@@ -1,0 +1,71 @@
+{
+  "reload": {
+    "manualReloadAllowed": true,
+    "start": {
+      "duration": 0.0,
+      "sound": "",
+      "actions": [
+        {
+          "actionType": "Animation",
+          "anim": "TiltGunForReload",
+          "remainUntilEnd": true
+        }
+      ]
+    },
+    "eject": {
+      "duration": 0.0,
+      "sound": "",
+      "actions": []
+    },
+    "loadOne": {
+      "duration": 0.0,
+      "sound": "",
+      "actions": []
+    },
+    "end": {
+      "duration": 0.0,
+      "sound": "",
+      "actions": [
+        {
+          "actionType": "Animation",
+          "anim": "PumpAction",
+          "duration": 1.0,
+          "delay": 0.0,
+          "distance": 0.25
+        }
+      ]
+    }
+  },
+  "oneHanded": false,
+  "primaryActions": [
+    {
+      "actionType": "Melee",
+      "damage": 10.0,
+      "sound": ""
+    },
+    {
+      "actionType": "Animation",
+      "anim": "SlideSemiAuto",
+      "distance": 0.25
+    },
+    {
+      "actionType": "Animation",
+      "anim": "PumpAction",
+      "duration": 1.0,
+      "delay": 0.0,
+      "distance": 0.25
+    }
+  ],
+  "secondaryActions": [],
+  "idle": {
+    "sound": "",
+    "soundLength": 0
+  },
+  "gui": {
+    "showAttachments": true,
+    "showDamage": false,
+    "showRecoil": false,
+    "showSpread": false,
+    "showReloadTime": false
+  }
+}

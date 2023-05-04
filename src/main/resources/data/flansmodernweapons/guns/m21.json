@@ -1,0 +1,134 @@
+{
+  "reload": {
+    "manualReloadAllowed": true,
+    "start": {
+      "duration": 17.5,
+      "sound": "BARReload",
+      "actions": [
+        {
+          "actionType": "Animation",
+          "anim": "TiltGunForReload",
+          "remainUntilEnd": true
+        }
+      ]
+    },
+    "eject": {
+      "duration": 17.5,
+      "sound": "",
+      "actions": []
+    },
+    "loadOne": {
+      "duration": 17.5,
+      "sound": "",
+      "actions": []
+    },
+    "end": {
+      "duration": 17.5,
+      "sound": "",
+      "actions": [
+        {
+          "actionType": "Animation",
+          "anim": "PumpAction",
+          "duration": 1.0,
+          "delay": 0.0,
+          "distance": 0.25
+        }
+      ]
+    }
+  },
+  "oneHanded": false,
+  "primaryActions": [
+    {
+      "actionType": "Shoot",
+      "canActUnderwater": true,
+      "canActUnderOtherLiquid": false,
+      "fireMode": "SEMIAUTO",
+      "sound": "M21Shoot",
+      "soundLength": 0,
+      "distortSound": true,
+      "numMagazineSlots": 1,
+      "ammoWithTags": {},
+      "ammoTypes": {},
+      "shootStats": {
+        "verticalRecoil": 15,
+        "horizontalRecoil": 0.0,
+        "spread": 2.0,
+        "damage": 21.0,
+        "hitscan": true,
+        "speed": 0.0,
+        "count": 1,
+        "timeToNextShot": 10.0,
+        "knockback": 0.0
+      }
+    },
+    {
+      "actionType": "Animation",
+      "anim": "SlideSemiAuto",
+      "distance": 0.5
+    },
+    {
+      "actionType": "Animation",
+      "anim": "PumpAction",
+      "duration": 1.0,
+      "delay": 0.0,
+      "distance": 0.25
+    }
+  ],
+  "secondaryActions": [
+    {
+      "canBeOverriden": true,
+      "actionType": "Scope",
+      "scopeTexture": "mwm21",
+      "zoomFactor": 6.0,
+      "fovFactor": 1.0
+    }
+  ],
+  "idle": {
+    "sound": "",
+    "soundLength": 0
+  },
+  "gui": {
+    "showAttachments": true,
+    "showDamage": false,
+    "showRecoil": false,
+    "showSpread": false,
+    "showReloadTime": false
+  },
+  "barrelAttachments": {
+    "numAttachmentSlots": 1,
+    "attachToMesh": "body",
+    "attachPoint": [
+      1.125,
+      0.25,
+      0.0
+    ],
+    "allowAll": false,
+    "allowlist": [
+      "flanMWSilencer",
+      "flanMWLongBarrel"
+    ]
+  },
+  "scopeAttachments": {
+    "numAttachmentSlots": 1,
+    "attachToMesh": "body",
+    "attachPoint": [
+      0.1875,
+      0.3125,
+      0.0
+    ],
+    "allowAll": false,
+    "allowlist": []
+  },
+  "genericAttachments": {
+    "numAttachmentSlots": 2,
+    "allowAll": false,
+    "allowlist": [
+      "flanMWRedDot",
+      "flanMWACOG",
+      "flanMW4xScope",
+      "flanMWSingleFire",
+      "flanMWBurstFire",
+      "flanMWAutoFire"
+    ]
+  }
+}
