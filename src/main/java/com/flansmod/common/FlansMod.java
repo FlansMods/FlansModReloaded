@@ -6,6 +6,7 @@ import com.flansmod.client.render.FlanModelRegistration;
 import com.flansmod.client.render.debug.DebugRenderer;
 import com.flansmod.common.gunshots.GunshotManager;
 import com.flansmod.common.gunshots.Raytracer;
+import com.flansmod.common.item.FlanItem;
 import com.flansmod.common.item.GunItem;
 import com.flansmod.common.types.attachments.AttachmentDefinitions;
 import com.flansmod.common.types.guns.GunDefinitions;
@@ -13,6 +14,7 @@ import com.flansmod.common.types.bullets.BulletDefinitions;
 import com.mojang.logging.LogUtils;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.packs.resources.Resource;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -32,7 +34,11 @@ import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
+import org.codehaus.plexus.util.CachedMap;
 import org.slf4j.Logger;
+
+import java.util.HashMap;
+import java.util.Map;
 
 @Mod(FlansMod.MODID)
 public class FlansMod
@@ -48,13 +54,18 @@ public class FlansMod
     //public static final RegistryObject<Item> EXAMPLE_BLOCK_ITEM = ITEMS.register("example_block", () -> new BlockItem(EXAMPLE_BLOCK.get(), new Item.Properties()));
 
     //public static final RegistryObject<Item> R700 = ITEMS.register("r700", () -> new GunItem(new ResourceLocation(FlansMod.MODID, "guns/r700"), new Item.Properties()));
-    public static GunDefinitions GUNS;
-    public static BulletDefinitions BULLETS;
-    public static AttachmentDefinitions ATTACHMENTS;
+    public static GunDefinitions GUNS = new GunDefinitions();
+    public static BulletDefinitions BULLETS = new BulletDefinitions();
+    public static AttachmentDefinitions ATTACHMENTS = new AttachmentDefinitions();
 
     public static GunshotManager GUNSHOTS = new GunshotManager();
 
-    public static final RegistryObject<Item> Gun(String modID, String name) { return ITEMS.register(name, () -> new GunItem(new ResourceLocation(modID, name), new Item.Properties())); }
+    public static RegistryObject<Item> Gun(DeferredRegister<Item> itemRegister, String modID, String name)
+    {
+        ResourceLocation loc = new ResourceLocation(modID, name);
+        RegistryObject<Item> item = itemRegister.register(name, () -> new GunItem(loc, new Item.Properties()));
+        return item;
+    }
     //public static final RegistryObject<CreativeModeTabs> GUNS_TAB = new CreativeModeTabFlansMod("");
 
     public FlansMod()
@@ -63,7 +74,6 @@ public class FlansMod
 
         // Register the commonSetup method for modloading
         modEventBus.addListener(this::commonSetup);
-
         modEventBus.addListener(this::clientSetup);
 
         // Register the Deferred Register to the mod event bus so blocks get registered
@@ -131,13 +141,8 @@ public class FlansMod
     
     private void onReloadResources(AddReloadListenerEvent event)
     {
-        GUNS = new GunDefinitions();
         event.addListener(GUNS);
-
-        BULLETS = new BulletDefinitions();
         event.addListener(BULLETS);
-
-        ATTACHMENTS = new AttachmentDefinitions();
         event.addListener(ATTACHMENTS);
     }
     

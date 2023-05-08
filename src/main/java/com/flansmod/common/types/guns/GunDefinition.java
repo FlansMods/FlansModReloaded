@@ -50,6 +50,9 @@ public class GunDefinition extends JsonDefinition
 	@JsonField
 	public AttachmentSettingsDefinition scopeAttachments = new AttachmentSettingsDefinition();
 
+	@JsonField
+	public String[] modelParts = new String[0];
+
 
 	 //
 	@Override

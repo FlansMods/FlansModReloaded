@@ -1,0 +1,120 @@
+{
+  "loader": "flansmod:turbomodel",
+  "parent": "item/item",
+  "textures": {
+    "5": "flansmodernweapons:items/r700",
+    "particle": "minecraft:block/iron_block"
+  },
+  "turboelements": [
+    {
+      "verts": [
+        [
+          1.0,
+          3.0,
+          -0.5
+        ],
+        [
+          4.0,
+          3.0,
+          -0.5
+        ],
+        [
+          1.0,
+          4.0,
+          -0.5
+        ],
+        [
+          4.0,
+          4.0,
+          -0.5
+        ],
+        [
+          1.0,
+          3.0,
+          0.5
+        ],
+        [
+          4.0,
+          3.0,
+          0.5
+        ],
+        [
+          1.0,
+          4.0,
+          0.5
+        ],
+        [
+          4.0,
+          4.0,
+          0.5
+        ]
+      ],
+      "eulerRotations": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "rotationOrigin": [
+        0.0,
+        2.5,
+        0.0
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            69,
+            17,
+            72,
+            18
+          ],
+          "texture": "#5"
+        },
+        "east": {
+          "uv": [
+            65,
+            17,
+            68,
+            18
+          ],
+          "texture": "#5"
+        },
+        "south": {
+          "uv": [
+            68,
+            17,
+            69,
+            18
+          ],
+          "texture": "#5"
+        },
+        "west": {
+          "uv": [
+            64,
+            17,
+            65,
+            18
+          ],
+          "texture": "#5"
+        },
+        "up": {
+          "uv": [
+            68,
+            16,
+            71,
+            17
+          ],
+          "texture": "#5"
+        },
+        "down": {
+          "uv": [
+            65,
+            16,
+            68,
+            17
+          ],
+          "texture": "#5"
+        }
+      }
+    }
+  ]
+}

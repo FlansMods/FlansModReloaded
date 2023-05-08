@@ -14,18 +14,19 @@ import net.minecraft.world.item.ItemStack;
 public class GunItemRenderer extends FlanItemModelRenderer<GunModel>
 {
     @Override
-    protected void render(ItemStack stack, GunModel model, PartialRenderUtility renderer, ItemTransforms.TransformType transformType,
+    protected void render(ItemStack stack, GunModel model, ItemTransforms.TransformType transformType,
                           PoseStack ms, MultiBufferSource buffer, int light, int overlay) {
         //renderer.render(model.getOriginalModel(), light);
 
-        renderer.render(model.getModelPart("body"), light);
+        RenderPart(stack, ms, buffer, model, "body", light, overlay);
 
         float xOffset = -1/16f;
         ms.translate(-xOffset, 0, 0);
         ms.mulPose(Axis.YP.rotationDegrees(0));
         ms.translate(xOffset, 0, 0);
 
-        renderer.render(model.getModelPart("scope"), light);
+        RenderPart(stack, ms, buffer, model, "scope", light, overlay);
+
     }
 
     @Override

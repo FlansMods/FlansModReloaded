@@ -180,7 +180,7 @@ public class PlayerSnapshot
 
     public Transform GetMuzzlePosition()
     {
-
+        return hitboxes[EPlayerHitArea.RIGHTARM.ordinal()].transform;
     }
 
     // ----------------------------------------------------------

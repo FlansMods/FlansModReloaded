@@ -1,0 +1,120 @@
+{
+  "loader": "flansmod:turbomodel",
+  "parent": "item/item",
+  "textures": {
+    "5": "flansmodernweapons:items/uzi",
+    "particle": "minecraft:block/iron_block"
+  },
+  "turboelements": [
+    {
+      "verts": [
+        [
+          1.25,
+          -4.0,
+          -0.75
+        ],
+        [
+          2.75,
+          -4.0,
+          -0.75
+        ],
+        [
+          1.25,
+          2.0,
+          -0.75
+        ],
+        [
+          2.75,
+          2.0,
+          -0.75
+        ],
+        [
+          1.25,
+          -4.0,
+          0.75
+        ],
+        [
+          2.75,
+          -4.0,
+          0.75
+        ],
+        [
+          1.25,
+          2.0,
+          0.75
+        ],
+        [
+          2.75,
+          2.0,
+          0.75
+        ]
+      ],
+      "eulerRotations": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "rotationOrigin": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            38,
+            18,
+            40,
+            24
+          ],
+          "texture": "#5"
+        },
+        "east": {
+          "uv": [
+            34,
+            18,
+            36,
+            24
+          ],
+          "texture": "#5"
+        },
+        "south": {
+          "uv": [
+            36,
+            18,
+            38,
+            24
+          ],
+          "texture": "#5"
+        },
+        "west": {
+          "uv": [
+            32,
+            18,
+            34,
+            24
+          ],
+          "texture": "#5"
+        },
+        "up": {
+          "uv": [
+            36,
+            16,
+            38,
+            18
+          ],
+          "texture": "#5"
+        },
+        "down": {
+          "uv": [
+            34,
+            16,
+            36,
+            18
+          ],
+          "texture": "#5"
+        }
+      }
+    }
+  ]
+}

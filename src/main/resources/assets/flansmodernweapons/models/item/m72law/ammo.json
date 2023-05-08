@@ -1,0 +1,9 @@
+{
+  "loader": "flansmod:turbomodel",
+  "parent": "item/item",
+  "textures": {
+    "5": "flansmodernweapons:items/m72law",
+    "particle": "minecraft:block/iron_block"
+  },
+  "turboelements": []
+}

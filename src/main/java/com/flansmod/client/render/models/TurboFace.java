@@ -1,10 +1,17 @@
 package com.flansmod.client.render.models;
 
 import com.google.gson.*;
+import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.block.model.BlockFaceUV;
+import net.minecraft.client.renderer.texture.TextureAtlasSprite;
+import net.minecraft.core.Direction;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.GsonHelper;
+import net.minecraft.util.Mth;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.client.textures.UnitTextureAtlasSprite;
+import org.joml.Vector3f;
 
 import javax.annotation.Nullable;
 import java.lang.reflect.Type;
@@ -13,7 +20,9 @@ import java.lang.reflect.Type;
 public class TurboFace
 {
 	public final String texture;
-	public final BlockFaceUV uv;
+	public final BlockFaceUV uvData;
+	public Direction cullDirection;
+
 	@Nullable
 	TurboElement parent; // Parent canot be set by the constructor due to instantiation ordering. This shouldn't really ever be null, but it could theoretically be.
 
@@ -21,7 +30,57 @@ public class TurboFace
 					 BlockFaceUV uv)
 	{
 		this.texture = texture;
-		this.uv = uv;
+		this.uvData = uv;
+	}
+
+	public BakedQuad Bake(ResourceLocation skin,
+						  TurboElement element,
+						  Direction direction)
+	{
+		Vector3f[] positions = element.GetFaceVertices(direction, true);
+		// If this element is rotated, it might have a different facing, let's check
+		direction = EstimateFacing(positions);
+
+		return new BakedQuad(
+			VertexMagic(positions, uvData),
+			0, // tintIndex
+			direction,
+			new TurboTextureAtlasSprite(skin),
+			false, // ???
+			false // ambient occlusion
+		);
+	}
+
+	private static Direction EstimateFacing(Vector3f[] positions)
+	{
+		Vector3f axis1 = positions[0].sub(positions[1]);
+		Vector3f axis2 = positions[2].sub(positions[1]);
+		Vector3f normal = axis1.cross(axis2).normalize();
+
+		return normal.isFinite() ? Direction.getNearest(normal.x, normal.y, normal.z) : Direction.UP;
+	}
+
+	public static int[] VertexMagic(Vector3f[] positions, BlockFaceUV uvs)
+	{
+		// 4 verts * 8 bytes???
+		int[] magicVertData = new int[32];
+
+		for(int i = 0; i < positions.length; i++)
+		{
+			// WHAATT?
+			int offset = i * 8;
+			float u = uvs.getU(i); //sprite.getU(uvs.getU(i) * 0.999d + uvs.getU((i + 2) % 4) * 0.001d);
+			float v = uvs.getV(i); //sprite.getV(uvs.getV(i) * 0.999d + uvs.getV((i + 2) % 4) * 0.001d);
+
+			magicVertData[offset + 0] = Float.floatToRawIntBits(positions[i].x());
+			magicVertData[offset + 1] = Float.floatToRawIntBits(positions[i].y());
+			magicVertData[offset + 2] = Float.floatToRawIntBits(positions[i].z());
+			magicVertData[offset + 3] = -1;
+			magicVertData[offset + 4] = Float.floatToRawIntBits(u);
+			magicVertData[offset + 5] = Float.floatToRawIntBits(v);
+		}
+
+		return magicVertData;
 	}
 
 	@OnlyIn(Dist.CLIENT)

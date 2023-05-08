@@ -1,0 +1,137 @@
+{
+  "reload": {
+    "manualReloadAllowed": true,
+    "start": {
+      "duration": 50.0,
+      "sound": "BrowningReload",
+      "actions": [
+        {
+          "actionType": "Animation",
+          "anim": "TiltGunForReload",
+          "remainUntilEnd": true
+        }
+      ]
+    },
+    "eject": {
+      "duration": 20.0,
+      "sound": "",
+      "actions": []
+    },
+    "loadOne": {
+      "duration": 20.0,
+      "sound": "",
+      "actions": []
+    },
+    "end": {
+      "duration": 25.0,
+      "sound": "",
+      "actions": [
+        {
+          "actionType": "Animation",
+          "anim": "PumpAction",
+          "duration": 1.0,
+          "delay": 0.0,
+          "distance": 0.25
+        }
+      ]
+    }
+  },
+  "oneHanded": false,
+  "primaryActions": [
+    {
+      "actionType": "Shoot",
+      "canActUnderwater": true,
+      "canActUnderOtherLiquid": false,
+      "fireMode": "FULLAUTO",
+      "sound": "RPDShoot",
+      "soundLength": 0,
+      "distortSound": true,
+      "numMagazineSlots": 1,
+      "ammoWithTags": {},
+      "ammoTypes": {},
+      "shootStats": {
+        "verticalRecoil": 7,
+        "horizontalRecoil": 0.0,
+        "spread": 3.0,
+        "damage": 4.0,
+        "hitscan": true,
+        "speed": 0.0,
+        "count": 1,
+        "timeToNextShot": 2.0,
+        "knockback": 0.0
+      }
+    },
+    {
+      "actionType": "Animation",
+      "anim": "SlideSemiAuto",
+      "distance": 0.25
+    },
+    {
+      "actionType": "Animation",
+      "anim": "PumpAction",
+      "duration": 1.0,
+      "delay": 0.0,
+      "distance": 0.25
+    }
+  ],
+  "secondaryActions": [
+    {
+      "canBeOverriden": true,
+      "actionType": "IronSight",
+      "fovFactor": 1.25
+    }
+  ],
+  "idle": {
+    "sound": "",
+    "soundLength": 0
+  },
+  "gui": {
+    "showAttachments": true,
+    "showDamage": false,
+    "showRecoil": false,
+    "showSpread": false,
+    "showReloadTime": false
+  },
+  "gripAttachments": {
+    "numAttachmentSlots": 1,
+    "attachToMesh": "body",
+    "attachPoint": [
+      0.46875,
+      0.125,
+      0.0
+    ],
+    "allowAll": false,
+    "allowlist": [
+      "flanMWForegrip",
+      "flanMWFlashlight"
+    ]
+  },
+  "scopeAttachments": {
+    "numAttachmentSlots": 1,
+    "attachToMesh": "body",
+    "attachPoint": [
+      0.0,
+      0.3125,
+      0.0
+    ],
+    "allowAll": false,
+    "allowlist": []
+  },
+  "genericAttachments": {
+    "numAttachmentSlots": 1,
+    "allowAll": false,
+    "allowlist": [
+      "flanMWRedDot",
+      "flanMWACOG",
+      "flanMW4xScope",
+      "flanMWSingleFire",
+      "flanMWBurstFire",
+      "flanMWAutoFire"
+    ]
+  },
+  "modelParts": [
+    "body",
+    "ammo",
+    "scope"
+  ]
+}

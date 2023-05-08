@@ -1,0 +1,120 @@
+{
+  "loader": "flansmod:turbomodel",
+  "parent": "item/item",
+  "textures": {
+    "5": "flansmodernweapons:items/m1014",
+    "particle": "minecraft:block/iron_block"
+  },
+  "turboelements": [
+    {
+      "verts": [
+        [
+          10.0,
+          2.8,
+          -1.0
+        ],
+        [
+          14.0,
+          2.8,
+          -1.0
+        ],
+        [
+          10.0,
+          3.8,
+          -1.0
+        ],
+        [
+          14.0,
+          3.8,
+          -1.0
+        ],
+        [
+          10.0,
+          2.8,
+          1.0
+        ],
+        [
+          14.0,
+          2.8,
+          1.0
+        ],
+        [
+          10.0,
+          3.8,
+          1.0
+        ],
+        [
+          14.0,
+          3.8,
+          1.0
+        ]
+      ],
+      "eulerRotations": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "rotationOrigin": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            72,
+            18,
+            76,
+            19
+          ],
+          "texture": "#5"
+        },
+        "east": {
+          "uv": [
+            66,
+            18,
+            70,
+            19
+          ],
+          "texture": "#5"
+        },
+        "south": {
+          "uv": [
+            70,
+            18,
+            72,
+            19
+          ],
+          "texture": "#5"
+        },
+        "west": {
+          "uv": [
+            64,
+            18,
+            66,
+            19
+          ],
+          "texture": "#5"
+        },
+        "up": {
+          "uv": [
+            70,
+            16,
+            74,
+            18
+          ],
+          "texture": "#5"
+        },
+        "down": {
+          "uv": [
+            66,
+            16,
+            70,
+            18
+          ],
+          "texture": "#5"
+        }
+      }
+    }
+  ]
+}

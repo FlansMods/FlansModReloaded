@@ -1,27 +1,35 @@
 package com.flansmod.client.render.models;
 
+import com.flansmod.common.FlansMod;
 import com.google.common.collect.*;
 import com.google.gson.*;
 import com.mojang.datafixers.util.Either;
 import com.mojang.logging.LogUtils;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.block.model.*;
+import net.minecraft.client.renderer.texture.MissingTextureAtlasSprite;
 import net.minecraft.client.renderer.texture.TextureAtlas;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.model.*;
 import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.packs.resources.Resource;
 import net.minecraft.util.GsonHelper;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.client.event.ModelEvent;
+import net.minecraftforge.client.model.ElementsModel;
+import net.minecraftforge.client.model.EmptyModel;
 import net.minecraftforge.client.model.IDynamicBakedModel;
 import net.minecraftforge.client.model.SimpleModelState;
 import net.minecraftforge.client.model.data.ModelData;
 import net.minecraftforge.client.model.geometry.IGeometryBakingContext;
 import net.minecraftforge.client.model.geometry.IGeometryLoader;
 import net.minecraftforge.client.model.geometry.IUnbakedGeometry;
+import net.minecraftforge.client.textures.UnitTextureAtlasSprite;
+import net.minecraftforge.eventbus.api.IEventBus;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 
@@ -36,15 +44,17 @@ import java.util.stream.Collectors;
 public class TurboModel implements IUnbakedGeometry<TurboModel>, UnbakedModel
 {
 	private static final Logger LOGGER = LogUtils.getLogger();
-	private static final FaceBakery FACE_BAKERY = new FaceBakery();
-
+	public static final Loader LOADER = new Loader();
 
 	private final List<TurboElement> elements;
 	private final BlockModel.GuiLight guiLight;
 	public final boolean hasAmbientOcclusion;
 	private final ItemTransforms transforms;
 	private final List<ItemOverride> overrides;
-	public final Map<String, Either<Material, String>> textureMap;
+	//public final Map<String, Either<Material, String>> textureMap;
+	public final Map<String, ResourceLocation> textures;
+
+
 	@Nullable
 	public TurboModel parent;
 	@Nullable
@@ -52,7 +62,8 @@ public class TurboModel implements IUnbakedGeometry<TurboModel>, UnbakedModel
 
 	public TurboModel(@Nullable ResourceLocation parentLocation,
 					  List<TurboElement> elements,
-					  Map<String, Either<Material, String>> textureMap,
+					  //Map<String, Either<Material, String>> textureMap,
+					  Map<String, ResourceLocation> textures,
 					  boolean hasAmbientOcclusion,
 					  @Nullable BlockModel.GuiLight guiLight,
 					  ItemTransforms transforms,
@@ -61,7 +72,8 @@ public class TurboModel implements IUnbakedGeometry<TurboModel>, UnbakedModel
 		this.elements = elements;
 		this.hasAmbientOcclusion = hasAmbientOcclusion;
 		this.guiLight = guiLight;
-		this.textureMap = textureMap;
+		//this.textureMap = textureMap;
+		this.textures = textures;
 		this.parentLocation = parentLocation;
 		this.transforms = transforms;
 		this.overrides = overrides;
@@ -74,7 +86,10 @@ public class TurboModel implements IUnbakedGeometry<TurboModel>, UnbakedModel
 	public List<ItemOverride> getOverrides() {
 		return overrides;
 	}
-	// getItemOverrides
+	private ItemOverrides getItemOverrides(ModelBaker baker, UnbakedModel model, Function<Material, TextureAtlasSprite> spriteGetter)
+	{
+		return overrides.isEmpty() ? ItemOverrides.EMPTY : new ItemOverrides(baker, model, overrides, spriteGetter);
+	}
 	// getOverrides
 	public Collection<ResourceLocation> getDependencies()
 	{
@@ -128,6 +143,35 @@ public class TurboModel implements IUnbakedGeometry<TurboModel>, UnbakedModel
 		});
 	}
 
+	public ItemTransforms getTransforms()
+	{
+		ItemTransform itemtransform = getTransform(ItemTransforms.TransformType.THIRD_PERSON_LEFT_HAND);
+		ItemTransform itemtransform1 = getTransform(ItemTransforms.TransformType.THIRD_PERSON_RIGHT_HAND);
+		ItemTransform itemtransform2 = getTransform(ItemTransforms.TransformType.FIRST_PERSON_LEFT_HAND);
+		ItemTransform itemtransform3 = getTransform(ItemTransforms.TransformType.FIRST_PERSON_RIGHT_HAND);
+		ItemTransform itemtransform4 = getTransform(ItemTransforms.TransformType.HEAD);
+		ItemTransform itemtransform5 = getTransform(ItemTransforms.TransformType.GUI);
+		ItemTransform itemtransform6 = getTransform(ItemTransforms.TransformType.GROUND);
+		ItemTransform itemtransform7 = getTransform(ItemTransforms.TransformType.FIXED);
+
+		var builder = com.google.common.collect.ImmutableMap.<ItemTransforms.TransformType, ItemTransform>builder();
+		for(ItemTransforms.TransformType type : ItemTransforms.TransformType.values()) {
+			if (type.isModded()) {
+				var transform = getTransform(type);
+				if (transform != ItemTransform.NO_TRANSFORM) {
+					builder.put(type, transform);
+				}
+			}
+		}
+
+		return new ItemTransforms(itemtransform, itemtransform1, itemtransform2, itemtransform3, itemtransform4, itemtransform5, itemtransform6, itemtransform7, builder.build());
+	}
+
+	private ItemTransform getTransform(ItemTransforms.TransformType type)
+	{
+		return parent != null && !transforms.hasTransform(type) ? parent.getTransform(type) : transforms.getTransform(type);
+	}
+
 	@org.jetbrains.annotations.Nullable
 	@Override
 	public BakedModel bake(ModelBaker baker,
@@ -154,66 +198,83 @@ public class TurboModel implements IUnbakedGeometry<TurboModel>, UnbakedModel
 		if (!rootTransform.isIdentity())
 			modelState = new SimpleModelState(modelState.getRotation().compose(rootTransform), modelState.isUvLocked());
 
+		List<BakedQuad> quad = new ArrayList<>(elements.size() * 6);
+		for(TurboElement element : elements)
+		{
+			for(Direction direction : element.faces.keySet())
+			{
+				TurboFace face = element.faces.get(direction);
+				ResourceLocation skin = ResolveSkin(face.texture);
+				quad.add(face.Bake(skin, element, direction));
+			}
+		}
 
-
-
-		return new Baked(
-
-		)
+		return new Baked(quad, overrides);
 	}
 
-	public static class Baked implements IDynamicBakedModel
+	public static class Baked implements BakedModel
 	{
-		private static final FaceBakery FACE_BAKERY = new FaceBakery();
-		private final TextureAtlasSprite particle;
+		private final List<BakedQuad> quads;
 		private final ItemOverrides overrides;
 
-		public Baked(TextureAtlasSprite particle,
-					 ItemOverrides overrides)
+		public Baked(List<BakedQuad> quads, ItemOverrides overrides)
 		{
-			this.particle = particle;
+			this.quads = quads;
 			this.overrides = overrides;
 		}
 
 		@Override
-		public @NotNull List<BakedQuad> getQuads(@org.jetbrains.annotations.Nullable BlockState state, @org.jetbrains.annotations.Nullable Direction side, @NotNull RandomSource rand, @NotNull ModelData extraData, @org.jetbrains.annotations.Nullable RenderType renderType)
+		public List<BakedQuad> getQuads(@org.jetbrains.annotations.Nullable BlockState p_235039_, @org.jetbrains.annotations.Nullable Direction p_235040_, RandomSource p_235041_)
 		{
-			return null;
+			return quads;
 		}
 
 		@Override
 		public boolean useAmbientOcclusion() { return false; }
 		@Override
-		public boolean isGui3d() { return true;}
+		public boolean isGui3d() { return true; }
 		@Override
 		public boolean usesBlockLight() { return false; }
 		@Override
-		public boolean isCustomRenderer() { return false; }
+		public boolean isCustomRenderer() { return true; }
 		@Override
-		public TextureAtlasSprite getParticleIcon() { return particle; }
+		public TextureAtlasSprite getParticleIcon() { return UnitTextureAtlasSprite.INSTANCE; }
 		@Override
 		public ItemOverrides getOverrides() { return overrides; }
-
-		public static class Builder
-		{
-
-		}
 	}
 
-
-	public static final class Loader implements IGeometryLoader<TurboModel>
+	private ResourceLocation ResolveSkin(String path)
 	{
-		public static final TurboModel.Loader INSTANCE = new TurboModel.Loader();
+		if (isTextureReference(path))
+			path = path.substring(1);
 
-		private Loader()
+		for(TurboModel modelLineage = this; modelLineage != null; modelLineage = modelLineage.parent)
 		{
+			ResourceLocation skin = modelLineage.textures.get(path);
+			if (skin != null)
+				return skin;
 		}
+
+		return MissingTextureAtlasSprite.getLocation();
+	}
+
+	private static boolean isTextureReference(String key) { return key.charAt(0) == '#'; }
+
+	public static class Loader implements IGeometryLoader<TurboModel>
+	{
+		private static final Gson GSON = (new GsonBuilder())
+			.registerTypeAdapter(TurboModel.class, new Deserializer())
+			.registerTypeAdapter(TurboElement.class, new TurboElement.Deserializer())
+			.registerTypeAdapter(TurboFace.class, new TurboFace.Deserializer())
+			.registerTypeAdapter(BlockFaceUV.class, new BlockFaceUV.Deserializer())
+			.create();
 
 		@Override
 		public TurboModel read(JsonObject jsonObject,
-							   JsonDeserializationContext deserializationContext)
+							   JsonDeserializationContext deserializationContext) throws JsonParseException
 		{
-
+			return GSON.fromJson(jsonObject, TurboModel.class);
+			//return deserializationContext.deserialize(jsonObject, TurboModel.class);
 		}
 	}
 
@@ -229,7 +290,7 @@ public class TurboModel implements IUnbakedGeometry<TurboModel>, UnbakedModel
 			JsonObject jObject = jElement.getAsJsonObject();
 			List<TurboElement> elementList = getElements(context, jObject);
 			String parentName = getParentName(jObject);
-			Map<String, Either<Material, String>> map = this.getTextureMap(jObject);
+			Map<String, ResourceLocation> map = this.getTextureMap(jObject);
 			boolean flag = this.getAmbientOcclusion(jObject);
 
 			ItemTransforms itemTransforms = ItemTransforms.NO_TRANSFORMS;
@@ -267,33 +328,42 @@ public class TurboModel implements IUnbakedGeometry<TurboModel>, UnbakedModel
 			return list;
 		}
 
-		private Map<String, Either<Material, String>> getTextureMap(JsonObject jObject)
+		private Map<String, ResourceLocation> getTextureMap(JsonObject jObject)
 		{
-			ResourceLocation resourcelocation = TextureAtlas.LOCATION_BLOCKS;
-			Map<String, Either<Material, String>> map = Maps.newHashMap();
+			Map<String, ResourceLocation> map = Maps.newHashMap();
 			if (jObject.has("textures"))
 			{
 				JsonObject jTextureObject = GsonHelper.getAsJsonObject(jObject, "textures");
 				for(var kvp : jTextureObject.entrySet())
 				{
-					map.put(kvp.getKey(), parseTextureLocationOrReference(resourcelocation, kvp.getValue().getAsString()));
+					map.put(kvp.getKey(), parseTextureLocationOrReference(kvp.getValue().getAsString()));
 				}
 			}
 
 			return map;
 		}
 
-		private static Either<Material, String> parseTextureLocationOrReference(ResourceLocation p_111504_, String p_111505_) {
-			if (TurboModel.isTextureReference(p_111505_)) {
-				return Either.right(p_111505_.substring(1));
-			} else {
-				ResourceLocation resourcelocation = ResourceLocation.tryParse(p_111505_);
-				if (resourcelocation == null) {
-					throw new JsonParseException(p_111505_ + " is not valid resource location");
-				} else {
-					return Either.left(new Material(p_111504_, resourcelocation));
+		private static ResourceLocation parseTextureLocationOrReference(String textureName)
+		{
+			return ResourceLocation.tryParse(textureName);
+			/*
+			if (TurboModel.isTextureReference(textureName))
+			{
+				return Either.right(textureName.substring(1));
+			}
+			else
+			{
+				ResourceLocation resourcelocation = ResourceLocation.tryParse(textureName);
+				if (resourcelocation == null)
+				{
+					throw new JsonParseException(textureName + " is not valid resource location");
+				}
+				else
+				{
+					return Either.left(new Material(atlas, resourcelocation));
 				}
 			}
+			*/
 		}
 
 		private String getParentName(JsonObject jObject)
@@ -310,9 +380,9 @@ public class TurboModel implements IUnbakedGeometry<TurboModel>, UnbakedModel
 												 JsonObject jObject)
 		{
 			List<TurboElement> list = Lists.newArrayList();
-			if (jObject.has("elements"))
+			if (jObject.has("turboelements"))
 			{
-				for(JsonElement jElement : GsonHelper.getAsJsonArray(jObject, "elements"))
+				for(JsonElement jElement : GsonHelper.getAsJsonArray(jObject, "turboelements"))
 				{
 					list.add(context.deserialize(jElement, TurboElement.class));
 				}

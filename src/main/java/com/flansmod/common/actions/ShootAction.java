@@ -32,6 +32,7 @@ import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 import org.joml.Vector3d;
+import org.joml.Vector3f;
 
 import java.sql.Array;
 import java.util.ArrayList;
@@ -355,6 +356,7 @@ public class ShootAction extends Action
 		}
 		return context.shootFrom.getEyePosition();
 
+		/*
 		ItemStack itemstack = hand == EnumHand.OFF_HAND ? player.getHeldItemOffhand() : player.getHeldItemMainhand();
 
 		if(itemstack.getItem() instanceof ItemGun)
@@ -364,7 +366,6 @@ public class ShootAction extends Action
 
 			return Vector3f.add(new Vector3f(player.posX, player.posY, player.posZ), snapshot.GetMuzzleLocation(gunType, barrelType, hand), null);
 		}
-
-		return new Vector3f(player.getPositionEyes(0.0f));
+		 */
 	}
 }

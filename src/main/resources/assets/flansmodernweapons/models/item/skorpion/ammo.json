@@ -1,0 +1,120 @@
+{
+  "loader": "flansmod:turbomodel",
+  "parent": "item/item",
+  "textures": {
+    "5": "flansmodernweapons:items/skorpion",
+    "particle": "minecraft:block/iron_block"
+  },
+  "turboelements": [
+    {
+      "verts": [
+        [
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0
+        ]
+      ],
+      "eulerRotations": [
+        0.0,
+        0.0,
+        0.5
+      ],
+      "rotationOrigin": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            32,
+            16,
+            32,
+            16
+          ],
+          "texture": "#5"
+        },
+        "east": {
+          "uv": [
+            32,
+            16,
+            32,
+            16
+          ],
+          "texture": "#5"
+        },
+        "south": {
+          "uv": [
+            32,
+            16,
+            32,
+            16
+          ],
+          "texture": "#5"
+        },
+        "west": {
+          "uv": [
+            32,
+            16,
+            32,
+            16
+          ],
+          "texture": "#5"
+        },
+        "up": {
+          "uv": [
+            32,
+            16,
+            32,
+            16
+          ],
+          "texture": "#5"
+        },
+        "down": {
+          "uv": [
+            32,
+            16,
+            32,
+            16
+          ],
+          "texture": "#5"
+        }
+      }
+    }
+  ]
+}
