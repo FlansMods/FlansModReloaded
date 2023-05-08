@@ -2,8 +2,146 @@
   "loader": "flansmod:turbomodel",
   "parent": "item/item",
   "textures": {
-    "5": "flansmodernweapons:items/uzi",
+    "5": "flansmodernweapons:items/mini_uzi",
     "particle": "minecraft:block/iron_block"
+  },
+  "display": {
+    "firstperson_lefthand": {
+      "rotation": [
+        -90.0,
+        0.0,
+        0.0
+      ],
+      "translation": [
+        0.0,
+        1.0,
+        -3.0
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ]
+    },
+    "firstperson_righthand": {
+      "rotation": [
+        -90.0,
+        0.0,
+        0.0
+      ],
+      "translation": [
+        0.0,
+        1.0,
+        -3.0
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ]
+    },
+    "thirdperson_righthand": {
+      "rotation": [
+        -90.0,
+        0.0,
+        0.0
+      ],
+      "translation": [
+        0.0,
+        1.0,
+        -3.0
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ]
+    },
+    "thirdperson_lefthand": {
+      "rotation": [
+        -90.0,
+        0.0,
+        0.0
+      ],
+      "translation": [
+        0.0,
+        1.0,
+        -3.0
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ]
+    },
+    "gui": {
+      "rotation": [
+        -90.0,
+        0.0,
+        0.0
+      ],
+      "translation": [
+        0.0,
+        1.0,
+        -3.0
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ]
+    },
+    "head": {
+      "rotation": [
+        -90.0,
+        0.0,
+        0.0
+      ],
+      "translation": [
+        0.0,
+        1.0,
+        -3.0
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ]
+    },
+    "ground": {
+      "rotation": [
+        -90.0,
+        0.0,
+        0.0
+      ],
+      "translation": [
+        0.0,
+        1.0,
+        -3.0
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ]
+    },
+    "fixed": {
+      "rotation": [
+        -90.0,
+        0.0,
+        0.0
+      ],
+      "translation": [
+        0.0,
+        1.0,
+        -3.0
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ]
+    }
   },
   "turboelements": [
     {
@@ -62,55 +200,55 @@
       "faces": {
         "north": {
           "uv": [
-            38,
-            18,
-            40,
-            24
+            1,
+            1,
+            1,
+            1
           ],
           "texture": "#5"
         },
         "east": {
           "uv": [
-            34,
-            18,
-            36,
-            24
+            1,
+            1,
+            1,
+            1
           ],
           "texture": "#5"
         },
         "south": {
           "uv": [
-            36,
-            18,
-            38,
-            24
+            1,
+            1,
+            1,
+            1
           ],
           "texture": "#5"
         },
         "west": {
           "uv": [
-            32,
-            18,
-            34,
-            24
+            1,
+            1,
+            1,
+            1
           ],
           "texture": "#5"
         },
         "up": {
           "uv": [
-            36,
-            16,
-            38,
-            18
+            1,
+            1,
+            1,
+            1
           ],
           "texture": "#5"
         },
         "down": {
           "uv": [
-            34,
-            16,
-            36,
-            18
+            1,
+            1,
+            1,
+            1
           ],
           "texture": "#5"
         }

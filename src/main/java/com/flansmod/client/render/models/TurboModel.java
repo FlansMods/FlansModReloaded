@@ -209,16 +209,18 @@ public class TurboModel implements IUnbakedGeometry<TurboModel>, UnbakedModel
 			}
 		}
 
-		return new Baked(quad, overrides);
+		return new Baked(quad, overrides, transforms);
 	}
 
 	public static class Baked implements BakedModel
 	{
 		private final List<BakedQuad> quads;
 		private final ItemOverrides overrides;
+		private final ItemTransforms transforms;
 
-		public Baked(List<BakedQuad> quads, ItemOverrides overrides)
+		public Baked(List<BakedQuad> quads, ItemOverrides overrides, ItemTransforms transforms)
 		{
+			this.transforms = transforms;
 			this.quads = quads;
 			this.overrides = overrides;
 		}
@@ -241,6 +243,8 @@ public class TurboModel implements IUnbakedGeometry<TurboModel>, UnbakedModel
 		public TextureAtlasSprite getParticleIcon() { return UnitTextureAtlasSprite.INSTANCE; }
 		@Override
 		public ItemOverrides getOverrides() { return overrides; }
+		@Override
+		public ItemTransforms getTransforms() { return transforms; }
 	}
 
 	private ResourceLocation ResolveSkin(String path)
@@ -267,6 +271,8 @@ public class TurboModel implements IUnbakedGeometry<TurboModel>, UnbakedModel
 			.registerTypeAdapter(TurboElement.class, new TurboElement.Deserializer())
 			.registerTypeAdapter(TurboFace.class, new TurboFace.Deserializer())
 			.registerTypeAdapter(BlockFaceUV.class, new BlockFaceUV.Deserializer())
+			.registerTypeAdapter(ItemTransforms.class, new ItemTransforms.Deserializer())
+			.registerTypeAdapter(ItemTransform.class, new ItemTransform.Deserializer())
 			.create();
 
 		@Override

@@ -1,5 +1,6 @@
 package com.flansmod.client.render.models;
 
+import com.flansmod.util.Maths;
 import com.google.gson.*;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.block.model.BlockFaceUV;
@@ -53,9 +54,9 @@ public class TurboFace
 
 	private static Direction EstimateFacing(Vector3f[] positions)
 	{
-		Vector3f axis1 = positions[0].sub(positions[1]);
-		Vector3f axis2 = positions[2].sub(positions[1]);
-		Vector3f normal = axis1.cross(axis2).normalize();
+		Vector3f axis1 = Maths.Sub(positions[0], positions[1]);
+		Vector3f axis2 = Maths.Sub(positions[2], positions[1]);
+		Vector3f normal = Maths.Cross(axis1, axis2).normalize();
 
 		return normal.isFinite() ? Direction.getNearest(normal.x, normal.y, normal.z) : Direction.UP;
 	}

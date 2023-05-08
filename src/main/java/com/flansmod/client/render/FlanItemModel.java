@@ -75,6 +75,9 @@ public abstract class FlanItemModel extends BakedModelWrapper<BakedModel>
 
     public BakedModel getModelPart(String name)
     {
+        if(name.equals("body"))
+            return originalModel;
+
         return parts.get(name);
     }
 

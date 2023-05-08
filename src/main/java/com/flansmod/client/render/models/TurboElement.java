@@ -68,17 +68,17 @@ public class TurboElement
 			// TODO: Check order
 			Quaternionf rotation = new Quaternionf().rotateZYX(eulerRotations.z, eulerRotations.y, eulerRotations.x);
 			return new Vector3f[] {
-				vertices[indices[0]].rotate(rotation).add(rotationOrigin),
-				vertices[indices[1]].rotate(rotation).add(rotationOrigin),
-				vertices[indices[2]].rotate(rotation).add(rotationOrigin),
-				vertices[indices[3]].rotate(rotation).add(rotationOrigin)
+				new Vector3f(vertices[indices[0]]).rotate(rotation).add(rotationOrigin),
+				new Vector3f(vertices[indices[1]]).rotate(rotation).add(rotationOrigin),
+				new Vector3f(vertices[indices[2]]).rotate(rotation).add(rotationOrigin),
+				new Vector3f(vertices[indices[3]]).rotate(rotation).add(rotationOrigin)
 			};
 		}
 		else return new Vector3f[] {
-			vertices[indices[0]],
-			vertices[indices[1]],
-			vertices[indices[2]],
-			vertices[indices[3]]
+			new Vector3f(vertices[indices[0]]),
+			new Vector3f(vertices[indices[1]]),
+			new Vector3f(vertices[indices[2]]),
+			new Vector3f(vertices[indices[3]])
 		};
 	}
 
@@ -183,7 +183,8 @@ public class TurboElement
 		private Vector3f getVector3f(JsonElement jObject)
 		{
 			JsonArray jArray = jObject.getAsJsonArray();
-			return new Vector3f(jArray.get(0).getAsFloat(),
+			return new Vector3f(
+				jArray.get(0).getAsFloat(),
 				jArray.get(1).getAsFloat(),
 				jArray.get(2).getAsFloat());
 		}

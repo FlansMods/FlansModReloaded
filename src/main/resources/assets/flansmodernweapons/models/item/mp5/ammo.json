@@ -5,6 +5,144 @@
     "5": "flansmodernweapons:items/mp5",
     "particle": "minecraft:block/iron_block"
   },
+  "display": {
+    "firstperson_lefthand": {
+      "rotation": [
+        -90.0,
+        0.0,
+        0.0
+      ],
+      "translation": [
+        0.0,
+        1.0,
+        -3.0
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ]
+    },
+    "firstperson_righthand": {
+      "rotation": [
+        -90.0,
+        0.0,
+        0.0
+      ],
+      "translation": [
+        0.0,
+        1.0,
+        -3.0
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ]
+    },
+    "thirdperson_righthand": {
+      "rotation": [
+        -90.0,
+        0.0,
+        0.0
+      ],
+      "translation": [
+        0.0,
+        1.0,
+        -3.0
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ]
+    },
+    "thirdperson_lefthand": {
+      "rotation": [
+        -90.0,
+        0.0,
+        0.0
+      ],
+      "translation": [
+        0.0,
+        1.0,
+        -3.0
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ]
+    },
+    "gui": {
+      "rotation": [
+        -90.0,
+        0.0,
+        0.0
+      ],
+      "translation": [
+        0.0,
+        1.0,
+        -3.0
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ]
+    },
+    "head": {
+      "rotation": [
+        -90.0,
+        0.0,
+        0.0
+      ],
+      "translation": [
+        0.0,
+        1.0,
+        -3.0
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ]
+    },
+    "ground": {
+      "rotation": [
+        -90.0,
+        0.0,
+        0.0
+      ],
+      "translation": [
+        0.0,
+        1.0,
+        -3.0
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ]
+    },
+    "fixed": {
+      "rotation": [
+        -90.0,
+        0.0,
+        0.0
+      ],
+      "translation": [
+        0.0,
+        1.0,
+        -3.0
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ]
+    }
+  },
   "turboelements": [
     {
       "verts": [
@@ -62,55 +200,55 @@
       "faces": {
         "north": {
           "uv": [
-            67,
-            17,
-            68,
-            20
+            1,
+            1,
+            1,
+            1
           ],
           "texture": "#5"
         },
         "east": {
           "uv": [
-            65,
-            17,
-            66,
-            20
+            1,
+            1,
+            1,
+            1
           ],
           "texture": "#5"
         },
         "south": {
           "uv": [
-            66,
-            17,
-            67,
-            20
+            1,
+            1,
+            1,
+            1
           ],
           "texture": "#5"
         },
         "west": {
           "uv": [
-            64,
-            17,
-            65,
-            20
+            1,
+            1,
+            1,
+            1
           ],
           "texture": "#5"
         },
         "up": {
           "uv": [
-            66,
-            16,
-            67,
-            17
+            1,
+            1,
+            1,
+            1
           ],
           "texture": "#5"
         },
         "down": {
           "uv": [
-            65,
-            16,
-            66,
-            17
+            1,
+            1,
+            1,
+            1
           ],
           "texture": "#5"
         }
@@ -172,55 +310,55 @@
       "faces": {
         "north": {
           "uv": [
-            67,
-            17,
-            68,
-            20
+            1,
+            1,
+            1,
+            1
           ],
           "texture": "#5"
         },
         "east": {
           "uv": [
-            65,
-            17,
-            66,
-            20
+            1,
+            1,
+            1,
+            1
           ],
           "texture": "#5"
         },
         "south": {
           "uv": [
-            66,
-            17,
-            67,
-            20
+            1,
+            1,
+            1,
+            1
           ],
           "texture": "#5"
         },
         "west": {
           "uv": [
-            64,
-            17,
-            65,
-            20
+            1,
+            1,
+            1,
+            1
           ],
           "texture": "#5"
         },
         "up": {
           "uv": [
-            66,
-            16,
-            67,
-            17
+            1,
+            1,
+            1,
+            1
           ],
           "texture": "#5"
         },
         "down": {
           "uv": [
-            65,
-            16,
-            66,
-            17
+            1,
+            1,
+            1,
+            1
           ],
           "texture": "#5"
         }

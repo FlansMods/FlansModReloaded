@@ -5,6 +5,144 @@
     "5": "flansmodernweapons:items/g3",
     "particle": "minecraft:block/iron_block"
   },
+  "display": {
+    "firstperson_lefthand": {
+      "rotation": [
+        -90.0,
+        0.0,
+        0.0
+      ],
+      "translation": [
+        0.0,
+        1.0,
+        -3.0
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ]
+    },
+    "firstperson_righthand": {
+      "rotation": [
+        -90.0,
+        0.0,
+        0.0
+      ],
+      "translation": [
+        0.0,
+        1.0,
+        -3.0
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ]
+    },
+    "thirdperson_righthand": {
+      "rotation": [
+        -90.0,
+        0.0,
+        0.0
+      ],
+      "translation": [
+        0.0,
+        1.0,
+        -3.0
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ]
+    },
+    "thirdperson_lefthand": {
+      "rotation": [
+        -90.0,
+        0.0,
+        0.0
+      ],
+      "translation": [
+        0.0,
+        1.0,
+        -3.0
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ]
+    },
+    "gui": {
+      "rotation": [
+        -90.0,
+        0.0,
+        0.0
+      ],
+      "translation": [
+        0.0,
+        1.0,
+        -3.0
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ]
+    },
+    "head": {
+      "rotation": [
+        -90.0,
+        0.0,
+        0.0
+      ],
+      "translation": [
+        0.0,
+        1.0,
+        -3.0
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ]
+    },
+    "ground": {
+      "rotation": [
+        -90.0,
+        0.0,
+        0.0
+      ],
+      "translation": [
+        0.0,
+        1.0,
+        -3.0
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ]
+    },
+    "fixed": {
+      "rotation": [
+        -90.0,
+        0.0,
+        0.0
+      ],
+      "translation": [
+        0.0,
+        1.0,
+        -3.0
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ]
+    }
+  },
   "turboelements": [
     {
       "verts": [
@@ -62,55 +200,55 @@
       "faces": {
         "north": {
           "uv": [
-            70,
-            18,
-            72,
-            22
+            1,
+            1,
+            1,
+            1
           ],
           "texture": "#5"
         },
         "east": {
           "uv": [
-            66,
-            18,
-            68,
-            22
+            1,
+            1,
+            1,
+            1
           ],
           "texture": "#5"
         },
         "south": {
           "uv": [
-            68,
-            18,
-            70,
-            22
+            1,
+            1,
+            1,
+            1
           ],
           "texture": "#5"
         },
         "west": {
           "uv": [
-            64,
-            18,
-            66,
-            22
+            1,
+            1,
+            1,
+            1
           ],
           "texture": "#5"
         },
         "up": {
           "uv": [
-            68,
-            16,
-            70,
-            18
+            1,
+            1,
+            1,
+            1
           ],
           "texture": "#5"
         },
         "down": {
           "uv": [
-            66,
-            16,
-            68,
-            18
+            1,
+            1,
+            1,
+            1
           ],
           "texture": "#5"
         }

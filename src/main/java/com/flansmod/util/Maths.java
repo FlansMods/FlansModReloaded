@@ -3,6 +3,7 @@ package com.flansmod.util;
 import com.flansmod.common.FlansMod;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.phys.Vec3;
+import org.joml.Vector3f;
 
 public class Maths
 {
@@ -42,6 +43,10 @@ public class Maths
     public static float SinF(float f) { return (float)Math.sin(f); }
     public static float CosF(float f) { return (float)Math.cos(f); }
     public static float SqrtF(float f) { return (float)Math.sqrt(f); }
+
+    public static Vector3f Sub(Vector3f a, Vector3f b) { return new Vector3f(a.x - b.x, a.y - b.y, a.z - b.z); }
+    public static Vector3f Add(Vector3f a, Vector3f b) { return new Vector3f(a.x + b.x, a.y + b.y, a.z + b.z); }
+    public static Vector3f Cross(Vector3f a, Vector3f b) { return a.cross(b, new Vector3f()); }
 
     public static float ClampDegrees(float f)
     {
