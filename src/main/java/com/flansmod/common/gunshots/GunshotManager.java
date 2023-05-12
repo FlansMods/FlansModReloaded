@@ -18,7 +18,10 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
+import net.minecraftforge.fml.LogicalSide;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -29,9 +32,15 @@ public class GunshotManager
 {
 	private HashMap<Entity, ActionStack> ActionStacks = new HashMap<Entity, ActionStack>();
 
+	public ActionStack GetActionStack(Entity entity)
+	{
+		return ActionStacks.get(entity);
+	}
+
 	public void Hook(IEventBus modEventBus)
 	{
 		FlansModPacketHandler.RegisterServerHandler(ShotRequestMessage.class, ShotRequestMessage::new, this::OnServerReceivedShotData);
+		MinecraftForge.EVENT_BUS.addListener(this::ServerTick);
 	}
 
 	// ----------------------------------------------------------------------------------------------------------------
@@ -41,6 +50,7 @@ public class GunshotManager
 	public void HookClient(IEventBus modEventBus)
 	{
 		FlansModPacketHandler.RegisterClientHandler(ShotFiredMessage.class, ShotFiredMessage::new, this::OnClientShotsFired);
+		MinecraftForge.EVENT_BUS.addListener(this::ClientTick);
 
 	}
 
@@ -55,7 +65,7 @@ public class GunshotManager
 			GunDefinition gunDef = gunContext.GunDef();
 			ActionDefinition[] actionsDefs = gunContext.GetActions(actionSet);
 			List<Action> otherActions = new ArrayList<>(actionsDefs.length);
-			ShootAction shootAction = CreateActions(actionsDefs, otherActions);
+			ShootAction shootAction = CreateActions(actionsDefs, otherActions, hand);
 
 			// TODO: Check if we can shoot based on our local data about our
 			 // a) Inventory, ammo levels
@@ -93,12 +103,13 @@ public class GunshotManager
 	{
 		// Reconstruct the shot details and context
 		GunshotCollection shotCollection = msg.Get();
-		GunContext gunContext = GunContext.TryCreateFromEntity(shotCollection.Shooter(), shotCollection.seatID == 0 ? InteractionHand.MAIN_HAND : InteractionHand.OFF_HAND);
+		InteractionHand hand = shotCollection.seatID == 0 ? InteractionHand.MAIN_HAND : InteractionHand.OFF_HAND;
+		GunContext gunContext = GunContext.TryCreateFromEntity(shotCollection.Shooter(), hand);
 		if(gunContext.IsValid())
 		{
 			ActionDefinition[] actionsDefs = gunContext.GetActions(shotCollection.actionUsed);
 			List<Action> otherActions = new ArrayList<>(actionsDefs.length);
-			ShootAction shootAction = CreateActions(actionsDefs, otherActions);
+			ShootAction shootAction = CreateActions(actionsDefs, otherActions, hand);
 
 			// TODO: We should hash-check the action set we use, as there could be a race condition
 			// between switching what actions are active for the weapon and triggering this code
@@ -128,10 +139,11 @@ public class GunshotManager
 	{
 		// Reconstruct the shot details and context
 		GunshotCollection shotCollection = msg.Get();
-		GunContext gunContext = GunContext.CreateFromPlayer(from, shotCollection.seatID == 0 ? InteractionHand.MAIN_HAND : InteractionHand.OFF_HAND);
+		InteractionHand hand = shotCollection.seatID == 0 ? InteractionHand.MAIN_HAND : InteractionHand.OFF_HAND;
+		GunContext gunContext = GunContext.CreateFromPlayer(from, hand);
 		ActionDefinition[] actionsDefs = gunContext.GetActions(shotCollection.actionUsed);
 		List<Action> otherActions = new ArrayList<>(actionsDefs.length);
-		ShootAction shootAction = CreateActions(actionsDefs, otherActions);
+		ShootAction shootAction = CreateActions(actionsDefs, otherActions, hand);
 
 		// TODO: We should hash-check the action set we use, as there could be a race condition
 		// between switching what actions are active for the weapon and triggering this code
@@ -186,12 +198,12 @@ public class GunshotManager
 	// COMMON
 	// ----------------------------------------------------------------------------------------------------------------
 
-	private ShootAction CreateActions(ActionDefinition[] actionDefs, List<Action> nonShootActions)
+	private ShootAction CreateActions(ActionDefinition[] actionDefs, List<Action> nonShootActions, InteractionHand hand)
 	{
 		ShootAction shoot = null;
 		for(ActionDefinition def : actionDefs)
 		{
-			Action action = Actions.CreateAction(def);
+			Action action = Actions.CreateAction(def, hand);
 			if(action instanceof ShootAction found)
 				shoot = found;
 			else
@@ -222,5 +234,45 @@ public class GunshotManager
 	{
 		ActionStack entitysActionStack = GetOrCreateActionStack(context.shootFrom);
 		entitysActionStack.AddAction(level, context, action);
+	}
+
+	public void ServerTick(TickEvent.ServerTickEvent tickEvent)
+	{
+		if(tickEvent.phase == TickEvent.Phase.END)
+		{
+			for(var kvp : ActionStacks.entrySet())
+			{
+				Entity entity = kvp.getKey();
+				ActionStack stack = kvp.getValue();
+				for(int i = stack.GetActions().size() - 1; i >= 0; i--)
+				{
+					Action action = stack.GetActions().get(i);
+					GunContext context = GunContext.TryCreateFromEntity(entity, action.hand);
+					action.OnTickClient(context);
+					if(action.Finished())
+						stack.GetActions().remove(i);
+				}
+			}
+		}
+	}
+
+	public void ClientTick(TickEvent.ClientTickEvent tickEvent)
+	{
+		if(tickEvent.phase == TickEvent.Phase.END)
+		{
+			for(var kvp : ActionStacks.entrySet())
+			{
+				Entity entity = kvp.getKey();
+				ActionStack stack = kvp.getValue();
+				for(int i = stack.GetActions().size() - 1; i >= 0; i--)
+				{
+					Action action = stack.GetActions().get(i);
+					GunContext context = GunContext.TryCreateFromEntity(entity, action.hand);
+					action.OnTickClient(context);
+					if(action.Finished())
+						stack.GetActions().remove(i);
+				}
+			}
+		}
 	}
 }

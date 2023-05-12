@@ -41,7 +41,7 @@ public class Definitions<TDefinitionType extends JsonDefinition> extends SimpleJ
 					   TDefinitionType invalid,
 					   Factory<TDefinitionType> createFunctor)
 	{
-		super(GSON, "guns");
+		super(GSON, typeName.toLowerCase() + "s");
 		createFunc = createFunctor;
 		INVALID = invalid;
 		DefinitionParser.IterativelyCreateParsers(clazz);

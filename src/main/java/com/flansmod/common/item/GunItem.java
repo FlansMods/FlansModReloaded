@@ -2,12 +2,16 @@ package com.flansmod.common.item;
 
 import com.flansmod.client.render.FlanClientItemExtensions;
 import com.flansmod.client.render.guns.GunItemRenderer;
+import com.flansmod.client.render.models.TurboRig;
 import com.flansmod.common.FlansMod;
 import com.flansmod.common.actions.*;
 import com.flansmod.common.types.elements.ActionDefinition;
 import com.flansmod.common.types.guns.GunContext;
 import com.flansmod.common.types.guns.GunDefinition;
 import com.flansmod.common.types.guns.IGunInterpreter;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.resources.model.BakedModel;
+import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.InteractionHand;
@@ -25,10 +29,12 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.event.InputEvent;
 import net.minecraftforge.client.extensions.common.IClientItemExtensions;
 import net.minecraftforge.common.ToolAction;
+import net.minecraftforge.registries.ForgeRegistries;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Properties;
 import java.util.function.Consumer;
 
 public class GunItem extends FlanItem
@@ -43,6 +49,12 @@ public class GunItem extends FlanItem
         super(properties);
     
         definitionLocation = defLoc;
+    }
+
+    private Properties HackySetBeforeSuper(ResourceLocation defLoc, Properties properties)
+    {
+        definitionLocation = defLoc;
+        return properties;
     }
 
 

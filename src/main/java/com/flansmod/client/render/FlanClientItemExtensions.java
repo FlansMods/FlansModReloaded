@@ -5,21 +5,21 @@ import net.minecraftforge.client.extensions.common.IClientItemExtensions;
 
 public class FlanClientItemExtensions implements IClientItemExtensions
 {
-    protected FlanItemModelRenderer<?> renderer;
+    protected FlanItemModelRenderer renderer;
 
-    protected FlanClientItemExtensions(FlanItemModelRenderer<?> renderer)
+    protected FlanClientItemExtensions(FlanItemModelRenderer renderer)
     {
         this.renderer = renderer;
     }
 
-    public static FlanClientItemExtensions create(Item item, FlanItemModelRenderer<?> renderer)
+    public static FlanClientItemExtensions create(Item item, FlanItemModelRenderer renderer)
     {
         FlanModelRegistration.preRegisterRenderer(item, renderer);
         return new FlanClientItemExtensions(renderer);
     }
 
     @Override
-    public FlanItemModelRenderer<?> getCustomRenderer()
+    public FlanItemModelRenderer getCustomRenderer()
     {
         return renderer;
     }

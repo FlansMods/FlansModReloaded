@@ -52,7 +52,7 @@
       "shootStats": {
         "verticalRecoil": 14,
         "horizontalRecoil": 0.0,
-        "spread": 20.0,
+        "spread": 15.0,
         "damage": 1.0,
         "hitscan": false,
         "speed": 2.5,
@@ -100,17 +100,13 @@
       0.3125,
       0.0
     ],
-    "allowAll": false,
+    "allowAll": true,
     "allowlist": []
   },
   "genericAttachments": {
     "numAttachmentSlots": 1,
-    "allowAll": false,
-    "allowlist": [
-      "flanMWRedDot",
-      "flanMWACOG",
-      "flanMW4xScope"
-    ]
+    "allowAll": true,
+    "allowlist": []
   },
   "userMoveSpeedMultiplier": 0.8,
   "modelParts": [

@@ -4,9 +4,11 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.damagesource.IndirectEntityDamageSource;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.HumanoidArm;
 import net.minecraft.world.entity.projectile.AbstractArrow;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.material.Material;
@@ -38,10 +40,26 @@ public class MinecraftHelpers
 		return null;
 	}
 
+	public static boolean IsClient()
+	{
+		Boolean isClientOrNull = DistExecutor.safeCallWhenOn(Dist.CLIENT, () -> MinecraftHelpers::True );
+		return isClientOrNull != null;
+	}
+
+	public static Boolean True() { return true; }
+
 	@Nullable
 	private static MinecraftServer GetServer()
 	{
 		return ServerLifecycleHooks.getCurrentServer();
+	}
+
+	@OnlyIn(Dist.CLIENT)
+	public static HumanoidArm GetArm(InteractionHand hand)
+	{
+		return hand == InteractionHand.MAIN_HAND ?
+			Minecraft.getInstance().options.mainHand().get() :
+			Minecraft.getInstance().options.mainHand().get().getOpposite();
 	}
 
 	@OnlyIn(Dist.CLIENT)

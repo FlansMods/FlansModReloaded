@@ -46,9 +46,9 @@ public class ShootAction extends Action
 
 	public ShotDefinition ShotDef() { return actionDef.ShootStats; }
 
-	public ShootAction(ActionDefinition def)
+	public ShootAction(ActionDefinition def, InteractionHand hand)
 	{
-		super(def);
+		super(def, hand);
 		results = null;
 	}
 
@@ -186,7 +186,7 @@ public class ShootAction extends Action
 	}
 
 	@Override
-	protected void OnStartServer(GunContext context)
+	public void OnStartServer(GunContext context)
 	{
 		super.OnStartServer(context);
 
@@ -270,7 +270,7 @@ public class ShootAction extends Action
 	}
 
 	@Override
-	protected void OnStartClient(GunContext context)
+	public void OnStartClient(GunContext context)
 	{
 		super.OnStartClient(context);
 		if(results != null)
@@ -286,7 +286,7 @@ public class ShootAction extends Action
 	}
 
 	@Override
-	protected void OnTickClient(GunContext context)
+	public void OnTickClient(GunContext context)
 	{
 		float tBefore = progress;
 		super.OnTickClient(context);

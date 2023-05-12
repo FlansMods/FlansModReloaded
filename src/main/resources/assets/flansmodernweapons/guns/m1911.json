@@ -3,7 +3,7 @@
     "manualReloadAllowed": true,
     "start": {
       "duration": 7.5,
-      "sound": "ColtReload",
+      "sound": "MWColtReload",
       "actions": [
         {
           "actionType": "Animation",
@@ -96,42 +96,30 @@
     "numAttachmentSlots": 1,
     "attachToMesh": "body",
     "attachPoint": [
-      0.46875,
-      0.25,
+      0.0,
+      0.0,
       0.0
     ],
-    "allowAll": false,
-    "allowlist": [
-      "flanMWSilencer",
-      "flanMWLongBarrel"
-    ]
+    "allowAll": true,
+    "allowlist": []
   },
   "scopeAttachments": {
     "numAttachmentSlots": 1,
-    "attachToMesh": "slide",
+    "attachToMesh": "body",
     "attachPoint": [
-      0.1875,
-      0.3125,
+      0.0,
+      0.0,
       0.0
     ],
-    "allowAll": false,
+    "allowAll": true,
     "allowlist": []
   },
   "genericAttachments": {
     "numAttachmentSlots": 1,
-    "allowAll": false,
-    "allowlist": [
-      "flanMWRedDot",
-      "flanMWACOG",
-      "flanMW4xScope",
-      "flanMWSingleFire",
-      "flanMWBurstFire",
-      "flanMWAutoFire"
-    ]
+    "allowAll": true,
+    "allowlist": []
   },
   "modelParts": [
-    "body",
-    "ammo",
-    "slide"
+    "body"
   ]
 }

@@ -102,11 +102,8 @@
       0.28125,
       0.0
     ],
-    "allowAll": false,
-    "allowlist": [
-      "flanMWSilencer",
-      "flanMWLongBarrel"
-    ]
+    "allowAll": true,
+    "allowlist": []
   },
   "scopeAttachments": {
     "numAttachmentSlots": 1,
@@ -116,17 +113,13 @@
       0.3125,
       0.0
     ],
-    "allowAll": false,
+    "allowAll": true,
     "allowlist": []
   },
   "genericAttachments": {
     "numAttachmentSlots": 2,
-    "allowAll": false,
-    "allowlist": [
-      "flanMWRedDot",
-      "flanMWACOG",
-      "flanMW4xScope"
-    ]
+    "allowAll": true,
+    "allowlist": []
   },
   "modelParts": [
     "body",

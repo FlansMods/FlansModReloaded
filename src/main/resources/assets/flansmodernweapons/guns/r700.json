@@ -3,7 +3,7 @@
     "manualReloadAllowed": true,
     "start": {
       "duration": 13.0400009,
-      "sound": "SpringfieldReload",
+      "sound": "MWSpringfieldReload",
       "actions": [
         {
           "actionType": "Animation",
@@ -46,14 +46,14 @@
       "sound": "R700Shoot",
       "soundLength": 0,
       "distortSound": true,
-      "numMagazineSlots": 1,
+      "numMagazineSlots": 4,
       "ammoWithTags": {},
       "ammoTypes": {},
       "shootStats": {
-        "verticalRecoil": 25,
+        "verticalRecoil": 15,
         "horizontalRecoil": 0.0,
         "spread": 2.0,
-        "damage": 20.0,
+        "damage": 16.0,
         "hitscan": true,
         "speed": 0.0,
         "count": 1,
@@ -99,34 +99,27 @@
     "attachToMesh": "body",
     "attachPoint": [
       1.0625,
-      0.28125,
+      0.4375,
       0.0
     ],
-    "allowAll": false,
-    "allowlist": [
-      "flanMWSilencer",
-      "flanMWLongBarrel"
-    ]
+    "allowAll": true,
+    "allowlist": []
   },
   "scopeAttachments": {
     "numAttachmentSlots": 1,
     "attachToMesh": "body",
     "attachPoint": [
       0.1875,
-      0.3125,
+      0.46875,
       0.0
     ],
-    "allowAll": false,
+    "allowAll": true,
     "allowlist": []
   },
   "genericAttachments": {
     "numAttachmentSlots": 2,
-    "allowAll": false,
-    "allowlist": [
-      "flanMWRedDot",
-      "flanMWACOG",
-      "flanMW4xScope"
-    ]
+    "allowAll": true,
+    "allowlist": []
   },
   "modelParts": [
     "body",

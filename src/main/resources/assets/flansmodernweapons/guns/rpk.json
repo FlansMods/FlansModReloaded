@@ -100,20 +100,13 @@
       0.3125,
       0.0
     ],
-    "allowAll": false,
+    "allowAll": true,
     "allowlist": []
   },
   "genericAttachments": {
     "numAttachmentSlots": 1,
-    "allowAll": false,
-    "allowlist": [
-      "flanMWRedDot",
-      "flanMWACOG",
-      "flanMW4xScope",
-      "flanMWSingleFire",
-      "flanMWBurstFire",
-      "flanMWAutoFire"
-    ]
+    "allowAll": true,
+    "allowlist": []
   },
   "modelParts": [
     "body",

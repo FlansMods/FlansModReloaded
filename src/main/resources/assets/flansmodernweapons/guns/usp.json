@@ -63,11 +63,6 @@
     },
     {
       "actionType": "Animation",
-      "anim": "SlideSemiAuto",
-      "distance": 0.25
-    },
-    {
-      "actionType": "Animation",
       "anim": "PumpAction",
       "duration": 1.0,
       "delay": 0.0,
@@ -96,42 +91,44 @@
     "numAttachmentSlots": 1,
     "attachToMesh": "body",
     "attachPoint": [
-      0.46875,
+      0.43125,
+      0.265625,
+      0.0
+    ],
+    "allowAll": true,
+    "allowlist": []
+  },
+  "gripAttachments": {
+    "numAttachmentSlots": 1,
+    "attachToMesh": "body",
+    "attachPoint": [
+      0.0,
       0.25,
       0.0
     ],
-    "allowAll": false,
-    "allowlist": [
-      "flanMWSilencer",
-      "flanMWLongBarrel"
-    ]
+    "allowAll": true,
+    "allowlist": []
   },
   "scopeAttachments": {
     "numAttachmentSlots": 1,
-    "attachToMesh": "slide",
+    "attachToMesh": "body",
     "attachPoint": [
-      0.1875,
+      0.125,
       0.3125,
       0.0
     ],
-    "allowAll": false,
+    "allowAll": true,
     "allowlist": []
   },
   "genericAttachments": {
     "numAttachmentSlots": 1,
-    "allowAll": false,
-    "allowlist": [
-      "flanMWRedDot",
-      "flanMWACOG",
-      "flanMW4xScope",
-      "flanMWSingleFire",
-      "flanMWBurstFire",
-      "flanMWAutoFire"
-    ]
+    "allowAll": true,
+    "allowlist": []
   },
   "modelParts": [
     "body",
-    "slide",
-    "ammo"
+    "scope",
+    "ammo",
+    "slide"
   ]
 }

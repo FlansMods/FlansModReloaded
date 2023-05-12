@@ -52,8 +52,8 @@
       "shootStats": {
         "verticalRecoil": 6,
         "horizontalRecoil": 0.0,
-        "spread": 3.0,
-        "damage": 5.0,
+        "spread": 8.0,
+        "damage": 4.0,
         "hitscan": true,
         "speed": 0.0,
         "count": 1,
@@ -96,38 +96,28 @@
     "numAttachmentSlots": 1,
     "attachToMesh": "body",
     "attachPoint": [
-      0.5,
-      0.03125,
+      0.375,
+      -0.09375,
       0.0
     ],
-    "allowAll": false,
-    "allowlist": [
-      "flanMWForegrip",
-      "flanMWFlashlight"
-    ]
+    "allowAll": true,
+    "allowlist": []
   },
   "scopeAttachments": {
     "numAttachmentSlots": 1,
     "attachToMesh": "body",
     "attachPoint": [
       0.125,
-      0.2083125,
+      0.0625,
       0.0
     ],
-    "allowAll": false,
+    "allowAll": true,
     "allowlist": []
   },
   "genericAttachments": {
     "numAttachmentSlots": 1,
-    "allowAll": false,
-    "allowlist": [
-      "flanMWRedDot",
-      "flanMWACOG",
-      "flanMW4xScope",
-      "flanMWSingleFire",
-      "flanMWBurstFire",
-      "flanMWAutoFire"
-    ]
+    "allowAll": true,
+    "allowlist": []
   },
   "modelParts": [
     "body",

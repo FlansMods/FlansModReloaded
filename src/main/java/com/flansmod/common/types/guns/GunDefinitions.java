@@ -10,6 +10,6 @@ public class GunDefinitions extends Definitions<GunDefinition>
 		super(GunDefinition.TYPE,
 			  GunDefinition.class,
 			  GunDefinition.INVALID,
-			  (key) -> { return new GunDefinition(key); } );
+			  GunDefinition::new);
 	}
 }

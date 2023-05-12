@@ -3,7 +3,7 @@
     "manualReloadAllowed": true,
     "start": {
       "duration": 10.0,
-      "sound": "MP44Reload",
+      "sound": "MWMP44Reload",
       "actions": [
         {
           "actionType": "Animation",
@@ -95,11 +95,8 @@
       0.171875,
       0.0
     ],
-    "allowAll": false,
-    "allowlist": [
-      "flanMWSilencer",
-      "flanMWLongBarrel"
-    ]
+    "allowAll": true,
+    "allowlist": []
   },
   "gripAttachments": {
     "numAttachmentSlots": 1,
@@ -109,11 +106,8 @@
       0.0,
       0.0
     ],
-    "allowAll": false,
-    "allowlist": [
-      "flanMWForegrip",
-      "flanMWFlashlight"
-    ]
+    "allowAll": true,
+    "allowlist": []
   },
   "scopeAttachments": {
     "numAttachmentSlots": 1,
@@ -123,20 +117,13 @@
       0.3125,
       0.0
     ],
-    "allowAll": false,
+    "allowAll": true,
     "allowlist": []
   },
   "genericAttachments": {
     "numAttachmentSlots": 1,
-    "allowAll": false,
-    "allowlist": [
-      "flanMWRedDot",
-      "flanMWACOG",
-      "flanMW4xScope",
-      "flanMWSingleFire",
-      "flanMWBurstFire",
-      "flanMWAutoFire"
-    ]
+    "allowAll": true,
+    "allowlist": []
   },
   "modelParts": [
     "body",

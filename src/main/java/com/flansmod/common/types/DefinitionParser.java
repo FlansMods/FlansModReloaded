@@ -7,6 +7,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import net.minecraft.util.GsonHelper;
 import net.minecraft.world.phys.Vec3;
+import org.joml.Vector3f;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.*;
@@ -44,6 +45,13 @@ public class DefinitionParser
 			return new Vec3(jVec.get(0).getAsDouble(),
 				jVec.get(1).getAsDouble(),
 				jVec.get(2).getAsDouble());
+		});
+		Parsers.put(Vector3f.class, (ref, jNode, annot) ->
+		{
+			JsonArray jVec = jNode.getAsJsonArray();
+			return new Vector3f(jVec.get(0).getAsFloat(),
+				jVec.get(1).getAsFloat(),
+				jVec.get(2).getAsFloat());
 		});
 	}
 

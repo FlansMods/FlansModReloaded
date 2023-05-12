@@ -7,6 +7,6 @@ import java.lang.annotation.RetentionPolicy;
 public @interface JsonField
 {
 	String Docs() default "";
-	double Min() default Double.MAX_VALUE;
+	double Min() default -Double.MAX_VALUE;
 	double Max() default Double.MAX_VALUE;
 }

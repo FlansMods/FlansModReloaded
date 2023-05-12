@@ -10,6 +10,8 @@ public class ActionStack
 {
 	private List<Action> ActiveActions = new ArrayList<Action>();
 
+	public List<Action> GetActions() { return ActiveActions; }
+
 	public void AddAction(Level level, GunContext context, Action action)
 	{
 		ActiveActions.add(action);

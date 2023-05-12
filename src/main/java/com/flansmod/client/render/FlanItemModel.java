@@ -18,6 +18,10 @@ import java.util.stream.Collectors;
 
 public abstract class FlanItemModel extends BakedModelWrapper<BakedModel>
 {
+
+
+
+
     protected String modName;
     protected String modelName;
     protected Map<String, BakedModel> parts = new HashMap<>();

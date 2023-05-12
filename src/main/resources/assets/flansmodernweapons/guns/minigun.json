@@ -55,7 +55,7 @@
       "cooldown": {
         "sound": "MinigunCooldown"
       },
-      "sound": "RPDShoot",
+      "sound": "MinigunShoot",
       "soundLength": 0,
       "distortSound": true,
       "numMagazineSlots": 1,
@@ -64,12 +64,12 @@
       "shootStats": {
         "verticalRecoil": 1,
         "horizontalRecoil": 0.0,
-        "spread": 4.0,
+        "spread": 20.0,
         "damage": 2.0,
         "hitscan": true,
         "speed": 0.0,
-        "count": 3,
-        "timeToNextShot": 1.0,
+        "count": 1,
+        "timeToNextShot": 0.3,
         "knockback": 0.5
       }
     },
@@ -100,13 +100,14 @@
   },
   "genericAttachments": {
     "numAttachmentSlots": 1,
-    "allowAll": false,
+    "allowAll": true,
     "allowlist": []
   },
   "userMoveSpeedMultiplier": 0.4,
   "modelParts": [
     "body",
     "ammo",
-    "minigunBarrel"
+    "minigunBarrel",
+    "spinner"
   ]
 }

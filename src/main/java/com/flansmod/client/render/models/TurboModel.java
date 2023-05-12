@@ -44,7 +44,6 @@ import java.util.stream.Collectors;
 public class TurboModel implements IUnbakedGeometry<TurboModel>, UnbakedModel
 {
 	private static final Logger LOGGER = LogUtils.getLogger();
-	public static final Loader LOADER = new Loader();
 
 	private final List<TurboElement> elements;
 	private final BlockModel.GuiLight guiLight;
@@ -79,107 +78,27 @@ public class TurboModel implements IUnbakedGeometry<TurboModel>, UnbakedModel
 		this.overrides = overrides;
 	}
 
-	@Nullable
-	public ResourceLocation getParentLocation() { return parentLocation; }
-	public boolean hasAmbientOcclusion() { return parent != null ? parent.hasAmbientOcclusion() : hasAmbientOcclusion; }
-	public boolean isResolved() { return parentLocation == null || parent != null && parent.isResolved(); }
-	public List<ItemOverride> getOverrides() {
-		return overrides;
-	}
-	private ItemOverrides getItemOverrides(ModelBaker baker, UnbakedModel model, Function<Material, TextureAtlasSprite> spriteGetter)
-	{
-		return overrides.isEmpty() ? ItemOverrides.EMPTY : new ItemOverrides(baker, model, overrides, spriteGetter);
-	}
-	// getOverrides
+	public List<TurboElement> GetElements() { return elements; }
+
+	// -----------------------------------------------------------------------------------------------------------------
+	// UnbakedModel interface
+	// -----------------------------------------------------------------------------------------------------------------
+	@Override
 	public Collection<ResourceLocation> getDependencies()
 	{
 		Set<ResourceLocation> set = Sets.newHashSet();
-		for(ItemOverride itemoverride : overrides)
-			set.add(itemoverride.getModel());
-
-		if (parentLocation != null)
-			set.add(parentLocation);
-
 		return set;
 	}
-	public void resolveParents(Function<ResourceLocation, UnbakedModel> modelFinderFunction)
-	{
-		Set<UnbakedModel> set = Sets.newLinkedHashSet();
-
-		for(TurboModel turboModel = this;
-			turboModel.parentLocation != null && turboModel.parent == null;
-			turboModel = turboModel.parent)
-		{
-			set.add(turboModel);
-			UnbakedModel unbakedmodel = modelFinderFunction.apply(turboModel.parentLocation);
-			if (unbakedmodel == null) {
-				LOGGER.warn("No parent '{}' while loading model '{}'", this.parentLocation, turboModel);
-			}
-
-			if (set.contains(unbakedmodel)) {
-				LOGGER.warn("Found 'parent' loop while loading model '{}' in chain: {} -> {}", turboModel, set.stream().map(Object::toString).collect(Collectors.joining(" -> ")), this.parentLocation);
-				unbakedmodel = null;
-			}
-
-			if (unbakedmodel == null) {
-				turboModel.parentLocation = ModelBakery.MISSING_MODEL_LOCATION;
-				unbakedmodel = modelFinderFunction.apply(turboModel.parentLocation);
-			}
-
-			if (!(unbakedmodel instanceof BlockModel)) {
-				throw new IllegalStateException("BlockModel parent has to be a block model.");
-			}
-
-			turboModel.parent = (TurboModel)unbakedmodel;
-		}
-
-		overrides.forEach((override) ->
-		{
-			UnbakedModel unbakedmodel1 = modelFinderFunction.apply(override.getModel());
-			if (!Objects.equals(unbakedmodel1, this))
-			{
-				unbakedmodel1.resolveParents(modelFinderFunction);
-			}
-		});
-	}
-
-	public ItemTransforms getTransforms()
-	{
-		ItemTransform itemtransform = getTransform(ItemTransforms.TransformType.THIRD_PERSON_LEFT_HAND);
-		ItemTransform itemtransform1 = getTransform(ItemTransforms.TransformType.THIRD_PERSON_RIGHT_HAND);
-		ItemTransform itemtransform2 = getTransform(ItemTransforms.TransformType.FIRST_PERSON_LEFT_HAND);
-		ItemTransform itemtransform3 = getTransform(ItemTransforms.TransformType.FIRST_PERSON_RIGHT_HAND);
-		ItemTransform itemtransform4 = getTransform(ItemTransforms.TransformType.HEAD);
-		ItemTransform itemtransform5 = getTransform(ItemTransforms.TransformType.GUI);
-		ItemTransform itemtransform6 = getTransform(ItemTransforms.TransformType.GROUND);
-		ItemTransform itemtransform7 = getTransform(ItemTransforms.TransformType.FIXED);
-
-		var builder = com.google.common.collect.ImmutableMap.<ItemTransforms.TransformType, ItemTransform>builder();
-		for(ItemTransforms.TransformType type : ItemTransforms.TransformType.values()) {
-			if (type.isModded()) {
-				var transform = getTransform(type);
-				if (transform != ItemTransform.NO_TRANSFORM) {
-					builder.put(type, transform);
-				}
-			}
-		}
-
-		return new ItemTransforms(itemtransform, itemtransform1, itemtransform2, itemtransform3, itemtransform4, itemtransform5, itemtransform6, itemtransform7, builder.build());
-	}
-
-	private ItemTransform getTransform(ItemTransforms.TransformType type)
-	{
-		return parent != null && !transforms.hasTransform(type) ? parent.getTransform(type) : transforms.getTransform(type);
-	}
-
-	@org.jetbrains.annotations.Nullable
 	@Override
-	public BakedModel bake(ModelBaker baker,
-						   Function<Material, TextureAtlasSprite> spriteLookupFunction,
-						   ModelState p_119536_,
-						   ResourceLocation p_119537_)
+	public void resolveParents(Function<ResourceLocation, UnbakedModel> modelLookup)
 	{
-		return null;
+		// No parenting
+	}
+	@Nullable
+	@Override
+	public BakedModel bake(ModelBaker bakery, Function<Material, TextureAtlasSprite> spriteGetter, ModelState state, ResourceLocation location)
+	{
+		return bake(null, bakery, spriteGetter, state, null, location);
 	}
 
 	@Override
@@ -225,8 +144,11 @@ public class TurboModel implements IUnbakedGeometry<TurboModel>, UnbakedModel
 			this.overrides = overrides;
 		}
 
-		@Override
-		public List<BakedQuad> getQuads(@org.jetbrains.annotations.Nullable BlockState p_235039_, @org.jetbrains.annotations.Nullable Direction p_235040_, RandomSource p_235041_)
+		// -----------------------------------------------------------------------------------------------------------------
+		// BakedModel interface
+		// -----------------------------------------------------------------------------------------------------------------
+		public List<BakedQuad> getQuads(@org.jetbrains.annotations.Nullable BlockState state,
+										@org.jetbrains.annotations.Nullable Direction direction, RandomSource rng)
 		{
 			return quads;
 		}
@@ -264,25 +186,7 @@ public class TurboModel implements IUnbakedGeometry<TurboModel>, UnbakedModel
 
 	private static boolean isTextureReference(String key) { return key.charAt(0) == '#'; }
 
-	public static class Loader implements IGeometryLoader<TurboModel>
-	{
-		private static final Gson GSON = (new GsonBuilder())
-			.registerTypeAdapter(TurboModel.class, new Deserializer())
-			.registerTypeAdapter(TurboElement.class, new TurboElement.Deserializer())
-			.registerTypeAdapter(TurboFace.class, new TurboFace.Deserializer())
-			.registerTypeAdapter(BlockFaceUV.class, new BlockFaceUV.Deserializer())
-			.registerTypeAdapter(ItemTransforms.class, new ItemTransforms.Deserializer())
-			.registerTypeAdapter(ItemTransform.class, new ItemTransform.Deserializer())
-			.create();
 
-		@Override
-		public TurboModel read(JsonObject jsonObject,
-							   JsonDeserializationContext deserializationContext) throws JsonParseException
-		{
-			return GSON.fromJson(jsonObject, TurboModel.class);
-			//return deserializationContext.deserialize(jsonObject, TurboModel.class);
-		}
-	}
 
 	@OnlyIn(Dist.CLIENT)
 	public static class Deserializer implements JsonDeserializer<TurboModel>

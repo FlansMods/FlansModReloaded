@@ -19,6 +19,8 @@ public class ActionDefinition
 	public int soundLength;
 	@JsonField
 	public boolean distortSound;
+	@JsonField
+	public float duration = 0.0f;
 
 	// Shoot Action Specifics
 	@JsonField
@@ -30,5 +32,8 @@ public class ActionDefinition
 	@JsonField
 	public float fovFactor = 1.25f;
 
+	// Animation action specifics
+	@JsonField
+	public String anim = "";
 
 }

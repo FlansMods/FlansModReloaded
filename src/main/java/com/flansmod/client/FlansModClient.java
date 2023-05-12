@@ -2,6 +2,9 @@ package com.flansmod.client;
 
 import com.flansmod.client.input.ClientInputHooks;
 import com.flansmod.client.render.FlanModelRegistration;
+import com.flansmod.client.render.FlansModRenderCore;
+import com.flansmod.client.render.animation.AnimationDefinitions;
+import com.flansmod.client.render.debug.DebugModelPoser;
 import com.flansmod.client.render.debug.DebugRenderer;
 import com.flansmod.client.render.guns.ShotRenderer;
 import com.flansmod.client.render.models.TurboModel;
@@ -20,6 +23,7 @@ import net.minecraftforge.event.AddReloadListenerEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 
 
@@ -30,12 +34,10 @@ public class FlansModClient
 	public static DebugRenderer DEBUG_RENDERER;
 	public static ClientInputHooks CLIENT_INPUT_HOOKS;
 	public static FlanModelRegistration MODEL_REGISTRATION = new FlanModelRegistration();
+	public static AnimationDefinitions ANIMATIONS = new AnimationDefinitions();
 
 	@SubscribeEvent
-	public static void onRegisterGeometryLoaders(ModelEvent.RegisterGeometryLoaders event)
-	{
-		event.register("turbomodel", TurboModel.LOADER);
-	}
+	public static void OnRegisterGeometryLoaders(ModelEvent.RegisterGeometryLoaders event) { MODEL_REGISTRATION.OnRegisterGeometryLoaders(event); }
 
 	@SubscribeEvent
 	public static void ModelRegistryEvent(ModelEvent.RegisterAdditional event)
@@ -49,18 +51,21 @@ public class FlansModClient
 		}
 	}
 
-	private void onReloadResources(AddReloadListenerEvent event)
-	{
-		event.addListener(MODEL_REGISTRATION);
-	}
-
 	public static void Init()
 	{
 		SHOT_RENDERER = new ShotRenderer();
 		DEBUG_RENDERER = new DebugRenderer();
 		CLIENT_INPUT_HOOKS = new ClientInputHooks();
 
+		new DebugModelPoser().Init();
+
 		IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
 		MODEL_REGISTRATION.hook(modEventBus);
+		modEventBus.register(ANIMATIONS);
+	}
+
+	public static void RegisterClientReloadListeners(AddReloadListenerEvent event)
+	{
+		event.addListener(ANIMATIONS);
 	}
 }

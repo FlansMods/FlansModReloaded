@@ -40,6 +40,8 @@ public class TurboElement
 		this.faces.values().forEach(face -> face.parent = this);
 	}
 
+	public TurboFace GetFace(Direction direction) { return faces.get(direction); }
+
 	private static final int[] UP_VERTS 	= new int[] { 7,3,2,6 };
 	private static final int[] DOWN_VERTS 	= new int[] { 5,4,0,1 };
 	private static final int[] NORTH_VERTS 	= new int[] { 0,2,3,1 };

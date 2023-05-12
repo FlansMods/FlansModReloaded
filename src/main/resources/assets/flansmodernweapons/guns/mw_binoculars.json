@@ -40,7 +40,7 @@
   "primaryActions": [
     {
       "actionType": "Melee",
-      "damage": 2.0,
+      "damage": 1.0,
       "sound": ""
     },
     {
@@ -62,7 +62,7 @@
       "actionType": "Scope",
       "scopeTexture": "Binoculars",
       "zoomFactor": 16.0,
-      "fovFactor": 1.5
+      "fovFactor": 1.0
     }
   ],
   "idle": {
@@ -76,5 +76,7 @@
     "showSpread": false,
     "showReloadTime": false
   },
-  "modelParts": []
+  "modelParts": [
+    "body"
+  ]
 }

@@ -11,6 +11,7 @@ import com.flansmod.common.item.GunItem;
 import com.flansmod.common.types.attachments.AttachmentDefinitions;
 import com.flansmod.common.types.guns.GunDefinitions;
 import com.flansmod.common.types.bullets.BulletDefinitions;
+import com.flansmod.util.MinecraftHelpers;
 import com.mojang.logging.LogUtils;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
@@ -27,10 +28,12 @@ import net.minecraftforge.event.AddReloadListenerEvent;
 import net.minecraftforge.event.CreativeModeTabEvent;
 import net.minecraftforge.event.level.LevelEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
+import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+import net.minecraftforge.fml.loading.FMLEnvironment;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
@@ -144,6 +147,15 @@ public class FlansMod
         event.addListener(GUNS);
         event.addListener(BULLETS);
         event.addListener(ATTACHMENTS);
+
+        if(FMLEnvironment.dist == Dist.CLIENT)
+            RegisterClientReloadListeners(event);
+    }
+
+    @OnlyIn(Dist.CLIENT)
+    private void RegisterClientReloadListeners(AddReloadListenerEvent event)
+    {
+        FlansModClient.RegisterClientReloadListeners(event);
     }
     
 

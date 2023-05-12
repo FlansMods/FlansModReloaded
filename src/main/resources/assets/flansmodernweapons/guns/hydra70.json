@@ -88,7 +88,7 @@
   },
   "genericAttachments": {
     "numAttachmentSlots": 1,
-    "allowAll": false,
+    "allowAll": true,
     "allowlist": []
   },
   "userMoveSpeedMultiplier": 0.4,
