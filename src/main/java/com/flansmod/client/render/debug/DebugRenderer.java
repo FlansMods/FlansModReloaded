@@ -1,5 +1,7 @@
 package com.flansmod.client.render.debug;
 
+import com.flansmod.util.Maths;
+import com.flansmod.util.MinecraftHelpers;
 import com.flansmod.util.Transform;
 import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
@@ -36,6 +38,56 @@ public class DebugRenderer
         }
 
         public abstract void Render(PoseStack poseStack, Tesselator tesselator);
+    }
+
+    private static class DebugRenderLine extends DebugRenderItem
+    {
+        public Vec3 direction;
+
+        public DebugRenderLine(Transform t, int ticks, Vector4f col, Vec3 dir)
+        {
+            super(t, ticks, col);
+            direction = dir;
+        }
+
+        @Override
+        public void Render(PoseStack poseStack, Tesselator tesselator)
+        {
+            if(MinecraftHelpers.GetCamera() == null)
+                return;
+
+            BufferBuilder buf = tesselator.getBuilder();
+            buf.begin(VertexFormat.Mode.TRIANGLE_STRIP, DefaultVertexFormat.POSITION_COLOR);
+
+            Vec3 center = new Vec3(transform.position.x + direction.x * 0.5f,
+                                    transform.position.y + direction.y * 0.5f,
+                                    transform.position.z + direction.z * 0.5f);
+            Vec3 toCamera = Maths.Sub(center, MinecraftHelpers.GetCamera().position());
+            Vec3 lateralAxis = Maths.Cross(toCamera, direction).normalize();
+            lateralAxis = lateralAxis.scale(0.1d);
+
+            buf.vertex(poseStack.last().pose(), (float)lateralAxis.x, (float)lateralAxis.y, (float)lateralAxis.z)
+                .color(colour.x, colour.y, colour.z, colour.w)
+                .endVertex();
+            buf.vertex(poseStack.last().pose(), (float)-lateralAxis.x, (float)-lateralAxis.y, (float)-lateralAxis.z)
+                .color(colour.x, colour.y, colour.z, colour.w)
+                .endVertex();
+
+            buf.vertex(poseStack.last().pose(),
+                    (float)(direction.x - lateralAxis.x),
+                    (float)(direction.y - lateralAxis.y),
+                    (float)(direction.z - lateralAxis.z))
+                .color(colour.x, colour.y, colour.z, colour.w)
+                .endVertex();
+            buf.vertex(poseStack.last().pose(),
+                    (float)(direction.x + lateralAxis.x),
+                    (float)(direction.y + lateralAxis.y),
+                    (float)(direction.z + lateralAxis.z))
+                .color(colour.x, colour.y, colour.z, colour.w)
+                .endVertex();
+
+            tesselator.end();
+        }
     }
 
     private static class DebugRenderCube extends DebugRenderItem
@@ -80,6 +132,11 @@ public class DebugRenderer
     public static void RenderCube(Transform t, int ticks, Vector4f col, Vector3f h)
     {
         renderItems.add(new DebugRenderCube(t.copy(), ticks, col, h));
+    }
+
+    public static void RenderLine(Vec3 origin, int ticks, Vector4f col, Vec3 ray)
+    {
+        renderItems.add(new DebugRenderLine(new Transform(origin), ticks, col, ray));
     }
 
     public DebugRenderer()

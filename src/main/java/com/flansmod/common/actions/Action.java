@@ -16,7 +16,7 @@ public abstract class Action
 	public Action(ActionDefinition def, InteractionHand hand)
 	{
 		this.actionDef = def;
-		this.duration = def.duration * 100f;
+		this.duration = def.duration;// * 20.0f;// * 100f;
 		this.hand = hand;
 	}
 

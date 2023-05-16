@@ -6,6 +6,9 @@ public enum EActionType
 	Shoot,
 	IronSight,
 	Scope,
-	Shield,
+	Shield, // == Block?
+	Drop,
+	Melee,
+
 
 }

@@ -1,6 +1,5 @@
 package com.flansmod.common.types.guns;
 
-import com.flansmod.common.actions.Action;
 import com.flansmod.common.actions.EActionSet;
 import com.flansmod.common.item.AttachmentItem;
 import com.flansmod.common.item.GunItem;
@@ -11,7 +10,6 @@ import com.flansmod.common.types.elements.EActionType;
 import com.flansmod.common.types.elements.ESpreadPattern;
 import com.flansmod.common.types.elements.ModifierDefinition;
 import com.flansmod.util.Transform;
-import com.google.common.cache.Cache;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.damagesource.DamageSource;
@@ -21,9 +19,6 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.UseOnContext;
-import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.fml.common.Mod;
-import org.joml.Quaternionf;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -222,9 +217,9 @@ public class GunContext
 		return results;
 	}
 
-	public boolean HasAction(EActionSet actionSet) { return GetShootAction(actionSet) != null; }
+	public boolean HasAction(EActionSet actionSet) { return GetShootActionDefinition(actionSet) != null; }
 	@Nonnull
-	public ActionDefinition[] GetActions(EActionSet actionSet)
+	public ActionDefinition[] GetActionDefinitions(EActionSet actionSet)
 	{
 		if(GunDef() == null)
 			return new ActionDefinition[0];
@@ -232,7 +227,7 @@ public class GunContext
 		return GunDef().GetActions(actionSet);
 	}
 	@Nullable
-	public ActionDefinition GetShootAction(EActionSet actionSet)
+	public ActionDefinition GetShootActionDefinition(EActionSet actionSet)
 	{
 		if(GunDef() == null)
 			return null;
@@ -241,7 +236,7 @@ public class GunContext
 		// e.g. An underslung grenade launcher attachment
 
 		for(ActionDefinition def : GunDef().GetActions(actionSet))
-			if(def.ActionType == EActionType.Shoot)
+			if(def.actionType == EActionType.Shoot)
 				return def;
 
 		return null;
@@ -300,10 +295,10 @@ public class GunContext
 	{
 		CachedGunStats stats = new CachedGunStats();
 
-		ActionDefinition shootAction = GetShootAction(actionSet);
+		ActionDefinition shootAction = GetShootActionDefinition(actionSet);
 		if(shootAction != null)
 		{
-			stats.InitializeFrom(shootAction.ShootStats);
+			stats.InitializeFrom(shootAction.shootStats);
 		}
 
 		var modifierMap = GetAllApplicableModifiers(actionSet);

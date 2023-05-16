@@ -141,6 +141,7 @@ public class GunshotCollection
 			buf.writeInt(shotCollection.seatID);
 			buf.writeInt(shotCollection.bulletHash);
 			buf.writeInt(shotCollection.gunHash);
+			buf.writeBoolean(shotCollection.actionUsed == EActionSet.PRIMARY);
 			buf.writeResourceKey(shotCollection.dimension);
 		}
 	}
@@ -160,6 +161,7 @@ public class GunshotCollection
 			shotCollection.seatID = buf.readInt();
 			shotCollection.bulletHash = buf.readInt();
 			shotCollection.gunHash = buf.readInt();
+			shotCollection.actionUsed = buf.readBoolean() ? EActionSet.PRIMARY : EActionSet.SECONDARY;
 			shotCollection.dimension = buf.readResourceKey(Registries.DIMENSION);
 		}
 	}

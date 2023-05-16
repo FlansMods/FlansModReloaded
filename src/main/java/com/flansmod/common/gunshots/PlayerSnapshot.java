@@ -35,9 +35,10 @@ public class PlayerSnapshot
     {
         valid = false;
         hitboxes = new PlayerHitbox[EPlayerHitArea.NUM_AREAS];
+        rootPos = Vec3.ZERO;
         for(int i = 0; i < EPlayerHitArea.NUM_AREAS; i++)
         {
-            hitboxes[i] = new PlayerHitbox(EPlayerHitArea.values()[i], Transform.Identity(), Transform.IdentityPosf());
+            hitboxes[i] = new PlayerHitbox(EPlayerHitArea.values()[i], Transform.Identity(), Maths.IdentityPosF());
         }
     }
 
@@ -46,7 +47,8 @@ public class PlayerSnapshot
         valid = true;
         player = p;
 
-        Transform playerRoot = new Transform(p.getPosition(0.0f));
+        rootPos = p.getPosition(0.0f);
+        Transform playerRoot = new Transform(rootPos);
 
         // This block of code is good fun. We need to get the CLIENT ONLY poses onto the server
         // float attackTime = getAttackAnim()

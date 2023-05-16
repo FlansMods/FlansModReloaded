@@ -2,7 +2,10 @@ package com.flansmod.util;
 
 import com.flansmod.common.FlansMod;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.world.phys.Vec3;
+import org.joml.Quaternionf;
+import org.joml.Vector3d;
 import org.joml.Vector3f;
 
 public class Maths
@@ -44,9 +47,37 @@ public class Maths
     public static float CosF(float f) { return (float)Math.cos(f); }
     public static float SqrtF(float f) { return (float)Math.sqrt(f); }
 
+    public static Vector3f Lerp(Vector3f a, Vector3f b, float t) { return new Vector3f(a.x + (b.x - a.x) * t, a.y + (b.y - a.y) * t, a.z + (b.z - a.z) * t); }
     public static Vector3f Sub(Vector3f a, Vector3f b) { return new Vector3f(a.x - b.x, a.y - b.y, a.z - b.z); }
     public static Vector3f Add(Vector3f a, Vector3f b) { return new Vector3f(a.x + b.x, a.y + b.y, a.z + b.z); }
     public static Vector3f Cross(Vector3f a, Vector3f b) { return a.cross(b, new Vector3f()); }
+    public static Vector3f IdentityPosF()
+    {
+        return new Vector3f(0.0f, 0.0f, 0.0f);
+    }
+
+    public static Vector3d Lerp(Vector3d a, Vector3d b, float t) { return new Vector3d(a.x + (b.x - a.x) * t, a.y + (b.y - a.y) * t, a.z + (b.z - a.z) * t); }
+    public static Vector3d Sub(Vector3d a, Vector3d b) { return new Vector3d(a.x - b.x, a.y - b.y, a.z - b.z); }
+    public static Vector3d Add(Vector3d a, Vector3d b) { return new Vector3d(a.x + b.x, a.y + b.y, a.z + b.z); }
+    public static Vector3d Cross(Vector3d a, Vector3d b) { return a.cross(b, new Vector3d()); }
+    public static Vector3d IdentityPosD()
+    {
+        return new Vector3d(0.0d, 0.0d, 0.0d);
+    }
+
+    public static Vec3 Lerp(Vec3 a, Vec3 b, float t) { return new Vec3(a.x + (b.x - a.x) * t, a.y + (b.y - a.y) * t, a.z + (b.z - a.z) * t); }
+    public static Vec3 Sub(Vec3 a, Vec3 b) { return new Vec3(a.x - b.x, a.y - b.y, a.z - b.z); }
+    public static Vec3 Add(Vec3 a, Vec3 b) { return new Vec3(a.x + b.x, a.y + b.y, a.z + b.z); }
+    public static Vec3 Cross(Vec3 a, Vec3 b) { return a.cross(b); }
+
+
+    public static Quaternionf IdentityQuat()
+    {
+        return new Quaternionf(0.0f, 0.0f, 0.0f, 1.0f);
+    }
+    public static Quaternionf QuaternionFromEuler(float x, float y, float z) { return new Quaternionf().rotateXYZ(x* Maths.DegToRadF, y * Maths.DegToRadF, z* Maths.DegToRadF); }
+    public static Quaternionf QuaternionFromEuler(Vector3f v) { return new Quaternionf().rotateXYZ(v.x* Maths.DegToRadF, v.y * Maths.DegToRadF, v.z* Maths.DegToRadF); }
+    public static Quaternionf Slerp(Quaternionf a, Quaternionf b, float t) { return a.slerp(b, t, new Quaternionf()); }
 
     public static float ClampDegrees(float f)
     {
@@ -86,6 +117,17 @@ public class Maths
         int complement = delta - mod;       // in [-mod, 0)
 
         return Abs(complement) < Abs(delta) ? complement : delta;
+    }
+
+    public static Vec3 Reflect(Vec3 incident, Direction surface)
+    {
+        switch(surface)
+        {
+            case UP, DOWN -> { return new Vec3(incident.x, -incident.y, incident.z); }
+            case NORTH, SOUTH -> { return new Vec3(incident.x, incident.y, -incident.z); }
+            case EAST, WEST -> { return new Vec3(-incident.x, incident.y, incident.z); }
+            default -> {return incident;}
+        }
     }
 
     public static BlockPos ResolveBlockPos(BlockPos roughGuess, int pinpointData)

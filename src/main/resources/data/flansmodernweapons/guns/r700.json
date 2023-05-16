@@ -3,7 +3,7 @@
     "manualReloadAllowed": true,
     "start": {
       "duration": 13.0400009,
-      "sound": "SpringfieldReload",
+      "sound": "MWSpringfieldReload",
       "actions": [
         {
           "actionType": "Animation",
@@ -46,32 +46,35 @@
       "sound": "R700Shoot",
       "soundLength": 0,
       "distortSound": true,
-      "numMagazineSlots": 1,
+      "numMagazineSlots": 4,
       "ammoWithTags": {},
       "ammoTypes": {},
       "shootStats": {
-        "verticalRecoil": 25,
+        "verticalRecoil": 15,
         "horizontalRecoil": 0.0,
         "spread": 2.0,
-        "damage": 20.0,
         "hitscan": true,
         "speed": 0.0,
         "count": 1,
         "timeToNextShot": 20.0,
-        "knockback": 0.0
+        "impact": {
+          "damageToTarget": 16.0,
+          "multiplierVsPlayers": 1.0,
+          "multiplierVsVehicles": 1.0,
+          "splashDamageRadius": 0.0,
+          "splashDamageFalloff": 0.0,
+          "setFireToTarget": 0.0,
+          "fireSpreadRadius": 0.0,
+          "fireSpreadAmount": 0.0,
+          "knockback": 0.0,
+          "decal": "flansmod:effects/bullet_decal.png"
+        }
       }
     },
     {
       "actionType": "Animation",
-      "anim": "SlideSemiAuto",
-      "distance": 0.5
-    },
-    {
-      "actionType": "Animation",
-      "anim": "PumpAction",
-      "duration": 1.0,
-      "delay": 0.0,
-      "distance": 0.25
+      "anim": "shoot",
+      "duration": 20.0
     }
   ],
   "secondaryActions": [
@@ -99,33 +102,32 @@
     "attachToMesh": "body",
     "attachPoint": [
       1.0625,
-      0.28125,
+      0.4375,
       0.0
     ],
-    "allowAll": false,
-    "allowlist": [
-      "flanMWSilencer",
-      "flanMWLongBarrel"
-    ]
+    "allowAll": true,
+    "allowlist": []
   },
   "scopeAttachments": {
     "numAttachmentSlots": 1,
     "attachToMesh": "body",
     "attachPoint": [
       0.1875,
-      0.3125,
+      0.46875,
       0.0
     ],
-    "allowAll": false,
+    "allowAll": true,
     "allowlist": []
   },
   "genericAttachments": {
     "numAttachmentSlots": 2,
-    "allowAll": false,
-    "allowlist": [
-      "flanMWRedDot",
-      "flanMWACOG",
-      "flanMW4xScope"
-    ]
-  }
+    "allowAll": true,
+    "allowlist": []
+  },
+  "modelParts": [
+    "body",
+    "scope",
+    "stock",
+    "ammo"
+  ]
 }

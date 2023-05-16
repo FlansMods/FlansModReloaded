@@ -48,23 +48,23 @@ public class CachedGunStats
 
 	public void InitializeFrom(ShotDefinition shotDef)
 	{
-		VerticalRecoil = shotDef.VerticalRecoil;
-		HorizontalRecoil = shotDef.HorizontalRecoil;
-		Spread = shotDef.Spread;
-		Speed = shotDef.Speed;
-		Count = shotDef.Count;
-		TimeToNextShot = shotDef.TimeToNextShot;
-		PenetrationPower = shotDef.PenetrationPower;
-		BaseDamage = shotDef.Impact.DamageToTarget;
-		Knockback = shotDef.Impact.Knockback;
-		MultiplierVsPlayers = shotDef.Impact.MultiplierVsPlayers;
-		MultiplierVsVehicles = shotDef.Impact.MultiplierVsVehicles;
-		SpreadPattern = shotDef.SpreadPattern;
-		SplashDamageRadius = shotDef.Impact.SplashDamageRadius;
-		SplashDamageFalloff = shotDef.Impact.SplashDamageFalloff;
-		SetFireToTarget = shotDef.Impact.SetFireToTarget;
-		FireSpreadRadius = shotDef.Impact.FireSpreadRadius;
-		FireSpreadAmount = shotDef.Impact.FireSpreadAmount;
+		VerticalRecoil = shotDef.verticalReocil;
+		HorizontalRecoil = shotDef.horizontalRecoil;
+		Spread = shotDef.spread;
+		Speed = shotDef.speed;
+		Count = shotDef.count;
+		TimeToNextShot = shotDef.timeToNextShot;
+		PenetrationPower = shotDef.penetrationPower;
+		BaseDamage = shotDef.impact.damageToTarget;
+		Knockback = shotDef.impact.knockback;
+		MultiplierVsPlayers = shotDef.impact.multiplierVsPlayers;
+		MultiplierVsVehicles = shotDef.impact.multiplierVsVehicles;
+		SpreadPattern = shotDef.spreadPattern;
+		SplashDamageRadius = shotDef.impact.splashDamageRadius;
+		SplashDamageFalloff = shotDef.impact.splashDamageFalloff;
+		SetFireToTarget = shotDef.impact.setFireToTarget;
+		FireSpreadRadius = shotDef.impact.fireSpreadRadius;
+		FireSpreadAmount = shotDef.impact.fireSpreadAmount;
 
 	}
 

@@ -63,6 +63,9 @@ public class MinecraftHelpers
 	}
 
 	@OnlyIn(Dist.CLIENT)
+	public static Entity GetCamera() { return Minecraft.getInstance().cameraEntity; }
+
+	@OnlyIn(Dist.CLIENT)
 	public static Minecraft GetClient()
 	{
 		return Minecraft.getInstance();

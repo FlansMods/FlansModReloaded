@@ -10,31 +10,118 @@
 					"position": [0.0,0.0,0.0],
 					"rotation": [0.0,0.0,0.0],
 					"scale": [1.0,1.0,1.0]
-				},
-				{
-					"ref": "flansmodernweapons:animations/idle/Idle"
 				}
+			]
+		},
+		{
+			"name": "shot_fired",
+			"poses": 
+			[
+				{
+					"applyTo": "body",
+					"position": [0.0,1.0,5.0],
+					"rotation": [0.0,0.0,10.0],
+					"scale": [1.0,1.0,1.0]
+				}
+			]
+		},
+		{
+			"name": "ready_to_reload",
+			"poses": 
+			[
+				{
+					"applyTo": "body",
+					"position": [3.0,0.0,2.0],
+					"rotation": [-30.0,0.0,15.0],
+					"scale": [1.0,1.0,1.0]
+				}
+			]
+		},
+		{
+			"name": "bolt_open",
+			"parents": 
+			[
+				"ready_to_reload"
 			],
-			"constraints":
-			{
-				
-			}
+			"poses": 
+			[
+				{
+					"applyTo": "bolt",
+					"position": [0.0,0.0,-2.0],
+					"rotation": [0.0,0.0,0.0],
+					"scale": [1.0,1.0,1.0]
+				}
+			]
+		},
+		{
+			"name": "ammo_load_start",
+			"parents": 
+			[
+				"bolt_open"
+			],
+			"poses": 
+			[
+				{
+					"applyTo": "ammo_0",
+					"position": [16.0,-12.0,0.0],
+					"rotation": [0.0,0.0,-60.0],
+					"scale": [1.0,1.0,1.0]
+				}
+			]
+		},
+		{
+			"name": "ammo_load_end",
+			"parents": 
+			[
+				"bolt_open"
+			],
+			"poses": 
+			[
+				{
+					"applyTo": "ammo_0",
+					"position": [0.0,0.0,0.0],
+					"rotation": [0.0,0.0,0.0],
+					"scale": [1.0,1.0,1.0]
+				}
+			]
 		}
 	],
 	"sequences": 
 	[
 		{
 			"name": "shoot",
+			"ticks": 40,
 			"frames":
 			[ 
 				{ "tick":0, "frame":"idle" },
-				{ "tick":1, "frame":"shotFired" },
-				{ "tick":3, "frame":"idle" },
+				{ "tick":1, "frame":"shot_fired", "entry":"instant" },
+				{ "tick":10, "frame":"idle", "entry":"smooth", "exit":"smooth" },
 				
-				{ "tick":10, "frame":"readyToPullBolt" },
-				{ "tick":15, "frame":"pullBolt" },
-				{ "tick":20, "frame":"readyToPullBolt" },
-				{ "tick":21, "frame":"idle" }
+				{ "tick":15, "frame":"ready_to_reload", "entry":"smooth" },
+				{ "tick":20, "frame":"bolt_open", "entry":"smooth" },
+				{ "tick":30, "frame":"ready_to_reload" },
+				{ "tick":40, "frame":"idle" }
+			]
+		},
+		{
+			"name": "reload_start",
+			"ticks": 10,
+			"frames":
+			[
+				{ "tick":0, "frame":"idle" },
+				{ "tick":5, "frame":"ready_to_reload" },
+				{ "tick":15, "frame":"bolt_open" }
+			]
+		},
+		{
+			"name": "reload_load_one",
+			"ticks": 10,
+			"frames":
+			[
+				{ "tick":0, "frame":"bolt_open" },
+				{ "tick":1, "frame":"ammo_load_start" },
+				{ "tick":9, "frame":"ammo_load_end" },
+				{ "tick":10, "frame":"bolt_open" }
 			]
 		}
 	]

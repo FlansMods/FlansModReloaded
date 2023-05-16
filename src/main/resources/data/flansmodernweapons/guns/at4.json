@@ -53,12 +53,22 @@
         "verticalRecoil": 6,
         "horizontalRecoil": 0.0,
         "spread": 3.5,
-        "damage": 1.0,
         "hitscan": true,
         "speed": 0.0,
         "count": 1,
         "timeToNextShot": 1.0,
-        "knockback": 0.0
+        "impact": {
+          "damageToTarget": 1.0,
+          "multiplierVsPlayers": 1.0,
+          "multiplierVsVehicles": 1.0,
+          "splashDamageRadius": 0.0,
+          "splashDamageFalloff": 0.0,
+          "setFireToTarget": 0.0,
+          "fireSpreadRadius": 0.0,
+          "fireSpreadAmount": 0.0,
+          "knockback": 0.0,
+          "decal": "flansmod:effects/bullet_decal.png"
+        }
       }
     },
     {
@@ -70,10 +80,8 @@
     },
     {
       "actionType": "Animation",
-      "anim": "PumpAction",
-      "duration": 1.0,
-      "delay": 0.0,
-      "distance": 0.25
+      "anim": "shoot",
+      "duration": 1.0
     }
   ],
   "secondaryActions": [
@@ -94,5 +102,9 @@
     "showSpread": false,
     "showReloadTime": false
   },
-  "userMoveSpeedMultiplier": 0.6
+  "userMoveSpeedMultiplier": 0.6,
+  "modelParts": [
+    "body",
+    "ammo"
+  ]
 }

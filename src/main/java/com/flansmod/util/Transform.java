@@ -11,44 +11,25 @@ public class Transform
     public Vector3d position;
     public Quaternionf orientation;
 
-    public static Vector3f IdentityPosf()
-    {
-        return new Vector3f(0.0f, 0.0f, 0.0f);
-    }
-
-    public static Vector3d IdentityPos()
-    {
-        return new Vector3d(0.0d, 0.0d, 0.0d);
-    }
-
-    public static Quaternionf IdentityQuat()
-    {
-        return new Quaternionf(0.0f, 0.0f, 0.0f, 1.0f);
-    }
-
     public static Transform Identity()
     {
-        return new Transform(IdentityPos(), IdentityQuat());
+        return new Transform(Maths.IdentityPosD(), Maths.IdentityQuat());
     }
 
-    public static Quaternionf QuaternionFromEuler(float x, float y, float z)
-    {
-        return new Quaternionf().rotateXYZ(x* Maths.DegToRadF, y * Maths.DegToRadF, z* Maths.DegToRadF);
-    }
     public static Transform RotationFromEuler(Vector3f euler)
     {
-        return new Transform(IdentityPos(), new Quaternionf().rotateXYZ(euler.x, euler.y, euler.z));
+        return new Transform(Maths.IdentityPosD(), new Quaternionf().rotateXYZ(euler.x, euler.y, euler.z));
     }
 
     public Transform(Vec3 pos)
     {
         position = new Vector3d(pos.x, pos.y, pos.z);
-        orientation = IdentityQuat();
+        orientation = Maths.IdentityQuat();
     }
 
     public Transform(Quaternionf ori)
     {
-        position = IdentityPos();
+        position = Maths.IdentityPosD();
         orientation = new Quaternionf(ori);
     }
 
@@ -77,9 +58,9 @@ public class Transform
         return new Transform(position, orientation);
     }
 
-    public static final Vector3d X_AXIS = new Vector3d(1d, 0d, 0d), RIGHT = X_AXIS;
-    public static final Vector3d Y_AXIS = new Vector3d(0d, 1d, 0d), UP = Y_AXIS;
-    public static final Vector3d Z_AXIS = new Vector3d(0d, 0d, 1d), FORWARD = Z_AXIS;
+    public static final Vector3d UnitX() { return new Vector3d(1d, 0d, 0d); }
+    public static final Vector3d UnitY() { return new Vector3d(0d, 1d, 0d); }
+    public static final Vector3d UnitZ() { return new Vector3d(0d, 0d, 1d); }
     private static Vec3 ToVec3(Vector3d v) { return new Vec3(v.x, v.y, v.z); }
     private static Vector3d ToVec3d(Vec3 v) { return new Vector3d(v.x, v.y, v.z); }
 
@@ -89,9 +70,9 @@ public class Transform
     public Vec3 ForwardVec3() { return ToVec3(Forward()); }
 
     public Vector3d Position() { return position; }
-    public Vector3d Up() { return orientation.transform(UP); }
-    public Vector3d Right() { return orientation.transform(RIGHT); }
-    public Vector3d Forward() { return orientation.transform(FORWARD); }
+    public Vector3d Up() { return orientation.transform(UnitY()); }
+    public Vector3d Right() { return orientation.transform(UnitX()); }
+    public Vector3d Forward() { return orientation.transform(UnitZ()); }
 
     // Yucky, but needed until I write my own Quaternion class
     public Vec3 InverseTransformDirection(Vec3 direction) { return ToVec3(InverseTransformDirection(ToVec3d(direction))); }
@@ -161,9 +142,9 @@ public class Transform
         orientation.mul(rotation);
         return this;
     }
-    public Transform RotateLocalEuler(float yaw, float pitch, float roll)
+    public Transform RotateLocalEuler(float roll, float yaw, float pitch)
     {
-        orientation.rotateLocalZ(roll * Maths.DegToRadF).rotateLocalX(pitch * Maths.DegToRadF).rotateLocalY(-yaw * Maths.DegToRadF);
+        orientation.rotateLocalX(roll * Maths.DegToRadF).rotateLocalZ(pitch * Maths.DegToRadF).rotateLocalY(-yaw * Maths.DegToRadF);
         return this;
     }
     public Transform RotateYaw(float yAngle) { orientation.rotateY(-yAngle * Maths.DegToRadF); return this; }

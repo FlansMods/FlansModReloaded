@@ -1,14 +1,17 @@
 package com.flansmod.client;
 
+import com.flansmod.client.gui.overlay.ClientOverlayHooks;
 import com.flansmod.client.input.ClientInputHooks;
 import com.flansmod.client.render.FlanModelRegistration;
 import com.flansmod.client.render.FlansModRenderCore;
 import com.flansmod.client.render.animation.AnimationDefinitions;
 import com.flansmod.client.render.debug.DebugModelPoser;
 import com.flansmod.client.render.debug.DebugRenderer;
+import com.flansmod.client.render.decals.DecalRenderer;
 import com.flansmod.client.render.guns.ShotRenderer;
 import com.flansmod.client.render.models.TurboModel;
 import com.flansmod.common.FlansMod;
+import com.flansmod.common.gunshots.GunshotManager;
 import com.flansmod.common.item.FlanItem;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.ItemModelShaper;
@@ -33,8 +36,11 @@ public class FlansModClient
 	public static ShotRenderer SHOT_RENDERER;
 	public static DebugRenderer DEBUG_RENDERER;
 	public static ClientInputHooks CLIENT_INPUT_HOOKS;
+	public static ClientOverlayHooks CLIENT_OVERLAY_HOOKS;
 	public static FlanModelRegistration MODEL_REGISTRATION = new FlanModelRegistration();
 	public static AnimationDefinitions ANIMATIONS = new AnimationDefinitions();
+	public static DecalRenderer DECAL_RENDERER;
+	public static GunshotManager GUNSHOTS_CLIENT = new GunshotManager();
 
 	@SubscribeEvent
 	public static void OnRegisterGeometryLoaders(ModelEvent.RegisterGeometryLoaders event) { MODEL_REGISTRATION.OnRegisterGeometryLoaders(event); }
@@ -56,10 +62,13 @@ public class FlansModClient
 		SHOT_RENDERER = new ShotRenderer();
 		DEBUG_RENDERER = new DebugRenderer();
 		CLIENT_INPUT_HOOKS = new ClientInputHooks();
+		CLIENT_OVERLAY_HOOKS = new ClientOverlayHooks();
+		DECAL_RENDERER = new DecalRenderer();
 
-		new DebugModelPoser().Init();
 
 		IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
+		GUNSHOTS_CLIENT.HookClient(modEventBus);
+		new DebugModelPoser().Init();
 		MODEL_REGISTRATION.hook(modEventBus);
 		modEventBus.register(ANIMATIONS);
 	}

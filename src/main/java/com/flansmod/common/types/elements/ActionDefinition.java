@@ -6,7 +6,7 @@ public class ActionDefinition
 {
 	// General fields
 	@JsonField
-	public EActionType ActionType = EActionType.Animation;
+	public EActionType actionType = EActionType.Animation;
 	@JsonField
 	public boolean canActUnderwater = true;
 	@JsonField
@@ -26,11 +26,13 @@ public class ActionDefinition
 	@JsonField
 	public EFireMode FireMode = EFireMode.FullAuto;
 	@JsonField
-	public ShotDefinition ShootStats = new ShotDefinition();
+	public ShotDefinition shootStats = new ShotDefinition();
 
 	// IronSight / Scope Action
 	@JsonField
 	public float fovFactor = 1.25f;
+	@JsonField
+	public String scopeOverlay = "";
 
 	// Animation action specifics
 	@JsonField

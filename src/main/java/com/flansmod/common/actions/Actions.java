@@ -7,10 +7,11 @@ public class Actions
 {
 	public static Action CreateAction(ActionDefinition def, InteractionHand hand)
 	{
-		switch(def.ActionType)
+		switch(def.actionType)
 		{
 			case Animation	-> { return new AnimationAction(def, hand); }
 			case Shoot 		-> { return new ShootAction(def, hand); }
+			case Scope		-> { return new ScopeAction(def, hand); }
 			default			-> { return null; }
 		}
 	}

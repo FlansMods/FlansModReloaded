@@ -4,30 +4,32 @@ import com.flansmod.common.types.JsonField;
 
 public class ImpactDefinition
 {
+	@JsonField
+	public String decal = "";
 
 	@JsonField
-	public float DamageToTarget = 8.0f;
+	public float damageToTarget = 8.0f;
 	@JsonField
-	public float MultiplierVsPlayers = 1.0f;
+	public float multiplierVsPlayers = 1.0f;
 	@JsonField
-	public float MultiplierVsVehicles = 1.0f;
+	public float multiplierVsVehicles = 1.0f;
 	@JsonField
-	public float Knockback = 0.0f;
+	public float knockback = 0.0f;
 
 	@JsonField
-	public float SplashDamageRadius = 0.0f;
+	public float splashDamageRadius = 0.0f;
 	@JsonField
-	public float SplashDamageFalloff = 1.0f;
+	public float splashDamageFalloff = 1.0f;
 
 	@JsonField
-	public float SetFireToTarget = 0.0f;
+	public float setFireToTarget = 0.0f;
 	@JsonField
-	public float FireSpreadRadius = 0.0f;
+	public float fireSpreadRadius = 0.0f;
 	@JsonField
-	public float FireSpreadAmount = 0.0f;
+	public float fireSpreadAmount = 0.0f;
 
 	@JsonField
-	public String HitSound = "";
+	public String hitSound = "";
 
 
 }

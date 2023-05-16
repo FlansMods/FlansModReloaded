@@ -3,7 +3,7 @@
     "manualReloadAllowed": true,
     "start": {
       "duration": 10.0,
-      "sound": "MP44Reload",
+      "sound": "MWMP44Reload",
       "actions": [
         {
           "actionType": "Animation",
@@ -53,20 +53,28 @@
         "verticalRecoil": 3,
         "horizontalRecoil": 0.0,
         "spread": 3.0,
-        "damage": 8.0,
         "hitscan": true,
         "speed": 0.0,
         "count": 1,
         "timeToNextShot": 2.0,
-        "knockback": 0.0
+        "impact": {
+          "damageToTarget": 8.0,
+          "multiplierVsPlayers": 1.0,
+          "multiplierVsVehicles": 1.0,
+          "splashDamageRadius": 0.0,
+          "splashDamageFalloff": 0.0,
+          "setFireToTarget": 0.0,
+          "fireSpreadRadius": 0.0,
+          "fireSpreadAmount": 0.0,
+          "knockback": 0.0,
+          "decal": "flansmod:effects/bullet_decal.png"
+        }
       }
     },
     {
       "actionType": "Animation",
-      "anim": "PumpAction",
-      "duration": 1.0,
-      "delay": 0.0,
-      "distance": 0.25
+      "anim": "shoot",
+      "duration": 2.0
     }
   ],
   "secondaryActions": [
@@ -95,11 +103,8 @@
       0.171875,
       0.0
     ],
-    "allowAll": false,
-    "allowlist": [
-      "flanMWSilencer",
-      "flanMWLongBarrel"
-    ]
+    "allowAll": true,
+    "allowlist": []
   },
   "gripAttachments": {
     "numAttachmentSlots": 1,
@@ -109,11 +114,8 @@
       0.0,
       0.0
     ],
-    "allowAll": false,
-    "allowlist": [
-      "flanMWForegrip",
-      "flanMWFlashlight"
-    ]
+    "allowAll": true,
+    "allowlist": []
   },
   "scopeAttachments": {
     "numAttachmentSlots": 1,
@@ -123,19 +125,17 @@
       0.3125,
       0.0
     ],
-    "allowAll": false,
+    "allowAll": true,
     "allowlist": []
   },
   "genericAttachments": {
     "numAttachmentSlots": 1,
-    "allowAll": false,
-    "allowlist": [
-      "flanMWRedDot",
-      "flanMWACOG",
-      "flanMW4xScope",
-      "flanMWSingleFire",
-      "flanMWBurstFire",
-      "flanMWAutoFire"
-    ]
-  }
+    "allowAll": true,
+    "allowlist": []
+  },
+  "modelParts": [
+    "body",
+    "ammo",
+    "slide"
+  ]
 }

@@ -1,5 +1,6 @@
 package com.flansmod.client.render.models;
 
+import com.flansmod.common.FlansMod;
 import com.google.gson.*;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.renderer.block.model.*;
@@ -176,15 +177,31 @@ public class TurboRig implements IUnbakedGeometry<TurboRig>, UnbakedModel
 					{
 						floatParams.put(kvp.getKey(), kvp.getValue().getAsFloat());
 					}
-					catch(JsonParseException jsonParseException)
+					catch(Exception exception)
 					{
 						try
 						{
 							floatParams.put(kvp.getKey(), kvp.getValue().getAsBoolean() ? 1.0f : 0.0f);
 						}
-						catch (JsonParseException jsonParseException1)
+						catch (Exception exception1)
 						{
-							// oh well
+							try
+							{
+								JsonArray jArray = kvp.getValue().getAsJsonArray();
+
+								float x = jArray.size() > 0 ? jArray.get(0).getAsFloat() : 0.0f;
+								float y = jArray.size() > 1 ? jArray.get(1).getAsFloat() : 0.0f;
+								float z = jArray.size() > 2 ? jArray.get(2).getAsFloat() : 0.0f;
+
+								floatParams.put(kvp.getKey() + "_x", x);
+								floatParams.put(kvp.getKey() + "_y", y);
+								floatParams.put(kvp.getKey() + "_z", z);
+							}
+							catch (Exception exception2)
+							{
+								// Well I'm out of ideas
+								FlansMod.LOGGER.warn("Could not parse " + kvp.getValue() + " into float anim params");
+							}
 						}
 					}
 				}

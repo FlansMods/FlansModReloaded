@@ -1,6 +1,8 @@
 package com.flansmod.common.actions;
 
 import com.flansmod.client.FlansModClient;
+import com.flansmod.client.particle.GunshotHitBlockParticle;
+import com.flansmod.common.FlansMod;
 import com.flansmod.common.gunshots.*;
 import com.flansmod.common.types.elements.ActionDefinition;
 import com.flansmod.common.types.elements.ESpreadPattern;
@@ -10,21 +12,18 @@ import com.flansmod.common.types.guns.GunContext;
 import com.flansmod.util.Maths;
 import com.flansmod.util.Transform;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.particle.ParticleEngine;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.particles.ParticleOptions;
-import net.minecraft.core.particles.ParticleType;
+import net.minecraft.core.Vec3i;
 import net.minecraft.core.particles.ParticleTypes;
-import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.Fluids;
 import net.minecraft.world.phys.BlockHitResult;
@@ -32,19 +31,15 @@ import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 import org.joml.Vector3d;
-import org.joml.Vector3f;
 
-import java.sql.Array;
 import java.util.ArrayList;
-import java.util.Enumeration;
 import java.util.List;
-import java.util.Random;
 
 public class ShootAction extends Action
 {
 	private GunshotCollection results;
 
-	public ShotDefinition ShotDef() { return actionDef.ShootStats; }
+	public ShotDefinition ShotDef() { return actionDef.shootStats; }
 
 	public ShootAction(ActionDefinition def, InteractionHand hand)
 	{
@@ -66,7 +61,7 @@ public class ShootAction extends Action
 		}
 		if(!actionDef.canActUnderOtherLiquid)
 		{
-			if(context.shootFrom.level.isFluidAtPosition(new BlockPos(context.shootOrigin.PositionVec3()), (fluidState) -> { return !fluidState.isSourceOfType(Fluids.WATER); }))
+			if(context.shootFrom.level.isFluidAtPosition(new BlockPos(context.shootOrigin.PositionVec3()), (fluidState) -> { return !fluidState.isEmpty() && !fluidState.isSourceOfType(Fluids.WATER); }))
 				return false;
 		}
 
@@ -94,38 +89,46 @@ public class ShootAction extends Action
 
 	private static final double RAYCAST_LENGTH = 500.0d;
 
-	public void Calculate(GunContext context, EActionSet actionSet)
+	public void Calculate(GunContext context, ActionStack actionStack, EActionSet actionSet)
 	{
 		results = new GunshotCollection()
+			.FromAction(actionSet)
 			.WithOwner(context.owner)
+			.WithShooter(context.shootFrom)
 			.WithGun(context.GunDef());
 
 		CachedGunStats stats = context.GetStatBlock(actionSet);
 
-		// Multiplier from https://github.com/FlansMods/FlansMod/blob/71ba7ed065d906d48f34ca471bbd0172b5192f6b/src/main/java/com/flansmod/common/guns/ShotHandler.java#L93
-		float bulletSpread = 0.0025f * stats.Spread();
-		for(int i = 0; i < stats.Count(); i++)
+		// If we are firing something faster than 1200rpm, that is more than 1 per tick
+		int shotsFired = actionStack.TryShootMultiple(stats.TimeToNextShot());
+
+		for(int j = 0; j < shotsFired; j++)
 		{
-			Transform randomizedDirection = RandomizeVectorDirection(context.shootFrom.level.random, context.shootOrigin, bulletSpread, stats.SpreadPattern());
+			// Multiplier from https://github.com/FlansMods/FlansMod/blob/71ba7ed065d906d48f34ca471bbd0172b5192f6b/src/main/java/com/flansmod/common/guns/ShotHandler.java#L93
+			float bulletSpread = 0.0025f * stats.Spread();
+			for (int i = 0; i < stats.Count(); i++)
+			{
+				Transform randomizedDirection = RandomizeVectorDirection(context.shootFrom.level.random, context.shootOrigin, bulletSpread, stats.SpreadPattern());
 
-			float penetrationPower = stats.PenetrationPower();
+				float penetrationPower = stats.PenetrationPower();
 
-			List<HitResult> hits = new ArrayList<HitResult>(8);
-			Raytracer.ForLevel(context.shootFrom.level).CastBullet(
-				context.shootFrom,
-				randomizedDirection.PositionVec3(),
-				randomizedDirection.ForwardVec3().scale(RAYCAST_LENGTH),
-				penetrationPower,
-				penetrationPower,
-				hits
-			);
+				List<HitResult> hits = new ArrayList<HitResult>(8);
+				Raytracer.ForLevel(context.shootFrom.level).CastBullet(
+					context.shootFrom,
+					randomizedDirection.PositionVec3(),
+					randomizedDirection.ForwardVec3().scale(RAYCAST_LENGTH),
+					penetrationPower,
+					penetrationPower,
+					hits
+				);
 
-			HitResult[] hitArray = new HitResult[hits.size()];
-			hits.toArray(hitArray);
-			results.AddShot(new Gunshot()
-				.WithOrigin(randomizedDirection.PositionVec3())
-				.WithTrajectory(randomizedDirection.ForwardVec3().scale(RAYCAST_LENGTH))
-				.WithHits(hitArray));
+				HitResult[] hitArray = new HitResult[hits.size()];
+				hits.toArray(hitArray);
+				results.AddShot(new Gunshot()
+					.WithOrigin(randomizedDirection.PositionVec3())
+					.WithTrajectory(randomizedDirection.ForwardVec3().scale(RAYCAST_LENGTH))
+					.WithHits(hitArray));
+			}
 		}
 	}
 
@@ -144,17 +147,18 @@ public class ShootAction extends Action
 				float xComponent = radius * Maths.SinF(theta);
 				float yComponent = radius * Maths.CosF(theta);
 
-				result.TranslateLocal(xComponent, yComponent, 0.0f);
+				result.RotateLocalYaw(xComponent);
+				result.RotateLocalPitch(yComponent);
 			}
 			case Horizontal ->
 			{
 				float xComponent = spread * (rand.nextFloat() * 2f - 1f);
-				result.TranslateLocal(xComponent, 0f, 0f);
+				result.RotateLocalYaw(xComponent);
 			}
 			case Vertical ->
 			{
 				float yComponent = spread * (rand.nextFloat() * 2f - 1f);
-				result.TranslateLocal(0f, yComponent, 0f);
+				result.RotateLocalPitch(yComponent);
 			}
 			case Triangle ->
 			{
@@ -177,8 +181,8 @@ public class ShootAction extends Action
 						xComponent = -1f - xComponent;
 					}
 				}
-
-				result.TranslateLocal(spread * xComponent, spread * yComponent, 0d);
+				result.RotateLocalYaw(xComponent);
+				result.RotateLocalPitch(yComponent);
 			}
 			default -> {}
 		}
@@ -204,11 +208,11 @@ public class ShootAction extends Action
 					{
 						case BLOCK ->
 						{
-							if(actionDef.ShootStats.BreaksMaterials.length > 0)
+							if(actionDef.shootStats.breaksMaterials.length > 0)
 							{
 								BlockHitResult blockHit = (BlockHitResult) hit;
 								BlockState stateHit = level.getBlockState(blockHit.getBlockPos());
-								if(actionDef.ShootStats.BreaksMaterial(stateHit.getMaterial()))
+								if(actionDef.shootStats.BreaksMaterial(stateHit.getMaterial()))
 								{
 									level.destroyBlock(blockHit.getBlockPos(), true, context.shootFrom);
 								}
@@ -295,6 +299,7 @@ public class ShootAction extends Action
 		boolean playedASoundThisTick = false;
 
 		ParticleEngine particleEngine = Minecraft.getInstance().particleEngine;
+		ActionDefinition shootActionDef = context.GetShootActionDefinition(results.actionUsed);
 
 		for(Gunshot shot : results.shots)
 		{
@@ -309,11 +314,46 @@ public class ShootAction extends Action
 					{
 						case BLOCK ->
 						{
+							ClientLevel level = Minecraft.getInstance().level;
 							BlockHitResult blockHit = (BlockHitResult)hit;
-							particleEngine.addBlockHitEffects(
-								blockHit.getBlockPos(),
-								blockHit
-							);
+							if(shootActionDef != null && shootActionDef.shootStats.impact.decal != null && shootActionDef.shootStats.impact.decal.length() > 0)
+							{
+								FlansModClient.DECAL_RENDERER.AddDecal(
+									ResourceLocation.tryParse(shootActionDef.shootStats.impact.decal).withPrefix("textures/"),
+									blockHit.getLocation(),
+									blockHit.getDirection(),
+									level.random.nextFloat() * 360.0f,
+									1000);
+							}
+
+							Vec3[] motions = new Vec3[3];
+							motions[0] = Maths.Reflect(shot.trajectory.normalize(), blockHit.getDirection());
+							Vec3i normal = blockHit.getDirection().getNormal();
+							for(int i = 1; i < motions.length; i++)
+							{
+								motions[i] = new Vec3(
+									normal.getX() + level.random.nextGaussian() * 0.2d,
+									normal.getY() + level.random.nextGaussian() * 0.2d,
+									normal.getZ() + level.random.nextGaussian() * 0.2d);
+								motions[i] = motions[i].normalize().scale(0.3d);
+							}
+
+							for(int i = 0; i < motions.length; i++)
+							{
+								BlockState state = level.getBlockState(blockHit.getBlockPos());
+								particleEngine.add(new GunshotHitBlockParticle(
+									level,
+									hit.getLocation().x,
+									hit.getLocation().y,
+									hit.getLocation().z,
+									motions[i].x,
+									motions[i].y,
+									motions[i].z,
+									state,
+									blockHit.getBlockPos())
+									.updateSprite(state, blockHit.getBlockPos())
+									.scale(0.5f));
+							}
 						}
 						case ENTITY ->
 						{
@@ -330,15 +370,12 @@ public class ShootAction extends Action
 					}
 
 					// Play a sound, only once per tick to avoid audio overload
-					if(!playedASoundThisTick && actionDef.ShootStats.Impact.HitSound != null)
+					if(!playedASoundThisTick && actionDef.shootStats.impact.hitSound != null)
 					{
 						playedASoundThisTick = true;
 						//Minecraft.getInstance().getSoundManager().play(actionDef.ShootStats.Impact.HitSound);
 					}
 				}
-
-
-
 			}
 		}
 	}

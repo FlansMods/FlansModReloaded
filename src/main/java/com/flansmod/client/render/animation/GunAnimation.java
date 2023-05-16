@@ -128,7 +128,7 @@ public abstract class GunAnimation
 			float parameter = (animationProgress / animationDuration);
 			float spinParameter = parameter * (parameter - 0.2f) * (parameter + 0.2f) * (360.0f / (1.2f * 0.8f));
 
-			poses.mulPose(Transform.QuaternionFromEuler(0f, 0f, spinParameter));
+			poses.mulPose(Maths.QuaternionFromEuler(0f, 0f, spinParameter));
 		}
 	}
 
@@ -146,10 +146,10 @@ public abstract class GunAnimation
 			float parameter = animationProgress / animationDuration;
 
 			new AnimationChain(Transform.Identity(), parameter)
-				.LerpToTransform(new Transform(new Vector3f(-0.5f, -0.5f, 0.0f), Transform.IdentityQuat()), 0.1f)
-				.LerpToTransform(new Transform(new Vector3f(0f, 6f, 6f), Transform.QuaternionFromEuler(0f, 90f, 0f)), 0.2f)
+				.LerpToTransform(new Transform(new Vector3f(-0.5f, -0.5f, 0.0f), Maths.IdentityQuat()), 0.1f)
+				.LerpToTransform(new Transform(new Vector3f(0f, 6f, 6f), Maths.QuaternionFromEuler(0f, 90f, 0f)), 0.2f)
 				.Pause(0.2f)
-				.LerpToTransform(new Transform(new Vector3f(0f, 6f, 6f), Transform.QuaternionFromEuler(0f, -90f, 0f)), 0.2f)
+				.LerpToTransform(new Transform(new Vector3f(0f, 6f, 6f), Maths.QuaternionFromEuler(0f, -90f, 0f)), 0.2f)
 				.LerpToIdentity(0.1f)
 				//.LerpToPos(new Vector3f(10.0f, 0.0f, 0.0f), 0.25f)
 				//.Pause(0.5f)
@@ -172,10 +172,10 @@ public abstract class GunAnimation
 			float parameter = animationProgress / animationDuration;
 
 			new AnimationChain(Transform.Identity(), parameter)
-				.LerpToTransform(new Transform(new Vector3f(-0.5f, -0.5f, 0.0f), Transform.IdentityQuat()), 0.1f)
-				.LerpToTransform(new Transform(new Vector3f(0f, 6f, 6f), Transform.QuaternionFromEuler(0f, 90f, 0f)), 0.2f)
+				.LerpToTransform(new Transform(new Vector3f(-0.5f, -0.5f, 0.0f), Maths.IdentityQuat()), 0.1f)
+				.LerpToTransform(new Transform(new Vector3f(0f, 6f, 6f), Maths.QuaternionFromEuler(0f, 90f, 0f)), 0.2f)
 				.Pause(0.2f)
-				.LerpToTransform(new Transform(new Vector3f(0f, 6f, 6f), Transform.QuaternionFromEuler(0f, -90f, 0f)), 0.2f)
+				.LerpToTransform(new Transform(new Vector3f(0f, 6f, 6f), Maths.QuaternionFromEuler(0f, -90f, 0f)), 0.2f)
 				.LerpToIdentity(0.1f)
 				//.LerpToPos(new Vector3f(10.0f, 0.0f, 0.0f), 0.25f)
 				//.Pause(0.5f)

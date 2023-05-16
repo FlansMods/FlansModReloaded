@@ -1,6 +1,9 @@
 package com.flansmod.common.gunshots;
 
+import com.flansmod.client.FlansModClient;
+import com.flansmod.client.render.debug.DebugRenderer;
 import com.flansmod.common.FlansMod;
+import com.flansmod.util.Transform;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Position;
 import net.minecraft.core.SectionPos;
@@ -15,6 +18,8 @@ import net.minecraft.world.phys.*;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
+import org.joml.Vector3f;
+import org.joml.Vector4f;
 
 import javax.annotation.Nonnull;
 import java.util.*;
@@ -94,6 +99,8 @@ public class Raytracer
         Vec3 testPoint = origin;
         Vec3 endPoint = origin.add(motion);
 
+        int numTests = 0;
+
         while(testPoint.distanceToSqr(endPoint) > 0.0001d)
         {
             // Get the next block hit and all entity hits inbetween
@@ -133,6 +140,27 @@ public class Raytracer
                     testPoint = endPoint;
                     break;
                 }
+                else // To avoid repeat collisions, we need to move past the exit point of the current hit
+                {
+                    // TODO:
+                    testPoint = endPoint;
+                    break;
+                }
+            }
+
+            numTests++;
+            if(numTests > 100)
+            {
+                FlansMod.LOGGER.warn("Raytrace exceeded 100 raycasts, something is probably wrong");
+                if(from.level.isClientSide)
+                {
+                    DebugRenderer.RenderLine(
+                        origin,
+                        100,
+                        new Vector4f(1.0f, 1.0f, 1.0f, 1.0f),
+                        endPoint.subtract(origin));
+                }
+                break;
             }
         }
     }

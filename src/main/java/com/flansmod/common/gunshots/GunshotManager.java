@@ -8,10 +8,10 @@ import com.flansmod.common.network.toserver.ShotRequestMessage;
 import com.flansmod.common.types.elements.ActionDefinition;
 import com.flansmod.common.types.guns.GunContext;
 import com.flansmod.common.types.guns.GunDefinition;
+import net.minecraft.client.Minecraft;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.ai.behavior.declarative.Trigger;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
@@ -21,7 +21,6 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
-import net.minecraftforge.fml.LogicalSide;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -35,12 +34,6 @@ public class GunshotManager
 	public ActionStack GetActionStack(Entity entity)
 	{
 		return ActionStacks.get(entity);
-	}
-
-	public void Hook(IEventBus modEventBus)
-	{
-		FlansModPacketHandler.RegisterServerHandler(ShotRequestMessage.class, ShotRequestMessage::new, this::OnServerReceivedShotData);
-		MinecraftForge.EVENT_BUS.addListener(this::ServerTick);
 	}
 
 	// ----------------------------------------------------------------------------------------------------------------
@@ -63,30 +56,42 @@ public class GunshotManager
 			// Set our context and create the lists of actions this shoot event will trigger
 			GunContext gunContext = GunContext.CreateFromPlayer(player, hand);
 			GunDefinition gunDef = gunContext.GunDef();
-			ActionDefinition[] actionsDefs = gunContext.GetActions(actionSet);
+			ActionDefinition[] actionsDefs = gunContext.GetActionDefinitions(actionSet);
 			List<Action> otherActions = new ArrayList<>(actionsDefs.length);
 			ShootAction shootAction = CreateActions(actionsDefs, otherActions, hand);
+
+			ActionStack actionStack = GetOrCreateActionStack(player);
 
 			// TODO: Check if we can shoot based on our local data about our
 			 // a) Inventory, ammo levels
 			 // b) Shoot cooldown
 			 // c) Handedness
 
-			GunshotCollection shotsFired = null;
-			if(shootAction != null)
+			boolean bCanFire = shootAction != null && shootAction.CanStart(gunContext);
+			for(Action action : otherActions)
+				if(!action.CanStart(gunContext))
+					bCanFire = false;
+			if(actionStack.GetShotCooldown() > 0.0f)
+				bCanFire = false;
+
+			if(bCanFire)
 			{
-				// Calculate the GunshotCollection (as we believe it to be)
-				// (Using some sort of deterministic random? - or sending our RNG results to server for analysis)
-				shootAction.Calculate(gunContext, actionSet);
-				TriggerAction(player.level, gunContext, shootAction);
-				shotsFired = shootAction.GetResults();
+				GunshotCollection shotsFired = null;
+				if (shootAction != null)
+				{
+					// Calculate the GunshotCollection (as we believe it to be)
+					// (Using some sort of deterministic random? - or sending our RNG results to server for analysis)
+					shootAction.Calculate(gunContext, actionStack, actionSet);
+					TriggerAction(player.level, gunContext, shootAction);
+					shotsFired = shootAction.GetResults();
+				}
+
+				// Start any other actions we have attached to the trigger
+				TriggerActions(player.level, gunContext, otherActions);
+
+				// Finally, send our shot data to the server for verification, action and propogation
+				ClientSendToServer(shotsFired);
 			}
-
-			// Start any other actions we have attached to the trigger
-			TriggerActions(player.level, gunContext, otherActions);
-
-			// Finally, send our shot data to the server for verification, action and propogation
-			ClientSendToServer(shotsFired);
 		}
 	}
 
@@ -107,7 +112,7 @@ public class GunshotManager
 		GunContext gunContext = GunContext.TryCreateFromEntity(shotCollection.Shooter(), hand);
 		if(gunContext.IsValid())
 		{
-			ActionDefinition[] actionsDefs = gunContext.GetActions(shotCollection.actionUsed);
+			ActionDefinition[] actionsDefs = gunContext.GetActionDefinitions(shotCollection.actionUsed);
 			List<Action> otherActions = new ArrayList<>(actionsDefs.length);
 			ShootAction shootAction = CreateActions(actionsDefs, otherActions, hand);
 
@@ -134,6 +139,12 @@ public class GunshotManager
 	// SERVER
 	// ----------------------------------------------------------------------------------------------------------------
 
+	public void HookServer(IEventBus modEventBus)
+	{
+		FlansModPacketHandler.RegisterServerHandler(ShotRequestMessage.class, ShotRequestMessage::new, this::OnServerReceivedShotData);
+		MinecraftForge.EVENT_BUS.addListener(this::ServerTick);
+	}
+
 	// When a client tells us what they shot, we need to verify it
 	private void OnServerReceivedShotData(ShotRequestMessage msg, ServerPlayer from)
 	{
@@ -141,7 +152,7 @@ public class GunshotManager
 		GunshotCollection shotCollection = msg.Get();
 		InteractionHand hand = shotCollection.seatID == 0 ? InteractionHand.MAIN_HAND : InteractionHand.OFF_HAND;
 		GunContext gunContext = GunContext.CreateFromPlayer(from, hand);
-		ActionDefinition[] actionsDefs = gunContext.GetActions(shotCollection.actionUsed);
+		ActionDefinition[] actionsDefs = gunContext.GetActionDefinitions(shotCollection.actionUsed);
 		List<Action> otherActions = new ArrayList<>(actionsDefs.length);
 		ShootAction shootAction = CreateActions(actionsDefs, otherActions, hand);
 
@@ -244,14 +255,9 @@ public class GunshotManager
 			{
 				Entity entity = kvp.getKey();
 				ActionStack stack = kvp.getValue();
-				for(int i = stack.GetActions().size() - 1; i >= 0; i--)
-				{
-					Action action = stack.GetActions().get(i);
-					GunContext context = GunContext.TryCreateFromEntity(entity, action.hand);
-					action.OnTickClient(context);
-					if(action.Finished())
-						stack.GetActions().remove(i);
-				}
+				GunContext mainHandContext = GunContext.TryCreateFromEntity(entity, InteractionHand.MAIN_HAND);
+				GunContext offHandContext = GunContext.TryCreateFromEntity(entity, InteractionHand.OFF_HAND);
+				stack.OnTick(entity.level, mainHandContext, offHandContext);
 			}
 		}
 	}
@@ -264,14 +270,9 @@ public class GunshotManager
 			{
 				Entity entity = kvp.getKey();
 				ActionStack stack = kvp.getValue();
-				for(int i = stack.GetActions().size() - 1; i >= 0; i--)
-				{
-					Action action = stack.GetActions().get(i);
-					GunContext context = GunContext.TryCreateFromEntity(entity, action.hand);
-					action.OnTickClient(context);
-					if(action.Finished())
-						stack.GetActions().remove(i);
-				}
+				GunContext mainHandContext = GunContext.TryCreateFromEntity(entity, InteractionHand.MAIN_HAND);
+				GunContext offHandContext = GunContext.TryCreateFromEntity(entity, InteractionHand.OFF_HAND);
+				stack.OnTick(Minecraft.getInstance().level, mainHandContext, offHandContext);
 			}
 		}
 	}

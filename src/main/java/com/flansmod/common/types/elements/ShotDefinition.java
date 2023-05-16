@@ -13,10 +13,10 @@ public class ShotDefinition
 	{
 		if(BreakMaterialReferences == null)
 		{
-			BreakMaterialReferences = new Material[BreaksMaterials.length];
-			for(int i = 0; i < BreaksMaterials.length; i++)
+			BreakMaterialReferences = new Material[breaksMaterials.length];
+			for(int i = 0; i < breaksMaterials.length; i++)
 			{
-				BreakMaterialReferences[i] = MinecraftHelpers.FindMaterial(BreaksMaterials[i]);
+				BreakMaterialReferences[i] = MinecraftHelpers.FindMaterial(breaksMaterials[i]);
 			}
 		}
 		return BreakMaterialReferences;
@@ -33,30 +33,30 @@ public class ShotDefinition
 	}
 
 	@JsonField
-	public float VerticalRecoil = 3.0f;
+	public float verticalReocil = 3.0f;
 	@JsonField
-	public float HorizontalRecoil = 0.0f;
+	public float horizontalRecoil = 0.0f;
 	@JsonField
-	public float Spread = 3.0f;
+	public float spread = 3.0f;
 	@JsonField
-	public boolean Hitscan = true;
+	public boolean hitscan = true;
 	@JsonField
-	public float Speed = 0.0f;
+	public float speed = 0.0f;
 	@JsonField
-	public int Count = 1;
+	public int count = 1;
 	@JsonField
-	public float TimeToNextShot = 2.0f;
+	public float timeToNextShot = 2.0f;
 	@JsonField
-	public ESpreadPattern SpreadPattern = ESpreadPattern.FilledCircle;
+	public ESpreadPattern spreadPattern = ESpreadPattern.FilledCircle;
 	@JsonField
-	public String[] BreaksMaterials = new String[0];
+	public String[] breaksMaterials = new String[0];
 
 	@JsonField
-	public float PenetrationPower = 1.0f;
+	public float penetrationPower = 1.0f;
 	@JsonField
-	public String TrailParticles = "";
+	public String trailParticles = "";
 
 	@JsonField
 	@Nonnull
-	public ImpactDefinition Impact = new ImpactDefinition();
+	public ImpactDefinition impact = new ImpactDefinition();
 }

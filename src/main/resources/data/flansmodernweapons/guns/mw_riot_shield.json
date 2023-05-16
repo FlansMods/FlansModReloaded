@@ -1,0 +1,78 @@
+{
+  "reload": {
+    "manualReloadAllowed": true,
+    "start": {
+      "duration": 0.0,
+      "sound": "",
+      "actions": [
+        {
+          "actionType": "Animation",
+          "anim": "TiltGunForReload",
+          "remainUntilEnd": true
+        }
+      ]
+    },
+    "eject": {
+      "duration": 0.0,
+      "sound": "",
+      "actions": []
+    },
+    "loadOne": {
+      "duration": 0.0,
+      "sound": "",
+      "actions": []
+    },
+    "end": {
+      "duration": 0.0,
+      "sound": "",
+      "actions": [
+        {
+          "actionType": "Animation",
+          "anim": "PumpAction",
+          "duration": 1.0,
+          "delay": 0.0,
+          "distance": 0.25
+        }
+      ]
+    }
+  },
+  "oneHanded": true,
+  "primaryActions": [
+    {
+      "actionType": "Animation",
+      "anim": "shoot",
+      "duration": 0.0
+    }
+  ],
+  "secondaryActions": [
+    {
+      "canBeOverriden": true,
+      "actionType": "Block",
+      "shieldOrigin": [
+        0.25,
+        -1.25,
+        -0.5
+      ],
+      "shieldDimensions": [
+        0.0625,
+        2.0,
+        1.0
+      ],
+      "shieldDamageAbsorption": 1.0
+    }
+  ],
+  "idle": {
+    "sound": "",
+    "soundLength": 0
+  },
+  "gui": {
+    "showAttachments": true,
+    "showDamage": false,
+    "showRecoil": false,
+    "showSpread": false,
+    "showReloadTime": false
+  },
+  "modelParts": [
+    "body"
+  ]
+}

@@ -1,6 +1,7 @@
 package com.flansmod.common.types;
 
 import com.flansmod.common.FlansMod;
+import com.flansmod.common.types.elements.VecWithOverride;
 import com.flansmod.util.Maths;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
@@ -53,8 +54,9 @@ public class DefinitionParser
 				jVec.get(1).getAsFloat(),
 				jVec.get(2).getAsFloat());
 		});
-	}
+		Parsers.put(VecWithOverride.class, VecWithOverride::ParseFunc);
 
+	}
 	private static FieldParseMethod GetParserFor(Field field) { return GetParserFor(field.getType()); }
 	private static FieldParseMethod GetParserFor(Type type)
 	{
@@ -117,7 +119,14 @@ public class DefinitionParser
 		@Override
 		public Object Parse(Object ref, JsonElement jNode, JsonField annotation) throws NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException
 		{
-			return Enum.valueOf(enumRef, jNode.getAsString());
+			try
+			{
+				return Enum.valueOf(enumRef, jNode.getAsString());
+			}
+			catch (Exception e)
+			{
+				return Enum.valueOf(enumRef, jNode.getAsString().toLowerCase());
+			}
 		}
 	}
 

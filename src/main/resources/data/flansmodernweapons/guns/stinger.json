@@ -3,7 +3,7 @@
     "manualReloadAllowed": true,
     "start": {
       "duration": 20.0,
-      "sound": "BazookaReload",
+      "sound": "MWBazookaReload",
       "actions": [
         {
           "actionType": "Animation",
@@ -53,25 +53,28 @@
         "verticalRecoil": 25,
         "horizontalRecoil": 0.0,
         "spread": 20.0,
-        "damage": 1.0,
         "hitscan": false,
         "speed": 1.0,
         "count": 1,
         "timeToNextShot": 1.0,
-        "knockback": 0.0
+        "impact": {
+          "damageToTarget": 1.0,
+          "multiplierVsPlayers": 1.0,
+          "multiplierVsVehicles": 1.0,
+          "splashDamageRadius": 0.0,
+          "splashDamageFalloff": 0.0,
+          "setFireToTarget": 0.0,
+          "fireSpreadRadius": 0.0,
+          "fireSpreadAmount": 0.0,
+          "knockback": 0.0,
+          "decal": "flansmod:effects/bullet_decal.png"
+        }
       }
     },
     {
       "actionType": "Animation",
-      "anim": "SlideSemiAuto",
-      "distance": 0.5
-    },
-    {
-      "actionType": "Animation",
-      "anim": "PumpAction",
-      "duration": 1.0,
-      "delay": 0.0,
-      "distance": 0.25
+      "anim": "shoot",
+      "duration": 1.0
     }
   ],
   "secondaryActions": [
@@ -100,17 +103,17 @@
       0.3125,
       0.0
     ],
-    "allowAll": false,
+    "allowAll": true,
     "allowlist": []
   },
   "genericAttachments": {
     "numAttachmentSlots": 1,
-    "allowAll": false,
-    "allowlist": [
-      "flanMWRedDot",
-      "flanMWACOG",
-      "flanMW4xScope"
-    ]
+    "allowAll": true,
+    "allowlist": []
   },
-  "userMoveSpeedMultiplier": 0.6
+  "userMoveSpeedMultiplier": 0.6,
+  "modelParts": [
+    "body",
+    "ammo"
+  ]
 }

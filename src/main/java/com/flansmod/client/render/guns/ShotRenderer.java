@@ -49,6 +49,7 @@ public class ShotRenderer
 		{
 			shots.get(i).Update();
 			if(shots.get(i).Finished())
+				//shots.get(i).ticksExisted = 0;
 				shots.remove(i);
 		}
 	}
@@ -62,6 +63,7 @@ public class ShotRenderer
 			Vec3 pos = camera.getPosition();
 			Tesselator tesselator = Tesselator.getInstance();
 			RenderSystem.setShader(GameRenderer::getPositionColorShader);
+			//RenderSystem.disableDepthTest();
 
 			for(ShotRenderInstance shot : shots)
 			{
@@ -107,8 +109,8 @@ public class ShotRenderer
 			ticksExisted++;
 		}
 
-		private static final Vector4f WHITE_COLOUR = new Vector4f(1.0f, 1.0f, 1.0f, 0.0f);
-		private static final Vector4f DEFAULT_TRAIL_COLOUR = new Vector4f(1.0f, 1.0f, 0.5f, 0.0f);
+		private static final Vector4f WHITE_COLOUR = new Vector4f(1.0f, 1.0f, 1.0f, 1.0f);
+		private static final Vector4f DEFAULT_TRAIL_COLOUR = new Vector4f(1.0f, 1.0f, 0.5f, 1.0f);
 
 		public void Render(Tesselator tesselator, PoseStack poseStack, Vec3 cameraPos, float dt)
 		{
@@ -125,53 +127,49 @@ public class ShotRenderer
 			}
 
 			double centerT = (ticksExisted + dt) * bulletSpeed;
-			Vec3 centerPos = origin.lerp(endPoint, centerT);
 			Vec3 bulletDirection = endPoint.subtract(origin).normalize();
+			Vec3 centerPos = origin.add(bulletDirection.scale(centerT));
 			Vec3 cameraToTrailDirection = centerPos.subtract(cameraPos).normalize();
 
-			Vec3 trailYAxis = bulletDirection.cross(cameraToTrailDirection).normalize().scale(width * 0.5f);
+			Vec3 trailYAxis = bulletDirection.cross(cameraToTrailDirection).normalize();
 			Vec3 trailXAxis = bulletDirection.scale(length * 0.5f);
 			Vec3 trailNormal = trailXAxis.cross(trailYAxis).normalize();
 
+
+			trailYAxis = trailYAxis.scale(width * 0.5f);
 
 			poseStack.pushPose();
 			poseStack.translate(centerPos.x - cameraPos.x, centerPos.y - cameraPos.y, centerPos.z - cameraPos.z);
 
 			BufferBuilder buf = tesselator.getBuilder();
-			buf.begin(VertexFormat.Mode.TRIANGLE_STRIP, DefaultVertexFormat.POSITION_COLOR_NORMAL);
+			buf.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_COLOR);
 
-			buf.vertex(poseStack.last().pose(),
-				(float)(trailXAxis.x + trailYAxis.x),
-				(float)(trailXAxis.y + trailYAxis.y),
-			    (float)(trailXAxis.z + trailYAxis.z))
+			Vec3 v0 = trailYAxis.add(trailXAxis);
+			Vec3 v1 = trailYAxis.subtract(trailXAxis);
+			Vec3 v2 = trailYAxis.scale(-1d).subtract(trailXAxis);
+			Vec3 v3 = trailYAxis.scale(-1d).add(trailXAxis);
+
+			buf.vertex(poseStack.last().pose(), (float)v0.x, (float)v0.y, (float)v0.z)
 				.color(colour.x, colour.y, colour.z, colour.w)
-				.normal((float)trailNormal.x, (float)trailNormal.y, (float)trailNormal.z)
+				//.normal((float)trailNormal.x, (float)trailNormal.y, (float)trailNormal.z)
 				.endVertex();
-			buf.vertex(poseStack.last().pose(),
-					(float)(trailXAxis.x - trailYAxis.x),
-					(float)(trailXAxis.y - trailYAxis.y),
-					(float)(trailXAxis.z - trailYAxis.z))
+			buf.vertex(poseStack.last().pose(), (float)v1.x, (float)v1.y, (float)v1.z)
 				.color(colour.x, colour.y, colour.z, colour.w)
-				.normal((float)trailNormal.x, (float)trailNormal.y, (float)trailNormal.z)
+				//.normal((float)trailNormal.x, (float)trailNormal.y, (float)trailNormal.z)
 				.endVertex();
-			buf.vertex(poseStack.last().pose(),
-					(float)(-trailXAxis.x - trailYAxis.x),
-					(float)(-trailXAxis.y - trailYAxis.y),
-					(float)(-trailXAxis.z - trailYAxis.z))
+			buf.vertex(poseStack.last().pose(), (float)v2.x, (float)v2.y, (float)v2.z)
 				.color(colour.x, colour.y, colour.z, colour.w)
-				.normal((float)trailNormal.x, (float)trailNormal.y, (float)trailNormal.z)
+				//.normal((float)trailNormal.x, (float)trailNormal.y, (float)trailNormal.z)
 				.endVertex();
-			buf.vertex(poseStack.last().pose(),
-					(float)(-trailXAxis.x + trailYAxis.x),
-					(float)(-trailXAxis.y + trailYAxis.y),
-					(float)(-trailXAxis.z + trailYAxis.z))
+			buf.vertex(poseStack.last().pose(), (float)v3.x, (float)v3.y, (float)v3.z)
 				.color(colour.x, colour.y, colour.z, colour.w)
-				.normal((float)trailNormal.x, (float)trailNormal.y, (float)trailNormal.z)
+				//.normal((float)trailNormal.x, (float)trailNormal.y, (float)trailNormal.z)
 				.endVertex();
 
 			tesselator.end();
 
 			poseStack.popPose();
+
 		}
 	}
 
