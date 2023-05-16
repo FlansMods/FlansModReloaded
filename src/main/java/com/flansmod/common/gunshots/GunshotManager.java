@@ -217,7 +217,7 @@ public class GunshotManager
 			Action action = Actions.CreateAction(def, hand);
 			if(action instanceof ShootAction found)
 				shoot = found;
-			else
+			else if(action != null)
 				nonShootActions.add(action);
 		}
 		return shoot;

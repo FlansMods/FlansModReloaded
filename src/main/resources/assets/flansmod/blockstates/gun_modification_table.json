@@ -1,7 +1,21 @@
 {
-  "forge_marker": 1,
-  "defaults": 
-  {
-	"model": "flansmod:gun_modification_table"
+  "variants": {
+	  "facing=north": {
+		  "model": "flansmod:block/gun_modification_table",
+		  "y": 90		  
+	  },
+	  "facing=east": {
+		  "model": "flansmod:block/gun_modification_table",
+		  "y": 180		  
+	  },
+	  "facing=south": {
+		  "model": "flansmod:block/gun_modification_table",
+		  "y": 270		  
+	  },
+	  "facing=west": {
+		  "model": "flansmod:block/gun_modification_table",
+		  "y": 0		  
+	  }
+	  
   }
 }

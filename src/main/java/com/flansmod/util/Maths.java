@@ -32,7 +32,9 @@ public class Maths
     }
     public static int Ceil(double d) { return (int)Math.ceil(d); }
     public static int Floor(double d) { return (int)Math.floor(d); }
-    
+    public static float Max(float a, float b) { return a > b ? a : b; }
+    public static float Min(float a, float b) { return a < b ? a : b; }
+
     public static final double Pi = 3.1415926535897932384626433832795028841971d;
     public static final double Tau = 2.0d * Pi;
     public static final double DegToRad = Tau / 360.0d;
@@ -146,5 +148,6 @@ public class Maths
 
         return new BlockPos(roughGuess.getX() + dx, roughGuess.getY() + dy, roughGuess.getZ() + dz);
     }
+
 
 }

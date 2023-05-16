@@ -1,7 +1,21 @@
 {
   "variants": {
-    "normal": {
-      "model": "flansmod:gun_machining_table"
-    }
+	  "facing=north": {
+		  "model": "flansmod:block/gun_machining_table",
+		  "y": 90		  
+	  },
+	  "facing=east": {
+		  "model": "flansmod:block/gun_machining_table",
+		  "y": 180		  
+	  },
+	  "facing=south": {
+		  "model": "flansmod:block/gun_machining_table",
+		  "y": 270		  
+	  },
+	  "facing=west": {
+		  "model": "flansmod:block/gun_machining_table",
+		  "y": 0		  
+	  }
+	  
   }
 }

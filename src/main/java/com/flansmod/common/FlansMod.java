@@ -1,27 +1,29 @@
 package com.flansmod.common;
 
 import com.flansmod.client.FlansModClient;
-import com.flansmod.common.crafting.GunCraftingBlock;
+import com.flansmod.common.crafting.*;
 import com.flansmod.common.gunshots.GunshotManager;
 import com.flansmod.common.gunshots.Raytracer;
 import com.flansmod.common.item.GunItem;
-import com.flansmod.common.crafting.GunModTableBlock;
 import com.flansmod.common.types.attachments.AttachmentDefinitions;
 import com.flansmod.common.types.guns.GunDefinitions;
 import com.flansmod.common.types.bullets.BulletDefinitions;
 import com.mojang.logging.LogUtils;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.material.Material;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.common.extensions.IForgeMenuType;
 import net.minecraftforge.event.AddReloadListenerEvent;
 import net.minecraftforge.event.CreativeModeTabEvent;
 import net.minecraftforge.event.level.LevelEvent;
@@ -46,13 +48,24 @@ public class FlansMod
     // Core mod blocks & items
     public static final DeferredRegister<Block> BLOCKS = DeferredRegister.create(ForgeRegistries.BLOCKS, MODID);
     public static final DeferredRegister<Item> ITEMS = DeferredRegister.create(ForgeRegistries.ITEMS, MODID);
-    public static final RegistryObject<Block> GUN_MACHINING_TABLE = BLOCKS.register("gun_machining_table", () -> new GunCraftingBlock(BlockBehaviour.Properties.of(Material.STONE)));
-    public static final RegistryObject<Item> GUN_MACHINING_TABLE_ITEM = ITEMS.register("gun_machining_table", () -> new BlockItem(GUN_MACHINING_TABLE.get(), new Item.Properties()));
-    public static final RegistryObject<Block> GUN_MODIFICATION_TABLE = BLOCKS.register("gun_modification_table", () -> new GunModTableBlock(BlockBehaviour.Properties.of(Material.STONE)));
-    public static final RegistryObject<Item> GUN_MODIFICATION_TABLE_ITEM = ITEMS.register("gun_modification_table", () -> new BlockItem(GUN_MODIFICATION_TABLE.get(), new Item.Properties()));
+    public static final RegistryObject<Block> GUN_MACHINING_TABLE_BLOCK = BLOCKS.register("gun_machining_table", () -> new GunCraftingBlock(BlockBehaviour.Properties.of(Material.STONE)));
+    public static final RegistryObject<Block> GUN_MOD_TABLE_BLOCK = BLOCKS.register("gun_modification_table", () -> new GunModTableBlock(BlockBehaviour.Properties.of(Material.STONE)));
+    public static final RegistryObject<Block> PORTABLE_DIESEL_GENERATOR_BLOCK = BLOCKS.register("portable_diesel_generator", () -> new GeneratorBlock(BlockBehaviour.Properties.of(Material.STONE)));
+
+    public static final RegistryObject<Item> GUN_MACHINING_TABLE_ITEM = ITEMS.register("gun_machining_table", () -> new BlockItem(GUN_MACHINING_TABLE_BLOCK.get(), new Item.Properties()));
+    public static final RegistryObject<Item> GUN_MOD_TABLE_ITEM = ITEMS.register("gun_modification_table", () -> new BlockItem(GUN_MOD_TABLE_BLOCK.get(), new Item.Properties()));
+    public static final RegistryObject<Item> PORTABLE_DIESEL_GENERATOR_ITEM = ITEMS.register("portable_diesel_generator", () -> new BlockItem(PORTABLE_DIESEL_GENERATOR_BLOCK.get(), new Item.Properties()));
+
+    // Tile entities
+    public static final DeferredRegister<BlockEntityType<?>> TILE_ENTITIES = DeferredRegister.create(ForgeRegistries.BLOCK_ENTITY_TYPES, MODID);
+    public static final RegistryObject<BlockEntityType<GunModBlockEntity>> GUN_MOD_TILE_ENTITY = TILE_ENTITIES.register("gun_modification_table", () -> BlockEntityType.Builder.of(GunModBlockEntity::new, GUN_MOD_TABLE_BLOCK.get()).build(null));
+
 
     // Creative Mode Tabs
     //public static final RegistryObject<CreativeModeTabs> GUNS_TAB = new CreativeModeTabFlansMod("");
+    // Menus
+    public static final DeferredRegister<MenuType<?>> MENUS = DeferredRegister.create(ForgeRegistries.MENU_TYPES, MODID);
+    public static final RegistryObject<MenuType<GunModificationMenu>> GUN_MOD_MENU = MENUS.register("gun_modification_table", () -> IForgeMenuType.create(GunModificationMenu::new));
 
     // Definition Repositories
     public static GunDefinitions GUNS = new GunDefinitions();
@@ -82,6 +95,8 @@ public class FlansMod
 
         BLOCKS.register(modEventBus);
         ITEMS.register(modEventBus);
+        TILE_ENTITIES.register(modEventBus);
+        MENUS.register(modEventBus);
     }
 
     private void CommonInit(final FMLCommonSetupEvent event)
@@ -109,7 +124,7 @@ public class FlansMod
                 .displayItems((enabledFlags, populator, hasPermissions) ->
                 {
                     populator.accept(GUN_MACHINING_TABLE_ITEM.get());
-                    populator.accept(GUN_MODIFICATION_TABLE_ITEM.get());
+                    populator.accept(GUN_MOD_TABLE_ITEM.get());
                     for(Item item : ForgeRegistries.ITEMS.getValues())
                     {
                         if(item instanceof GunItem)

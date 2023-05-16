@@ -6,6 +6,7 @@ import com.flansmod.common.actions.Action;
 import com.flansmod.common.actions.ActionStack;
 import com.flansmod.common.actions.ScopeAction;
 import com.flansmod.common.types.guns.GunContext;
+import com.flansmod.util.Maths;
 import com.flansmod.util.MinecraftHelpers;
 import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
@@ -13,19 +14,39 @@ import com.mojang.blaze3d.vertex.BufferBuilder;
 import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import com.mojang.blaze3d.vertex.Tesselator;
 import com.mojang.blaze3d.vertex.VertexFormat;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GameRenderer;
+import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.levelgen.LegacyRandomSource;
+import net.minecraft.world.phys.Vec2;
 import net.minecraftforge.client.event.RenderGuiOverlayEvent;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
+
+import java.util.ArrayList;
 
 public class ClientOverlayHooks
 {
+	private Minecraft MC;
+	private RandomSource RNG;
 	public ClientOverlayHooks()
 	{
+		MC = Minecraft.getInstance();
+		RNG = new LegacyRandomSource(0x19393939292L);
 		MinecraftForge.EVENT_BUS.register(this);
+	}
+
+	@SubscribeEvent
+	public void OnClientTick(TickEvent.ClientTickEvent event)
+	{
+		UpdateHitMarkers();
 	}
 
 	@SubscribeEvent
@@ -110,9 +131,72 @@ public class ClientOverlayHooks
 		}
 	}
 
+	private static final ResourceLocation HIT_MARKER_TEXTURE = new ResourceLocation(FlansMod.MODID, "textures/gui/hitmarker.png");
+	private static final float HIT_MARKER_SIZE = 4f;
+	private static float HitMarkerDurationRemaining = 0.0f;
+	private static boolean isMLG = false;
+	private static ArrayList<Vec2> MLGPositions = new ArrayList<>();
+	public void ApplyHitMarker(float duration, boolean MLG)
+	{
+		HitMarkerDurationRemaining = Maths.Max(HitMarkerDurationRemaining, duration);
+		MC.getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.GENERIC_HURT, 1.0f));
+		isMLG = MLG;
+	}
+
+	private void UpdateHitMarkers()
+	{
+		if(isMLG)
+		{
+			MC.getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.GENERIC_HURT, 1.0f));
+			for(int i = 0; i < Maths.Ceil(HitMarkerDurationRemaining * 0.5f); i++)
+			{
+				MLGPositions.add(new Vec2((float)RNG.nextGaussian(), (float)RNG.nextGaussian()));
+			}
+			for(int i = 0; i < Maths.Ceil(MLGPositions.size() * 0.25f); i++)
+			{
+				MLGPositions.remove(RNG.nextInt(i+1));
+			}
+			if(MLGPositions.size() == 0)
+				isMLG = false;
+		}
+		HitMarkerDurationRemaining--;
+	}
+
 	private void RenderHitMarkerOverlay()
 	{
+		int i = MinecraftHelpers.GetClient().getWindow().getGuiScaledWidth();
+		int j = MinecraftHelpers.GetClient().getWindow().getGuiScaledHeight();
 
+		RenderSystem.enableTexture();
+		RenderSystem.enableBlend();
+		RenderSystem.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
+		RenderSystem.setShader(GameRenderer::getPositionTexShader);
+		RenderSystem.setShaderTexture(0, HIT_MARKER_TEXTURE);
+
+		if(isMLG)
+		{
+			for(Vec2 v : MLGPositions)
+				RenderHitMarker(i, j, v);
+		}
+		else if(HitMarkerDurationRemaining > 0.0f)
+		{
+			RenderHitMarker(i, j, Vec2.ZERO);
+		}
+	}
+
+	private void RenderHitMarker(int i, int j, Vec2 pos)
+	{
+		Tesselator tesselator = Tesselator.getInstance();
+		BufferBuilder builder = tesselator.getBuilder();
+		builder.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX);
+		float uvMin = 0f, uvMax = 9f / 16f;
+		float scale = 1f;
+		float x = pos.x * 64.0f, y = pos.y * 64.0f;
+		builder.vertex(i*0.5f + x - HIT_MARKER_SIZE*scale, j*0.5f + y + HIT_MARKER_SIZE*scale, -90f).uv(uvMin, uvMax).endVertex();
+		builder.vertex(i*0.5f + x + HIT_MARKER_SIZE*scale, j*0.5f + y + HIT_MARKER_SIZE*scale, -90f).uv(uvMax, uvMax).endVertex();
+		builder.vertex(i*0.5f + x + HIT_MARKER_SIZE*scale, j*0.5f + y - HIT_MARKER_SIZE*scale, -90f).uv(uvMax, uvMin).endVertex();
+		builder.vertex(i*0.5f + x - HIT_MARKER_SIZE*scale, j*0.5f + y - HIT_MARKER_SIZE*scale, -90f).uv(uvMin, uvMin).endVertex();
+		tesselator.end();
 	}
 
 	private void RenderPlayerAmmoOverlay()

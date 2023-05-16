@@ -8,14 +8,15 @@ import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.DirectionProperty;
 
-public class GunCraftingBlock extends Block
+public class GeneratorBlock extends Block
 {
 	public static final DirectionProperty DIRECTION = BlockStateProperties.HORIZONTAL_FACING;
 
 
-	public GunCraftingBlock(Properties props)
+	public GeneratorBlock(Properties props)
 	{
 		super(props);
+
 		registerDefaultState(stateDefinition.any()
 			.setValue(DIRECTION, Direction.NORTH));
 	}

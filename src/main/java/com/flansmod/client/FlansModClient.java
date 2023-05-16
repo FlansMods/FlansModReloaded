@@ -1,5 +1,6 @@
 package com.flansmod.client;
 
+import com.flansmod.client.gui.crafting.GunModificationScreen;
 import com.flansmod.client.gui.overlay.ClientOverlayHooks;
 import com.flansmod.client.input.ClientInputHooks;
 import com.flansmod.client.render.FlanModelRegistration;
@@ -14,6 +15,7 @@ import com.flansmod.common.FlansMod;
 import com.flansmod.common.gunshots.GunshotManager;
 import com.flansmod.common.item.FlanItem;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraft.client.renderer.ItemModelShaper;
 import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraft.core.registries.Registries;
@@ -71,6 +73,9 @@ public class FlansModClient
 		new DebugModelPoser().Init();
 		MODEL_REGISTRATION.hook(modEventBus);
 		modEventBus.register(ANIMATIONS);
+
+		// Screens
+		MenuScreens.register(FlansMod.GUN_MOD_MENU.get(), GunModificationScreen::new);
 	}
 
 	public static void RegisterClientReloadListeners(AddReloadListenerEvent event)

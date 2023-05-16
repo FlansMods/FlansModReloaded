@@ -58,7 +58,7 @@
         "count": 1,
         "timeToNextShot": 20.0,
         "impact": {
-          "damageToTarget": 16.0,
+          "damageToTarget": 160.0,
           "multiplierVsPlayers": 1.0,
           "multiplierVsVehicles": 1.0,
           "splashDamageRadius": 0.0,

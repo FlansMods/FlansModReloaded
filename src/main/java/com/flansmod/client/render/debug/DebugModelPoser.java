@@ -33,7 +33,7 @@ public class DebugModelPoser
 		}
 	}
 
-	public static boolean active = true;
+	public static boolean active = false;
 	public static Quaternionf rotation = new Quaternionf();
 	public static Vector3f eulerAngles = new Vector3f();
 	public static Vector3f translation = new Vector3f();

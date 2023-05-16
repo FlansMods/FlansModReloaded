@@ -22,6 +22,9 @@ import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.animal.Chicken;
+import net.minecraft.world.entity.boss.EnderDragonPart;
+import net.minecraft.world.entity.boss.enderdragon.EnderDragon;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
@@ -279,12 +282,41 @@ public class ShootAction extends Action
 		super.OnStartClient(context);
 		if(results != null)
 		{
+			boolean hitEntity = false;
+			boolean hitMLG = false;
 			for(Gunshot shot : results.shots)
 			{
 				// Create a bullet trail render
 				duration = FlansModClient.SHOT_RENDERER.AddTrail(shot.origin, shot.Endpoint());
 
+				for(HitResult hit : shot.hits)
+				{
+					if(hit.getType() == HitResult.Type.ENTITY)
+					{
+						hitEntity = true;
+						if(((EntityHitResult)hit).getEntity() instanceof EnderDragon dragon)
+						{
+							float damage = context.BaseDamage(results.actionUsed);
+							damage = damage / 4.0F + Math.min(damage, 1.0F);
+							if(dragon.getHealth() <= damage)
+								hitMLG = true;
+						}
+						else if(((EntityHitResult)hit).getEntity() instanceof EnderDragonPart part)
+						{
+							float damage = context.BaseDamage(results.actionUsed);
+							if(part != part.parentMob.head)
+								damage = damage / 4.0F + Math.min(damage, 1.0F);
+							if(part.parentMob.getHealth() <= damage)
+								hitMLG = true;
+						}
+					}
+				}
+			}
 
+			// If this was my shot, and it hit, hit marker me
+			if(hitEntity && context.owner == Minecraft.getInstance().player)
+			{
+				FlansModClient.CLIENT_OVERLAY_HOOKS.ApplyHitMarker(hitMLG ? 100.0f : 10.0f, hitMLG);
 			}
 		}
 	}
