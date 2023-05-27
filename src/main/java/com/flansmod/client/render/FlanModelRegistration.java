@@ -147,7 +147,6 @@ public class FlanModelRegistration implements PreparableReloadListener
             }
             else
             {
-                FlansMod.LOGGER.info("Hey");
             }
         }
     }

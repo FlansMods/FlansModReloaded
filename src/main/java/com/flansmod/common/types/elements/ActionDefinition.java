@@ -1,6 +1,8 @@
 package com.flansmod.common.types.elements;
 
 import com.flansmod.common.types.JsonField;
+import com.flansmod.common.types.guns.EActionType;
+import com.flansmod.common.types.guns.EFireMode;
 
 public class ActionDefinition
 {

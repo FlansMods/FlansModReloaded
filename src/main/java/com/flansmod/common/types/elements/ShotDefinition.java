@@ -1,6 +1,7 @@
 package com.flansmod.common.types.elements;
 
 import com.flansmod.common.types.JsonField;
+import com.flansmod.common.types.guns.ESpreadPattern;
 import com.flansmod.util.MinecraftHelpers;
 import net.minecraft.world.level.material.Material;
 

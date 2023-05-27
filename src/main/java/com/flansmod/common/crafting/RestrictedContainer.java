@@ -73,7 +73,10 @@ public class RestrictedContainer implements Container, ContainerData
 		return ItemStack.EMPTY;
 	}
 	@Override
-	public void setItem(int slot, ItemStack stack) {}
+	public void setItem(int index, ItemStack stack)
+	{
+		Slots[index] = stack;
+	}
 	@Override
 	public void setChanged() {}
 	@Override
@@ -92,7 +95,7 @@ public class RestrictedContainer implements Container, ContainerData
 			Slots[i] = ItemStack.EMPTY;
 	}
 
-	public void save(CompoundTag tags)
+	public CompoundTag save(CompoundTag tags)
 	{
 		for(int i = 0; i < SlotCount; i++)
 		{
@@ -100,6 +103,7 @@ public class RestrictedContainer implements Container, ContainerData
 			Slots[i].save(itemTag);
 			tags.put("slot" + i, itemTag);
 		}
+		return tags;
 	}
 
 	public void load(CompoundTag tags)

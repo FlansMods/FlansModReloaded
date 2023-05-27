@@ -1,4 +1,4 @@
-package com.flansmod.common.crafting;
+package com.flansmod.common.energy;
 
 import net.minecraft.core.Direction;
 import net.minecraft.world.item.context.BlockPlaceContext;

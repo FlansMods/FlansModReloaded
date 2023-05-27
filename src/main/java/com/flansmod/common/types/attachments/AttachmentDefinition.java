@@ -20,6 +20,8 @@ public class AttachmentDefinition extends JsonDefinition
 
 
 	@JsonField
+	public EAttachmentType AttachmentType = EAttachmentType.Generic;
+	@JsonField
 	public ModifierDefinition[] Modifiers = new ModifierDefinition[0];
 
 

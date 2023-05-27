@@ -6,8 +6,6 @@ import com.flansmod.common.item.GunItem;
 import com.flansmod.common.types.attachments.AttachmentDefinition;
 import com.flansmod.common.types.attachments.EAttachmentType;
 import com.flansmod.common.types.elements.ActionDefinition;
-import com.flansmod.common.types.elements.EActionType;
-import com.flansmod.common.types.elements.ESpreadPattern;
 import com.flansmod.common.types.elements.ModifierDefinition;
 import com.flansmod.util.Transform;
 import net.minecraft.nbt.CompoundTag;

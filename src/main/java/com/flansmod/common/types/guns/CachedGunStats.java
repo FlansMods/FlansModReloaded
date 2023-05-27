@@ -1,7 +1,6 @@
 package com.flansmod.common.types.guns;
 
 import com.flansmod.common.FlansMod;
-import com.flansmod.common.types.elements.ESpreadPattern;
 import com.flansmod.common.types.elements.ModifierDefinition;
 import com.flansmod.common.types.elements.ShotDefinition;
 

@@ -103,7 +103,6 @@ public class ModernWeaponsMod
 
 			for(var entry : ITEMS.getEntries())
 			{
-				//event.register(new ModelResourceLocation(entry.getId(), "inventory"));
 				shaper.register(entry.get(), new ModelResourceLocation(entry.getId(), "inventory"));
 			}
 		}

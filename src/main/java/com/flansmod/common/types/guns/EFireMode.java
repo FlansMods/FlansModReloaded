@@ -1,4 +1,4 @@
-package com.flansmod.common.types.elements;
+package com.flansmod.common.types.guns;
 
 public enum EFireMode
 {

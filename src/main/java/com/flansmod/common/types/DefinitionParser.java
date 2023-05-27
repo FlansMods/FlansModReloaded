@@ -1,21 +1,16 @@
 package com.flansmod.common.types;
 
 import com.flansmod.common.FlansMod;
+import com.flansmod.common.types.elements.ColourDefinition;
 import com.flansmod.common.types.elements.VecWithOverride;
 import com.flansmod.util.Maths;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import net.minecraft.util.GsonHelper;
 import net.minecraft.world.phys.Vec3;
 import org.joml.Vector3f;
 
-import java.lang.annotation.Annotation;
 import java.lang.reflect.*;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
-import java.util.concurrent.atomic.AtomicInteger;
 
 public class DefinitionParser
 {
@@ -55,6 +50,7 @@ public class DefinitionParser
 				jVec.get(2).getAsFloat());
 		});
 		Parsers.put(VecWithOverride.class, VecWithOverride::ParseFunc);
+		Parsers.put(ColourDefinition.class, ColourDefinition::ParseFunc);
 
 	}
 	private static FieldParseMethod GetParserFor(Field field) { return GetParserFor(field.getType()); }
