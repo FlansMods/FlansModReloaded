@@ -8,6 +8,4 @@ public class ItemHoldingSlotDefinition
 	public String name = "";
 	@JsonField
 	public int stackSize = 1;
-	@JsonField
-	public String allow = "";
 }

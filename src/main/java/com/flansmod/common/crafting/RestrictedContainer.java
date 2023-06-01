@@ -4,6 +4,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.Container;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.ContainerData;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntity;
 
@@ -17,6 +18,16 @@ public class RestrictedContainer implements Container, ContainerData
 	private final int MaxStackSize;
 	private final Function<ItemStack, Boolean> AllowFunction;
 	private final ItemStack[] Slots;
+
+	public RestrictedContainer(BlockEntity parent)
+	{
+		OwnedBy = parent;
+		InteractRange = 0.0f;
+		AllowFunction = (stack) -> { return false; };
+		SlotCount = 0;
+		MaxStackSize = 0;
+		Slots = new ItemStack[0];
+	}
 
 	public RestrictedContainer(BlockEntity parent, double interactRange, int slots, int maxStack, Function<ItemStack, Boolean> allowFunc)
 	{

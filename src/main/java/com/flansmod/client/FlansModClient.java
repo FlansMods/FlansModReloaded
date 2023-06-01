@@ -1,34 +1,27 @@
 package com.flansmod.client;
 
-import com.flansmod.client.gui.crafting.GunModificationScreen;
+import com.flansmod.client.gui.crafting.WorkbenchScreen;
 import com.flansmod.client.gui.overlay.ClientOverlayHooks;
 import com.flansmod.client.input.ClientInputHooks;
 import com.flansmod.client.render.FlanModelRegistration;
-import com.flansmod.client.render.FlansModRenderCore;
 import com.flansmod.client.render.animation.AnimationDefinitions;
 import com.flansmod.client.render.debug.DebugModelPoser;
 import com.flansmod.client.render.debug.DebugRenderer;
 import com.flansmod.client.render.decals.DecalRenderer;
 import com.flansmod.client.render.guns.ShotRenderer;
-import com.flansmod.client.render.models.TurboModel;
 import com.flansmod.common.FlansMod;
+import com.flansmod.common.crafting.WorkbenchMenu;
 import com.flansmod.common.gunshots.GunshotManager;
-import com.flansmod.common.item.FlanItem;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraft.client.renderer.ItemModelShaper;
 import net.minecraft.client.resources.model.ModelResourceLocation;
-import net.minecraft.core.registries.Registries;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.ModelEvent;
-import net.minecraftforge.client.model.*;
-import net.minecraftforge.client.model.obj.ObjLoader;
-import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.AddReloadListenerEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 
 
@@ -75,7 +68,7 @@ public class FlansModClient
 		modEventBus.register(ANIMATIONS);
 
 		// Screens
-		MenuScreens.register(FlansMod.GUN_MOD_MENU.get(), GunModificationScreen::new);
+		MenuScreens.register(FlansMod.WORKBENCH_MENU.get(), WorkbenchScreen::new);
 	}
 
 	public static void RegisterClientReloadListeners(AddReloadListenerEvent event)

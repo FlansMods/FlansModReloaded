@@ -1,0 +1,176 @@
+{
+    "paintjobs": [
+        {
+            "forItem": "ak47",
+            "name": "ak47"
+        },
+        {
+            "forItem": "m16a4",
+            "name": "m16a4"
+        },
+        {
+            "forItem": "fnscar",
+            "name": "fnscar"
+        },
+        {
+            "forItem": "m1014",
+            "name": "m1014"
+        },
+        {
+            "forItem": "glock",
+            "name": "glock"
+        },
+        {
+            "forItem": "makarov",
+            "name": "makarov"
+        },
+        {
+            "forItem": "desertEagle",
+            "name": "desertEagle"
+        },
+        {
+            "forItem": "p90",
+            "name": "p90"
+        },
+        {
+            "forItem": "bizon",
+            "name": "bizon"
+        },
+        {
+            "forItem": "barrett",
+            "name": "barrett"
+        },
+        {
+            "forItem": "acr",
+            "name": "acr"
+        },
+        {
+            "forItem": "m1014",
+            "name": "m1014"
+        },
+        {
+            "forItem": "judge",
+            "name": "judge"
+        },
+        {
+            "forItem": "w1200",
+            "name": "w1200"
+        },
+        {
+            "forItem": "executioner",
+            "name": "executioner"
+        },
+        {
+            "forItem": "jury",
+            "name": "jury"
+        },
+        {
+            "forItem": "rpd",
+            "name": "rpd"
+        },
+        {
+            "forItem": "minigun",
+            "name": "minigun"
+        },
+        {
+            "forItem": "gl1",
+            "name": "gl1"
+        },
+        {
+            "forItem": "m40a3",
+            "name": "m40a3"
+        },
+        {
+            "forItem": "dragunov",
+            "name": "dragunov"
+        },
+        {
+            "forItem": "m249",
+            "name": "m249"
+        },
+        {
+            "forItem": "acr",
+            "name": "acr"
+        },
+        {
+            "forItem": "fnscar",
+            "name": "fnscar"
+        },
+        {
+            "forItem": "m14",
+            "name": "m14"
+        },
+        {
+            "forItem": "r870",
+            "name": "r870"
+        },
+        {
+            "forItem": "judge",
+            "name": "judge"
+        },
+        {
+            "forItem": "executioner",
+            "name": "executioner"
+        },
+        {
+            "forItem": "m9",
+            "name": "m9"
+        },
+        {
+            "forItem": "jury",
+            "name": "jury"
+        },
+        {
+            "forItem": "glock",
+            "name": "glock"
+        },
+        {
+            "forItem": "desertEagle",
+            "name": "desertEagle"
+        },
+        {
+            "forItem": "m21",
+            "name": "m21"
+        },
+        {
+            "forItem": "w1200",
+            "name": "w1200"
+        },
+        {
+            "forItem": "acr",
+            "name": "acr"
+        },
+        {
+            "forItem": "minigun",
+            "name": "minigun"
+        },
+        {
+            "forItem": "m14",
+            "name": "m14"
+        },
+        {
+            "forItem": "dragunov",
+            "name": "dragunov"
+        },
+        {
+            "forItem": "desertEagle",
+            "name": "desertEagle"
+        },
+        {
+            "forItem": "desertEagle",
+            "name": "desertEagle"
+        },
+        {
+            "forItem": "minigun",
+            "name": "minigun"
+        },
+        {
+            "forItem": "barrett",
+            "name": "barrett"
+        }
+    ],
+    "legendaryChance": 1.0,
+    "rareChance": 1.0,
+    "uncommonChance": 0.0,
+    "commonChance": 1.0
+}

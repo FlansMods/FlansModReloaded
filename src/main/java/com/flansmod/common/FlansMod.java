@@ -2,14 +2,12 @@ package com.flansmod.common;
 
 import com.flansmod.client.FlansModClient;
 import com.flansmod.common.crafting.*;
-import com.flansmod.common.energy.GeneratorBlock;
-import com.flansmod.common.energy.GeneratorBlockEntity;
-import com.flansmod.common.energy.GeneratorMenu;
 import com.flansmod.common.gunshots.GunshotManager;
 import com.flansmod.common.gunshots.Raytracer;
 import com.flansmod.common.item.GunItem;
 import com.flansmod.common.item.PartItem;
 import com.flansmod.common.types.attachments.AttachmentDefinitions;
+import com.flansmod.common.types.crafting.WorkbenchDefinitions;
 import com.flansmod.common.types.guns.GunDefinitions;
 import com.flansmod.common.types.bullets.BulletDefinitions;
 import com.flansmod.common.types.parts.PartDefinitions;
@@ -22,6 +20,7 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.material.Material;
@@ -53,9 +52,16 @@ public class FlansMod
     // Core mod blocks & items
     public static final DeferredRegister<Block> BLOCKS = DeferredRegister.create(ForgeRegistries.BLOCKS, MODID);
     public static final DeferredRegister<Item> ITEMS = DeferredRegister.create(ForgeRegistries.ITEMS, MODID);
-    public static final RegistryObject<Block> GUN_MACHINING_TABLE_BLOCK = BLOCKS.register("gun_machining_table", () -> new GunCraftingBlock(BlockBehaviour.Properties.of(Material.STONE)));
-    public static final RegistryObject<Block> GUN_MOD_TABLE_BLOCK = BLOCKS.register("gun_modification_table", () -> new GunModTableBlock(BlockBehaviour.Properties.of(Material.STONE)));
-    public static final RegistryObject<Block> DIESEL_GENERATOR_BLOCK = BLOCKS.register("diesel_generator", () -> new GeneratorBlock(BlockBehaviour.Properties.of(Material.STONE)));
+
+
+    public static final RegistryObject<Block> GUN_MACHINING_TABLE_BLOCK = FlansMod.Workbench_Block(BLOCKS, MODID, "gun_machining_table");
+    public static final RegistryObject<Block> GUN_MOD_TABLE_BLOCK = FlansMod.Workbench_Block(BLOCKS, MODID, "gun_modification_table");
+    public static final RegistryObject<Block> DIESEL_GENERATOR_BLOCK = FlansMod.Workbench_Block(BLOCKS, MODID, "diesel_generator");
+
+
+    //public static final RegistryObject<Block> GUN_MACHINING_TABLE_BLOCK = BLOCKS.register("gun_machining_table", () -> new WorkbenchBlock(new ResourceLocation(MODID, "workbenches/gun_machining_table"), BlockBehaviour.Properties.of(Material.STONE)));
+    //public static final RegistryObject<Block> GUN_MOD_TABLE_BLOCK = BLOCKS.register("gun_modification_table", () -> new GunModTableBlock(BlockBehaviour.Properties.of(Material.STONE)));
+    //public static final RegistryObject<Block> DIESEL_GENERATOR_BLOCK = BLOCKS.register("diesel_generator", () -> new GeneratorBlock(BlockBehaviour.Properties.of(Material.STONE)));
 
     public static final RegistryObject<Item> GUN_MACHINING_TABLE_ITEM = ITEMS.register("gun_machining_table", () -> new BlockItem(GUN_MACHINING_TABLE_BLOCK.get(), new Item.Properties()));
     public static final RegistryObject<Item> GUN_MOD_TABLE_ITEM = ITEMS.register("gun_modification_table", () -> new BlockItem(GUN_MOD_TABLE_BLOCK.get(), new Item.Properties()));
@@ -63,22 +69,25 @@ public class FlansMod
 
     // Tile entities
     public static final DeferredRegister<BlockEntityType<?>> TILE_ENTITIES = DeferredRegister.create(ForgeRegistries.BLOCK_ENTITY_TYPES, MODID);
-    public static final RegistryObject<BlockEntityType<GunModBlockEntity>> GUN_MOD_TILE_ENTITY = TILE_ENTITIES.register("gun_modification_table", () -> BlockEntityType.Builder.of(GunModBlockEntity::new, GUN_MOD_TABLE_BLOCK.get()).build(null));
-    public static final RegistryObject<BlockEntityType<GeneratorBlockEntity>> DIESEL_GENERATOR_TILE_ENTITY = TILE_ENTITIES.register("diesel_generator", () -> BlockEntityType.Builder.of(GeneratorBlockEntity::new, DIESEL_GENERATOR_BLOCK.get()).build(null));
+    //public static final RegistryObject<BlockEntityType<GunModBlockEntity>> GUN_MOD_TILE_ENTITY = TILE_ENTITIES.register("gun_modification_table", () -> BlockEntityType.Builder.of(GunModBlockEntity::new, GUN_MOD_TABLE_BLOCK.get()).build(null));
+    //public static final RegistryObject<BlockEntityType<GeneratorBlockEntity>> DIESEL_GENERATOR_TILE_ENTITY = TILE_ENTITIES.register("diesel_generator", () -> BlockEntityType.Builder.of(GeneratorBlockEntity::new, DIESEL_GENERATOR_BLOCK.get()).build(null));
+    public static final RegistryObject<BlockEntityType<WorkbenchBlockEntity>> GUN_CRAFTING_TILE_ENTITY = Workbench_TileEntityType(TILE_ENTITIES, MODID, "gun_machining_table");
+    public static final RegistryObject<BlockEntityType<WorkbenchBlockEntity>> DIESEL_GENERATOR_TILE_ENTITY = Workbench_TileEntityType(TILE_ENTITIES, MODID, "diesel_generator");
+    public static final RegistryObject<BlockEntityType<WorkbenchBlockEntity>> GUN_MODIFICATION_TILE_ENTITY = Workbench_TileEntityType(TILE_ENTITIES, MODID, "gun_modification_table");
 
 
     // Creative Mode Tabs
     //public static final RegistryObject<CreativeModeTabs> GUNS_TAB = new CreativeModeTabFlansMod("");
     // Menus
     public static final DeferredRegister<MenuType<?>> MENUS = DeferredRegister.create(ForgeRegistries.MENU_TYPES, MODID);
-    public static final RegistryObject<MenuType<GunModificationMenu>> GUN_MOD_MENU = MENUS.register("gun_modification_table", () -> IForgeMenuType.create(GunModificationMenu::new));
-    public static final RegistryObject<MenuType<GeneratorMenu>> GENERATOR_MENU = MENUS.register("generator", () -> IForgeMenuType.create(GeneratorMenu::new));
+    public static final RegistryObject<MenuType<WorkbenchMenu>> WORKBENCH_MENU = MENUS.register("workbench", () -> IForgeMenuType.create(WorkbenchMenu::new));
 
     // Definition Repositories
     public static final GunDefinitions GUNS = new GunDefinitions();
     public static final BulletDefinitions BULLETS = new BulletDefinitions();
     public static final AttachmentDefinitions ATTACHMENTS = new AttachmentDefinitions();
     public static final PartDefinitions PARTS = new PartDefinitions();
+    public static final WorkbenchDefinitions WORKBENCHES = new WorkbenchDefinitions();
 
     // Server handlers
     public static final GunshotManager GUNSHOTS_SERVER = new GunshotManager();
@@ -86,16 +95,27 @@ public class FlansMod
     public static RegistryObject<Item> Gun(DeferredRegister<Item> itemRegister, String modID, String name)
     {
         ResourceLocation loc = new ResourceLocation(modID, name);
-        RegistryObject<Item> item = itemRegister.register(name, () -> new GunItem(loc, new Item.Properties()));
-        return item;
+        return itemRegister.register(name, () -> new GunItem(loc, new Item.Properties()));
     }
 
     public static RegistryObject<Item> Part(DeferredRegister<Item> itemRegister, String modID, String name)
     {
         ResourceLocation loc = new ResourceLocation(modID, name);
-        RegistryObject<Item> item = itemRegister.register(name, () -> new PartItem(loc, new Item.Properties()));
-        return item;
+        return itemRegister.register(name, () -> new PartItem(loc, new Item.Properties()));
     }
+
+    public static RegistryObject<Block> Workbench_Block(DeferredRegister<Block> blockRegister, String modID, String name)
+    {
+        ResourceLocation loc = new ResourceLocation(modID, name);
+        return blockRegister.register(name, () -> new WorkbenchBlock(loc, BlockBehaviour.Properties.of(Material.STONE)));
+    }
+
+    public static RegistryObject<BlockEntityType<WorkbenchBlockEntity>> Workbench_TileEntityType(DeferredRegister<BlockEntityType<?>> tileEntityTypeRegister, String modID, String name)
+    {
+        ResourceLocation loc = new ResourceLocation(modID, name);
+        return tileEntityTypeRegister.register(name, () -> { return new WorkbenchBlockEntity.WorkbenchBlockEntityTypeHolder(loc).CreateType(); });
+    }
+
 
     public FlansMod()
     {
@@ -156,6 +176,7 @@ public class FlansMod
         event.addListener(BULLETS);
         event.addListener(ATTACHMENTS);
         event.addListener(PARTS);
+        event.addListener(WORKBENCHES);
 
         if(FMLEnvironment.dist == Dist.CLIENT)
             RegisterClientReloadListeners(event);

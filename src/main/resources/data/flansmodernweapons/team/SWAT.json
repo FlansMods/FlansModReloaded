@@ -1,0 +1,38 @@
+{
+    "classes": [
+        "SWATSniper",
+        "SWATCloaker",
+        "SWATShield",
+        "SWATFumigator",
+        "SWATCombatMedic",
+        "SWATBulldozer"
+    ],
+    "flagColour": {
+        "value": 0
+    },
+    "textColour": {},
+    "hat": {
+        "item": "SWATHelmet",
+        "count": 1,
+        "damage": -1,
+        "tags": "{}"
+    },
+    "chest": {
+        "item": "SWATBody",
+        "count": 1,
+        "damage": -1,
+        "tags": "{}"
+    },
+    "legs": {
+        "item": "blackTrousers",
+        "count": 1,
+        "damage": -1,
+        "tags": "{}"
+    },
+    "shoes": {
+        "item": "sasBoots",
+        "count": 1,
+        "damage": -1,
+        "tags": "{}"
+    }
+}

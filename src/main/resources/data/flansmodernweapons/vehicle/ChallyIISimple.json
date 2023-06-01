@@ -1,0 +1,8 @@
+{
+    "movementModes": [
+        {
+            "name": "car",
+            "type": {}
+        }
+    ]
+}

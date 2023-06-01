@@ -14,5 +14,7 @@ public class InputDefinition
 	public MountedGunInputDefinition[] guns = new MountedGunInputDefinition[0];
 	@JsonField
 	public DrivingInputDefinition[] driving = new DrivingInputDefinition[0];
+	@JsonField
+	public String switchVehicleMode = "";
 }
 

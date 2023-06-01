@@ -19,6 +19,11 @@ public class ColourDefinition
 	@JsonField
 	public int value;
 
+	public ColourDefinition()
+	{
+		value = 0xffffff;
+	}
+
 	public ColourDefinition(int i)
 	{
 		value = i;

@@ -1,0 +1,11 @@
+{
+    "hasDurability": true,
+    "maxDurability": 3,
+    "destroyWhenBroken": true,
+    "usesPower": false,
+    "internalFEStorage": 0,
+    "primaryFEUsage": 0,
+    "secondaryFEUsage": 0,
+    "spendFEOnFailRatio": 0.0,
+    "foodValue": 0
+}

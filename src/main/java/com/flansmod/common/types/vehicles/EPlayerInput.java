@@ -9,6 +9,8 @@ public enum EPlayerInput
 
 	RollLeft,
 	RollRight,
+	PitchUp,
+	PitchDown,
 
 	Fire1,
 	Fire2,

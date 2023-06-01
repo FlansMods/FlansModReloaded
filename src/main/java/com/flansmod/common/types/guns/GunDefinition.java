@@ -4,6 +4,7 @@ import com.flansmod.common.FlansMod;
 import com.flansmod.common.actions.EActionSet;
 import com.flansmod.common.types.JsonDefinition;
 import com.flansmod.common.types.JsonField;
+import com.flansmod.common.types.attachments.EAttachmentType;
 import com.flansmod.common.types.elements.ActionDefinition;
 import com.flansmod.common.types.elements.AttachmentSettingsDefinition;
 import com.flansmod.common.types.elements.PaintableDefinition;
@@ -49,7 +50,8 @@ public class GunDefinition extends JsonDefinition
 	public AttachmentSettingsDefinition stockAttachments = new AttachmentSettingsDefinition();
 	@JsonField
 	public AttachmentSettingsDefinition scopeAttachments = new AttachmentSettingsDefinition();
-
+	@JsonField
+	public AttachmentSettingsDefinition genericAttachments = new AttachmentSettingsDefinition();
 	@JsonField
 	public String[] modelParts = new String[0];
 
@@ -66,6 +68,19 @@ public class GunDefinition extends JsonDefinition
 	{
 		ActionDefinition[] ret = set == EActionSet.PRIMARY ? primaryActions : secondaryActions;
 		return ret != null ? ret : new ActionDefinition[0];
+	}
+
+	public AttachmentSettingsDefinition GetAttachmentSettings(EAttachmentType type)
+	{
+		switch(type)
+		{
+			case Grip -> { return gripAttachments; }
+			case Sights -> { return scopeAttachments; }
+			case Stock -> { return stockAttachments; }
+			case Barrel -> { return barrelAttachments; }
+			case Generic -> { return genericAttachments; }
+			default -> { return null; }
+		}
 	}
 
 }

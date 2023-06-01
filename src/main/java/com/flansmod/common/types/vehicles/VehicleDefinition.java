@@ -6,7 +6,9 @@ import com.flansmod.common.types.JsonField;
 import com.flansmod.common.types.vehicles.elements.ArticulatedPartDefinition;
 import com.flansmod.common.types.vehicles.elements.MountedGunDefinition;
 import com.flansmod.common.types.vehicles.elements.SeatDefinition;
+import com.flansmod.common.types.vehicles.elements.VehicleMovementDefinition;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.phys.Vec3;
 
 public class VehicleDefinition extends JsonDefinition
 {
@@ -26,4 +28,26 @@ public class VehicleDefinition extends JsonDefinition
 	public ArticulatedPartDefinition[] articulatedParts = new ArticulatedPartDefinition[0];
 	@JsonField
 	public MountedGunDefinition[] guns = new MountedGunDefinition[0];
+	@JsonField
+	public VehicleMovementDefinition[] movementModes = new VehicleMovementDefinition[0];
+
+	// Rest Pose
+	@JsonField
+	public Vec3 restingEulerAngles = Vec3.ZERO;
+
+	// Power / Fuel
+	@JsonField
+	public int fuelSlots = 0;
+	@JsonField(Docs = "In millibuckets")
+	public int fuelStorageSize = 1000;
+	@JsonField
+	public int batterySlots = 0;
+	@JsonField
+	public int FECapacity = 0;
+
+	// Storage
+	@JsonField
+	public int CargoSlots = 0;
+	@JsonField
+	public boolean CanAccessMenusWhileMoving = true;
 }

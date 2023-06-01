@@ -1,0 +1,2399 @@
+{
+    "gunCrafting": {
+        "isActive": true,
+        "pages": [
+            {
+                "entries": [
+                    {
+                        "outputs": [
+                            {
+                                "item": "m21",
+                                "count": 0,
+                                "damage": 0,
+                                "tags": "{}"
+                            }
+                        ],
+                        "ingredients": [
+                            {
+                                "itemName": "10xingotIron.0",
+                                "count": 1,
+                                "compareDamage": false,
+                                "damage": 0,
+                                "compareNBT": false,
+                                "checkCapabilities": false
+                            },
+                            {
+                                "itemName": "10xfiberglass.0",
+                                "count": 1,
+                                "compareDamage": false,
+                                "damage": 0,
+                                "compareNBT": false,
+                                "checkCapabilities": false
+                            },
+                            {
+                                "itemName": "5xglass.0",
+                                "count": 1,
+                                "compareDamage": false,
+                                "damage": 0,
+                                "compareNBT": false,
+                                "checkCapabilities": false
+                            }
+                        ],
+                        "children": [
+                            {
+                                "outputs": [
+                                    {
+                                        "item": "m21Ammo",
+                                        "count": 0,
+                                        "damage": 0,
+                                        "tags": "{}"
+                                    }
+                                ],
+                                "ingredients": [
+                                    {
+                                        "itemName": "2xingotIron.0",
+                                        "count": 1,
+                                        "compareDamage": false,
+                                        "damage": 0,
+                                        "compareNBT": false,
+                                        "checkCapabilities": false
+                                    },
+                                    {
+                                        "itemName": "3xfiberglass.0",
+                                        "count": 1,
+                                        "compareDamage": false,
+                                        "damage": 0,
+                                        "compareNBT": false,
+                                        "checkCapabilities": false
+                                    },
+                                    {
+                                        "itemName": "3xgunpowder.0",
+                                        "count": 1,
+                                        "compareDamage": false,
+                                        "damage": 0,
+                                        "compareNBT": false,
+                                        "checkCapabilities": false
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "outputs": [
+                            {
+                                "item": "barrett",
+                                "count": 0,
+                                "damage": 0,
+                                "tags": "{}"
+                            }
+                        ],
+                        "ingredients": [
+                            {
+                                "itemName": "20xingotIron.0",
+                                "count": 1,
+                                "compareDamage": false,
+                                "damage": 0,
+                                "compareNBT": false,
+                                "checkCapabilities": false
+                            },
+                            {
+                                "itemName": "5xglass.0",
+                                "count": 1,
+                                "compareDamage": false,
+                                "damage": 0,
+                                "compareNBT": false,
+                                "checkCapabilities": false
+                            }
+                        ],
+                        "children": [
+                            {
+                                "outputs": [
+                                    {
+                                        "item": "barrettAmmo",
+                                        "count": 0,
+                                        "damage": 0,
+                                        "tags": "{}"
+                                    }
+                                ],
+                                "ingredients": [
+                                    {
+                                        "itemName": "4xingotIron.0",
+                                        "count": 1,
+                                        "compareDamage": false,
+                                        "damage": 0,
+                                        "compareNBT": false,
+                                        "checkCapabilities": false
+                                    },
+                                    {
+                                        "itemName": "3xgunpowder.0",
+                                        "count": 1,
+                                        "compareDamage": false,
+                                        "damage": 0,
+                                        "compareNBT": false,
+                                        "checkCapabilities": false
+                                    }
+                                ]
+                            },
+                            {
+                                "outputs": [
+                                    {
+                                        "item": "barrettExplosiveAmmo",
+                                        "count": 0,
+                                        "damage": 0,
+                                        "tags": "{}"
+                                    }
+                                ],
+                                "ingredients": [
+                                    {
+                                        "itemName": "4xingotIron.0",
+                                        "count": 1,
+                                        "compareDamage": false,
+                                        "damage": 0,
+                                        "compareNBT": false,
+                                        "checkCapabilities": false
+                                    },
+                                    {
+                                        "itemName": "5xhighexgunpowder.0",
+                                        "count": 1,
+                                        "compareDamage": false,
+                                        "damage": 0,
+                                        "compareNBT": false,
+                                        "checkCapabilities": false
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "outputs": [
+                            {
+                                "item": "l96",
+                                "count": 0,
+                                "damage": 0,
+                                "tags": "{}"
+                            }
+                        ],
+                        "ingredients": [
+                            {
+                                "itemName": "6xingotIron.0",
+                                "count": 1,
+                                "compareDamage": false,
+                                "damage": 0,
+                                "compareNBT": false,
+                                "checkCapabilities": false
+                            },
+                            {
+                                "itemName": "12xfiberglass.0",
+                                "count": 1,
+                                "compareDamage": false,
+                                "damage": 0,
+                                "compareNBT": false,
+                                "checkCapabilities": false
+                            },
+                            {
+                                "itemName": "5xglass.0",
+                                "count": 1,
+                                "compareDamage": false,
+                                "damage": 0,
+                                "compareNBT": false,
+                                "checkCapabilities": false
+                            }
+                        ],
+                        "children": [
+                            {
+                                "outputs": [
+                                    {
+                                        "item": "l96Ammo",
+                                        "count": 0,
+                                        "damage": 0,
+                                        "tags": "{}"
+                                    }
+                                ],
+                                "ingredients": [
+                                    {
+                                        "itemName": "3xfiberglass.0",
+                                        "count": 1,
+                                        "compareDamage": false,
+                                        "damage": 0,
+                                        "compareNBT": false,
+                                        "checkCapabilities": false
+                                    },
+                                    {
+                                        "itemName": "3xgunpowder.0",
+                                        "count": 1,
+                                        "compareDamage": false,
+                                        "damage": 0,
+                                        "compareNBT": false,
+                                        "checkCapabilities": false
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "outputs": [
+                            {
+                                "item": "sg550",
+                                "count": 0,
+                                "damage": 0,
+                                "tags": "{}"
+                            }
+                        ],
+                        "ingredients": [
+                            {
+                                "itemName": "16xingotIron.0",
+                                "count": 1,
+                                "compareDamage": false,
+                                "damage": 0,
+                                "compareNBT": false,
+                                "checkCapabilities": false
+                            },
+                            {
+                                "itemName": "2xfiberglass.0",
+                                "count": 1,
+                                "compareDamage": false,
+                                "damage": 0,
+                                "compareNBT": false,
+                                "checkCapabilities": false
+                            }
+                        ],
+                        "children": [
+                            {
+                                "outputs": [
+                                    {
+                                        "item": "sg550Ammo",
+                                        "count": 0,
+                                        "damage": 0,
+                                        "tags": "{}"
+                                    }
+                                ],
+                                "ingredients": [
+                                    {
+                                        "itemName": "5xingotIron.0",
+                                        "count": 1,
+                                        "compareDamage": false,
+                                        "damage": 0,
+                                        "compareNBT": false,
+                                        "checkCapabilities": false
+                                    },
+                                    {
+                                        "itemName": "4xgunpowder.0",
+                                        "count": 1,
+                                        "compareDamage": false,
+                                        "damage": 0,
+                                        "compareNBT": false,
+                                        "checkCapabilities": false
+                                    }
+                                ]
+                            },
+                            {
+                                "outputs": [
+                                    {
+                                        "item": "seekerrifleammo",
+                                        "count": 0,
+                                        "damage": 0,
+                                        "tags": "{}"
+                                    }
+                                ],
+                                "ingredients": [
+                                    {
+                                        "itemName": "2xingotIron.0",
+                                        "count": 1,
+                                        "compareDamage": false,
+                                        "damage": 0,
+                                        "compareNBT": false,
+                                        "checkCapabilities": false
+                                    },
+                                    {
+                                        "itemName": "2xhighexgunpowder.0",
+                                        "count": 1,
+                                        "compareDamage": false,
+                                        "damage": 0,
+                                        "compareNBT": false,
+                                        "checkCapabilities": false
+                                    },
+                                    {
+                                        "itemName": "1xender_eye.0",
+                                        "count": 1,
+                                        "compareDamage": false,
+                                        "damage": 0,
+                                        "compareNBT": false,
+                                        "checkCapabilities": false
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "entries": [
+                    {
+                        "outputs": [
+                            {
+                                "item": "m249",
+                                "count": 0,
+                                "damage": 0,
+                                "tags": "{}"
+                            }
+                        ],
+                        "ingredients": [
+                            {
+                                "itemName": "24xingotIron.0",
+                                "count": 1,
+                                "compareDamage": false,
+                                "damage": 0,
+                                "compareNBT": false,
+                                "checkCapabilities": false
+                            },
+                            {
+                                "itemName": "5xfiberglass.0",
+                                "count": 1,
+                                "compareDamage": false,
+                                "damage": 0,
+                                "compareNBT": false,
+                                "checkCapabilities": false
+                            }
+                        ],
+                        "children": [
+                            {
+                                "outputs": [
+                                    {
+                                        "item": "m249Ammo",
+                                        "count": 0,
+                                        "damage": 0,
+                                        "tags": "{}"
+                                    }
+                                ],
+                                "ingredients": [
+                                    {
+                                        "itemName": "10xingotIron.0",
+                                        "count": 1,
+                                        "compareDamage": false,
+                                        "damage": 0,
+                                        "compareNBT": false,
+                                        "checkCapabilities": false
+                                    },
+                                    {
+                                        "itemName": "10xfiberglass.0",
+                                        "count": 1,
+                                        "compareDamage": false,
+                                        "damage": 0,
+                                        "compareNBT": false,
+                                        "checkCapabilities": false
+                                    },
+                                    {
+                                        "itemName": "10xgunpowder.0",
+                                        "count": 1,
+                                        "compareDamage": false,
+                                        "damage": 0,
+                                        "compareNBT": false,
+                                        "checkCapabilities": false
+                                    },
+                                    {
+                                        "itemName": "1xdyePowder.6",
+                                        "count": 1,
+                                        "compareDamage": false,
+                                        "damage": 0,
+                                        "compareNBT": false,
+                                        "checkCapabilities": false
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "outputs": [
+                            {
+                                "item": "rpd",
+                                "count": 0,
+                                "damage": 0,
+                                "tags": "{}"
+                            }
+                        ],
+                        "ingredients": [
+                            {
+                                "itemName": "20xingotIron.0",
+                                "count": 1,
+                                "compareDamage": false,
+                                "damage": 0,
+                                "compareNBT": false,
+                                "checkCapabilities": false
+                            },
+                            {
+                                "itemName": "5xlog.0",
+                                "count": 1,
+                                "compareDamage": false,
+                                "damage": 0,
+                                "compareNBT": false,
+                                "checkCapabilities": false
+                            }
+                        ],
+                        "children": [
+                            {
+                                "outputs": [
+                                    {
+                                        "item": "rpdAmmo",
+                                        "count": 0,
+                                        "damage": 0,
+                                        "tags": "{}"
+                                    }
+                                ],
+                                "ingredients": [
+                                    {
+                                        "itemName": "12xingotIron.0",
+                                        "count": 1,
+                                        "compareDamage": false,
+                                        "damage": 0,
+                                        "compareNBT": false,
+                                        "checkCapabilities": false
+                                    },
+                                    {
+                                        "itemName": "11xgunpowder.0",
+                                        "count": 1,
+                                        "compareDamage": false,
+                                        "damage": 0,
+                                        "compareNBT": false,
+                                        "checkCapabilities": false
+                                    }
+                                ]
+                            },
+                            {
+                                "outputs": [
+                                    {
+                                        "item": "witheringakammo",
+                                        "count": 0,
+                                        "damage": 0,
+                                        "tags": "{}"
+                                    }
+                                ],
+                                "ingredients": [
+                                    {
+                                        "itemName": "4xingotIron.0",
+                                        "count": 1,
+                                        "compareDamage": false,
+                                        "damage": 0,
+                                        "compareNBT": false,
+                                        "checkCapabilities": false
+                                    },
+                                    {
+                                        "itemName": "1xskull.1",
+                                        "count": 1,
+                                        "compareDamage": false,
+                                        "damage": 0,
+                                        "compareNBT": false,
+                                        "checkCapabilities": false
+                                    },
+                                    {
+                                        "itemName": "3xgunpowder.0",
+                                        "count": 1,
+                                        "compareDamage": false,
+                                        "damage": 0,
+                                        "compareNBT": false,
+                                        "checkCapabilities": false
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "outputs": [
+                            {
+                                "item": "rpk",
+                                "count": 0,
+                                "damage": 0,
+                                "tags": "{}"
+                            }
+                        ],
+                        "ingredients": [
+                            {
+                                "itemName": "12xingotIron.0",
+                                "count": 1,
+                                "compareDamage": false,
+                                "damage": 0,
+                                "compareNBT": false,
+                                "checkCapabilities": false
+                            },
+                            {
+                                "itemName": "8xlog.0",
+                                "count": 1,
+                                "compareDamage": false,
+                                "damage": 0,
+                                "compareNBT": false,
+                                "checkCapabilities": false
+                            }
+                        ],
+                        "children": [
+                            {
+                                "outputs": [
+                                    {
+                                        "item": "rpkAmmo",
+                                        "count": 0,
+                                        "damage": 0,
+                                        "tags": "{}"
+                                    }
+                                ],
+                                "ingredients": [
+                                    {
+                                        "itemName": "6xingotIron.0",
+                                        "count": 1,
+                                        "compareDamage": false,
+                                        "damage": 0,
+                                        "compareNBT": false,
+                                        "checkCapabilities": false
+                                    },
+                                    {
+                                        "itemName": "4xgunpowder.0",
+                                        "count": 1,
+                                        "compareDamage": false,
+                                        "damage": 0,
+                                        "compareNBT": false,
+                                        "checkCapabilities": false
+                                    }
+                                ]
+                            },
+                            {
+                                "outputs": [
+                                    {
+                                        "item": "witheringakammo",
+                                        "count": 0,
+                                        "damage": 0,
+                                        "tags": "{}"
+                                    }
+                                ],
+                                "ingredients": [
+                                    {
+                                        "itemName": "4xingotIron.0",
+                                        "count": 1,
+                                        "compareDamage": false,
+                                        "damage": 0,
+                                        "compareNBT": false,
+                                        "checkCapabilities": false
+                                    },
+                                    {
+                                        "itemName": "1xskull.1",
+                                        "count": 1,
+                                        "compareDamage": false,
+                                        "damage": 0,
+                                        "compareNBT": false,
+                                        "checkCapabilities": false
+                                    },
+                                    {
+                                        "itemName": "3xgunpowder.0",
+                                        "count": 1,
+                                        "compareDamage": false,
+                                        "damage": 0,
+                                        "compareNBT": false,
+                                        "checkCapabilities": false
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "outputs": [
+                            {
+                                "item": "m60",
+                                "count": 0,
+                                "damage": 0,
+                                "tags": "{}"
+                            }
+                        ],
+                        "ingredients": [
+                            {
+                                "itemName": "24xingotIron.0",
+                                "count": 1,
+                                "compareDamage": false,
+                                "damage": 0,
+                                "compareNBT": false,
+                                "checkCapabilities": false
+                            }
+                        ],
+                        "children": [
+                            {
+                                "outputs": [
+                                    {
+                                        "item": "m60Ammo",
+                                        "count": 0,
+                                        "damage": 0,
+                                        "tags": "{}"
+                                    }
+                                ],
+                                "ingredients": [
+                                    {
+                                        "itemName": "9xingotIron.0",
+                                        "count": 1,
+                                        "compareDamage": false,
+                                        "damage": 0,
+                                        "compareNBT": false,
+                                        "checkCapabilities": false
+                                    },
+                                    {
+                                        "itemName": "3xfiberglass.0",
+                                        "count": 1,
+                                        "compareDamage": false,
+                                        "damage": 0,
+                                        "compareNBT": false,
+                                        "checkCapabilities": false
+                                    },
+                                    {
+                                        "itemName": "10xgunpowder.0",
+                                        "count": 1,
+                                        "compareDamage": false,
+                                        "damage": 0,
+                                        "compareNBT": false,
+                                        "checkCapabilities": false
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "outputs": [
+                            {
+                                "item": "l86",
+                                "count": 0,
+                                "damage": 0,
+                                "tags": "{}"
+                            }
+                        ],
+                        "ingredients": [
+                            {
+                                "itemName": "20xingotIron.0",
+                                "count": 1,
+                                "compareDamage": false,
+                                "damage": 0,
+                                "compareNBT": false,
+                                "checkCapabilities": false
+                            },
+                            {
+                                "itemName": "5xfiberglass.0",
+                                "count": 1,
+                                "compareDamage": false,
+                                "damage": 0,
+                                "compareNBT": false,
+                                "checkCapabilities": false
+                            }
+                        ],
+                        "children": [
+                            {
+                                "outputs": [
+                                    {
+                                        "item": "l86Ammo",
+                                        "count": 0,
+                                        "damage": 0,
+                                        "tags": "{}"
+                                    }
+                                ],
+                                "ingredients": [
+                                    {
+                                        "itemName": "10xingotIron.0",
+                                        "count": 1,
+                                        "compareDamage": false,
+                                        "damage": 0,
+                                        "compareNBT": false,
+                                        "checkCapabilities": false
+                                    },
+                                    {
+                                        "itemName": "9xgunpowder.0",
+                                        "count": 1,
+                                        "compareDamage": false,
+                                        "damage": 0,
+                                        "compareNBT": false,
+                                        "checkCapabilities": false
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "entries": [
+                    {
+                        "outputs": [
+                            {
+                                "item": "MP7",
+                                "count": 0,
+                                "damage": 0,
+                                "tags": "{}"
+                            }
+                        ],
+                        "ingredients": [
+                            {
+                                "itemName": "14xingotIron.0",
+                                "count": 1,
+                                "compareDamage": false,
+                                "damage": 0,
+                                "compareNBT": false,
+                                "checkCapabilities": false
+                            }
+                        ],
+                        "children": [
+                            {
+                                "outputs": [
+                                    {
+                                        "item": "MP7Ammo",
+                                        "count": 0,
+                                        "damage": 0,
+                                        "tags": "{}"
+                                    }
+                                ],
+                                "ingredients": [
+                                    {
+                                        "itemName": "4xingotIron.0",
+                                        "count": 1,
+                                        "compareDamage": false,
+                                        "damage": 0,
+                                        "compareNBT": false,
+                                        "checkCapabilities": false
+                                    },
+                                    {
+                                        "itemName": "4xgunpowder.0",
+                                        "count": 1,
+                                        "compareDamage": false,
+                                        "damage": 0,
+                                        "compareNBT": false,
+                                        "checkCapabilities": false
+                                    }
+                                ]
+                            },
+                            {
+                                "outputs": [
+                                    {
+                                        "item": "smg100ammo",
+                                        "count": 0,
+                                        "damage": 0,
+                                        "tags": "{}"
+                                    }
+                                ],
+                                "ingredients": [
+                                    {
+                                        "itemName": "6xfiberglass.0",
+                                        "count": 1,
+                                        "compareDamage": false,
+                                        "damage": 0,
+                                        "compareNBT": false,
+                                        "checkCapabilities": false
+                                    },
+                                    {
+                                        "itemName": "9xgunpowder.0",
+                                        "count": 1,
+                                        "compareDamage": false,
+                                        "damage": 0,
+                                        "compareNBT": false,
+                                        "checkCapabilities": false
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "outputs": [
+                            {
+                                "item": "FMG",
+                                "count": 0,
+                                "damage": 0,
+                                "tags": "{}"
+                            }
+                        ],
+                        "ingredients": [
+                            {
+                                "itemName": "5xingotIron.0",
+                                "count": 1,
+                                "compareDamage": false,
+                                "damage": 0,
+                                "compareNBT": false,
+                                "checkCapabilities": false
+                            },
+                            {
+                                "itemName": "8xfiberglass.0",
+                                "count": 1,
+                                "compareDamage": false,
+                                "damage": 0,
+                                "compareNBT": false,
+                                "checkCapabilities": false
+                            }
+                        ],
+                        "children": [
+                            {
+                                "outputs": [
+                                    {
+                                        "item": "MP7Ammo",
+                                        "count": 0,
+                                        "damage": 0,
+                                        "tags": "{}"
+                                    }
+                                ],
+                                "ingredients": [
+                                    {
+                                        "itemName": "4xingotIron.0",
+                                        "count": 1,
+                                        "compareDamage": false,
+                                        "damage": 0,
+                                        "compareNBT": false,
+                                        "checkCapabilities": false
+                                    },
+                                    {
+                                        "itemName": "4xgunpowder.0",
+                                        "count": 1,
+                                        "compareDamage": false,
+                                        "damage": 0,
+                                        "compareNBT": false,
+                                        "checkCapabilities": false
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "outputs": [
+                            {
+                                "item": "HK416",
+                                "count": 0,
+                                "damage": 0,
+                                "tags": "{}"
+                            }
+                        ],
+                        "ingredients": [
+                            {
+                                "itemName": "12xingotIron.0",
+                                "count": 1,
+                                "compareDamage": false,
+                                "damage": 0,
+                                "compareNBT": false,
+                                "checkCapabilities": false
+                            },
+                            {
+                                "itemName": "8xfiberglass.0",
+                                "count": 1,
+                                "compareDamage": false,
+                                "damage": 0,
+                                "compareNBT": false,
+                                "checkCapabilities": false
+                            }
+                        ],
+                        "children": [
+                            {
+                                "outputs": [
+                                    {
+                                        "item": "m16a4Ammo",
+                                        "count": 0,
+                                        "damage": 0,
+                                        "tags": "{}"
+                                    }
+                                ],
+                                "ingredients": [
+                                    {
+                                        "itemName": "6xingotIron.0",
+                                        "count": 1,
+                                        "compareDamage": false,
+                                        "damage": 0,
+                                        "compareNBT": false,
+                                        "checkCapabilities": false
+                                    },
+                                    {
+                                        "itemName": "5xgunpowder.0",
+                                        "count": 1,
+                                        "compareDamage": false,
+                                        "damage": 0,
+                                        "compareNBT": false,
+                                        "checkCapabilities": false
+                                    }
+                                ]
+                            },
+                            {
+                                "outputs": [
+                                    {
+                                        "item": "betaCMag",
+                                        "count": 0,
+                                        "damage": 0,
+                                        "tags": "{}"
+                                    }
+                                ],
+                                "ingredients": [
+                                    {
+                                        "itemName": "8xfiberglass.0",
+                                        "count": 1,
+                                        "compareDamage": false,
+                                        "damage": 0,
+                                        "compareNBT": false,
+                                        "checkCapabilities": false
+                                    },
+                                    {
+                                        "itemName": "10xgunpowder.0",
+                                        "count": 1,
+                                        "compareDamage": false,
+                                        "damage": 0,
+                                        "compareNBT": false,
+                                        "checkCapabilities": false
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "outputs": [
+                            {
+                                "item": "krissvector",
+                                "count": 0,
+                                "damage": 0,
+                                "tags": "{}"
+                            }
+                        ],
+                        "ingredients": [
+                            {
+                                "itemName": "2xingotIron.0",
+                                "count": 1,
+                                "compareDamage": false,
+                                "damage": 0,
+                                "compareNBT": false,
+                                "checkCapabilities": false
+                            },
+                            {
+                                "itemName": "20xfiberglass.0",
+                                "count": 1,
+                                "compareDamage": false,
+                                "damage": 0,
+                                "compareNBT": false,
+                                "checkCapabilities": false
+                            }
+                        ],
+                        "children": [
+                            {
+                                "outputs": [
+                                    {
+                                        "item": "krissvectorAmmo",
+                                        "count": 0,
+                                        "damage": 0,
+                                        "tags": "{}"
+                                    }
+                                ],
+                                "ingredients": [
+                                    {
+                                        "itemName": "8xfiberglass.0",
+                                        "count": 1,
+                                        "compareDamage": false,
+                                        "damage": 0,
+                                        "compareNBT": false,
+                                        "checkCapabilities": false
+                                    },
+                                    {
+                                        "itemName": "6xgunpowder.0",
+                                        "count": 1,
+                                        "compareDamage": false,
+                                        "damage": 0,
+                                        "compareNBT": false,
+                                        "checkCapabilities": false
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "entries": [
+                    {
+                        "outputs": [
+                            {
+                                "item": "judge",
+                                "count": 0,
+                                "damage": 0,
+                                "tags": "{}"
+                            }
+                        ],
+                        "ingredients": [
+                            {
+                                "itemName": "8xingotIron.0",
+                                "count": 1,
+                                "compareDamage": false,
+                                "damage": 0,
+                                "compareNBT": false,
+                                "checkCapabilities": false
+                            },
+                            {
+                                "itemName": "4xfiberglass.0",
+                                "count": 1,
+                                "compareDamage": false,
+                                "damage": 0,
+                                "compareNBT": false,
+                                "checkCapabilities": false
+                            }
+                        ],
+                        "children": [
+                            {
+                                "outputs": [
+                                    {
+                                        "item": "w1200Ammo",
+                                        "count": 0,
+                                        "damage": 0,
+                                        "tags": "{}"
+                                    }
+                                ],
+                                "ingredients": [
+                                    {
+                                        "itemName": "1xfiberglass.0",
+                                        "count": 1,
+                                        "compareDamage": false,
+                                        "damage": 0,
+                                        "compareNBT": false,
+                                        "checkCapabilities": false
+                                    },
+                                    {
+                                        "itemName": "1xgunpowder.0",
+                                        "count": 1,
+                                        "compareDamage": false,
+                                        "damage": 0,
+                                        "compareNBT": false,
+                                        "checkCapabilities": false
+                                    }
+                                ]
+                            },
+                            {
+                                "outputs": [
+                                    {
+                                        "item": "m1014Ammo",
+                                        "count": 0,
+                                        "damage": 0,
+                                        "tags": "{}"
+                                    }
+                                ],
+                                "ingredients": [
+                                    {
+                                        "itemName": "1xingotIron.0",
+                                        "count": 1,
+                                        "compareDamage": false,
+                                        "damage": 0,
+                                        "compareNBT": false,
+                                        "checkCapabilities": false
+                                    },
+                                    {
+                                        "itemName": "1xfiberglass.0",
+                                        "count": 1,
+                                        "compareDamage": false,
+                                        "damage": 0,
+                                        "compareNBT": false,
+                                        "checkCapabilities": false
+                                    },
+                                    {
+                                        "itemName": "1xgunpowder.0",
+                                        "count": 1,
+                                        "compareDamage": false,
+                                        "damage": 0,
+                                        "compareNBT": false,
+                                        "checkCapabilities": false
+                                    }
+                                ]
+                            },
+                            {
+                                "outputs": [
+                                    {
+                                        "item": "w1200IncendiaryAmmo",
+                                        "count": 0,
+                                        "damage": 0,
+                                        "tags": "{}"
+                                    }
+                                ],
+                                "ingredients": [
+                                    {
+                                        "itemName": "1xfiberglass.0",
+                                        "count": 1,
+                                        "compareDamage": false,
+                                        "damage": 0,
+                                        "compareNBT": false,
+                                        "checkCapabilities": false
+                                    },
+                                    {
+                                        "itemName": "1xgunpowder.0",
+                                        "count": 1,
+                                        "compareDamage": false,
+                                        "damage": 0,
+                                        "compareNBT": false,
+                                        "checkCapabilities": false
+                                    },
+                                    {
+                                        "itemName": "2xblazePowder.0",
+                                        "count": 1,
+                                        "compareDamage": false,
+                                        "damage": 0,
+                                        "compareNBT": false,
+                                        "checkCapabilities": false
+                                    }
+                                ]
+                            },
+                            {
+                                "outputs": [
+                                    {
+                                        "item": "r870Ammo",
+                                        "count": 0,
+                                        "damage": 0,
+                                        "tags": "{}"
+                                    }
+                                ],
+                                "ingredients": [
+                                    {
+                                        "itemName": "1xingotIron.0",
+                                        "count": 1,
+                                        "compareDamage": false,
+                                        "damage": 0,
+                                        "compareNBT": false,
+                                        "checkCapabilities": false
+                                    },
+                                    {
+                                        "itemName": "1xfiberglass.0",
+                                        "count": 1,
+                                        "compareDamage": false,
+                                        "damage": 0,
+                                        "compareNBT": false,
+                                        "checkCapabilities": false
+                                    },
+                                    {
+                                        "itemName": "1xgunpowder.0",
+                                        "count": 1,
+                                        "compareDamage": false,
+                                        "damage": 0,
+                                        "compareNBT": false,
+                                        "checkCapabilities": false
+                                    }
+                                ]
+                            },
+                            {
+                                "outputs": [
+                                    {
+                                        "item": "spasAmmo",
+                                        "count": 0,
+                                        "damage": 0,
+                                        "tags": "{}"
+                                    }
+                                ],
+                                "ingredients": [
+                                    {
+                                        "itemName": "1xfiberglass.0",
+                                        "count": 1,
+                                        "compareDamage": false,
+                                        "damage": 0,
+                                        "compareNBT": false,
+                                        "checkCapabilities": false
+                                    },
+                                    {
+                                        "itemName": "4xgunpowder.0",
+                                        "count": 1,
+                                        "compareDamage": false,
+                                        "damage": 0,
+                                        "compareNBT": false,
+                                        "checkCapabilities": false
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "outputs": [
+                            {
+                                "item": "executioner",
+                                "count": 0,
+                                "damage": 0,
+                                "tags": "{}"
+                            }
+                        ],
+                        "ingredients": [
+                            {
+                                "itemName": "10xingotIron.0",
+                                "count": 1,
+                                "compareDamage": false,
+                                "damage": 0,
+                                "compareNBT": false,
+                                "checkCapabilities": false
+                            },
+                            {
+                                "itemName": "6xlog.0",
+                                "count": 1,
+                                "compareDamage": false,
+                                "damage": 0,
+                                "compareNBT": false,
+                                "checkCapabilities": false
+                            }
+                        ],
+                        "children": [
+                            {
+                                "outputs": [
+                                    {
+                                        "item": "w1200Ammo",
+                                        "count": 0,
+                                        "damage": 0,
+                                        "tags": "{}"
+                                    }
+                                ],
+                                "ingredients": [
+                                    {
+                                        "itemName": "1xfiberglass.0",
+                                        "count": 1,
+                                        "compareDamage": false,
+                                        "damage": 0,
+                                        "compareNBT": false,
+                                        "checkCapabilities": false
+                                    },
+                                    {
+                                        "itemName": "1xgunpowder.0",
+                                        "count": 1,
+                                        "compareDamage": false,
+                                        "damage": 0,
+                                        "compareNBT": false,
+                                        "checkCapabilities": false
+                                    }
+                                ]
+                            },
+                            {
+                                "outputs": [
+                                    {
+                                        "item": "m1014Ammo",
+                                        "count": 0,
+                                        "damage": 0,
+                                        "tags": "{}"
+                                    }
+                                ],
+                                "ingredients": [
+                                    {
+                                        "itemName": "1xingotIron.0",
+                                        "count": 1,
+                                        "compareDamage": false,
+                                        "damage": 0,
+                                        "compareNBT": false,
+                                        "checkCapabilities": false
+                                    },
+                                    {
+                                        "itemName": "1xfiberglass.0",
+                                        "count": 1,
+                                        "compareDamage": false,
+                                        "damage": 0,
+                                        "compareNBT": false,
+                                        "checkCapabilities": false
+                                    },
+                                    {
+                                        "itemName": "1xgunpowder.0",
+                                        "count": 1,
+                                        "compareDamage": false,
+                                        "damage": 0,
+                                        "compareNBT": false,
+                                        "checkCapabilities": false
+                                    }
+                                ]
+                            },
+                            {
+                                "outputs": [
+                                    {
+                                        "item": "w1200IncendiaryAmmo",
+                                        "count": 0,
+                                        "damage": 0,
+                                        "tags": "{}"
+                                    }
+                                ],
+                                "ingredients": [
+                                    {
+                                        "itemName": "1xfiberglass.0",
+                                        "count": 1,
+                                        "compareDamage": false,
+                                        "damage": 0,
+                                        "compareNBT": false,
+                                        "checkCapabilities": false
+                                    },
+                                    {
+                                        "itemName": "1xgunpowder.0",
+                                        "count": 1,
+                                        "compareDamage": false,
+                                        "damage": 0,
+                                        "compareNBT": false,
+                                        "checkCapabilities": false
+                                    },
+                                    {
+                                        "itemName": "2xblazePowder.0",
+                                        "count": 1,
+                                        "compareDamage": false,
+                                        "damage": 0,
+                                        "compareNBT": false,
+                                        "checkCapabilities": false
+                                    }
+                                ]
+                            },
+                            {
+                                "outputs": [
+                                    {
+                                        "item": "r870Ammo",
+                                        "count": 0,
+                                        "damage": 0,
+                                        "tags": "{}"
+                                    }
+                                ],
+                                "ingredients": [
+                                    {
+                                        "itemName": "1xingotIron.0",
+                                        "count": 1,
+                                        "compareDamage": false,
+                                        "damage": 0,
+                                        "compareNBT": false,
+                                        "checkCapabilities": false
+                                    },
+                                    {
+                                        "itemName": "1xfiberglass.0",
+                                        "count": 1,
+                                        "compareDamage": false,
+                                        "damage": 0,
+                                        "compareNBT": false,
+                                        "checkCapabilities": false
+                                    },
+                                    {
+                                        "itemName": "1xgunpowder.0",
+                                        "count": 1,
+                                        "compareDamage": false,
+                                        "damage": 0,
+                                        "compareNBT": false,
+                                        "checkCapabilities": false
+                                    }
+                                ]
+                            },
+                            {
+                                "outputs": [
+                                    {
+                                        "item": "m1887Ammo",
+                                        "count": 0,
+                                        "damage": 0,
+                                        "tags": "{}"
+                                    }
+                                ],
+                                "ingredients": [
+                                    {
+                                        "itemName": "1xingotIron.0",
+                                        "count": 1,
+                                        "compareDamage": false,
+                                        "damage": 0,
+                                        "compareNBT": false,
+                                        "checkCapabilities": false
+                                    },
+                                    {
+                                        "itemName": "1xfiberglass.0",
+                                        "count": 1,
+                                        "compareDamage": false,
+                                        "damage": 0,
+                                        "compareNBT": false,
+                                        "checkCapabilities": false
+                                    },
+                                    {
+                                        "itemName": "1xgunpowder.0",
+                                        "count": 1,
+                                        "compareDamage": false,
+                                        "damage": 0,
+                                        "compareNBT": false,
+                                        "checkCapabilities": false
+                                    },
+                                    {
+                                        "itemName": "1xspiderEye.0",
+                                        "count": 1,
+                                        "compareDamage": false,
+                                        "damage": 0,
+                                        "compareNBT": false,
+                                        "checkCapabilities": false
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "outputs": [
+                            {
+                                "item": "aa12",
+                                "count": 0,
+                                "damage": 0,
+                                "tags": "{}"
+                            }
+                        ],
+                        "ingredients": [
+                            {
+                                "itemName": "12xingotIron.0",
+                                "count": 1,
+                                "compareDamage": false,
+                                "damage": 0,
+                                "compareNBT": false,
+                                "checkCapabilities": false
+                            },
+                            {
+                                "itemName": "12xfiberglass.0",
+                                "count": 1,
+                                "compareDamage": false,
+                                "damage": 0,
+                                "compareNBT": false,
+                                "checkCapabilities": false
+                            }
+                        ],
+                        "children": [
+                            {
+                                "outputs": [
+                                    {
+                                        "item": "aa12Ammo",
+                                        "count": 0,
+                                        "damage": 0,
+                                        "tags": "{}"
+                                    }
+                                ],
+                                "ingredients": [
+                                    {
+                                        "itemName": "6xingotIron.0",
+                                        "count": 1,
+                                        "compareDamage": false,
+                                        "damage": 0,
+                                        "compareNBT": false,
+                                        "checkCapabilities": false
+                                    },
+                                    {
+                                        "itemName": "6xfiberglass.0",
+                                        "count": 1,
+                                        "compareDamage": false,
+                                        "damage": 0,
+                                        "compareNBT": false,
+                                        "checkCapabilities": false
+                                    },
+                                    {
+                                        "itemName": "8xgunpowder.0",
+                                        "count": 1,
+                                        "compareDamage": false,
+                                        "damage": 0,
+                                        "compareNBT": false,
+                                        "checkCapabilities": false
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "entries": [
+                    {
+                        "outputs": [
+                            {
+                                "item": "minigun",
+                                "count": 0,
+                                "damage": 0,
+                                "tags": "{}"
+                            }
+                        ],
+                        "ingredients": [
+                            {
+                                "itemName": "32xingotIron.0",
+                                "count": 1,
+                                "compareDamage": false,
+                                "damage": 0,
+                                "compareNBT": false,
+                                "checkCapabilities": false
+                            },
+                            {
+                                "itemName": "16xfiberglass.0",
+                                "count": 1,
+                                "compareDamage": false,
+                                "damage": 0,
+                                "compareNBT": false,
+                                "checkCapabilities": false
+                            },
+                            {
+                                "itemName": "16xredstone.0",
+                                "count": 1,
+                                "compareDamage": false,
+                                "damage": 0,
+                                "compareNBT": false,
+                                "checkCapabilities": false
+                            }
+                        ],
+                        "children": [
+                            {
+                                "outputs": [
+                                    {
+                                        "item": "minigunAmmo",
+                                        "count": 0,
+                                        "damage": 0,
+                                        "tags": "{}"
+                                    }
+                                ],
+                                "ingredients": [
+                                    {
+                                        "itemName": "8xingotIron.0",
+                                        "count": 1,
+                                        "compareDamage": false,
+                                        "damage": 0,
+                                        "compareNBT": false,
+                                        "checkCapabilities": false
+                                    },
+                                    {
+                                        "itemName": "32xgunpowder.0",
+                                        "count": 1,
+                                        "compareDamage": false,
+                                        "damage": 0,
+                                        "compareNBT": false,
+                                        "checkCapabilities": false
+                                    }
+                                ]
+                            },
+                            {
+                                "outputs": [
+                                    {
+                                        "item": "minigunExplosiveAmmo",
+                                        "count": 0,
+                                        "damage": 0,
+                                        "tags": "{}"
+                                    }
+                                ],
+                                "ingredients": [
+                                    {
+                                        "itemName": "8xingotIron.0",
+                                        "count": 1,
+                                        "compareDamage": false,
+                                        "damage": 0,
+                                        "compareNBT": false,
+                                        "checkCapabilities": false
+                                    },
+                                    {
+                                        "itemName": "32xhighexgunpowder.0",
+                                        "count": 1,
+                                        "compareDamage": false,
+                                        "damage": 0,
+                                        "compareNBT": false,
+                                        "checkCapabilities": false
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "outputs": [
+                            {
+                                "item": "desertEagle",
+                                "count": 0,
+                                "damage": 0,
+                                "tags": "{}"
+                            }
+                        ],
+                        "ingredients": [
+                            {
+                                "itemName": "12xingotIron.0",
+                                "count": 1,
+                                "compareDamage": false,
+                                "damage": 0,
+                                "compareNBT": false,
+                                "checkCapabilities": false
+                            }
+                        ],
+                        "children": [
+                            {
+                                "outputs": [
+                                    {
+                                        "item": "desertEagleAmmo",
+                                        "count": 0,
+                                        "damage": 0,
+                                        "tags": "{}"
+                                    }
+                                ],
+                                "ingredients": [
+                                    {
+                                        "itemName": "3xingotIron.0",
+                                        "count": 1,
+                                        "compareDamage": false,
+                                        "damage": 0,
+                                        "compareNBT": false,
+                                        "checkCapabilities": false
+                                    },
+                                    {
+                                        "itemName": "2xgunpowder.0",
+                                        "count": 1,
+                                        "compareDamage": false,
+                                        "damage": 0,
+                                        "compareNBT": false,
+                                        "checkCapabilities": false
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "outputs": [
+                            {
+                                "item": "goldDesertEagle",
+                                "count": 0,
+                                "damage": 0,
+                                "tags": "{}"
+                            }
+                        ],
+                        "ingredients": [
+                            {
+                                "itemName": "12xingotGold.0",
+                                "count": 1,
+                                "compareDamage": false,
+                                "damage": 0,
+                                "compareNBT": false,
+                                "checkCapabilities": false
+                            }
+                        ],
+                        "children": [
+                            {
+                                "outputs": [
+                                    {
+                                        "item": "desertEagleAmmo",
+                                        "count": 0,
+                                        "damage": 0,
+                                        "tags": "{}"
+                                    }
+                                ],
+                                "ingredients": [
+                                    {
+                                        "itemName": "3xingotIron.0",
+                                        "count": 1,
+                                        "compareDamage": false,
+                                        "damage": 0,
+                                        "compareNBT": false,
+                                        "checkCapabilities": false
+                                    },
+                                    {
+                                        "itemName": "2xgunpowder.0",
+                                        "count": 1,
+                                        "compareDamage": false,
+                                        "damage": 0,
+                                        "compareNBT": false,
+                                        "checkCapabilities": false
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "entries": [
+                    {
+                        "outputs": [
+                            {
+                                "item": "rpg",
+                                "count": 0,
+                                "damage": 0,
+                                "tags": "{}"
+                            }
+                        ],
+                        "ingredients": [
+                            {
+                                "itemName": "25xingotIron.0",
+                                "count": 1,
+                                "compareDamage": false,
+                                "damage": 0,
+                                "compareNBT": false,
+                                "checkCapabilities": false
+                            },
+                            {
+                                "itemName": "10xlog.0",
+                                "count": 1,
+                                "compareDamage": false,
+                                "damage": 0,
+                                "compareNBT": false,
+                                "checkCapabilities": false
+                            }
+                        ],
+                        "children": [
+                            {
+                                "outputs": [
+                                    {
+                                        "item": "rpgAmmo",
+                                        "count": 0,
+                                        "damage": 0,
+                                        "tags": "{}"
+                                    }
+                                ],
+                                "ingredients": [
+                                    {
+                                        "itemName": "5xingotIron.0",
+                                        "count": 1,
+                                        "compareDamage": false,
+                                        "damage": 0,
+                                        "compareNBT": false,
+                                        "checkCapabilities": false
+                                    },
+                                    {
+                                        "itemName": "6xgunpowder.0",
+                                        "count": 1,
+                                        "compareDamage": false,
+                                        "damage": 0,
+                                        "compareNBT": false,
+                                        "checkCapabilities": false
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "outputs": [
+                            {
+                                "item": "m72law",
+                                "count": 0,
+                                "damage": 0,
+                                "tags": "{}"
+                            }
+                        ],
+                        "ingredients": [
+                            {
+                                "itemName": "12xingotIron.0",
+                                "count": 1,
+                                "compareDamage": false,
+                                "damage": 0,
+                                "compareNBT": false,
+                                "checkCapabilities": false
+                            },
+                            {
+                                "itemName": "8xfiberglass.0",
+                                "count": 1,
+                                "compareDamage": false,
+                                "damage": 0,
+                                "compareNBT": false,
+                                "checkCapabilities": false
+                            }
+                        ],
+                        "children": [
+                            {
+                                "outputs": [
+                                    {
+                                        "item": "m72lawAmmo",
+                                        "count": 0,
+                                        "damage": 0,
+                                        "tags": "{}"
+                                    }
+                                ],
+                                "ingredients": [
+                                    {
+                                        "itemName": "3xingotIron.0",
+                                        "count": 1,
+                                        "compareDamage": false,
+                                        "damage": 0,
+                                        "compareNBT": false,
+                                        "checkCapabilities": false
+                                    },
+                                    {
+                                        "itemName": "5xgunpowder.0",
+                                        "count": 1,
+                                        "compareDamage": false,
+                                        "damage": 0,
+                                        "compareNBT": false,
+                                        "checkCapabilities": false
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "outputs": [
+                            {
+                                "item": "at4",
+                                "count": 0,
+                                "damage": 0,
+                                "tags": "{}"
+                            }
+                        ],
+                        "ingredients": [
+                            {
+                                "itemName": "5xfiberglass.0",
+                                "count": 1,
+                                "compareDamage": false,
+                                "damage": 0,
+                                "compareNBT": false,
+                                "checkCapabilities": false
+                            },
+                            {
+                                "itemName": "4xingotIron.0",
+                                "count": 1,
+                                "compareDamage": false,
+                                "damage": 0,
+                                "compareNBT": false,
+                                "checkCapabilities": false
+                            }
+                        ],
+                        "children": [
+                            {
+                                "outputs": [
+                                    {
+                                        "item": "at4Ammo",
+                                        "count": 0,
+                                        "damage": 0,
+                                        "tags": "{}"
+                                    }
+                                ],
+                                "ingredients": [
+                                    {
+                                        "itemName": "3xingotIron.0",
+                                        "count": 1,
+                                        "compareDamage": false,
+                                        "damage": 0,
+                                        "compareNBT": false,
+                                        "checkCapabilities": false
+                                    },
+                                    {
+                                        "itemName": "5xgunpowder.0",
+                                        "count": 1,
+                                        "compareDamage": false,
+                                        "damage": 0,
+                                        "compareNBT": false,
+                                        "checkCapabilities": false
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "outputs": [
+                            {
+                                "item": "stinger",
+                                "count": 0,
+                                "damage": 0,
+                                "tags": "{}"
+                            }
+                        ],
+                        "ingredients": [
+                            {
+                                "itemName": "20xingotIron.0",
+                                "count": 1,
+                                "compareDamage": false,
+                                "damage": 0,
+                                "compareNBT": false,
+                                "checkCapabilities": false
+                            },
+                            {
+                                "itemName": "10xfiberglass.0",
+                                "count": 1,
+                                "compareDamage": false,
+                                "damage": 0,
+                                "compareNBT": false,
+                                "checkCapabilities": false
+                            },
+                            {
+                                "itemName": "20xredstone.0",
+                                "count": 1,
+                                "compareDamage": false,
+                                "damage": 0,
+                                "compareNBT": false,
+                                "checkCapabilities": false
+                            }
+                        ],
+                        "children": [
+                            {
+                                "outputs": [
+                                    {
+                                        "item": "stingerAmmo",
+                                        "count": 0,
+                                        "damage": 0,
+                                        "tags": "{}"
+                                    }
+                                ],
+                                "ingredients": [
+                                    {
+                                        "itemName": "12xingotIron.0",
+                                        "count": 1,
+                                        "compareDamage": false,
+                                        "damage": 0,
+                                        "compareNBT": false,
+                                        "checkCapabilities": false
+                                    },
+                                    {
+                                        "itemName": "4xingotGold.0",
+                                        "count": 1,
+                                        "compareDamage": false,
+                                        "damage": 0,
+                                        "compareNBT": false,
+                                        "checkCapabilities": false
+                                    },
+                                    {
+                                        "itemName": "12xgunpowder.0",
+                                        "count": 1,
+                                        "compareDamage": false,
+                                        "damage": 0,
+                                        "compareNBT": false,
+                                        "checkCapabilities": false
+                                    },
+                                    {
+                                        "itemName": "6xredstone.0",
+                                        "count": 1,
+                                        "compareDamage": false,
+                                        "damage": 0,
+                                        "compareNBT": false,
+                                        "checkCapabilities": false
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "entries": [
+                    {
+                        "outputs": [
+                            {
+                                "item": "gl1",
+                                "count": 0,
+                                "damage": 0,
+                                "tags": "{}"
+                            }
+                        ],
+                        "ingredients": [
+                            {
+                                "itemName": "12xingotIron.0",
+                                "count": 1,
+                                "compareDamage": false,
+                                "damage": 0,
+                                "compareNBT": false,
+                                "checkCapabilities": false
+                            },
+                            {
+                                "itemName": "6xlog.0",
+                                "count": 1,
+                                "compareDamage": false,
+                                "damage": 0,
+                                "compareNBT": false,
+                                "checkCapabilities": false
+                            }
+                        ],
+                        "children": [
+                            {
+                                "outputs": [
+                                    {
+                                        "item": "grenadeLauncherAmmo",
+                                        "count": 0,
+                                        "damage": 0,
+                                        "tags": "{}"
+                                    }
+                                ],
+                                "ingredients": [
+                                    {
+                                        "itemName": "3xingotIron.0",
+                                        "count": 1,
+                                        "compareDamage": false,
+                                        "damage": 0,
+                                        "compareNBT": false,
+                                        "checkCapabilities": false
+                                    },
+                                    {
+                                        "itemName": "5xgunpowder.0",
+                                        "count": 1,
+                                        "compareDamage": false,
+                                        "damage": 0,
+                                        "compareNBT": false,
+                                        "checkCapabilities": false
+                                    }
+                                ]
+                            },
+                            {
+                                "outputs": [
+                                    {
+                                        "item": "grenadeLauncherIncendiaryAmmo",
+                                        "count": 0,
+                                        "damage": 0,
+                                        "tags": "{}"
+                                    }
+                                ],
+                                "ingredients": [
+                                    {
+                                        "itemName": "3xingotIron.0",
+                                        "count": 1,
+                                        "compareDamage": false,
+                                        "damage": 0,
+                                        "compareNBT": false,
+                                        "checkCapabilities": false
+                                    },
+                                    {
+                                        "itemName": "3xgunpowder.0",
+                                        "count": 1,
+                                        "compareDamage": false,
+                                        "damage": 0,
+                                        "compareNBT": false,
+                                        "checkCapabilities": false
+                                    },
+                                    {
+                                        "itemName": "2xblazePowder.0",
+                                        "count": 1,
+                                        "compareDamage": false,
+                                        "damage": 0,
+                                        "compareNBT": false,
+                                        "checkCapabilities": false
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "outputs": [
+                            {
+                                "item": "gl6",
+                                "count": 0,
+                                "damage": 0,
+                                "tags": "{}"
+                            }
+                        ],
+                        "ingredients": [
+                            {
+                                "itemName": "20xingotIron.0",
+                                "count": 1,
+                                "compareDamage": false,
+                                "damage": 0,
+                                "compareNBT": false,
+                                "checkCapabilities": false
+                            },
+                            {
+                                "itemName": "12xfiberglass.0",
+                                "count": 1,
+                                "compareDamage": false,
+                                "damage": 0,
+                                "compareNBT": false,
+                                "checkCapabilities": false
+                            }
+                        ],
+                        "children": [
+                            {
+                                "outputs": [
+                                    {
+                                        "item": "grenadeLauncherBouncyAmmo",
+                                        "count": 0,
+                                        "damage": 0,
+                                        "tags": "{}"
+                                    }
+                                ],
+                                "ingredients": [
+                                    {
+                                        "itemName": "3xingotIron.0",
+                                        "count": 1,
+                                        "compareDamage": false,
+                                        "damage": 0,
+                                        "compareNBT": false,
+                                        "checkCapabilities": false
+                                    },
+                                    {
+                                        "itemName": "5xgunpowder.0",
+                                        "count": 1,
+                                        "compareDamage": false,
+                                        "damage": 0,
+                                        "compareNBT": false,
+                                        "checkCapabilities": false
+                                    }
+                                ]
+                            },
+                            {
+                                "outputs": [
+                                    {
+                                        "item": "grenadeLauncherGasAmmo",
+                                        "count": 0,
+                                        "damage": 0,
+                                        "tags": "{}"
+                                    }
+                                ],
+                                "ingredients": [
+                                    {
+                                        "itemName": "3xingotIron.0",
+                                        "count": 1,
+                                        "compareDamage": false,
+                                        "damage": 0,
+                                        "compareNBT": false,
+                                        "checkCapabilities": false
+                                    },
+                                    {
+                                        "itemName": "3xgunpowder.0",
+                                        "count": 1,
+                                        "compareDamage": false,
+                                        "damage": 0,
+                                        "compareNBT": false,
+                                        "checkCapabilities": false
+                                    },
+                                    {
+                                        "itemName": "4xspiderEye.0",
+                                        "count": 1,
+                                        "compareDamage": false,
+                                        "damage": 0,
+                                        "compareNBT": false,
+                                        "checkCapabilities": false
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "outputs": [
+                            {
+                                "item": "claymore",
+                                "count": 0,
+                                "damage": 0,
+                                "tags": "{}"
+                            }
+                        ],
+                        "ingredients": [
+                            {
+                                "itemName": "4xfiberglass.0",
+                                "count": 1,
+                                "compareDamage": false,
+                                "damage": 0,
+                                "compareNBT": false,
+                                "checkCapabilities": false
+                            },
+                            {
+                                "itemName": "2xgunpowder.0",
+                                "count": 1,
+                                "compareDamage": false,
+                                "damage": 0,
+                                "compareNBT": false,
+                                "checkCapabilities": false
+                            },
+                            {
+                                "itemName": "1xredstone.0",
+                                "count": 1,
+                                "compareDamage": false,
+                                "damage": 0,
+                                "compareNBT": false,
+                                "checkCapabilities": false
+                            }
+                        ]
+                    },
+                    {
+                        "outputs": [
+                            {
+                                "item": "c4Remote",
+                                "count": 0,
+                                "damage": 0,
+                                "tags": "{}"
+                            }
+                        ],
+                        "ingredients": [
+                            {
+                                "itemName": "1xfiberglass.0",
+                                "count": 1,
+                                "compareDamage": false,
+                                "damage": 0,
+                                "compareNBT": false,
+                                "checkCapabilities": false
+                            },
+                            {
+                                "itemName": "1xredstone.0",
+                                "count": 1,
+                                "compareDamage": false,
+                                "damage": 0,
+                                "compareNBT": false,
+                                "checkCapabilities": false
+                            }
+                        ],
+                        "children": [
+                            {
+                                "outputs": [
+                                    {
+                                        "item": "c4",
+                                        "count": 0,
+                                        "damage": 0,
+                                        "tags": "{}"
+                                    }
+                                ],
+                                "ingredients": [
+                                    {
+                                        "itemName": "3xgunpowder.0",
+                                        "count": 1,
+                                        "compareDamage": false,
+                                        "damage": 0,
+                                        "compareNBT": false,
+                                        "checkCapabilities": false
+                                    },
+                                    {
+                                        "itemName": "2xslimeball.0",
+                                        "count": 1,
+                                        "compareDamage": false,
+                                        "damage": 0,
+                                        "compareNBT": false,
+                                        "checkCapabilities": false
+                                    },
+                                    {
+                                        "itemName": "1xredstone.0",
+                                        "count": 1,
+                                        "compareDamage": false,
+                                        "damage": 0,
+                                        "compareNBT": false,
+                                        "checkCapabilities": false
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "entries": [
+                    {
+                        "outputs": [
+                            {
+                                "item": "mwRiotShield",
+                                "count": 0,
+                                "damage": 0,
+                                "tags": "{}"
+                            }
+                        ],
+                        "ingredients": [
+                            {
+                                "itemName": "12xfiberglass.0",
+                                "count": 1,
+                                "compareDamage": false,
+                                "damage": 0,
+                                "compareNBT": false,
+                                "checkCapabilities": false
+                            },
+                            {
+                                "itemName": "12xthinGlass.0",
+                                "count": 1,
+                                "compareDamage": false,
+                                "damage": 0,
+                                "compareNBT": false,
+                                "checkCapabilities": false
+                            },
+                            {
+                                "itemName": "16xingotIron.0",
+                                "count": 1,
+                                "compareDamage": false,
+                                "damage": 0,
+                                "compareNBT": false,
+                                "checkCapabilities": false
+                            }
+                        ]
+                    },
+                    {
+                        "outputs": [
+                            {
+                                "item": "Hydra70Ammo",
+                                "count": 0,
+                                "damage": 0,
+                                "tags": "{}"
+                            }
+                        ],
+                        "ingredients": [
+                            {
+                                "itemName": "19xiron.0",
+                                "count": 1,
+                                "compareDamage": false,
+                                "damage": 0,
+                                "compareNBT": false,
+                                "checkCapabilities": false
+                            },
+                            {
+                                "itemName": "19xgunpowder.0",
+                                "count": 1,
+                                "compareDamage": false,
+                                "damage": 0,
+                                "compareNBT": false,
+                                "checkCapabilities": false
+                            }
+                        ]
+                    },
+                    {
+                        "outputs": [
+                            {
+                                "item": "Hellfire",
+                                "count": 0,
+                                "damage": 0,
+                                "tags": "{}"
+                            }
+                        ],
+                        "ingredients": [
+                            {
+                                "itemName": "2xiron.0",
+                                "count": 1,
+                                "compareDamage": false,
+                                "damage": 0,
+                                "compareNBT": false,
+                                "checkCapabilities": false
+                            },
+                            {
+                                "itemName": "4xfiberglass.0",
+                                "count": 1,
+                                "compareDamage": false,
+                                "damage": 0,
+                                "compareNBT": false,
+                                "checkCapabilities": false
+                            },
+                            {
+                                "itemName": "4xgunpowder.0",
+                                "count": 1,
+                                "compareDamage": false,
+                                "damage": 0,
+                                "compareNBT": false,
+                                "checkCapabilities": false
+                            },
+                            {
+                                "itemName": "2xredstone.0",
+                                "count": 1,
+                                "compareDamage": false,
+                                "damage": 0,
+                                "compareNBT": false,
+                                "checkCapabilities": false
+                            }
+                        ]
+                    },
+                    {
+                        "outputs": [
+                            {
+                                "item": "TRIGAT",
+                                "count": 0,
+                                "damage": 0,
+                                "tags": "{}"
+                            }
+                        ],
+                        "ingredients": [
+                            {
+                                "itemName": "2xiron.0",
+                                "count": 1,
+                                "compareDamage": false,
+                                "damage": 0,
+                                "compareNBT": false,
+                                "checkCapabilities": false
+                            },
+                            {
+                                "itemName": "4xfiberglass.0",
+                                "count": 1,
+                                "compareDamage": false,
+                                "damage": 0,
+                                "compareNBT": false,
+                                "checkCapabilities": false
+                            },
+                            {
+                                "itemName": "5xgunpowder.0",
+                                "count": 1,
+                                "compareDamage": false,
+                                "damage": 0,
+                                "compareNBT": false,
+                                "checkCapabilities": false
+                            },
+                            {
+                                "itemName": "1xredstone.0",
+                                "count": 1,
+                                "compareDamage": false,
+                                "damage": 0,
+                                "compareNBT": false,
+                                "checkCapabilities": false
+                            }
+                        ]
+                    }
+                ]
+            }
+        ],
+        "FECostPerCraft": 0
+    },
+    "gunModifying": {
+        "isActive": false,
+        "FECostPerModify": 0
+    },
+    "energy": {
+        "maxFE": 0,
+        "acceptFEPerTick": 0,
+        "disperseFEPerTick": 0,
+        "numBatterySlots": 0,
+        "batterySlotStackSize": 1
+    },
+    "armourCrafting": {
+        "isActive": false,
+        "FECostPerCraft": 0
+    },
+    "itemHolding": {
+        "allow": "",
+        "maxStackSize": 64
+    }
+}

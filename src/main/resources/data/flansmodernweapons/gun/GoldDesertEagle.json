@@ -1,0 +1,276 @@
+{
+    "paints": {},
+    "reload": {
+        "manualReloadAllowed": true,
+        "start": {
+            "duration": 10.0,
+            "sound": "MWLugerReload",
+            "actions": [
+                {
+                    "actionType": {},
+                    "canActUnderwater": true,
+                    "canActUnderOtherLiquid": false,
+                    "canBeOverriden": false,
+                    "sound": "",
+                    "soundLength": 0,
+                    "distortSound": false,
+                    "duration": 0.0,
+                    "FireMode": {},
+                    "shootStats": {
+                        "verticalReocil": 3.0,
+                        "horizontalRecoil": 0.0,
+                        "spread": 3.0,
+                        "hitscan": true,
+                        "speed": 0.0,
+                        "count": 1,
+                        "timeToNextShot": 2.0,
+                        "spreadPattern": {},
+                        "penetrationPower": 1.0,
+                        "trailParticles": "",
+                        "impact": {
+                            "decal": "",
+                            "damageToTarget": 8.0,
+                            "multiplierVsPlayers": 1.0,
+                            "multiplierVsVehicles": 1.0,
+                            "knockback": 0.0,
+                            "splashDamageRadius": 0.0,
+                            "splashDamageFalloff": 1.0,
+                            "setFireToTarget": 0.0,
+                            "fireSpreadRadius": 0.0,
+                            "fireSpreadAmount": 0.0,
+                            "hitSound": ""
+                        }
+                    },
+                    "fovFactor": 1.25,
+                    "scopeOverlay": "",
+                    "anim": "TiltGunForReload"
+                }
+            ]
+        },
+        "eject": {
+            "duration": 10.0,
+            "sound": ""
+        },
+        "loadOne": {
+            "duration": 10.0,
+            "sound": ""
+        },
+        "end": {
+            "duration": 10.0,
+            "sound": "",
+            "actions": [
+                {
+                    "actionType": {},
+                    "canActUnderwater": true,
+                    "canActUnderOtherLiquid": false,
+                    "canBeOverriden": false,
+                    "sound": "",
+                    "soundLength": 0,
+                    "distortSound": false,
+                    "duration": 1.0,
+                    "FireMode": {},
+                    "shootStats": {
+                        "verticalReocil": 3.0,
+                        "horizontalRecoil": 0.0,
+                        "spread": 3.0,
+                        "hitscan": true,
+                        "speed": 0.0,
+                        "count": 1,
+                        "timeToNextShot": 2.0,
+                        "spreadPattern": {},
+                        "penetrationPower": 1.0,
+                        "trailParticles": "",
+                        "impact": {
+                            "decal": "",
+                            "damageToTarget": 8.0,
+                            "multiplierVsPlayers": 1.0,
+                            "multiplierVsVehicles": 1.0,
+                            "knockback": 0.0,
+                            "splashDamageRadius": 0.0,
+                            "splashDamageFalloff": 1.0,
+                            "setFireToTarget": 0.0,
+                            "fireSpreadRadius": 0.0,
+                            "fireSpreadAmount": 0.0,
+                            "hitSound": ""
+                        }
+                    },
+                    "fovFactor": 1.25,
+                    "scopeOverlay": "",
+                    "anim": "PumpAction"
+                }
+            ]
+        }
+    },
+    "primaryActions": [
+        {
+            "actionType": {},
+            "canActUnderwater": true,
+            "canActUnderOtherLiquid": false,
+            "canBeOverriden": false,
+            "sound": "DesertEagleShoot",
+            "soundLength": 0,
+            "distortSound": true,
+            "duration": 0.0,
+            "FireMode": {},
+            "shootStats": {
+                "verticalReocil": 5.0,
+                "horizontalRecoil": 0.0,
+                "spread": 5.0,
+                "hitscan": true,
+                "speed": 0.0,
+                "count": 1,
+                "timeToNextShot": 1.0,
+                "spreadPattern": {},
+                "penetrationPower": 1.0,
+                "trailParticles": "",
+                "impact": {
+                    "decal": "flansmod:effects/bullet_decal.png",
+                    "damageToTarget": 10.0,
+                    "multiplierVsPlayers": 1.0,
+                    "multiplierVsVehicles": 1.0,
+                    "knockback": 0.0,
+                    "splashDamageRadius": 0.0,
+                    "splashDamageFalloff": 0.0,
+                    "setFireToTarget": 0.0,
+                    "fireSpreadRadius": 0.0,
+                    "fireSpreadAmount": 0.0,
+                    "hitSound": ""
+                }
+            },
+            "fovFactor": 1.25,
+            "scopeOverlay": "",
+            "anim": ""
+        },
+        {
+            "actionType": {},
+            "canActUnderwater": true,
+            "canActUnderOtherLiquid": false,
+            "canBeOverriden": false,
+            "sound": "",
+            "soundLength": 0,
+            "distortSound": false,
+            "duration": 1.0,
+            "FireMode": {},
+            "shootStats": {
+                "verticalReocil": 3.0,
+                "horizontalRecoil": 0.0,
+                "spread": 3.0,
+                "hitscan": true,
+                "speed": 0.0,
+                "count": 1,
+                "timeToNextShot": 2.0,
+                "spreadPattern": {},
+                "penetrationPower": 1.0,
+                "trailParticles": "",
+                "impact": {
+                    "decal": "",
+                    "damageToTarget": 8.0,
+                    "multiplierVsPlayers": 1.0,
+                    "multiplierVsVehicles": 1.0,
+                    "knockback": 0.0,
+                    "splashDamageRadius": 0.0,
+                    "splashDamageFalloff": 1.0,
+                    "setFireToTarget": 0.0,
+                    "fireSpreadRadius": 0.0,
+                    "fireSpreadAmount": 0.0,
+                    "hitSound": ""
+                }
+            },
+            "fovFactor": 1.25,
+            "scopeOverlay": "",
+            "anim": "Shoot"
+        }
+    ],
+    "secondaryActions": [
+        {
+            "actionType": {},
+            "canActUnderwater": true,
+            "canActUnderOtherLiquid": false,
+            "canBeOverriden": true,
+            "sound": "",
+            "soundLength": 0,
+            "distortSound": false,
+            "duration": 0.0,
+            "FireMode": {},
+            "shootStats": {
+                "verticalReocil": 3.0,
+                "horizontalRecoil": 0.0,
+                "spread": 3.0,
+                "hitscan": true,
+                "speed": 0.0,
+                "count": 1,
+                "timeToNextShot": 2.0,
+                "spreadPattern": {},
+                "penetrationPower": 1.0,
+                "trailParticles": "",
+                "impact": {
+                    "decal": "",
+                    "damageToTarget": 8.0,
+                    "multiplierVsPlayers": 1.0,
+                    "multiplierVsVehicles": 1.0,
+                    "knockback": 0.0,
+                    "splashDamageRadius": 0.0,
+                    "splashDamageFalloff": 1.0,
+                    "setFireToTarget": 0.0,
+                    "fireSpreadRadius": 0.0,
+                    "fireSpreadAmount": 0.0,
+                    "hitSound": ""
+                }
+            },
+            "fovFactor": 1.2,
+            "scopeOverlay": "",
+            "anim": ""
+        }
+    ],
+    "numBullets": 0,
+    "barrelAttachments": {
+        "allowAll": true,
+        "numAttachmentSlots": 1,
+        "attachToMesh": "body",
+        "attachPoint": [
+            0.0,
+            0.0,
+            0.0
+        ]
+    },
+    "gripAttachments": {
+        "allowAll": true,
+        "numAttachmentSlots": 0,
+        "attachToMesh": "body",
+        "attachPoint": [
+            0.0,
+            0.0,
+            0.0
+        ]
+    },
+    "stockAttachments": {
+        "allowAll": true,
+        "numAttachmentSlots": 0,
+        "attachToMesh": "body",
+        "attachPoint": [
+            0.0,
+            0.0,
+            0.0
+        ]
+    },
+    "scopeAttachments": {
+        "allowAll": true,
+        "numAttachmentSlots": 1,
+        "attachToMesh": "body",
+        "attachPoint": [
+            0.0,
+            0.0,
+            0.0
+        ]
+    },
+    "genericAttachments": {
+        "allowAll": true,
+        "numAttachmentSlots": 0,
+        "attachToMesh": "body",
+        "attachPoint": [
+            0.0,
+            0.0,
+            0.0
+        ]
+    }
+}
