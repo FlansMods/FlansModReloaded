@@ -29,7 +29,7 @@ public class ImpactDefinition
 	public float fireSpreadAmount = 0.0f;
 
 	@JsonField
-	public String hitSound = "";
+	public SoundDefinition hitSound = new SoundDefinition();
 
 
 }

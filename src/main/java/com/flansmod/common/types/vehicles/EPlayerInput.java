@@ -2,11 +2,13 @@ package com.flansmod.common.types.vehicles;
 
 public enum EPlayerInput
 {
-	Forward,
-	Backward,
-	Left,
-	Right,
+	MoveForward,
+	MoveBackward,
+	MoveLeft,
+	MoveRight,
 
+	YawLeft,
+	YawRight,
 	RollLeft,
 	RollRight,
 	PitchUp,

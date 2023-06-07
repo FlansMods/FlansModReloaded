@@ -6,7 +6,7 @@ public class AttachmentDefinitions extends Definitions<AttachmentDefinition>
 {
 	public AttachmentDefinitions()
 	{
-		super(AttachmentDefinition.TYPE,
+		super(AttachmentDefinition.FOLDER,
 			  AttachmentDefinition.class,
 			  AttachmentDefinition.INVALID,
 			  (key) -> { return new AttachmentDefinition(key); } );

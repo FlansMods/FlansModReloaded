@@ -1,8 +1,15 @@
 package com.flansmod.util;
 
+import com.flansmod.common.FlansMod;
+import com.flansmod.common.types.elements.ItemStackDefinition;
+import com.mojang.brigadier.StringReader;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
+import net.minecraft.commands.arguments.item.ItemParser;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.TagParser;
 import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.damagesource.DamageSource;
@@ -10,11 +17,14 @@ import net.minecraft.world.damagesource.IndirectEntityDamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.HumanoidArm;
 import net.minecraft.world.entity.projectile.AbstractArrow;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.material.Material;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.fml.DistExecutor;
+import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.server.ServerLifecycleHooks;
 
 import javax.annotation.Nullable;
@@ -38,6 +48,17 @@ public class MinecraftHelpers
 			return clientLevel;
 
 		return null;
+	}
+
+	public static String GetFEString(int fe)
+	{
+		if(fe > 1000000000)
+			return String.format("%.2f GFE", fe / 1000000000f);
+		if(fe > 1000000)
+			return String.format("%.2f MFE", fe / 1000000f);
+		if(fe > 1000)
+			return String.format("%.2f KFE", fe / 1000f);
+		return fe + " FE";
 	}
 
 	public static boolean IsClient()
@@ -135,5 +156,27 @@ public class MinecraftHelpers
 
 			default -> 									{ return Material.AIR; }
 		}
+	}
+
+	public static ResourceLocation CreateLocation(String locString)
+	{
+		return ResourceLocation.tryParse(locString);
+	}
+
+	public static ItemStack CreateStack(ItemStackDefinition def)
+	{
+		if(def.tags != null && def.tags.length() > 0)
+		{
+			try
+			{
+				CompoundTag tags = new TagParser(new StringReader(def.tags)).readStruct();
+				return new ItemStack(ForgeRegistries.ITEMS.getValue(CreateLocation(def.item)), def.count, tags);
+			}
+			catch(Exception e)
+			{
+				FlansMod.LOGGER.error("Could not parse " + def.tags);
+			}
+		}
+		return new ItemStack(ForgeRegistries.ITEMS.getValue(CreateLocation(def.item)), def.count);
 	}
 }

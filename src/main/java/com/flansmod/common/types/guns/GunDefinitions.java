@@ -7,7 +7,7 @@ public class GunDefinitions extends Definitions<GunDefinition>
 {
 	public GunDefinitions()
 	{
-		super(GunDefinition.TYPE,
+		super(GunDefinition.FOLDER,
 			  GunDefinition.class,
 			  GunDefinition.INVALID,
 			  GunDefinition::new);

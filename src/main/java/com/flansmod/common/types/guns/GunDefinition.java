@@ -1,6 +1,7 @@
 package com.flansmod.common.types.guns;
 
 import com.flansmod.common.FlansMod;
+import com.flansmod.common.actions.Action;
 import com.flansmod.common.actions.EActionSet;
 import com.flansmod.common.types.JsonDefinition;
 import com.flansmod.common.types.JsonField;
@@ -17,6 +18,7 @@ import javax.annotation.Nonnull;
 public class GunDefinition extends JsonDefinition
 {
 	public static final String TYPE = "gun";
+	public static final String FOLDER = "guns";
 	public static final GunDefinition INVALID = new GunDefinition(new ResourceLocation(FlansMod.MODID, "guns/null"));
 	@Override
 	public String GetTypeName() { return TYPE; }

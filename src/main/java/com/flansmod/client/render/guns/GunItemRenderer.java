@@ -80,8 +80,8 @@ public class GunItemRenderer extends FlanItemModelRenderer
                         continue;
 
                     // Make sure we scale the sequence (which can be played at any speed) with the target duration of this specific animation action
-                    float progress = animAction.progress + Minecraft.getInstance().getPartialTick();
-                    float animMultiplier = sequence.Duration() / animAction.duration;
+                    float progress = animAction.GetProgressTicks() + Minecraft.getInstance().getPartialTick();
+                    float animMultiplier = sequence.Duration() / animAction.GetDurationTicks();
                     progress *= animMultiplier;
 
                     // Find the segment of this animation that we need
@@ -125,7 +125,7 @@ public class GunItemRenderer extends FlanItemModelRenderer
                             Vector3f pos = PoseDefinition.LerpPosition(UnbakedRig.GetFloatParams(), fromPose, toPose, outputParameter);
                             Quaternionf rotation = PoseDefinition.LerpRotation(UnbakedRig.GetFloatParams(), fromPose, toPose, outputParameter);
 
-                            //FlansMod.LOGGER.info("Frame " + progress + ": From " + from.name + " to " + to.name + " at t=" + outputParameter);
+                            FlansMod.LOGGER.info("Frame " + progress + ": From " + from.name + " to " + to.name + " at t=" + outputParameter);
 
                             ms.translate(pos.x, pos.y, pos.z);
                             ms.mulPose(rotation);
@@ -150,8 +150,8 @@ public class GunItemRenderer extends FlanItemModelRenderer
                     if(action instanceof AnimationAction animAction)
                     {
                         //FlansMod.LOGGER.info(animAction.progress + " + " + Minecraft.getInstance().getPartialTick());
-                        float progress = animAction.progress + Minecraft.getInstance().getPartialTick();
-                        float duration = animAction.duration;
+                        float progress = animAction.GetProgressTicks() + Minecraft.getInstance().getPartialTick();
+                        float duration = animAction.GetDurationTicks();
                         if(duration < 1.0f)
                             duration = 1.0f;
                         GunAnimation anim = GunAnimations.GetGunAnimation(animAction.actionDef.anim);

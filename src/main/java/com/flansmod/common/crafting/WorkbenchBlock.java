@@ -15,9 +15,14 @@ import net.minecraft.world.SimpleMenuProvider;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.BaseEntityBlock;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.EntityBlock;
+import net.minecraft.world.level.block.RenderShape;
+import net.minecraft.world.level.block.entity.AbstractFurnaceBlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.BlockEntityTicker;
+import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
@@ -29,7 +34,7 @@ import net.minecraftforge.registries.ForgeRegistries;
 import javax.annotation.Nullable;
 
 @SuppressWarnings("deprecation")
-public class WorkbenchBlock extends Block implements EntityBlock
+public class WorkbenchBlock extends BaseEntityBlock
 {
 	public static final DirectionProperty DIRECTION = BlockStateProperties.HORIZONTAL_FACING;
 	private ResourceLocation definitionLocation;
@@ -43,6 +48,10 @@ public class WorkbenchBlock extends Block implements EntityBlock
 
 		registerDefaultState(stateDefinition.any()
 			.setValue(DIRECTION, Direction.NORTH));
+	}
+
+	public RenderShape getRenderShape(BlockState p_49232_) {
+		return RenderShape.MODEL;
 	}
 
 	@Override
@@ -88,5 +97,27 @@ public class WorkbenchBlock extends Block implements EntityBlock
 	{
 		return stateDefinition.any().setValue(DIRECTION,
 			context.getHorizontalDirection().getOpposite());
+	}
+
+	@Nullable
+	@Override
+	public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState state, BlockEntityType<T> type)
+	{
+		return level.isClientSide ? null : new BlockEntityTicker<T>()
+		{
+			@Override
+			public void tick(Level level1, BlockPos pos1, BlockState state1, T blockEntity)
+			{
+				if(blockEntity instanceof WorkbenchBlockEntity workbenchBlockEntity)
+					WorkbenchBlockEntity.serverTick(level1, pos1, state1, workbenchBlockEntity);
+			}
+		};
+	}
+
+
+	@Nullable
+	protected static <T extends BlockEntity> BlockEntityTicker<T> createFurnaceTicker(Level level, BlockEntityType<T> type, BlockEntityType<? extends WorkbenchBlockEntity> workbenchType)
+	{
+		return level.isClientSide ? null : createTickerHelper(type, workbenchType, WorkbenchBlockEntity::serverTick);
 	}
 }

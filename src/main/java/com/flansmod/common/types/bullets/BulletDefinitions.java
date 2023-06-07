@@ -6,7 +6,7 @@ public class BulletDefinitions extends Definitions<BulletDefinition>
 {
 	public BulletDefinitions()
 	{
-		super(BulletDefinition.TYPE,
+		super(BulletDefinition.FOLDER,
 			  BulletDefinition.class,
 			  BulletDefinition.INVALID,
 			  (key) -> { return new BulletDefinition(key); } );

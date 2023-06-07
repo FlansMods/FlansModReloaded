@@ -1,132 +1,399 @@
 {
-  "reload": {
-    "manualReloadAllowed": true,
-    "start": {
-      "duration": 10.0,
-      "sound": "LugerReload",
-      "actions": [
-        {
-          "actionType": "Animation",
-          "anim": "TiltGunForReload",
-          "remainUntilEnd": true
+    "paints": {
+        "paintjobs": []
+    },
+    "reload": {
+        "manualReloadAllowed": true,
+        "start": {
+            "duration": 10.0,
+            "sound": {
+                "sound": "MWLugerReload",
+                "length": 1.0,
+                "minPitchMultiplier": 1.0,
+                "maxPitchMultiplier": 1.0,
+                "maxRange": 100.0,
+                "LODs": []
+            },
+            "actions": [
+                {
+                    "actionType": "Animation",
+                    "canActUnderwater": true,
+                    "canActUnderOtherLiquid": false,
+                    "canBeOverriden": false,
+                    "sound": {
+                        "sound": "",
+                        "length": 1.0,
+                        "minPitchMultiplier": 1.0,
+                        "maxPitchMultiplier": 1.0,
+                        "maxRange": 100.0,
+                        "LODs": []
+                    },
+                    "duration": 0.0,
+                    "itemStack": "",
+                    "FireMode": "FullAuto",
+                    "shootStats": {
+                        "verticalReocil": 3.0,
+                        "horizontalRecoil": 0.0,
+                        "spread": 3.0,
+                        "hitscan": true,
+                        "speed": 0.0,
+                        "count": 1,
+                        "timeToNextShot": 2.0,
+                        "spreadPattern": "FilledCircle",
+                        "breaksMaterials": [],
+                        "penetrationPower": 1.0,
+                        "trailParticles": "",
+                        "impact": {
+                            "decal": "",
+                            "damageToTarget": 8.0,
+                            "multiplierVsPlayers": 1.0,
+                            "multiplierVsVehicles": 1.0,
+                            "knockback": 0.0,
+                            "splashDamageRadius": 0.0,
+                            "splashDamageFalloff": 1.0,
+                            "setFireToTarget": 0.0,
+                            "fireSpreadRadius": 0.0,
+                            "fireSpreadAmount": 0.0,
+                            "hitSound": {
+                                "sound": "",
+                                "length": 1.0,
+                                "minPitchMultiplier": 1.0,
+                                "maxPitchMultiplier": 1.0,
+                                "maxRange": 100.0,
+                                "LODs": []
+                            }
+                        }
+                    },
+                    "fovFactor": 1.25,
+                    "scopeOverlay": "",
+                    "anim": "TiltGunForReload",
+                    "toolLevel": 1.0,
+                    "harvestSpeed": 1.0,
+                    "reach": 1.0
+                }
+            ]
+        },
+        "eject": {
+            "duration": 10.0,
+            "sound": {
+                "sound": "",
+                "length": 1.0,
+                "minPitchMultiplier": 1.0,
+                "maxPitchMultiplier": 1.0,
+                "maxRange": 100.0,
+                "LODs": []
+            },
+            "actions": []
+        },
+        "loadOne": {
+            "duration": 10.0,
+            "sound": {
+                "sound": "",
+                "length": 1.0,
+                "minPitchMultiplier": 1.0,
+                "maxPitchMultiplier": 1.0,
+                "maxRange": 100.0,
+                "LODs": []
+            },
+            "actions": []
+        },
+        "end": {
+            "duration": 10.0,
+            "sound": {
+                "sound": "",
+                "length": 1.0,
+                "minPitchMultiplier": 1.0,
+                "maxPitchMultiplier": 1.0,
+                "maxRange": 100.0,
+                "LODs": []
+            },
+            "actions": [
+                {
+                    "actionType": "Animation",
+                    "canActUnderwater": true,
+                    "canActUnderOtherLiquid": false,
+                    "canBeOverriden": false,
+                    "sound": {
+                        "sound": "",
+                        "length": 1.0,
+                        "minPitchMultiplier": 1.0,
+                        "maxPitchMultiplier": 1.0,
+                        "maxRange": 100.0,
+                        "LODs": []
+                    },
+                    "duration": 1.0,
+                    "itemStack": "",
+                    "FireMode": "FullAuto",
+                    "shootStats": {
+                        "verticalReocil": 3.0,
+                        "horizontalRecoil": 0.0,
+                        "spread": 3.0,
+                        "hitscan": true,
+                        "speed": 0.0,
+                        "count": 1,
+                        "timeToNextShot": 2.0,
+                        "spreadPattern": "FilledCircle",
+                        "breaksMaterials": [],
+                        "penetrationPower": 1.0,
+                        "trailParticles": "",
+                        "impact": {
+                            "decal": "",
+                            "damageToTarget": 8.0,
+                            "multiplierVsPlayers": 1.0,
+                            "multiplierVsVehicles": 1.0,
+                            "knockback": 0.0,
+                            "splashDamageRadius": 0.0,
+                            "splashDamageFalloff": 1.0,
+                            "setFireToTarget": 0.0,
+                            "fireSpreadRadius": 0.0,
+                            "fireSpreadAmount": 0.0,
+                            "hitSound": {
+                                "sound": "",
+                                "length": 1.0,
+                                "minPitchMultiplier": 1.0,
+                                "maxPitchMultiplier": 1.0,
+                                "maxRange": 100.0,
+                                "LODs": []
+                            }
+                        }
+                    },
+                    "fovFactor": 1.25,
+                    "scopeOverlay": "",
+                    "anim": "PumpAction",
+                    "toolLevel": 1.0,
+                    "harvestSpeed": 1.0,
+                    "reach": 1.0
+                }
+            ]
         }
-      ]
     },
-    "eject": {
-      "duration": 10.0,
-      "sound": "",
-      "actions": []
-    },
-    "loadOne": {
-      "duration": 10.0,
-      "sound": "",
-      "actions": []
-    },
-    "end": {
-      "duration": 10.0,
-      "sound": "",
-      "actions": [
+    "primaryActions": [
         {
-          "actionType": "Animation",
-          "anim": "PumpAction",
-          "duration": 1.0,
-          "delay": 0.0,
-          "distance": 0.25
+            "actionType": "Shoot",
+            "canActUnderwater": true,
+            "canActUnderOtherLiquid": false,
+            "canBeOverriden": false,
+            "sound": {
+                "sound": "SIGP229Shoot",
+                "length": 0.0,
+                "minPitchMultiplier": 0.8333333,
+                "maxPitchMultiplier": 1.25,
+                "maxRange": 100.0,
+                "LODs": []
+            },
+            "duration": 0.0,
+            "itemStack": "",
+            "FireMode": "SemiAuto",
+            "shootStats": {
+                "verticalReocil": 3.0,
+                "horizontalRecoil": 0.0,
+                "spread": 6.0,
+                "hitscan": true,
+                "speed": 0.0,
+                "count": 1,
+                "timeToNextShot": 1.0,
+                "spreadPattern": "FilledCircle",
+                "breaksMaterials": [],
+                "penetrationPower": 1.0,
+                "trailParticles": "",
+                "impact": {
+                    "decal": "flansmod:effects/bullet_decal.png",
+                    "damageToTarget": 7.0,
+                    "multiplierVsPlayers": 1.0,
+                    "multiplierVsVehicles": 1.0,
+                    "knockback": 0.0,
+                    "splashDamageRadius": 0.0,
+                    "splashDamageFalloff": 0.0,
+                    "setFireToTarget": 0.0,
+                    "fireSpreadRadius": 0.0,
+                    "fireSpreadAmount": 0.0,
+                    "hitSound": {
+                        "sound": "",
+                        "length": 1.0,
+                        "minPitchMultiplier": 1.0,
+                        "maxPitchMultiplier": 1.0,
+                        "maxRange": 100.0,
+                        "LODs": []
+                    }
+                }
+            },
+            "fovFactor": 1.25,
+            "scopeOverlay": "",
+            "anim": "",
+            "toolLevel": 1.0,
+            "harvestSpeed": 1.0,
+            "reach": 1.0
+        },
+        {
+            "actionType": "Animation",
+            "canActUnderwater": true,
+            "canActUnderOtherLiquid": false,
+            "canBeOverriden": false,
+            "sound": {
+                "sound": "",
+                "length": 1.0,
+                "minPitchMultiplier": 1.0,
+                "maxPitchMultiplier": 1.0,
+                "maxRange": 100.0,
+                "LODs": []
+            },
+            "duration": 1.0,
+            "itemStack": "",
+            "FireMode": "FullAuto",
+            "shootStats": {
+                "verticalReocil": 3.0,
+                "horizontalRecoil": 0.0,
+                "spread": 3.0,
+                "hitscan": true,
+                "speed": 0.0,
+                "count": 1,
+                "timeToNextShot": 2.0,
+                "spreadPattern": "FilledCircle",
+                "breaksMaterials": [],
+                "penetrationPower": 1.0,
+                "trailParticles": "",
+                "impact": {
+                    "decal": "",
+                    "damageToTarget": 8.0,
+                    "multiplierVsPlayers": 1.0,
+                    "multiplierVsVehicles": 1.0,
+                    "knockback": 0.0,
+                    "splashDamageRadius": 0.0,
+                    "splashDamageFalloff": 1.0,
+                    "setFireToTarget": 0.0,
+                    "fireSpreadRadius": 0.0,
+                    "fireSpreadAmount": 0.0,
+                    "hitSound": {
+                        "sound": "",
+                        "length": 1.0,
+                        "minPitchMultiplier": 1.0,
+                        "maxPitchMultiplier": 1.0,
+                        "maxRange": 100.0,
+                        "LODs": []
+                    }
+                }
+            },
+            "fovFactor": 1.25,
+            "scopeOverlay": "",
+            "anim": "Shoot",
+            "toolLevel": 1.0,
+            "harvestSpeed": 1.0,
+            "reach": 1.0
         }
-      ]
-    }
-  },
-  "oneHanded": true,
-  "primaryActions": [
-    {
-      "actionType": "Shoot",
-      "canActUnderwater": true,
-      "canActUnderOtherLiquid": false,
-      "fireMode": "SEMIAUTO",
-      "sound": "SIGP229Shoot",
-      "soundLength": 0,
-      "distortSound": true,
-      "numMagazineSlots": 1,
-      "ammoWithTags": {},
-      "ammoTypes": {},
-      "shootStats": {
-        "verticalRecoil": 3,
-        "horizontalRecoil": 0.0,
-        "spread": 6.0,
-        "damage": 7.0,
-        "hitscan": true,
-        "speed": 0.0,
-        "count": 1,
-        "timeToNextShot": 1.0,
-        "knockback": 0.0
-      }
-    },
-    {
-      "actionType": "Animation",
-      "anim": "SlideSemiAuto",
-      "distance": 0.25
-    },
-    {
-      "actionType": "Animation",
-      "anim": "PumpAction",
-      "duration": 1.0,
-      "delay": 0.0,
-      "distance": 0.25
-    }
-  ],
-  "secondaryActions": [
-    {
-      "canBeOverriden": true,
-      "actionType": "IronSight",
-      "fovFactor": 1.2
-    }
-  ],
-  "idle": {
-    "sound": "",
-    "soundLength": 0
-  },
-  "gui": {
-    "showAttachments": true,
-    "showDamage": false,
-    "showRecoil": false,
-    "showSpread": false,
-    "showReloadTime": false
-  },
-  "barrelAttachments": {
-    "numAttachmentSlots": 1,
-    "attachToMesh": "body",
-    "attachPoint": [
-      0.40625,
-      0.25,
-      0.0
     ],
-    "allowAll": false,
-    "allowlist": [
-      "flanMWSilencer",
-      "flanMWLongBarrel"
-    ]
-  },
-  "scopeAttachments": {
-    "numAttachmentSlots": 1,
-    "attachToMesh": "slide",
-    "attachPoint": [
-      0.1875,
-      0.3125,
-      0.0
+    "secondaryActions": [
+        {
+            "actionType": "IronSight",
+            "canActUnderwater": true,
+            "canActUnderOtherLiquid": false,
+            "canBeOverriden": true,
+            "sound": {
+                "sound": "",
+                "length": 1.0,
+                "minPitchMultiplier": 1.0,
+                "maxPitchMultiplier": 1.0,
+                "maxRange": 100.0,
+                "LODs": []
+            },
+            "duration": 0.0,
+            "itemStack": "",
+            "FireMode": "FullAuto",
+            "shootStats": {
+                "verticalReocil": 3.0,
+                "horizontalRecoil": 0.0,
+                "spread": 3.0,
+                "hitscan": true,
+                "speed": 0.0,
+                "count": 1,
+                "timeToNextShot": 2.0,
+                "spreadPattern": "FilledCircle",
+                "breaksMaterials": [],
+                "penetrationPower": 1.0,
+                "trailParticles": "",
+                "impact": {
+                    "decal": "",
+                    "damageToTarget": 8.0,
+                    "multiplierVsPlayers": 1.0,
+                    "multiplierVsVehicles": 1.0,
+                    "knockback": 0.0,
+                    "splashDamageRadius": 0.0,
+                    "splashDamageFalloff": 1.0,
+                    "setFireToTarget": 0.0,
+                    "fireSpreadRadius": 0.0,
+                    "fireSpreadAmount": 0.0,
+                    "hitSound": {
+                        "sound": "",
+                        "length": 1.0,
+                        "minPitchMultiplier": 1.0,
+                        "maxPitchMultiplier": 1.0,
+                        "maxRange": 100.0,
+                        "LODs": []
+                    }
+                }
+            },
+            "fovFactor": 1.2,
+            "scopeOverlay": "",
+            "anim": "",
+            "toolLevel": 1.0,
+            "harvestSpeed": 1.0,
+            "reach": 1.0
+        }
     ],
-    "allowAll": false,
-    "allowlist": []
-  },
-  "genericAttachments": {
-    "numAttachmentSlots": 1,
-    "allowAll": false,
-    "allowlist": [
-      "flanMWRedDot",
-      "flanMWACOG",
-      "flanMW4xScope",
-      "flanMWSingleFire",
-      "flanMWBurstFire",
-      "flanMWAutoFire"
-    ]
-  }
+    "numBullets": 0,
+    "barrelAttachments": {
+        "allowlist": [],
+        "allowAll": true,
+        "numAttachmentSlots": 1,
+        "attachToMesh": "body",
+        "attachPoint": [
+            0.0,
+            0.0,
+            0.0
+        ]
+    },
+    "gripAttachments": {
+        "allowlist": [],
+        "allowAll": true,
+        "numAttachmentSlots": 0,
+        "attachToMesh": "body",
+        "attachPoint": [
+            0.0,
+            0.0,
+            0.0
+        ]
+    },
+    "stockAttachments": {
+        "allowlist": [],
+        "allowAll": true,
+        "numAttachmentSlots": 0,
+        "attachToMesh": "body",
+        "attachPoint": [
+            0.0,
+            0.0,
+            0.0
+        ]
+    },
+    "scopeAttachments": {
+        "allowlist": [],
+        "allowAll": true,
+        "numAttachmentSlots": 1,
+        "attachToMesh": "body",
+        "attachPoint": [
+            0.0,
+            0.0,
+            0.0
+        ]
+    },
+    "genericAttachments": {
+        "allowlist": [],
+        "allowAll": true,
+        "numAttachmentSlots": 0,
+        "attachToMesh": "body",
+        "attachPoint": [
+            0.0,
+            0.0,
+            0.0
+        ]
+    },
+    "modelParts": []
 }

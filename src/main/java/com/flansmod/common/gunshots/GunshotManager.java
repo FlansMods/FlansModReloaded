@@ -62,6 +62,8 @@ public class GunshotManager
 
 			ActionStack actionStack = GetOrCreateActionStack(player);
 
+			shootAction.FindLoadedAmmo(gunContext);
+
 			// TODO: Check if we can shoot based on our local data about our
 			 // a) Inventory, ammo levels
 			 // b) Shoot cooldown

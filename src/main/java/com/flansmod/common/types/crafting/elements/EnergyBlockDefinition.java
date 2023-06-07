@@ -14,4 +14,18 @@ public class EnergyBlockDefinition
 	public int numBatterySlots = 0;
 	@JsonField
 	public int batterySlotStackSize = 1;
+
+	@JsonField(Docs = "In millibuckets")
+	public int liquidFuelStorage = 0;
+	@JsonField
+	public String liquidFuelFilter = "";
+	@JsonField
+	public int liquidFEPerMillibucket = 0;
+
+	@JsonField
+	public int numSolidFuelSlots = 0;
+	@JsonField
+	public String solidFuelFilter = "";
+	@JsonField
+	public int solidFEPerFuelTime = 0;
 }

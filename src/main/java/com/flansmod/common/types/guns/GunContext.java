@@ -176,7 +176,7 @@ public class GunContext
 			if(attachmentStack.getItem() instanceof AttachmentItem attachmentItem)
 			{
 				AttachmentDefinition attachDef = attachmentItem.Def();
-				for(ModifierDefinition modifierDef : attachDef.Modifiers)
+				for(ModifierDefinition modifierDef : attachDef.modifiers)
 				{
 					if(modifierDef.AppliesTo(stat, actionSet))
 					{
@@ -197,7 +197,7 @@ public class GunContext
 			if(attachmentStack.getItem() instanceof AttachmentItem attachmentItem)
 			{
 				AttachmentDefinition attachDef = attachmentItem.Def();
-				for(ModifierDefinition modifierDef : attachDef.Modifiers)
+				for(ModifierDefinition modifierDef : attachDef.modifiers)
 				{
 					if(modifierDef.AppliesTo(actionSet))
 					{

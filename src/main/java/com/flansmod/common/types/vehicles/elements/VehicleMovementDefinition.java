@@ -14,6 +14,8 @@ public class VehicleMovementDefinition
 	public PropellerDefinition[] propellers = new PropellerDefinition[0];
 	@JsonField
 	public LegsDefinition[] legs = new LegsDefinition[0];
+	@JsonField
+	public ArmDefinition[] arms = new ArmDefinition[0];
 
 	@JsonField
 	public float maxAcceleration = 1.0f;

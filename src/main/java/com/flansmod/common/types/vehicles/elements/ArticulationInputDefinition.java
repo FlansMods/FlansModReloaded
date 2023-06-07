@@ -16,4 +16,6 @@ public class ArticulationInputDefinition
 	public Vec3 motion = Vec3.ZERO;
 	@JsonField(Docs = "Used with the ApplyMotion type. Rotates in this direction (euler angles) if within the bounds of the part")
 	public Vec3 rotationalMotion = Vec3.ZERO;
+	@JsonField
+	public float speed = 1.0f;
 }

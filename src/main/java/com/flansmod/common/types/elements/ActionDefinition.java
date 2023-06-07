@@ -15,14 +15,14 @@ public class ActionDefinition
 	public boolean canActUnderOtherLiquid = false;
 	@JsonField(Docs = "If true, attachments that add an action in the same place will override this one")
 	public boolean canBeOverriden = false;
+
 	@JsonField
-	public String sound;
-	@JsonField
-	public int soundLength;
-	@JsonField
-	public boolean distortSound;
+	public SoundDefinition sound = new SoundDefinition();
+
 	@JsonField
 	public float duration = 0.0f;
+	@JsonField
+	public String itemStack = "";
 
 	// Shoot Action Specifics
 	@JsonField
@@ -40,4 +40,11 @@ public class ActionDefinition
 	@JsonField
 	public String anim = "";
 
+	// Tool specifics
+	@JsonField
+	public float toolLevel = 1.0f;
+	@JsonField
+	public float harvestSpeed = 1.0f;
+	@JsonField
+	public float reach = 1.0f;
 }

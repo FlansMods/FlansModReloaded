@@ -14,11 +14,16 @@ import net.minecraft.world.MenuProvider;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.inventory.ContainerData;
 import net.minecraft.world.item.crafting.RecipeType;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.entity.AbstractFurnaceBlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.BlockEntityTicker;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.energy.EnergyStorage;
@@ -35,9 +40,43 @@ public class WorkbenchBlockEntity extends BlockEntity implements MenuProvider, C
 	public final RestrictedContainer MaterialContainer;
 	public final RestrictedContainer BatteryContainer;
 	public final RestrictedContainer FuelContainer;
-	private EnergyStorage InternalEnergyStorage;
-	private LazyOptional<IEnergyStorage> LazyEnergyStorage;
+	private EnergyStorage EnergyStorage;
 	private static final double INTERACT_RANGE = 5.0d;
+
+	public static final int DATA_LIT_TIME = 0;
+	public static final int DATA_LIT_DURATION = 1;
+	public static final int DATA_FORGE_ENERGY = 2;
+	public int LitTime = 0;
+	public int LitDuration = 0;
+
+	protected final ContainerData DataAccess = new ContainerData()
+	{
+		@Override
+		public int get(int id)
+		{
+			switch (id)
+			{
+				case DATA_LIT_TIME -> { return LitTime; }
+				case DATA_LIT_DURATION -> { return LitDuration; }
+				case DATA_FORGE_ENERGY -> { return EnergyStorage == null ? 0 : EnergyStorage.getEnergyStored(); }
+				default -> { return 0; }
+			}
+		}
+
+		@Override
+		public void set(int id, int value)
+		{
+			switch (id)
+			{
+				case DATA_LIT_TIME -> { LitTime = value; }
+				case DATA_LIT_DURATION -> { LitDuration = value; }
+				case DATA_FORGE_ENERGY -> { if(EnergyStorage != null) EnergyStorage.receiveEnergy(value - EnergyStorage.getEnergyStored(), false); }
+			}
+		}
+
+		@Override
+		public int getCount() { return 3; }
+	};
 
 	public static class WorkbenchBlockEntityTypeHolder implements BlockEntityType.BlockEntitySupplier<WorkbenchBlockEntity>
 	{
@@ -95,6 +134,7 @@ public class WorkbenchBlockEntity extends BlockEntity implements MenuProvider, C
 
 		if(Def.energy.maxFE > 0)
 		{
+			EnergyStorage = new EnergyStorage(Def.energy.maxFE);
 			BatteryContainer = new RestrictedContainer(
 				this,
 				INTERACT_RANGE,
@@ -105,9 +145,9 @@ public class WorkbenchBlockEntity extends BlockEntity implements MenuProvider, C
 			FuelContainer = new RestrictedContainer(
 				this,
 				INTERACT_RANGE,
-				1,
+				Def.energy.numSolidFuelSlots,
 				64,
-				(stack) -> { return stack.getBurnTime(RecipeType.SMELTING) > 0.0f; }
+				(stack) -> { return ForgeHooks.getBurnTime(stack, RecipeType.SMELTING) > 0.0f; }
 			);
 		}
 		else
@@ -115,9 +155,6 @@ public class WorkbenchBlockEntity extends BlockEntity implements MenuProvider, C
 			BatteryContainer = new RestrictedContainer(this);
 			FuelContainer = new RestrictedContainer(this);
 		}
-
-		LazyEnergyStorage = LazyOptional.of(() -> InternalEnergyStorage);
-
 	}
 
 	@Override
@@ -128,7 +165,8 @@ public class WorkbenchBlockEntity extends BlockEntity implements MenuProvider, C
 		tags.put("materials", MaterialContainer.save(new CompoundTag()));
 		tags.put("battery", BatteryContainer.save(new CompoundTag()));
 		tags.put("fuel", FuelContainer.save(new CompoundTag()));
-		tags.put("energy", InternalEnergyStorage.serializeNBT());
+		if(EnergyStorage != null)
+			tags.put("energy", EnergyStorage.serializeNBT());
 	}
 
 	@Override
@@ -139,8 +177,8 @@ public class WorkbenchBlockEntity extends BlockEntity implements MenuProvider, C
 		MaterialContainer.load(tags.getCompound("materials"));
 		BatteryContainer.load(tags.getCompound("battery"));
 		FuelContainer.load(tags.getCompound("fuel"));
-		InternalEnergyStorage.deserializeNBT(tags.getCompound("energy"));
-		LazyEnergyStorage = LazyOptional.of(() -> InternalEnergyStorage);
+		if(EnergyStorage != null)
+			EnergyStorage.deserializeNBT(tags.getCompound("energy"));
 	}
 
 	@Override
@@ -163,6 +201,38 @@ public class WorkbenchBlockEntity extends BlockEntity implements MenuProvider, C
 	@Override
 	public AbstractContainerMenu createMenu(int containerID, Inventory inventory, Player player)
 	{
-		return new WorkbenchMenu(containerID, inventory, Def, GunContainer, MaterialContainer, BatteryContainer, FuelContainer);
+		return new WorkbenchMenu(containerID, inventory, Def, GunContainer, MaterialContainer, BatteryContainer, FuelContainer, DataAccess);
+	}
+
+	public static void serverTick(Level level, BlockPos pos, BlockState state, WorkbenchBlockEntity workbench)
+	{
+		if(workbench.EnergyStorage != null)
+		{
+			if (workbench.LitTime > 0)
+			{
+				workbench.LitTime--;
+				workbench.EnergyStorage.receiveEnergy(workbench.Def.energy.solidFEPerFuelTime, false);
+				if (workbench.LitTime <= 0)
+				{
+					workbench.LitDuration = 0;
+					setChanged(level, pos, state);
+				}
+			}
+
+			if (workbench.LitTime <= 0 && workbench.EnergyStorage.getEnergyStored() < workbench.EnergyStorage.getMaxEnergyStored())
+			{
+				if (workbench.FuelContainer.getContainerSize() > 0)
+				{
+					int burnTime = ForgeHooks.getBurnTime(workbench.FuelContainer.getItem(0), RecipeType.SMELTING);
+					if (burnTime > 0)
+					{
+						workbench.FuelContainer.removeItem(0, 1);
+						workbench.LitDuration = burnTime;
+						workbench.LitTime = burnTime;
+						setChanged(level, pos, state);
+					}
+				}
+			}
+		}
 	}
 }

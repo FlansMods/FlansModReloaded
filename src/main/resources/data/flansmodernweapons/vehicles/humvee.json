@@ -1,0 +1,305 @@
+{
+    "seats": [
+        {
+            "attachedTo": "core",
+            "offsetFromAttachPoint": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "minYaw": -360.0,
+            "maxYaw": 360.0,
+            "minPitch": -89.0,
+            "maxPitch": 89.0,
+            "gyroStabilised": false,
+            "inputs": [
+                {
+                    "key": "MoveForward",
+                    "articulations": [],
+                    "guns": [],
+                    "driving": [
+                        {
+                            "control": "Accelerate",
+                            "force": 0.7,
+                            "toggle": false
+                        }
+                    ],
+                    "arms": [],
+                    "alternateInputs": false,
+                    "switchVehicleMode": ""
+                },
+                {
+                    "key": "MoveBackward",
+                    "articulations": [],
+                    "guns": [],
+                    "driving": [
+                        {
+                            "control": "Decelerate",
+                            "force": 0.5,
+                            "toggle": false
+                        }
+                    ],
+                    "arms": [],
+                    "alternateInputs": false,
+                    "switchVehicleMode": ""
+                },
+                {
+                    "key": "YawLeft",
+                    "articulations": [],
+                    "guns": [],
+                    "driving": [
+                        {
+                            "control": "YawLeft",
+                            "force": 0.3,
+                            "toggle": false
+                        }
+                    ],
+                    "arms": [],
+                    "alternateInputs": false,
+                    "switchVehicleMode": ""
+                },
+                {
+                    "key": "YawRight",
+                    "articulations": [],
+                    "guns": [],
+                    "driving": [
+                        {
+                            "control": "YawRight",
+                            "force": 0.3,
+                            "toggle": false
+                        }
+                    ],
+                    "arms": [],
+                    "alternateInputs": false,
+                    "switchVehicleMode": ""
+                },
+                {
+                    "key": "Jump",
+                    "articulations": [],
+                    "guns": [],
+                    "driving": [
+                        {
+                            "control": "Handbrake",
+                            "force": 1.0,
+                            "toggle": false
+                        }
+                    ],
+                    "arms": [],
+                    "alternateInputs": false,
+                    "switchVehicleMode": ""
+                }
+            ]
+        },
+        {
+            "attachedTo": "core",
+            "offsetFromAttachPoint": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "minYaw": -360.0,
+            "maxYaw": 360.0,
+            "minPitch": -89.0,
+            "maxPitch": 89.0,
+            "gyroStabilised": false,
+            "inputs": []
+        },
+        {
+            "attachedTo": "core",
+            "offsetFromAttachPoint": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "minYaw": -360.0,
+            "maxYaw": 360.0,
+            "minPitch": -89.0,
+            "maxPitch": 89.0,
+            "gyroStabilised": false,
+            "inputs": []
+        },
+        {
+            "attachedTo": "core",
+            "offsetFromAttachPoint": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "minYaw": -360.0,
+            "maxYaw": 360.0,
+            "minPitch": -89.0,
+            "maxPitch": 89.0,
+            "gyroStabilised": false,
+            "inputs": []
+        },
+        {
+            "attachedTo": "core",
+            "offsetFromAttachPoint": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "minYaw": -35.0,
+            "maxYaw": 35.0,
+            "minPitch": -20.0,
+            "maxPitch": 25.0,
+            "gyroStabilised": false,
+            "inputs": [
+                {
+                    "key": "Fire1",
+                    "articulations": [],
+                    "guns": [
+                        {
+                            "gunName": "seat_4_gun",
+                            "toggle": false
+                        }
+                    ],
+                    "driving": [],
+                    "arms": [],
+                    "alternateInputs": false,
+                    "switchVehicleMode": ""
+                }
+            ]
+        }
+    ],
+    "articulatedParts": [],
+    "guns": [
+        {
+            "name": "seat_4_gun",
+            "primaryActions": [],
+            "recoil": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "attachedTo": "core",
+            "shootPointOffset": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "minYaw": -35.0,
+            "maxYaw": 35.0,
+            "minPitch": -20.0,
+            "maxPitch": 25.0,
+            "aimingSpeed": 1.0,
+            "lockSeatToGunAngles": false,
+            "traveseIndependently": false,
+            "yawSound": {
+                "sound": "",
+                "length": 0.0,
+                "minPitchMultiplier": 1.0,
+                "maxPitchMultiplier": 1.0,
+                "maxRange": 100.0,
+                "LODs": []
+            },
+            "pitchSound": {
+                "sound": "",
+                "length": 0.0,
+                "minPitchMultiplier": 1.0,
+                "maxPitchMultiplier": 1.0,
+                "maxRange": 100.0,
+                "LODs": []
+            }
+        }
+    ],
+    "movementModes": [
+        {
+            "name": "car",
+            "type": "Car",
+            "wheels": [
+                {
+                    "attachedTo": "coreWheel",
+                    "visualOffset": [
+                        -2.25,
+                        -0.625,
+                        -1.25
+                    ],
+                    "physicsOffset": [
+                        -2.25,
+                        -0.625,
+                        -1.25
+                    ],
+                    "springStrength": 0.5,
+                    "stepHeight": 1.0
+                },
+                {
+                    "attachedTo": "coreWheel",
+                    "visualOffset": [
+                        -2.25,
+                        -0.625,
+                        1.25
+                    ],
+                    "physicsOffset": [
+                        -2.25,
+                        -0.625,
+                        1.25
+                    ],
+                    "springStrength": 0.5,
+                    "stepHeight": 1.0
+                },
+                {
+                    "attachedTo": "coreWheel",
+                    "visualOffset": [
+                        2.125,
+                        -0.625,
+                        1.25
+                    ],
+                    "physicsOffset": [
+                        2.125,
+                        -0.625,
+                        1.25
+                    ],
+                    "springStrength": 0.5,
+                    "stepHeight": 1.0
+                },
+                {
+                    "attachedTo": "coreWheel",
+                    "visualOffset": [
+                        2.125,
+                        -0.625,
+                        -1.25
+                    ],
+                    "physicsOffset": [
+                        2.125,
+                        -0.625,
+                        -1.25
+                    ],
+                    "springStrength": 0.5,
+                    "stepHeight": 1.0
+                }
+            ],
+            "propellers": [],
+            "legs": [],
+            "arms": [],
+            "maxAcceleration": 1.0,
+            "maxDecceleration": -1.0,
+            "maxSpeed": 100.0,
+            "liftForce": 10.0
+        }
+    ],
+    "restingEulerAngles": [
+        0.0,
+        0.0,
+        0.0
+    ],
+    "defaultEngine": {
+        "maxAcceleration": 1.0,
+        "maxDeceleration": 1.0,
+        "maxSpeed": 1.0,
+        "fuelType": "Creative",
+        "fuelConsumptionRate": 1.0,
+        "solidFuelSlots": 0,
+        "liquidFuelCapacity": 1000,
+        "batterySlots": 0,
+        "FECapacity": 0
+    },
+    "useAABBCollisionOnly": false,
+    "aabbSize": [
+        0.0,
+        0.0,
+        0.0
+    ],
+    "CargoSlots": 0,
+    "CanAccessMenusWhileMoving": true
+}

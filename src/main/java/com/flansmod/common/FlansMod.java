@@ -56,24 +56,26 @@ public class FlansMod
 
     public static final RegistryObject<Block> GUN_MACHINING_TABLE_BLOCK = FlansMod.Workbench_Block(BLOCKS, MODID, "gun_machining_table");
     public static final RegistryObject<Block> GUN_MOD_TABLE_BLOCK = FlansMod.Workbench_Block(BLOCKS, MODID, "gun_modification_table");
-    public static final RegistryObject<Block> DIESEL_GENERATOR_BLOCK = FlansMod.Workbench_Block(BLOCKS, MODID, "diesel_generator");
+    public static final RegistryObject<Block> DIESEL_GENERATOR_BLOCK = FlansMod.Workbench_Block(BLOCKS, MODID, "portable_diesel_generator");
+    public static final RegistryObject<Block> COAL_GENERATOR_BLOCK = FlansMod.Workbench_Block(BLOCKS, MODID, "portable_coal_generator");
+    public static final RegistryObject<Block> WEAPON_CRATE = FlansMod.Workbench_Block(BLOCKS, MODID, "weapon_crate");
 
-
-    //public static final RegistryObject<Block> GUN_MACHINING_TABLE_BLOCK = BLOCKS.register("gun_machining_table", () -> new WorkbenchBlock(new ResourceLocation(MODID, "workbenches/gun_machining_table"), BlockBehaviour.Properties.of(Material.STONE)));
-    //public static final RegistryObject<Block> GUN_MOD_TABLE_BLOCK = BLOCKS.register("gun_modification_table", () -> new GunModTableBlock(BlockBehaviour.Properties.of(Material.STONE)));
-    //public static final RegistryObject<Block> DIESEL_GENERATOR_BLOCK = BLOCKS.register("diesel_generator", () -> new GeneratorBlock(BlockBehaviour.Properties.of(Material.STONE)));
 
     public static final RegistryObject<Item> GUN_MACHINING_TABLE_ITEM = ITEMS.register("gun_machining_table", () -> new BlockItem(GUN_MACHINING_TABLE_BLOCK.get(), new Item.Properties()));
     public static final RegistryObject<Item> GUN_MOD_TABLE_ITEM = ITEMS.register("gun_modification_table", () -> new BlockItem(GUN_MOD_TABLE_BLOCK.get(), new Item.Properties()));
-    public static final RegistryObject<Item> DIESEL_GENERATOR_ITEM = ITEMS.register("diesel_generator", () -> new BlockItem(DIESEL_GENERATOR_BLOCK.get(), new Item.Properties()));
+    public static final RegistryObject<Item> DIESEL_GENERATOR_ITEM = ITEMS.register("portable_diesel_generator", () -> new BlockItem(DIESEL_GENERATOR_BLOCK.get(), new Item.Properties()));
+    public static final RegistryObject<Item> COAL_GENERATOR_ITEM = ITEMS.register("portable_coal_generator", () -> new BlockItem(COAL_GENERATOR_BLOCK.get(), new Item.Properties()));
+    public static final RegistryObject<Item> WEAPON_CRATE_ITEM = ITEMS.register("weapon_crate", () -> new BlockItem(WEAPON_CRATE.get(), new Item.Properties()));
 
     // Tile entities
     public static final DeferredRegister<BlockEntityType<?>> TILE_ENTITIES = DeferredRegister.create(ForgeRegistries.BLOCK_ENTITY_TYPES, MODID);
     //public static final RegistryObject<BlockEntityType<GunModBlockEntity>> GUN_MOD_TILE_ENTITY = TILE_ENTITIES.register("gun_modification_table", () -> BlockEntityType.Builder.of(GunModBlockEntity::new, GUN_MOD_TABLE_BLOCK.get()).build(null));
     //public static final RegistryObject<BlockEntityType<GeneratorBlockEntity>> DIESEL_GENERATOR_TILE_ENTITY = TILE_ENTITIES.register("diesel_generator", () -> BlockEntityType.Builder.of(GeneratorBlockEntity::new, DIESEL_GENERATOR_BLOCK.get()).build(null));
     public static final RegistryObject<BlockEntityType<WorkbenchBlockEntity>> GUN_CRAFTING_TILE_ENTITY = Workbench_TileEntityType(TILE_ENTITIES, MODID, "gun_machining_table");
-    public static final RegistryObject<BlockEntityType<WorkbenchBlockEntity>> DIESEL_GENERATOR_TILE_ENTITY = Workbench_TileEntityType(TILE_ENTITIES, MODID, "diesel_generator");
+    public static final RegistryObject<BlockEntityType<WorkbenchBlockEntity>> DIESEL_GENERATOR_TILE_ENTITY = Workbench_TileEntityType(TILE_ENTITIES, MODID, "portable_diesel_generator");
+    public static final RegistryObject<BlockEntityType<WorkbenchBlockEntity>> COAL_GENERATOR_TILE_ENTITY = Workbench_TileEntityType(TILE_ENTITIES, MODID, "portable_coal_generator");
     public static final RegistryObject<BlockEntityType<WorkbenchBlockEntity>> GUN_MODIFICATION_TILE_ENTITY = Workbench_TileEntityType(TILE_ENTITIES, MODID, "gun_modification_table");
+    public static final RegistryObject<BlockEntityType<WorkbenchBlockEntity>> WEAPON_CRATE_TILE_ENTITY = Workbench_TileEntityType(TILE_ENTITIES, MODID, "weapon_crate");
 
 
     // Creative Mode Tabs
@@ -161,6 +163,8 @@ public class FlansMod
                     populator.accept(GUN_MACHINING_TABLE_ITEM.get());
                     populator.accept(GUN_MOD_TABLE_ITEM.get());
                     populator.accept(DIESEL_GENERATOR_ITEM.get());
+                    populator.accept(COAL_GENERATOR_ITEM.get());
+                    populator.accept(WEAPON_CRATE_ITEM.get());
                     for(Item item : ForgeRegistries.ITEMS.getValues())
                     {
                         if(item instanceof GunItem)

@@ -10,6 +10,7 @@ import org.joml.Vector3f;
 
 public class Maths
 {
+    // Integer maths
     public static int Modulo(int a, int b)
     {
         int c = a % b;
@@ -18,22 +19,32 @@ public class Maths
         return c;
     }
     public static int Abs(int a) { return a < 0 ? -a : a; }
-    public static int Clamp(int i, int min, int max)
-    {
-        return i > max ? max : (i < min ? min : i);
-    }
-    public static double Clamp(double i, double min, double max)
-    {
-        return i > max ? max : (i < min ? min : i);
-    }
+    public static int Clamp(int i, int min, int max) { return i > max ? max : (i < min ? min : i);  }
+    public static int Max(int a, int b) { return a > b ? a : b; }
+    public static int Min(int a, int b) { return a < b ? a : b; }
+    public static int CeilLerp(int a, int b, float t) { return Maths.Ceil(a + (b-a)*t); }
+    public static int FloorLerp(int a, int b, float t) { return Maths.Floor(a + (b-a)*t); }
+
+    // Double maths
+    public static double Abs(double a) { return a < 0 ? -a : a; }
+    public static double Clamp(double i, double min, double max) { return i > max ? max : (i < min ? min : i);  }
+    public static int Ceil(double d) { return (int)Math.ceil(d); }
+    public static int Floor(double d) { return (int)Math.floor(d); }
+    public static double Max(double a, double b) { return a > b ? a : b; }
+    public static double Min(double a, double b) { return a < b ? a : b; }
+    public static double Lerp(double a, double b, double t) { return a + (b-a)*t; }
+
+    // Float maths
     public static float Clamp(float i, float min, float max)
     {
         return i > max ? max : (i < min ? min : i);
     }
-    public static int Ceil(double d) { return (int)Math.ceil(d); }
-    public static int Floor(double d) { return (int)Math.floor(d); }
+    public static float Abs(float a) { return a < 0 ? -a : a; }
     public static float Max(float a, float b) { return a > b ? a : b; }
     public static float Min(float a, float b) { return a < b ? a : b; }
+    public static int Ceil(float d) { return (int)Math.ceil(d); }
+    public static int Floor(float d) { return (int)Math.floor(d); }
+    public static float Lerp(float a, float b, float t) { return a + (b-a)*t; }
 
     public static final double Pi = 3.1415926535897932384626433832795028841971d;
     public static final double Tau = 2.0d * Pi;

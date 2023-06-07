@@ -1,0 +1,965 @@
+{
+    "seats": [
+        {
+            "attachedTo": "core",
+            "offsetFromAttachPoint": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "minYaw": -360.0,
+            "maxYaw": 360.0,
+            "minPitch": -89.0,
+            "maxPitch": 89.0,
+            "gyroStabilised": false,
+            "inputs": [
+                {
+                    "key": "MoveForward",
+                    "articulations": [],
+                    "guns": [],
+                    "driving": [
+                        {
+                            "control": "Accelerate",
+                            "force": 8.0,
+                            "toggle": false
+                        }
+                    ],
+                    "arms": [],
+                    "alternateInputs": false,
+                    "switchVehicleMode": ""
+                },
+                {
+                    "key": "MoveBackward",
+                    "articulations": [],
+                    "guns": [],
+                    "driving": [
+                        {
+                            "control": "Decelerate",
+                            "force": 0.0,
+                            "toggle": false
+                        }
+                    ],
+                    "arms": [],
+                    "alternateInputs": false,
+                    "switchVehicleMode": ""
+                },
+                {
+                    "key": "MoveLeft",
+                    "articulations": [],
+                    "guns": [],
+                    "driving": [
+                        {
+                            "control": "YawLeft",
+                            "force": 4.0,
+                            "toggle": false
+                        }
+                    ],
+                    "arms": [],
+                    "alternateInputs": false,
+                    "switchVehicleMode": ""
+                },
+                {
+                    "key": "MoveRight",
+                    "articulations": [],
+                    "guns": [],
+                    "driving": [
+                        {
+                            "control": "YawRight",
+                            "force": 4.0,
+                            "toggle": false
+                        }
+                    ],
+                    "arms": [],
+                    "alternateInputs": false,
+                    "switchVehicleMode": ""
+                },
+                {
+                    "key": "Jump",
+                    "articulations": [],
+                    "guns": [],
+                    "driving": [
+                        {
+                            "control": "Handbrake",
+                            "force": 1.0,
+                            "toggle": false
+                        }
+                    ],
+                    "arms": [],
+                    "alternateInputs": false,
+                    "switchVehicleMode": ""
+                },
+                {
+                    "key": "RollLeft",
+                    "articulations": [],
+                    "guns": [],
+                    "driving": [
+                        {
+                            "control": "RollLeft",
+                            "force": 4.0,
+                            "toggle": false
+                        }
+                    ],
+                    "arms": [],
+                    "alternateInputs": false,
+                    "switchVehicleMode": ""
+                },
+                {
+                    "key": "RollRight",
+                    "articulations": [],
+                    "guns": [],
+                    "driving": [
+                        {
+                            "control": "RollRight",
+                            "force": 4.0,
+                            "toggle": false
+                        }
+                    ],
+                    "arms": [],
+                    "alternateInputs": false,
+                    "switchVehicleMode": ""
+                },
+                {
+                    "key": "PitchUp",
+                    "articulations": [],
+                    "guns": [],
+                    "driving": [
+                        {
+                            "control": "PitchUp",
+                            "force": 4.0,
+                            "toggle": false
+                        }
+                    ],
+                    "arms": [],
+                    "alternateInputs": false,
+                    "switchVehicleMode": ""
+                },
+                {
+                    "key": "PitchDown",
+                    "articulations": [],
+                    "guns": [],
+                    "driving": [
+                        {
+                            "control": "PitchDown",
+                            "force": 4.0,
+                            "toggle": false
+                        }
+                    ],
+                    "arms": [],
+                    "alternateInputs": false,
+                    "switchVehicleMode": ""
+                },
+                {
+                    "key": "GearUp",
+                    "articulations": [],
+                    "guns": [],
+                    "driving": [
+                        {
+                            "control": "GearUp",
+                            "force": 1.0,
+                            "toggle": false
+                        }
+                    ],
+                    "arms": [],
+                    "alternateInputs": false,
+                    "switchVehicleMode": ""
+                },
+                {
+                    "key": "GearDown",
+                    "articulations": [],
+                    "guns": [],
+                    "driving": [
+                        {
+                            "control": "GearDown",
+                            "force": 1.0,
+                            "toggle": false
+                        }
+                    ],
+                    "arms": [],
+                    "alternateInputs": false,
+                    "switchVehicleMode": ""
+                }
+            ]
+        }
+    ],
+    "articulatedParts": [],
+    "guns": [
+        {
+            "name": "pilot_gun_primary_0",
+            "primaryActions": [],
+            "recoil": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "attachedTo": "body",
+            "shootPointOffset": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "minYaw": 0.0,
+            "maxYaw": 0.0,
+            "minPitch": 0.0,
+            "maxPitch": 0.0,
+            "aimingSpeed": 0.0,
+            "lockSeatToGunAngles": false,
+            "traveseIndependently": false,
+            "yawSound": {
+                "sound": "",
+                "length": 1.0,
+                "minPitchMultiplier": 1.0,
+                "maxPitchMultiplier": 1.0,
+                "maxRange": 100.0,
+                "LODs": []
+            },
+            "pitchSound": {
+                "sound": "",
+                "length": 1.0,
+                "minPitchMultiplier": 1.0,
+                "maxPitchMultiplier": 1.0,
+                "maxRange": 100.0,
+                "LODs": []
+            }
+        },
+        {
+            "name": "pilot_gun_primary_1",
+            "primaryActions": [],
+            "recoil": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "attachedTo": "body",
+            "shootPointOffset": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "minYaw": 0.0,
+            "maxYaw": 0.0,
+            "minPitch": 0.0,
+            "maxPitch": 0.0,
+            "aimingSpeed": 0.0,
+            "lockSeatToGunAngles": false,
+            "traveseIndependently": false,
+            "yawSound": {
+                "sound": "",
+                "length": 1.0,
+                "minPitchMultiplier": 1.0,
+                "maxPitchMultiplier": 1.0,
+                "maxRange": 100.0,
+                "LODs": []
+            },
+            "pitchSound": {
+                "sound": "",
+                "length": 1.0,
+                "minPitchMultiplier": 1.0,
+                "maxPitchMultiplier": 1.0,
+                "maxRange": 100.0,
+                "LODs": []
+            }
+        },
+        {
+            "name": "pilot_gun_secondary_0",
+            "primaryActions": [
+                {
+                    "actionType": "Shoot",
+                    "canActUnderwater": true,
+                    "canActUnderOtherLiquid": false,
+                    "canBeOverriden": false,
+                    "sound": {
+                        "sound": "",
+                        "length": 1.0,
+                        "minPitchMultiplier": 1.0,
+                        "maxPitchMultiplier": 1.0,
+                        "maxRange": 100.0,
+                        "LODs": []
+                    },
+                    "duration": 0.0,
+                    "itemStack": "",
+                    "FireMode": "FullAuto",
+                    "shootStats": {
+                        "verticalReocil": 3.0,
+                        "horizontalRecoil": 0.0,
+                        "spread": 3.0,
+                        "hitscan": true,
+                        "speed": 0.0,
+                        "count": 1,
+                        "timeToNextShot": 2.0,
+                        "spreadPattern": "FilledCircle",
+                        "breaksMaterials": [],
+                        "penetrationPower": 1.0,
+                        "trailParticles": "",
+                        "impact": {
+                            "decal": "",
+                            "damageToTarget": 8.0,
+                            "multiplierVsPlayers": 1.0,
+                            "multiplierVsVehicles": 1.0,
+                            "knockback": 0.0,
+                            "splashDamageRadius": 0.0,
+                            "splashDamageFalloff": 1.0,
+                            "setFireToTarget": 0.0,
+                            "fireSpreadRadius": 0.0,
+                            "fireSpreadAmount": 0.0,
+                            "hitSound": {
+                                "sound": "",
+                                "length": 1.0,
+                                "minPitchMultiplier": 1.0,
+                                "maxPitchMultiplier": 1.0,
+                                "maxRange": 100.0,
+                                "LODs": []
+                            }
+                        }
+                    },
+                    "fovFactor": 1.25,
+                    "scopeOverlay": "",
+                    "anim": "",
+                    "toolLevel": 1.0,
+                    "harvestSpeed": 1.0,
+                    "reach": 1.0
+                },
+                {
+                    "actionType": "Animation",
+                    "canActUnderwater": true,
+                    "canActUnderOtherLiquid": false,
+                    "canBeOverriden": false,
+                    "sound": {
+                        "sound": "",
+                        "length": 1.0,
+                        "minPitchMultiplier": 1.0,
+                        "maxPitchMultiplier": 1.0,
+                        "maxRange": 100.0,
+                        "LODs": []
+                    },
+                    "duration": 0.0,
+                    "itemStack": "",
+                    "FireMode": "FullAuto",
+                    "shootStats": {
+                        "verticalReocil": 3.0,
+                        "horizontalRecoil": 0.0,
+                        "spread": 3.0,
+                        "hitscan": true,
+                        "speed": 0.0,
+                        "count": 1,
+                        "timeToNextShot": 2.0,
+                        "spreadPattern": "FilledCircle",
+                        "breaksMaterials": [],
+                        "penetrationPower": 1.0,
+                        "trailParticles": "",
+                        "impact": {
+                            "decal": "",
+                            "damageToTarget": 8.0,
+                            "multiplierVsPlayers": 1.0,
+                            "multiplierVsVehicles": 1.0,
+                            "knockback": 0.0,
+                            "splashDamageRadius": 0.0,
+                            "splashDamageFalloff": 1.0,
+                            "setFireToTarget": 0.0,
+                            "fireSpreadRadius": 0.0,
+                            "fireSpreadAmount": 0.0,
+                            "hitSound": {
+                                "sound": "",
+                                "length": 1.0,
+                                "minPitchMultiplier": 1.0,
+                                "maxPitchMultiplier": 1.0,
+                                "maxRange": 100.0,
+                                "LODs": []
+                            }
+                        }
+                    },
+                    "fovFactor": 1.25,
+                    "scopeOverlay": "",
+                    "anim": "FireMissile",
+                    "toolLevel": 1.0,
+                    "harvestSpeed": 1.0,
+                    "reach": 1.0
+                }
+            ],
+            "recoil": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "attachedTo": "body",
+            "shootPointOffset": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "minYaw": 0.0,
+            "maxYaw": 0.0,
+            "minPitch": 0.0,
+            "maxPitch": 0.0,
+            "aimingSpeed": 0.0,
+            "lockSeatToGunAngles": false,
+            "traveseIndependently": false,
+            "yawSound": {
+                "sound": "",
+                "length": 1.0,
+                "minPitchMultiplier": 1.0,
+                "maxPitchMultiplier": 1.0,
+                "maxRange": 100.0,
+                "LODs": []
+            },
+            "pitchSound": {
+                "sound": "",
+                "length": 1.0,
+                "minPitchMultiplier": 1.0,
+                "maxPitchMultiplier": 1.0,
+                "maxRange": 100.0,
+                "LODs": []
+            }
+        },
+        {
+            "name": "pilot_gun_secondary_1",
+            "primaryActions": [
+                {
+                    "actionType": "Shoot",
+                    "canActUnderwater": true,
+                    "canActUnderOtherLiquid": false,
+                    "canBeOverriden": false,
+                    "sound": {
+                        "sound": "",
+                        "length": 1.0,
+                        "minPitchMultiplier": 1.0,
+                        "maxPitchMultiplier": 1.0,
+                        "maxRange": 100.0,
+                        "LODs": []
+                    },
+                    "duration": 0.0,
+                    "itemStack": "",
+                    "FireMode": "FullAuto",
+                    "shootStats": {
+                        "verticalReocil": 3.0,
+                        "horizontalRecoil": 0.0,
+                        "spread": 3.0,
+                        "hitscan": true,
+                        "speed": 0.0,
+                        "count": 1,
+                        "timeToNextShot": 2.0,
+                        "spreadPattern": "FilledCircle",
+                        "breaksMaterials": [],
+                        "penetrationPower": 1.0,
+                        "trailParticles": "",
+                        "impact": {
+                            "decal": "",
+                            "damageToTarget": 8.0,
+                            "multiplierVsPlayers": 1.0,
+                            "multiplierVsVehicles": 1.0,
+                            "knockback": 0.0,
+                            "splashDamageRadius": 0.0,
+                            "splashDamageFalloff": 1.0,
+                            "setFireToTarget": 0.0,
+                            "fireSpreadRadius": 0.0,
+                            "fireSpreadAmount": 0.0,
+                            "hitSound": {
+                                "sound": "",
+                                "length": 1.0,
+                                "minPitchMultiplier": 1.0,
+                                "maxPitchMultiplier": 1.0,
+                                "maxRange": 100.0,
+                                "LODs": []
+                            }
+                        }
+                    },
+                    "fovFactor": 1.25,
+                    "scopeOverlay": "",
+                    "anim": "",
+                    "toolLevel": 1.0,
+                    "harvestSpeed": 1.0,
+                    "reach": 1.0
+                },
+                {
+                    "actionType": "Animation",
+                    "canActUnderwater": true,
+                    "canActUnderOtherLiquid": false,
+                    "canBeOverriden": false,
+                    "sound": {
+                        "sound": "",
+                        "length": 1.0,
+                        "minPitchMultiplier": 1.0,
+                        "maxPitchMultiplier": 1.0,
+                        "maxRange": 100.0,
+                        "LODs": []
+                    },
+                    "duration": 0.0,
+                    "itemStack": "",
+                    "FireMode": "FullAuto",
+                    "shootStats": {
+                        "verticalReocil": 3.0,
+                        "horizontalRecoil": 0.0,
+                        "spread": 3.0,
+                        "hitscan": true,
+                        "speed": 0.0,
+                        "count": 1,
+                        "timeToNextShot": 2.0,
+                        "spreadPattern": "FilledCircle",
+                        "breaksMaterials": [],
+                        "penetrationPower": 1.0,
+                        "trailParticles": "",
+                        "impact": {
+                            "decal": "",
+                            "damageToTarget": 8.0,
+                            "multiplierVsPlayers": 1.0,
+                            "multiplierVsVehicles": 1.0,
+                            "knockback": 0.0,
+                            "splashDamageRadius": 0.0,
+                            "splashDamageFalloff": 1.0,
+                            "setFireToTarget": 0.0,
+                            "fireSpreadRadius": 0.0,
+                            "fireSpreadAmount": 0.0,
+                            "hitSound": {
+                                "sound": "",
+                                "length": 1.0,
+                                "minPitchMultiplier": 1.0,
+                                "maxPitchMultiplier": 1.0,
+                                "maxRange": 100.0,
+                                "LODs": []
+                            }
+                        }
+                    },
+                    "fovFactor": 1.25,
+                    "scopeOverlay": "",
+                    "anim": "FireMissile",
+                    "toolLevel": 1.0,
+                    "harvestSpeed": 1.0,
+                    "reach": 1.0
+                }
+            ],
+            "recoil": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "attachedTo": "body",
+            "shootPointOffset": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "minYaw": 0.0,
+            "maxYaw": 0.0,
+            "minPitch": 0.0,
+            "maxPitch": 0.0,
+            "aimingSpeed": 0.0,
+            "lockSeatToGunAngles": false,
+            "traveseIndependently": false,
+            "yawSound": {
+                "sound": "",
+                "length": 1.0,
+                "minPitchMultiplier": 1.0,
+                "maxPitchMultiplier": 1.0,
+                "maxRange": 100.0,
+                "LODs": []
+            },
+            "pitchSound": {
+                "sound": "",
+                "length": 1.0,
+                "minPitchMultiplier": 1.0,
+                "maxPitchMultiplier": 1.0,
+                "maxRange": 100.0,
+                "LODs": []
+            }
+        },
+        {
+            "name": "pilot_gun_secondary_2",
+            "primaryActions": [
+                {
+                    "actionType": "Shoot",
+                    "canActUnderwater": true,
+                    "canActUnderOtherLiquid": false,
+                    "canBeOverriden": false,
+                    "sound": {
+                        "sound": "",
+                        "length": 1.0,
+                        "minPitchMultiplier": 1.0,
+                        "maxPitchMultiplier": 1.0,
+                        "maxRange": 100.0,
+                        "LODs": []
+                    },
+                    "duration": 0.0,
+                    "itemStack": "",
+                    "FireMode": "FullAuto",
+                    "shootStats": {
+                        "verticalReocil": 3.0,
+                        "horizontalRecoil": 0.0,
+                        "spread": 3.0,
+                        "hitscan": true,
+                        "speed": 0.0,
+                        "count": 1,
+                        "timeToNextShot": 2.0,
+                        "spreadPattern": "FilledCircle",
+                        "breaksMaterials": [],
+                        "penetrationPower": 1.0,
+                        "trailParticles": "",
+                        "impact": {
+                            "decal": "",
+                            "damageToTarget": 8.0,
+                            "multiplierVsPlayers": 1.0,
+                            "multiplierVsVehicles": 1.0,
+                            "knockback": 0.0,
+                            "splashDamageRadius": 0.0,
+                            "splashDamageFalloff": 1.0,
+                            "setFireToTarget": 0.0,
+                            "fireSpreadRadius": 0.0,
+                            "fireSpreadAmount": 0.0,
+                            "hitSound": {
+                                "sound": "",
+                                "length": 1.0,
+                                "minPitchMultiplier": 1.0,
+                                "maxPitchMultiplier": 1.0,
+                                "maxRange": 100.0,
+                                "LODs": []
+                            }
+                        }
+                    },
+                    "fovFactor": 1.25,
+                    "scopeOverlay": "",
+                    "anim": "",
+                    "toolLevel": 1.0,
+                    "harvestSpeed": 1.0,
+                    "reach": 1.0
+                },
+                {
+                    "actionType": "Animation",
+                    "canActUnderwater": true,
+                    "canActUnderOtherLiquid": false,
+                    "canBeOverriden": false,
+                    "sound": {
+                        "sound": "",
+                        "length": 1.0,
+                        "minPitchMultiplier": 1.0,
+                        "maxPitchMultiplier": 1.0,
+                        "maxRange": 100.0,
+                        "LODs": []
+                    },
+                    "duration": 0.0,
+                    "itemStack": "",
+                    "FireMode": "FullAuto",
+                    "shootStats": {
+                        "verticalReocil": 3.0,
+                        "horizontalRecoil": 0.0,
+                        "spread": 3.0,
+                        "hitscan": true,
+                        "speed": 0.0,
+                        "count": 1,
+                        "timeToNextShot": 2.0,
+                        "spreadPattern": "FilledCircle",
+                        "breaksMaterials": [],
+                        "penetrationPower": 1.0,
+                        "trailParticles": "",
+                        "impact": {
+                            "decal": "",
+                            "damageToTarget": 8.0,
+                            "multiplierVsPlayers": 1.0,
+                            "multiplierVsVehicles": 1.0,
+                            "knockback": 0.0,
+                            "splashDamageRadius": 0.0,
+                            "splashDamageFalloff": 1.0,
+                            "setFireToTarget": 0.0,
+                            "fireSpreadRadius": 0.0,
+                            "fireSpreadAmount": 0.0,
+                            "hitSound": {
+                                "sound": "",
+                                "length": 1.0,
+                                "minPitchMultiplier": 1.0,
+                                "maxPitchMultiplier": 1.0,
+                                "maxRange": 100.0,
+                                "LODs": []
+                            }
+                        }
+                    },
+                    "fovFactor": 1.25,
+                    "scopeOverlay": "",
+                    "anim": "FireMissile",
+                    "toolLevel": 1.0,
+                    "harvestSpeed": 1.0,
+                    "reach": 1.0
+                }
+            ],
+            "recoil": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "attachedTo": "body",
+            "shootPointOffset": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "minYaw": 0.0,
+            "maxYaw": 0.0,
+            "minPitch": 0.0,
+            "maxPitch": 0.0,
+            "aimingSpeed": 0.0,
+            "lockSeatToGunAngles": false,
+            "traveseIndependently": false,
+            "yawSound": {
+                "sound": "",
+                "length": 1.0,
+                "minPitchMultiplier": 1.0,
+                "maxPitchMultiplier": 1.0,
+                "maxRange": 100.0,
+                "LODs": []
+            },
+            "pitchSound": {
+                "sound": "",
+                "length": 1.0,
+                "minPitchMultiplier": 1.0,
+                "maxPitchMultiplier": 1.0,
+                "maxRange": 100.0,
+                "LODs": []
+            }
+        },
+        {
+            "name": "pilot_gun_secondary_3",
+            "primaryActions": [
+                {
+                    "actionType": "Shoot",
+                    "canActUnderwater": true,
+                    "canActUnderOtherLiquid": false,
+                    "canBeOverriden": false,
+                    "sound": {
+                        "sound": "",
+                        "length": 1.0,
+                        "minPitchMultiplier": 1.0,
+                        "maxPitchMultiplier": 1.0,
+                        "maxRange": 100.0,
+                        "LODs": []
+                    },
+                    "duration": 0.0,
+                    "itemStack": "",
+                    "FireMode": "FullAuto",
+                    "shootStats": {
+                        "verticalReocil": 3.0,
+                        "horizontalRecoil": 0.0,
+                        "spread": 3.0,
+                        "hitscan": true,
+                        "speed": 0.0,
+                        "count": 1,
+                        "timeToNextShot": 2.0,
+                        "spreadPattern": "FilledCircle",
+                        "breaksMaterials": [],
+                        "penetrationPower": 1.0,
+                        "trailParticles": "",
+                        "impact": {
+                            "decal": "",
+                            "damageToTarget": 8.0,
+                            "multiplierVsPlayers": 1.0,
+                            "multiplierVsVehicles": 1.0,
+                            "knockback": 0.0,
+                            "splashDamageRadius": 0.0,
+                            "splashDamageFalloff": 1.0,
+                            "setFireToTarget": 0.0,
+                            "fireSpreadRadius": 0.0,
+                            "fireSpreadAmount": 0.0,
+                            "hitSound": {
+                                "sound": "",
+                                "length": 1.0,
+                                "minPitchMultiplier": 1.0,
+                                "maxPitchMultiplier": 1.0,
+                                "maxRange": 100.0,
+                                "LODs": []
+                            }
+                        }
+                    },
+                    "fovFactor": 1.25,
+                    "scopeOverlay": "",
+                    "anim": "",
+                    "toolLevel": 1.0,
+                    "harvestSpeed": 1.0,
+                    "reach": 1.0
+                },
+                {
+                    "actionType": "Animation",
+                    "canActUnderwater": true,
+                    "canActUnderOtherLiquid": false,
+                    "canBeOverriden": false,
+                    "sound": {
+                        "sound": "",
+                        "length": 1.0,
+                        "minPitchMultiplier": 1.0,
+                        "maxPitchMultiplier": 1.0,
+                        "maxRange": 100.0,
+                        "LODs": []
+                    },
+                    "duration": 0.0,
+                    "itemStack": "",
+                    "FireMode": "FullAuto",
+                    "shootStats": {
+                        "verticalReocil": 3.0,
+                        "horizontalRecoil": 0.0,
+                        "spread": 3.0,
+                        "hitscan": true,
+                        "speed": 0.0,
+                        "count": 1,
+                        "timeToNextShot": 2.0,
+                        "spreadPattern": "FilledCircle",
+                        "breaksMaterials": [],
+                        "penetrationPower": 1.0,
+                        "trailParticles": "",
+                        "impact": {
+                            "decal": "",
+                            "damageToTarget": 8.0,
+                            "multiplierVsPlayers": 1.0,
+                            "multiplierVsVehicles": 1.0,
+                            "knockback": 0.0,
+                            "splashDamageRadius": 0.0,
+                            "splashDamageFalloff": 1.0,
+                            "setFireToTarget": 0.0,
+                            "fireSpreadRadius": 0.0,
+                            "fireSpreadAmount": 0.0,
+                            "hitSound": {
+                                "sound": "",
+                                "length": 1.0,
+                                "minPitchMultiplier": 1.0,
+                                "maxPitchMultiplier": 1.0,
+                                "maxRange": 100.0,
+                                "LODs": []
+                            }
+                        }
+                    },
+                    "fovFactor": 1.25,
+                    "scopeOverlay": "",
+                    "anim": "FireMissile",
+                    "toolLevel": 1.0,
+                    "harvestSpeed": 1.0,
+                    "reach": 1.0
+                }
+            ],
+            "recoil": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "attachedTo": "body",
+            "shootPointOffset": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "minYaw": 0.0,
+            "maxYaw": 0.0,
+            "minPitch": 0.0,
+            "maxPitch": 0.0,
+            "aimingSpeed": 0.0,
+            "lockSeatToGunAngles": false,
+            "traveseIndependently": false,
+            "yawSound": {
+                "sound": "",
+                "length": 1.0,
+                "minPitchMultiplier": 1.0,
+                "maxPitchMultiplier": 1.0,
+                "maxRange": 100.0,
+                "LODs": []
+            },
+            "pitchSound": {
+                "sound": "",
+                "length": 1.0,
+                "minPitchMultiplier": 1.0,
+                "maxPitchMultiplier": 1.0,
+                "maxRange": 100.0,
+                "LODs": []
+            }
+        }
+    ],
+    "movementModes": [
+        {
+            "name": "plane",
+            "type": "Plane",
+            "wheels": [
+                {
+                    "attachedTo": "coreWheel",
+                    "visualOffset": [
+                        -1.375,
+                        -0.625,
+                        -1.125
+                    ],
+                    "physicsOffset": [
+                        -1.375,
+                        -0.625,
+                        -1.125
+                    ],
+                    "springStrength": 0.125,
+                    "stepHeight": 1.0
+                },
+                {
+                    "attachedTo": "coreWheel",
+                    "visualOffset": [
+                        -1.375,
+                        -0.625,
+                        1.125
+                    ],
+                    "physicsOffset": [
+                        -1.375,
+                        -0.625,
+                        1.125
+                    ],
+                    "springStrength": 0.125,
+                    "stepHeight": 1.0
+                },
+                {
+                    "attachedTo": "coreWheel",
+                    "visualOffset": [
+                        4.0,
+                        -0.625,
+                        0.0
+                    ],
+                    "physicsOffset": [
+                        4.0,
+                        -0.625,
+                        0.0
+                    ],
+                    "springStrength": 0.125,
+                    "stepHeight": 1.0
+                }
+            ],
+            "propellers": [
+                {
+                    "attachedTo": "core",
+                    "visualOffset": [
+                        3.375,
+                        0.0,
+                        0.0
+                    ],
+                    "forceOffset": [
+                        0.0,
+                        0.0,
+                        0.0
+                    ]
+                }
+            ],
+            "legs": [],
+            "arms": [],
+            "maxAcceleration": 1.0,
+            "maxDecceleration": -1.0,
+            "maxSpeed": 100.0,
+            "liftForce": 10.0
+        }
+    ],
+    "restingEulerAngles": [
+        0.0,
+        0.0,
+        0.0
+    ],
+    "defaultEngine": {
+        "maxAcceleration": 1.0,
+        "maxDeceleration": 1.0,
+        "maxSpeed": 1.0,
+        "fuelType": "Creative",
+        "fuelConsumptionRate": 1.0,
+        "solidFuelSlots": 0,
+        "liquidFuelCapacity": 1000,
+        "batterySlots": 0,
+        "FECapacity": 0
+    },
+    "useAABBCollisionOnly": false,
+    "aabbSize": [
+        0.0,
+        0.0,
+        0.0
+    ],
+    "CargoSlots": 0,
+    "CanAccessMenusWhileMoving": true
+}

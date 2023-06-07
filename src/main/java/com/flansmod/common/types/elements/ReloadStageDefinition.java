@@ -9,7 +9,7 @@ public class ReloadStageDefinition
 	@JsonField(Docs = "The full duration of this reload stage, in seconds")
 	public float duration = 10.0f;
 	@JsonField(Docs = "The sound to play when entering this reload stage")
-	public String sound = "";
+	public SoundDefinition sound = new SoundDefinition();
 	@JsonField(Docs = "All actions to run when entering this reload stage")
 	public ActionDefinition[] actions = new ActionDefinition[0];
 

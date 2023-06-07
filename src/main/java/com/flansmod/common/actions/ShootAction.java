@@ -322,9 +322,9 @@ public class ShootAction extends Action
 	@Override
 	public void OnTickClient(GunContext context)
 	{
-		float tBefore = progress;
+		int tickBefore = GetProgressTicks();
 		super.OnTickClient(context);
-		float tAfter = progress;
+		int tickAfter = GetProgressTicks();
 
 		boolean playedASoundThisTick = false;
 
@@ -336,8 +336,8 @@ public class ShootAction extends Action
 			for (HitResult hit : shot.hits)
 			{
 				// Check if this hit should be processed on this frame
-				double t = Maths.CalculateParameter(shot.origin, shot.Endpoint(), hit.getLocation()) * duration;
-				if(tBefore <= t && t < tAfter)
+				double t = Maths.CalculateParameter(shot.origin, shot.Endpoint(), hit.getLocation()) * GetDurationTicks();
+				if(tickBefore <= t && t < tickAfter)
 				{
 					// Create hit particles
 					switch (hit.getType())
@@ -387,7 +387,7 @@ public class ShootAction extends Action
 						}
 						case ENTITY ->
 						{
-							Vec3 shotMotion = shot.trajectory.normalize().scale(duration);
+							Vec3 shotMotion = shot.trajectory.normalize().scale(GetDurationTicks());
 							particleEngine.createParticle(
 								ParticleTypes.DAMAGE_INDICATOR,
 								hit.getLocation().x,

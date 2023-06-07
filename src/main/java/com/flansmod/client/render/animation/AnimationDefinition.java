@@ -15,6 +15,7 @@ import java.util.Optional;
 public class AnimationDefinition extends JsonDefinition
 {
 	public static final String TYPE = "animation";
+	public static final String FOLDER = "animations";
 	public static final AnimationDefinition INVALID = new AnimationDefinition(new ResourceLocation(FlansMod.MODID, "animations/null"));
 
 
@@ -30,7 +31,7 @@ public class AnimationDefinition extends JsonDefinition
 	{
 		for(int i = 0; i < sequences.length; i++)
 		{
-			if(sequences[i].name.equals(name))
+			if(sequences[i].name.toLowerCase().equals(name.toLowerCase()))
 				return sequences[i];
 		}
 		return null;

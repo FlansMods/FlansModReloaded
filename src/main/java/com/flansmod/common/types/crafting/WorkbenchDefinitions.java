@@ -7,7 +7,7 @@ public class WorkbenchDefinitions extends Definitions<WorkbenchDefinition>
 {
 	public WorkbenchDefinitions()
 	{
-		super(WorkbenchDefinition.TYPE,
+		super(WorkbenchDefinition.FOLDER,
 			WorkbenchDefinition.class,
 			WorkbenchDefinition.INVALID,
 			WorkbenchDefinition::new);

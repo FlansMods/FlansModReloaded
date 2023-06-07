@@ -36,12 +36,12 @@ public class Definitions<TDefinitionType extends JsonDefinition> extends SimpleJ
 	}
 	private final Factory<TDefinitionType> createFunc;
 
-	public Definitions(String typeName,
+	public Definitions(String folderName,
 					   Class<? extends TDefinitionType> clazz,
 					   TDefinitionType invalid,
 					   Factory<TDefinitionType> createFunctor)
 	{
-		super(GSON, typeName.toLowerCase() + "s");
+		super(GSON, folderName.toLowerCase());
 		createFunc = createFunctor;
 		INVALID = invalid;
 		DefinitionParser.IterativelyCreateParsers(clazz);

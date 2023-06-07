@@ -3,6 +3,7 @@ package com.flansmod.common.types.vehicles.elements;
 import com.flansmod.common.types.JsonField;
 import com.flansmod.common.types.elements.ActionDefinition;
 import com.flansmod.common.types.elements.ShotDefinition;
+import com.flansmod.common.types.elements.SoundDefinition;
 import com.flansmod.common.types.guns.GunDefinition;
 import net.minecraft.world.phys.Vec3;
 
@@ -36,11 +37,7 @@ public class MountedGunDefinition
 	@JsonField(Docs = "If set true, this turret has to line up its yaw, then its pitch, one at a time")
 	public boolean traveseIndependently = false;
 	@JsonField
-	public String yawSound = "";
+	public SoundDefinition yawSound = new SoundDefinition();
 	@JsonField
-	public int yawSoundLength = 0;
-	@JsonField
-	public String pitchSound = "";
-	@JsonField
-	public int pitchSoundLength = 0;
+	public SoundDefinition pitchSound = new SoundDefinition();
 }

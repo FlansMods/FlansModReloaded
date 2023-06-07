@@ -6,7 +6,7 @@ public class PartDefinitions extends Definitions<PartDefinition>
 {
 	public PartDefinitions()
 	{
-		super(PartDefinition.TYPE,
+		super(PartDefinition.FOLDER,
 			PartDefinition.class,
 			PartDefinition.INVALID,
 			(key) -> { return new PartDefinition(key); } );

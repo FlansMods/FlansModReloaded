@@ -6,7 +6,7 @@ public class AnimationDefinitions extends Definitions<AnimationDefinition>
 {
 	public AnimationDefinitions()
 	{
-		super(AnimationDefinition.TYPE,
+		super(AnimationDefinition.FOLDER,
 			AnimationDefinition.class,
 			AnimationDefinition.INVALID,
 			AnimationDefinition::new);

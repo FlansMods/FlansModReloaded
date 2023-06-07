@@ -9,6 +9,19 @@ public enum EActionType
 	Shield, // == Block?
 	Drop,
 	Melee,
+	Interact,
+	BreakBlock,
+	PlaceBlock,
+	SelectBlock,
+	CollectFluid,
+	PlaceFluid,
 
+	Pickaxe,
+	Shovel,
+	Axe,
+	Hoe,
+	Strip,
+	Shear,
+	Flatten,
 
 }

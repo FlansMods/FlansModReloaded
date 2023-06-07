@@ -1,0 +1,662 @@
+{
+    "seats": [
+        {
+            "attachedTo": "core",
+            "offsetFromAttachPoint": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "minYaw": -360.0,
+            "maxYaw": 360.0,
+            "minPitch": -89.0,
+            "maxPitch": 89.0,
+            "gyroStabilised": false,
+            "inputs": [
+                {
+                    "key": "MoveForward",
+                    "articulations": [],
+                    "guns": [],
+                    "driving": [
+                        {
+                            "control": "Accelerate",
+                            "force": 3.5,
+                            "toggle": false
+                        }
+                    ],
+                    "arms": [],
+                    "alternateInputs": false,
+                    "switchVehicleMode": ""
+                },
+                {
+                    "key": "MoveBackward",
+                    "articulations": [],
+                    "guns": [],
+                    "driving": [
+                        {
+                            "control": "Decelerate",
+                            "force": 0.0,
+                            "toggle": false
+                        }
+                    ],
+                    "arms": [],
+                    "alternateInputs": false,
+                    "switchVehicleMode": ""
+                },
+                {
+                    "key": "MoveLeft",
+                    "articulations": [],
+                    "guns": [],
+                    "driving": [
+                        {
+                            "control": "YawLeft",
+                            "force": 1.25,
+                            "toggle": false
+                        }
+                    ],
+                    "arms": [],
+                    "alternateInputs": false,
+                    "switchVehicleMode": ""
+                },
+                {
+                    "key": "MoveRight",
+                    "articulations": [],
+                    "guns": [],
+                    "driving": [
+                        {
+                            "control": "YawRight",
+                            "force": 1.25,
+                            "toggle": false
+                        }
+                    ],
+                    "arms": [],
+                    "alternateInputs": false,
+                    "switchVehicleMode": ""
+                },
+                {
+                    "key": "Jump",
+                    "articulations": [],
+                    "guns": [],
+                    "driving": [
+                        {
+                            "control": "Handbrake",
+                            "force": 1.0,
+                            "toggle": false
+                        }
+                    ],
+                    "arms": [],
+                    "alternateInputs": false,
+                    "switchVehicleMode": ""
+                },
+                {
+                    "key": "RollLeft",
+                    "articulations": [],
+                    "guns": [],
+                    "driving": [
+                        {
+                            "control": "RollLeft",
+                            "force": 1.25,
+                            "toggle": false
+                        }
+                    ],
+                    "arms": [],
+                    "alternateInputs": false,
+                    "switchVehicleMode": ""
+                },
+                {
+                    "key": "RollRight",
+                    "articulations": [],
+                    "guns": [],
+                    "driving": [
+                        {
+                            "control": "RollRight",
+                            "force": 1.25,
+                            "toggle": false
+                        }
+                    ],
+                    "arms": [],
+                    "alternateInputs": false,
+                    "switchVehicleMode": ""
+                },
+                {
+                    "key": "PitchUp",
+                    "articulations": [],
+                    "guns": [],
+                    "driving": [
+                        {
+                            "control": "PitchUp",
+                            "force": 1.25,
+                            "toggle": false
+                        }
+                    ],
+                    "arms": [],
+                    "alternateInputs": false,
+                    "switchVehicleMode": ""
+                },
+                {
+                    "key": "PitchDown",
+                    "articulations": [],
+                    "guns": [],
+                    "driving": [
+                        {
+                            "control": "PitchDown",
+                            "force": 1.25,
+                            "toggle": false
+                        }
+                    ],
+                    "arms": [],
+                    "alternateInputs": false,
+                    "switchVehicleMode": ""
+                },
+                {
+                    "key": "GearUp",
+                    "articulations": [],
+                    "guns": [],
+                    "driving": [
+                        {
+                            "control": "GearUp",
+                            "force": 1.0,
+                            "toggle": false
+                        }
+                    ],
+                    "arms": [],
+                    "alternateInputs": false,
+                    "switchVehicleMode": ""
+                },
+                {
+                    "key": "GearDown",
+                    "articulations": [],
+                    "guns": [],
+                    "driving": [
+                        {
+                            "control": "GearDown",
+                            "force": 1.0,
+                            "toggle": false
+                        }
+                    ],
+                    "arms": [],
+                    "alternateInputs": false,
+                    "switchVehicleMode": ""
+                }
+            ]
+        },
+        {
+            "attachedTo": "core",
+            "offsetFromAttachPoint": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "minYaw": -360.0,
+            "maxYaw": 360.0,
+            "minPitch": -89.0,
+            "maxPitch": 89.0,
+            "gyroStabilised": false,
+            "inputs": []
+        },
+        {
+            "attachedTo": "core",
+            "offsetFromAttachPoint": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "minYaw": -360.0,
+            "maxYaw": 360.0,
+            "minPitch": -89.0,
+            "maxPitch": 89.0,
+            "gyroStabilised": false,
+            "inputs": []
+        },
+        {
+            "attachedTo": "core",
+            "offsetFromAttachPoint": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "minYaw": -360.0,
+            "maxYaw": 360.0,
+            "minPitch": -89.0,
+            "maxPitch": 89.0,
+            "gyroStabilised": false,
+            "inputs": []
+        },
+        {
+            "attachedTo": "core",
+            "offsetFromAttachPoint": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "minYaw": -360.0,
+            "maxYaw": 360.0,
+            "minPitch": -89.0,
+            "maxPitch": 89.0,
+            "gyroStabilised": false,
+            "inputs": []
+        },
+        {
+            "attachedTo": "core",
+            "offsetFromAttachPoint": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "minYaw": -360.0,
+            "maxYaw": 360.0,
+            "minPitch": -89.0,
+            "maxPitch": 89.0,
+            "gyroStabilised": false,
+            "inputs": []
+        },
+        {
+            "attachedTo": "core",
+            "offsetFromAttachPoint": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "minYaw": -360.0,
+            "maxYaw": 360.0,
+            "minPitch": -89.0,
+            "maxPitch": 89.0,
+            "gyroStabilised": false,
+            "inputs": []
+        },
+        {
+            "attachedTo": "core",
+            "offsetFromAttachPoint": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "minYaw": -360.0,
+            "maxYaw": 360.0,
+            "minPitch": -89.0,
+            "maxPitch": 89.0,
+            "gyroStabilised": false,
+            "inputs": []
+        },
+        {
+            "attachedTo": "core",
+            "offsetFromAttachPoint": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "minYaw": -360.0,
+            "maxYaw": 360.0,
+            "minPitch": -89.0,
+            "maxPitch": 89.0,
+            "gyroStabilised": false,
+            "inputs": []
+        },
+        {
+            "attachedTo": "core",
+            "offsetFromAttachPoint": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "minYaw": -360.0,
+            "maxYaw": 360.0,
+            "minPitch": -89.0,
+            "maxPitch": 89.0,
+            "gyroStabilised": false,
+            "inputs": []
+        },
+        {
+            "attachedTo": "core",
+            "offsetFromAttachPoint": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "minYaw": -360.0,
+            "maxYaw": 360.0,
+            "minPitch": -89.0,
+            "maxPitch": 89.0,
+            "gyroStabilised": false,
+            "inputs": []
+        },
+        {
+            "attachedTo": "core",
+            "offsetFromAttachPoint": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "minYaw": -360.0,
+            "maxYaw": 360.0,
+            "minPitch": -89.0,
+            "maxPitch": 89.0,
+            "gyroStabilised": false,
+            "inputs": []
+        },
+        {
+            "attachedTo": "core",
+            "offsetFromAttachPoint": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "minYaw": -360.0,
+            "maxYaw": 360.0,
+            "minPitch": -89.0,
+            "maxPitch": 89.0,
+            "gyroStabilised": false,
+            "inputs": []
+        },
+        {
+            "attachedTo": "core",
+            "offsetFromAttachPoint": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "minYaw": -360.0,
+            "maxYaw": 360.0,
+            "minPitch": -89.0,
+            "maxPitch": 89.0,
+            "gyroStabilised": false,
+            "inputs": []
+        },
+        {
+            "attachedTo": "core",
+            "offsetFromAttachPoint": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "minYaw": -360.0,
+            "maxYaw": 360.0,
+            "minPitch": -89.0,
+            "maxPitch": 89.0,
+            "gyroStabilised": false,
+            "inputs": []
+        },
+        {
+            "attachedTo": "core",
+            "offsetFromAttachPoint": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "minYaw": -360.0,
+            "maxYaw": 360.0,
+            "minPitch": -89.0,
+            "maxPitch": 89.0,
+            "gyroStabilised": false,
+            "inputs": []
+        },
+        {
+            "attachedTo": "core",
+            "offsetFromAttachPoint": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "minYaw": -360.0,
+            "maxYaw": 360.0,
+            "minPitch": -89.0,
+            "maxPitch": 89.0,
+            "gyroStabilised": false,
+            "inputs": []
+        },
+        {
+            "attachedTo": "core",
+            "offsetFromAttachPoint": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "minYaw": -360.0,
+            "maxYaw": 360.0,
+            "minPitch": -89.0,
+            "maxPitch": 89.0,
+            "gyroStabilised": false,
+            "inputs": []
+        },
+        {
+            "attachedTo": "core",
+            "offsetFromAttachPoint": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "minYaw": -360.0,
+            "maxYaw": 360.0,
+            "minPitch": -89.0,
+            "maxPitch": 89.0,
+            "gyroStabilised": false,
+            "inputs": []
+        },
+        {
+            "attachedTo": "core",
+            "offsetFromAttachPoint": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "minYaw": -360.0,
+            "maxYaw": 360.0,
+            "minPitch": -89.0,
+            "maxPitch": 89.0,
+            "gyroStabilised": false,
+            "inputs": []
+        },
+        {
+            "attachedTo": "core",
+            "offsetFromAttachPoint": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "minYaw": -360.0,
+            "maxYaw": 360.0,
+            "minPitch": -89.0,
+            "maxPitch": 89.0,
+            "gyroStabilised": false,
+            "inputs": []
+        },
+        {
+            "attachedTo": "core",
+            "offsetFromAttachPoint": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "minYaw": -360.0,
+            "maxYaw": 360.0,
+            "minPitch": -89.0,
+            "maxPitch": 89.0,
+            "gyroStabilised": false,
+            "inputs": []
+        },
+        {
+            "attachedTo": "core",
+            "offsetFromAttachPoint": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "minYaw": -360.0,
+            "maxYaw": 360.0,
+            "minPitch": -89.0,
+            "maxPitch": 89.0,
+            "gyroStabilised": false,
+            "inputs": []
+        },
+        {
+            "attachedTo": "core",
+            "offsetFromAttachPoint": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "minYaw": -360.0,
+            "maxYaw": 360.0,
+            "minPitch": -89.0,
+            "maxPitch": 89.0,
+            "gyroStabilised": false,
+            "inputs": []
+        },
+        {
+            "attachedTo": "core",
+            "offsetFromAttachPoint": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "minYaw": -360.0,
+            "maxYaw": 360.0,
+            "minPitch": -89.0,
+            "maxPitch": 89.0,
+            "gyroStabilised": false,
+            "inputs": []
+        },
+        {
+            "attachedTo": "core",
+            "offsetFromAttachPoint": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "minYaw": -360.0,
+            "maxYaw": 360.0,
+            "minPitch": -89.0,
+            "maxPitch": 89.0,
+            "gyroStabilised": false,
+            "inputs": []
+        }
+    ],
+    "articulatedParts": [],
+    "guns": [],
+    "movementModes": [
+        {
+            "name": "helicopter",
+            "type": "Helicopter",
+            "wheels": [
+                {
+                    "attachedTo": "coreWheel",
+                    "visualOffset": [
+                        -2.875,
+                        -0.625,
+                        -1.9375
+                    ],
+                    "physicsOffset": [
+                        -2.875,
+                        -0.625,
+                        -1.9375
+                    ],
+                    "springStrength": 0.125,
+                    "stepHeight": 1.0
+                },
+                {
+                    "attachedTo": "coreWheel",
+                    "visualOffset": [
+                        -2.875,
+                        -0.625,
+                        1.9375
+                    ],
+                    "physicsOffset": [
+                        -2.875,
+                        -0.625,
+                        1.9375
+                    ],
+                    "springStrength": 0.125,
+                    "stepHeight": 1.0
+                },
+                {
+                    "attachedTo": "coreWheel",
+                    "visualOffset": [
+                        5.0625,
+                        -0.625,
+                        1.6875
+                    ],
+                    "physicsOffset": [
+                        5.0625,
+                        -0.625,
+                        1.6875
+                    ],
+                    "springStrength": 0.125,
+                    "stepHeight": 1.0
+                },
+                {
+                    "attachedTo": "coreWheel",
+                    "visualOffset": [
+                        5.0625,
+                        -0.625,
+                        -1.6875
+                    ],
+                    "physicsOffset": [
+                        5.0625,
+                        -0.625,
+                        -1.6875
+                    ],
+                    "springStrength": 0.125,
+                    "stepHeight": 1.0
+                }
+            ],
+            "propellers": [
+                {
+                    "attachedTo": "core",
+                    "visualOffset": [
+                        4.375,
+                        -6.0625,
+                        0.0
+                    ],
+                    "forceOffset": [
+                        0.0,
+                        0.0,
+                        0.0
+                    ]
+                },
+                {
+                    "attachedTo": "tail",
+                    "visualOffset": [
+                        -9.625,
+                        -4.5625,
+                        0.0
+                    ],
+                    "forceOffset": [
+                        0.0,
+                        0.0,
+                        0.0
+                    ]
+                }
+            ],
+            "legs": [],
+            "arms": [],
+            "maxAcceleration": 1.0,
+            "maxDecceleration": -1.0,
+            "maxSpeed": 100.0,
+            "liftForce": 10.0
+        }
+    ],
+    "restingEulerAngles": [
+        0.0,
+        0.0,
+        0.0
+    ],
+    "defaultEngine": {
+        "maxAcceleration": 1.0,
+        "maxDeceleration": 1.0,
+        "maxSpeed": 1.0,
+        "fuelType": "Creative",
+        "fuelConsumptionRate": 1.0,
+        "solidFuelSlots": 0,
+        "liquidFuelCapacity": 1000,
+        "batterySlots": 0,
+        "FECapacity": 0
+    },
+    "useAABBCollisionOnly": false,
+    "aabbSize": [
+        0.0,
+        0.0,
+        0.0
+    ],
+    "CargoSlots": 0,
+    "CanAccessMenusWhileMoving": true
+}

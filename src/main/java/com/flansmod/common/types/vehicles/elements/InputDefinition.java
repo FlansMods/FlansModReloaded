@@ -15,6 +15,11 @@ public class InputDefinition
 	@JsonField
 	public DrivingInputDefinition[] driving = new DrivingInputDefinition[0];
 	@JsonField
+	public ArmInputDefinition[] arms = new ArmInputDefinition[0];
+
+	@JsonField(Docs = "If true, each articulation/gun/driving control will be triggered in order. If false, one press = activate all")
+	public boolean alternateInputs = false;
+	@JsonField
 	public String switchVehicleMode = "";
 }
 

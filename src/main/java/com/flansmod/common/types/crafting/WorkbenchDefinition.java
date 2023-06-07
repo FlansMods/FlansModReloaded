@@ -11,6 +11,7 @@ public class WorkbenchDefinition extends JsonDefinition
 {
 	public static final WorkbenchDefinition INVALID = new WorkbenchDefinition(new ResourceLocation(FlansMod.MODID, "workbenches/null"));
 	public static final String TYPE = "workbench";
+	public static final String FOLDER = "workbenches";
 	@Override
 	public String GetTypeName() { return TYPE; }
 
@@ -19,6 +20,11 @@ public class WorkbenchDefinition extends JsonDefinition
 		super(resLoc);
 	}
 
+
+	@JsonField
+	public String titleString = "workbench";
+	@JsonField
+	public String bannerTextureLocation = "";
 
 	@JsonField
 	public GunCraftingDefinition gunCrafting = new GunCraftingDefinition();
@@ -30,4 +36,7 @@ public class WorkbenchDefinition extends JsonDefinition
 	public ArmourCraftingDefinition armourCrafting = new ArmourCraftingDefinition();
 	@JsonField
 	public ItemHoldingDefinition itemHolding = new ItemHoldingDefinition();
+
+	@JsonField
+	public WorkbenchSideDefinition[] sides = new WorkbenchSideDefinition[0];
 }

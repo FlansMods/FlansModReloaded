@@ -3,6 +3,7 @@ package com.flansmod.common.types.vehicles;
 import com.flansmod.common.FlansMod;
 import com.flansmod.common.types.JsonDefinition;
 import com.flansmod.common.types.JsonField;
+import com.flansmod.common.types.parts.elements.EngineDefinition;
 import com.flansmod.common.types.vehicles.elements.ArticulatedPartDefinition;
 import com.flansmod.common.types.vehicles.elements.MountedGunDefinition;
 import com.flansmod.common.types.vehicles.elements.SeatDefinition;
@@ -37,13 +38,18 @@ public class VehicleDefinition extends JsonDefinition
 
 	// Power / Fuel
 	@JsonField
-	public int fuelSlots = 0;
-	@JsonField(Docs = "In millibuckets")
-	public int fuelStorageSize = 1000;
+	public EngineDefinition defaultEngine = new EngineDefinition();
+
+	// Harvest volumes
+	// TODO:
+
+	// Collision
+	// TODO:
 	@JsonField
-	public int batterySlots = 0;
+	public boolean useAABBCollisionOnly = false;
 	@JsonField
-	public int FECapacity = 0;
+	public Vec3 aabbSize = Vec3.ZERO;
+
 
 	// Storage
 	@JsonField

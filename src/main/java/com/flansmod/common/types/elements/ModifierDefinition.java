@@ -7,6 +7,8 @@ public class ModifierDefinition
 {
 	@JsonField
 	public String Stat = "";
+	@JsonField
+	public String Filter = "";
 	@JsonField(Docs = "Additive modifiers are applied first")
 	public float Add = 0.0f;
 	@JsonField(Docs = "All multiplys are applied after all adds, so notably a 0x multiplier will always 0 the stat")
