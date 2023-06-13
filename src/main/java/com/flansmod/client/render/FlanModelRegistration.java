@@ -161,6 +161,7 @@ public class FlanModelRegistration implements PreparableReloadListener
             if(ITEMS_TO_REGISTER.containsKey(flanItem))
             {
                 ITEMS_TO_REGISTER.get(flanItem).Render(
+                    Minecraft.getInstance().player,
                     event.getItemStack(),
                     MinecraftHelpers.GetArm(event.getHand()),
                     event.getHand() == InteractionHand.OFF_HAND ? ItemTransforms.TransformType.FIRST_PERSON_LEFT_HAND : ItemTransforms.TransformType.FIRST_PERSON_RIGHT_HAND,

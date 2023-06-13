@@ -331,7 +331,7 @@
                     }
                 }
             },
-            "fovFactor": 1.0,
+            "fovFactor": 5.0,
             "scopeOverlay": "mwm40a3",
             "anim": "",
             "toolLevel": 1.0,

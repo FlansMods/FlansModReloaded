@@ -6,9 +6,9 @@ import net.minecraft.world.InteractionHand;
 
 public class AnimationAction extends Action
 {
-	public AnimationAction(ActionDefinition def, InteractionHand hand)
+	public AnimationAction(ActionStack stack, ActionDefinition def, InteractionHand hand)
 	{
-		super(def, hand);
+		super(stack, def, hand);
 	}
 
 	@Override

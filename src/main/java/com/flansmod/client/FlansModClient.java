@@ -1,7 +1,7 @@
 package com.flansmod.client;
 
 import com.flansmod.client.gui.crafting.WorkbenchScreen;
-import com.flansmod.client.gui.overlay.ClientOverlayHooks;
+import com.flansmod.client.render.ClientRenderHooks;
 import com.flansmod.client.input.ClientInputHooks;
 import com.flansmod.client.render.FlanModelRegistration;
 import com.flansmod.client.render.animation.AnimationDefinitions;
@@ -10,7 +10,6 @@ import com.flansmod.client.render.debug.DebugRenderer;
 import com.flansmod.client.render.decals.DecalRenderer;
 import com.flansmod.client.render.guns.ShotRenderer;
 import com.flansmod.common.FlansMod;
-import com.flansmod.common.crafting.WorkbenchMenu;
 import com.flansmod.common.gunshots.GunshotManager;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.MenuScreens;
@@ -28,13 +27,13 @@ import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 @Mod.EventBusSubscriber(value = Dist.CLIENT, bus = Mod.EventBusSubscriber.Bus.MOD, modid = FlansMod.MODID)
 public class FlansModClient
 {
-	public static ShotRenderer SHOT_RENDERER;
-	public static DebugRenderer DEBUG_RENDERER;
-	public static ClientInputHooks CLIENT_INPUT_HOOKS;
-	public static ClientOverlayHooks CLIENT_OVERLAY_HOOKS;
+	public static ShotRenderer SHOT_RENDERER= new ShotRenderer();
+	public static DebugRenderer DEBUG_RENDERER = new DebugRenderer();
+	public static ClientInputHooks CLIENT_INPUT_HOOKS = new ClientInputHooks();
+	public static ClientRenderHooks CLIENT_OVERLAY_HOOKS = new ClientRenderHooks();
 	public static FlanModelRegistration MODEL_REGISTRATION = new FlanModelRegistration();
 	public static AnimationDefinitions ANIMATIONS = new AnimationDefinitions();
-	public static DecalRenderer DECAL_RENDERER;
+	public static DecalRenderer DECAL_RENDERER = new DecalRenderer();
 	public static GunshotManager GUNSHOTS_CLIENT = new GunshotManager();
 
 	@SubscribeEvent
@@ -54,13 +53,6 @@ public class FlansModClient
 
 	public static void Init()
 	{
-		SHOT_RENDERER = new ShotRenderer();
-		DEBUG_RENDERER = new DebugRenderer();
-		CLIENT_INPUT_HOOKS = new ClientInputHooks();
-		CLIENT_OVERLAY_HOOKS = new ClientOverlayHooks();
-		DECAL_RENDERER = new DecalRenderer();
-
-
 		IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
 		GUNSHOTS_CLIENT.HookClient(modEventBus);
 		new DebugModelPoser().Init();

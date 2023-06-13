@@ -121,7 +121,7 @@
     "vehicleProximityTrigger": -1.0,
     "detonateWhenShot": true,
     "detonateWhenDamaged": true,
-    "fuse": 0.0,
+    "fuse": 20.0,
     "spinForceX": 10.0,
     "spinForceY": 10.0,
     "impact": {

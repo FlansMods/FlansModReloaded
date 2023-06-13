@@ -1,0 +1,12 @@
+{
+    "attachmentType": "Generic",
+    "modifiers": [],
+    "mechaEffects": [],
+    "mechaEffectFilter": "",
+    "primaryActions": [],
+    "secondaryActions": [],
+    "replacePrimaryAction": false,
+    "replaceSecondaryAction": false,
+    "modeOverride": "FullAuto",
+    "overrideFireMode": false
+}

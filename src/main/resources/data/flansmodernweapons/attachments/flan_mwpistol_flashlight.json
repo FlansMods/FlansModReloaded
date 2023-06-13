@@ -1,0 +1,31 @@
+{
+    "attachmentType": "Grip",
+    "modifiers": [
+        {
+            "Stat": "flashlightStrength",
+            "Filter": "",
+            "Add": 12.0,
+            "Multiply": 1.0,
+            "SetValue": "",
+            "ApplyToPrimary": true,
+            "ApplyToSecondary": false
+        },
+        {
+            "Stat": "flashlightRange",
+            "Filter": "",
+            "Add": 10.0,
+            "Multiply": 1.0,
+            "SetValue": "",
+            "ApplyToPrimary": true,
+            "ApplyToSecondary": false
+        }
+    ],
+    "mechaEffects": [],
+    "mechaEffectFilter": "",
+    "primaryActions": [],
+    "secondaryActions": [],
+    "replacePrimaryAction": false,
+    "replaceSecondaryAction": false,
+    "modeOverride": "FullAuto",
+    "overrideFireMode": false
+}

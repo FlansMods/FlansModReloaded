@@ -1,0 +1,407 @@
+{
+    "maxLevel": 30,
+    "xpForKill": 10,
+    "xpForDeath": 5,
+    "xpForKillstreakBonus": 10,
+    "xpForAssist": 5,
+    "xpForMultikill": 10,
+    "defaultLoadouts": [
+        {
+            "slots": [
+                "ak47",
+                "m9",
+                "m67",
+                "mwKnife",
+                "",
+                "",
+                "",
+                ""
+            ]
+        },
+        {
+            "slots": [
+                "rpd",
+                "ak74",
+                "m67",
+                "mwKnife",
+                "",
+                "",
+                "",
+                ""
+            ]
+        },
+        {
+            "slots": [
+                "dragunov",
+                "makarov",
+                "mwMedKit",
+                "mwKnife",
+                "",
+                "",
+                "",
+                ""
+            ]
+        },
+        {
+            "slots": [
+                "g3",
+                "p90",
+                "mwMedKit",
+                "mwKnife",
+                "",
+                "",
+                "",
+                ""
+            ]
+        },
+        {
+            "slots": [
+                "r870",
+                "glock",
+                "m67",
+                "mwKnife",
+                "",
+                "",
+                "",
+                ""
+            ]
+        }
+    ],
+    "availableRewardBoxes": [
+        "modernRegularA",
+        "modernRegularB",
+        "modernPremium"
+    ],
+    "levelUps": [
+        {
+            "paintjobs": [],
+            "items": [
+                {
+                    "name": "modernRegularA",
+                    "items": []
+                }
+            ],
+            "unlockSlot": 1,
+            "xpToLevel": 30
+        },
+        {
+            "paintjobs": [],
+            "items": [
+                {
+                    "name": "modernRegularB",
+                    "items": []
+                }
+            ],
+            "unlockSlot": -1,
+            "xpToLevel": 60
+        },
+        {
+            "paintjobs": [],
+            "items": [
+                {
+                    "name": "modernRegularA",
+                    "items": []
+                }
+            ],
+            "unlockSlot": -1,
+            "xpToLevel": 110
+        },
+        {
+            "paintjobs": [],
+            "items": [
+                {
+                    "name": "modernRegularB",
+                    "items": []
+                }
+            ],
+            "unlockSlot": -1,
+            "xpToLevel": 160
+        },
+        {
+            "paintjobs": [],
+            "items": [
+                {
+                    "name": "modernPremium",
+                    "items": []
+                }
+            ],
+            "unlockSlot": -1,
+            "xpToLevel": 220
+        },
+        {
+            "paintjobs": [],
+            "items": [
+                {
+                    "name": "modernRegularA",
+                    "items": []
+                }
+            ],
+            "unlockSlot": 2,
+            "xpToLevel": 290
+        },
+        {
+            "paintjobs": [],
+            "items": [
+                {
+                    "name": "modernRegularB",
+                    "items": []
+                }
+            ],
+            "unlockSlot": -1,
+            "xpToLevel": 360
+        },
+        {
+            "paintjobs": [],
+            "items": [
+                {
+                    "name": "modernRegularA",
+                    "items": []
+                }
+            ],
+            "unlockSlot": -1,
+            "xpToLevel": 450
+        },
+        {
+            "paintjobs": [],
+            "items": [
+                {
+                    "name": "modernRegularB",
+                    "items": []
+                }
+            ],
+            "unlockSlot": -1,
+            "xpToLevel": 540
+        },
+        {
+            "paintjobs": [],
+            "items": [
+                {
+                    "name": "modernPremium",
+                    "items": []
+                }
+            ],
+            "unlockSlot": -1,
+            "xpToLevel": 630
+        },
+        {
+            "paintjobs": [],
+            "items": [
+                {
+                    "name": "modernRegularA",
+                    "items": []
+                }
+            ],
+            "unlockSlot": 3,
+            "xpToLevel": 740
+        },
+        {
+            "paintjobs": [],
+            "items": [
+                {
+                    "name": "modernRegularB",
+                    "items": []
+                }
+            ],
+            "unlockSlot": -1,
+            "xpToLevel": 850
+        },
+        {
+            "paintjobs": [],
+            "items": [
+                {
+                    "name": "modernRegularA",
+                    "items": []
+                }
+            ],
+            "unlockSlot": -1,
+            "xpToLevel": 970
+        },
+        {
+            "paintjobs": [],
+            "items": [
+                {
+                    "name": "modernRegularB",
+                    "items": []
+                }
+            ],
+            "unlockSlot": -1,
+            "xpToLevel": 1100
+        },
+        {
+            "paintjobs": [],
+            "items": [
+                {
+                    "name": "modernPremium",
+                    "items": []
+                }
+            ],
+            "unlockSlot": -1,
+            "xpToLevel": 1230
+        },
+        {
+            "paintjobs": [],
+            "items": [
+                {
+                    "name": "modernRegularA",
+                    "items": []
+                }
+            ],
+            "unlockSlot": -1,
+            "xpToLevel": 1380
+        },
+        {
+            "paintjobs": [],
+            "items": [
+                {
+                    "name": "modernRegularB",
+                    "items": []
+                }
+            ],
+            "unlockSlot": -1,
+            "xpToLevel": 1530
+        },
+        {
+            "paintjobs": [],
+            "items": [
+                {
+                    "name": "modernRegularA",
+                    "items": []
+                }
+            ],
+            "unlockSlot": -1,
+            "xpToLevel": 1680
+        },
+        {
+            "paintjobs": [],
+            "items": [
+                {
+                    "name": "modernRegularB",
+                    "items": []
+                }
+            ],
+            "unlockSlot": -1,
+            "xpToLevel": 1850
+        },
+        {
+            "paintjobs": [],
+            "items": [
+                {
+                    "name": "modernPremium",
+                    "items": []
+                }
+            ],
+            "unlockSlot": -1,
+            "xpToLevel": 2000
+        },
+        {
+            "paintjobs": [],
+            "items": [
+                {
+                    "name": "modernRegularA",
+                    "items": []
+                }
+            ],
+            "unlockSlot": 4,
+            "xpToLevel": 2200
+        },
+        {
+            "paintjobs": [],
+            "items": [
+                {
+                    "name": "modernRegularB",
+                    "items": []
+                }
+            ],
+            "unlockSlot": -1,
+            "xpToLevel": 2390
+        },
+        {
+            "paintjobs": [],
+            "items": [
+                {
+                    "name": "modernRegularA",
+                    "items": []
+                }
+            ],
+            "unlockSlot": -1,
+            "xpToLevel": 2580
+        },
+        {
+            "paintjobs": [],
+            "items": [
+                {
+                    "name": "modernRegularB",
+                    "items": []
+                }
+            ],
+            "unlockSlot": -1,
+            "xpToLevel": 2790
+        },
+        {
+            "paintjobs": [],
+            "items": [
+                {
+                    "name": "modernPremium",
+                    "items": []
+                }
+            ],
+            "unlockSlot": -1,
+            "xpToLevel": 3000
+        },
+        {
+            "paintjobs": [],
+            "items": [
+                {
+                    "name": "modernRegularA",
+                    "items": []
+                }
+            ],
+            "unlockSlot": -1,
+            "xpToLevel": 3210
+        },
+        {
+            "paintjobs": [],
+            "items": [
+                {
+                    "name": "modernRegularB",
+                    "items": []
+                }
+            ],
+            "unlockSlot": -1,
+            "xpToLevel": 3440
+        },
+        {
+            "paintjobs": [],
+            "items": [
+                {
+                    "name": "modernRegularA",
+                    "items": []
+                }
+            ],
+            "unlockSlot": -1,
+            "xpToLevel": 3670
+        },
+        {
+            "paintjobs": [],
+            "items": [
+                {
+                    "name": "modernRegularB",
+                    "items": []
+                }
+            ],
+            "unlockSlot": -1,
+            "xpToLevel": 3910
+        },
+        {
+            "paintjobs": [],
+            "items": [
+                {
+                    "name": "modernPremium",
+                    "items": []
+                }
+            ],
+            "unlockSlot": -1,
+            "xpToLevel": 4160
+        }
+    ]
+}

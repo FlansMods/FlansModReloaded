@@ -1,6 +1,7 @@
 package com.flansmod.packs.modern;
 
 import com.flansmod.common.FlansMod;
+import com.flansmod.common.crafting.WorkbenchBlockEntity;
 import com.flansmod.common.item.GunItem;
 import com.mojang.logging.LogUtils;
 import net.minecraft.client.Minecraft;
@@ -8,7 +9,9 @@ import net.minecraft.client.renderer.ItemModelShaper;
 import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.ModelEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
@@ -29,7 +32,8 @@ public class ModernWeaponsMod
 	
 	// Item registration
 	public static final DeferredRegister<Item> ITEMS = DeferredRegister.create(ForgeRegistries.ITEMS, MODID);
-
+	public static final DeferredRegister<Block> BLOCKS = DeferredRegister.create(ForgeRegistries.BLOCKS, MODID);
+	public static final DeferredRegister<BlockEntityType<?>> TILE_ENTITIES = DeferredRegister.create(ForgeRegistries.BLOCK_ENTITY_TYPES, MODID);
 
 	public static final RegistryObject<Item> GUN_A91 = 						FlansMod.Gun(ITEMS, MODID, "a91");
 	public static final RegistryObject<Item> GUN_ACR = 						FlansMod.Gun(ITEMS, MODID, "acr");
@@ -85,12 +89,23 @@ public class ModernWeaponsMod
 	public static final RegistryObject<Item> GUN_UZI = 						FlansMod.Gun(ITEMS, MODID, "uzi");
 	public static final RegistryObject<Item> GUN_W1200 = 					FlansMod.Gun(ITEMS, MODID, "w1200");
 
-	//ITEMS.register("r700", () -> new GunItem(new ResourceLocation(MODID, "guns/r700"), new Item.Properties()));
+
+	public static final RegistryObject<Block> WORKBENCH_BLOCK_MODERN = 				FlansMod.Workbench_Block(BLOCKS, MODID, "modern");
+	public static final RegistryObject<Item> WORKBENCH_ITEM_MODERN = 				FlansMod.Workbench_Item(ITEMS, MODID, "modern", WORKBENCH_BLOCK_MODERN);
+	public static final RegistryObject<BlockEntityType<WorkbenchBlockEntity>> WORKBENCH_TILE_ENTITY_MODERN =
+																					FlansMod.Workbench_TileEntityType(TILE_ENTITIES, MODID, "modern");
+	public static final RegistryObject<Block> WORKBENCH_BLOCK_MODERN_ADVANCED = 	FlansMod.Workbench_Block(BLOCKS, MODID, "modern_advanced");
+	public static final RegistryObject<Item> WORKBENCH_ITEM_MODERN_ADVANCED = 		FlansMod.Workbench_Item(ITEMS, MODID, "modern_advanced", WORKBENCH_BLOCK_MODERN_ADVANCED);
+	public static final RegistryObject<BlockEntityType<WorkbenchBlockEntity>> WORKBENCH_TILE_ENTITY_MODERN_ADVANCED =
+																					FlansMod.Workbench_TileEntityType(TILE_ENTITIES, MODID, "modern_advanced");
+
 	
 	public ModernWeaponsMod()
 	{
 		IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
 		ITEMS.register(modEventBus);
+		BLOCKS.register(modEventBus);
+		TILE_ENTITIES.register(modEventBus);
 	}
 
 	@Mod.EventBusSubscriber(value = Dist.CLIENT, bus = Mod.EventBusSubscriber.Bus.MOD, modid = MODID)

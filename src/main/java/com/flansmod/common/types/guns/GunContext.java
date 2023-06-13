@@ -239,6 +239,14 @@ public class GunContext
 
 		return null;
 	}
+	@Nonnull
+	public ActionDefinition[] GetLookAtActions()
+	{
+		if(GunDef() == null)
+			return new ActionDefinition[0];
+
+		return GunDef().lookAtActions;
+	}
 
 
 	public CachedGunStats GetStatBlock(EActionSet actionSet) { return GetStatCache(actionSet); }

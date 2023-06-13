@@ -214,7 +214,64 @@
     "guns": [
         {
             "name": "seat_1_gun",
-            "primaryActions": [],
+            "primaryActions": [
+                {
+                    "actionType": "Shoot",
+                    "canActUnderwater": false,
+                    "canActUnderOtherLiquid": false,
+                    "canBeOverriden": false,
+                    "sound": {
+                        "sound": "MinigunShoot",
+                        "length": 0.0,
+                        "minPitchMultiplier": 0.8333333,
+                        "maxPitchMultiplier": 1.25,
+                        "maxRange": 100.0,
+                        "LODs": []
+                    },
+                    "duration": 0.0,
+                    "itemStack": "",
+                    "FireMode": "Minigun",
+                    "shootStats": {
+                        "verticalReocil": 1.0,
+                        "horizontalRecoil": 0.0,
+                        "spread": 20.0,
+                        "hitscan": true,
+                        "speed": 0.0,
+                        "count": 1,
+                        "timeToNextShot": 0.3,
+                        "spreadPattern": "FilledCircle",
+                        "breaksMaterials": [],
+                        "penetrationPower": 1.0,
+                        "trailParticles": "",
+                        "impact": {
+                            "decal": "flansmod:effects/bullet_decal.png",
+                            "damageToTarget": 2.0,
+                            "multiplierVsPlayers": 1.0,
+                            "multiplierVsVehicles": 1.0,
+                            "knockback": 0.5,
+                            "splashDamageRadius": 0.0,
+                            "splashDamageFalloff": 0.0,
+                            "setFireToTarget": 0.0,
+                            "fireSpreadRadius": 0.0,
+                            "fireSpreadAmount": 0.0,
+                            "hitSound": {
+                                "sound": "",
+                                "length": 1.0,
+                                "minPitchMultiplier": 1.0,
+                                "maxPitchMultiplier": 1.0,
+                                "maxRange": 100.0,
+                                "LODs": []
+                            }
+                        }
+                    },
+                    "fovFactor": 1.25,
+                    "scopeOverlay": "",
+                    "anim": "",
+                    "toolLevel": 1.0,
+                    "harvestSpeed": 1.0,
+                    "reach": 1.0
+                }
+            ],
             "recoil": [
                 0.0,
                 0.0,

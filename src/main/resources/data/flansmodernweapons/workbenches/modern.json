@@ -1,4 +1,6 @@
 {
+    "titlestring": "workbench",
+    "bannerTextureLocation": "",
     "gunCrafting": {
         "isActive": true,
         "pages": [
@@ -3192,7 +3194,13 @@
         "acceptFEPerTick": 0,
         "disperseFEPerTick": 0,
         "numBatterySlots": 0,
-        "batterySlotStackSize": 1
+        "batterySlotStackSize": 1,
+        "liquidFuelStorage": 0,
+        "liquidFuelFilter": "",
+        "liquidFEPerMillibucket": 0,
+        "numSolidFuelSlots": 0,
+        "solidFuelFilter": "",
+        "solidFEPerFuelTime": 0
     },
     "armourCrafting": {
         "isActive": false,

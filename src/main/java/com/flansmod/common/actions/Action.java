@@ -8,6 +8,7 @@ import net.minecraft.world.InteractionHand;
 public abstract class Action
 {
 	public static final float TICK_RATE = 1.0f / 20.0f;
+	protected final ActionStack stack;
 	public ActionDefinition actionDef;
 	protected int progress = 0;
 	protected int duration = 0;
@@ -20,13 +21,16 @@ public abstract class Action
 
 	public boolean Finished() { return progress >= duration; }
 
-	public Action(ActionDefinition def, InteractionHand hand)
+	public Action(ActionStack stack, ActionDefinition def, InteractionHand hand)
 	{
+		this.stack = stack;
 		this.actionDef = def;
 		this.duration = Maths.Ceil(def.duration);
 		this.progress = 0;
 		this.hand = hand;
 	}
+
+	public boolean ShouldRender(GunContext context) { return true; }
 
 	public boolean CanStart(GunContext context) { return true; }
 

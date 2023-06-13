@@ -243,7 +243,7 @@
         "multiplierVsPlayers": 1.0,
         "multiplierVsVehicles": 0.0,
         "knockback": 0.0,
-        "splashDamageRadius": 0.0,
+        "splashDamageRadius": 4.0,
         "splashDamageFalloff": 0.0,
         "setFireToTarget": 0.0,
         "fireSpreadRadius": 0.0,

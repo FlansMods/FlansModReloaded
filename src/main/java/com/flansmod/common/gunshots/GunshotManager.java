@@ -33,7 +33,7 @@ public class GunshotManager
 
 	public ActionStack GetActionStack(Entity entity)
 	{
-		return ActionStacks.get(entity);
+		return GetOrCreateActionStack(entity);
 	}
 
 	// ----------------------------------------------------------------------------------------------------------------
@@ -48,6 +48,24 @@ public class GunshotManager
 	}
 
 	@OnlyIn(Dist.CLIENT)
+	public void ClientLookAt(Player player, InteractionHand hand)
+	{
+		ItemStack stack = player.getItemInHand(hand);
+		if(stack.getItem() instanceof GunItem gunItem)
+		{
+			// Set our context and work out what Look At will do
+			GunContext gunContext = GunContext.CreateFromPlayer(player, hand);
+			GunDefinition gunDef = gunContext.GunDef();
+			ActionDefinition[] actionsDefs = gunContext.GetLookAtActions();
+
+			// Then fire all the actions, with no sync to server
+			List<Action> actions = new ArrayList<>();
+			CreateActions(player, actionsDefs, actions, hand);
+			TriggerActions(player.level, gunContext, actions);
+		}
+	}
+
+	@OnlyIn(Dist.CLIENT)
 	public void ClientShoot(Player player, InteractionHand hand, EActionSet actionSet)
 	{
 		ItemStack stack = player.getItemInHand(hand);
@@ -58,18 +76,18 @@ public class GunshotManager
 			GunDefinition gunDef = gunContext.GunDef();
 			ActionDefinition[] actionsDefs = gunContext.GetActionDefinitions(actionSet);
 			List<Action> otherActions = new ArrayList<>(actionsDefs.length);
-			ShootAction shootAction = CreateActions(actionsDefs, otherActions, hand);
+			ShootAction shootAction = CreateActions(player, actionsDefs, otherActions, hand);
 
 			ActionStack actionStack = GetOrCreateActionStack(player);
 
-			shootAction.FindLoadedAmmo(gunContext);
+			//shootAction.FindLoadedAmmo(gunContext);
 
 			// TODO: Check if we can shoot based on our local data about our
 			 // a) Inventory, ammo levels
 			 // b) Shoot cooldown
 			 // c) Handedness
 
-			boolean bCanFire = shootAction != null && shootAction.CanStart(gunContext);
+			boolean bCanFire = shootAction == null || shootAction.CanStart(gunContext);
 			for(Action action : otherActions)
 				if(!action.CanStart(gunContext))
 					bCanFire = false;
@@ -116,7 +134,7 @@ public class GunshotManager
 		{
 			ActionDefinition[] actionsDefs = gunContext.GetActionDefinitions(shotCollection.actionUsed);
 			List<Action> otherActions = new ArrayList<>(actionsDefs.length);
-			ShootAction shootAction = CreateActions(actionsDefs, otherActions, hand);
+			ShootAction shootAction = CreateActions(shotCollection.Shooter(), actionsDefs, otherActions, hand);
 
 			// TODO: We should hash-check the action set we use, as there could be a race condition
 			// between switching what actions are active for the weapon and triggering this code
@@ -156,7 +174,7 @@ public class GunshotManager
 		GunContext gunContext = GunContext.CreateFromPlayer(from, hand);
 		ActionDefinition[] actionsDefs = gunContext.GetActionDefinitions(shotCollection.actionUsed);
 		List<Action> otherActions = new ArrayList<>(actionsDefs.length);
-		ShootAction shootAction = CreateActions(actionsDefs, otherActions, hand);
+		ShootAction shootAction = CreateActions(from, actionsDefs, otherActions, hand);
 
 		// TODO: We should hash-check the action set we use, as there could be a race condition
 		// between switching what actions are active for the weapon and triggering this code
@@ -211,12 +229,17 @@ public class GunshotManager
 	// COMMON
 	// ----------------------------------------------------------------------------------------------------------------
 
-	private ShootAction CreateActions(ActionDefinition[] actionDefs, List<Action> nonShootActions, InteractionHand hand)
+	private ShootAction CreateActions(Entity entity, ActionDefinition[] actionDefs, List<Action> nonShootActions, InteractionHand hand)
+	{
+		return CreateActions(GetOrCreateActionStack(entity), actionDefs, nonShootActions, hand);
+	}
+
+	private ShootAction CreateActions(ActionStack stack, ActionDefinition[] actionDefs, List<Action> nonShootActions, InteractionHand hand)
 	{
 		ShootAction shoot = null;
 		for(ActionDefinition def : actionDefs)
 		{
-			Action action = Actions.CreateAction(def, hand);
+			Action action = Actions.CreateAction(stack, def, hand);
 			if(action instanceof ShootAction found)
 				shoot = found;
 			else if(action != null)

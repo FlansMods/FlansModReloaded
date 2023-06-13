@@ -331,7 +331,7 @@
                     }
                 }
             },
-            "fovFactor": 1.0,
+            "fovFactor": 6.0,
             "scopeOverlay": "mwdragunov",
             "anim": "",
             "toolLevel": 1.0,

@@ -239,11 +239,11 @@
     "spinForceY": 0.0,
     "impact": {
         "decal": "",
-        "damageToTarget": 1.0,
+        "damageToTarget": 0.0,
         "multiplierVsPlayers": 1.0,
         "multiplierVsVehicles": 0.0,
         "knockback": 0.0,
-        "splashDamageRadius": 0.0,
+        "splashDamageRadius": 2.5,
         "splashDamageFalloff": 0.0,
         "setFireToTarget": 0.0,
         "fireSpreadRadius": 0.0,

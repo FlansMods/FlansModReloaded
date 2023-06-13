@@ -1,0 +1,12 @@
+{
+    "parent": "block/cube",
+    "textures": {
+        "particle": "flansmodernweapons:block/advanced_modern_box_side",
+        "up": "flansmodernweapons:block/advanced_modern_box_top",
+        "down": "flansmodernweapons:block/box_bottom",
+        "north": "flansmodernweapons:block/advanced_modern_box_side",
+        "east": "flansmodernweapons:block/advanced_modern_box_side",
+        "south": "flansmodernweapons:block/advanced_modern_box_side",
+        "west": "flansmodernweapons:block/advanced_modern_box_side"
+    }
+}

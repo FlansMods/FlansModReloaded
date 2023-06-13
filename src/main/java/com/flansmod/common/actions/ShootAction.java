@@ -42,9 +42,9 @@ public class ShootAction extends Action
 
 	public ShotDefinition ShotDef() { return actionDef.shootStats; }
 
-	public ShootAction(ActionDefinition def, InteractionHand hand)
+	public ShootAction(ActionStack stack, ActionDefinition def, InteractionHand hand)
 	{
-		super(def, hand);
+		super(stack, def, hand);
 		results = null;
 	}
 

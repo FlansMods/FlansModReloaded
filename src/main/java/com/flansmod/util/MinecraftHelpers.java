@@ -5,6 +5,7 @@ import com.flansmod.common.types.elements.ItemStackDefinition;
 import com.mojang.brigadier.StringReader;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
+import net.minecraft.client.renderer.block.model.ItemTransforms;
 import net.minecraft.commands.arguments.item.ItemParser;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.TagParser;
@@ -81,6 +82,19 @@ public class MinecraftHelpers
 		return hand == InteractionHand.MAIN_HAND ?
 			Minecraft.getInstance().options.mainHand().get() :
 			Minecraft.getInstance().options.mainHand().get().getOpposite();
+	}
+
+	@OnlyIn(Dist.CLIENT)
+	public static InteractionHand GetHand(ItemTransforms.TransformType transformType)
+	{
+		boolean rightHanded = Minecraft.getInstance().options.mainHand().get() == HumanoidArm.RIGHT;
+		return switch (transformType)
+		{
+			case FIRST_PERSON_LEFT_HAND -> rightHanded ? InteractionHand.OFF_HAND : InteractionHand.MAIN_HAND;
+			case FIRST_PERSON_RIGHT_HAND -> rightHanded ? InteractionHand.MAIN_HAND : InteractionHand.OFF_HAND;
+			case THIRD_PERSON_LEFT_HAND -> InteractionHand.OFF_HAND;
+			default -> InteractionHand.MAIN_HAND;
+		};
 	}
 
 	@OnlyIn(Dist.CLIENT)

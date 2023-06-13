@@ -283,7 +283,7 @@
     ],
     "secondaryActions": [
         {
-            "actionType": "IronSight",
+            "actionType": "AimDownSights",
             "canActUnderwater": true,
             "canActUnderOtherLiquid": false,
             "canBeOverriden": true,

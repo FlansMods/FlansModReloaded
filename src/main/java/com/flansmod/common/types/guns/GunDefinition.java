@@ -40,6 +40,9 @@ public class GunDefinition extends JsonDefinition
 	@JsonField
 	public ActionDefinition[] secondaryActions = new ActionDefinition[0];
 
+	@JsonField(Docs = "Actions to trigger when pressing the 'Look At' key")
+	public ActionDefinition[] lookAtActions = new ActionDefinition[0];
+
 	@JsonField(Min = 0, Max = 100)
 	public int numBullets = 0;
 

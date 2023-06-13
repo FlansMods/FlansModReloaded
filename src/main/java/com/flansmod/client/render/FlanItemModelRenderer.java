@@ -33,6 +33,8 @@ import net.minecraft.client.resources.model.UnbakedModel;
 import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.RandomSource;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.HumanoidArm;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -57,7 +59,8 @@ public abstract class FlanItemModelRenderer extends BlockEntityWithoutLevelRende
         super(null, null);
     }
 
-    public void Render(ItemStack stack,
+    public void Render(Entity entity,
+                       ItemStack stack,
                        HumanoidArm arm,
                        ItemTransforms.TransformType transformType,
                        PoseStack ms,
@@ -66,7 +69,11 @@ public abstract class FlanItemModelRenderer extends BlockEntityWithoutLevelRende
                        int overlay,
                        float equipProgress)
     {
-
+        if(BakedRig == null)
+        {
+            FlansMod.LOGGER.error("Could not render Flan's Item " + stack + " because rig was null");
+            return;
+        }
 
         //ms.pushPose();
         //BakedRig.ApplyTransform(transformType, ms, false);
@@ -90,7 +97,7 @@ public abstract class FlanItemModelRenderer extends BlockEntityWithoutLevelRende
                     ms.mulPose(DebugModelPoser.keyframes.get(i).transform.orientation);
 
                     int color = DebugModelPoser.editingKeyframe == i ? 0x00ff00 : 0xff0000;
-                    DoRender(stack, BakedRig, transformType, ms, (partName) -> {
+                    DoRender(entity, stack, BakedRig, transformType, ms, (partName) -> {
                         RenderPartTransparent(stack, buffers, partName, color, overlay);
                     });
                     ms.popPose();
@@ -124,7 +131,7 @@ public abstract class FlanItemModelRenderer extends BlockEntityWithoutLevelRende
 
             //float t = (Minecraft.getInstance().level.getGameTime() + Minecraft.getInstance().getPartialTick());
             //ms.mulPose(Transform.QuaternionFromEuler(Maths.SinF(t / 100.0f) * 15.0f, t, 0f));
-            DoRender(stack, BakedRig, transformType, ms, (partName) -> {
+            DoRender(entity, stack, BakedRig, transformType, ms, (partName) -> {
                 RenderPartSolid(stack, buffers, partName, light, overlay);
             });
         }
@@ -148,7 +155,7 @@ public abstract class FlanItemModelRenderer extends BlockEntityWithoutLevelRende
         BakedRig = baked;
     }
 
-    protected abstract void DoRender(ItemStack stack, TurboRig.Baked rig, ItemTransforms.TransformType transformType, PoseStack ms, Consumer<String> renderPartFunc);
+    protected abstract void DoRender(Entity entity, ItemStack stack, TurboRig.Baked rig, ItemTransforms.TransformType transformType, PoseStack ms, Consumer<String> renderPartFunc);
 
     protected void RenderFirstPersonArm(PoseStack poseStack)
     {

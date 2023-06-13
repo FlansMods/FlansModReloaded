@@ -8,12 +8,15 @@ import com.flansmod.common.FlansMod;
 import com.flansmod.common.actions.Action;
 import com.flansmod.common.actions.ActionStack;
 import com.flansmod.common.actions.AnimationAction;
+import com.flansmod.common.types.guns.GunContext;
 import com.flansmod.util.Maths;
+import com.flansmod.util.MinecraftHelpers;
 import com.mojang.blaze3d.vertex.PoseStack;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.block.model.ItemTransforms;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.item.ItemStack;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
@@ -28,7 +31,8 @@ public class GunItemRenderer extends FlanItemModelRenderer
     }
 
     @Override
-    protected void DoRender(ItemStack stack,
+    protected void DoRender(Entity entity,
+                            ItemStack stack,
                             TurboRig.Baked rig,
                             ItemTransforms.TransformType transformType,
                             PoseStack ms,
@@ -36,9 +40,16 @@ public class GunItemRenderer extends FlanItemModelRenderer
     {
         ActionStack actions = FlansModClient.GUNSHOTS_CLIENT.GetActionStack(Minecraft.getInstance().cameraEntity);
         AnimationDefinition animationSet = FlansModClient.ANIMATIONS.get(new ResourceLocation("flansmod", "bolt_action_rifle"));
+        GunContext context = GunContext.TryCreateFromEntity(entity, MinecraftHelpers.GetHand(transformType));
 
-
-
+        if(actions != null)
+        {
+            for (Action action : actions.GetActions())
+            {
+                if (!action.ShouldRender(context))
+                    return;
+            }
+        }
 
         ms.pushPose();
         {
@@ -125,7 +136,7 @@ public class GunItemRenderer extends FlanItemModelRenderer
                             Vector3f pos = PoseDefinition.LerpPosition(UnbakedRig.GetFloatParams(), fromPose, toPose, outputParameter);
                             Quaternionf rotation = PoseDefinition.LerpRotation(UnbakedRig.GetFloatParams(), fromPose, toPose, outputParameter);
 
-                            FlansMod.LOGGER.info("Frame " + progress + ": From " + from.name + " to " + to.name + " at t=" + outputParameter);
+                            //FlansMod.LOGGER.info("Frame " + progress + ": From " + from.name + " to " + to.name + " at t=" + outputParameter);
 
                             ms.translate(pos.x, pos.y, pos.z);
                             ms.mulPose(rotation);
