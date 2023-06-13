@@ -1,8 +1,10 @@
 package com.flansmod.client.render.models;
 
 import com.flansmod.common.FlansMod;
+import com.flansmod.util.Maths;
 import com.google.gson.*;
 import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.block.model.*;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.model.*;
@@ -16,6 +18,8 @@ import net.minecraftforge.client.model.geometry.IGeometryLoader;
 import net.minecraftforge.client.model.geometry.IUnbakedGeometry;
 import net.minecraftforge.client.textures.UnitTextureAtlasSprite;
 import org.jetbrains.annotations.Nullable;
+import org.joml.Quaternionf;
+import org.joml.Vector3f;
 
 import javax.json.Json;
 import java.lang.reflect.Type;
@@ -89,7 +93,20 @@ public class TurboRig implements IUnbakedGeometry<TurboRig>, UnbakedModel
 
 		public void ApplyTransform(ItemTransforms.TransformType transformType, PoseStack ms, boolean b)
 		{
-			Transforms.getTransform(transformType).apply(b, ms);
+
+			/*if(transformType == ItemTransforms.TransformType.GUI)
+			{
+				Vector3f copyOfTranslation = new Vector3f(Transforms.getTransform(transformType).translation);
+				Vector3f eulers = new Vector3f(-30f, 160f, 45f);
+
+				Maths.QuaternionFromEuler(eulers).transform(copyOfTranslation);
+
+				new ItemTransform(eulers,
+					copyOfTranslation.mul(-1f / 16f),
+					new Vector3f(1f / 16f, 1f / 16f, 1f / 16f)).apply(b, ms);
+			}
+			else*/
+				Transforms.getTransform(transformType).apply(b, ms);
 		}
 
 		public TurboModel.Baked GetPart(String part)

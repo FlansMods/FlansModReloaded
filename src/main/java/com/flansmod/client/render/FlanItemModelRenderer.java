@@ -59,6 +59,18 @@ public abstract class FlanItemModelRenderer extends BlockEntityWithoutLevelRende
         super(null, null);
     }
 
+    @Override
+    public void renderByItem(ItemStack stack,
+                             ItemTransforms.TransformType transformType,
+                             PoseStack ms,
+                             MultiBufferSource buffers,
+                             int light,
+                             int overlay)
+    {
+        //Item item = stack.getItem();
+        Render(null, stack, HumanoidArm.RIGHT, transformType, ms, buffers, light, overlay, 0.0f);
+    }
+
     public void Render(Entity entity,
                        ItemStack stack,
                        HumanoidArm arm,
@@ -76,11 +88,12 @@ public abstract class FlanItemModelRenderer extends BlockEntityWithoutLevelRende
         }
 
         //ms.pushPose();
-        //BakedRig.ApplyTransform(transformType, ms, false);
+
         Matrix4f oldModelView = RenderSystem.getModelViewMatrix();
         ms = RenderSystem.getModelViewStack();
         ms.pushPose();
         {
+            BakedRig.ApplyTransform(transformType, ms, false);
             //ms.translate(0f, 0f, -16f);
             if(DebugModelPoser.active)
             {
@@ -126,7 +139,7 @@ public abstract class FlanItemModelRenderer extends BlockEntityWithoutLevelRende
             ItemTransform transform = UnbakedRig.GetTransforms(transformType);
             if(transform != null)
             {
-                transform.apply(false, ms);
+                //transform.apply(false, ms);
             }
 
             //float t = (Minecraft.getInstance().level.getGameTime() + Minecraft.getInstance().getPartialTick());
