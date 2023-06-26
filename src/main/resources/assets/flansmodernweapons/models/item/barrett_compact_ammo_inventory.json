@@ -1,7 +1,7 @@
 {
-    "parent": "builtin/generated",
+    "parent": "item/generated",
     "textures": {
-        "layer0": "flansmodernweapons:items/barrett_compact_ammo"
+        "layer0": "flansmodernweapons:item/barrett_compact_ammo"
     },
     "display": {
         "thirdperson": {

@@ -1,4 +1,6 @@
 {
+    "titlestring": "portable_coal_generator",
+    "bannerTextureLocation": "",
     "gunCrafting": {
         "isActive": false,
         "pages": [],

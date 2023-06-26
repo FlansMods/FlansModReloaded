@@ -1,7 +1,7 @@
 {
     "loader": "flansmod:turborig",
     "textures": {
-        "5": "flansmodernweapons:skins/mw_medic_bag",
+        "default": "flansmodernweapons:skins/mw_medic_bag",
         "particle": "minecraft:block/iron_block"
     },
     "animations": {},
@@ -110,19 +110,19 @@
         },
         "ground": {
             "rotation": [
-                -90.0,
+                0.0,
                 0.0,
                 0.0
             ],
             "translation": [
                 0.0,
-                -2.3,
+                0.15,
                 0.0
             ],
             "scale": [
-                1.0,
-                1.0,
-                1.0
+                0.0625,
+                0.0625,
+                0.0625
             ]
         },
         "fixed": {
@@ -179,13 +179,13 @@
                             0.0
                         ],
                         [
-                            -3.0,
-                            6.0,
+                            -2.9,
+                            5.0,
                             0.0
                         ],
                         [
-                            3.0,
-                            6.0,
+                            2.5,
+                            5.0,
                             0.0
                         ]
                     ],
@@ -207,7 +207,7 @@
                                 1.5,
                                 0.75
                             ],
-                            "texture": "#5"
+                            "texture": "#default"
                         },
                         "east": {
                             "uv": [
@@ -216,7 +216,7 @@
                                 1.125,
                                 0.75
                             ],
-                            "texture": "#5"
+                            "texture": "#default"
                         },
                         "south": {
                             "uv": [
@@ -225,7 +225,7 @@
                                 0.75,
                                 0.75
                             ],
-                            "texture": "#5"
+                            "texture": "#default"
                         },
                         "west": {
                             "uv": [
@@ -234,7 +234,7 @@
                                 0.375,
                                 0.75
                             ],
-                            "texture": "#5"
+                            "texture": "#default"
                         },
                         "up": {
                             "uv": [
@@ -244,7 +244,7 @@
                                 0.375
                             ],
                             "rotation": 180,
-                            "texture": "#5"
+                            "texture": "#default"
                         },
                         "down": {
                             "uv": [
@@ -254,7 +254,7 @@
                                 0.375
                             ],
                             "rotation": 90,
-                            "texture": "#5"
+                            "texture": "#default"
                         }
                     }
                 },
@@ -271,13 +271,13 @@
                             0.0
                         ],
                         [
-                            -3.0,
-                            6.0,
+                            -2.9,
+                            5.0,
                             0.0
                         ],
                         [
-                            3.0,
-                            6.0,
+                            2.5,
+                            5.0,
                             0.0
                         ],
                         [
@@ -319,7 +319,7 @@
                                 1.5,
                                 1.5
                             ],
-                            "texture": "#5"
+                            "texture": "#default"
                         },
                         "east": {
                             "uv": [
@@ -328,7 +328,7 @@
                                 1.125,
                                 1.5
                             ],
-                            "texture": "#5"
+                            "texture": "#default"
                         },
                         "south": {
                             "uv": [
@@ -337,7 +337,7 @@
                                 0.75,
                                 1.5
                             ],
-                            "texture": "#5"
+                            "texture": "#default"
                         },
                         "west": {
                             "uv": [
@@ -346,7 +346,7 @@
                                 0.375,
                                 1.5
                             ],
-                            "texture": "#5"
+                            "texture": "#default"
                         },
                         "up": {
                             "uv": [
@@ -356,7 +356,7 @@
                                 1.125
                             ],
                             "rotation": 180,
-                            "texture": "#5"
+                            "texture": "#default"
                         },
                         "down": {
                             "uv": [
@@ -366,7 +366,7 @@
                                 1.125
                             ],
                             "rotation": 90,
-                            "texture": "#5"
+                            "texture": "#default"
                         }
                     }
                 }

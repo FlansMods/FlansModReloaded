@@ -1,7 +1,7 @@
 {
-    "parent": "builtin/generated",
+    "parent": "item/generated",
     "textures": {
-        "layer0": "flansmodernweapons:items/pistol_flashlight"
+        "layer0": "flansmodernweapons:item/pistol_flashlight"
     },
     "display": {
         "thirdperson": {

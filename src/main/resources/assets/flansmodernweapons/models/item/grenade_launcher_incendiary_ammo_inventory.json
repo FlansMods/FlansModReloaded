@@ -1,7 +1,7 @@
 {
-    "parent": "builtin/generated",
+    "parent": "item/generated",
     "textures": {
-        "layer0": "flansmodernweapons:items/grenade_launcher_incendiary_ammo"
+        "layer0": "flansmodernweapons:item/grenade_launcher_incendiary_ammo"
     },
     "display": {
         "thirdperson": {

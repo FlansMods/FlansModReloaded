@@ -4,10 +4,8 @@ import com.flansmod.client.FlansModClient;
 import com.flansmod.client.particle.GunshotHitBlockParticle;
 import com.flansmod.common.gunshots.*;
 import com.flansmod.common.types.elements.ActionDefinition;
-import com.flansmod.common.types.guns.ESpreadPattern;
+import com.flansmod.common.types.guns.*;
 import com.flansmod.common.types.elements.ShotDefinition;
-import com.flansmod.common.types.guns.CachedGunStats;
-import com.flansmod.common.types.guns.GunContext;
 import com.flansmod.util.Maths;
 import com.flansmod.util.Transform;
 import net.minecraft.client.Minecraft;
@@ -24,6 +22,7 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.boss.EnderDragonPart;
 import net.minecraft.world.entity.boss.enderdragon.EnderDragon;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.Fluids;
@@ -40,7 +39,7 @@ public class ShootAction extends Action
 {
 	private GunshotCollection results;
 
-	public ShotDefinition ShotDef() { return actionDef.shootStats; }
+	public ShotDefinition ShotDef() { return actionDef.shootStats[0]; }
 
 	public ShootAction(ActionStack stack, ActionDefinition def, InteractionHand hand)
 	{
@@ -67,6 +66,55 @@ public class ShootAction extends Action
 		}
 
 		return super.CanStart(context);
+	}
+
+	public int EvaluateTrigger(GunContext context)
+	{
+		int flags = GunTriggerResult.Flag_None;
+		ItemStack ammo = FindLoadedAmmo(context);
+		if(ammo.isEmpty())
+		{
+			if(context.GunDef().reload.autoReloadWhenEmpty)
+			{
+				flags |= GunTriggerResult.Flag_AutoReloadIfEnabled;
+			}
+			else if(context.GunDef().AmmoConsumeMode == EAmmoConsumeMode.RoundRobin)
+			{
+				flags |= GunTriggerResult.Flag_RotateChambers;
+			}
+		}
+		else
+		{
+			flags |= GunTriggerResult.Flag_Shoot;
+			if(context.GunDef().AmmoConsumeMode == EAmmoConsumeMode.RoundRobin)
+			{
+				flags |= GunTriggerResult.Flag_RotateChambers;
+			}
+		}
+		return flags;
+	}
+
+	public ItemStack FindLoadedAmmo(GunContext context)
+	{
+		switch(context.GunDef().AmmoConsumeMode)
+		{
+			case RoundRobin -> {
+				int currentChamber = context.GetCurrentChamber();
+				return context.GetBulletStack(currentChamber);
+			}
+			case FirstNonEmpty -> {
+				for(int i = 0; i < context.GunDef().numBullets; i++)
+				{
+					ItemStack stack = context.GetBulletStack(i);
+					if(!stack.isEmpty())
+						return stack;
+				}
+			}
+			case Simultaneous -> {
+
+			}
+		}
+		return ItemStack.EMPTY;
 	}
 
 	public void SetResults(GunshotCollection shots)
@@ -209,11 +257,11 @@ public class ShootAction extends Action
 					{
 						case BLOCK ->
 						{
-							if(actionDef.shootStats.breaksMaterials.length > 0)
+							if(actionDef.shootStats[0].breaksMaterials.length > 0)
 							{
 								BlockHitResult blockHit = (BlockHitResult) hit;
 								BlockState stateHit = level.getBlockState(blockHit.getBlockPos());
-								if(actionDef.shootStats.BreaksMaterial(stateHit.getMaterial()))
+								if(actionDef.shootStats[0].BreaksMaterial(stateHit.getMaterial()))
 								{
 									level.destroyBlock(blockHit.getBlockPos(), true, context.shootFrom);
 								}
@@ -346,10 +394,10 @@ public class ShootAction extends Action
 						{
 							ClientLevel level = Minecraft.getInstance().level;
 							BlockHitResult blockHit = (BlockHitResult)hit;
-							if(shootActionDef != null && shootActionDef.shootStats.impact.decal != null && shootActionDef.shootStats.impact.decal.length() > 0)
+							if(shootActionDef != null && shootActionDef.shootStats[0].impact.decal != null && shootActionDef.shootStats[0].impact.decal.length() > 0)
 							{
 								FlansModClient.DECAL_RENDERER.AddDecal(
-									ResourceLocation.tryParse(shootActionDef.shootStats.impact.decal).withPrefix("textures/"),
+									ResourceLocation.tryParse(shootActionDef.shootStats[0].impact.decal).withPrefix("textures/"),
 									blockHit.getLocation(),
 									blockHit.getDirection(),
 									level.random.nextFloat() * 360.0f,
@@ -400,7 +448,7 @@ public class ShootAction extends Action
 					}
 
 					// Play a sound, only once per tick to avoid audio overload
-					if(!playedASoundThisTick && actionDef.shootStats.impact.hitSound != null)
+					if(!playedASoundThisTick && actionDef.shootStats[0].impact.hitSound != null)
 					{
 						playedASoundThisTick = true;
 						//Minecraft.getInstance().getSoundManager().play(actionDef.ShootStats.Impact.HitSound);

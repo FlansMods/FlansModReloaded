@@ -1,7 +1,7 @@
 {
-    "parent": "builtin/generated",
+    "parent": "item/generated",
     "textures": {
-        "layer0": "flansmodernweapons:items/colt45"
+        "layer0": "flansmodernweapons:item/colt45"
     },
     "display": {
         "thirdperson": {

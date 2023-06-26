@@ -27,6 +27,13 @@ public class ClientInputHooks
 		GLFW.GLFW_KEY_L,
 		"key.categories.flansmod"); });
 
+	public static final Lazy<KeyMapping> MANUAL_RELOAD_MAPPING = Lazy.of(() -> { return new KeyMapping(
+		"key.flansmod.manual_reload",
+		KeyConflictContext.IN_GAME,
+		InputConstants.Type.KEYSYM,
+		GLFW.GLFW_KEY_R,
+		"key.categories.flansmod"); });
+
 	public ClientInputHooks()
 	{
 		IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
@@ -39,6 +46,7 @@ public class ClientInputHooks
 	public void OnKeyMappings(RegisterKeyMappingsEvent event)
 	{
 		event.register(LOOK_AT_MAPPING.get());
+		event.register(MANUAL_RELOAD_MAPPING.get());
 	}
 
 	public void OnClickInput(InputEvent.InteractionKeyMappingTriggered event)
@@ -69,6 +77,22 @@ public class ClientInputHooks
 				if(stack.getItem() instanceof GunItem gun)
 				{
 					FlansModClient.GUNSHOTS_CLIENT.ClientLookAt(player, InteractionHand.OFF_HAND);
+				}
+			}
+
+			while(MANUAL_RELOAD_MAPPING.get().consumeClick())
+			{
+				Player player = Minecraft.getInstance().player;
+				ItemStack stack = player.getItemInHand(InteractionHand.MAIN_HAND);
+				if(stack.getItem() instanceof GunItem gun)
+				{
+					FlansModClient.GUNSHOTS_CLIENT.ClientReload(player, InteractionHand.MAIN_HAND);
+				}
+
+				stack = player.getItemInHand(InteractionHand.OFF_HAND);
+				if(stack.getItem() instanceof GunItem gun)
+				{
+					FlansModClient.GUNSHOTS_CLIENT.ClientReload(player, InteractionHand.OFF_HAND);
 				}
 			}
 		}

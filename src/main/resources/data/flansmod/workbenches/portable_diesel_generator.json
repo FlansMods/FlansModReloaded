@@ -1,4 +1,6 @@
 {
+    "titlestring": "portable_diesel_generator",
+    "bannerTextureLocation": "",
     "gunCrafting": {
         "isActive": false,
         "pages": [],

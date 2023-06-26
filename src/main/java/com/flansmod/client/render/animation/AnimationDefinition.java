@@ -1,15 +1,14 @@
 package com.flansmod.client.render.animation;
 
+import com.flansmod.client.render.animation.elements.KeyframeDefinition;
+import com.flansmod.client.render.animation.elements.PoseDefinition;
+import com.flansmod.client.render.animation.elements.SequenceDefinition;
+import com.flansmod.client.render.animation.elements.SequenceEntryDefinition;
 import com.flansmod.common.FlansMod;
 import com.flansmod.common.types.JsonDefinition;
 import com.flansmod.common.types.JsonField;
-import com.flansmod.common.types.guns.GunDefinition;
-import com.flansmod.util.Transform;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.entity.Pose;
 
-import javax.swing.text.html.Option;
-import java.util.Map;
 import java.util.Optional;
 
 public class AnimationDefinition extends JsonDefinition
@@ -37,7 +36,7 @@ public class AnimationDefinition extends JsonDefinition
 		return null;
 	}
 
-	public KeyframeDefinition GetKeyframe(SequenceDefinition.SequenceEntry entry)
+	public KeyframeDefinition GetKeyframe(SequenceEntryDefinition entry)
 	{
 		return entry == null ? null : GetKeyframe(entry.frame);
 	}

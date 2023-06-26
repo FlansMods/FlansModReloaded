@@ -1,7 +1,7 @@
 {
-    "parent": "builtin/generated",
+    "parent": "item/generated",
     "textures": {
-        "layer0": "flansmodernweapons:items/sigp226ammo"
+        "layer0": "flansmodernweapons:item/sigp226ammo"
     },
     "display": {
         "thirdperson": {

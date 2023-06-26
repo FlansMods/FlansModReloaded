@@ -90,6 +90,58 @@ public class ModernWeaponsMod
 	public static final RegistryObject<Item> GUN_W1200 = 					FlansMod.Gun(ITEMS, MODID, "w1200");
 
 
+	public static final RegistryObject<Item> BULLET_A91 = 						FlansMod.Bullet(ITEMS, MODID, "a91ammo");
+	public static final RegistryObject<Item> BULLET_ACR = 						FlansMod.Bullet(ITEMS, MODID, "acr_ammo");
+	public static final RegistryObject<Item> BULLET_AK47 = 						FlansMod.Bullet(ITEMS, MODID, "ak47ammo");
+	public static final RegistryObject<Item> BULLET_AK74 = 						FlansMod.Bullet(ITEMS, MODID, "ak74ammo");
+	public static final RegistryObject<Item> BULLET_AT4 = 						FlansMod.Bullet(ITEMS, MODID, "at4ammo");
+	public static final RegistryObject<Item> BULLET_AUG = 						FlansMod.Bullet(ITEMS, MODID, "aug_ammo");
+	public static final RegistryObject<Item> BULLET_BARRETT = 					FlansMod.Bullet(ITEMS, MODID, "barrett_ammo");
+	public static final RegistryObject<Item> BULLET_BARRETT_COMPACT =			FlansMod.Bullet(ITEMS, MODID, "barrett_compact_ammo");
+	public static final RegistryObject<Item> BULLET_BARRETT_EXPLOSIVE =			FlansMod.Bullet(ITEMS, MODID, "barrett_explosive_ammo");
+	public static final RegistryObject<Item> BULLET_BIZON = 					FlansMod.Bullet(ITEMS, MODID, "bizon_ammo");
+	public static final RegistryObject<Item> BULLET_DESERT_EAGLE = 				FlansMod.Bullet(ITEMS, MODID, "desert_eagle_ammo");
+	public static final RegistryObject<Item> BULLET_DRAGUNOV = 					FlansMod.Bullet(ITEMS, MODID, "dragunov_ammo");
+	public static final RegistryObject<Item> BULLET_FNSCAR = 					FlansMod.Bullet(ITEMS, MODID, "fnscar_ammo");
+	public static final RegistryObject<Item> BULLET_G3 = 						FlansMod.Bullet(ITEMS, MODID, "g3ammo");
+	public static final RegistryObject<Item> BULLET_G36 = 						FlansMod.Bullet(ITEMS, MODID, "g36ammo");
+	public static final RegistryObject<Item> BULLET_GL1 = 						FlansMod.Bullet(ITEMS, MODID, "gl1ammo");
+	public static final RegistryObject<Item> BULLET_GL6 = 						FlansMod.Bullet(ITEMS, MODID, "gl6ammo");
+	public static final RegistryObject<Item> BULLET_GLOCK = 					FlansMod.Bullet(ITEMS, MODID, "glock_ammo");
+	public static final RegistryObject<Item> BULLET_L86 = 						FlansMod.Bullet(ITEMS, MODID, "l86ammo");
+	public static final RegistryObject<Item> BULLET_L96 = 						FlansMod.Bullet(ITEMS, MODID, "l96ammo");
+	public static final RegistryObject<Item> BULLET_M9 = 						FlansMod.Bullet(ITEMS, MODID, "m9ammo");
+	public static final RegistryObject<Item> BULLET_M14 = 						FlansMod.Bullet(ITEMS, MODID, "m14ammo");
+	public static final RegistryObject<Item> BULLET_M16A4 = 					FlansMod.Bullet(ITEMS, MODID, "m16a4ammo");
+	public static final RegistryObject<Item> BULLET_M21 = 						FlansMod.Bullet(ITEMS, MODID, "m21ammo");
+	public static final RegistryObject<Item> BULLET_M40A3 = 					FlansMod.Bullet(ITEMS, MODID, "m40a3ammo");
+	public static final RegistryObject<Item> BULLET_M60 = 						FlansMod.Bullet(ITEMS, MODID, "m60ammo");
+	public static final RegistryObject<Item> BULLET_M72LAW = 					FlansMod.Bullet(ITEMS, MODID, "m72law_ammo");
+	public static final RegistryObject<Item> BULLET_M249 = 						FlansMod.Bullet(ITEMS, MODID, "m249ammo");
+	public static final RegistryObject<Item> BULLET_M1014 = 					FlansMod.Bullet(ITEMS, MODID, "m1014ammo");
+	public static final RegistryObject<Item> BULLET_M1887 = 					FlansMod.Bullet(ITEMS, MODID, "m1887ammo");
+	public static final RegistryObject<Item> BULLET_M1911 = 					FlansMod.Bullet(ITEMS, MODID, "m1911ammo");
+	public static final RegistryObject<Item> BULLET_MAKAROV = 					FlansMod.Bullet(ITEMS, MODID, "makarov_ammo");
+	public static final RegistryObject<Item> BULLET_MINIGUN = 					FlansMod.Bullet(ITEMS, MODID, "minigun_ammo");
+	public static final RegistryObject<Item> BULLET_MP5 = 						FlansMod.Bullet(ITEMS, MODID, "mp5ammo");
+	public static final RegistryObject<Item> BULLET_MTAR = 						FlansMod.Bullet(ITEMS, MODID, "mtar_ammo");
+	public static final RegistryObject<Item> BULLET_P90 = 						FlansMod.Bullet(ITEMS, MODID, "p90ammo");
+	public static final RegistryObject<Item> BULLET_PANZERFAUST3 = 				FlansMod.Bullet(ITEMS, MODID, "panzerfaust3ammo");
+	public static final RegistryObject<Item> BULLET_R700 = 						FlansMod.Bullet(ITEMS, MODID, "r700ammo");
+	public static final RegistryObject<Item> BULLET_R870 = 						FlansMod.Bullet(ITEMS, MODID, "r870ammo");
+	public static final RegistryObject<Item> BULLET_RPD = 						FlansMod.Bullet(ITEMS, MODID, "rpd_ammo");
+	public static final RegistryObject<Item> BULLET_RPG = 						FlansMod.Bullet(ITEMS, MODID, "rpg_ammo");
+	public static final RegistryObject<Item> BULLET_RPK = 						FlansMod.Bullet(ITEMS, MODID, "rpk_ammo");
+	public static final RegistryObject<Item> BULLET_SG550 = 					FlansMod.Bullet(ITEMS, MODID, "sg550ammo");
+	public static final RegistryObject<Item> BULLET_SIGP226 = 					FlansMod.Bullet(ITEMS, MODID, "sigp226ammo");
+	public static final RegistryObject<Item> BULLET_SKORPION = 					FlansMod.Bullet(ITEMS, MODID, "skorpion_ammo");
+	public static final RegistryObject<Item> BULLET_SPAS = 						FlansMod.Bullet(ITEMS, MODID, "spas_ammo");
+	public static final RegistryObject<Item> BULLET_STINGER = 					FlansMod.Bullet(ITEMS, MODID, "stinger_ammo");
+	public static final RegistryObject<Item> BULLET_USP = 						FlansMod.Bullet(ITEMS, MODID, "usp_ammo");
+	public static final RegistryObject<Item> BULLET_UZI = 						FlansMod.Bullet(ITEMS, MODID, "uzi_ammo");
+	public static final RegistryObject<Item> BULLET_W1200 = 					FlansMod.Bullet(ITEMS, MODID, "w1200ammo");
+
+
 	public static final RegistryObject<Block> WORKBENCH_BLOCK_MODERN = 				FlansMod.Workbench_Block(BLOCKS, MODID, "modern");
 	public static final RegistryObject<Item> WORKBENCH_ITEM_MODERN = 				FlansMod.Workbench_Item(ITEMS, MODID, "modern", WORKBENCH_BLOCK_MODERN);
 	public static final RegistryObject<BlockEntityType<WorkbenchBlockEntity>> WORKBENCH_TILE_ENTITY_MODERN =
@@ -112,14 +164,26 @@ public class ModernWeaponsMod
 	public static class ClientMod
 	{
 		@SubscribeEvent
+		public static void ModelRegistryEvent(ModelEvent.RegisterAdditional event)
+		{
+			ItemModelShaper shaper = Minecraft.getInstance().getItemRenderer().getItemModelShaper();
+
+			for(var entry : ITEMS.getEntries())
+			{
+				event.register(new ModelResourceLocation(MODID, entry.getId().getPath() + "_inventory", "inventory"));
+				shaper.register(entry.get(), new ModelResourceLocation(MODID, entry.getId().getPath() + "_inventory", "inventory"));
+			}
+		}
+		/*
+		@SubscribeEvent
 		public static void ModelRegistryEvent(ModelEvent.BakingCompleted event)
 		{
 			ItemModelShaper shaper = Minecraft.getInstance().getItemRenderer().getItemModelShaper();
 
 			for(var entry : ITEMS.getEntries())
 			{
-				shaper.register(entry.get(), new ModelResourceLocation(entry.getId(), "inventory"));
+				shaper.register(entry.get(), new ModelResourceLocation(MODID, entry.getId().getPath() + "_inventory", "inventory"));
 			}
-		}
+		}*/
 	}
 }

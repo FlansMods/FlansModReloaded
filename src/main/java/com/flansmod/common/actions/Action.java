@@ -8,6 +8,7 @@ import net.minecraft.world.InteractionHand;
 public abstract class Action
 {
 	public static final float TICK_RATE = 1.0f / 20.0f;
+	private Action nextAction = null;
 	protected final ActionStack stack;
 	public ActionDefinition actionDef;
 	protected int progress = 0;
@@ -30,9 +31,21 @@ public abstract class Action
 		this.hand = hand;
 	}
 
+	public Action AndThen(Action nextAction)
+	{
+		this.nextAction = nextAction;
+		return nextAction;
+	}
+
 	public boolean ShouldRender(GunContext context) { return true; }
 
-	public boolean CanStart(GunContext context) { return true; }
+	public boolean CanStart(GunContext context)
+	{
+		if(actionDef.twoHanded && context.HasItemInOtherHand())
+			return false;
+
+		return true;
+	}
 
 	public void OnStartServer(GunContext context) { progress = 0; }
 	public void OnTickServer(GunContext context) { progress++; }

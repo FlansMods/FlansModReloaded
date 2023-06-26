@@ -1,7 +1,7 @@
 {
-    "parent": "builtin/generated",
+    "parent": "item/generated",
     "textures": {
-        "layer0": "flansmodernweapons:items/red_dot_sight"
+        "layer0": "flansmodernweapons:item/red_dot_sight"
     },
     "display": {
         "thirdperson": {

@@ -15,9 +15,11 @@ public class ActionDefinition
 	public boolean canActUnderOtherLiquid = false;
 	@JsonField(Docs = "If true, attachments that add an action in the same place will override this one")
 	public boolean canBeOverriden = false;
+	@JsonField(Docs = "If true, then this action will only work if the other hand is empty")
+	public boolean twoHanded = false;
 
 	@JsonField
-	public SoundDefinition sound = new SoundDefinition();
+	public SoundDefinition[] sounds = new SoundDefinition[0];
 
 	@JsonField
 	public float duration = 0.0f;
@@ -28,7 +30,7 @@ public class ActionDefinition
 	@JsonField
 	public EFireMode FireMode = EFireMode.FullAuto;
 	@JsonField
-	public ShotDefinition shootStats = new ShotDefinition();
+	public ShotDefinition[] shootStats = new ShotDefinition[0];
 
 	// IronSight / Scope Action
 	@JsonField

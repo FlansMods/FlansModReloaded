@@ -1,16 +1,15 @@
-package com.flansmod.common.types.guns;
+package com.flansmod.common.types.grenades;
 
 import com.flansmod.common.FlansMod;
 import com.flansmod.common.types.JsonDefinition;
 import com.flansmod.common.types.JsonField;
 import com.flansmod.common.types.elements.ActionDefinition;
 import com.flansmod.common.types.elements.ImpactDefinition;
-import com.flansmod.common.types.elements.ItemStackDefinition;
-import com.flansmod.common.types.parts.PartDefinition;
 import net.minecraft.resources.ResourceLocation;
 
 public class GrenadeDefinition extends JsonDefinition
 {
+	public static final String FOLDER = "grenades";
 	public static final GrenadeDefinition INVALID = new GrenadeDefinition(new ResourceLocation(FlansMod.MODID, "grenades/null"));
 	public static final String TYPE = "grenade";
 	@Override

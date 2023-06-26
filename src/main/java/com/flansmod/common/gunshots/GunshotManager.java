@@ -4,10 +4,12 @@ import com.flansmod.common.actions.*;
 import com.flansmod.common.item.GunItem;
 import com.flansmod.common.network.FlansModPacketHandler;
 import com.flansmod.common.network.toclient.ShotFiredMessage;
+import com.flansmod.common.network.toserver.ReloadRequestMessage;
 import com.flansmod.common.network.toserver.ShotRequestMessage;
 import com.flansmod.common.types.elements.ActionDefinition;
 import com.flansmod.common.types.guns.GunContext;
 import com.flansmod.common.types.guns.GunDefinition;
+import com.flansmod.common.types.guns.GunTriggerResult;
 import net.minecraft.client.Minecraft;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
@@ -48,6 +50,30 @@ public class GunshotManager
 	}
 
 	@OnlyIn(Dist.CLIENT)
+	public void ClientReload(Player player, InteractionHand hand)
+	{
+		ItemStack stack = player.getItemInHand(hand);
+		if(stack.getItem() instanceof GunItem gunItem)
+		{
+			// Set our context and work out what Look At will do
+			GunContext gunContext = GunContext.CreateFromPlayer(player, hand);
+			GunDefinition gunDef = gunContext.GunDef();
+			ActionStack actionStack = GetOrCreateActionStack(player);
+			actionStack.AddReload(player.level, gunContext, EActionSet.PRIMARY, hand, gunContext.GunDef().reload);
+
+			// And inform the server that we are reloading
+			ClientSendToServerReload(hand);
+		}
+	}
+
+	// You fired a shot, tell the server where you shot
+	@OnlyIn(Dist.CLIENT)
+	private void ClientSendToServerReload(InteractionHand hand)
+	{
+		FlansModPacketHandler.SendToServer(new ReloadRequestMessage(hand));
+	}
+
+	@OnlyIn(Dist.CLIENT)
 	public void ClientLookAt(Player player, InteractionHand hand)
 	{
 		ItemStack stack = player.getItemInHand(hand);
@@ -80,13 +106,6 @@ public class GunshotManager
 
 			ActionStack actionStack = GetOrCreateActionStack(player);
 
-			//shootAction.FindLoadedAmmo(gunContext);
-
-			// TODO: Check if we can shoot based on our local data about our
-			 // a) Inventory, ammo levels
-			 // b) Shoot cooldown
-			 // c) Handedness
-
 			boolean bCanFire = shootAction == null || shootAction.CanStart(gunContext);
 			for(Action action : otherActions)
 				if(!action.CanStart(gunContext))
@@ -96,21 +115,45 @@ public class GunshotManager
 
 			if(bCanFire)
 			{
-				GunshotCollection shotsFired = null;
-				if (shootAction != null)
+				if(shootAction != null)
 				{
-					// Calculate the GunshotCollection (as we believe it to be)
-					// (Using some sort of deterministic random? - or sending our RNG results to server for analysis)
-					shootAction.Calculate(gunContext, actionStack, actionSet);
-					TriggerAction(player.level, gunContext, shootAction);
-					shotsFired = shootAction.GetResults();
+					// Even though we know the gun will do *something*, what is it?
+					int triggerResult = shootAction.EvaluateTrigger(gunContext);
+					if ((triggerResult & GunTriggerResult.Flag_Shoot) != 0)
+					{
+						GunshotCollection shotsFired = null;
+						// Calculate the GunshotCollection (as we believe it to be)
+						// (Using some sort of deterministic random? - or sending our RNG results to server for analysis)
+						shootAction.Calculate(gunContext, actionStack, actionSet);
+						TriggerAction(player.level, gunContext, shootAction);
+						shotsFired = shootAction.GetResults();
+
+						// Start any other actions we have attached to the trigger
+						TriggerActions(player.level, gunContext, otherActions);
+
+						// Finally, send our shot data to the server for verification, action and propogation
+						ClientSendToServer(shotsFired);
+					}
+					if ((triggerResult & GunTriggerResult.Flag_RotateChambers) != 0)
+					{
+						gunContext.AdvanceChamber();
+					}
+					if ((triggerResult & GunTriggerResult.Flag_AutoReloadIfEnabled) != 0)
+					{
+						if (actionStack.IsReloading())
+						{
+							actionStack.RequestCancel();
+						} else
+						{
+							ClientReload(player, hand);
+						}
+					}
 				}
-
-				// Start any other actions we have attached to the trigger
-				TriggerActions(player.level, gunContext, otherActions);
-
-				// Finally, send our shot data to the server for verification, action and propogation
-				ClientSendToServer(shotsFired);
+				else
+				{
+					// In the case of no shoot action, just trigger the others
+					TriggerActions(player.level, gunContext, otherActions);
+				}
 			}
 		}
 	}
@@ -130,7 +173,7 @@ public class GunshotManager
 		GunshotCollection shotCollection = msg.Get();
 		InteractionHand hand = shotCollection.seatID == 0 ? InteractionHand.MAIN_HAND : InteractionHand.OFF_HAND;
 		GunContext gunContext = GunContext.TryCreateFromEntity(shotCollection.Shooter(), hand);
-		if(gunContext.IsValid())
+		if(gunContext.IsValidForUse())
 		{
 			ActionDefinition[] actionsDefs = gunContext.GetActionDefinitions(shotCollection.actionUsed);
 			List<Action> otherActions = new ArrayList<>(actionsDefs.length);
@@ -162,7 +205,25 @@ public class GunshotManager
 	public void HookServer(IEventBus modEventBus)
 	{
 		FlansModPacketHandler.RegisterServerHandler(ShotRequestMessage.class, ShotRequestMessage::new, this::OnServerReceivedShotData);
+		FlansModPacketHandler.RegisterServerHandler(ReloadRequestMessage.class, ReloadRequestMessage::new, this::OnServerReceivedReloadRequest);
 		MinecraftForge.EVENT_BUS.addListener(this::ServerTick);
+	}
+
+	// When a client tells us they want to reload, we need to process their items
+	private static final double RELOAD_MSG_RADIUS = 50d;
+	private void OnServerReceivedReloadRequest(ReloadRequestMessage msg, ServerPlayer from)
+	{
+		GunContext gunContext = GunContext.CreateFromPlayer(from, msg.hand);
+		ActionStack actionStack = GetOrCreateActionStack(from);
+		actionStack.AddReload(from.level, gunContext, EActionSet.PRIMARY, msg.hand, gunContext.GunDef().reload);
+
+		// And propogate to players for third person anims
+		FlansModPacketHandler.SendToAllAroundPoint(
+			new ReloadRequestMessage(msg.hand),
+			from.level.dimension(),
+			from.position(),
+			RELOAD_MSG_RADIUS,
+			gunContext.owner);
 	}
 
 	// When a client tells us what they shot, we need to verify it

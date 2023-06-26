@@ -1,7 +1,7 @@
 {
-    "parent": "builtin/generated",
+    "parent": "item/generated",
     "textures": {
-        "layer0": "flansmodernweapons:items/bizon_ammo"
+        "layer0": "flansmodernweapons:item/bizon_ammo"
     },
     "display": {
         "thirdperson": {

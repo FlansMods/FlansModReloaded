@@ -1,7 +1,7 @@
 {
-    "parent": "builtin/generated",
+    "parent": "item/generated",
     "textures": {
-        "layer0": "flansmodernweapons:items/quickreloadgrip"
+        "layer0": "flansmodernweapons:item/quickreloadgrip"
     },
     "display": {
         "thirdperson": {

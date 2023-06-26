@@ -1,0 +1,41 @@
+{
+	"keyframes":
+	{
+		[
+			"name": "idle",
+			"poses": 
+			[
+				{
+					"applyTo": "body",
+					"position": [0.0,0.0,0.0],
+					"rotation": [0.0,0.0,0.0],
+					"scale": [1.0,1.0,1.0]
+				},
+				{
+					"ref": "flansmodernweapons:animations/idle/Idle"
+				}
+			],
+			"constraints":
+			{
+
+			}
+		]
+	},
+	"animations": 
+	[
+		{
+			"name": "shoot",
+			"frames":
+			[ 
+				{ "tick":0, "frame":"idle" },
+				{ "tick":1, "frame":"shotFired" },
+				{ "tick":3, "frame":"idle" },
+
+				{ "tick":10, "frame":"readyToPullBolt" },
+				{ "tick":15, "frame":"pullBolt" },
+				{ "tick":20, "frame":"readyToPullBolt" },
+				{ "tick":21, "frame":"idle" }
+			]
+		}
+	]
+}

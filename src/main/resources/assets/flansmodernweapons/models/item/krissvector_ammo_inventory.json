@@ -1,7 +1,7 @@
 {
-    "parent": "builtin/generated",
+    "parent": "item/generated",
     "textures": {
-        "layer0": "flansmodernweapons:items/kriss_vector_ammo"
+        "layer0": "flansmodernweapons:item/kriss_vector_ammo"
     },
     "display": {
         "thirdperson": {

@@ -1,7 +1,7 @@
 {
-    "parent": "builtin/generated",
+    "parent": "item/generated",
     "textures": {
-        "layer0": "flansmodernweapons:items/panzerfaust3"
+        "layer0": "flansmodernweapons:item/panzerfaust3"
     },
     "display": {
         "thirdperson": {

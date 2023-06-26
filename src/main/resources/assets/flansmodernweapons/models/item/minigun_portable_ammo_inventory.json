@@ -1,7 +1,7 @@
 {
-    "parent": "builtin/generated",
+    "parent": "item/generated",
     "textures": {
-        "layer0": "flansmodernweapons:items/minigun_ammo_portable"
+        "layer0": "flansmodernweapons:item/minigun_ammo_portable"
     },
     "display": {
         "thirdperson": {

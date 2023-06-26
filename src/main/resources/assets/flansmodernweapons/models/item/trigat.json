@@ -1,7 +1,7 @@
 {
     "loader": "flansmod:turborig",
     "textures": {
-        "5": "flansmodernweapons:skins/trigat",
+        "default": "flansmodernweapons:skins/trigat",
         "particle": "minecraft:block/iron_block"
     },
     "animations": {},
@@ -110,19 +110,19 @@
         },
         "ground": {
             "rotation": [
-                -90.0,
+                0.0,
                 0.0,
                 0.0
             ],
             "translation": [
                 0.0,
-                -2.3,
+                0.15,
                 0.0
             ],
             "scale": [
-                1.0,
-                1.0,
-                1.0
+                0.0625,
+                0.0625,
+                0.0625
             ]
         },
         "fixed": {
@@ -207,7 +207,7 @@
                                 1.0,
                                 0.65625
                             ],
-                            "texture": "#5"
+                            "texture": "#default"
                         },
                         "east": {
                             "uv": [
@@ -216,7 +216,7 @@
                                 0.984375,
                                 0.65625
                             ],
-                            "texture": "#5"
+                            "texture": "#default"
                         },
                         "south": {
                             "uv": [
@@ -225,7 +225,7 @@
                                 0.96875,
                                 0.65625
                             ],
-                            "texture": "#5"
+                            "texture": "#default"
                         },
                         "west": {
                             "uv": [
@@ -234,7 +234,7 @@
                                 0.953125,
                                 0.65625
                             ],
-                            "texture": "#5"
+                            "texture": "#default"
                         },
                         "up": {
                             "uv": [
@@ -244,7 +244,7 @@
                                 0.03125
                             ],
                             "rotation": 180,
-                            "texture": "#5"
+                            "texture": "#default"
                         },
                         "down": {
                             "uv": [
@@ -254,7 +254,7 @@
                                 0.03125
                             ],
                             "rotation": 90,
-                            "texture": "#5"
+                            "texture": "#default"
                         }
                     }
                 },
@@ -319,7 +319,7 @@
                                 0.921875,
                                 0.03125
                             ],
-                            "texture": "#5"
+                            "texture": "#default"
                         },
                         "east": {
                             "uv": [
@@ -328,7 +328,7 @@
                                 0.890625,
                                 0.03125
                             ],
-                            "texture": "#5"
+                            "texture": "#default"
                         },
                         "south": {
                             "uv": [
@@ -337,7 +337,7 @@
                                 0.890625,
                                 0.03125
                             ],
-                            "texture": "#5"
+                            "texture": "#default"
                         },
                         "west": {
                             "uv": [
@@ -346,7 +346,7 @@
                                 0.859375,
                                 0.03125
                             ],
-                            "texture": "#5"
+                            "texture": "#default"
                         },
                         "up": {
                             "uv": [
@@ -356,7 +356,7 @@
                                 0.0
                             ],
                             "rotation": 180,
-                            "texture": "#5"
+                            "texture": "#default"
                         },
                         "down": {
                             "uv": [
@@ -366,7 +366,7 @@
                                 0.0
                             ],
                             "rotation": 90,
-                            "texture": "#5"
+                            "texture": "#default"
                         }
                     }
                 },
@@ -431,7 +431,7 @@
                                 0.921875,
                                 0.15625
                             ],
-                            "texture": "#5"
+                            "texture": "#default"
                         },
                         "east": {
                             "uv": [
@@ -440,7 +440,7 @@
                                 0.921875,
                                 0.15625
                             ],
-                            "texture": "#5"
+                            "texture": "#default"
                         },
                         "south": {
                             "uv": [
@@ -449,7 +449,7 @@
                                 0.890625,
                                 0.15625
                             ],
-                            "texture": "#5"
+                            "texture": "#default"
                         },
                         "west": {
                             "uv": [
@@ -458,7 +458,7 @@
                                 0.890625,
                                 0.15625
                             ],
-                            "texture": "#5"
+                            "texture": "#default"
                         },
                         "up": {
                             "uv": [
@@ -468,7 +468,7 @@
                                 0.125
                             ],
                             "rotation": 180,
-                            "texture": "#5"
+                            "texture": "#default"
                         },
                         "down": {
                             "uv": [
@@ -478,7 +478,7 @@
                                 0.125
                             ],
                             "rotation": 90,
-                            "texture": "#5"
+                            "texture": "#default"
                         }
                     }
                 }

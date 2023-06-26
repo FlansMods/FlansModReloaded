@@ -1,7 +1,7 @@
 {
-    "parent": "builtin/generated",
+    "parent": "item/generated",
     "textures": {
-        "layer0": "flansmodernweapons:items/beta_cmag"
+        "layer0": "flansmodernweapons:item/beta_cmag"
     },
     "display": {
         "thirdperson": {

@@ -2,6 +2,7 @@ package com.flansmod.common.types.guns;
 
 import com.flansmod.common.actions.EActionSet;
 import com.flansmod.common.item.AttachmentItem;
+import com.flansmod.common.item.BulletItem;
 import com.flansmod.common.item.GunItem;
 import com.flansmod.common.types.attachments.AttachmentDefinition;
 import com.flansmod.common.types.attachments.EAttachmentType;
@@ -14,6 +15,7 @@ import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.damagesource.IndirectEntityDamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.UseOnContext;
@@ -32,6 +34,7 @@ public class GunContext
 	// Source variables
 	public ItemStack stack;
 	public Entity shootFrom;
+	public int subEntityIndex;
 	public Transform shootOrigin;
 	public Entity owner;
 
@@ -48,9 +51,17 @@ public class GunContext
 		);
 	}
 
-	public boolean IsValid()
+	public boolean IsValidForRender() { return stack != null; }
+	public boolean IsValidForUse()
 	{
 		return stack != null && shootFrom != null;
+	}
+	public InteractionHand GetHand() { return subEntityIndex == 1 ? InteractionHand.OFF_HAND : InteractionHand.MAIN_HAND; }
+	public void SetHand(InteractionHand hand) { subEntityIndex = hand == InteractionHand.MAIN_HAND ? 0 : 1; }
+
+	public static GunContext TryCreateFromItemStack(ItemStack stack)
+	{
+		return new GunContext(null, Transform.Identity(), null, stack);
 	}
 
 	@Nonnull
@@ -123,6 +134,43 @@ public class GunContext
 		return GunDefinition.INVALID;
 	}
 
+	public Inventory GetAttachedInventory()
+	{
+		if(shootFrom != null)
+		{
+			if(shootFrom instanceof Player player)
+			{
+				return player.getInventory();
+			}
+			//else if(shootFrom instanceof )
+		}
+		return null;
+	}
+
+	public boolean HasItemInOtherHand()
+	{
+		if(shootFrom instanceof Player player)
+		{
+			if(GetHand() == InteractionHand.MAIN_HAND)
+				return !player.getItemInHand(InteractionHand.OFF_HAND).isEmpty();
+			else
+				return !player.getItemInHand(InteractionHand.MAIN_HAND).isEmpty();
+		}
+		return false;
+	}
+
+	public GunContext GetGunInOtherHand()
+	{
+		if(shootFrom instanceof Player player)
+		{
+			if(GetHand() == InteractionHand.MAIN_HAND)
+				return CreateFromPlayer(player, InteractionHand.OFF_HAND);
+			else
+				return CreateFromPlayer(player, InteractionHand.MAIN_HAND);
+		}
+		return GunContext.INVALID;
+	}
+
 	public ItemStack GetGunStack()
 	{
 		return stack;
@@ -142,6 +190,105 @@ public class GunContext
 		}
 
 		return ItemStack.of(ammoTags.getCompound(key));
+	}
+
+	public void SetBulletStack(int index, ItemStack stack)
+	{
+		CompoundTag ammoTags = GetOrCreateTags("ammo");
+		String key = Integer.toString(index);
+		CompoundTag itemTags = new CompoundTag();
+		stack.save(itemTags);
+		ammoTags.put(key, itemTags);
+	}
+
+	public boolean CanPerformReload()
+	{
+		for(int i = 0; i < GunDef().numBullets; i++)
+		{
+			if(GetBulletStack(i).isEmpty())
+				return true;
+		}
+		return false;
+	}
+
+	public int GetNextBulletSlotToLoad(EActionSet actionSet)
+	{
+		for(int i = 0; i < GunDef().numBullets; i++)
+		{
+			if(GetBulletStack(i).isEmpty())
+				return i;
+		}
+		return Inventory.NOT_FOUND_INDEX;
+	}
+
+	public void LoadOne(EActionSet actionSet, int bulletSlot)
+	{
+		if(bulletSlot < 0 || bulletSlot >= GunDef().numBullets)
+			return;
+
+		ActionDefinition shootActionDef = GetShootActionDefinition(actionSet);
+		Inventory attachedInventory = GetAttachedInventory();
+		if(shootActionDef != null && attachedInventory != null)
+		{
+			int slot = FindSlotWithMatchingAmmo(shootActionDef, attachedInventory);
+			if(slot != Inventory.NOT_FOUND_INDEX)
+			{
+				ItemStack stackToLoad = attachedInventory.removeItem(slot, 1);
+				SetBulletStack(bulletSlot, stackToLoad);
+			}
+		}
+	}
+
+	public int FindSlotWithMatchingAmmo(ActionDefinition shootActionDef, Inventory inventory)
+	{
+		for(int i = 0; i < inventory.getContainerSize(); i++)
+		{
+			ItemStack stack = inventory.getItem(i);
+			if(stack.isEmpty())
+				continue;
+			if(stack.getItem() instanceof BulletItem bullet)
+			{
+				if(shootActionDef.shootStats[0].GetMatchingBullets().contains(bullet.Def()))
+				{
+					return i;
+				}
+			}
+		}
+		return Inventory.NOT_FOUND_INDEX;
+	}
+
+	public int GetCurrentChamber()
+	{
+		return stack.getOrCreateTag().contains("chamber") ? stack.getTag().getInt("chamber") : 0;
+	}
+
+	public void SetCurrentChamber(int chamber)
+	{
+		stack.getOrCreateTag().putInt("chamber", chamber);
+	}
+
+	public void AdvanceChamber()
+	{
+		int chamber = GetCurrentChamber();
+		chamber++;
+		if(chamber >= GunDef().numBullets)
+			chamber = 0;
+		SetCurrentChamber(chamber);
+	}
+
+	public AttachmentDefinition GetAttachmentDefinition(EAttachmentType attachType)
+	{
+		CompoundTag attachmentTags = GetOrCreateTags("attachments");
+		if(attachmentTags.contains(attachType.toString()))
+		{
+			CompoundTag forThisType = attachmentTags.getCompound(attachType.toString());
+			ItemStack stack = ItemStack.of(forThisType);
+			if(stack.getItem() instanceof AttachmentItem attachmentItem)
+			{
+				return attachmentItem.Def();
+			}
+		}
+		return AttachmentDefinition.INVALID;
 	}
 
 	public ItemStack GetAttachmentStack(EAttachmentType attachType)
@@ -165,6 +312,20 @@ public class GunContext
 			stacks.add(ItemStack.of(attachmentStackTags));
 		}
 		return stacks;
+	}
+
+	public String GetPaintjobName()
+	{
+		if(stack.hasTag())
+		{
+			return stack.getTag().getString("paint");
+		}
+		return "default";
+	}
+
+	public void SetPaintjobName(String paint)
+	{
+		stack.getOrCreateTag().putString("paint", paint);
 	}
 
 	public List<ModifierDefinition> GetApplicableModifiers(String stat, EActionSet actionSet)
@@ -247,6 +408,13 @@ public class GunContext
 
 		return GunDef().lookAtActions;
 	}
+	@Nonnull
+	public ActionDefinition[] GetReloadActions(EReloadStage stage)
+	{
+		if(GunDef() == null)
+			return new ActionDefinition[0];
+		return GunDef().reload.GetReloadActions(stage);
+	}
 
 
 	public CachedGunStats GetStatBlock(EActionSet actionSet) { return GetStatCache(actionSet); }
@@ -304,7 +472,7 @@ public class GunContext
 		ActionDefinition shootAction = GetShootActionDefinition(actionSet);
 		if(shootAction != null)
 		{
-			stats.InitializeFrom(shootAction.shootStats);
+			stats.InitializeFrom(shootAction.shootStats[0]);
 		}
 
 		var modifierMap = GetAllApplicableModifiers(actionSet);

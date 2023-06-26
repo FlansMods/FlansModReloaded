@@ -1,7 +1,7 @@
 {
-    "parent": "builtin/generated",
+    "parent": "item/generated",
     "textures": {
-        "layer0": "flansmodernweapons:items/desert_eagle_ammo"
+        "layer0": "flansmodernweapons:item/desert_eagle_ammo"
     },
     "display": {
         "thirdperson": {

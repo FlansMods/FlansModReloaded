@@ -1,11 +1,17 @@
 package com.flansmod.common.types.elements;
 
+import com.flansmod.common.FlansMod;
+import com.flansmod.common.types.JsonDefinition;
 import com.flansmod.common.types.JsonField;
 import com.flansmod.common.types.guns.ESpreadPattern;
 import com.flansmod.util.MinecraftHelpers;
 import net.minecraft.world.level.material.Material;
 
 import javax.annotation.Nonnull;
+import javax.json.Json;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 
 public class ShotDefinition
 {
@@ -32,6 +38,33 @@ public class ShotDefinition
 		}
 		return false;
 	}
+	private List<JsonDefinition> MatchingBulletReferences = null;
+	public List<JsonDefinition> GetMatchingBullets()
+	{
+		if(MatchingBulletReferences == null)
+		{
+			MatchingBulletReferences = new ArrayList<>(matchAmmoNames.length + matchAmmoTags.length * 4);
+			for (String matchAmmoName : matchAmmoNames)
+			{
+				FlansMod.BULLETS.RunOnMatch(matchAmmoName, (bullet) ->
+				{
+					if(!MatchingBulletReferences.contains(bullet))
+						MatchingBulletReferences.add(bullet);
+				});
+			}
+			for (final String tag : matchAmmoTags)
+			{
+				FlansMod.BULLETS.RunOnMatches(
+					(bullet) -> bullet.HasTag(tag),
+					(bullet) ->
+					{
+						if (!MatchingBulletReferences.contains(bullet))
+							MatchingBulletReferences.add(bullet);
+					});
+			}
+		}
+		return MatchingBulletReferences;
+	}
 
 	@JsonField
 	public float verticalReocil = 3.0f;
@@ -51,6 +84,11 @@ public class ShotDefinition
 	public ESpreadPattern spreadPattern = ESpreadPattern.FilledCircle;
 	@JsonField
 	public String[] breaksMaterials = new String[0];
+
+	@JsonField
+	public String[] matchAmmoNames = new String[0];
+	@JsonField
+	public String[] matchAmmoTags = new String[0];
 
 	@JsonField
 	public float penetrationPower = 1.0f;

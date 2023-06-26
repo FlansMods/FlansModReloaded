@@ -3,11 +3,17 @@ package com.flansmod.client.render.guns;
 import com.flansmod.client.FlansModClient;
 import com.flansmod.client.render.FlanItemModelRenderer;
 import com.flansmod.client.render.animation.*;
+import com.flansmod.client.render.animation.elements.KeyframeDefinition;
+import com.flansmod.client.render.animation.elements.PoseDefinition;
+import com.flansmod.client.render.animation.elements.SequenceDefinition;
+import com.flansmod.client.render.animation.elements.SequenceEntryDefinition;
 import com.flansmod.client.render.models.TurboRig;
-import com.flansmod.common.FlansMod;
 import com.flansmod.common.actions.Action;
 import com.flansmod.common.actions.ActionStack;
 import com.flansmod.common.actions.AnimationAction;
+import com.flansmod.common.types.attachments.AttachmentDefinition;
+import com.flansmod.common.types.attachments.EAttachmentType;
+import com.flansmod.common.types.elements.AttachmentSettingsDefinition;
 import com.flansmod.common.types.guns.GunContext;
 import com.flansmod.util.Maths;
 import com.flansmod.util.MinecraftHelpers;
@@ -38,9 +44,18 @@ public class GunItemRenderer extends FlanItemModelRenderer
                             PoseStack ms,
                             Consumer<String> renderPart)
     {
-        ActionStack actions = FlansModClient.GUNSHOTS_CLIENT.GetActionStack(Minecraft.getInstance().cameraEntity);
-        AnimationDefinition animationSet = FlansModClient.ANIMATIONS.get(new ResourceLocation("flansmod", "bolt_action_rifle"));
-        GunContext context = GunContext.TryCreateFromEntity(entity, MinecraftHelpers.GetHand(transformType));
+
+        GunContext context =
+            entity != null ?
+            GunContext.TryCreateFromEntity(entity, MinecraftHelpers.GetHand(transformType)) :
+            GunContext.TryCreateFromItemStack(stack);
+        if(!context.IsValidForRender())
+            return;
+
+        ActionStack actions =
+            context.IsValidForUse() ?
+            FlansModClient.GUNSHOTS_CLIENT.GetActionStack(Minecraft.getInstance().cameraEntity) :
+            null;
 
         if(actions != null)
         {
@@ -51,29 +66,54 @@ public class GunItemRenderer extends FlanItemModelRenderer
             }
         }
 
+        AnimationDefinition animationSet = FlansModClient.ANIMATIONS.get(new ResourceLocation(context.GunDef().animationSet));
         ms.pushPose();
         {
             //ApplyRootRotation(stack, actions, ms, transformType);
-            ApplyActiveAnimations(stack, actions, animationSet, ms, transformType, "body");
-            renderPart.accept("body");
-
-
-
-            renderPart.accept("grip");
-            renderPart.accept("scope");
-            renderPart.accept("slide");
-            renderPart.accept("revolver");
-
-            ms.pushPose();
+            Consumer<String> PushAnimateRenderPop = new Consumer<String>()
             {
-                ms.translate(0f, 0f, 0f);
-                renderPart.accept("stock");
-            }
-            ms.popPose();
+                @Override
+                public void accept(String partName)
+                {
+                    ms.pushPose();
+                    ApplyActiveAnimations(stack, actions, animationSet, ms, transformType, partName);
+                    renderPart.accept(partName);
+                    ms.popPose();
+                }
+            };
 
-            renderPart.accept("rightHand");
+            PushAnimateRenderPop.accept("body");
+            PushAnimateRenderPop.accept("revolver");
+            PushAnimateRenderPop.accept("slide");
+            PushAnimateRenderPop.accept("pump");
+
+            RenderPartOrAttachment(context, EAttachmentType.Barrel, PushAnimateRenderPop, "barrel");
+            RenderPartOrAttachment(context, EAttachmentType.Grip, PushAnimateRenderPop, "grip");
+            RenderPartOrAttachment(context, EAttachmentType.Sights, PushAnimateRenderPop, "scope");
+            RenderPartOrAttachment(context, EAttachmentType.Stock, PushAnimateRenderPop, "stock");
+
+            PushAnimateRenderPop.accept("rightHand");
         }
         ms.popPose();
+    }
+
+    private void RenderPartOrAttachment(GunContext context, EAttachmentType attachmentType, Consumer<String> renderPartFunc, String partName)
+    {
+        AttachmentSettingsDefinition attachmentSettings = context.GunDef().GetAttachmentSettings(attachmentType);
+        AttachmentDefinition attachment = context.GetAttachmentDefinition(attachmentType);
+
+        // Render the default mesh if we have no attachment or it is set to render anyway
+        if(attachment == AttachmentDefinition.INVALID || !attachmentSettings.hideDefaultMesh)
+        {
+            renderPartFunc.accept(partName);
+        }
+
+        // Then render the attachment if we have one
+        if(attachment != AttachmentDefinition.INVALID)
+        {
+            // TODO: Go get AttachmentRenderer
+
+        }
     }
 
     private void ApplyActiveAnimations(ItemStack stack, ActionStack actions, AnimationDefinition animSet, PoseStack ms, ItemTransforms.TransformType transformType, String part)
@@ -96,7 +136,7 @@ public class GunItemRenderer extends FlanItemModelRenderer
                     progress *= animMultiplier;
 
                     // Find the segment of this animation that we need
-                    SequenceDefinition.SequenceEntry[] segment = sequence.GetSegment(progress);
+                    SequenceEntryDefinition[] segment = sequence.GetSegment(progress);
                     float segmentDuration = segment[1].tick - segment[0].tick;
 
                     // If it is valid, let's animate it
@@ -111,19 +151,19 @@ public class GunItemRenderer extends FlanItemModelRenderer
                             float outputParameter = linearParameter;
 
                             // Instant transitions take priority first
-                            if(segment[0].exit == SequenceDefinition.ESmoothSetting.instant)
+                            if(segment[0].exit == ESmoothSetting.instant)
                                 outputParameter = 1.0f;
-                            if(segment[1].entry == SequenceDefinition.ESmoothSetting.instant)
+                            if(segment[1].entry == ESmoothSetting.instant)
                                 outputParameter = 0.0f;
 
                             // Then apply smoothing?
-                            if(segment[0].exit == SequenceDefinition.ESmoothSetting.smooth)
+                            if(segment[0].exit == ESmoothSetting.smooth)
                             {
                                 // Smoothstep function
                                 if(linearParameter < 0.5f)
                                     outputParameter = linearParameter * linearParameter * (3f - 2f * linearParameter);
                             }
-                            if(segment[1].entry == SequenceDefinition.ESmoothSetting.smooth)
+                            if(segment[1].entry == ESmoothSetting.smooth)
                             {
                                 // Smoothstep function
                                 if(linearParameter > 0.5f)

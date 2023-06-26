@@ -5,6 +5,8 @@ import net.minecraft.resources.ResourceLocation;
 
 public abstract class JsonDefinition
 {
+	public ResourceLocation GetLocation() { return data; }
+
 	public ResourceLocation data;
 
 	public JsonDefinition(ResourceLocation srcLoc)

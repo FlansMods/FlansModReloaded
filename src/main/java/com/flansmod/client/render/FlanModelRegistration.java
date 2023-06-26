@@ -1,33 +1,25 @@
 package com.flansmod.client.render;
 
 import com.flansmod.client.render.models.TurboRig;
-import com.flansmod.common.FlansMod;
 import com.flansmod.common.item.FlanItem;
 import com.flansmod.util.MinecraftHelpers;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
 import net.minecraft.client.renderer.block.model.BlockModel;
 import net.minecraft.client.renderer.block.model.ItemTransforms;
-import net.minecraft.client.renderer.texture.SimpleTexture;
 import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.client.resources.model.ModelBakery;
 import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraft.client.resources.model.UnbakedModel;
-import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.PreparableReloadListener;
-import net.minecraft.server.packs.resources.Resource;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.util.profiling.ProfilerFiller;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.item.Item;
 import net.minecraftforge.client.event.ModelEvent;
 import net.minecraftforge.client.event.RenderHandEvent;
-import net.minecraftforge.client.extensions.common.IClientItemExtensions;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.common.util.NonNullFunction;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.registries.ForgeRegistries;
@@ -160,7 +152,7 @@ public class FlanModelRegistration implements PreparableReloadListener
             ResourceLocation key = ForgeRegistries.ITEMS.getKey(flanItem);
             if(ITEMS_TO_REGISTER.containsKey(flanItem))
             {
-                ITEMS_TO_REGISTER.get(flanItem).Render(
+                ITEMS_TO_REGISTER.get(flanItem).RenderFirstPerson(
                     Minecraft.getInstance().player,
                     event.getItemStack(),
                     MinecraftHelpers.GetArm(event.getHand()),

@@ -1,9 +1,7 @@
-package com.flansmod.client.render.animation;
+package com.flansmod.client.render.animation.elements;
 
 
 import com.flansmod.common.types.JsonField;
-import net.minecraft.world.entity.Pose;
-import org.joml.Vector3f;
 
 public class KeyframeDefinition
 {

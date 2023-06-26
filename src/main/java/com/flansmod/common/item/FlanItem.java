@@ -75,4 +75,18 @@ public abstract class FlanItem extends Item
         SetAttachmentInSlot(stack, type, slot, ItemStack.EMPTY);
         return ret;
     }
+
+    public String GetPaintjobName(ItemStack stack)
+    {
+        if(stack.hasTag() && stack.getTag().contains("paint"))
+        {
+            return stack.getTag().getString("paint");
+        }
+        return "default";
+    }
+
+    public void SetPaintjobName(ItemStack stack, String paint)
+    {
+        stack.getOrCreateTag().putString("paint", paint);
+    }
 }

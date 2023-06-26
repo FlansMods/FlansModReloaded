@@ -4,10 +4,13 @@ import com.flansmod.client.FlansModClient;
 import com.flansmod.common.crafting.*;
 import com.flansmod.common.gunshots.GunshotManager;
 import com.flansmod.common.gunshots.Raytracer;
+import com.flansmod.common.item.BulletItem;
+import com.flansmod.common.item.GrenadeItem;
 import com.flansmod.common.item.GunItem;
 import com.flansmod.common.item.PartItem;
 import com.flansmod.common.types.attachments.AttachmentDefinitions;
 import com.flansmod.common.types.crafting.WorkbenchDefinitions;
+import com.flansmod.common.types.grenades.GrenadeDefinitions;
 import com.flansmod.common.types.guns.GunDefinitions;
 import com.flansmod.common.types.bullets.BulletDefinitions;
 import com.flansmod.common.types.parts.PartDefinitions;
@@ -87,6 +90,7 @@ public class FlansMod
     // Definition Repositories
     public static final GunDefinitions GUNS = new GunDefinitions();
     public static final BulletDefinitions BULLETS = new BulletDefinitions();
+    public static final GrenadeDefinitions GRENADES = new GrenadeDefinitions();
     public static final AttachmentDefinitions ATTACHMENTS = new AttachmentDefinitions();
     public static final PartDefinitions PARTS = new PartDefinitions();
     public static final WorkbenchDefinitions WORKBENCHES = new WorkbenchDefinitions();
@@ -99,6 +103,13 @@ public class FlansMod
         ResourceLocation loc = new ResourceLocation(modID, name);
         return itemRegister.register(name, () -> new GunItem(loc, new Item.Properties()));
     }
+
+    public static RegistryObject<Item> Bullet(DeferredRegister<Item> itemRegister, String modID, String name)
+    {
+        ResourceLocation loc = new ResourceLocation(modID, name);
+        return itemRegister.register(name, () -> new BulletItem(loc, new Item.Properties()));
+    }
+
 
     public static RegistryObject<Item> Part(DeferredRegister<Item> itemRegister, String modID, String name)
     {
@@ -171,6 +182,21 @@ public class FlansMod
                     populator.accept(DIESEL_GENERATOR_ITEM.get());
                     populator.accept(COAL_GENERATOR_ITEM.get());
                     populator.accept(WEAPON_CRATE_ITEM.get());
+                    for(Item item : ForgeRegistries.ITEMS.getValues())
+                    {
+                        if(item instanceof GunItem || item instanceof BulletItem || item instanceof GrenadeItem)
+                            populator.accept(new ItemStack(item));
+                    }
+                });
+        });
+
+        event.registerCreativeModeTab(new ResourceLocation(MODID, "creative_tab_vehicles"), builder ->
+        {
+            builder
+                .title(Component.translatable("item_group." + MODID + ".creative_tab_vehicles"))
+                .icon(() -> new ItemStack(Items.DIAMOND))
+                .displayItems((enabledFlags, populator, hasPermissions) ->
+                {
                     for(Item item : ForgeRegistries.ITEMS.getValues())
                     {
                         if(item instanceof GunItem)

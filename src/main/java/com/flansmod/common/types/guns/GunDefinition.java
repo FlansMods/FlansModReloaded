@@ -30,22 +30,20 @@ public class GunDefinition extends JsonDefinition
 
 	@JsonField
 	public PaintableDefinition paints = new PaintableDefinition();
-
 	@JsonField
 	public ReloadDefinition reload = new ReloadDefinition();
 
-	@JsonField
+	@JsonField(Docs = "Actions on the primary mouse button, this is where a shoot action normally goes")
 	public ActionDefinition[] primaryActions = new ActionDefinition[0];
-
-	@JsonField
+	@JsonField(Docs = "Actions on the alternate mouse button, like scopes")
 	public ActionDefinition[] secondaryActions = new ActionDefinition[0];
-
 	@JsonField(Docs = "Actions to trigger when pressing the 'Look At' key")
 	public ActionDefinition[] lookAtActions = new ActionDefinition[0];
 
 	@JsonField(Min = 0, Max = 100)
 	public int numBullets = 0;
-
+	@JsonField
+	public EAmmoConsumeMode AmmoConsumeMode = EAmmoConsumeMode.RoundRobin;
 
 	@JsonField
 	public AttachmentSettingsDefinition barrelAttachments = new AttachmentSettingsDefinition();
@@ -59,6 +57,8 @@ public class GunDefinition extends JsonDefinition
 	public AttachmentSettingsDefinition genericAttachments = new AttachmentSettingsDefinition();
 	@JsonField
 	public String[] modelParts = new String[0];
+	@JsonField
+	public String animationSet = "";
 
 
 	 //

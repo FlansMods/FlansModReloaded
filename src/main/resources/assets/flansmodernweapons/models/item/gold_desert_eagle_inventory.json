@@ -1,7 +1,7 @@
 {
-    "parent": "builtin/generated",
+    "parent": "item/generated",
     "textures": {
-        "layer0": "flansmodernweapons:items/gold_desert_eagle"
+        "layer0": "flansmodernweapons:item/gold_desert_eagle"
     },
     "display": {
         "thirdperson": {

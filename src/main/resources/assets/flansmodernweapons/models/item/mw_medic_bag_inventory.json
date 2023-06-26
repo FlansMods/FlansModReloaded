@@ -1,7 +1,7 @@
 {
-    "parent": "builtin/generated",
+    "parent": "item/generated",
     "textures": {
-        "layer0": "flansmodernweapons:items/mwmedic_bag"
+        "layer0": "flansmodernweapons:item/mwmedic_bag"
     },
     "display": {
         "thirdperson": {

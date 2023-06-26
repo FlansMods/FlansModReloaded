@@ -1,7 +1,7 @@
 {
-    "parent": "builtin/generated",
+    "parent": "item/generated",
     "textures": {
-        "layer0": "flansmodernweapons:items/highexgunpowder"
+        "layer0": "flansmodernweapons:item/highexgunpowder"
     },
     "display": {
         "thirdperson": {

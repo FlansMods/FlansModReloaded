@@ -16,6 +16,8 @@ import org.slf4j.Logger;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Consumer;
+import java.util.function.Function;
 
 public class Definitions<TDefinitionType extends JsonDefinition> extends SimpleJsonResourceReloadListener
 {
@@ -55,6 +57,23 @@ public class Definitions<TDefinitionType extends JsonDefinition> extends SimpleJ
 	public TDefinitionType ByHash(int hash)
 	{
 		return hashmap.get(hash);
+	}
+
+	public void RunOnMatch(String key, Consumer<TDefinitionType> resultFunction)
+	{
+		for(var kvp : tables.entrySet())
+		{
+			if(kvp.getKey().getPath().equals(key))
+				resultFunction.accept(kvp.getValue());
+		}
+	}
+	public void RunOnMatches(Function<TDefinitionType, Boolean> matchFunction, Consumer<TDefinitionType> resultFunction)
+	{
+		for(var kvp : tables.entrySet())
+		{
+			if(matchFunction.apply(kvp.getValue()))
+				resultFunction.accept(kvp.getValue());
+		}
 	}
 
 	protected void apply(Map<ResourceLocation, JsonElement> sources, ResourceManager resourceManager, ProfilerFiller p_79216_)

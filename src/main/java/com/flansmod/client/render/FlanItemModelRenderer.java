@@ -1,11 +1,6 @@
 package com.flansmod.client.render;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.function.BiConsumer;
 import java.util.function.Consumer;
-import java.util.function.Function;
 
 import com.flansmod.client.render.debug.DebugModelPoser;
 import com.flansmod.client.render.models.TurboElement;
@@ -13,7 +8,7 @@ import com.flansmod.client.render.models.TurboFace;
 import com.flansmod.client.render.models.TurboModel;
 import com.flansmod.client.render.models.TurboRig;
 import com.flansmod.common.FlansMod;
-import com.flansmod.util.Maths;
+import com.flansmod.common.item.FlanItem;
 import com.flansmod.util.Transform;
 import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
@@ -23,28 +18,18 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.RenderType;
-import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.block.model.ItemTransform;
 import net.minecraft.client.renderer.block.model.ItemTransforms;
 import net.minecraft.client.renderer.entity.ItemRenderer;
 import net.minecraft.client.resources.model.BakedModel;
-import net.minecraft.client.resources.model.UnbakedModel;
 import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.RandomSource;
-import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.HumanoidArm;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.client.extensions.common.IClientItemExtensions;
 import net.minecraftforge.client.model.data.ModelData;
-import net.minecraftforge.common.util.NonNullFunction;
-import net.minecraftforge.registries.ForgeRegistries;
-import org.jetbrains.annotations.Debug;
 import org.joml.Matrix4f;
-import org.joml.Quaternionf;
 import org.joml.Vector3d;
 import org.joml.Vector3f;
 
@@ -67,19 +52,28 @@ public abstract class FlanItemModelRenderer extends BlockEntityWithoutLevelRende
                              int light,
                              int overlay)
     {
-        //Item item = stack.getItem();
-        Render(null, stack, HumanoidArm.RIGHT, transformType, ms, buffers, light, overlay, 0.0f);
+        RenderSystem.enableDepthTest();
+
+        if(transformType == ItemTransforms.TransformType.GROUND)
+        {
+            BakedRig.ApplyTransform(transformType, ms, false);
+        }
+
+
+        ms.pushPose();
+        RenderItem(null, transformType, stack, ms, buffers, light, overlay);
+        ms.popPose();
     }
 
-    public void Render(Entity entity,
-                       ItemStack stack,
-                       HumanoidArm arm,
-                       ItemTransforms.TransformType transformType,
-                       PoseStack ms,
-                       MultiBufferSource buffers,
-                       int light,
-                       int overlay,
-                       float equipProgress)
+    public void RenderFirstPerson(Entity entity,
+                                  ItemStack stack,
+                                  HumanoidArm arm,
+                                  ItemTransforms.TransformType transformType,
+                                  PoseStack ms,
+                                  MultiBufferSource buffers,
+                                  int light,
+                                  int overlay,
+                                  float equipProgress)
     {
         if(BakedRig == null)
         {
@@ -87,47 +81,31 @@ public abstract class FlanItemModelRenderer extends BlockEntityWithoutLevelRende
             return;
         }
 
-        //ms.pushPose();
+        BakedRig.ApplyTransform(transformType, ms, false);
+        RenderItem(entity, transformType, stack, ms, buffers, light, overlay);
+    }
 
-        Matrix4f oldModelView = RenderSystem.getModelViewMatrix();
-        ms = RenderSystem.getModelViewStack();
-        ms.pushPose();
+    protected void RenderItem(Entity entity,
+                              ItemTransforms.TransformType transformType,
+                              ItemStack stack,
+                              PoseStack requestedPoseStack,
+                              MultiBufferSource buffers,
+                              int light,
+                              int overlay)
+    {
+
+        // Default minecraft doesn't use the ModelView matrix properly?!
+        // We are going to load up our transformations into it
+        PoseStack modelViewStack = RenderSystem.getModelViewStack();
+        modelViewStack.pushPose();
         {
-            BakedRig.ApplyTransform(transformType, ms, false);
-            //ms.translate(0f, 0f, -16f);
-            if(DebugModelPoser.active)
-            {
-                RenderSystem.setShader(GameRenderer::getPositionColorShader);
-                RenderSystem.enableBlend();
-                RenderSystem.disableTexture();
-                RenderSystem.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
+            modelViewStack.mulPoseMatrix(requestedPoseStack.last().pose());
 
-                for(int i = 0; i < DebugModelPoser.keyframes.size(); i++)
-                {
-                    ms.pushPose();
-                    Vector3d v = DebugModelPoser.keyframes.get(i).transform.position;
-                    ms.translate((float)v.x, (float)v.y, (float)v.z);
-                    ms.mulPose(DebugModelPoser.keyframes.get(i).transform.orientation);
-
-                    int color = DebugModelPoser.editingKeyframe == i ? 0x00ff00 : 0xff0000;
-                    DoRender(entity, stack, BakedRig, transformType, ms, (partName) -> {
-                        RenderPartTransparent(stack, buffers, partName, color, overlay);
-                    });
-                    ms.popPose();
-                }
-
-                Transform debugPose = DebugModelPoser.GetDebugRenderPose();
-                ms.translate(debugPose.position.x, debugPose.position.y, debugPose.position.z);
-                ms.mulPose(debugPose.orientation);
-
-                RenderSystem.disableBlend();
-                RenderSystem.enableTexture();
-            }
-
-            //ApplyItemArmTransform(ms, arm, equipProgress);
-
-
-            String skin = "5";
+            // Bind texture
+            FlanItem flanItem = stack.getItem() instanceof FlanItem ? (FlanItem)stack.getItem() : null;
+            String skin = "default";
+            if(flanItem != null)
+                skin = flanItem.GetPaintjobName(stack);
             ResourceLocation texture = BakedRig.GetTexture(skin);
             if (texture != null)
             {
@@ -136,26 +114,13 @@ public abstract class FlanItemModelRenderer extends BlockEntityWithoutLevelRende
                 RenderSystem.setShaderTexture(0, texture);
             }
 
-            ItemTransform transform = UnbakedRig.GetTransforms(transformType);
-            if(transform != null)
-            {
-                //transform.apply(false, ms);
-            }
-
-            //float t = (Minecraft.getInstance().level.getGameTime() + Minecraft.getInstance().getPartialTick());
-            //ms.mulPose(Transform.QuaternionFromEuler(Maths.SinF(t / 100.0f) * 15.0f, t, 0f));
-            DoRender(entity, stack, BakedRig, transformType, ms, (partName) -> {
+            // Render item
+            DoRender(entity, stack, BakedRig, transformType, modelViewStack, (partName) -> {
                 RenderPartSolid(stack, buffers, partName, light, overlay);
             });
         }
-        ms.popPose();
-        ms.pushPose();
-        {
-            ms.setIdentity();
-            ms.mulPoseMatrix(oldModelView);
-            RenderSystem.applyModelViewMatrix();
-        }
-        ms.popPose();
+        modelViewStack.popPose();
+        RenderSystem.applyModelViewMatrix();
     }
 
     public void OnUnbakedModelLoaded(TurboRig unbaked)
@@ -204,11 +169,7 @@ public abstract class FlanItemModelRenderer extends BlockEntityWithoutLevelRende
         if(partName.equals("rightHand") || partName.equals("leftHand"))
         {
             ResourceLocation skinLocation = Minecraft.getInstance().getSkinManager().getInsecureSkinLocation(Minecraft.getInstance().getUser().getGameProfile());
-            if(skinLocation != null)
-            {
-                RenderSystem.setShaderTexture(0, skinLocation);
-
-            }
+            RenderSystem.setShaderTexture(0, skinLocation);
         }
         else
         {

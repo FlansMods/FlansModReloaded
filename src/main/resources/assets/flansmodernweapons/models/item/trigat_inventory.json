@@ -1,7 +1,7 @@
 {
-    "parent": "builtin/generated",
+    "parent": "item/generated",
     "textures": {
-        "layer0": "flansmodernweapons:items/trigat"
+        "layer0": "flansmodernweapons:item/trigat"
     },
     "display": {
         "thirdperson": {

@@ -17,6 +17,14 @@ public class BulletDefinition extends JsonDefinition
 	@Override
 	public String GetTypeName() { return TYPE; }
 
+	public boolean HasTag(String tag)
+	{
+		for (String s : tags)
+			if (s.equals(tag))
+				return true;
+		return false;
+	}
+
 	public BulletDefinition(ResourceLocation resLoc)
 	{
 		super(resLoc);
@@ -30,6 +38,8 @@ public class BulletDefinition extends JsonDefinition
 	public int roundsPerItem = 1;
 	@JsonField
 	public ShotDefinition shootStats = new ShotDefinition();
+	@JsonField
+	public String[] tags = new String[0];
 
 	@JsonField
 	public ActionDefinition[] onShootActions = new ActionDefinition[0];

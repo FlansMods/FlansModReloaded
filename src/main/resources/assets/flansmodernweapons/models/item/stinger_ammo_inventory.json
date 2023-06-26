@@ -1,7 +1,7 @@
 {
-    "parent": "builtin/generated",
+    "parent": "item/generated",
     "textures": {
-        "layer0": "flansmodernweapons:items/stinger_ammo"
+        "layer0": "flansmodernweapons:item/stinger_ammo"
     },
     "display": {
         "thirdperson": {

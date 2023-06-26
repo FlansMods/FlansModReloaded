@@ -1,7 +1,7 @@
 {
     "loader": "flansmod:turborig",
     "textures": {
-        "5": "flansmodernweapons:skins/molotov_cocktail",
+        "default": "flansmodernweapons:skins/molotov_cocktail",
         "particle": "minecraft:block/iron_block"
     },
     "animations": {},
@@ -81,14 +81,14 @@
                 45.0
             ],
             "translation": [
-                -0.011535746,
-                -0.01579748,
-                0.00679230038
+                -0.009393344,
+                -0.0120213544,
+                -0.000175346446
             ],
             "scale": [
-                0.1536417,
-                0.1536417,
-                0.1536417
+                0.149457023,
+                0.149457023,
+                0.149457023
             ]
         },
         "head": {
@@ -110,19 +110,19 @@
         },
         "ground": {
             "rotation": [
-                -90.0,
+                0.0,
                 0.0,
                 0.0
             ],
             "translation": [
                 0.0,
-                -2.3,
+                0.15,
                 0.0
             ],
             "scale": [
-                1.0,
-                1.0,
-                1.0
+                0.0625,
+                0.0625,
+                0.0625
             ]
         },
         "fixed": {
@@ -207,7 +207,7 @@
                                 0.5,
                                 0.375
                             ],
-                            "texture": "#5"
+                            "texture": "#default"
                         },
                         "east": {
                             "uv": [
@@ -216,7 +216,7 @@
                                 0.375,
                                 0.375
                             ],
-                            "texture": "#5"
+                            "texture": "#default"
                         },
                         "south": {
                             "uv": [
@@ -225,7 +225,7 @@
                                 0.25,
                                 0.375
                             ],
-                            "texture": "#5"
+                            "texture": "#default"
                         },
                         "west": {
                             "uv": [
@@ -234,7 +234,7 @@
                                 0.125,
                                 0.375
                             ],
-                            "texture": "#5"
+                            "texture": "#default"
                         },
                         "up": {
                             "uv": [
@@ -244,7 +244,7 @@
                                 0.125
                             ],
                             "rotation": 180,
-                            "texture": "#5"
+                            "texture": "#default"
                         },
                         "down": {
                             "uv": [
@@ -254,7 +254,7 @@
                                 0.125
                             ],
                             "rotation": 90,
-                            "texture": "#5"
+                            "texture": "#default"
                         }
                     }
                 }
@@ -323,7 +323,7 @@
                                 0.75,
                                 0.1875
                             ],
-                            "texture": "#5"
+                            "texture": "#default"
                         },
                         "east": {
                             "uv": [
@@ -332,7 +332,7 @@
                                 0.6875,
                                 0.1875
                             ],
-                            "texture": "#5"
+                            "texture": "#default"
                         },
                         "south": {
                             "uv": [
@@ -341,7 +341,7 @@
                                 0.625,
                                 0.1875
                             ],
-                            "texture": "#5"
+                            "texture": "#default"
                         },
                         "west": {
                             "uv": [
@@ -350,7 +350,7 @@
                                 0.5625,
                                 0.1875
                             ],
-                            "texture": "#5"
+                            "texture": "#default"
                         },
                         "up": {
                             "uv": [
@@ -360,7 +360,7 @@
                                 0.0625
                             ],
                             "rotation": 180,
-                            "texture": "#5"
+                            "texture": "#default"
                         },
                         "down": {
                             "uv": [
@@ -370,7 +370,7 @@
                                 0.0625
                             ],
                             "rotation": 90,
-                            "texture": "#5"
+                            "texture": "#default"
                         }
                     }
                 }
@@ -381,22 +381,22 @@
                 {
                     "verts": [
                         [
-                            -1.0,
+                            -0.5,
                             -0.5,
                             -0.5
                         ],
                         [
-                            1.0,
+                            0.5,
                             -0.5,
                             -0.5
                         ],
                         [
-                            -1.0,
+                            -0.5,
                             0.5,
                             -0.5
                         ],
                         [
-                            1.0,
+                            0.5,
                             0.5,
                             -0.5
                         ],
@@ -422,7 +422,7 @@
                         ]
                     ],
                     "eulerRotations": [
-                        1.0,
+                        57.29578,
                         0.0,
                         0.0
                     ],
@@ -439,7 +439,7 @@
                                 0.875,
                                 0.75
                             ],
-                            "texture": "#5"
+                            "texture": "#default"
                         },
                         "east": {
                             "uv": [
@@ -448,7 +448,7 @@
                                 0.75,
                                 0.75
                             ],
-                            "texture": "#5"
+                            "texture": "#default"
                         },
                         "south": {
                             "uv": [
@@ -457,7 +457,7 @@
                                 0.4375,
                                 0.75
                             ],
-                            "texture": "#5"
+                            "texture": "#default"
                         },
                         "west": {
                             "uv": [
@@ -466,7 +466,7 @@
                                 0.3125,
                                 0.75
                             ],
-                            "texture": "#5"
+                            "texture": "#default"
                         },
                         "up": {
                             "uv": [
@@ -476,7 +476,7 @@
                                 0.6875
                             ],
                             "rotation": 180,
-                            "texture": "#5"
+                            "texture": "#default"
                         },
                         "down": {
                             "uv": [
@@ -486,7 +486,7 @@
                                 0.6875
                             ],
                             "rotation": 90,
-                            "texture": "#5"
+                            "texture": "#default"
                         }
                     }
                 }

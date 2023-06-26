@@ -112,6 +112,24 @@ public class FlansModPacketHandler
 		INSTANCE.send(PacketDistributor.ALL.noArg(), message);
 	}
 
+	public static <MSG> void SendToAllAroundPoint(MSG message, ResourceKey<Level> dimension, Vec3 point, double radius, Entity excluding)
+	{
+		for(ServerPlayer player : getServer().getPlayerList().getPlayers())
+		{
+			if(excluding.equals(player))
+				continue;
+			if(player.level.dimension().equals(dimension))
+			{
+				// If the player is within range of ANY point, send it
+				if(player.position().distanceTo(point) <= radius)
+				{
+					INSTANCE.send(PacketDistributor.PLAYER.with(() -> { return player; }), message);
+					break;
+				}
+			}
+		}
+	}
+
 	public static <MSG> void SendToAllAroundPoints(MSG message, ResourceKey<Level> dimension, Collection<Vec3> points, double radius, Entity excluding)
 	{
 		for(ServerPlayer player : getServer().getPlayerList().getPlayers())

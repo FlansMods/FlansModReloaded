@@ -1,7 +1,9 @@
 {
     "loader": "flansmod:turborig",
     "textures": {
-        "5": "flansmodernweapons:skins/skorpion",
+        "skorpion_green": "flansmodernweapons:skins/skorpion_green",
+        "skorpion_red": "flansmodernweapons:skins/skorpion_red",
+        "default": "flansmodernweapons:skins/skorpion",
         "particle": "minecraft:block/iron_block"
     },
     "animations": {
@@ -83,9 +85,9 @@
                 45.0
             ],
             "translation": [
-                0.0139175747,
-                -0.0226010438,
-                -0.008820572
+                0.0140774883,
+                -0.02242088,
+                -0.008651675
             ],
             "scale": [
                 0.09090909,
@@ -112,19 +114,19 @@
         },
         "ground": {
             "rotation": [
-                -90.0,
+                0.0,
                 0.0,
                 0.0
             ],
             "translation": [
                 0.0,
-                -2.3,
+                0.15,
                 0.0
             ],
             "scale": [
-                1.0,
-                1.0,
-                1.0
+                0.0625,
+                0.0625,
+                0.0625
             ]
         },
         "fixed": {
@@ -209,7 +211,7 @@
                                 0.625,
                                 0.25
                             ],
-                            "texture": "#5"
+                            "texture": "#default"
                         },
                         "east": {
                             "uv": [
@@ -218,7 +220,7 @@
                                 0.375,
                                 0.25
                             ],
-                            "texture": "#5"
+                            "texture": "#default"
                         },
                         "south": {
                             "uv": [
@@ -227,7 +229,7 @@
                                 0.3125,
                                 0.25
                             ],
-                            "texture": "#5"
+                            "texture": "#default"
                         },
                         "west": {
                             "uv": [
@@ -236,7 +238,7 @@
                                 0.0625,
                                 0.25
                             ],
-                            "texture": "#5"
+                            "texture": "#default"
                         },
                         "up": {
                             "uv": [
@@ -246,7 +248,7 @@
                                 0.125
                             ],
                             "rotation": 180,
-                            "texture": "#5"
+                            "texture": "#default"
                         },
                         "down": {
                             "uv": [
@@ -256,7 +258,7 @@
                                 0.125
                             ],
                             "rotation": 90,
-                            "texture": "#5"
+                            "texture": "#default"
                         }
                     }
                 },
@@ -268,7 +270,7 @@
                             -1.0
                         ],
                         [
-                            6.0,
+                            2.0,
                             2.0,
                             -1.0
                         ],
@@ -288,7 +290,7 @@
                             1.0
                         ],
                         [
-                            6.0,
+                            2.0,
                             2.0,
                             1.0
                         ],
@@ -321,7 +323,7 @@
                                 0.5625,
                                 0.4375
                             ],
-                            "texture": "#5"
+                            "texture": "#default"
                         },
                         "east": {
                             "uv": [
@@ -330,7 +332,7 @@
                                 0.34375,
                                 0.4375
                             ],
-                            "texture": "#5"
+                            "texture": "#default"
                         },
                         "south": {
                             "uv": [
@@ -339,7 +341,7 @@
                                 0.28125,
                                 0.4375
                             ],
-                            "texture": "#5"
+                            "texture": "#default"
                         },
                         "west": {
                             "uv": [
@@ -348,7 +350,7 @@
                                 0.0625,
                                 0.4375
                             ],
-                            "texture": "#5"
+                            "texture": "#default"
                         },
                         "up": {
                             "uv": [
@@ -358,7 +360,7 @@
                                 0.375
                             ],
                             "rotation": 180,
-                            "texture": "#5"
+                            "texture": "#default"
                         },
                         "down": {
                             "uv": [
@@ -368,7 +370,7 @@
                                 0.375
                             ],
                             "rotation": 90,
-                            "texture": "#5"
+                            "texture": "#default"
                         }
                     }
                 },
@@ -433,7 +435,7 @@
                                 0.25,
                                 0.8125
                             ],
-                            "texture": "#5"
+                            "texture": "#default"
                         },
                         "east": {
                             "uv": [
@@ -442,7 +444,7 @@
                                 0.1875,
                                 0.8125
                             ],
-                            "texture": "#5"
+                            "texture": "#default"
                         },
                         "south": {
                             "uv": [
@@ -451,7 +453,7 @@
                                 0.125,
                                 0.8125
                             ],
-                            "texture": "#5"
+                            "texture": "#default"
                         },
                         "west": {
                             "uv": [
@@ -460,7 +462,7 @@
                                 0.0625,
                                 0.8125
                             ],
-                            "texture": "#5"
+                            "texture": "#default"
                         },
                         "up": {
                             "uv": [
@@ -470,7 +472,7 @@
                                 0.625
                             ],
                             "rotation": 180,
-                            "texture": "#5"
+                            "texture": "#default"
                         },
                         "down": {
                             "uv": [
@@ -480,7 +482,7 @@
                                 0.625
                             ],
                             "rotation": 90,
-                            "texture": "#5"
+                            "texture": "#default"
                         }
                     }
                 },
@@ -545,7 +547,7 @@
                                 0.125,
                                 1.0
                             ],
-                            "texture": "#5"
+                            "texture": "#default"
                         },
                         "east": {
                             "uv": [
@@ -554,7 +556,7 @@
                                 0.09375,
                                 1.0
                             ],
-                            "texture": "#5"
+                            "texture": "#default"
                         },
                         "south": {
                             "uv": [
@@ -563,7 +565,7 @@
                                 0.0625,
                                 1.0
                             ],
-                            "texture": "#5"
+                            "texture": "#default"
                         },
                         "west": {
                             "uv": [
@@ -572,7 +574,7 @@
                                 0.03125,
                                 1.0
                             ],
-                            "texture": "#5"
+                            "texture": "#default"
                         },
                         "up": {
                             "uv": [
@@ -582,7 +584,7 @@
                                 0.9375
                             ],
                             "rotation": 180,
-                            "texture": "#5"
+                            "texture": "#default"
                         },
                         "down": {
                             "uv": [
@@ -592,7 +594,7 @@
                                 0.9375
                             ],
                             "rotation": 90,
-                            "texture": "#5"
+                            "texture": "#default"
                         }
                     }
                 },
@@ -657,7 +659,7 @@
                                 0.3125,
                                 1.0
                             ],
-                            "texture": "#5"
+                            "texture": "#default"
                         },
                         "east": {
                             "uv": [
@@ -666,7 +668,7 @@
                                 0.25,
                                 1.0
                             ],
-                            "texture": "#5"
+                            "texture": "#default"
                         },
                         "south": {
                             "uv": [
@@ -675,7 +677,7 @@
                                 0.21875,
                                 1.0
                             ],
-                            "texture": "#5"
+                            "texture": "#default"
                         },
                         "west": {
                             "uv": [
@@ -684,7 +686,7 @@
                                 0.15625,
                                 1.0
                             ],
-                            "texture": "#5"
+                            "texture": "#default"
                         },
                         "up": {
                             "uv": [
@@ -694,7 +696,7 @@
                                 0.9375
                             ],
                             "rotation": 180,
-                            "texture": "#5"
+                            "texture": "#default"
                         },
                         "down": {
                             "uv": [
@@ -704,7 +706,7 @@
                                 0.9375
                             ],
                             "rotation": 90,
-                            "texture": "#5"
+                            "texture": "#default"
                         }
                     }
                 }
@@ -758,7 +760,7 @@
                     "eulerRotations": [
                         0.0,
                         0.0,
-                        0.5
+                        28.64789
                     ],
                     "rotationOrigin": [
                         4.0,
@@ -773,7 +775,7 @@
                                 0.5,
                                 0.875
                             ],
-                            "texture": "#5"
+                            "texture": "#default"
                         },
                         "east": {
                             "uv": [
@@ -782,7 +784,7 @@
                                 0.4375,
                                 0.875
                             ],
-                            "texture": "#5"
+                            "texture": "#default"
                         },
                         "south": {
                             "uv": [
@@ -791,7 +793,7 @@
                                 0.375,
                                 0.875
                             ],
-                            "texture": "#5"
+                            "texture": "#default"
                         },
                         "west": {
                             "uv": [
@@ -800,7 +802,7 @@
                                 0.3125,
                                 0.875
                             ],
-                            "texture": "#5"
+                            "texture": "#default"
                         },
                         "up": {
                             "uv": [
@@ -810,7 +812,7 @@
                                 0.625
                             ],
                             "rotation": 180,
-                            "texture": "#5"
+                            "texture": "#default"
                         },
                         "down": {
                             "uv": [
@@ -820,7 +822,7 @@
                                 0.625
                             ],
                             "rotation": 90,
-                            "texture": "#5"
+                            "texture": "#default"
                         }
                     }
                 }

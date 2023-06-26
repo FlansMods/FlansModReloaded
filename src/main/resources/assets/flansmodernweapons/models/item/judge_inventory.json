@@ -1,7 +1,7 @@
 {
-    "parent": "builtin/generated",
+    "parent": "item/generated",
     "textures": {
-        "layer0": "flansmodernweapons:items/judge"
+        "layer0": "flansmodernweapons:item/judge"
     },
     "display": {
         "thirdperson": {

@@ -1,4 +1,6 @@
 {
+    "titlestring": "weapon_crate",
+    "bannerTextureLocation": "",
     "gunCrafting": {
         "isActive": false,
         "pages": [],

@@ -1,4 +1,6 @@
 {
+    "titlestring": "gun_modification_table",
+    "bannerTextureLocation": "",
     "gunCrafting": {
         "isActive": false,
         "pages": [],

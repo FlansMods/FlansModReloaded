@@ -93,19 +93,22 @@ public class TurboRig implements IUnbakedGeometry<TurboRig>, UnbakedModel
 
 		public void ApplyTransform(ItemTransforms.TransformType transformType, PoseStack ms, boolean b)
 		{
-
-			/*if(transformType == ItemTransforms.TransformType.GUI)
+			if(transformType == ItemTransforms.TransformType.GROUND)
 			{
-				Vector3f copyOfTranslation = new Vector3f(Transforms.getTransform(transformType).translation);
-				Vector3f eulers = new Vector3f(-30f, 160f, 45f);
+				//Vector3f copyOfTranslation = new Vector3f(Transforms.getTransform(transformType).translation);
+				//Vector3f eulers = new Vector3f(90f, 0f, 0f);
 
-				Maths.QuaternionFromEuler(eulers).transform(copyOfTranslation);
+				//Maths.QuaternionFromEuler(eulers).transform(copyOfTranslation);
 
-				new ItemTransform(eulers,
-					copyOfTranslation.mul(-1f / 16f),
-					new Vector3f(1f / 16f, 1f / 16f, 1f / 16f)).apply(b, ms);
+				//new ItemTransform(eulers,
+				//	copyOfTranslation, //.mul(-1f).add(0f, 0.5f, 0.5f),
+				//	new Vector3f(1f / 16f, 1f / 16f, 1f / 16f)).apply(b, ms);
+
+				//new ItemTransform(new Vector3f(-90f, 0f, 0f),
+				//	new Vector3f(0f, 0f, 3f),
+				//	new Vector3f(1f/16f, 1f/16f, 1f/16f)).apply(b, ms);
 			}
-			else*/
+			else
 				Transforms.getTransform(transformType).apply(b, ms);
 		}
 
@@ -137,7 +140,10 @@ public class TurboRig implements IUnbakedGeometry<TurboRig>, UnbakedModel
 		@Override
 		public ItemOverrides getOverrides() { return ItemOverrides.EMPTY; }
 		@Override
-		public ItemTransforms getTransforms() { return Transforms; }
+		public ItemTransforms getTransforms()
+		{
+			return Transforms;
+		}
 	}
 
 	public static class Loader implements IGeometryLoader<TurboRig>

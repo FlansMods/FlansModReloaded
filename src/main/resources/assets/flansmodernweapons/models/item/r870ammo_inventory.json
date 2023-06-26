@@ -1,7 +1,7 @@
 {
-    "parent": "builtin/generated",
+    "parent": "item/generated",
     "textures": {
-        "layer0": "flansmodernweapons:items/r870ammo"
+        "layer0": "flansmodernweapons:item/r870ammo"
     },
     "display": {
         "thirdperson": {

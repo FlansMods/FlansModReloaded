@@ -12,6 +12,8 @@
         "timeToNextShot": 0.0,
         "spreadPattern": "Circle",
         "breaksMaterials": [],
+        "matchAmmoNames": [],
+        "matchAmmoTags": [],
         "penetrationPower": 1.0,
         "trailParticles": "",
         "impact": {
@@ -35,6 +37,7 @@
             }
         }
     },
+    "tags": [],
     "onShootActions": [],
     "onClipEmptyActions": [],
     "onReloadActions": []
