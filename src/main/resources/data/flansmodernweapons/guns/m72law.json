@@ -11,14 +11,6 @@
         "autoReloadWhenEmpty": true,
         "start": {
             "duration": 0.0,
-            "sound": {
-                "sound": {},
-                "length": 1.0,
-                "minPitchMultiplier": 1.0,
-                "maxPitchMultiplier": 1.0,
-                "maxRange": 100.0,
-                "LODs": []
-            },
             "actions": [
                 {
                     "actionType": "Animation",
@@ -41,26 +33,10 @@
         },
         "eject": {
             "duration": 0.0,
-            "sound": {
-                "sound": "",
-                "length": 1.0,
-                "minPitchMultiplier": 1.0,
-                "maxPitchMultiplier": 1.0,
-                "maxRange": 100.0,
-                "LODs": []
-            },
             "actions": []
         },
         "loadOne": {
             "duration": 0.0,
-            "sound": {
-                "sound": "",
-                "length": 1.0,
-                "minPitchMultiplier": 1.0,
-                "maxPitchMultiplier": 1.0,
-                "maxRange": 100.0,
-                "LODs": []
-            },
             "actions": [
                 {
                     "actionType": "Animation",
@@ -83,14 +59,6 @@
         },
         "end": {
             "duration": 0.0,
-            "sound": {
-                "sound": "",
-                "length": 1.0,
-                "minPitchMultiplier": 1.0,
-                "maxPitchMultiplier": 1.0,
-                "maxRange": 100.0,
-                "LODs": []
-            },
             "actions": [
                 {
                     "actionType": "Animation",

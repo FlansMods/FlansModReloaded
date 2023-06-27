@@ -17,14 +17,6 @@
         "autoReloadWhenEmpty": true,
         "start": {
             "duration": 0.3,
-            "sound": {
-                "sound": "MG42Reload",
-                "length": 1.0,
-                "minPitchMultiplier": 1.0,
-                "maxPitchMultiplier": 1.0,
-                "maxRange": 100.0,
-                "LODs": []
-            },
             "actions": [
                 {
                     "actionType": "Animation",
@@ -42,19 +34,37 @@
                     "toolLevel": 1.0,
                     "harvestSpeed": 1.0,
                     "reach": 1.0
+                },
+                {
+                    "actionType": "PlaySound",
+                    "canActUnderwater": true,
+                    "canActUnderOtherLiquid": false,
+                    "canBeOverriden": false,
+                    "twoHanded": false,
+                    "sounds": [
+                        {
+                            "sound": "MG42Reload",
+                            "length": 1.0,
+                            "minPitchMultiplier": 1.0,
+                            "maxPitchMultiplier": 1.0,
+                            "maxRange": 100.0,
+                            "LODs": []
+                        }
+                    ],
+                    "duration": 0.0,
+                    "itemStack": "",
+                    "shootStats": [],
+                    "fovFactor": 1.25,
+                    "scopeOverlay": "",
+                    "anim": "",
+                    "toolLevel": 1.0,
+                    "harvestSpeed": 1.0,
+                    "reach": 1.0
                 }
             ]
         },
         "eject": {
             "duration": 0.6,
-            "sound": {
-                "sound": "",
-                "length": 1.0,
-                "minPitchMultiplier": 1.0,
-                "maxPitchMultiplier": 1.0,
-                "maxRange": 100.0,
-                "LODs": []
-            },
             "actions": [
                 {
                     "actionType": "Animation",
@@ -77,14 +87,6 @@
         },
         "loadOne": {
             "duration": 0.6,
-            "sound": {
-                "sound": "",
-                "length": 1.0,
-                "minPitchMultiplier": 1.0,
-                "maxPitchMultiplier": 1.0,
-                "maxRange": 100.0,
-                "LODs": []
-            },
             "actions": [
                 {
                     "actionType": "Animation",
@@ -107,14 +109,6 @@
         },
         "end": {
             "duration": 1.5,
-            "sound": {
-                "sound": "",
-                "length": 1.0,
-                "minPitchMultiplier": 1.0,
-                "maxPitchMultiplier": 1.0,
-                "maxRange": 100.0,
-                "LODs": []
-            },
             "actions": [
                 {
                     "actionType": "Animation",

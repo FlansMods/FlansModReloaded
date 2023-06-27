@@ -61,14 +61,10 @@ public class Transform
 
     public static Transform Interpolate(List<Transform> transforms)
     {
-        FlansMod.LOGGER.info("Interpolating " + transforms.size() + " transforms");
-
-
         if(transforms.size() <= 0)
             return Transform.Identity();
         if(transforms.size() == 1)
             return transforms.get(0);
-
 
         Vector3d position = new Vector3d();
         Quaternionf[] orientations = new Quaternionf[transforms.size()];
@@ -78,11 +74,7 @@ public class Transform
             position.add(transforms.get(i).position);
             orientations[i] = transforms.get(i).orientation;
             weights[i] = 1f / transforms.size();
-
-            FlansMod.LOGGER.info("Transform[" + i + "]: [" + transforms.get(i).position.toString() + "], [" + transforms.get(i).orientation.toString() + "]");
         }
-
-        //FlansMod.LOGGER.info("Result: [" + position.mul(1d / transforms.size()).toString() + "], [" + ((Quaternionf) Quaternionf.slerp(orientations, weights, new Quaternionf())).toString() + "]");
 
         return new Transform(
             position.mul(1d / transforms.size()),

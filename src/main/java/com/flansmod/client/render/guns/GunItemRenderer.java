@@ -203,18 +203,8 @@ public class GunItemRenderer extends FlanItemModelRenderer
                         Vector3f pos = PoseDefinition.LerpPosition(UnbakedRig.GetFloatParams(), fromPose, toPose, outputParameter);
                         Quaternionf rotation = PoseDefinition.LerpRotation(UnbakedRig.GetFloatParams(), fromPose, toPose, outputParameter);
 
-                        //FlansMod.LOGGER.info("Frame " + progress + ": From " + from.name + " to " + to.name + " at t=" + outputParameter);
-
-
-                        //ms.pushPose();
-                        //ms.translate(pos.x, pos.y, pos.z);
-                        //ms.mulPose(rotation);
-                        FlansMod.LOGGER.info("Src: " + pos.toString() + ", " + rotation.toString());
                         Transform test = new Transform(pos, rotation);
                         poses.add(test);
-                        FlansMod.LOGGER.info("Src: " + test.position.toString() + ", " + test.orientation.toString());
-
-                        //ms.popPose();
                     }
                 }
             }

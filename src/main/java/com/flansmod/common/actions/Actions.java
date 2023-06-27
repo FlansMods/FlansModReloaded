@@ -13,6 +13,7 @@ public class Actions
 			case Shoot 				-> { return new ShootAction(stack, def, hand); }
 			case Scope				-> { return new ScopeAction(stack, def, hand); }
 			case AimDownSights 		-> { return new AimDownSightAction(stack, def, hand); }
+			case PlaySound  		-> { return new PlaySoundAction(stack, def, hand); }
 			default					-> { return null; }
 		}
 	}

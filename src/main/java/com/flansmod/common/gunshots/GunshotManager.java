@@ -110,6 +110,11 @@ public class GunshotManager
 			for(Action action : otherActions)
 				if(!action.CanStart(gunContext))
 					bCanFire = false;
+			if(actionStack.IsReloading())
+			{
+				bCanFire = false;
+				actionStack.RequestCancel();
+			}
 			if(actionStack.GetShotCooldown() > 0.0f)
 				bCanFire = false;
 
@@ -140,13 +145,7 @@ public class GunshotManager
 					}
 					if ((triggerResult & GunTriggerResult.Flag_AutoReloadIfEnabled) != 0)
 					{
-						if (actionStack.IsReloading())
-						{
-							actionStack.RequestCancel();
-						} else
-						{
-							ClientReload(player, hand);
-						}
+						ClientReload(player, hand);
 					}
 				}
 				else
