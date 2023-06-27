@@ -51,7 +51,7 @@ public class CachedGunStats
 		HorizontalRecoil = shotDef.horizontalRecoil;
 		Spread = shotDef.spread;
 		Speed = shotDef.speed;
-		Count = shotDef.count;
+		Count = shotDef.bulletCount;
 		TimeToNextShot = shotDef.timeToNextShot;
 		PenetrationPower = shotDef.penetrationPower;
 		BaseDamage = shotDef.impact.damageToTarget;

@@ -92,7 +92,7 @@ public class PlayerSnapshot
                 yBody += Maths.CosF(player.tickCount * 3.25f) * Maths.PiF * 0.4f;
 
             if (!player.hasPose(Pose.SLEEPING))
-                playerRoot.RotateYaw(180.0f - yBody);
+                playerRoot = playerRoot.RotateYaw(180.0f - yBody);
 
             if (player.deathTime > 0)
             {
@@ -100,20 +100,20 @@ public class PlayerSnapshot
                 deathTime = Maths.SqrtF(deathTime);
                 deathTime = Maths.Clamp(deathTime, Float.MIN_VALUE, 1.0f);
 
-                playerRoot.RotateRoll(deathTime * 90.0f);
+                playerRoot = playerRoot.RotateRoll(deathTime * 90.0f);
             }
             else if (player.isAutoSpinAttack())
             {
-                playerRoot.RotatePitch(-90.0f - player.getXRot());
-                playerRoot.RotateYaw(player.tickCount * -75.0f);
+                playerRoot = playerRoot.RotatePitch(-90.0f - player.getXRot());
+                playerRoot = playerRoot.RotateYaw(player.tickCount * -75.0f);
             }
             else if (player.hasPose(Pose.SLEEPING))
             {
                 Direction bedDir = player.getBedOrientation();
                 float bedAngle = bedDir != null ? (90.0f - bedDir.toYRot()) : yBody;
-                playerRoot.RotateYaw(bedAngle);
-                playerRoot.RotateRoll(90.0f);
-                playerRoot.RotateYaw(270.0f);
+                playerRoot = playerRoot.RotateYaw(bedAngle);
+                playerRoot = playerRoot.RotateRoll(90.0f);
+                playerRoot = playerRoot.RotateYaw(270.0f);
             }
         }
         // else dinnerbone, nty
@@ -141,7 +141,6 @@ public class PlayerSnapshot
 
         // Body
         Transform bodyTransform = playerRoot
-                .copy()
                 .RotateLocalYaw(p.yBodyRot)
                 .Translate(0.0d, 0.7d, 0.0d);
         Vector3f bodyHalfSize = new Vector3f(0.25f, 0.7f, 0.15f);
@@ -149,7 +148,6 @@ public class PlayerSnapshot
 
         // Head
         Transform headTransform = playerRoot
-                .copy()
                 .Translate(0.0d, 0.25d, 0.0d) // Add half a head height
                 .RotateLocalEuler(p.yHeadRot, p.xRotO, 0.0f) // Rotate around the neck
                 .Translate(0.0d, 1.4d, 0.0d); // Then add the neck pivot point

@@ -76,7 +76,7 @@
             "name": "bolt_open",
             "poses": [
                 {
-                    "applyTo": "bolt",
+                    "applyTo": "slide",
                     "position": [
                         "0",
                         "0",
@@ -219,7 +219,7 @@
         },
         {
             "name": "reload_start",
-            "ticks": 20,
+            "ticks": 10,
             "frames": [
                 {
                     "tick": 0,
@@ -237,7 +237,7 @@
         },
         {
             "name": "reload_load_one",
-            "ticks": 20,
+            "ticks": 5,
             "frames": [
                 {
                     "tick": 0,
@@ -255,7 +255,7 @@
         },
         {
             "name": "reload_end",
-            "ticks": 20,
+            "ticks": 5,
             "frames": [
                 {
                     "tick": 0,

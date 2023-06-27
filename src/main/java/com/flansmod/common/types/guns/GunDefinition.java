@@ -6,10 +6,7 @@ import com.flansmod.common.actions.EActionSet;
 import com.flansmod.common.types.JsonDefinition;
 import com.flansmod.common.types.JsonField;
 import com.flansmod.common.types.attachments.EAttachmentType;
-import com.flansmod.common.types.elements.ActionDefinition;
-import com.flansmod.common.types.elements.AttachmentSettingsDefinition;
-import com.flansmod.common.types.elements.PaintableDefinition;
-import com.flansmod.common.types.elements.ReloadDefinition;
+import com.flansmod.common.types.elements.*;
 import com.google.gson.JsonElement;
 import net.minecraft.resources.ResourceLocation;
 
@@ -39,6 +36,17 @@ public class GunDefinition extends JsonDefinition
 	public ActionDefinition[] secondaryActions = new ActionDefinition[0];
 	@JsonField(Docs = "Actions to trigger when pressing the 'Look At' key")
 	public ActionDefinition[] lookAtActions = new ActionDefinition[0];
+
+	@JsonField
+	public ActionDefinition[] startSpinUpActions = new ActionDefinition[0];
+	@JsonField
+	public ActionDefinition[] reachMaxSpinActions = new ActionDefinition[0];
+	@JsonField
+	public ActionDefinition[] startSpinDownActions = new ActionDefinition[0];
+	@JsonField
+	public ActionDefinition[] reachZeroSpinActions = new ActionDefinition[0];
+	@JsonField
+	public SoundDefinition[] loopingSounds = new SoundDefinition[0];
 
 	@JsonField(Min = 0, Max = 100)
 	public int numBullets = 0;

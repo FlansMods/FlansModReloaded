@@ -1,15 +1,15 @@
 package com.flansmod.util;
 
+import com.flansmod.common.FlansMod;
 import net.minecraft.world.phys.Vec3;
-import org.joml.Quaternionf;
-import org.joml.Vector3d;
-import org.joml.Vector3dc;
-import org.joml.Vector3f;
+import org.joml.*;
+
+import java.util.List;
 
 public class Transform
 {
-    public Vector3d position;
-    public Quaternionf orientation;
+    public final Vector3d position;
+    public final Quaternionf orientation;
 
     public static Transform Identity()
     {
@@ -39,6 +39,12 @@ public class Transform
         orientation = new Quaternionf(ori);
     }
 
+    public Transform(Matrix4f pose)
+    {
+        position = new Vector3d(pose.transformPosition(new Vector3f()));
+        orientation = pose.getNormalizedRotation(new Quaternionf());
+    }
+
     public Transform(Vector3d pos, Quaternionf ori)
     {
         position = new Vector3d(pos);
@@ -53,14 +59,44 @@ public class Transform
         );
     }
 
+    public static Transform Interpolate(List<Transform> transforms)
+    {
+        FlansMod.LOGGER.info("Interpolating " + transforms.size() + " transforms");
+
+
+        if(transforms.size() <= 0)
+            return Transform.Identity();
+        if(transforms.size() == 1)
+            return transforms.get(0);
+
+
+        Vector3d position = new Vector3d();
+        Quaternionf[] orientations = new Quaternionf[transforms.size()];
+        float[] weights = new float[transforms.size()];
+        for(int i = 0; i < transforms.size(); i++)
+        {
+            position.add(transforms.get(i).position);
+            orientations[i] = transforms.get(i).orientation;
+            weights[i] = 1f / transforms.size();
+
+            FlansMod.LOGGER.info("Transform[" + i + "]: [" + transforms.get(i).position.toString() + "], [" + transforms.get(i).orientation.toString() + "]");
+        }
+
+        //FlansMod.LOGGER.info("Result: [" + position.mul(1d / transforms.size()).toString() + "], [" + ((Quaternionf) Quaternionf.slerp(orientations, weights, new Quaternionf())).toString() + "]");
+
+        return new Transform(
+            position.mul(1d / transforms.size()),
+            (Quaternionf) Quaternionf.slerp(orientations, weights, new Quaternionf()));
+    }
+
     public Transform copy()
     {
         return new Transform(position, orientation);
     }
 
-    public static final Vector3d UnitX() { return new Vector3d(1d, 0d, 0d); }
-    public static final Vector3d UnitY() { return new Vector3d(0d, 1d, 0d); }
-    public static final Vector3d UnitZ() { return new Vector3d(0d, 0d, 1d); }
+    public static Vector3d UnitX() { return new Vector3d(1d, 0d, 0d); }
+    public static Vector3d UnitY() { return new Vector3d(0d, 1d, 0d); }
+    public static Vector3d UnitZ() { return new Vector3d(0d, 0d, 1d); }
     private static Vec3 ToVec3(Vector3d v) { return new Vec3(v.x, v.y, v.z); }
     private static Vector3d ToVec3d(Vec3 v) { return new Vector3d(v.x, v.y, v.z); }
 
@@ -108,49 +144,64 @@ public class Transform
 
     public Transform Translate(Vec3 deltaPos)
     {
-        position.x += deltaPos.x;
-        position.y += deltaPos.y;
-        position.z += deltaPos.z;
-        return this;
+        return new Transform(
+            new Vector3d(position.x + deltaPos.x, position.y + deltaPos.y, position.z + deltaPos.z),
+            orientation);
     }
 
     public Transform TranslateLocal(Vector3d localDeltaPos)
     {
         Vector3d globalDeltaPos = new Vector3d();
         orientation.transform(localDeltaPos, globalDeltaPos);
-        position.add(globalDeltaPos);
-        return this;
+
+        return new Transform(
+            new Vector3d(position.x + globalDeltaPos.x, position.y + globalDeltaPos.y, position.z + globalDeltaPos.z),
+            orientation);
     }
     public Transform TranslateLocal(double x, double y, double z)
     {
         Vector3d deltaPos = new Vector3d(x, y, z);
         orientation.transform(deltaPos, deltaPos);
-        position.add(deltaPos);
-        return this;
+        return new Transform(
+            new Vector3d(position.x + deltaPos.x, position.y + deltaPos.y, position.z + deltaPos.z),
+            orientation);
     }
-    public Transform Translate(double x, double y, double z) { position.x += x; position.y += y; position.z += z; return this; }
-    public Transform RotateLocal(Quaternionf rotation) { orientation.mul(rotation); return this; }
+    public Transform Translate(double x, double y, double z)
+    {
+        return new Transform(
+            new Vector3d(position.x + x, position.y + y, position.z + z),
+            orientation);
+    }
+    public Transform RotateLocal(Quaternionf rotation)
+    {
+        return new Transform(position,
+            orientation.mul(rotation, new Quaternionf()));
+    }
     public Transform RotateGlobal(Quaternionf rotation)
     {
-        rotation.transform(position);
-        orientation.mul(rotation);
-        return this;
+        return new Transform(rotation.transform(position, new Vector3d()),
+            orientation.mul(rotation, new Quaternionf()));
     }
     public Transform RotateAround(Vector3d origin, Quaternionf rotation)
     {
-        position = rotation.transform(position.sub(origin)).add(origin);
-        orientation.mul(rotation);
-        return this;
+        Vector3d pos = new Vector3d(position);
+        pos.sub(origin);
+        rotation.transform(pos);
+        pos.add(origin);
+        return new Transform(pos, orientation.mul(rotation, new Quaternionf()));
     }
     public Transform RotateLocalEuler(float roll, float yaw, float pitch)
     {
-        orientation.rotateLocalX(roll * Maths.DegToRadF).rotateLocalZ(pitch * Maths.DegToRadF).rotateLocalY(-yaw * Maths.DegToRadF);
-        return this;
+        Quaternionf ori = new Quaternionf(orientation);
+        ori.rotateLocalX(roll * Maths.DegToRadF);
+        ori.rotateLocalZ(pitch * Maths.DegToRadF);
+        ori.rotateLocalY(-yaw * Maths.DegToRadF);
+        return new Transform(position, ori);
     }
-    public Transform RotateYaw(float yAngle) { orientation.rotateY(-yAngle * Maths.DegToRadF); return this; }
-    public Transform RotatePitch(float xAngle) { orientation.rotateX(xAngle * Maths.DegToRadF); return this; }
-    public Transform RotateRoll(float zAngle) { orientation.rotateZ(zAngle * Maths.DegToRadF); return this; }
-    public Transform RotateLocalYaw(float yAngle) { orientation.rotateLocalY(-yAngle * Maths.DegToRadF); return this; }
-    public Transform RotateLocalPitch(float xAngle) { orientation.rotateLocalX(xAngle * Maths.DegToRadF); return this; }
-    public Transform RotateLocalRoll(float zAngle) { orientation.rotateLocalZ(zAngle * Maths.DegToRadF); return this; }
+    public Transform RotateYaw(float yAngle) { return new Transform(position, orientation.rotateY(-yAngle * Maths.DegToRadF, new Quaternionf())); }
+    public Transform RotatePitch(float xAngle) { return new Transform(position, orientation.rotateX(xAngle * Maths.DegToRadF, new Quaternionf())); }
+    public Transform RotateRoll(float zAngle) {  return new Transform(position, orientation.rotateZ(zAngle * Maths.DegToRadF, new Quaternionf()));  }
+    public Transform RotateLocalYaw(float yAngle) {  return new Transform(position, orientation.rotateLocalY(-yAngle * Maths.DegToRadF, new Quaternionf()));  }
+    public Transform RotateLocalPitch(float xAngle) {  return new Transform(position, orientation.rotateLocalX(xAngle * Maths.DegToRadF, new Quaternionf()));  }
+    public Transform RotateLocalRoll(float zAngle) {  return new Transform(position, orientation.rotateLocalZ(zAngle * Maths.DegToRadF, new Quaternionf()));  }
 }

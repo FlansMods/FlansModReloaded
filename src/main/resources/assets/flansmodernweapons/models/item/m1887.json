@@ -21,7 +21,8 @@
         "numBulletsInReloadAnimation": 5.0,
         "tiltGunTime": 0.159000009,
         "unloadClipTime": 0.0,
-        "loadClipTime": 0.708
+        "loadClipTime": 0.708,
+        "untiltGunTime": 0.133000016
     },
     "display": {
         "firstperson_lefthand": {
@@ -954,7 +955,7 @@
                 }
             ]
         },
-        "ammo": {
+        "ammo_0": {
             "turboelements": [
                 {
                     "verts": [

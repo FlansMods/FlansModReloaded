@@ -12,7 +12,8 @@
         "revolverFlipAngle": -40.0,
         "tiltGunTime": 0.2,
         "unloadClipTime": 0.2,
-        "loadClipTime": 0.4
+        "loadClipTime": 0.4,
+        "untiltGunTime": 0.2
     },
     "display": {
         "firstperson_lefthand": {
@@ -829,7 +830,7 @@
                 }
             ]
         },
-        "ammo": {
+        "ammo_0": {
             "turboelements": [
                 {
                     "verts": [

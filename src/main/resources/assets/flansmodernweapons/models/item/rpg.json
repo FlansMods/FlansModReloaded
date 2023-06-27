@@ -10,6 +10,7 @@
         "tiltGunTime": 0.4,
         "unloadClipTime": 0.1,
         "loadClipTime": 0.1,
+        "untiltGunTime": 0.4,
         "itemFrameOffset": [
             0.25,
             0.0,
@@ -719,7 +720,7 @@
                 }
             ]
         },
-        "ammo": {
+        "ammo_0": {
             "turboelements": [
                 {
                     "verts": [

@@ -8,6 +8,7 @@ import com.flansmod.common.types.attachments.AttachmentDefinition;
 import com.flansmod.common.types.attachments.EAttachmentType;
 import com.flansmod.common.types.elements.ActionDefinition;
 import com.flansmod.common.types.elements.ModifierDefinition;
+import com.flansmod.util.Maths;
 import com.flansmod.util.Transform;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.InteractionHand;
@@ -121,7 +122,7 @@ public class GunContext
 		if(entity == null)
 			return Transform.Identity();
 		Transform transform = new Transform(entity.getEyePosition());
-		transform.RotateLocalEuler(entity.getXRot(), entity.getYRot(), 0.0f);
+		transform = transform.RotateLocalEuler(entity.getXRot(), entity.getYRot(), 0.0f);
 		return transform;
 	}
 
@@ -194,6 +195,8 @@ public class GunContext
 
 	public void SetBulletStack(int index, ItemStack stack)
 	{
+		if(stack.isEmpty())
+			stack = ItemStack.EMPTY;
 		CompoundTag ammoTags = GetOrCreateTags("ammo");
 		String key = Integer.toString(index);
 		CompoundTag itemTags = new CompoundTag();

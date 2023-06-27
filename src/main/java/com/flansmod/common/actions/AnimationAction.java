@@ -11,6 +11,13 @@ public class AnimationAction extends Action
 		super(stack, def, hand);
 	}
 
+	private static final int HOLD_END_POSE_TICKS = 1;
+	@Override
+	public boolean Finished()
+	{
+		return progress > duration;
+	}
+
 	@Override
 	public void OnStartServer(GunContext context)
 	{

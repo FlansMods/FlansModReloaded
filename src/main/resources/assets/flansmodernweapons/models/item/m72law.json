@@ -9,7 +9,8 @@
         "gunSlideDistance": 0.5,
         "tiltGunTime": 0.4,
         "unloadClipTime": 0.1,
-        "loadClipTime": 0.1
+        "loadClipTime": 0.1,
+        "untiltGunTime": 0.4
     },
     "display": {
         "firstperson_lefthand": {
@@ -602,7 +603,7 @@
                 }
             ]
         },
-        "ammo": {
+        "ammo_0": {
             "turboelements": []
         }
     },

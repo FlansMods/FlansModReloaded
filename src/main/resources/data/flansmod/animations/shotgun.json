@@ -388,7 +388,7 @@
     "sequences": [
         {
             "name": "shoot",
-            "ticks": 40,
+            "ticks": 15,
             "frames": [
                 {
                     "tick": 0,
@@ -430,7 +430,7 @@
         },
         {
             "name": "reload_start",
-            "ticks": 20,
+            "ticks": 10,
             "frames": [
                 {
                     "tick": 0,
@@ -448,7 +448,7 @@
         },
         {
             "name": "reload_load_one",
-            "ticks": 20,
+            "ticks": 12,
             "frames": [
                 {
                     "tick": 0,
@@ -532,7 +532,7 @@
         },
         {
             "name": "look_at",
-            "ticks": 20,
+            "ticks": 35,
             "frames": [
                 {
                     "tick": 0,
@@ -574,7 +574,7 @@
         },
         {
             "name": "spin",
-            "ticks": 20,
+            "ticks": 10,
             "frames": [
                 {
                     "tick": 0,
@@ -616,7 +616,7 @@
         },
         {
             "name": "melee",
-            "ticks": 20,
+            "ticks": 15,
             "frames": [
                 {
                     "tick": 0,

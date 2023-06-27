@@ -11,6 +11,7 @@
         "tiltGunTime": 0.25,
         "unloadClipTime": 0.25,
         "loadClipTime": 0.25,
+        "untiltGunTime": 0.25,
         "thirdPersonOffset": [
             0.0,
             0.0,
@@ -725,7 +726,7 @@
                 }
             ]
         },
-        "ammo": {
+        "ammo_0": {
             "turboelements": [
                 {
                     "verts": [

@@ -20,13 +20,13 @@ public abstract class Action
 
 	public InteractionHand hand = InteractionHand.MAIN_HAND;
 
-	public boolean Finished() { return progress >= duration; }
+	public boolean Finished() { return progress > duration; }
 
 	public Action(ActionStack stack, ActionDefinition def, InteractionHand hand)
 	{
 		this.stack = stack;
 		this.actionDef = def;
-		this.duration = Maths.Ceil(def.duration);
+		this.duration = Maths.Ceil(def.duration * 20f);
 		this.progress = 0;
 		this.hand = hand;
 	}

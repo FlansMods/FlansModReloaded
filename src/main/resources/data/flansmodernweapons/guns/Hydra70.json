@@ -23,13 +23,12 @@
                     "canBeOverriden": false,
                     "twoHanded": false,
                     "sounds": [],
-                    "duration": 0.0,
+                    "duration": 1.25,
                     "itemStack": "",
-                    "FireMode": "FullAuto",
                     "shootStats": [],
                     "fovFactor": 1.25,
                     "scopeOverlay": "",
-                    "anim": "TiltGunForReload",
+                    "anim": "reload_start",
                     "toolLevel": 1.0,
                     "harvestSpeed": 1.0,
                     "reach": 1.0
@@ -46,7 +45,25 @@
                 "maxRange": 100.0,
                 "LODs": []
             },
-            "actions": []
+            "actions": [
+                {
+                    "actionType": "Animation",
+                    "canActUnderwater": true,
+                    "canActUnderOtherLiquid": false,
+                    "canBeOverriden": false,
+                    "twoHanded": false,
+                    "sounds": [],
+                    "duration": 1.25,
+                    "itemStack": "",
+                    "shootStats": [],
+                    "fovFactor": 1.25,
+                    "scopeOverlay": "",
+                    "anim": "reload_eject",
+                    "toolLevel": 1.0,
+                    "harvestSpeed": 1.0,
+                    "reach": 1.0
+                }
+            ]
         },
         "loadOne": {
             "duration": 1.25,
@@ -58,7 +75,25 @@
                 "maxRange": 100.0,
                 "LODs": []
             },
-            "actions": []
+            "actions": [
+                {
+                    "actionType": "Animation",
+                    "canActUnderwater": true,
+                    "canActUnderOtherLiquid": false,
+                    "canBeOverriden": false,
+                    "twoHanded": false,
+                    "sounds": [],
+                    "duration": 1.25,
+                    "itemStack": "",
+                    "shootStats": [],
+                    "fovFactor": 1.25,
+                    "scopeOverlay": "",
+                    "anim": "reload_load_one",
+                    "toolLevel": 1.0,
+                    "harvestSpeed": 1.0,
+                    "reach": 1.0
+                }
+            ]
         },
         "end": {
             "duration": 1.25,
@@ -78,13 +113,12 @@
                     "canBeOverriden": false,
                     "twoHanded": false,
                     "sounds": [],
-                    "duration": 1.0,
+                    "duration": 1.25,
                     "itemStack": "",
-                    "FireMode": "FullAuto",
                     "shootStats": [],
                     "fovFactor": 1.25,
                     "scopeOverlay": "",
-                    "anim": "PumpAction",
+                    "anim": "reload_end",
                     "toolLevel": 1.0,
                     "harvestSpeed": 1.0,
                     "reach": 1.0
@@ -97,8 +131,8 @@
             "actionType": "Shoot",
             "canActUnderwater": true,
             "canActUnderOtherLiquid": false,
-            "canBeOverriden": false,
-            "twoHanded": false,
+            "canBeOverriden": true,
+            "twoHanded": true,
             "sounds": [
                 {
                     "sound": "BarrettShoot",
@@ -109,21 +143,26 @@
                     "LODs": []
                 }
             ],
-            "duration": 0.0,
+            "duration": 0.25,
             "itemStack": "",
-            "FireMode": "FullAuto",
             "shootStats": [
                 {
                     "verticalReocil": 1.0,
                     "horizontalRecoil": 0.0,
                     "spread": 0.0,
+                    "spreadPattern": "Circle",
                     "hitscan": true,
                     "speed": 0.0,
-                    "count": 1,
+                    "fireMode": "FullAuto",
+                    "repeatCount": 3,
+                    "bulletCount": 1,
+                    "spinUpDuration": 1.5,
+                    "spinSpeed": 360.0,
                     "timeToNextShot": 5.0,
-                    "spreadPattern": "FilledCircle",
                     "breaksMaterials": [],
-                    "matchAmmoNames": [],
+                    "matchAmmoNames": [
+                        "hydra70ammo"
+                    ],
                     "matchAmmoTags": [],
                     "penetrationPower": 1.0,
                     "trailParticles": "",
@@ -138,23 +177,16 @@
                         "setFireToTarget": 0.0,
                         "fireSpreadRadius": 0.0,
                         "fireSpreadAmount": 0.0,
-                        "hitSound": {
-                            "sound": "",
-                            "length": 1.0,
-                            "minPitchMultiplier": 1.0,
-                            "maxPitchMultiplier": 1.0,
-                            "maxRange": 100.0,
-                            "LODs": []
-                        }
+                        "hitSounds": []
                     }
                 }
             ],
-            "fovFactor": 1.25,
+            "fovFactor": 1.0,
             "scopeOverlay": "",
             "anim": "",
             "toolLevel": 1.0,
             "harvestSpeed": 1.0,
-            "reach": 1.0
+            "reach": 5.0
         },
         {
             "actionType": "Animation",
@@ -163,9 +195,8 @@
             "canBeOverriden": false,
             "twoHanded": false,
             "sounds": [],
-            "duration": 5.0,
+            "duration": 0.25,
             "itemStack": "",
-            "FireMode": "FullAuto",
             "shootStats": [],
             "fovFactor": 1.25,
             "scopeOverlay": "",
@@ -186,7 +217,6 @@
             "sounds": [],
             "duration": 0.0,
             "itemStack": "",
-            "FireMode": "FullAuto",
             "shootStats": [],
             "fovFactor": 1.25,
             "scopeOverlay": "",
@@ -196,8 +226,13 @@
             "reach": 1.0
         }
     ],
-    "numBullets": 0,
-    "AmmoConsumeMode": "RoundRobin",
+    "startSpinUpActions": [],
+    "reachMaxSpinActions": [],
+    "startSpinDownActions": [],
+    "reachZeroSpinActions": [],
+    "loopingSounds": [],
+    "numBullets": 1,
+    "AmmoConsumeMode": "LastNonEmpty",
     "barrelAttachments": {
         "allowlist": [],
         "allowAll": true,
@@ -207,7 +242,8 @@
             0.0,
             0.0,
             0.0
-        ]
+        ],
+        "hideDefaultMesh": false
     },
     "gripAttachments": {
         "allowlist": [],
@@ -218,7 +254,8 @@
             0.0,
             0.0,
             0.0
-        ]
+        ],
+        "hideDefaultMesh": false
     },
     "stockAttachments": {
         "allowlist": [],
@@ -229,7 +266,8 @@
             0.0,
             0.0,
             0.0
-        ]
+        ],
+        "hideDefaultMesh": false
     },
     "scopeAttachments": {
         "allowlist": [],
@@ -240,7 +278,8 @@
             0.0,
             0.0,
             0.0
-        ]
+        ],
+        "hideDefaultMesh": false
     },
     "genericAttachments": {
         "allowlist": [],
@@ -251,7 +290,8 @@
             0.0,
             0.0,
             0.0
-        ]
+        ],
+        "hideDefaultMesh": false
     },
     "modelParts": [],
     "animationSet": ""

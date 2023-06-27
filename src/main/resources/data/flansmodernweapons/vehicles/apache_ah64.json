@@ -219,7 +219,7 @@
                     "actionType": "Shoot",
                     "canActUnderwater": false,
                     "canActUnderOtherLiquid": false,
-                    "canBeOverriden": false,
+                    "canBeOverriden": true,
                     "twoHanded": false,
                     "sounds": [
                         {
@@ -233,19 +233,25 @@
                     ],
                     "duration": 0.0,
                     "itemStack": "",
-                    "FireMode": "FullAuto",
                     "shootStats": [
                         {
                             "verticalReocil": 7.0,
                             "horizontalRecoil": 0.0,
                             "spread": 3.0,
+                            "spreadPattern": "Circle",
                             "hitscan": true,
                             "speed": 0.0,
-                            "count": 1,
+                            "fireMode": "FullAuto",
+                            "repeatCount": 3,
+                            "bulletCount": 1,
+                            "spinUpDuration": 1.5,
+                            "spinSpeed": 360.0,
                             "timeToNextShot": 2.0,
-                            "spreadPattern": "FilledCircle",
                             "breaksMaterials": [],
-                            "matchAmmoNames": [],
+                            "matchAmmoNames": [
+                                "m60ammo",
+                                "m249ammo"
+                            ],
                             "matchAmmoTags": [],
                             "penetrationPower": 1.0,
                             "trailParticles": "",
@@ -260,14 +266,7 @@
                                 "setFireToTarget": 0.0,
                                 "fireSpreadRadius": 0.0,
                                 "fireSpreadAmount": 0.0,
-                                "hitSound": {
-                                    "sound": "",
-                                    "length": 1.0,
-                                    "minPitchMultiplier": 1.0,
-                                    "maxPitchMultiplier": 1.0,
-                                    "maxRange": 100.0,
-                                    "LODs": []
-                                }
+                                "hitSounds": []
                             }
                         }
                     ],
@@ -321,7 +320,7 @@
                     "actionType": "Shoot",
                     "canActUnderwater": false,
                     "canActUnderOtherLiquid": false,
-                    "canBeOverriden": false,
+                    "canBeOverriden": true,
                     "twoHanded": false,
                     "sounds": [
                         {
@@ -335,19 +334,24 @@
                     ],
                     "duration": 0.0,
                     "itemStack": "",
-                    "FireMode": "FullAuto",
                     "shootStats": [
                         {
                             "verticalReocil": 1.0,
                             "horizontalRecoil": 0.0,
                             "spread": 0.0,
+                            "spreadPattern": "Circle",
                             "hitscan": true,
                             "speed": 0.0,
-                            "count": 1,
+                            "fireMode": "FullAuto",
+                            "repeatCount": 3,
+                            "bulletCount": 1,
+                            "spinUpDuration": 1.5,
+                            "spinSpeed": 360.0,
                             "timeToNextShot": 5.0,
-                            "spreadPattern": "FilledCircle",
                             "breaksMaterials": [],
-                            "matchAmmoNames": [],
+                            "matchAmmoNames": [
+                                "hydra70ammo"
+                            ],
                             "matchAmmoTags": [],
                             "penetrationPower": 1.0,
                             "trailParticles": "",
@@ -362,14 +366,7 @@
                                 "setFireToTarget": 0.0,
                                 "fireSpreadRadius": 0.0,
                                 "fireSpreadAmount": 0.0,
-                                "hitSound": {
-                                    "sound": "",
-                                    "length": 1.0,
-                                    "minPitchMultiplier": 1.0,
-                                    "maxPitchMultiplier": 1.0,
-                                    "maxRange": 100.0,
-                                    "LODs": []
-                                }
+                                "hitSounds": []
                             }
                         }
                     ],
@@ -423,7 +420,7 @@
                     "actionType": "Shoot",
                     "canActUnderwater": false,
                     "canActUnderOtherLiquid": false,
-                    "canBeOverriden": false,
+                    "canBeOverriden": true,
                     "twoHanded": false,
                     "sounds": [
                         {
@@ -437,19 +434,24 @@
                     ],
                     "duration": 0.0,
                     "itemStack": "",
-                    "FireMode": "FullAuto",
                     "shootStats": [
                         {
                             "verticalReocil": 1.0,
                             "horizontalRecoil": 0.0,
                             "spread": 0.0,
+                            "spreadPattern": "Circle",
                             "hitscan": true,
                             "speed": 0.0,
-                            "count": 1,
+                            "fireMode": "FullAuto",
+                            "repeatCount": 3,
+                            "bulletCount": 1,
+                            "spinUpDuration": 1.5,
+                            "spinSpeed": 360.0,
                             "timeToNextShot": 5.0,
-                            "spreadPattern": "FilledCircle",
                             "breaksMaterials": [],
-                            "matchAmmoNames": [],
+                            "matchAmmoNames": [
+                                "hydra70ammo"
+                            ],
                             "matchAmmoTags": [],
                             "penetrationPower": 1.0,
                             "trailParticles": "",
@@ -464,14 +466,7 @@
                                 "setFireToTarget": 0.0,
                                 "fireSpreadRadius": 0.0,
                                 "fireSpreadAmount": 0.0,
-                                "hitSound": {
-                                    "sound": "",
-                                    "length": 1.0,
-                                    "minPitchMultiplier": 1.0,
-                                    "maxPitchMultiplier": 1.0,
-                                    "maxRange": 100.0,
-                                    "LODs": []
-                                }
+                                "hitSounds": []
                             }
                         }
                     ],
@@ -530,7 +525,6 @@
                     "sounds": [],
                     "duration": 0.0,
                     "itemStack": "",
-                    "FireMode": "FullAuto",
                     "shootStats": [],
                     "fovFactor": 1.25,
                     "scopeOverlay": "",
@@ -548,7 +542,6 @@
                     "sounds": [],
                     "duration": 0.0,
                     "itemStack": "",
-                    "FireMode": "FullAuto",
                     "shootStats": [],
                     "fovFactor": 1.25,
                     "scopeOverlay": "",
@@ -605,7 +598,6 @@
                     "sounds": [],
                     "duration": 0.0,
                     "itemStack": "",
-                    "FireMode": "FullAuto",
                     "shootStats": [],
                     "fovFactor": 1.25,
                     "scopeOverlay": "",
@@ -623,7 +615,6 @@
                     "sounds": [],
                     "duration": 0.0,
                     "itemStack": "",
-                    "FireMode": "FullAuto",
                     "shootStats": [],
                     "fovFactor": 1.25,
                     "scopeOverlay": "",

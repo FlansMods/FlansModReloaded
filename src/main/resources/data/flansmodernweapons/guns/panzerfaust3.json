@@ -15,26 +15,7 @@
                 "maxRange": 100.0,
                 "LODs": []
             },
-            "actions": [
-                {
-                    "actionType": "Animation",
-                    "canActUnderwater": true,
-                    "canActUnderOtherLiquid": false,
-                    "canBeOverriden": false,
-                    "twoHanded": false,
-                    "sounds": [],
-                    "duration": 0.0,
-                    "itemStack": "",
-                    "FireMode": "FullAuto",
-                    "shootStats": [],
-                    "fovFactor": 1.25,
-                    "scopeOverlay": "",
-                    "anim": "TiltGunForReload",
-                    "toolLevel": 1.0,
-                    "harvestSpeed": 1.0,
-                    "reach": 1.0
-                }
-            ]
+            "actions": []
         },
         "eject": {
             "duration": 0.0,
@@ -70,26 +51,7 @@
                 "maxRange": 100.0,
                 "LODs": []
             },
-            "actions": [
-                {
-                    "actionType": "Animation",
-                    "canActUnderwater": true,
-                    "canActUnderOtherLiquid": false,
-                    "canBeOverriden": false,
-                    "twoHanded": false,
-                    "sounds": [],
-                    "duration": 1.0,
-                    "itemStack": "",
-                    "FireMode": "FullAuto",
-                    "shootStats": [],
-                    "fovFactor": 1.25,
-                    "scopeOverlay": "",
-                    "anim": "PumpAction",
-                    "toolLevel": 1.0,
-                    "harvestSpeed": 1.0,
-                    "reach": 1.0
-                }
-            ]
+            "actions": []
         }
     },
     "primaryActions": [
@@ -97,8 +59,8 @@
             "actionType": "Shoot",
             "canActUnderwater": true,
             "canActUnderOtherLiquid": false,
-            "canBeOverriden": false,
-            "twoHanded": false,
+            "canBeOverriden": true,
+            "twoHanded": true,
             "sounds": [
                 {
                     "sound": "AT4Shoot",
@@ -109,21 +71,26 @@
                     "LODs": []
                 }
             ],
-            "duration": 0.0,
+            "duration": 0.05,
             "itemStack": "",
-            "FireMode": "SemiAuto",
             "shootStats": [
                 {
                     "verticalReocil": 4.0,
                     "horizontalRecoil": 0.0,
                     "spread": 3.0,
+                    "spreadPattern": "Circle",
                     "hitscan": true,
                     "speed": 0.0,
-                    "count": 1,
+                    "fireMode": "SemiAuto",
+                    "repeatCount": 3,
+                    "bulletCount": 1,
+                    "spinUpDuration": 1.5,
+                    "spinSpeed": 360.0,
                     "timeToNextShot": 1.0,
-                    "spreadPattern": "FilledCircle",
                     "breaksMaterials": [],
-                    "matchAmmoNames": [],
+                    "matchAmmoNames": [
+                        "panzerfaust3ammo"
+                    ],
                     "matchAmmoTags": [],
                     "penetrationPower": 1.0,
                     "trailParticles": "",
@@ -138,23 +105,16 @@
                         "setFireToTarget": 0.0,
                         "fireSpreadRadius": 0.0,
                         "fireSpreadAmount": 0.0,
-                        "hitSound": {
-                            "sound": "",
-                            "length": 1.0,
-                            "minPitchMultiplier": 1.0,
-                            "maxPitchMultiplier": 1.0,
-                            "maxRange": 100.0,
-                            "LODs": []
-                        }
+                        "hitSounds": []
                     }
                 }
             ],
-            "fovFactor": 1.25,
+            "fovFactor": 1.0,
             "scopeOverlay": "",
             "anim": "",
             "toolLevel": 1.0,
             "harvestSpeed": 1.0,
-            "reach": 1.0
+            "reach": 5.0
         },
         {
             "actionType": "Drop",
@@ -165,7 +125,6 @@
             "sounds": [],
             "duration": 0.0,
             "itemStack": "",
-            "FireMode": "FullAuto",
             "shootStats": [],
             "fovFactor": 1.25,
             "scopeOverlay": "",
@@ -183,7 +142,6 @@
             "sounds": [],
             "duration": 0.0,
             "itemStack": "",
-            "FireMode": "FullAuto",
             "shootStats": [],
             "fovFactor": 1.25,
             "scopeOverlay": "",
@@ -199,9 +157,8 @@
             "canBeOverriden": false,
             "twoHanded": false,
             "sounds": [],
-            "duration": 1.0,
+            "duration": 0.05,
             "itemStack": "",
-            "FireMode": "FullAuto",
             "shootStats": [],
             "fovFactor": 1.25,
             "scopeOverlay": "",
@@ -221,7 +178,6 @@
             "sounds": [],
             "duration": 0.0,
             "itemStack": "",
-            "FireMode": "FullAuto",
             "shootStats": [],
             "fovFactor": 1.5,
             "scopeOverlay": "",
@@ -241,7 +197,6 @@
             "sounds": [],
             "duration": 0.0,
             "itemStack": "",
-            "FireMode": "FullAuto",
             "shootStats": [],
             "fovFactor": 1.25,
             "scopeOverlay": "",
@@ -251,8 +206,13 @@
             "reach": 1.0
         }
     ],
-    "numBullets": 0,
-    "AmmoConsumeMode": "RoundRobin",
+    "startSpinUpActions": [],
+    "reachMaxSpinActions": [],
+    "startSpinDownActions": [],
+    "reachZeroSpinActions": [],
+    "loopingSounds": [],
+    "numBullets": 1,
+    "AmmoConsumeMode": "LastNonEmpty",
     "barrelAttachments": {
         "allowlist": [],
         "allowAll": false,
@@ -262,7 +222,8 @@
             0.0,
             0.0,
             0.0
-        ]
+        ],
+        "hideDefaultMesh": false
     },
     "gripAttachments": {
         "allowlist": [],
@@ -273,7 +234,8 @@
             0.0,
             0.0,
             0.0
-        ]
+        ],
+        "hideDefaultMesh": false
     },
     "stockAttachments": {
         "allowlist": [],
@@ -284,7 +246,8 @@
             0.0,
             0.0,
             0.0
-        ]
+        ],
+        "hideDefaultMesh": false
     },
     "scopeAttachments": {
         "allowlist": [],
@@ -295,7 +258,8 @@
             0.0,
             0.0,
             0.0
-        ]
+        ],
+        "hideDefaultMesh": false
     },
     "genericAttachments": {
         "allowlist": [],
@@ -306,7 +270,8 @@
             0.0,
             0.0,
             0.0
-        ]
+        ],
+        "hideDefaultMesh": false
     },
     "modelParts": [],
     "animationSet": ""

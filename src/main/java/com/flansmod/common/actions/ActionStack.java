@@ -78,26 +78,6 @@ public class ActionStack
 
 	public void OnTick(Level level, GunContext mainHand, GunContext offHand)
 	{
-		// Reverse iterate to delete when done
-		for(int i = ActiveActions.size() - 1; i >= 0; i--)
-		{
-			Action action = ActiveActions.get(i);
-			GunContext context = action.hand == InteractionHand.MAIN_HAND ? mainHand : offHand;
-			if(level.isClientSide)
-				action.OnTickClient(context);
-			else
-				action.OnTickServer(context);
-
-			if(action.Finished())
-			{
-				if(level.isClientSide)
-					action.OnFinishClient(context);
-				else
-					action.OnFinishServer(context);
-				ActiveActions.remove(i);
-			}
-		}
-
 		ShotCooldown--;
 		if(ShotCooldown < 0.0f)
 			ShotCooldown = 0.0f;
@@ -138,6 +118,26 @@ public class ActionStack
 				{
 					EnterReloadState(context, reload, reload.Hand, nextStage);
 				}
+			}
+		}
+
+		// Reverse iterate to delete when done
+		for(int i = ActiveActions.size() - 1; i >= 0; i--)
+		{
+			Action action = ActiveActions.get(i);
+			GunContext context = action.hand == InteractionHand.MAIN_HAND ? mainHand : offHand;
+			if(level.isClientSide)
+				action.OnTickClient(context);
+			else
+				action.OnTickServer(context);
+
+			if(action.Finished())
+			{
+				if(level.isClientSide)
+					action.OnFinishClient(context);
+				else
+					action.OnFinishServer(context);
+				ActiveActions.remove(i);
 			}
 		}
 	}

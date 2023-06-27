@@ -28,8 +28,6 @@ public class ActionDefinition
 
 	// Shoot Action Specifics
 	@JsonField
-	public EFireMode FireMode = EFireMode.FullAuto;
-	@JsonField
 	public ShotDefinition[] shootStats = new ShotDefinition[0];
 
 	// IronSight / Scope Action

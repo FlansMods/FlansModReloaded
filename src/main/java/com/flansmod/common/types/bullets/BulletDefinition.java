@@ -25,6 +25,9 @@ public class BulletDefinition extends JsonDefinition
 		return false;
 	}
 
+	public int GetItemDurability() { return roundsPerItem > 1 ? roundsPerItem : 0; }
+	public int GetMaxStackSize() { return roundsPerItem > 1 ? 1 : maxStackSize; }
+
 	public BulletDefinition(ResourceLocation resLoc)
 	{
 		super(resLoc);

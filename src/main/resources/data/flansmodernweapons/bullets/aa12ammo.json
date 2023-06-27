@@ -6,11 +6,15 @@
         "verticalReocil": 0.0,
         "horizontalRecoil": 0.0,
         "spread": 1.0,
+        "spreadPattern": "Circle",
         "hitscan": true,
         "speed": 0.0,
-        "count": 8,
+        "fireMode": "SemiAuto",
+        "repeatCount": 1,
+        "bulletCount": 8,
+        "spinUpDuration": 1.0,
+        "spinSpeed": 360.0,
         "timeToNextShot": 0.0,
-        "spreadPattern": "Circle",
         "breaksMaterials": [
             "glass"
         ],
@@ -29,14 +33,16 @@
             "setFireToTarget": 0.0,
             "fireSpreadRadius": 0.0,
             "fireSpreadAmount": 0.5,
-            "hitSound": {
-                "sound": "bullet",
-                "length": 1.0,
-                "minPitchMultiplier": 1.0,
-                "maxPitchMultiplier": 1.0,
-                "maxRange": 50.0,
-                "LODs": []
-            }
+            "hitSounds": [
+                {
+                    "sound": "bullet",
+                    "length": 1.0,
+                    "minPitchMultiplier": 1.0,
+                    "maxPitchMultiplier": 1.0,
+                    "maxRange": 50.0,
+                    "LODs": []
+                }
+            ]
         }
     },
     "tags": [],

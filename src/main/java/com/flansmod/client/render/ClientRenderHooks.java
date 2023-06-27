@@ -11,18 +11,17 @@ import com.flansmod.util.Maths;
 import com.flansmod.util.MinecraftHelpers;
 import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.BufferBuilder;
-import com.mojang.blaze3d.vertex.DefaultVertexFormat;
-import com.mojang.blaze3d.vertex.Tesselator;
-import com.mojang.blaze3d.vertex.VertexFormat;
+import com.mojang.blaze3d.vertex.*;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.levelgen.LegacyRandomSource;
 import net.minecraft.world.phys.Vec2;
 import net.minecraftforge.client.event.ComputeFovModifierEvent;
@@ -93,24 +92,24 @@ public class ClientRenderHooks
 				{
 					case "helmet":
 					{
-						RenderScopeOverlay(player, mainContext, offContext);
-						//event.setCanceled(true);
+
 						break;
 					}
 					case "crosshair":
 					{
 						RenderHitMarkerOverlay();
-
-						//event.setCanceled(true);
+						if(RenderScopeOverlay(player, mainContext, offContext))
+						{
+							event.setCanceled(true);
+						}
 						break;
 					}
 					case "hotbar":
 					{
-						RenderPlayerAmmoOverlay();
+						RenderPlayerAmmoOverlay(event.getPoseStack());
 						RenderKillMessageOverlay();
 						RenderTeamInfoOverlay();
 
-						//event.setCanceled(true);
 						break;
 					}
 				}
@@ -118,14 +117,14 @@ public class ClientRenderHooks
 		}
 	}
 
-	private void RenderScopeOverlay(Player player, GunContext main, GunContext off)
+	private boolean RenderScopeOverlay(Player player, GunContext main, GunContext off)
 	{
 		int i = MinecraftHelpers.GetClient().getWindow().getGuiScaledWidth();
 		int j = MinecraftHelpers.GetClient().getWindow().getGuiScaledHeight();
 
 		ActionStack stack = FlansModClient.GUNSHOTS_CLIENT.GetActionStack(player);
 		if(stack == null)
-			return;
+			return false;
 
 		for(Action action : stack.GetActions())
 		{
@@ -151,9 +150,12 @@ public class ClientRenderHooks
 						builder.vertex(i*0.5f - 2*j, 0f, -90f).uv(0f, 0f).endVertex();
 						tesselator.end();
 					}
+					return true;
 				}
 			}
 		}
+
+		return false;
 	}
 
 	private static final ResourceLocation HIT_MARKER_TEXTURE = new ResourceLocation(FlansMod.MODID, "textures/gui/hitmarker.png");
@@ -217,17 +219,52 @@ public class ClientRenderHooks
 		float uvMin = 0f, uvMax = 9f / 16f;
 		float scale = 1f;
 		float x = pos.x * 64.0f, y = pos.y * 64.0f;
-		builder.vertex(i*0.5f + x - HIT_MARKER_SIZE*scale, j*0.5f + y + HIT_MARKER_SIZE*scale, -90f).uv(uvMin, uvMax).endVertex();
-		builder.vertex(i*0.5f + x + HIT_MARKER_SIZE*scale, j*0.5f + y + HIT_MARKER_SIZE*scale, -90f).uv(uvMax, uvMax).endVertex();
-		builder.vertex(i*0.5f + x + HIT_MARKER_SIZE*scale, j*0.5f + y - HIT_MARKER_SIZE*scale, -90f).uv(uvMax, uvMin).endVertex();
-		builder.vertex(i*0.5f + x - HIT_MARKER_SIZE*scale, j*0.5f + y - HIT_MARKER_SIZE*scale, -90f).uv(uvMin, uvMin).endVertex();
-		tesselator.end();
+		//builder.vertex(i*0.5f + x - HIT_MARKER_SIZE*scale, j*0.5f + y + HIT_MARKER_SIZE*scale, -90f).uv(uvMin, uvMax).endVertex();
+		//builder.vertex(i*0.5f + x + HIT_MARKER_SIZE*scale, j*0.5f + y + HIT_MARKER_SIZE*scale, -90f).uv(uvMax, uvMax).endVertex();
+		//builder.vertex(i*0.5f + x + HIT_MARKER_SIZE*scale, j*0.5f + y - HIT_MARKER_SIZE*scale, -90f).uv(uvMax, uvMin).endVertex();
+		//builder.vertex(i*0.5f + x - HIT_MARKER_SIZE*scale, j*0.5f + y - HIT_MARKER_SIZE*scale, -90f).uv(uvMin, uvMin).endVertex();
+		//tesselator.end();
+
+		RenderQuad(i*0.5f + x - HIT_MARKER_SIZE*scale, j*0.5f + y - HIT_MARKER_SIZE*scale,
+			HIT_MARKER_SIZE*scale, HIT_MARKER_SIZE*scale,
+			uvMin, uvMin,
+			16, 16);
 	}
 
-	private void RenderPlayerAmmoOverlay()
+	private void RenderPlayerAmmoOverlay(PoseStack poseStack)
 	{
+		int screenX = MinecraftHelpers.GetClient().getWindow().getGuiScaledWidth();
+		int screenY = MinecraftHelpers.GetClient().getWindow().getGuiScaledHeight();
 
+		int anchorX = screenX / 2;
+		int anchorY = screenY;
+
+
+
+		if(Minecraft.getInstance().player != null)
+		{
+			GunContext mainHandContext = GunContext.CreateFromPlayer(Minecraft.getInstance().player, InteractionHand.MAIN_HAND);
+			GunContext offHandContext = GunContext.CreateFromPlayer(Minecraft.getInstance().player, InteractionHand.OFF_HAND);
+			if(mainHandContext.IsValidForUse())
+			{
+				RenderUntexturedQuad(anchorX + 94, anchorY - 41, 300, 18, 0x80808080);
+
+				Minecraft.getInstance().getItemRenderer().renderGuiItem(mainHandContext.stack, anchorX + 95, anchorY - 40);
+
+				for(int i = 0; i < mainHandContext.GunDef().numBullets; i++)
+				{
+					ItemStack bulletStack = mainHandContext.GetBulletStack(i);
+					if(!bulletStack.isEmpty())
+					{
+						Minecraft.getInstance().getItemRenderer().renderGuiItem(bulletStack, anchorX + 113 + 12 * i, anchorY - 41 + (i % 2 == 0 ? 2 : 0));
+					}
+				}
+
+				RenderString(poseStack, anchorX + 96, anchorY - 50, mainHandContext.stack.getHoverName(), 0xffffff);
+			}
+		}
 	}
+
 
 	private void RenderKillMessageOverlay()
 	{
@@ -238,4 +275,39 @@ public class ClientRenderHooks
 	{
 
 	}
+
+	private void RenderQuad(float x, float y, float w, float h, float u0, float v0, float texW, float texH)
+	{
+		RenderSystem.enableTexture();
+		RenderSystem.setShader(GameRenderer::getPositionTexShader);
+		Tesselator tesselator = Tesselator.getInstance();
+		BufferBuilder builder = tesselator.getBuilder();
+		builder.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX);
+		builder.vertex(x, y + h, -90f)		.uv(u0 / texW, (v0 + h) / texH).endVertex();
+		builder.vertex(x + w, y + h, -90f)	.uv((u0 + w) / texW, (v0 + h) / texH).endVertex();
+		builder.vertex(x + w, y, -90f)		.uv((u0 + w) / texW, v0 / texH).endVertex();
+		builder.vertex(x, y, -90f)			.uv(u0 / texW, v0 / texH).endVertex();
+		tesselator.end();
+	}
+
+	private void RenderUntexturedQuad(float x, float y, float w, float h, int colour)
+	{
+		RenderSystem.disableTexture();
+		RenderSystem.setShader(GameRenderer::getPositionColorShader);
+		Tesselator tesselator = Tesselator.getInstance();
+		BufferBuilder builder = tesselator.getBuilder();
+		builder.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_COLOR);
+		builder.vertex(x, y + h, -90f)		.color(colour)	.endVertex();
+		builder.vertex(x + w, y + h, -90f)	.color(colour)	.endVertex();
+		builder.vertex(x + w, y, -90f)		.color(colour)	.endVertex();
+		builder.vertex(x, y, -90f)			.color(colour)	.endVertex();
+		tesselator.end();
+		RenderSystem.enableTexture();
+	}
+
+	private void RenderString(PoseStack poseStack, float x, float y, Component content, int colour)
+	{
+		Minecraft.getInstance().font.draw(poseStack, content, x, y, colour);
+	}
+
 }

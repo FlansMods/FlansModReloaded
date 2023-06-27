@@ -8,6 +8,7 @@ import com.flansmod.client.render.animation.elements.PoseDefinition;
 import com.flansmod.client.render.animation.elements.SequenceDefinition;
 import com.flansmod.client.render.animation.elements.SequenceEntryDefinition;
 import com.flansmod.client.render.models.TurboRig;
+import com.flansmod.common.FlansMod;
 import com.flansmod.common.actions.Action;
 import com.flansmod.common.actions.ActionStack;
 import com.flansmod.common.actions.AnimationAction;
@@ -17,6 +18,7 @@ import com.flansmod.common.types.elements.AttachmentSettingsDefinition;
 import com.flansmod.common.types.guns.GunContext;
 import com.flansmod.util.Maths;
 import com.flansmod.util.MinecraftHelpers;
+import com.flansmod.util.Transform;
 import com.mojang.blaze3d.vertex.PoseStack;
 
 import net.minecraft.client.Minecraft;
@@ -27,6 +29,8 @@ import net.minecraft.world.item.ItemStack;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.function.Consumer;
 
 public class GunItemRenderer extends FlanItemModelRenderer
@@ -63,7 +67,14 @@ public class GunItemRenderer extends FlanItemModelRenderer
             {
                 if (!action.ShouldRender(context))
                     return;
+
+                if(action instanceof AnimationAction animAction)
+                {
+                    //FlansMod.LOGGER.info(animAction.actionDef.anim);
+                }
             }
+
+            //FlansMod.LOGGER.info(actions.GetActions().size() + " actions for " + entity.getName().getString());
         }
 
         AnimationDefinition animationSet = FlansModClient.ANIMATIONS.get(new ResourceLocation(context.GunDef().animationSet));
@@ -81,18 +92,26 @@ public class GunItemRenderer extends FlanItemModelRenderer
                     ms.popPose();
                 }
             };
+            ms.pushPose();
+            {
+                // Apply the body transform, then apply other transforms as children
+                ApplyActiveAnimations(stack, actions, animationSet, ms, transformType, "body");
+                renderPart.accept("body");
 
-            PushAnimateRenderPop.accept("body");
-            PushAnimateRenderPop.accept("revolver");
-            PushAnimateRenderPop.accept("slide");
-            PushAnimateRenderPop.accept("pump");
+                PushAnimateRenderPop.accept("revolver");
+                PushAnimateRenderPop.accept("slide");
+                PushAnimateRenderPop.accept("pump");
+                for(int i = 0; i < context.GunDef().numBullets; i++)
+                    PushAnimateRenderPop.accept("ammo_" + i);
 
-            RenderPartOrAttachment(context, EAttachmentType.Barrel, PushAnimateRenderPop, "barrel");
-            RenderPartOrAttachment(context, EAttachmentType.Grip, PushAnimateRenderPop, "grip");
-            RenderPartOrAttachment(context, EAttachmentType.Sights, PushAnimateRenderPop, "scope");
-            RenderPartOrAttachment(context, EAttachmentType.Stock, PushAnimateRenderPop, "stock");
+                RenderPartOrAttachment(context, EAttachmentType.Barrel, PushAnimateRenderPop, "barrel");
+                RenderPartOrAttachment(context, EAttachmentType.Grip, PushAnimateRenderPop, "grip");
+                RenderPartOrAttachment(context, EAttachmentType.Sights, PushAnimateRenderPop, "scope");
+                RenderPartOrAttachment(context, EAttachmentType.Stock, PushAnimateRenderPop, "stock");
 
-            PushAnimateRenderPop.accept("rightHand");
+                PushAnimateRenderPop.accept("rightHand");
+            }
+            ms.popPose();
         }
         ms.popPose();
     }
@@ -122,67 +141,88 @@ public class GunItemRenderer extends FlanItemModelRenderer
         {
             Action[] cache = new Action[actions.GetActions().size()];
             actions.GetActions().toArray(cache);
+            List<AnimationAction> animActions = new ArrayList<>();
             for(Action action : cache)
             {
-                if(action instanceof AnimationAction animAction)
+                if (action instanceof AnimationAction animAction)
                 {
-                    SequenceDefinition sequence = animSet.GetSequence(animAction.actionDef.anim);
-                    if(sequence == null)
-                        continue;
+                    animActions.add(animAction);
+                }
+            }
 
-                    // Make sure we scale the sequence (which can be played at any speed) with the target duration of this specific animation action
-                    float progress = animAction.GetProgressTicks() + Minecraft.getInstance().getPartialTick();
-                    float animMultiplier = sequence.Duration() / animAction.GetDurationTicks();
-                    progress *= animMultiplier;
+            List<Transform> poses = new ArrayList<>();
+            for (AnimationAction animAction : animActions)
+            {
+                SequenceDefinition sequence = animSet.GetSequence(animAction.actionDef.anim);
+                if (sequence == null)
+                    continue;
 
-                    // Find the segment of this animation that we need
-                    SequenceEntryDefinition[] segment = sequence.GetSegment(progress);
-                    float segmentDuration = segment[1].tick - segment[0].tick;
+                // Make sure we scale the sequence (which can be played at any speed) with the target duration of this specific animation action
+                float progress = animAction.GetProgressTicks() + Minecraft.getInstance().getPartialTick();
+                float animMultiplier = sequence.Duration() / animAction.GetDurationTicks();
+                progress *= animMultiplier;
 
-                    // If it is valid, let's animate it
-                    if(segmentDuration > 0.0f)
+                // Find the segment of this animation that we need
+                SequenceEntryDefinition[] segment = sequence.GetSegment(progress);
+                float segmentDuration = segment[1].tick - segment[0].tick;
+
+                // If it is valid, let's animate it
+                if (segmentDuration >= 0.0f)
+                {
+                    KeyframeDefinition from = animSet.GetKeyframe(segment[0]);
+                    KeyframeDefinition to = animSet.GetKeyframe(segment[1]);
+                    if (from != null && to != null)
                     {
-                        KeyframeDefinition from = animSet.GetKeyframe(segment[0]);
-                        KeyframeDefinition to = animSet.GetKeyframe(segment[1]);
-                        if (from != null && to != null)
+                        float linearParameter = (progress - segment[0].tick) / segmentDuration;
+                        linearParameter = Maths.Clamp(linearParameter, 0f, 1f);
+                        float outputParameter = linearParameter;
+
+                        // Instant transitions take priority first
+                        if (segment[0].exit == ESmoothSetting.instant)
+                            outputParameter = 1.0f;
+                        if (segment[1].entry == ESmoothSetting.instant)
+                            outputParameter = 0.0f;
+
+                        // Then apply smoothing?
+                        if (segment[0].exit == ESmoothSetting.smooth)
                         {
-                            float linearParameter = (progress - segment[0].tick) / segmentDuration;
-                            linearParameter = Maths.Clamp(linearParameter, 0f, 1f);
-                            float outputParameter = linearParameter;
-
-                            // Instant transitions take priority first
-                            if(segment[0].exit == ESmoothSetting.instant)
-                                outputParameter = 1.0f;
-                            if(segment[1].entry == ESmoothSetting.instant)
-                                outputParameter = 0.0f;
-
-                            // Then apply smoothing?
-                            if(segment[0].exit == ESmoothSetting.smooth)
-                            {
-                                // Smoothstep function
-                                if(linearParameter < 0.5f)
-                                    outputParameter = linearParameter * linearParameter * (3f - 2f * linearParameter);
-                            }
-                            if(segment[1].entry == ESmoothSetting.smooth)
-                            {
-                                // Smoothstep function
-                                if(linearParameter > 0.5f)
-                                    outputParameter = linearParameter * linearParameter * (3f - 2f * linearParameter);
-                            }
-
-                            PoseDefinition fromPose = animSet.GetPoseForPart(from, part);
-                            PoseDefinition toPose = animSet.GetPoseForPart(to, part);
-
-                            Vector3f pos = PoseDefinition.LerpPosition(UnbakedRig.GetFloatParams(), fromPose, toPose, outputParameter);
-                            Quaternionf rotation = PoseDefinition.LerpRotation(UnbakedRig.GetFloatParams(), fromPose, toPose, outputParameter);
-
-                            //FlansMod.LOGGER.info("Frame " + progress + ": From " + from.name + " to " + to.name + " at t=" + outputParameter);
-
-                            ms.translate(pos.x, pos.y, pos.z);
-                            ms.mulPose(rotation);
+                            // Smoothstep function
+                            if (linearParameter < 0.5f)
+                                outputParameter = linearParameter * linearParameter * (3f - 2f * linearParameter);
                         }
+                        if (segment[1].entry == ESmoothSetting.smooth)
+                        {
+                            // Smoothstep function
+                            if (linearParameter > 0.5f)
+                                outputParameter = linearParameter * linearParameter * (3f - 2f * linearParameter);
+                        }
+
+                        PoseDefinition fromPose = animSet.GetPoseForPart(from, part);
+                        PoseDefinition toPose = animSet.GetPoseForPart(to, part);
+
+                        Vector3f pos = PoseDefinition.LerpPosition(UnbakedRig.GetFloatParams(), fromPose, toPose, outputParameter);
+                        Quaternionf rotation = PoseDefinition.LerpRotation(UnbakedRig.GetFloatParams(), fromPose, toPose, outputParameter);
+
+                        //FlansMod.LOGGER.info("Frame " + progress + ": From " + from.name + " to " + to.name + " at t=" + outputParameter);
+
+
+                        //ms.pushPose();
+                        //ms.translate(pos.x, pos.y, pos.z);
+                        //ms.mulPose(rotation);
+                        FlansMod.LOGGER.info("Src: " + pos.toString() + ", " + rotation.toString());
+                        Transform test = new Transform(pos, rotation);
+                        poses.add(test);
+                        FlansMod.LOGGER.info("Src: " + test.position.toString() + ", " + test.orientation.toString());
+
+                        //ms.popPose();
                     }
                 }
+            }
+            if(poses.size() > 0)
+            {
+                Transform resultPose = Transform.Interpolate(poses);
+                ms.translate(resultPose.position.x, resultPose.position.y, resultPose.position.z);
+                ms.mulPose(resultPose.orientation);
             }
         }
     }

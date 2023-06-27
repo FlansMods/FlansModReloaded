@@ -3,14 +3,13 @@ package com.flansmod.common.types.elements;
 import com.flansmod.common.FlansMod;
 import com.flansmod.common.types.JsonDefinition;
 import com.flansmod.common.types.JsonField;
+import com.flansmod.common.types.guns.EFireMode;
 import com.flansmod.common.types.guns.ESpreadPattern;
 import com.flansmod.util.MinecraftHelpers;
 import net.minecraft.world.level.material.Material;
 
 import javax.annotation.Nonnull;
-import javax.json.Json;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 public class ShotDefinition
@@ -73,15 +72,24 @@ public class ShotDefinition
 	@JsonField
 	public float spread = 3.0f;
 	@JsonField
+	public ESpreadPattern spreadPattern = ESpreadPattern.FilledCircle;
+	@JsonField
 	public boolean hitscan = true;
 	@JsonField
 	public float speed = 0.0f;
 	@JsonField
-	public int count = 1;
-	@JsonField
+	public EFireMode fireMode = EFireMode.SemiAuto;
+	@JsonField(Docs = "Number of times to repeat the fire action if we are set to burst fire mode")
+	public int repeatCount = 1;
+	@JsonField(Docs = "Number of raycasts or bullet entities to create", Min = 0, Max = 128)
+	public int bulletCount = 1;
+	@JsonField(Docs = "If using minigun fire mode, this is the time (in seconds) that it will take to spin up the motor and start shooting")
+	public float spinUpDuration = 1.0f;
+	@JsonField(Docs = "If using minigun fire mode, this is the max rotational speed (in degrees/second) of the barrels")
+	public float spinSpeed = 360.0f;
+	@JsonField(Docs = "The delay from this action to being able to perform it again (in seconds). If you have a desired Fire Rate in RPM, enter 60 / RPM")
 	public float timeToNextShot = 2.0f;
-	@JsonField
-	public ESpreadPattern spreadPattern = ESpreadPattern.FilledCircle;
+
 	@JsonField
 	public String[] breaksMaterials = new String[0];
 

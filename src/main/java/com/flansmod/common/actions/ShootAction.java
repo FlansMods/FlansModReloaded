@@ -110,12 +110,88 @@ public class ShootAction extends Action
 						return stack;
 				}
 			}
+			case LastNonEmpty -> {
+				for(int i = context.GunDef().numBullets - 1; i >= 0; i--)
+				{
+					ItemStack stack = context.GetBulletStack(i);
+					if(!stack.isEmpty())
+						return stack;
+				}
+			}
 			case Simultaneous -> {
 
 			}
 		}
 		return ItemStack.EMPTY;
 	}
+
+	public int TryConsumeAmmo(GunContext context, int count)
+	{
+		switch(context.GunDef().AmmoConsumeMode)
+		{
+			case RoundRobin -> {
+				int currentChamber = context.GetCurrentChamber();
+				return TryConsumeAmmo(context, currentChamber, count);
+			}
+			case FirstNonEmpty -> {
+				for(int i = 0; i < context.GunDef().numBullets; i++)
+				{
+					ItemStack stack = context.GetBulletStack(i);
+					if(!stack.isEmpty())
+					{
+						return TryConsumeAmmo(context, i, count);
+					}
+				}
+			}
+			case LastNonEmpty -> {
+				for(int i = context.GunDef().numBullets - 1; i >= 0; i--)
+				{
+					ItemStack stack = context.GetBulletStack(i);
+					if(!stack.isEmpty())
+					{
+						return TryConsumeAmmo(context, i, count);
+					}
+				}
+			}
+			case Simultaneous -> {
+				int countConsumed = 0;
+				for(int i = 0; i < context.GunDef().numBullets; i++)
+				{
+					ItemStack stack = context.GetBulletStack(i);
+					if(!stack.isEmpty())
+					{
+						int countStillToConsume = Maths.Max(count - countConsumed, 0);
+						countConsumed += TryConsumeAmmo(context, i, countStillToConsume);
+					}
+				}
+				return countConsumed;
+			}
+		}
+		return 0;
+	}
+
+	public int TryConsumeAmmo(GunContext context, int slotIndex, int amountToConsume)
+	{
+		ItemStack bulletStack = context.GetBulletStack(slotIndex);
+
+		if(bulletStack.isDamageableItem())
+		{
+			int amountRemaining = bulletStack.getMaxDamage() - bulletStack.getDamageValue();
+			amountToConsume = Maths.Min(amountRemaining, amountToConsume);
+			bulletStack.setDamageValue(bulletStack.getDamageValue() + amountToConsume);
+			context.SetBulletStack(slotIndex, bulletStack);
+			return amountToConsume;
+		}
+		else
+		{
+			int amountRemaining = bulletStack.getCount();
+			amountToConsume = Maths.Min(amountRemaining, amountToConsume);
+			bulletStack.setCount(amountRemaining - amountToConsume);
+			context.SetBulletStack(slotIndex, bulletStack);
+			return amountToConsume;
+		}
+	}
+
 
 	public void SetResults(GunshotCollection shots)
 	{
@@ -150,6 +226,9 @@ public class ShootAction extends Action
 
 		// If we are firing something faster than 1200rpm, that is more than 1 per tick
 		int shotsFired = actionStack.TryShootMultiple(stats.TimeToNextShot());
+
+		// We want to shoot {shotsFired} many, but check against and now consume ammo durability
+		shotsFired = TryConsumeAmmo(context, shotsFired);
 
 		for(int j = 0; j < shotsFired; j++)
 		{
@@ -196,18 +275,18 @@ public class ShootAction extends Action
 				float xComponent = radius * Maths.SinF(theta);
 				float yComponent = radius * Maths.CosF(theta);
 
-				result.RotateLocalYaw(xComponent);
-				result.RotateLocalPitch(yComponent);
+				result = result.RotateLocalYaw(xComponent);
+				result = result.RotateLocalPitch(yComponent);
 			}
 			case Horizontal ->
 			{
 				float xComponent = spread * (rand.nextFloat() * 2f - 1f);
-				result.RotateLocalYaw(xComponent);
+				result = result.RotateLocalYaw(xComponent);
 			}
 			case Vertical ->
 			{
 				float yComponent = spread * (rand.nextFloat() * 2f - 1f);
-				result.RotateLocalPitch(yComponent);
+				result = result.RotateLocalPitch(yComponent);
 			}
 			case Triangle ->
 			{
@@ -230,8 +309,8 @@ public class ShootAction extends Action
 						xComponent = -1f - xComponent;
 					}
 				}
-				result.RotateLocalYaw(xComponent);
-				result.RotateLocalPitch(yComponent);
+				result = result.RotateLocalYaw(xComponent);
+				result = result.RotateLocalPitch(yComponent);
 			}
 			default -> {}
 		}
@@ -448,7 +527,7 @@ public class ShootAction extends Action
 					}
 
 					// Play a sound, only once per tick to avoid audio overload
-					if(!playedASoundThisTick && actionDef.shootStats[0].impact.hitSound != null)
+					if(!playedASoundThisTick && actionDef.shootStats[0].impact.hitSounds != null)
 					{
 						playedASoundThisTick = true;
 						//Minecraft.getInstance().getSoundManager().play(actionDef.ShootStats.Impact.HitSound);

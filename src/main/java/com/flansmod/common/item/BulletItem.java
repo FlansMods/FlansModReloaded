@@ -13,7 +13,10 @@ public class BulletItem extends FlanItem
 
 	public BulletItem(ResourceLocation defLoc, Properties properties)
 	{
-		super(properties);
+		super(properties
+			.durability(FlansMod.BULLETS.get(defLoc).GetItemDurability())
+			.stacksTo(FlansMod.BULLETS.get(defLoc).GetMaxStackSize())
+		);
 
 		definitionLocation = defLoc;
 	}
