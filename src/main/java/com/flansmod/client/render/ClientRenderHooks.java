@@ -2,11 +2,9 @@ package com.flansmod.client.render;
 
 import com.flansmod.client.FlansModClient;
 import com.flansmod.common.FlansMod;
-import com.flansmod.common.actions.Action;
-import com.flansmod.common.actions.ActionStack;
-import com.flansmod.common.actions.AimDownSightAction;
-import com.flansmod.common.actions.ScopeAction;
-import com.flansmod.common.types.guns.GunContext;
+import com.flansmod.common.actions.*;
+import com.flansmod.common.gunshots.GunContext;
+import com.flansmod.common.gunshots.ShooterContext;
 import com.flansmod.util.Maths;
 import com.flansmod.util.MinecraftHelpers;
 import com.mojang.blaze3d.platform.GlStateManager;
@@ -52,24 +50,33 @@ public class ClientRenderHooks
 	@SubscribeEvent
 	public void OnComputeFOV(ComputeFovModifierEvent event)
 	{
-		Player player = MinecraftHelpers.GetClient().player;
+		ShooterContext shooterContext = ShooterContext.CreateFrom(MinecraftHelpers.GetClient().player);
+		if(!shooterContext.IsValid())
+			return;
 
-		if(player != null)
+		float totalFOVModifier = 0.0f;
+		int FOVModifierCount = 0;
+
+		GunContext[] gunContexts = shooterContext.GetAllGunContexts();
+		for(GunContext gunContext : gunContexts)
 		{
-			GunContext mainContext = GunContext.CreateFromPlayer(player, InteractionHand.MAIN_HAND);
-			GunContext offContext = GunContext.CreateFromPlayer(player, InteractionHand.OFF_HAND);
+			if(!gunContext.IsValid())
+				continue;
 
-			ActionStack stack = FlansModClient.GUNSHOTS_CLIENT.GetActionStack(player);
-			if(stack == null)
-				return;
-
-			for(Action action : stack.GetActions())
+			for (Action action : gunContext.GetActionStack().GetActions())
 			{
 				if (action instanceof AimDownSightAction adsAction)
 				{
-					event.setNewFovModifier(event.getNewFovModifier() / action.actionDef.fovFactor);
+					totalFOVModifier += action.actionDef.fovFactor;
+					FOVModifierCount++;
+
 				}
 			}
+		}
+
+		if(FOVModifierCount > 0)
+		{
+			event.setNewFovModifier(event.getNewFovModifier() / (totalFOVModifier / FOVModifierCount));
 		}
 	}
 
@@ -80,77 +87,79 @@ public class ClientRenderHooks
 		int j = MinecraftHelpers.GetClient().getWindow().getHeight();
 		Tesselator tesselator = Tesselator.getInstance();
 		Player player = MinecraftHelpers.GetClient().player;
+		ShooterContext shooterContext = ShooterContext.CreateFrom(player);
+		if(!shooterContext.IsValid())
+			return;
 
-		if(player != null)
+		GunContext[] gunContexts = shooterContext.GetAllGunContexts();
+		GunContext mainContext = gunContexts[0];
+		GunContext offContext = gunContexts[1];
+		if (event instanceof RenderGuiOverlayEvent.Pre)
 		{
-			GunContext mainContext = GunContext.CreateFromPlayer(player, InteractionHand.MAIN_HAND);
-			GunContext offContext = GunContext.CreateFromPlayer(player, InteractionHand.OFF_HAND);
-
-			if (event instanceof RenderGuiOverlayEvent.Pre)
+			switch (event.getOverlay().id().getPath())
 			{
-				switch (event.getOverlay().id().getPath())
+				case "helmet":
 				{
-					case "helmet":
-					{
 
-						break;
-					}
-					case "crosshair":
+					break;
+				}
+				case "crosshair":
+				{
+					RenderHitMarkerOverlay();
+					if (RenderScopeOverlay(mainContext, offContext))
 					{
-						RenderHitMarkerOverlay();
-						if(RenderScopeOverlay(player, mainContext, offContext))
-						{
-							event.setCanceled(true);
-						}
-						break;
+						event.setCanceled(true);
 					}
-					case "hotbar":
-					{
-						RenderPlayerAmmoOverlay(event.getPoseStack());
-						RenderKillMessageOverlay();
-						RenderTeamInfoOverlay();
+					break;
+				}
+				case "hotbar":
+				{
+					RenderPlayerAmmoOverlay(event.getPoseStack());
+					RenderKillMessageOverlay();
+					RenderTeamInfoOverlay();
 
-						break;
-					}
+					break;
 				}
 			}
 		}
 	}
 
-	private boolean RenderScopeOverlay(Player player, GunContext main, GunContext off)
+	private boolean RenderScopeOverlay(GunContext main, GunContext off)
 	{
 		int i = MinecraftHelpers.GetClient().getWindow().getGuiScaledWidth();
 		int j = MinecraftHelpers.GetClient().getWindow().getGuiScaledHeight();
 
-		ActionStack stack = FlansModClient.GUNSHOTS_CLIENT.GetActionStack(player);
-		if(stack == null)
-			return false;
-
-		for(Action action : stack.GetActions())
+		for(GunContext gunContext : new GunContext[] { main, off})
 		{
-			if(action instanceof ScopeAction scopeAction)
-			{
-				if(scopeAction.ApplyOverlay())
-				{
-					ResourceLocation overlayLocation = scopeAction.GetOverlayLocation();
-					if(overlayLocation != null)
-					{
-						RenderSystem.setShader(GameRenderer::getPositionTexShader);
-						RenderSystem.enableBlend();
-						RenderSystem.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
-						RenderSystem.enableTexture();
-						RenderSystem.setShaderTexture(0, overlayLocation);
+			if(!gunContext.IsValid())
+				continue;
 
-						Tesselator tesselator = Tesselator.getInstance();
-						BufferBuilder builder = tesselator.getBuilder();
-						builder.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX);
-						builder.vertex(i*0.5f - 2*j, j, -90f).uv(0f, 1f).endVertex();
-						builder.vertex(i*0.5f + 2*j, j, -90f).uv(1f, 1f).endVertex();
-						builder.vertex(i*0.5f + 2*j, 0f, -90f).uv(1f, 0f).endVertex();
-						builder.vertex(i*0.5f - 2*j, 0f, -90f).uv(0f, 0f).endVertex();
-						tesselator.end();
+			for (Action action : gunContext.GetActionStack().GetActions())
+			{
+				if (action instanceof ScopeAction scopeAction)
+				{
+					if (scopeAction.ApplyOverlay())
+					{
+						ResourceLocation overlayLocation = scopeAction.GetOverlayLocation();
+						if (overlayLocation != null)
+						{
+							RenderSystem.setShader(GameRenderer::getPositionTexShader);
+							RenderSystem.enableBlend();
+							RenderSystem.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
+							RenderSystem.enableTexture();
+							RenderSystem.setShaderTexture(0, overlayLocation);
+
+							Tesselator tesselator = Tesselator.getInstance();
+							BufferBuilder builder = tesselator.getBuilder();
+							builder.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX);
+							builder.vertex(i * 0.5f - 2 * j, j, -90f).uv(0f, 1f).endVertex();
+							builder.vertex(i * 0.5f + 2 * j, j, -90f).uv(1f, 1f).endVertex();
+							builder.vertex(i * 0.5f + 2 * j, 0f, -90f).uv(1f, 0f).endVertex();
+							builder.vertex(i * 0.5f - 2 * j, 0f, -90f).uv(0f, 0f).endVertex();
+							tesselator.end();
+						}
+						return true;
 					}
-					return true;
 				}
 			}
 		}
@@ -213,9 +222,9 @@ public class ClientRenderHooks
 
 	private void RenderHitMarker(int i, int j, Vec2 pos)
 	{
-		Tesselator tesselator = Tesselator.getInstance();
-		BufferBuilder builder = tesselator.getBuilder();
-		builder.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX);
+		//Tesselator tesselator = Tesselator.getInstance();
+		//BufferBuilder builder = tesselator.getBuilder();
+		//builder.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX);
 		float uvMin = 0f, uvMax = 9f / 16f;
 		float scale = 1f;
 		float x = pos.x * 64.0f, y = pos.y * 64.0f;
@@ -239,29 +248,52 @@ public class ClientRenderHooks
 		int anchorX = screenX / 2;
 		int anchorY = screenY;
 
+		ShooterContext shooterContext = ShooterContext.CreateFrom(Minecraft.getInstance().player);
+		if(!shooterContext.IsValid())
+			return;
 
-
-		if(Minecraft.getInstance().player != null)
+		GunContext[] gunContexts = shooterContext.GetAllGunContexts();
+		GunContext mainContext = gunContexts[0];
+		GunContext offContext = gunContexts[1];
+		if(gunContexts[0].IsValid())
 		{
-			GunContext mainHandContext = GunContext.CreateFromPlayer(Minecraft.getInstance().player, InteractionHand.MAIN_HAND);
-			GunContext offHandContext = GunContext.CreateFromPlayer(Minecraft.getInstance().player, InteractionHand.OFF_HAND);
-			if(mainHandContext.IsValidForUse())
+			RenderUntexturedQuad(anchorX + 94, anchorY - 41, 300, 18, 0x80808080);
+
+			Minecraft.getInstance().getItemRenderer().renderGuiItem(mainContext.GetItemStack(), anchorX + 95, anchorY - 40);
+
+			for(int i = 0; i < mainContext.GunDef().numBullets; i++)
 			{
-				RenderUntexturedQuad(anchorX + 94, anchorY - 41, 300, 18, 0x80808080);
-
-				Minecraft.getInstance().getItemRenderer().renderGuiItem(mainHandContext.stack, anchorX + 95, anchorY - 40);
-
-				for(int i = 0; i < mainHandContext.GunDef().numBullets; i++)
+				ItemStack bulletStack = mainContext.GetBulletStack(i);
+				if(!bulletStack.isEmpty())
 				{
-					ItemStack bulletStack = mainHandContext.GetBulletStack(i);
-					if(!bulletStack.isEmpty())
-					{
-						Minecraft.getInstance().getItemRenderer().renderGuiItem(bulletStack, anchorX + 113 + 12 * i, anchorY - 41 + (i % 2 == 0 ? 2 : 0));
-					}
+					Minecraft.getInstance().getItemRenderer().renderGuiItem(bulletStack, anchorX + 113 + 12 * i, anchorY - 41 + (i % 2 == 0 ? 2 : 0));
 				}
-
-				RenderString(poseStack, anchorX + 96, anchorY - 50, mainHandContext.stack.getHoverName(), 0xffffff);
 			}
+
+			RenderString(poseStack, anchorX + 96, anchorY - 50, mainContext.GetItemStack().getHoverName(), 0xffffff);
+		}
+
+		if(gunContexts[1].IsValid())
+		{
+			RenderSystem.enableBlend();
+			RenderUntexturedQuad(anchorX - 94 - 300, anchorY - 41, 300, 18, 0x80808080);
+
+			Minecraft.getInstance().getItemRenderer().renderGuiItem(offContext.GetItemStack(), anchorX - 95 - 16, anchorY - 40);
+
+			for(int i = 0; i < offContext.GunDef().numBullets; i++)
+			{
+				ItemStack bulletStack = offContext.GetBulletStack(i);
+				if(!bulletStack.isEmpty())
+				{
+					Minecraft.getInstance().getItemRenderer().renderGuiItem(bulletStack, anchorX - 133 - 12 * i, anchorY - 41 + (i % 2 == 0 ? 2 : 0));
+				}
+			}
+
+			RenderString(poseStack,
+				anchorX - 96 - Minecraft.getInstance().font.width(offContext.GetItemStack().getHoverName()),
+				anchorY - 50,
+				offContext.GetItemStack().getHoverName(),
+				0xffffff);
 		}
 	}
 

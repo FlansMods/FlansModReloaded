@@ -195,7 +195,7 @@
             "shootStats": [],
             "fovFactor": 1.25,
             "scopeOverlay": "",
-            "anim": "Shoot",
+            "anim": "shoot",
             "toolLevel": 1.0,
             "harvestSpeed": 1.0,
             "reach": 1.0

@@ -2,6 +2,8 @@ package com.flansmod.common.types.guns;
 
 public enum EActionType
 {
+	Invalid,
+
 	PlaySound,
 	Animation,
 	Shoot,

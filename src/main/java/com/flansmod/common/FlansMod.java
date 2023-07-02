@@ -2,7 +2,7 @@ package com.flansmod.common;
 
 import com.flansmod.client.FlansModClient;
 import com.flansmod.common.crafting.*;
-import com.flansmod.common.gunshots.GunshotManager;
+import com.flansmod.common.gunshots.ActionManager;
 import com.flansmod.common.gunshots.Raytracer;
 import com.flansmod.common.item.BulletItem;
 import com.flansmod.common.item.GrenadeItem;
@@ -23,7 +23,6 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.material.Material;
@@ -96,7 +95,7 @@ public class FlansMod
     public static final WorkbenchDefinitions WORKBENCHES = new WorkbenchDefinitions();
 
     // Server handlers
-    public static final GunshotManager GUNSHOTS_SERVER = new GunshotManager();
+    public static final ActionManager ACTIONS_SERVER = new ActionManager(false);
 
     public static RegistryObject<Item> Gun(DeferredRegister<Item> itemRegister, String modID, String name)
     {
@@ -144,7 +143,7 @@ public class FlansMod
         modEventBus.addListener(this::ClientInit);
         MinecraftForge.EVENT_BUS.addListener(this::loadLevel);
         MinecraftForge.EVENT_BUS.addListener(this::onReloadResources);
-        GUNSHOTS_SERVER.HookServer(modEventBus);
+        ACTIONS_SERVER.HookServer(modEventBus);
         modEventBus.addListener(this::onCreativeTabRegistry);
 
         BLOCKS.register(modEventBus);

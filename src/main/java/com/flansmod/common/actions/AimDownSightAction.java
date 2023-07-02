@@ -1,43 +1,53 @@
 package com.flansmod.common.actions;
 
+import com.flansmod.common.gunshots.ActionContext;
 import com.flansmod.common.types.elements.ActionDefinition;
-import com.flansmod.common.types.guns.GunContext;
-import net.minecraft.client.Minecraft;
-import net.minecraft.resources.ResourceLocation;
+import com.flansmod.common.gunshots.GunContext;
 import net.minecraft.world.InteractionHand;
 
 public class AimDownSightAction extends Action
 {
 	protected boolean shouldStop = false;
 
-	public AimDownSightAction(ActionStack stack, ActionDefinition def, InteractionHand hand)
+	public AimDownSightAction(ActionDefinition def, EActionInput inputType)
 	{
-		super(stack, def, hand);
+		super(def, inputType);
 	}
 
 	@Override
-	public boolean CanStart(GunContext context)
+	public boolean CanStart(ActionContext context)
 	{
 		// TODO: 2H check
 		return true;
 	}
 
 	@Override
-	public void OnStartClient(GunContext context)
+	public void OnTickClient(ActionContext context)
 	{
-		super.OnStartClient(context);
+		super.OnTickClient(context);
+		CancelActionIfDuplicate(context);
+	}
 
+	@Override
+	public void OnTickServer(ActionContext context)
+	{
+		super.OnTickClient(context);
+		CancelActionIfDuplicate(context);
+	}
+
+	private void CancelActionIfDuplicate(ActionContext context)
+	{
 		int numScopeActions = 0;
-		for(Action action : stack.GetActions())
+		for(Action action : context.ActionStack().GetActions())
 		{
-			if(action instanceof ScopeAction)
+			if(action instanceof AimDownSightAction)
 				numScopeActions++;
 		}
 		if(numScopeActions > 1)
 		{
-			for(Action action : stack.GetActions())
+			for(Action action : context.ActionStack().GetActions())
 			{
-				if(action instanceof ScopeAction scopeAction)
+				if(action instanceof AimDownSightAction scopeAction)
 					scopeAction.shouldStop = true;
 			}
 		}

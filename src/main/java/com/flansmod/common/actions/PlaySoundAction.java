@@ -1,16 +1,17 @@
 package com.flansmod.common.actions;
 
 import com.flansmod.client.sound.SoundLODManager;
+import com.flansmod.common.gunshots.ActionContext;
 import com.flansmod.common.types.elements.ActionDefinition;
 import com.flansmod.common.types.elements.SoundDefinition;
-import com.flansmod.common.types.guns.GunContext;
+import com.flansmod.common.gunshots.GunContext;
 import net.minecraft.world.InteractionHand;
 
 public class PlaySoundAction extends Action
 {
-	public PlaySoundAction(ActionStack stack, ActionDefinition def, InteractionHand hand)
+	public PlaySoundAction(ActionDefinition def, EActionInput inputType)
 	{
-		super(stack, def, hand);
+		super(def, inputType);
 	}
 
 	public boolean Finished()
@@ -19,13 +20,13 @@ public class PlaySoundAction extends Action
 	}
 
 	@Override
-	public void OnStartClient(GunContext context)
+	public void OnStartClient(ActionContext context)
 	{
 		super.OnStartClient(context);
 
 		for(SoundDefinition soundDef : actionDef.sounds)
 		{
-			SoundLODManager.PlaySound(soundDef, context.shootFrom);
+			SoundLODManager.PlaySound(soundDef, context.Shooter().Entity());
 		}
 	}
 }

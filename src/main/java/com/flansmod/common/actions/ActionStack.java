@@ -1,21 +1,36 @@
 package com.flansmod.common.actions;
 
+import com.flansmod.common.gunshots.ActionContext;
 import com.flansmod.common.types.elements.ActionDefinition;
 import com.flansmod.common.types.elements.ReloadDefinition;
 import com.flansmod.common.types.guns.EReloadStage;
-import com.flansmod.common.types.guns.GunContext;
+import com.flansmod.common.gunshots.GunContext;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.level.Level;
 
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * There should be one ActionStack per gun, per shooter
+ * So a plane with 4 cannons would have 4 seperate action stacks
+ * And a player would have a MAIN_HAND and OFF_HAND action stack
+ *
+ * Any custom Flan's Mod entities can store their own ActionStacks
+ * Any vanilla entity shooters, like players, can store them in ActionManager
+ */
 public class ActionStack
 {
 	private List<Action> ActiveActions = new ArrayList<Action>();
-	private float ShotCooldown = 0.0f;
 	private List<ReloadProgress> ActiveReloads = new ArrayList<>();
+	private float ShotCooldown = 0.0f;
 	private boolean cancelActionRequested = false;
+	private final boolean IsClient;
+
+	public ActionStack(boolean client)
+	{
+		IsClient = client;
+	}
 
 	public int TryShootMultiple(float timeBetweenShotsInTicks)
 	{
@@ -32,33 +47,34 @@ public class ActionStack
 	public boolean IsReloading() { return ActiveReloads.size() > 0; }
 	public void RequestCancel() { cancelActionRequested = true; }
 
-	public Action AddAction(Level level, GunContext context, Action action)
+	public void AddAction(ActionContext context, Action action)
 	{
 		ActiveActions.add(action);
-		if (level.isClientSide)
+		if(IsClient)
 			action.OnStartClient(context);
 		else
 			action.OnStartServer(context);
-		return action;
 	}
 
-	public void AddReload(Level level, GunContext context, EActionSet actionSet, InteractionHand hand, ReloadDefinition reloadDef)
+	public void AddReload(ActionContext context, ReloadProgress reload)
 	{
-		ReloadProgress reload = new ReloadProgress(reloadDef, actionSet, hand);
-		EnterReloadState(context, reload, hand, EReloadStage.Start);
-		ActiveReloads.add(reload);
-		cancelActionRequested = false;
+		if(!IsReloading())
+		{
+			ActiveReloads.add(reload);
+			cancelActionRequested = false;
+			EnterReloadState(context, reload, EReloadStage.Start);
+		}
 	}
 
-	private void EnterReloadState(GunContext context, ReloadProgress reload, InteractionHand hand, EReloadStage stage)
+	private void EnterReloadState(ActionContext actionContext, ReloadProgress reload, EReloadStage stage)
 	{
-		if(context.IsValidForUse())
+		if(actionContext.IsValid())
 		{
 			ActionDefinition[] reloadActionDefs = reload.Def.GetReloadActions(stage);
 			for (int i = 0; i < reloadActionDefs.length; i++)
 			{
-				Action action = Actions.CreateAction(this, reloadActionDefs[i], hand);
-				AddAction(context.shootFrom.level, context, action);
+				Action action = Actions.CreateAction(reloadActionDefs[i], EActionInput.RELOAD);
+				AddAction(actionContext, action);
 			}
 			reload.CurrentStage = stage;
 			reload.TicksInCurrentStage = 0;
@@ -67,8 +83,8 @@ public class ActionStack
 			{
 				case LoadOne:
 				{
-					int slotToLoad = context.GetNextBulletSlotToLoad(reload.ActionSet);
-					context.LoadOne(reload.ActionSet, slotToLoad);
+					int slotToLoad = actionContext.Gun().GetNextBulletSlotToLoad();
+					actionContext.Gun().LoadOne(slotToLoad);
 					break;
 				}
 			}
@@ -76,7 +92,7 @@ public class ActionStack
 	}
 
 
-	public void OnTick(Level level, GunContext mainHand, GunContext offHand)
+	public void OnTick(Level level, GunContext gunContext)
 	{
 		ShotCooldown--;
 		if(ShotCooldown < 0.0f)
@@ -86,8 +102,6 @@ public class ActionStack
 		{
 			ReloadProgress reload = ActiveReloads.get(i);
 			reload.TicksInCurrentStage++;
-			GunContext context = reload.Hand == InteractionHand.MAIN_HAND ? mainHand : offHand;
-
 			if(reload.FinishedCurrentStage())
 			{
 				EReloadStage nextStage = null;
@@ -100,7 +114,7 @@ public class ActionStack
 						nextStage = EReloadStage.LoadOne;
 					}
 					case LoadOne -> {
-						if(context.CanPerformReload() && !cancelActionRequested)
+						if(gunContext.CanPerformReload() && !cancelActionRequested)
 							nextStage = EReloadStage.LoadOne;
 						else
 						{
@@ -116,7 +130,8 @@ public class ActionStack
 				}
 				else
 				{
-					EnterReloadState(context, reload, reload.Hand, nextStage);
+					ActionContext actionContext = ActionContext.CreateFrom(gunContext, EActionInput.RELOAD);
+					EnterReloadState(actionContext, reload, nextStage);
 				}
 			}
 		}
@@ -125,18 +140,18 @@ public class ActionStack
 		for(int i = ActiveActions.size() - 1; i >= 0; i--)
 		{
 			Action action = ActiveActions.get(i);
-			GunContext context = action.hand == InteractionHand.MAIN_HAND ? mainHand : offHand;
+			ActionContext actionContext = ActionContext.CreateFrom(gunContext, action.inputType);
 			if(level.isClientSide)
-				action.OnTickClient(context);
+				action.OnTickClient(actionContext);
 			else
-				action.OnTickServer(context);
+				action.OnTickServer(actionContext);
 
 			if(action.Finished())
 			{
 				if(level.isClientSide)
-					action.OnFinishClient(context);
+					action.OnFinishClient(actionContext);
 				else
-					action.OnFinishServer(context);
+					action.OnFinishServer(actionContext);
 				ActiveActions.remove(i);
 			}
 		}

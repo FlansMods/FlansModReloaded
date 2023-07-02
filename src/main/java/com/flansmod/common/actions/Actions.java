@@ -5,15 +5,15 @@ import net.minecraft.world.InteractionHand;
 
 public class Actions
 {
-	public static Action CreateAction(ActionStack stack, ActionDefinition def, InteractionHand hand)
+	public static Action CreateAction(ActionDefinition def, EActionInput inputType)
 	{
 		switch(def.actionType)
 		{
-			case Animation			-> { return new AnimationAction(stack, def, hand); }
-			case Shoot 				-> { return new ShootAction(stack, def, hand); }
-			case Scope				-> { return new ScopeAction(stack, def, hand); }
-			case AimDownSights 		-> { return new AimDownSightAction(stack, def, hand); }
-			case PlaySound  		-> { return new PlaySoundAction(stack, def, hand); }
+			case Animation			-> { return new AnimationAction(def, inputType); }
+			case Shoot 				-> { return new ShootAction(def, inputType); }
+			case Scope				-> { return new ScopeAction(def, inputType); }
+			case AimDownSights 		-> { return new AimDownSightAction(def, inputType); }
+			case PlaySound  		-> { return new PlaySoundAction(def, inputType); }
 			default					-> { return null; }
 		}
 	}

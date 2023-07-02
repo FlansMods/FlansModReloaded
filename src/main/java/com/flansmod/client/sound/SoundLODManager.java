@@ -33,19 +33,24 @@ public class SoundLODManager
 				if(distance >= lodDefinition.minDistance && lodDefinition.minDistance > bestLOD)
 				{
 					bestLOD = lodDefinition.minDistance;
-					soundToPlay = lodDefinition.GetSoundLocation();
+					ResourceLocation lodSoundToPlay = lodDefinition.GetSoundLocation();
+					if(lodSoundToPlay != null)
+						soundToPlay = lodSoundToPlay;
 				}
 			}
 
-			Minecraft.getInstance().level.playLocalSound(
-				onEntity.position().x,
-				onEntity.position().y,
-				onEntity.position().z,
-				SoundEvent.createFixedRangeEvent(soundToPlay, soundDef.maxRange),
-				SoundSource.HOSTILE,
-				GetVolume(soundDef, Minecraft.getInstance().level.random),
-				GetPitch(soundDef, Minecraft.getInstance().level.random),
-				true);
+			if(soundToPlay != null)
+			{
+				Minecraft.getInstance().level.playLocalSound(
+					onEntity.position().x,
+					onEntity.position().y,
+					onEntity.position().z,
+					SoundEvent.createFixedRangeEvent(soundToPlay, soundDef.maxRange),
+					SoundSource.HOSTILE,
+					GetVolume(soundDef, Minecraft.getInstance().level.random),
+					GetPitch(soundDef, Minecraft.getInstance().level.random),
+					true);
+			}
 		}
 	}
 

@@ -1,18 +1,14 @@
 package com.flansmod.common.gunshots;
 
 import com.flansmod.common.FlansMod;
-import com.flansmod.common.actions.EActionSet;
+import com.flansmod.common.actions.EActionInput;
 import com.flansmod.common.types.bullets.BulletDefinition;
 import com.flansmod.common.types.guns.GunDefinition;
 import com.flansmod.util.MinecraftHelpers;
-import net.minecraft.client.Minecraft;
-import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 
@@ -28,7 +24,7 @@ public class GunshotCollection
 	public int seatID; // If relevant to this entity type, it will specify the seat number
 	public int bulletHash;
 	public int gunHash;
-	public EActionSet actionUsed;
+	public EActionInput actionUsed;
 	public ResourceKey<Level> dimension;
 	public List<Gunshot> shots = new ArrayList<>(2);
 
@@ -78,7 +74,7 @@ public class GunshotCollection
 		return this;
 	}
 
-	public GunshotCollection FromAction(EActionSet actionSet)
+	public GunshotCollection FromAction(EActionInput actionSet)
 	{
 		actionUsed = actionSet;
 		return this;
@@ -141,7 +137,7 @@ public class GunshotCollection
 			buf.writeInt(shotCollection.seatID);
 			buf.writeInt(shotCollection.bulletHash);
 			buf.writeInt(shotCollection.gunHash);
-			buf.writeBoolean(shotCollection.actionUsed == EActionSet.PRIMARY);
+			buf.writeBoolean(shotCollection.actionUsed == EActionInput.PRIMARY);
 			buf.writeResourceKey(shotCollection.dimension);
 		}
 	}
@@ -161,7 +157,7 @@ public class GunshotCollection
 			shotCollection.seatID = buf.readInt();
 			shotCollection.bulletHash = buf.readInt();
 			shotCollection.gunHash = buf.readInt();
-			shotCollection.actionUsed = buf.readBoolean() ? EActionSet.PRIMARY : EActionSet.SECONDARY;
+			shotCollection.actionUsed = buf.readBoolean() ? EActionInput.PRIMARY : EActionInput.SECONDARY;
 			shotCollection.dimension = buf.readResourceKey(Registries.DIMENSION);
 		}
 	}

@@ -1,6 +1,6 @@
 package com.flansmod.common.types.elements;
 
-import com.flansmod.common.actions.EActionSet;
+import com.flansmod.common.actions.EActionInput;
 import com.flansmod.common.types.JsonField;
 
 public class ModifierDefinition
@@ -21,13 +21,13 @@ public class ModifierDefinition
 	public boolean ApplyToSecondary = false;
 
 
-	public boolean AppliesTo(EActionSet actionSet)
+	public boolean AppliesTo(EActionInput actionSet)
 	{
-		return actionSet == EActionSet.PRIMARY ? ApplyToPrimary : ApplyToSecondary;
+		return actionSet == EActionInput.PRIMARY ? ApplyToPrimary : ApplyToSecondary;
 	}
-	public boolean AppliesTo(String stat, EActionSet actionSet)
+	public boolean AppliesTo(String stat, EActionInput actionSet)
 	{
 		return Stat.equals(stat)
-			&& (actionSet == EActionSet.PRIMARY ? ApplyToPrimary : ApplyToSecondary);
+			&& (actionSet == EActionInput.PRIMARY ? ApplyToPrimary : ApplyToSecondary);
 	}
 }

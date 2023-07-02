@@ -81,8 +81,10 @@ public abstract class FlanItemModelRenderer extends BlockEntityWithoutLevelRende
             return;
         }
 
+        ms.pushPose();
         BakedRig.ApplyTransform(transformType, ms, false);
         RenderItem(entity, transformType, stack, ms, buffers, light, overlay);
+        ms.popPose();
     }
 
     protected void RenderItem(Entity entity,

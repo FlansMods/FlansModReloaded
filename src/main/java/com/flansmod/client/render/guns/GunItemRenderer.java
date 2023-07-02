@@ -8,14 +8,15 @@ import com.flansmod.client.render.animation.elements.PoseDefinition;
 import com.flansmod.client.render.animation.elements.SequenceDefinition;
 import com.flansmod.client.render.animation.elements.SequenceEntryDefinition;
 import com.flansmod.client.render.models.TurboRig;
-import com.flansmod.common.FlansMod;
 import com.flansmod.common.actions.Action;
 import com.flansmod.common.actions.ActionStack;
 import com.flansmod.common.actions.AnimationAction;
+import com.flansmod.common.gunshots.ActionContext;
+import com.flansmod.common.gunshots.ShooterContext;
 import com.flansmod.common.types.attachments.AttachmentDefinition;
 import com.flansmod.common.types.attachments.EAttachmentType;
 import com.flansmod.common.types.elements.AttachmentSettingsDefinition;
-import com.flansmod.common.types.guns.GunContext;
+import com.flansmod.common.gunshots.GunContext;
 import com.flansmod.util.Maths;
 import com.flansmod.util.MinecraftHelpers;
 import com.flansmod.util.Transform;
@@ -48,36 +49,26 @@ public class GunItemRenderer extends FlanItemModelRenderer
                             PoseStack ms,
                             Consumer<String> renderPart)
     {
-
-        GunContext context =
-            entity != null ?
-            GunContext.TryCreateFromEntity(entity, MinecraftHelpers.GetHand(transformType)) :
-            GunContext.TryCreateFromItemStack(stack);
-        if(!context.IsValidForRender())
+        // Find a sensible GunContext
+        ShooterContext shooter = ShooterContext.CreateFrom(entity);
+        GunContext gunContext = shooter.IsValid() ?
+            GunContext.CreateFrom(shooter, MinecraftHelpers.GetHand(transformType)) :
+            GunContext.CreateFrom(stack);
+        if(!gunContext.IsValid())
             return;
 
-        ActionStack actions =
-            context.IsValidForUse() ?
-            FlansModClient.GUNSHOTS_CLIENT.GetActionStack(Minecraft.getInstance().cameraEntity) :
-            null;
-
+        // If there is a valid action stack applicable to this gun, scan it for animation actions
+        ActionStack actions = gunContext.GetActionStack();
         if(actions != null)
         {
             for (Action action : actions.GetActions())
             {
-                if (!action.ShouldRender(context))
+                if (!action.ShouldRender(gunContext))
                     return;
-
-                if(action instanceof AnimationAction animAction)
-                {
-                    //FlansMod.LOGGER.info(animAction.actionDef.anim);
-                }
             }
-
-            //FlansMod.LOGGER.info(actions.GetActions().size() + " actions for " + entity.getName().getString());
         }
 
-        AnimationDefinition animationSet = FlansModClient.ANIMATIONS.get(new ResourceLocation(context.GunDef().animationSet));
+        AnimationDefinition animationSet = FlansModClient.ANIMATIONS.get(new ResourceLocation(gunContext.GunDef().animationSet));
         ms.pushPose();
         {
             //ApplyRootRotation(stack, actions, ms, transformType);
@@ -101,13 +92,13 @@ public class GunItemRenderer extends FlanItemModelRenderer
                 PushAnimateRenderPop.accept("revolver");
                 PushAnimateRenderPop.accept("slide");
                 PushAnimateRenderPop.accept("pump");
-                for(int i = 0; i < context.GunDef().numBullets; i++)
+                for(int i = 0; i < gunContext.GunDef().numBullets; i++)
                     PushAnimateRenderPop.accept("ammo_" + i);
 
-                RenderPartOrAttachment(context, EAttachmentType.Barrel, PushAnimateRenderPop, "barrel");
-                RenderPartOrAttachment(context, EAttachmentType.Grip, PushAnimateRenderPop, "grip");
-                RenderPartOrAttachment(context, EAttachmentType.Sights, PushAnimateRenderPop, "scope");
-                RenderPartOrAttachment(context, EAttachmentType.Stock, PushAnimateRenderPop, "stock");
+                RenderPartOrAttachment(gunContext, EAttachmentType.Barrel, PushAnimateRenderPop, "barrel");
+                RenderPartOrAttachment(gunContext, EAttachmentType.Grip, PushAnimateRenderPop, "grip");
+                RenderPartOrAttachment(gunContext, EAttachmentType.Sights, PushAnimateRenderPop, "scope");
+                RenderPartOrAttachment(gunContext, EAttachmentType.Stock, PushAnimateRenderPop, "stock");
 
                 PushAnimateRenderPop.accept("rightHand");
             }
@@ -221,9 +212,6 @@ public class GunItemRenderer extends FlanItemModelRenderer
     {
         if(transformType.firstPerson())
         {
-
-
-
             if(actions != null)
             {
                 for(Action action : actions.GetActions())

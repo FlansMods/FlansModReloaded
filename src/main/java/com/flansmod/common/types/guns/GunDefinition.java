@@ -1,8 +1,7 @@
 package com.flansmod.common.types.guns;
 
 import com.flansmod.common.FlansMod;
-import com.flansmod.common.actions.Action;
-import com.flansmod.common.actions.EActionSet;
+import com.flansmod.common.actions.EActionInput;
 import com.flansmod.common.types.JsonDefinition;
 import com.flansmod.common.types.JsonField;
 import com.flansmod.common.types.attachments.EAttachmentType;
@@ -77,10 +76,16 @@ public class GunDefinition extends JsonDefinition
 	}
 
 	@Nonnull
-	public ActionDefinition[] GetActions(EActionSet set)
+	public ActionDefinition[] GetActions(EActionInput set)
 	{
-		ActionDefinition[] ret = set == EActionSet.PRIMARY ? primaryActions : secondaryActions;
-		return ret != null ? ret : new ActionDefinition[0];
+		switch(set)
+		{
+			case PRIMARY: return primaryActions;
+			case SECONDARY: return secondaryActions;
+			case RELOAD: return reload.GetReloadActions(EReloadStage.Start);
+			case LOOK_AT: return lookAtActions;
+			default: return new ActionDefinition[0];
+		}
 	}
 
 	public AttachmentSettingsDefinition GetAttachmentSettings(EAttachmentType type)

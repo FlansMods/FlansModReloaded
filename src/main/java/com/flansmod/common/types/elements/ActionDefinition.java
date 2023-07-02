@@ -6,9 +6,12 @@ import com.flansmod.common.types.guns.EFireMode;
 
 public class ActionDefinition
 {
+	public static final ActionDefinition Invalid = new ActionDefinition();
+	public boolean IsValid() { return actionType != EActionType.Invalid; }
+
 	// General fields
 	@JsonField
-	public EActionType actionType = EActionType.Animation;
+	public EActionType actionType = EActionType.Invalid;
 	@JsonField
 	public boolean canActUnderwater = true;
 	@JsonField

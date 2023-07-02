@@ -10,7 +10,7 @@ import com.flansmod.client.render.debug.DebugRenderer;
 import com.flansmod.client.render.decals.DecalRenderer;
 import com.flansmod.client.render.guns.ShotRenderer;
 import com.flansmod.common.FlansMod;
-import com.flansmod.common.gunshots.GunshotManager;
+import com.flansmod.common.gunshots.ActionManager;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraft.client.renderer.ItemModelShaper;
@@ -34,7 +34,7 @@ public class FlansModClient
 	public static FlanModelRegistration MODEL_REGISTRATION = new FlanModelRegistration();
 	public static AnimationDefinitions ANIMATIONS = new AnimationDefinitions();
 	public static DecalRenderer DECAL_RENDERER = new DecalRenderer();
-	public static GunshotManager GUNSHOTS_CLIENT = new GunshotManager();
+	public static ActionManager ACTIONS_CLIENT = new ActionManager(true);
 
 	@SubscribeEvent
 	public static void OnRegisterGeometryLoaders(ModelEvent.RegisterGeometryLoaders event) { MODEL_REGISTRATION.OnRegisterGeometryLoaders(event); }
@@ -54,7 +54,7 @@ public class FlansModClient
 	public static void Init()
 	{
 		IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
-		GUNSHOTS_CLIENT.HookClient(modEventBus);
+		ACTIONS_CLIENT.HookClient(modEventBus);
 		new DebugModelPoser().Init();
 		MODEL_REGISTRATION.hook(modEventBus);
 		modEventBus.register(ANIMATIONS);

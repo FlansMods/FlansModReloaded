@@ -3,13 +3,10 @@ package com.flansmod.common.actions;
 import com.flansmod.common.types.elements.ReloadDefinition;
 import com.flansmod.common.types.guns.EReloadStage;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.item.ItemStack;
 
 public class ReloadProgress
 {
 	public ReloadDefinition Def;
-	public InteractionHand Hand;
-	public EActionSet ActionSet;
 	public EReloadStage CurrentStage;
 	public int TicksInCurrentStage;
 	public float SecondsInCurrentStage() { return TicksInCurrentStage / 20f; }
@@ -26,11 +23,9 @@ public class ReloadProgress
 		}
 	}
 
-	public ReloadProgress(ReloadDefinition def, EActionSet actionSet, InteractionHand hand)
+	public ReloadProgress(ReloadDefinition def)
 	{
 		Def = def;
-		ActionSet = actionSet;
-		Hand = hand;
 		CurrentStage = EReloadStage.Start;
 		TicksInCurrentStage = 0;
 	}

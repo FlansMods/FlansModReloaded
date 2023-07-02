@@ -6,16 +6,14 @@ import net.minecraft.resources.ResourceLocation;
 public abstract class JsonDefinition
 {
 	public ResourceLocation GetLocation() { return data; }
+	public boolean IsValid() { return !data.getPath().contains("null"); }
 
 	public ResourceLocation data;
-
 	public JsonDefinition(ResourceLocation srcLoc)
 	{
 		data = srcLoc;
 	}
-
 	public abstract String GetTypeName();
-	
 	public void LoadExtra(JsonElement jRoot) {}
 
 	@Override

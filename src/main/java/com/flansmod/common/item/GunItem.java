@@ -21,6 +21,7 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.event.InputEvent;
 import net.minecraftforge.client.extensions.common.IClientItemExtensions;
 import net.minecraftforge.common.ToolAction;
+import net.minecraftforge.event.entity.living.LivingEntityUseItemEvent;
 
 import javax.annotation.Nonnull;
 import java.util.function.Consumer;
@@ -51,15 +52,22 @@ public class GunItem extends FlanItem
     {
         if(event.isAttack()) // Primary actions
         {
-            FlansModClient.GUNSHOTS_CLIENT.ClientShoot(player, event.getHand(), EActionSet.PRIMARY);
+          //  FlansModClient.ACTIONS_CLIENT.ClientInputEvent(player, event.getHand(), EActionInput.PRIMARY);
+            //player.startUsingItem(event.getHand());
         }
         else if(event.isUseItem()) // Secondary actions
         {
-            FlansModClient.GUNSHOTS_CLIENT.ClientShoot(player, event.getHand(), EActionSet.SECONDARY);
+            //FlansModClient.ACTIONS_CLIENT.ClientInputEvent(player, event.getHand(), EActionInput.SECONDARY);
         }
     }
 
+    @OnlyIn(Dist.CLIENT)
+    public void ClientUpdateUsing(Player player, ItemStack stack, LivingEntityUseItemEvent.Tick event)
+    {
+       // int useRemaining = FlansModClient.ACTIONS_CLIENT.ClientInputHeldUpdate(player, event.getEntity().getUsedItemHand());
 
+       // event.setDuration(useRemaining);
+    }
 
     @Nonnull
     @Override

@@ -207,7 +207,7 @@
             "lockSeatToGunAngles": false,
             "traveseIndependently": false,
             "yawSound": {
-                "sound": {},
+                "sound": "",
                 "length": 0.0,
                 "minPitchMultiplier": 1.0,
                 "maxPitchMultiplier": 1.0,
@@ -215,7 +215,7 @@
                 "LODs": []
             },
             "pitchSound": {
-                "sound": {},
+                "sound": "",
                 "length": 0.0,
                 "minPitchMultiplier": 1.0,
                 "maxPitchMultiplier": 1.0,
