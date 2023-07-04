@@ -112,6 +112,7 @@ public class Raytracer
             {
                 // Take the hit and calculate the penetration falloff
                 boolean bCanPenetrate = false;
+                boolean bShouldHit = true;
                 switch (hit.getType())
                 {
                     case ENTITY ->
@@ -122,6 +123,8 @@ public class Raytracer
                             bCanPenetrate = penetrationPowerVsEntities >= living.getArmorValue();
                         }
                         else bCanPenetrate = true;
+
+                        bShouldHit = entHit.getEntity() != from;
                     }
                     case BLOCK ->
                     {
@@ -134,7 +137,8 @@ public class Raytracer
                     }
                 }
 
-                outHitList.add(hit);
+                if(bShouldHit)
+                    outHitList.add(hit);
                 if(!bCanPenetrate)
                 {
                     testPoint = endPoint;

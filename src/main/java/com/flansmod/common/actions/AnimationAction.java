@@ -14,40 +14,18 @@ public class AnimationAction extends Action
 
 	private static final int HOLD_END_POSE_TICKS = 1;
 	@Override
-	public boolean Finished()
+	public boolean Finished(ActionContext context)
 	{
 		return progress > duration;
 	}
+	@Override
+	protected void OnTriggerServer(ActionContext context)
+	{
 
-	@Override
-	public void OnStartServer(ActionContext context)
-	{
-		super.OnStartServer(context);
 	}
 	@Override
-	public void OnTickServer(ActionContext context)
+	protected void OnTriggerClient(ActionContext context)
 	{
-		super.OnTickServer(context);
-	}
-	@Override
-	public void OnFinishServer(ActionContext context)
-	{
-		super.OnFinishServer(context);
-	}
 
-	@Override
-	public void OnStartClient(ActionContext context)
-	{
-		super.OnStartClient(context);
-	}
-	@Override
-	public void OnTickClient(ActionContext context)
-	{
-		super.OnTickClient(context);
-	}
-	@Override
-	public void OnFinishClient(ActionContext context)
-	{
-		super.OnFinishClient(context);
 	}
 }

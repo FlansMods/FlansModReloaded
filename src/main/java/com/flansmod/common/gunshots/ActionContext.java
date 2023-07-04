@@ -2,14 +2,10 @@ package com.flansmod.common.gunshots;
 
 import com.flansmod.common.actions.*;
 import com.flansmod.common.types.elements.ActionDefinition;
-import com.flansmod.common.types.guns.CachedGunStats;
 import com.flansmod.common.types.guns.EActionType;
 import com.flansmod.common.types.guns.ESpreadPattern;
 import com.flansmod.common.types.guns.GunDefinition;
-import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.player.Inventory;
-import net.minecraft.world.item.ItemStack;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -33,10 +29,6 @@ public class ActionContext
 	public ActionStack ActionStack() { return Gun.GetActionStack(); }
 
 	public boolean IsValid() { return Gun().IsValid(); }
-
-	// Caches
-	@Nullable
-	public CachedGunStats StatCache = null;
 
 	public static ActionContext CreateFrom(GunContext gunContext, EActionInput inputType)
 	{
@@ -85,43 +77,14 @@ public class ActionContext
 	}
 
 	@Nonnull
-	private CachedGunStats GetStatCache()
+	public CachedActionStats BuildActionStatCache(ActionDefinition actionDef)
 	{
-		if(StatCache == null)
-		{
-			StatCache = new CachedGunStats();
-			ActionDefinition shootAction = GetShootActionDefinition();
-			if (shootAction != null)
-			{
-				StatCache.InitializeFrom(shootAction.shootStats[0]);
-			}
-
-			var modifierMap = Gun.GetAllApplicableModifiers(InputType);
-			for (var kvp : modifierMap.entrySet())
-			{
-				StatCache.ApplyModifiers(kvp.getKey(), kvp.getValue());
-			}
-		}
-
-		return StatCache;
+		return new CachedActionStats(actionDef, Gun().GetAllApplicableModifiers(InputType));
 	}
 
-	public CachedGunStats GetStatBlock() { return GetStatCache(); }
-	public float VerticalRecoil() { return GetStatCache().VerticalRecoil();}
-	public float HorizontalRecoil() { return GetStatCache().HorizontalRecoil();}
-	public float Spread() { return GetStatCache().Spread();}
-	public float Speed() { return GetStatCache().Speed();}
-	public int Count() { return GetStatCache().Count();}
-	public float TimeToNextShot() { return GetStatCache().TimeToNextShot();}
-	public float PenetrationPower() { return GetStatCache().PenetrationPower();}
-	public float BaseDamage() { return GetStatCache().BaseDamage();}
-	public float Knockback() { return GetStatCache().Knockback();}
-	public float MultiplierVsPlayers() { return GetStatCache().MultiplierVsPlayers();}
-	public float MultiplierVsVehicles() { return GetStatCache().MultiplierVsVehicles();}
-	public float SplashDamageRadius() { return GetStatCache().SplashDamageRadius();}
-	public float SplashDamageFalloff() { return GetStatCache().SplashDamageFalloff();}
-	public float SetFireToTarget() { return GetStatCache().SetFireToTarget();}
-	public float FireSpreadRadius() { return GetStatCache().FireSpreadRadius();}
-	public float FireSpreadAmount() { return GetStatCache().FireSpreadAmount();}
-	public ESpreadPattern SpreadPattern() { return GetStatCache().SpreadPattern();}
+	@Nonnull
+	public CachedGunStats BuildGunStatCache(ActionDefinition actionDef)
+	{
+		return new CachedGunStats(actionDef.shootStats[0], Gun().GetAllApplicableModifiers(InputType));
+	}
 }

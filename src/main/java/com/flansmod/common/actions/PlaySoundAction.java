@@ -20,10 +20,13 @@ public class PlaySoundAction extends Action
 	}
 
 	@Override
-	public void OnStartClient(ActionContext context)
+	protected void OnTriggerServer(ActionContext context)
 	{
-		super.OnStartClient(context);
 
+	}
+	@Override
+	protected void OnTriggerClient(ActionContext context)
+	{
 		for(SoundDefinition soundDef : actionDef.sounds)
 		{
 			SoundLODManager.PlaySound(soundDef, context.Shooter().Entity());

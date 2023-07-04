@@ -22,6 +22,18 @@ public class AimDownSightAction extends Action
 	}
 
 	@Override
+	protected void OnTriggerClient(ActionContext context)
+	{
+
+	}
+
+	@Override
+	protected void OnTriggerServer(ActionContext context)
+	{
+
+	}
+
+	@Override
 	public void OnTickClient(ActionContext context)
 	{
 		super.OnTickClient(context);
@@ -54,7 +66,7 @@ public class AimDownSightAction extends Action
 	}
 
 	@Override
-	public boolean Finished()
+	public boolean Finished(ActionContext context)
 	{
 		return shouldStop;
 	}

@@ -350,7 +350,28 @@ public abstract class GunContext
 		return applicableModifiers;
 	}
 
-	public Map<String, List<ModifierDefinition>> GetAllApplicableModifiers(EActionInput actionSet)
+	public List<ModifierDefinition> GetAllApplicableModifiers(EActionInput actionSet)
+	{
+		List<ModifierDefinition> results = new ArrayList<>();
+		List<ItemStack> attachmentStacks = GetAttachmentStacks();
+		for (ItemStack attachmentStack : attachmentStacks)
+		{
+			if (attachmentStack.getItem() instanceof AttachmentItem attachmentItem)
+			{
+				AttachmentDefinition attachDef = attachmentItem.Def();
+				for (ModifierDefinition modifierDef : attachDef.modifiers)
+				{
+					if (modifierDef.AppliesTo(actionSet))
+					{
+						results.add(modifierDef);
+					}
+				}
+			}
+		}
+		return results;
+	}
+
+	public Map<String, List<ModifierDefinition>> GetAllApplicableModifiersMap(EActionInput actionSet)
 	{
 		Map<String, List<ModifierDefinition>> results = new IdentityHashMap<>();
 		List<ItemStack> attachmentStacks = GetAttachmentStacks();

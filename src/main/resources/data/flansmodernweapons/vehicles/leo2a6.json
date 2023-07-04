@@ -131,32 +131,34 @@
                     "canActUnderOtherLiquid": false,
                     "canBeOverriden": true,
                     "twoHanded": false,
+                    "repeatMode": "SemiAuto",
+                    "repeatDelay": 0.0,
+                    "repeatCount": 0,
+                    "spinUpDuration": 1.0,
+                    "duration": 0.0,
                     "sounds": [
                         {
                             "sound": "RPDShoot",
                             "length": 0.0,
                             "minPitchMultiplier": 0.8333333,
                             "maxPitchMultiplier": 1.25,
+                            "minVolume": 1.0,
+                            "maxVolume": 1.0,
                             "maxRange": 100.0,
                             "LODs": []
                         }
                     ],
-                    "duration": 0.0,
                     "itemStack": "",
                     "shootStats": [
                         {
-                            "verticalReocil": 7.0,
+                            "verticalRecoil": 7.0,
                             "horizontalRecoil": 0.0,
                             "spread": 3.0,
                             "spreadPattern": "Circle",
                             "hitscan": true,
                             "speed": 0.0,
-                            "fireMode": "FullAuto",
-                            "repeatCount": 3,
                             "bulletCount": 1,
-                            "spinUpDuration": 1.5,
                             "spinSpeed": 360.0,
-                            "timeToNextShot": 2.0,
                             "breaksMaterials": [],
                             "matchAmmoNames": [
                                 "m60ammo",
@@ -211,6 +213,8 @@
                 "length": 0.0,
                 "minPitchMultiplier": 1.0,
                 "maxPitchMultiplier": 1.0,
+                "minVolume": 1.0,
+                "maxVolume": 1.0,
                 "maxRange": 100.0,
                 "LODs": []
             },
@@ -219,6 +223,8 @@
                 "length": 0.0,
                 "minPitchMultiplier": 1.0,
                 "maxPitchMultiplier": 1.0,
+                "minVolume": 1.0,
+                "maxVolume": 1.0,
                 "maxRange": 100.0,
                 "LODs": []
             }
@@ -232,8 +238,12 @@
                     "canActUnderOtherLiquid": false,
                     "canBeOverriden": false,
                     "twoHanded": false,
-                    "sounds": [],
+                    "repeatMode": "SemiAuto",
+                    "repeatDelay": 0.0,
+                    "repeatCount": 0,
+                    "spinUpDuration": 1.0,
                     "duration": 0.0,
+                    "sounds": [],
                     "itemStack": "",
                     "shootStats": [],
                     "fovFactor": 1.25,
@@ -249,8 +259,12 @@
                     "canActUnderOtherLiquid": false,
                     "canBeOverriden": false,
                     "twoHanded": false,
-                    "sounds": [],
+                    "repeatMode": "SemiAuto",
+                    "repeatDelay": 0.0,
+                    "repeatCount": 0,
+                    "spinUpDuration": 1.0,
                     "duration": 0.0,
+                    "sounds": [],
                     "itemStack": "",
                     "shootStats": [],
                     "fovFactor": 1.25,
@@ -284,6 +298,8 @@
                 "length": 1.0,
                 "minPitchMultiplier": 1.0,
                 "maxPitchMultiplier": 1.0,
+                "minVolume": 1.0,
+                "maxVolume": 1.0,
                 "maxRange": 100.0,
                 "LODs": []
             },
@@ -292,6 +308,8 @@
                 "length": 1.0,
                 "minPitchMultiplier": 1.0,
                 "maxPitchMultiplier": 1.0,
+                "minVolume": 1.0,
+                "maxVolume": 1.0,
                 "maxRange": 100.0,
                 "LODs": []
             }
@@ -305,32 +323,34 @@
                     "canActUnderOtherLiquid": false,
                     "canBeOverriden": true,
                     "twoHanded": false,
+                    "repeatMode": "SemiAuto",
+                    "repeatDelay": 0.0,
+                    "repeatCount": 0,
+                    "spinUpDuration": 1.0,
+                    "duration": 0.0,
                     "sounds": [
                         {
                             "sound": "RPDShoot",
                             "length": 0.0,
                             "minPitchMultiplier": 0.8333333,
                             "maxPitchMultiplier": 1.25,
+                            "minVolume": 1.0,
+                            "maxVolume": 1.0,
                             "maxRange": 100.0,
                             "LODs": []
                         }
                     ],
-                    "duration": 0.0,
                     "itemStack": "",
                     "shootStats": [
                         {
-                            "verticalReocil": 7.0,
+                            "verticalRecoil": 7.0,
                             "horizontalRecoil": 0.0,
                             "spread": 3.0,
                             "spreadPattern": "Circle",
                             "hitscan": true,
                             "speed": 0.0,
-                            "fireMode": "FullAuto",
-                            "repeatCount": 3,
                             "bulletCount": 1,
-                            "spinUpDuration": 1.5,
                             "spinSpeed": 360.0,
-                            "timeToNextShot": 2.0,
                             "breaksMaterials": [],
                             "matchAmmoNames": [
                                 "m60ammo",
@@ -385,6 +405,8 @@
                 "length": 1.0,
                 "minPitchMultiplier": 1.0,
                 "maxPitchMultiplier": 1.0,
+                "minVolume": 1.0,
+                "maxVolume": 1.0,
                 "maxRange": 100.0,
                 "LODs": []
             },
@@ -393,6 +415,8 @@
                 "length": 1.0,
                 "minPitchMultiplier": 1.0,
                 "maxPitchMultiplier": 1.0,
+                "minVolume": 1.0,
+                "maxVolume": 1.0,
                 "maxRange": 100.0,
                 "LODs": []
             }

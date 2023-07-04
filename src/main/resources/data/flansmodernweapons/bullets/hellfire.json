@@ -3,18 +3,14 @@
     "maxStackSize": 24,
     "roundsPerItem": 1,
     "shootStats": {
-        "verticalReocil": 0.0,
+        "verticalRecoil": 0.0,
         "horizontalRecoil": 0.0,
         "spread": 1.0,
         "spreadPattern": "Circle",
         "hitscan": true,
         "speed": 0.0,
-        "fireMode": "SemiAuto",
-        "repeatCount": 1,
         "bulletCount": 1,
-        "spinUpDuration": 1.0,
         "spinSpeed": 360.0,
-        "timeToNextShot": 0.0,
         "breaksMaterials": [
             "glass"
         ],
@@ -39,6 +35,8 @@
                     "length": 1.0,
                     "minPitchMultiplier": 1.0,
                     "maxPitchMultiplier": 1.0,
+                    "minVolume": 1.0,
+                    "maxVolume": 1.0,
                     "maxRange": 50.0,
                     "LODs": []
                 }

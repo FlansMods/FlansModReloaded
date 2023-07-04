@@ -30,9 +30,9 @@
                 {
                     "applyTo": "body",
                     "position": [
+                        "-5",
                         "0",
-                        "0",
-                        "5"
+                        "0"
                     ],
                     "rotation": [
                         "0",
@@ -48,9 +48,9 @@
                 {
                     "applyTo": "slide",
                     "position": [
+                        "-2",
                         "0",
-                        "0",
-                        "2"
+                        "0"
                     ],
                     "rotation": [
                         "0",
@@ -72,9 +72,9 @@
                 {
                     "applyTo": "body",
                     "position": [
-                        "6",
+                        "-2",
                         "2",
-                        "2"
+                        "6"
                     ],
                     "rotation": [
                         "-35",
@@ -96,9 +96,9 @@
                 {
                     "applyTo": "ammo_0",
                     "position": [
-                        "5",
+                        "-10",
                         "-5",
-                        "10"
+                        "5"
                     ],
                     "rotation": [
                         "0",
@@ -122,9 +122,9 @@
                 {
                     "applyTo": "body",
                     "position": [
+                        "-1",
                         "5",
-                        "5",
-                        "1"
+                        "5"
                     ],
                     "rotation": [
                         "45",
@@ -146,9 +146,9 @@
                 {
                     "applyTo": "body",
                     "position": [
-                        "6",
                         "0",
-                        "0"
+                        "0",
+                        "6"
                     ],
                     "rotation": [
                         "-30",
@@ -244,7 +244,7 @@
                     "position": [
                         "-5",
                         "10",
-                        "5"
+                        "-5"
                     ],
                     "rotation": [
                         "-30",
@@ -290,9 +290,9 @@
                 {
                     "applyTo": "body",
                     "position": [
-                        "10",
                         "5",
-                        "-5"
+                        "5",
+                        "10"
                     ],
                     "rotation": [
                         "-75",
@@ -314,9 +314,9 @@
                 {
                     "applyTo": "pump",
                     "position": [
+                        "-3",
                         "0",
-                        "0",
-                        "3"
+                        "0"
                     ],
                     "rotation": [
                         "0",
@@ -364,9 +364,9 @@
                 {
                     "applyTo": "ammo_0",
                     "position": [
-                        "1",
                         "0",
-                        "0"
+                        "0",
+                        "1"
                     ],
                     "rotation": [
                         "0",

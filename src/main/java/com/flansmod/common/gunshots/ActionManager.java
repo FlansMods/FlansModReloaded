@@ -7,6 +7,7 @@ import com.flansmod.common.network.FlansModPacketHandler;
 import com.flansmod.common.network.toclient.ShotFiredMessage;
 import com.flansmod.common.network.toserver.SimpleActionMessage;
 import com.flansmod.common.network.toserver.ShotRequestMessage;
+import com.flansmod.common.types.guns.ERepeatMode;
 import net.minecraft.client.Minecraft;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
@@ -166,9 +167,23 @@ public class ActionManager
 	}
 
 	@OnlyIn(Dist.CLIENT)
-	public void ClientKeyHeld(Player player, EActionInput actionSet)
+	public void ClientKeyHeld(Player player, EActionInput inputType)
 	{
+		// See if any of the in-progress actions on this gun should stop on release
+		ShooterContext shooter = ShooterContext.CreateFrom(player);
+		if(!shooter.IsValid())
+			return;
 
+		// Ask the ShooterContext which actions on which guns we should perform
+		ActionContext[] actionContexts = shooter.GetPrioritisedActions(inputType);
+		for(ActionContext actionContext : actionContexts)
+		{
+			// Check the action stack for this action/gun pairing and see if any of them are waiting for mouse release
+			for(Action action : actionContext.ActionStack().GetActions())
+			{
+				action.UpdateInputHeld(actionContext, true);
+			}
+		}
 	}
 
 	@OnlyIn(Dist.CLIENT)
@@ -186,10 +201,7 @@ public class ActionManager
 			// Check the action stack for this action/gun pairing and see if any of them are waiting for mouse release
 			for(Action action : actionContext.ActionStack().GetActions())
 			{
-				if(action.Lifetime() == EActionLifetime.UntilInputReleased)
-				{
-					action.SetFinished();
-				}
+				action.UpdateInputHeld(actionContext, false);
 			}
 		}
 	}
@@ -437,7 +449,5 @@ public class ActionManager
 	// ----------------------------------------------------------------------------------------------------------------
 	// COMMON
 	// ----------------------------------------------------------------------------------------------------------------
-
-
 
 }

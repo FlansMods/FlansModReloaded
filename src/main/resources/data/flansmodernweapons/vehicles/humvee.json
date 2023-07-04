@@ -190,6 +190,8 @@
                 "length": 0.0,
                 "minPitchMultiplier": 1.0,
                 "maxPitchMultiplier": 1.0,
+                "minVolume": 1.0,
+                "maxVolume": 1.0,
                 "maxRange": 100.0,
                 "LODs": []
             },
@@ -198,6 +200,8 @@
                 "length": 0.0,
                 "minPitchMultiplier": 1.0,
                 "maxPitchMultiplier": 1.0,
+                "minVolume": 1.0,
+                "maxVolume": 1.0,
                 "maxRange": 100.0,
                 "LODs": []
             }

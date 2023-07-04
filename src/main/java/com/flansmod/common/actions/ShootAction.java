@@ -16,7 +16,6 @@ import net.minecraft.core.Vec3i;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.RandomSource;
-import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.boss.EnderDragonPart;
@@ -32,12 +31,16 @@ import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 import org.joml.Vector3d;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
 public class ShootAction extends Action
 {
 	private GunshotCollection results;
+	@Nullable
+	private CachedGunStats GunStatCache = null;
 
 	public ShotDefinition ShotDef() { return actionDef.shootStats[0]; }
 
@@ -94,32 +97,6 @@ public class ShootAction extends Action
 
 
 		return true;
-	}
-
-	public int EvaluateTrigger(GunContext context)
-	{
-		int flags = GunTriggerResult.Flag_None;
-		ItemStack ammo = FindLoadedAmmo(context);
-		if(ammo.isEmpty())
-		{
-			if(context.GunDef().reload.autoReloadWhenEmpty)
-			{
-				flags |= GunTriggerResult.Flag_AutoReloadIfEnabled;
-			}
-			else if(context.GunDef().AmmoConsumeMode == EAmmoConsumeMode.RoundRobin)
-			{
-				flags |= GunTriggerResult.Flag_RotateChambers;
-			}
-		}
-		else
-		{
-			flags |= GunTriggerResult.Flag_Shoot;
-			if(context.GunDef().AmmoConsumeMode == EAmmoConsumeMode.RoundRobin)
-			{
-				flags |= GunTriggerResult.Flag_RotateChambers;
-			}
-		}
-		return flags;
 	}
 
 	public ItemStack FindLoadedAmmo(GunContext context)
@@ -246,16 +223,20 @@ public class ShootAction extends Action
 
 	public void Calculate(ActionContext context)
 	{
-		results = new GunshotCollection()
-			.FromAction(context.InputType())
-			.WithOwner(context.Owner())
-			.WithShooter(context.Entity())
-			.WithGun(context.GunDef());
+		if(results == null)
+		{
+			results = new GunshotCollection()
+				.FromAction(context.InputType())
+				.WithOwner(context.Owner())
+				.WithShooter(context.Entity())
+				.WithGun(context.GunDef());
+		}
 
-		CachedGunStats stats = context.GetStatBlock();
+		CachedGunStats stats = GetGunStats(context);
 
 		// If we are firing something faster than 1200rpm, that is more than 1 per tick
-		int shotsFired = context.ActionStack().TryShootMultiple(stats.TimeToNextShot());
+		// We are now handling repeat actions at the Action level, so ShootAction will just get multiple triggers
+		int shotsFired = 1; //context.ActionStack().TryShootMultiple(stats.TimeToNextShot());
 
 		// We want to shoot {shotsFired} many, but check against and now consume ammo durability
 		shotsFired = TryConsumeAmmo(context.Gun(), shotsFired);
@@ -263,12 +244,16 @@ public class ShootAction extends Action
 		for(int j = 0; j < shotsFired; j++)
 		{
 			// Multiplier from https://github.com/FlansMods/FlansMod/blob/71ba7ed065d906d48f34ca471bbd0172b5192f6b/src/main/java/com/flansmod/common/guns/ShotHandler.java#L93
-			float bulletSpread = 0.0025f * stats.Spread();
-			for (int i = 0; i < stats.Count(); i++)
+			float bulletSpread = 0.0025f * stats.Spread;
+			for (int i = 0; i < stats.BulletCount; i++)
 			{
-				Transform randomizedDirection = RandomizeVectorDirection(context.Shooter().Entity().level.random, context.Shooter().GetShootOrigin(), bulletSpread, stats.SpreadPattern());
+				Transform randomizedDirection = RandomizeVectorDirection(
+					context.Shooter().Entity().level.random,
+					context.Shooter().GetShootOrigin(),
+					bulletSpread,
+					stats.SpreadPattern);
 
-				float penetrationPower = stats.PenetrationPower();
+				float penetrationPower = stats.PenetrationPower;
 
 				List<HitResult> hits = new ArrayList<HitResult>(8);
 				Raytracer.ForLevel(context.Shooter().Entity().level).CastBullet(
@@ -348,10 +333,8 @@ public class ShootAction extends Action
 	}
 
 	@Override
-	public void OnStartServer(ActionContext context)
+	protected void OnTriggerServer(ActionContext context)
 	{
-		super.OnStartServer(context);
-
 		if(!context.Shooter().IsValid())
 		{
 			SetFinished();
@@ -359,7 +342,7 @@ public class ShootAction extends Action
 		}
 
 		Level level = context.Shooter().Entity().level;
-		CachedGunStats stats = context.GetStatBlock();
+		CachedGunStats stats = GetGunStats(context);
 
 		if(results != null)
 		{
@@ -402,10 +385,10 @@ public class ShootAction extends Action
 							}
 
 							// Damage can be applied to anything living, with special multipliers if it was a player
-							float damage = context.BaseDamage();
+							float damage = stats.BaseDamage;
 							if(entity instanceof Player player)
 							{
-								damage *= context.MultiplierVsPlayers();
+								damage *= stats.MultiplierVsPlayers;
 								damage *= hitArea.DamageMultiplier();
 
 								// TODO: Shield item damage multipliers
@@ -425,7 +408,7 @@ public class ShootAction extends Action
 							// Fire and similar can be apllied to all entities
 							if(entity != null)
 							{
-								entity.setSecondsOnFire(Maths.Floor(stats.SetFireToTarget() * 20.0f));
+								entity.setSecondsOnFire(Maths.Floor(stats.SetFireToTarget * 20.0f));
 							}
 						}
 					}
@@ -438,9 +421,8 @@ public class ShootAction extends Action
 	}
 
 	@Override
-	public void OnStartClient(ActionContext context)
+	protected void OnTriggerClient(ActionContext context)
 	{
-		super.OnStartClient(context);
 		if(context.Shooter().IsLocalPlayerOwner())
 		{
 			Calculate(context);
@@ -462,14 +444,14 @@ public class ShootAction extends Action
 						hitEntity = true;
 						if(((EntityHitResult)hit).getEntity() instanceof EnderDragon dragon)
 						{
-							float damage = context.BaseDamage();
+							float damage = BaseDamage(context);
 							damage = damage / 4.0F + Math.min(damage, 1.0F);
 							if(dragon.getHealth() <= damage)
 								hitMLG = true;
 						}
 						else if(((EntityHitResult)hit).getEntity() instanceof EnderDragonPart part)
 						{
-							float damage = context.BaseDamage();
+							float damage = BaseDamage(context);
 							if(part != part.parentMob.head)
 								damage = damage / 4.0F + Math.min(damage, 1.0F);
 							if(part.parentMob.getHealth() <= damage)
@@ -603,4 +585,29 @@ public class ShootAction extends Action
 		}
 		 */
 	}
+
+	@Nonnull
+	private CachedGunStats GetGunStats(ActionContext context)
+	{
+		if(GunStatCache == null)
+			GunStatCache = context.BuildGunStatCache(actionDef);
+		return GunStatCache;
+	}
+	public float VerticalRecoil(ActionContext context) { return GetGunStats(context).VerticalRecoil; }
+	public float HorizontalRecoil(ActionContext context) { return GetGunStats(context).HorizontalRecoil; }
+	public float Spread(ActionContext context) { return GetGunStats(context).Spread; }
+	public float Speed(ActionContext context) { return GetGunStats(context).Speed; }
+	public int Count(ActionContext context) { return GetGunStats(context).BulletCount; }
+	public float PenetrationPower(ActionContext context) { return GetGunStats(context).PenetrationPower; }
+
+	public float BaseDamage(ActionContext context) { return GetGunStats(context).BaseDamage; }
+	public float Knockback(ActionContext context) { return GetGunStats(context).Knockback; }
+	public float MultiplierVsPlayers(ActionContext context) { return GetGunStats(context).MultiplierVsPlayers; }
+	public float MultiplierVsVehicles(ActionContext context) { return GetGunStats(context).MultiplierVsVehicles; }
+	public float SplashDamageRadius(ActionContext context) { return GetGunStats(context).SplashDamageRadius; }
+	public float SplashDamageFalloff(ActionContext context) { return GetGunStats(context).SplashDamageFalloff; }
+	public float SetFireToTarget(ActionContext context) { return GetGunStats(context).SetFireToTarget; }
+	public float FireSpreadRadius(ActionContext context) { return GetGunStats(context).FireSpreadRadius; }
+	public float FireSpreadAmount(ActionContext context) { return GetGunStats(context).FireSpreadAmount; }
+	public ESpreadPattern SpreadPattern(ActionContext context) { return GetGunStats(context).SpreadPattern; }
 }

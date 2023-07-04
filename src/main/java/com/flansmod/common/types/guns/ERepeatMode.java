@@ -1,9 +1,11 @@
 package com.flansmod.common.types.guns;
 
-public enum EFireMode
+public enum ERepeatMode
 {
 	FullAuto,
 	SemiAuto,
 	BurstFire,
 	Minigun,
+
+	Toggle,
 }

@@ -168,7 +168,7 @@ public class ClientRenderHooks
 	}
 
 	private static final ResourceLocation HIT_MARKER_TEXTURE = new ResourceLocation(FlansMod.MODID, "textures/gui/hitmarker.png");
-	private static final float HIT_MARKER_SIZE = 4f;
+	private static final float HIT_MARKER_SIZE = 9f;
 	private static float HitMarkerDurationRemaining = 0.0f;
 	private static boolean isMLG = false;
 	private static ArrayList<Vec2> MLGPositions = new ArrayList<>();
@@ -222,19 +222,11 @@ public class ClientRenderHooks
 
 	private void RenderHitMarker(int i, int j, Vec2 pos)
 	{
-		//Tesselator tesselator = Tesselator.getInstance();
-		//BufferBuilder builder = tesselator.getBuilder();
-		//builder.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX);
 		float uvMin = 0f, uvMax = 9f / 16f;
 		float scale = 1f;
 		float x = pos.x * 64.0f, y = pos.y * 64.0f;
-		//builder.vertex(i*0.5f + x - HIT_MARKER_SIZE*scale, j*0.5f + y + HIT_MARKER_SIZE*scale, -90f).uv(uvMin, uvMax).endVertex();
-		//builder.vertex(i*0.5f + x + HIT_MARKER_SIZE*scale, j*0.5f + y + HIT_MARKER_SIZE*scale, -90f).uv(uvMax, uvMax).endVertex();
-		//builder.vertex(i*0.5f + x + HIT_MARKER_SIZE*scale, j*0.5f + y - HIT_MARKER_SIZE*scale, -90f).uv(uvMax, uvMin).endVertex();
-		//builder.vertex(i*0.5f + x - HIT_MARKER_SIZE*scale, j*0.5f + y - HIT_MARKER_SIZE*scale, -90f).uv(uvMin, uvMin).endVertex();
-		//tesselator.end();
 
-		RenderQuad(i*0.5f + x - HIT_MARKER_SIZE*scale, j*0.5f + y - HIT_MARKER_SIZE*scale,
+		RenderQuad(i*0.5f + x - 0.5f*HIT_MARKER_SIZE*scale, j*0.5f + y - 0.5f*HIT_MARKER_SIZE*scale,
 			HIT_MARKER_SIZE*scale, HIT_MARKER_SIZE*scale,
 			uvMin, uvMin,
 			16, 16);
@@ -261,13 +253,22 @@ public class ClientRenderHooks
 
 			Minecraft.getInstance().getItemRenderer().renderGuiItem(mainContext.GetItemStack(), anchorX + 95, anchorY - 40);
 
+			int x = anchorX + 113;
 			for(int i = 0; i < mainContext.GunDef().numBullets; i++)
 			{
 				ItemStack bulletStack = mainContext.GetBulletStack(i);
 				if(!bulletStack.isEmpty())
 				{
-					Minecraft.getInstance().getItemRenderer().renderGuiItem(bulletStack, anchorX + 113 + 12 * i, anchorY - 41 + (i % 2 == 0 ? 2 : 0));
+					int y = anchorY - 41 + (i % 2 == 0 ? 2 : 0);
+					Minecraft.getInstance().getItemRenderer().renderGuiItem(bulletStack, x, y);
+					if(bulletStack.isDamageableItem())
+					{
+						int countRemaining = bulletStack.getMaxDamage() - bulletStack.getDamageValue();
+						RenderString(poseStack, x + 16, y + 4,  Component.literal(countRemaining + "/" + bulletStack.getMaxDamage()), 0xffffff);
+						x += 32;
+					}
 				}
+				x += 12;
 			}
 
 			RenderString(poseStack, anchorX + 96, anchorY - 50, mainContext.GetItemStack().getHoverName(), 0xffffff);

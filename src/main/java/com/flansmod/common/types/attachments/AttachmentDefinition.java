@@ -5,8 +5,7 @@ import com.flansmod.common.types.JsonDefinition;
 import com.flansmod.common.types.JsonField;
 import com.flansmod.common.types.elements.ActionDefinition;
 import com.flansmod.common.types.elements.ModifierDefinition;
-import com.flansmod.common.types.guns.EActionType;
-import com.flansmod.common.types.guns.EFireMode;
+import com.flansmod.common.types.guns.ERepeatMode;
 import net.minecraft.resources.ResourceLocation;
 
 public class AttachmentDefinition extends JsonDefinition
@@ -48,7 +47,7 @@ public class AttachmentDefinition extends JsonDefinition
 
 
 	@JsonField
-	public EFireMode modeOverride = EFireMode.FullAuto;
+	public ERepeatMode modeOverride = ERepeatMode.FullAuto;
 	@JsonField
 	public boolean overrideFireMode = false;
 }

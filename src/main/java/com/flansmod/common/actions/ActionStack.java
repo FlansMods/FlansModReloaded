@@ -32,13 +32,13 @@ public class ActionStack
 		IsClient = client;
 	}
 
-	public int TryShootMultiple(float timeBetweenShotsInTicks)
+	public int TryShootMultiple(float timeBetweenShotsInSeconds)
 	{
 		int shotCount = 0;
 		while(ShotCooldown < 1.0f)
 		{
 			shotCount++;
-			ShotCooldown += timeBetweenShotsInTicks;
+			ShotCooldown += timeBetweenShotsInSeconds * 20f;
 		}
 		return shotCount;
 	}
@@ -94,6 +94,11 @@ public class ActionStack
 
 	public void OnTick(Level level, GunContext gunContext)
 	{
+		if(level == null)
+		{
+			return;
+		}
+
 		ShotCooldown--;
 		if(ShotCooldown < 0.0f)
 			ShotCooldown = 0.0f;
@@ -146,7 +151,7 @@ public class ActionStack
 			else
 				action.OnTickServer(actionContext);
 
-			if(action.Finished())
+			if(action.Finished(actionContext))
 			{
 				if(level.isClientSide)
 					action.OnFinishClient(actionContext);

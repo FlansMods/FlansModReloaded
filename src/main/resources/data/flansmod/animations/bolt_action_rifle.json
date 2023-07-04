@@ -30,9 +30,9 @@
                 {
                     "applyTo": "body",
                     "position": [
-                        "0",
+                        "-5",
                         "1",
-                        "5"
+                        "0"
                     ],
                     "rotation": [
                         "0",
@@ -54,9 +54,9 @@
                 {
                     "applyTo": "body",
                     "position": [
-                        "3",
+                        "-2",
                         "0",
-                        "2"
+                        "3"
                     ],
                     "rotation": [
                         "-30",
@@ -78,9 +78,9 @@
                 {
                     "applyTo": "slide",
                     "position": [
+                        "2",
                         "0",
-                        "0",
-                        "-2"
+                        "0"
                     ],
                     "rotation": [
                         "0",
@@ -104,9 +104,9 @@
                 {
                     "applyTo": "ammo_0",
                     "position": [
-                        "16",
+                        "0",
                         "-12",
-                        "0"
+                        "16"
                     ],
                     "rotation": [
                         "0",
