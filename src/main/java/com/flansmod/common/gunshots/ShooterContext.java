@@ -3,8 +3,10 @@ package com.flansmod.common.gunshots;
 import com.flansmod.common.actions.EActionInput;
 import com.flansmod.common.item.GunItem;
 import com.flansmod.util.Transform;
+import net.minecraft.world.Container;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
@@ -32,12 +34,18 @@ public abstract class ShooterContext
 		@Override
 		public boolean IsValid() { return false; }
 		@Override
+		public boolean IsCreative() { return false; }
+		@Override
 		public int hashCode() { return 0; }
+		@Override
+		public Container GetAttachedInventory() { return null; }
 	};
 
 	@Nonnull
 	public static ShooterContext CreateFrom(Entity entity)
 	{
+		if(entity instanceof Player player)
+			return new ShooterContextPlayer(player);
 		if(entity instanceof LivingEntity living)
 			return new ShooterContextLiving(living);
 		return INVALID;
@@ -68,8 +76,10 @@ public abstract class ShooterContext
 	public abstract ActionContext[] GetPrioritisedActions(EActionInput action);
 	public abstract Entity Entity();
 	public abstract Entity Owner();
+	public abstract Container GetAttachedInventory();
 	public abstract Transform GetShootOrigin();
 	public abstract boolean IsValid();
+	public abstract boolean IsCreative();
 
 
 }

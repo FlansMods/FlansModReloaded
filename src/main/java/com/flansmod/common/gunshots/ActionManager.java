@@ -159,9 +159,12 @@ public class ActionManager
 						ClientSendToServerAction(actionContext.Gun().GetHand(), inputType);
 				}
 			}
-			else if(shouldFallbackToReload && inputType != EActionInput.RELOAD && !actionContext.ActionStack().IsReloading())
+			else if(shouldFallbackToReload
+				&& !inputType.IsReload
+				&& inputType.GetReloadType() != null
+				&& !actionContext.ActionStack().IsReloading())
 			{
-				ClientKeyPressed(player, EActionInput.RELOAD);
+				ClientKeyPressed(player, inputType.GetReloadType());
 			}
 		}
 	}
@@ -307,7 +310,10 @@ public class ActionManager
 		boolean isValid = true;
 		switch(msg.inputType)
 		{
-			case RELOAD -> { actionContext.ActionStack().AddReload(actionContext, new ReloadProgress(gunContext.GunDef().reload)); }
+			case RELOAD_PRIMARY, RELOAD_SECONDARY -> {
+				actionContext.ActionStack().AddReload(actionContext,
+					new ReloadProgress(gunContext.GunDef().GetReload(msg.inputType), msg.inputType));
+			}
 			case LOOK_AT, PRIMARY, SECONDARY -> {
 				Action[] actions = actionContext.CreateActions();
 				for(Action action : actions)

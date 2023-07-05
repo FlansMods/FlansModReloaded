@@ -1,6 +1,7 @@
 package com.flansmod.common.gunshots;
 
 import com.flansmod.common.actions.ActionStack;
+import net.minecraft.world.Container;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.Item;
@@ -28,7 +29,7 @@ public class GunContextItem extends GunContext
 	@Override
 	public ShooterContext GetShooter() { return ShooterContext.INVALID; }
 	@Override
-	public Inventory GetAttachedInventory() { return null; }
+	public Container GetAttachedInventory() { return null; }
 	@Override
 	public boolean CanPerformActions() { return false; }
 	@Override

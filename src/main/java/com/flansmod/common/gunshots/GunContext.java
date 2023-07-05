@@ -11,6 +11,7 @@ import com.flansmod.common.types.elements.ActionDefinition;
 import com.flansmod.common.types.elements.ModifierDefinition;
 import com.flansmod.common.types.guns.*;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.Container;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.player.Inventory;
@@ -90,7 +91,7 @@ public abstract class GunContext
 	public abstract void SetItemStack(ItemStack stack);
 	public abstract DamageSource CreateDamageSource();
 	public abstract ShooterContext GetShooter();
-	public abstract Inventory GetAttachedInventory();
+	public abstract Container GetAttachedInventory();
 	public abstract boolean CanPerformTwoHandedAction();
 	// Not necessarily valid to ask for a hand, but in cases where it is valid, use this
 	public InteractionHand GetHand() { return null; }
@@ -136,9 +137,13 @@ public abstract class GunContext
 	// --------------------------------------------------------------------------
 	// AMMO
 	// --------------------------------------------------------------------------
-	public ItemStack GetBulletStack(int index)
+	public ItemStack GetBulletStack(EActionInput inputType, int index)
 	{
-		CompoundTag ammoTags = GetOrCreateTags("ammo");
+		String ammoKey = inputType.GetAmmoTagName();
+		if(ammoKey == null)
+			return ItemStack.EMPTY;
+
+		CompoundTag ammoTags = GetOrCreateTags(ammoKey);
 		String key = Integer.toString(index);
 		if(!ammoTags.contains(key))
 		{
@@ -152,24 +157,45 @@ public abstract class GunContext
 		return ItemStack.of(ammoTags.getCompound(key));
 	}
 
-	public void SetBulletStack(int index, ItemStack stack)
+	public void SetBulletStack(EActionInput inputType, int index, ItemStack stack)
 	{
+		String ammoKey = inputType.GetAmmoTagName();
+		if(ammoKey == null)
+			return;
+
 		if(stack.isEmpty())
 			stack = ItemStack.EMPTY;
-		CompoundTag ammoTags = GetOrCreateTags("ammo");
+		CompoundTag ammoTags = GetOrCreateTags(ammoKey);
 		String key = Integer.toString(index);
 		CompoundTag itemTags = new CompoundTag();
 		stack.save(itemTags);
 		ammoTags.put(key, itemTags);
 	}
 
-	public boolean CanPerformReload()
+	public boolean CanBeReloaded(EActionInput inputType)
 	{
+		if(!IsShootAction(inputType))
+			return false;
+
 		for(int i = 0; i < GunDef().numBullets; i++)
 		{
-			if(GetBulletStack(i).isEmpty())
+			if(GetBulletStack(inputType, i).isEmpty())
 				return true;
 		}
+		return false;
+	}
+
+	public boolean CanPerformReloadFromAttachedInventory(EActionInput inputType)
+	{
+		if(!CanBeReloaded(inputType))
+			return false;
+
+		if(GetAttachedInventory() != null)
+		{
+			int matchSlot = FindSlotWithMatchingAmmo(inputType, GetAttachedInventory());
+			return matchSlot != Inventory.NOT_FOUND_INDEX;
+		}
+
 		return false;
 	}
 
@@ -179,66 +205,84 @@ public abstract class GunContext
 		return actionStack != null && actionStack.IsReloading();
 	}
 
-	public int GetCurrentChamber()
+	public int GetCurrentChamber(EActionInput inputType)
 	{
-		return GetItemStack().getOrCreateTag().contains("chamber") ? GetItemStack().getTag().getInt("chamber") : 0;
+		String chamberKey = inputType.GetChamberTagName();
+		if(chamberKey == null)
+			return 0;
+		return GetItemStack().getOrCreateTag().contains(chamberKey) ? GetItemStack().getTag().getInt(chamberKey) : 0;
 	}
 
-	public void SetCurrentChamber(int chamber)
+	public void SetCurrentChamber(EActionInput inputType, int chamber)
 	{
-		GetItemStack().getOrCreateTag().putInt("chamber", chamber);
+		String chamberKey = inputType.GetChamberTagName();
+		if(chamberKey == null)
+			return;
+		GetItemStack().getOrCreateTag().putInt(chamberKey, chamber);
 	}
 
-	public void AdvanceChamber()
+	public void AdvanceChamber(EActionInput inputType)
 	{
-		int chamber = GetCurrentChamber();
+		int chamber = GetCurrentChamber(inputType);
 		chamber++;
 		if(chamber >= GunDef().numBullets)
 			chamber = 0;
-		SetCurrentChamber(chamber);
+		SetCurrentChamber(inputType, chamber);
 	}
 
-	public int GetNextBulletSlotToLoad()
+	public int GetNextBulletSlotToLoad(EActionInput inputType)
 	{
 		for(int i = 0; i < GunDef().numBullets; i++)
 		{
-			if(GetBulletStack(i).isEmpty())
+			if(GetBulletStack(inputType, i).isEmpty())
 				return i;
 		}
 		return Inventory.NOT_FOUND_INDEX;
 	}
 
-	public void LoadOne(int bulletSlot)
+	public void LoadOne(EActionInput inputType, int bulletSlot)
 	{
 		if(bulletSlot < 0 || bulletSlot >= GunDef().numBullets)
 			return;
 
-		// TODO: Reloading needs to support both inputs
-		ActionDefinition shootActionDef = GetShootActionDefinition(EActionInput.PRIMARY);
-		Inventory attachedInventory = GetAttachedInventory();
+		ActionDefinition shootActionDef = GetShootActionDefinition(inputType);
+		Container attachedInventory = GetAttachedInventory();
 		if(shootActionDef != null && attachedInventory != null)
 		{
-			int slot = FindSlotWithMatchingAmmo(shootActionDef, attachedInventory);
+			int slot = FindSlotWithMatchingAmmo(inputType, attachedInventory);
 			if(slot != Inventory.NOT_FOUND_INDEX)
 			{
-				ItemStack stackToLoad = attachedInventory.removeItem(slot, 1);
-				SetBulletStack(bulletSlot, stackToLoad);
+				ItemStack stackToLoad;
+				if(GetShooter().IsCreative())
+				{
+					stackToLoad = attachedInventory.getItem(slot).copyWithCount(1);
+				}
+				else
+				{
+					stackToLoad = attachedInventory.removeItem(slot, 1);
+				}
+
+				SetBulletStack(inputType, bulletSlot, stackToLoad);
 			}
 		}
 	}
 
-	public int FindSlotWithMatchingAmmo(ActionDefinition shootActionDef, Inventory inventory)
+	public int FindSlotWithMatchingAmmo(EActionInput inputType, Container inventory)
 	{
-		for(int i = 0; i < inventory.getContainerSize(); i++)
+		ActionDefinition shootActionDef = GetShootActionDefinition(inputType);
+		if(shootActionDef.IsValid())
 		{
-			ItemStack stack = inventory.getItem(i);
-			if(stack.isEmpty())
-				continue;
-			if(stack.getItem() instanceof BulletItem bullet)
+			for (int i = 0; i < inventory.getContainerSize(); i++)
 			{
-				if(shootActionDef.shootStats[0].GetMatchingBullets().contains(bullet.Def()))
+				ItemStack stack = inventory.getItem(i);
+				if (stack.isEmpty())
+					continue;
+				if (stack.getItem() instanceof BulletItem bullet)
 				{
-					return i;
+					if (shootActionDef.shootStats[0].GetMatchingBullets().contains(bullet.Def()))
+					{
+						return i;
+					}
 				}
 			}
 		}
@@ -251,6 +295,15 @@ public abstract class GunContext
 	public abstract ActionStack GetActionStack();
 	public abstract boolean CanPerformActions();
 
+	public boolean IsShootAction(EActionInput inputType)
+	{
+		EActionInput actionInputType = inputType.GetActionType();
+		if(actionInputType != null)
+			for(ActionDefinition def : GunDef().GetActions(actionInputType))
+				if(def.actionType == EActionType.Shoot)
+					return true;
+		return false;
+	}
 	public boolean HasAction(EActionInput inputType)
 	{
 		return GetActionDefinitions(inputType).length > 0;
@@ -265,9 +318,11 @@ public abstract class GunContext
 		// TODO: Check attachments for changes in action
 		// e.g. An underslung grenade launcher attachment
 
-		for(ActionDefinition def : GunDef().GetActions(inputType))
-			if(def.actionType == EActionType.Shoot)
-				return def;
+		EActionInput shootType = inputType.GetActionType();
+		if(shootType != null)
+			for(ActionDefinition def : GunDef().GetActions(shootType))
+				if(def.actionType == EActionType.Shoot)
+					return def;
 		return ActionDefinition.Invalid;
 	}
 

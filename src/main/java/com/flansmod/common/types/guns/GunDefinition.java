@@ -27,7 +27,9 @@ public class GunDefinition extends JsonDefinition
 	@JsonField
 	public PaintableDefinition paints = new PaintableDefinition();
 	@JsonField
-	public ReloadDefinition reload = new ReloadDefinition();
+	public ReloadDefinition primaryReload = new ReloadDefinition();
+	@JsonField
+	public ReloadDefinition secondaryReload = new ReloadDefinition();
 
 	@JsonField(Docs = "Actions on the primary mouse button, this is where a shoot action normally goes")
 	public ActionDefinition[] primaryActions = new ActionDefinition[0];
@@ -75,6 +77,16 @@ public class GunDefinition extends JsonDefinition
 		super.LoadExtra(jRoot);
 	}
 
+	public ReloadDefinition GetReload(EActionInput inputType)
+	{
+		switch(inputType)
+		{
+			case PRIMARY, RELOAD_PRIMARY -> { return primaryReload; }
+			case SECONDARY, RELOAD_SECONDARY -> { return secondaryReload; }
+			default -> { return null; }
+		}
+	}
+
 	@Nonnull
 	public ActionDefinition[] GetActions(EActionInput set)
 	{
@@ -82,7 +94,8 @@ public class GunDefinition extends JsonDefinition
 		{
 			case PRIMARY: return primaryActions;
 			case SECONDARY: return secondaryActions;
-			case RELOAD: return reload.GetReloadActions(EReloadStage.Start);
+			case RELOAD_PRIMARY: return primaryReload.GetReloadActions(EReloadStage.Start);
+			case RELOAD_SECONDARY: return secondaryReload.GetReloadActions(EReloadStage.Start);
 			case LOOK_AT: return lookAtActions;
 			default: return new ActionDefinition[0];
 		}

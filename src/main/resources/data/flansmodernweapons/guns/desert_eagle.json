@@ -18,7 +18,7 @@
             }
         ]
     },
-    "reload": {
+    "primaryReload": {
         "manualReloadAllowed": true,
         "autoReloadWhenEmpty": true,
         "start": {
@@ -68,6 +68,26 @@
         },
         "end": {
             "duration": 0.0,
+            "actions": []
+        }
+    },
+    "secondaryReload": {
+        "manualReloadAllowed": true,
+        "autoReloadWhenEmpty": true,
+        "start": {
+            "duration": 1.0,
+            "actions": []
+        },
+        "eject": {
+            "duration": 1.0,
+            "actions": []
+        },
+        "loadOne": {
+            "duration": 1.0,
+            "actions": []
+        },
+        "end": {
+            "duration": 1.0,
             "actions": []
         }
     },

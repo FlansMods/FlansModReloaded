@@ -1,6 +1,7 @@
 package com.flansmod.common.gunshots;
 
 import com.flansmod.common.actions.ActionStack;
+import net.minecraft.world.Container;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.damagesource.IndirectEntityDamageSource;
@@ -32,7 +33,7 @@ public class GunContextLiving extends GunContext
 	@Override
 	public void SetItemStack(ItemStack stack) { ShooterContext.Shooter.setItemInHand(Hand, stack); }
 	@Override
-	public Inventory GetAttachedInventory() { return null; }
+	public Container GetAttachedInventory() { return ShooterContext.GetAttachedInventory(); }
 	@Override
 	public DamageSource CreateDamageSource() { return new IndirectEntityDamageSource("gun", ShooterContext.Shooter, ShooterContext.Shooter); }
 	@Override

@@ -16,6 +16,7 @@ public abstract class Action
 	public final ActionDefinition actionDef;
 	public final EActionInput inputType;
 
+	protected boolean finished = false;
 	protected int progress = 0;
 	protected int duration = 0;
 
@@ -41,7 +42,7 @@ public abstract class Action
 		switch(RepeatMode(context))
 		{
 			// These modes are all set to wait until a SetFinished call happens externally
-			case Toggle, FullAuto -> { return progress == Integer.MAX_VALUE; }
+			case Toggle, FullAuto -> { return finished; }
 			// When the minigun has spun down completely, this action finishes
 			case Minigun -> { return !isCharging && charge <= 0.0f; }
 			case SemiAuto, BurstFire ->  { return progress > duration; }
@@ -63,7 +64,7 @@ public abstract class Action
 			}
 		}
 	}
-	public void SetFinished() { progress = Integer.MAX_VALUE; }
+	public void SetFinished() { finished = true; }
 
 	public Action(ActionDefinition def, EActionInput inputType)
 	{

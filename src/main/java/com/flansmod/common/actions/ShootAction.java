@@ -55,7 +55,7 @@ public class ShootAction extends Action
 	@Override
 	public boolean ShouldFallBackToReload(ActionContext context)
 	{
-		if(FindLoadedAmmo(context.Gun()).isEmpty())
+		if(FindLoadedAmmo(context).isEmpty())
 			return true;
 
 		return false;
@@ -73,7 +73,7 @@ public class ShootAction extends Action
 			return false;
 		if(context.ActionStack().GetShotCooldown() > 0.0f)
 			return false;
-		if(FindLoadedAmmo(context.Gun()).isEmpty())
+		if(FindLoadedAmmo(context).isEmpty())
 			return false;
 
 		if(!actionDef.canActUnderwater)
@@ -99,7 +99,7 @@ public class ShootAction extends Action
 		return true;
 	}
 
-	public ItemStack FindLoadedAmmo(GunContext context)
+	public ItemStack FindLoadedAmmo(ActionContext context)
 	{
 		switch(context.GunDef().AmmoConsumeMode)
 		{
@@ -130,7 +130,7 @@ public class ShootAction extends Action
 		return ItemStack.EMPTY;
 	}
 
-	public int TryConsumeAmmo(GunContext context, int count)
+	public int TryConsumeAmmo(ActionContext context, int count)
 	{
 		switch(context.GunDef().AmmoConsumeMode)
 		{
@@ -175,7 +175,7 @@ public class ShootAction extends Action
 		return 0;
 	}
 
-	public int TryConsumeAmmo(GunContext context, int slotIndex, int amountToConsume)
+	public int TryConsumeAmmo(ActionContext context, int slotIndex, int amountToConsume)
 	{
 		ItemStack bulletStack = context.GetBulletStack(slotIndex);
 
@@ -239,7 +239,7 @@ public class ShootAction extends Action
 		int shotsFired = 1; //context.ActionStack().TryShootMultiple(stats.TimeToNextShot());
 
 		// We want to shoot {shotsFired} many, but check against and now consume ammo durability
-		shotsFired = TryConsumeAmmo(context.Gun(), shotsFired);
+		shotsFired = TryConsumeAmmo(context, shotsFired);
 
 		for(int j = 0; j < shotsFired; j++)
 		{
@@ -280,6 +280,8 @@ public class ShootAction extends Action
 		Transform result = aim.copy();
 		Vector3d yAxis = aim.Up();
 		Vector3d xAxis = aim.Right();
+		float xComponent;
+		float yComponent;
 
 		switch (spreadPattern)
 		{
@@ -287,27 +289,24 @@ public class ShootAction extends Action
 			{
 				float theta = rand.nextFloat() * Maths.TauF;
 				float radius = (spreadPattern == ESpreadPattern.Circle ? 1.0f : rand.nextFloat()) * spread;
-				float xComponent = radius * Maths.SinF(theta);
-				float yComponent = radius * Maths.CosF(theta);
-
-				result = result.RotateLocalYaw(xComponent);
-				result = result.RotateLocalPitch(yComponent);
+				xComponent = radius * Maths.SinF(theta);
+				yComponent = radius * Maths.CosF(theta);
 			}
 			case Horizontal ->
 			{
-				float xComponent = spread * (rand.nextFloat() * 2f - 1f);
-				result = result.RotateLocalYaw(xComponent);
+				xComponent = spread * (rand.nextFloat() * 2f - 1f);
+				yComponent = 0.0f;
 			}
 			case Vertical ->
 			{
-				float yComponent = spread * (rand.nextFloat() * 2f - 1f);
-				result = result.RotateLocalPitch(yComponent);
+				xComponent = 0.0f;
+				yComponent = spread * (rand.nextFloat() * 2f - 1f);
 			}
 			case Triangle ->
 			{
 				// Random square, then fold the corners
-				float xComponent = rand.nextFloat() * 2f - 1f;
-				float yComponent = rand.nextFloat() * 2f - 1f;
+				xComponent = rand.nextFloat() * 2f - 1f;
+				yComponent = rand.nextFloat() * 2f - 1f;
 
 				if (xComponent > 0f)
 				{
@@ -324,11 +323,19 @@ public class ShootAction extends Action
 						xComponent = -1f - xComponent;
 					}
 				}
-				result = result.RotateLocalYaw(xComponent);
-				result = result.RotateLocalPitch(yComponent);
 			}
-			default -> {}
+			default -> {
+				xComponent = 0.0f;
+				yComponent = 0.0f;
+			}
 		}
+
+		float yaw = Maths.AtanF(xComponent);
+		float pitch = Maths.AtanF(yComponent);
+
+		result = result.RotateLocalYaw(yaw * Maths.RadToDegF);
+		result = result.RotateLocalPitch(pitch * Maths.RadToDegF);
+
 		return result;
 	}
 

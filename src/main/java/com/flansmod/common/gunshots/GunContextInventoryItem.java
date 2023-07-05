@@ -1,6 +1,7 @@
 package com.flansmod.common.gunshots;
 
 import com.flansmod.common.actions.ActionStack;
+import net.minecraft.world.Container;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Inventory;
@@ -11,9 +12,9 @@ import java.util.Objects;
 
 public class GunContextInventoryItem extends GunContext
 {
-	private final Inventory Inv;
+	private final Container Inv;
 	private final int Slot;
-	public GunContextInventoryItem(Inventory inv, int slot)
+	public GunContextInventoryItem(Container inv, int slot)
 	{
 		super();
 		Inv = inv;
@@ -30,7 +31,7 @@ public class GunContextInventoryItem extends GunContext
 	@Override
 	public ShooterContext GetShooter() { return ShooterContext.INVALID; }
 	@Override
-	public Inventory GetAttachedInventory() { return Inv; }
+	public Container GetAttachedInventory() { return Inv; }
 	@Override
 	public boolean CanPerformActions() { return false; }
 	@Override

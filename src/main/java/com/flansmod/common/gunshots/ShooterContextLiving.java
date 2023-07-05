@@ -2,6 +2,7 @@ package com.flansmod.common.gunshots;
 
 import com.flansmod.common.actions.EActionInput;
 import com.flansmod.util.Transform;
+import net.minecraft.world.Container;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
@@ -44,6 +45,8 @@ public class ShooterContextLiving extends ShooterContext
 
 	@Override
 	public boolean IsValid() { return true; }
+	@Override
+	public boolean IsCreative() { return false; }
 
 	@Override
 	public int GetNumValidContexts()
@@ -87,6 +90,18 @@ public class ShooterContextLiving extends ShooterContext
 							ActionContext.CreateFrom(OffHand, EActionInput.PRIMARY)
 						};
 					}
+					case RELOAD_PRIMARY -> {
+						return new ActionContext[]{
+							ActionContext.CreateFrom(MainHand, EActionInput.RELOAD_PRIMARY),
+							ActionContext.CreateFrom(OffHand, EActionInput.RELOAD_PRIMARY)
+						};
+					}
+					case RELOAD_SECONDARY -> {
+						return new ActionContext[]{
+							ActionContext.CreateFrom(OffHand, EActionInput.RELOAD_PRIMARY),
+							ActionContext.CreateFrom(MainHand, EActionInput.RELOAD_PRIMARY)
+						};
+					}
 					default -> {
 						return new ActionContext[]{
 							ActionContext.CreateFrom(MainHand, action),
@@ -98,7 +113,8 @@ public class ShooterContextLiving extends ShooterContext
 			default: return new ActionContext[0];
 		}
 	}
-
+	@Override
+	public Container GetAttachedInventory() { return null; }
 	@Override
 	public Entity Entity()
 	{

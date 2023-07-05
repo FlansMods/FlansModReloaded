@@ -256,7 +256,7 @@ public class ClientRenderHooks
 			int x = anchorX + 113;
 			for(int i = 0; i < mainContext.GunDef().numBullets; i++)
 			{
-				ItemStack bulletStack = mainContext.GetBulletStack(i);
+				ItemStack bulletStack = mainContext.GetBulletStack(EActionInput.PRIMARY, i);
 				if(!bulletStack.isEmpty())
 				{
 					int y = anchorY - 41 + (i % 2 == 0 ? 2 : 0);
@@ -272,6 +272,8 @@ public class ClientRenderHooks
 			}
 
 			RenderString(poseStack, anchorX + 96, anchorY - 50, mainContext.GetItemStack().getHoverName(), 0xffffff);
+
+			// TODO: If alternate ammo?
 		}
 
 		if(gunContexts[1].IsValid())
@@ -281,13 +283,22 @@ public class ClientRenderHooks
 
 			Minecraft.getInstance().getItemRenderer().renderGuiItem(offContext.GetItemStack(), anchorX - 95 - 16, anchorY - 40);
 
+			int x = anchorX - 113 - 16;
 			for(int i = 0; i < offContext.GunDef().numBullets; i++)
 			{
-				ItemStack bulletStack = offContext.GetBulletStack(i);
+				ItemStack bulletStack = offContext.GetBulletStack(EActionInput.PRIMARY, i);
 				if(!bulletStack.isEmpty())
 				{
-					Minecraft.getInstance().getItemRenderer().renderGuiItem(bulletStack, anchorX - 133 - 12 * i, anchorY - 41 + (i % 2 == 0 ? 2 : 0));
+					int y = anchorY - 41 + (i % 2 == 0 ? 2 : 0);
+					Minecraft.getInstance().getItemRenderer().renderGuiItem(bulletStack, x, y);
+					if(bulletStack.isDamageableItem())
+					{
+						int countRemaining = bulletStack.getMaxDamage() - bulletStack.getDamageValue();
+						RenderString(poseStack, x - 12 - 16, y + 4,  Component.literal(countRemaining + "/" + bulletStack.getMaxDamage()), 0xffffff);
+						x -= 32;
+					}
 				}
+				x -= 12;
 			}
 
 			RenderString(poseStack,

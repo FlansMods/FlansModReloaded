@@ -93,8 +93,8 @@ public class TurboRig implements IUnbakedGeometry<TurboRig>, UnbakedModel
 
 		public void ApplyTransform(ItemTransforms.TransformType transformType, PoseStack ms, boolean b)
 		{
-			if(transformType == ItemTransforms.TransformType.GROUND)
-			{
+			//if(transformType == ItemTransforms.TransformType.GROUND)
+			//{
 				//Vector3f copyOfTranslation = new Vector3f(Transforms.getTransform(transformType).translation);
 				//Vector3f eulers = new Vector3f(90f, 0f, 0f);
 
@@ -107,9 +107,10 @@ public class TurboRig implements IUnbakedGeometry<TurboRig>, UnbakedModel
 				//new ItemTransform(new Vector3f(-90f, 0f, 0f),
 				//	new Vector3f(0f, 0f, 3f),
 				//	new Vector3f(1f/16f, 1f/16f, 1f/16f)).apply(b, ms);
-			}
-			else
-				Transforms.getTransform(transformType).apply(b, ms);
+			//}
+			//else
+			ItemTransform transform = Transforms.getTransform(transformType);
+			transform.apply(b, ms);
 		}
 
 		public TurboModel.Baked GetPart(String part)

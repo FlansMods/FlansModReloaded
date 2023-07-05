@@ -33,6 +33,7 @@ public class Maths
     public static double Max(double a, double b) { return a > b ? a : b; }
     public static double Min(double a, double b) { return a < b ? a : b; }
     public static double Lerp(double a, double b, double t) { return a + (b-a)*t; }
+    public static double Sign(double d) { return d > 0.0d ? 1.0d : (d < 0.0d ? -1.0d : 0.0d); }
 
     // Float maths
     public static float Clamp(float i, float min, float max)
@@ -45,6 +46,7 @@ public class Maths
     public static int Ceil(float d) { return (int)Math.ceil(d); }
     public static int Floor(float d) { return (int)Math.floor(d); }
     public static float Lerp(float a, float b, float t) { return a + (b-a)*t; }
+    public static float Sign(float f) { return f > 0.0f ? 1.0f : (f < 0.0f ? -1.0f : 0.0f); }
 
     public static final double Pi = 3.1415926535897932384626433832795028841971d;
     public static final double Tau = 2.0d * Pi;
@@ -59,6 +61,8 @@ public class Maths
     public static float SinF(float f) { return (float)Math.sin(f); }
     public static float CosF(float f) { return (float)Math.cos(f); }
     public static float SqrtF(float f) { return (float)Math.sqrt(f); }
+    public static float AtanF(float f) { return (float)Math.atan(f); }
+    public static float Atan2F(float a, float b) { return (float)Math.atan2(a, b); }
 
     public static Vector3f Lerp(Vector3f a, Vector3f b, float t) { return new Vector3f(a.x + (b.x - a.x) * t, a.y + (b.y - a.y) * t, a.z + (b.z - a.z) * t); }
     public static Vector3f Sub(Vector3f a, Vector3f b) { return new Vector3f(a.x - b.x, a.y - b.y, a.z - b.z); }

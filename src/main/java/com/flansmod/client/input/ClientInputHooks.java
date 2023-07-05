@@ -99,7 +99,7 @@ public class ClientInputHooks
 
 			while(MANUAL_RELOAD_MAPPING.get().consumeClick())
 			{
-				FlansModClient.ACTIONS_CLIENT.ClientKeyPressed(player, EActionInput.RELOAD);
+				FlansModClient.ACTIONS_CLIENT.ClientKeyPressed(player, EActionInput.RELOAD_PRIMARY);
 			}
 
 			UseHeldLastFrame = UseHeldThisFrame;

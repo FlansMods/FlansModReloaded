@@ -6,6 +6,7 @@ import com.flansmod.common.types.guns.EActionType;
 import com.flansmod.common.types.guns.ESpreadPattern;
 import com.flansmod.common.types.guns.GunDefinition;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.item.ItemStack;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -56,25 +57,23 @@ public class ActionContext
 
 	public ReloadProgress[] CreateReloads()
 	{
-		if(InputType == EActionInput.RELOAD)
+		if(InputType.IsReload)
 		{
 			return new ReloadProgress[] {
-				new ReloadProgress(GunDef().reload),
+				new ReloadProgress(GunDef().GetReload(InputType), InputType),
 			};
 		}
 		return new ReloadProgress[0];
 	}
 
-	public ActionDefinition GetShootActionDefinition()
-	{
-		// TODO: Check attachments for changes in action
-		// e.g. An underslung grenade launcher attachment
-
-		for(ActionDefinition def : GunDef().GetActions(InputType))
-			if(def.actionType == EActionType.Shoot)
-				return def;
-		return ActionDefinition.Invalid;
-	}
+	public ActionDefinition GetShootActionDefinition() { return Gun().GetShootActionDefinition(InputType);}
+	public boolean CanBeReloaded() { return Gun().CanBeReloaded(InputType); }
+	public boolean CanReloadFromAttachedInventory() { return Gun().CanPerformReloadFromAttachedInventory(InputType); }
+	public ItemStack GetBulletStack(int index) { return Gun().GetBulletStack(InputType, index); }
+	public void SetBulletStack(int index, ItemStack stack) { Gun().SetBulletStack(InputType, index, stack); }
+	public int GetCurrentChamber() { return Gun().GetCurrentChamber(InputType); }
+	public void SetCurrentChamber(int chamber) { Gun().SetCurrentChamber(InputType, chamber); }
+	public void AdvanceChamber() { Gun().AdvanceChamber(InputType); }
 
 	@Nonnull
 	public CachedActionStats BuildActionStatCache(ActionDefinition actionDef)

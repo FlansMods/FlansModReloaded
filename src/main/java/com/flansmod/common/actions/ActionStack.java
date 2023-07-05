@@ -73,7 +73,7 @@ public class ActionStack
 			ActionDefinition[] reloadActionDefs = reload.Def.GetReloadActions(stage);
 			for (int i = 0; i < reloadActionDefs.length; i++)
 			{
-				Action action = Actions.CreateAction(reloadActionDefs[i], EActionInput.RELOAD);
+				Action action = Actions.CreateAction(reloadActionDefs[i], actionContext.InputType());
 				AddAction(actionContext, action);
 			}
 			reload.CurrentStage = stage;
@@ -83,8 +83,8 @@ public class ActionStack
 			{
 				case LoadOne:
 				{
-					int slotToLoad = actionContext.Gun().GetNextBulletSlotToLoad();
-					actionContext.Gun().LoadOne(slotToLoad);
+					int slotToLoad = actionContext.Gun().GetNextBulletSlotToLoad(actionContext.InputType());
+					actionContext.Gun().LoadOne(actionContext.InputType(), slotToLoad);
 					break;
 				}
 			}
@@ -115,11 +115,8 @@ public class ActionStack
 					case Start -> {
 						nextStage = EReloadStage.Eject;
 					}
-					case Eject -> {
-						nextStage = EReloadStage.LoadOne;
-					}
-					case LoadOne -> {
-						if(gunContext.CanPerformReload() && !cancelActionRequested)
+					case Eject, LoadOne -> {
+						if(gunContext.CanPerformReloadFromAttachedInventory(reload.ReloadType) && !cancelActionRequested)
 							nextStage = EReloadStage.LoadOne;
 						else
 						{
@@ -135,7 +132,7 @@ public class ActionStack
 				}
 				else
 				{
-					ActionContext actionContext = ActionContext.CreateFrom(gunContext, EActionInput.RELOAD);
+					ActionContext actionContext = ActionContext.CreateFrom(gunContext, reload.ReloadType);
 					EnterReloadState(actionContext, reload, nextStage);
 				}
 			}

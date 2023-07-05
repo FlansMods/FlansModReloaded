@@ -39,7 +39,10 @@ public class BulletItem extends FlanItem implements IForgeItem
 	@Override
 	public int getMaxStackSize(ItemStack stack)
 	{
-		return Def().GetMaxStackSize();
+		if(stack.getDamageValue() == 0)
+			return Def().GetMaxStackSize();
+		else
+			return 1;
 	}
 
 	// Random parameter overrides
