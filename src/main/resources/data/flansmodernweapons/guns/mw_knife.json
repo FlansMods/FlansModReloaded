@@ -144,7 +144,7 @@
             "duration": 0.0,
             "sounds": [
                 {
-                    "sound": {},
+                    "sound": "",
                     "length": 1.0,
                     "minPitchMultiplier": 1.0,
                     "maxPitchMultiplier": 1.0,

@@ -49,6 +49,16 @@ public class TurboElement
 	private static final int[] SOUTH_VERTS 	= new int[] { 5,7,6,4 };
 	private static final int[] WEST_VERTS 	= new int[] { 4,6,2,0 };
 
+	public Vector3f GetNormal(Direction direction, boolean applyRotation)
+	{
+		if(applyRotation)
+		{
+			Quaternionf rotation = new Quaternionf().rotateZYX(eulerRotations.z, eulerRotations.y, eulerRotations.x);
+			return rotation.transform(new Vector3f(direction.getNormal().getX(), direction.getNormal().getY(), direction.getNormal().getZ()));
+		}
+		return new Vector3f(direction.getNormal().getX(), direction.getNormal().getY(), direction.getNormal().getZ());
+	}
+
 	public Vector3f[] GetFaceVertices(Direction direction, boolean applyRotation)
 	{
 		switch(direction)

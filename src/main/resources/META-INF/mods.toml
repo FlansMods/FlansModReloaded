@@ -58,7 +58,18 @@ license="All rights reserved"
     description='''
     Modern Weapons
     '''
-
+	
+[[mods]] #mandatory
+    modId="flansbasicparts"
+    version="${file.jarVersion}"
+    displayName="Flan's Basic Parts Pack"
+    logoFile="flansmod.png"
+    credits="jamioflan"
+    authors="jamioflan"
+    description='''
+    Basic Parts
+    '''
+	
 # A dependency - use the . to indicate dependency for a specific modid. Dependencies are optional.
 [[dependencies.flansmod]] #optional
     # the modid of the dependency

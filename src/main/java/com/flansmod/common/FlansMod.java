@@ -4,10 +4,7 @@ import com.flansmod.client.FlansModClient;
 import com.flansmod.common.crafting.*;
 import com.flansmod.common.gunshots.ActionManager;
 import com.flansmod.common.gunshots.Raytracer;
-import com.flansmod.common.item.BulletItem;
-import com.flansmod.common.item.GrenadeItem;
-import com.flansmod.common.item.GunItem;
-import com.flansmod.common.item.PartItem;
+import com.flansmod.common.item.*;
 import com.flansmod.common.types.attachments.AttachmentDefinitions;
 import com.flansmod.common.types.crafting.WorkbenchDefinitions;
 import com.flansmod.common.types.grenades.GrenadeDefinitions;
@@ -109,6 +106,11 @@ public class FlansMod
         return itemRegister.register(name, () -> new BulletItem(loc, new Item.Properties()));
     }
 
+    public static RegistryObject<Item> Attachment(DeferredRegister<Item> itemRegister, String modID, String name)
+    {
+        ResourceLocation loc = new ResourceLocation(modID, name);
+        return itemRegister.register(name, () -> new AttachmentItem(loc, new Item.Properties()));
+    }
 
     public static RegistryObject<Item> Part(DeferredRegister<Item> itemRegister, String modID, String name)
     {

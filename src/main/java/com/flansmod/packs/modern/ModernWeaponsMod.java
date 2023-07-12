@@ -142,6 +142,24 @@ public class ModernWeaponsMod
 	public static final RegistryObject<Item> BULLET_W1200 = 					FlansMod.Bullet(ITEMS, MODID, "w1200ammo");
 
 
+
+	public static final RegistryObject<Item> ATTACHMENT_4X_SCOPE = 						FlansMod.Attachment(ITEMS, MODID, "4x_scope");
+	public static final RegistryObject<Item> ATTACHMENT_ACOG_SCOPE = 					FlansMod.Attachment(ITEMS, MODID, "acog");
+	public static final RegistryObject<Item> ATTACHMENT_AUTO_FIRE = 					FlansMod.Attachment(ITEMS, MODID, "auto_fire");
+	public static final RegistryObject<Item> ATTACHMENT_BURST_FIRE = 					FlansMod.Attachment(ITEMS, MODID, "burst_fire");
+	public static final RegistryObject<Item> ATTACHMENT_DRAGONS_BREATH_INFUSER = 		FlansMod.Attachment(ITEMS, MODID, "dragonsbreathinfuser");
+	public static final RegistryObject<Item> ATTACHMENT_FLASHLIGHT = 					FlansMod.Attachment(ITEMS, MODID, "flashlight");
+	public static final RegistryObject<Item> ATTACHMENT_FOREGRIP = 						FlansMod.Attachment(ITEMS, MODID, "foregrip");
+	public static final RegistryObject<Item> ATTACHMENT_LONG_BARREL = 					FlansMod.Attachment(ITEMS, MODID, "long_barrel");
+	public static final RegistryObject<Item> ATTACHMENT_PISTOL_FLASHLIGHT = 			FlansMod.Attachment(ITEMS, MODID, "pistol_flashlight");
+	public static final RegistryObject<Item> ATTACHMENT_QUICK_RELOAD_GRIP = 			FlansMod.Attachment(ITEMS, MODID, "quickreloadgrip");
+	public static final RegistryObject<Item> ATTACHMENT_RED_DOT = 						FlansMod.Attachment(ITEMS, MODID, "red_dot");
+	public static final RegistryObject<Item> ATTACHMENT_REINFORCED_UPPER_RECEIVER = 	FlansMod.Attachment(ITEMS, MODID, "reinforcedupperreceiver");
+	public static final RegistryObject<Item> ATTACHMENT_SILENCER = 						FlansMod.Attachment(ITEMS, MODID, "silencer");
+	public static final RegistryObject<Item> ATTACHMENT_SINGLE_FIRE = 					FlansMod.Attachment(ITEMS, MODID, "single_fire");
+	public static final RegistryObject<Item> ATTACHMENT_SQUEAKY_UPPER_RECEIVER = 		FlansMod.Attachment(ITEMS, MODID, "squeakyupperreceiver");
+
+
 	public static final RegistryObject<Block> WORKBENCH_BLOCK_MODERN = 				FlansMod.Workbench_Block(BLOCKS, MODID, "modern");
 	public static final RegistryObject<Item> WORKBENCH_ITEM_MODERN = 				FlansMod.Workbench_Item(ITEMS, MODID, "modern", WORKBENCH_BLOCK_MODERN);
 	public static final RegistryObject<BlockEntityType<WorkbenchBlockEntity>> WORKBENCH_TILE_ENTITY_MODERN =
