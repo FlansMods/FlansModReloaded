@@ -8,7 +8,7 @@ import net.minecraft.world.item.ItemStack;
 public class GrenadeItem extends FlanItem
 {
 	private ResourceLocation definitionLocation;
-	public GrenadeDefinition Def() { return FlansMod.GRENADES.get(definitionLocation); }
+	public GrenadeDefinition Def() { return FlansMod.GRENADES.Get(definitionLocation); }
 
 	public GrenadeItem(ResourceLocation defLoc, Properties properties)
 	{

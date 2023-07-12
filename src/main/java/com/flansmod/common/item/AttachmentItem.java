@@ -8,7 +8,7 @@ import net.minecraft.world.item.ItemStack;
 public class AttachmentItem extends FlanItem
 {
 	private ResourceLocation definitionLocation;
-	public AttachmentDefinition Def() { return FlansMod.ATTACHMENTS.get(definitionLocation); }
+	public AttachmentDefinition Def() { return FlansMod.ATTACHMENTS.Get(definitionLocation); }
 
 
 	public AttachmentItem(ResourceLocation defLoc, Properties properties)

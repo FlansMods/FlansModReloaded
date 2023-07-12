@@ -2,9 +2,7 @@ package com.flansmod.common.crafting;
 
 import com.flansmod.common.FlansMod;
 import com.flansmod.common.item.GunItem;
-import com.flansmod.common.item.PartItem;
 import com.flansmod.common.types.crafting.WorkbenchDefinition;
-import com.mojang.datafixers.types.Type;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
@@ -17,17 +15,12 @@ import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.ContainerData;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.entity.AbstractFurnaceBlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraft.world.level.block.entity.BlockEntityTicker;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.common.capabilities.ForgeCapabilities;
-import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.energy.EnergyStorage;
-import net.minecraftforge.energy.IEnergyStorage;
 import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.Nullable;
 
@@ -106,7 +99,7 @@ public class WorkbenchBlockEntity extends BlockEntity implements MenuProvider, C
 	public WorkbenchBlockEntity(ResourceLocation defLoc, BlockPos pos, BlockState state)
 	{
 		super(ForgeRegistries.BLOCK_ENTITY_TYPES.getValue(defLoc), pos, state);
-		Def = FlansMod.WORKBENCHES.get(defLoc);
+		Def = FlansMod.WORKBENCHES.Get(defLoc);
 
 		if(Def.gunCrafting.isActive)
 		{

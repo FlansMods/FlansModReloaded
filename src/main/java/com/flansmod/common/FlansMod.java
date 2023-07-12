@@ -6,6 +6,8 @@ import com.flansmod.common.gunshots.ActionManager;
 import com.flansmod.common.gunshots.Raytracer;
 import com.flansmod.common.item.*;
 import com.flansmod.common.types.attachments.AttachmentDefinitions;
+import com.flansmod.common.types.crafting.MaterialDefinitions;
+import com.flansmod.common.types.crafting.TieredMaterialIngredient;
 import com.flansmod.common.types.crafting.WorkbenchDefinitions;
 import com.flansmod.common.types.grenades.GrenadeDefinitions;
 import com.flansmod.common.types.guns.GunDefinitions;
@@ -26,6 +28,7 @@ import net.minecraft.world.level.material.Material;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.common.crafting.CraftingHelper;
 import net.minecraftforge.common.extensions.IForgeMenuType;
 import net.minecraftforge.event.AddReloadListenerEvent;
 import net.minecraftforge.event.CreativeModeTabEvent;
@@ -38,6 +41,7 @@ import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.fml.loading.FMLEnvironment;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
+import net.minecraftforge.registries.RegisterEvent;
 import net.minecraftforge.registries.RegistryObject;
 import org.slf4j.Logger;
 
@@ -90,6 +94,7 @@ public class FlansMod
     public static final AttachmentDefinitions ATTACHMENTS = new AttachmentDefinitions();
     public static final PartDefinitions PARTS = new PartDefinitions();
     public static final WorkbenchDefinitions WORKBENCHES = new WorkbenchDefinitions();
+    public static final MaterialDefinitions MATERIALS = new MaterialDefinitions();
 
     // Server handlers
     public static final ActionManager ACTIONS_SERVER = new ActionManager(false);
@@ -147,11 +152,13 @@ public class FlansMod
         MinecraftForge.EVENT_BUS.addListener(this::onReloadResources);
         ACTIONS_SERVER.HookServer(modEventBus);
         modEventBus.addListener(this::onCreativeTabRegistry);
+        modEventBus.addListener(this::OnRegsiterEvent);
 
         BLOCKS.register(modEventBus);
         ITEMS.register(modEventBus);
         TILE_ENTITIES.register(modEventBus);
         MENUS.register(modEventBus);
+
     }
 
     private void CommonInit(final FMLCommonSetupEvent event)
@@ -206,6 +213,14 @@ public class FlansMod
                 });
         });
     }
+
+    private void OnRegsiterEvent(RegisterEvent event)
+    {
+        if(event.getRegistryKey().equals(ForgeRegistries.Keys.RECIPE_SERIALIZERS))
+        {
+            CraftingHelper.register(new ResourceLocation(MODID, "tiered_material"), TieredMaterialIngredient.Serializer.INSTANCE);
+        }
+    }
     
     private void onReloadResources(AddReloadListenerEvent event)
     {
@@ -214,6 +229,7 @@ public class FlansMod
         event.addListener(ATTACHMENTS);
         event.addListener(PARTS);
         event.addListener(WORKBENCHES);
+        event.addListener(MATERIALS);
 
         if(FMLEnvironment.dist == Dist.CLIENT)
             RegisterClientReloadListeners(event);

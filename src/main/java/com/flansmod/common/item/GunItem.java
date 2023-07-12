@@ -1,6 +1,5 @@
 package com.flansmod.common.item;
 
-import com.flansmod.client.FlansModClient;
 import com.flansmod.client.render.FlanClientItemExtensions;
 import com.flansmod.client.render.guns.GunItemRenderer;
 import com.flansmod.common.FlansMod;
@@ -29,7 +28,7 @@ import java.util.function.Consumer;
 public class GunItem extends FlanItem
 {
     private ResourceLocation definitionLocation;
-    public GunDefinition Def() { return FlansMod.GUNS.get(definitionLocation); }
+    public GunDefinition Def() { return FlansMod.GUNS.Get(definitionLocation); }
 
     // TODO: Place more generally private ActionStack GunActions;
     

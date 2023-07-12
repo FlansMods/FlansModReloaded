@@ -3,6 +3,7 @@ package com.flansmod.common.types.vehicles;
 import com.flansmod.common.FlansMod;
 import com.flansmod.common.types.JsonDefinition;
 import com.flansmod.common.types.JsonField;
+import com.flansmod.common.types.elements.ItemDefinition;
 import com.flansmod.common.types.parts.elements.EngineDefinition;
 import com.flansmod.common.types.vehicles.elements.ArticulatedPartDefinition;
 import com.flansmod.common.types.vehicles.elements.MountedGunDefinition;
@@ -23,6 +24,8 @@ public class VehicleDefinition extends JsonDefinition
 		super(resLoc);
 	}
 
+	@JsonField
+	public ItemDefinition itemSettings = new ItemDefinition();
 	@JsonField
 	public SeatDefinition[] seats = new SeatDefinition[0];
 	@JsonField

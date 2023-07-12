@@ -11,7 +11,6 @@ import com.flansmod.client.render.models.TurboRig;
 import com.flansmod.common.actions.Action;
 import com.flansmod.common.actions.ActionStack;
 import com.flansmod.common.actions.AnimationAction;
-import com.flansmod.common.gunshots.ActionContext;
 import com.flansmod.common.gunshots.ShooterContext;
 import com.flansmod.common.types.attachments.AttachmentDefinition;
 import com.flansmod.common.types.attachments.EAttachmentType;
@@ -68,7 +67,7 @@ public class GunItemRenderer extends FlanItemModelRenderer
             }
         }
 
-        AnimationDefinition animationSet = FlansModClient.ANIMATIONS.get(new ResourceLocation(gunContext.GunDef().animationSet));
+        AnimationDefinition animationSet = FlansModClient.ANIMATIONS.Get(new ResourceLocation(gunContext.GunDef().animationSet));
         ms.pushPose();
         {
             //ApplyRootRotation(stack, actions, ms, transformType);

@@ -25,6 +25,9 @@ public class GunDefinition extends JsonDefinition
 	}
 
 	@JsonField
+	public ItemDefinition itemSettings = new ItemDefinition();
+
+	@JsonField
 	public PaintableDefinition paints = new PaintableDefinition();
 	@JsonField
 	public ReloadDefinition primaryReload = new ReloadDefinition();

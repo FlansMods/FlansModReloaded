@@ -5,6 +5,7 @@ import com.flansmod.common.types.JsonDefinition;
 import com.flansmod.common.types.JsonField;
 import com.flansmod.common.types.elements.ActionDefinition;
 import com.flansmod.common.types.elements.ImpactDefinition;
+import com.flansmod.common.types.elements.ItemDefinition;
 import net.minecraft.resources.ResourceLocation;
 
 public class GrenadeDefinition extends JsonDefinition
@@ -19,6 +20,9 @@ public class GrenadeDefinition extends JsonDefinition
 	{
 		super(resLoc);
 	}
+
+	@JsonField
+	public ItemDefinition itemSettings = new ItemDefinition();
 
 	// Hmm, does this have an item?!
 	@JsonField(Docs = "Most likely a throw action")

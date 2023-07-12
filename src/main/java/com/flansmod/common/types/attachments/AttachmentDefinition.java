@@ -4,6 +4,7 @@ import com.flansmod.common.FlansMod;
 import com.flansmod.common.types.JsonDefinition;
 import com.flansmod.common.types.JsonField;
 import com.flansmod.common.types.elements.ActionDefinition;
+import com.flansmod.common.types.elements.ItemDefinition;
 import com.flansmod.common.types.elements.ModifierDefinition;
 import com.flansmod.common.types.guns.ERepeatMode;
 import net.minecraft.resources.ResourceLocation;
@@ -21,6 +22,8 @@ public class AttachmentDefinition extends JsonDefinition
 		super(resLoc);
 	}
 
+	@JsonField
+	public ItemDefinition itemSettings = new ItemDefinition();
 
 	@JsonField
 	public EAttachmentType attachmentType = EAttachmentType.Generic;
