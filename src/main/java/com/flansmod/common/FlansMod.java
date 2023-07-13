@@ -7,7 +7,7 @@ import com.flansmod.common.gunshots.Raytracer;
 import com.flansmod.common.item.*;
 import com.flansmod.common.types.attachments.AttachmentDefinitions;
 import com.flansmod.common.types.crafting.MaterialDefinitions;
-import com.flansmod.common.types.crafting.TieredMaterialIngredient;
+import com.flansmod.common.types.crafting.FlansModIngredient;
 import com.flansmod.common.types.crafting.WorkbenchDefinitions;
 import com.flansmod.common.types.grenades.GrenadeDefinitions;
 import com.flansmod.common.types.guns.GunDefinitions;
@@ -218,7 +218,7 @@ public class FlansMod
     {
         if(event.getRegistryKey().equals(ForgeRegistries.Keys.RECIPE_SERIALIZERS))
         {
-            CraftingHelper.register(new ResourceLocation(MODID, "tiered_material"), TieredMaterialIngredient.Serializer.INSTANCE);
+            CraftingHelper.register(new ResourceLocation(MODID, "tiered_material"), FlansModIngredient.Serializer.INSTANCE);
         }
     }
     

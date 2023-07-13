@@ -3,6 +3,7 @@ package com.flansmod.common.types.parts;
 import com.flansmod.common.FlansMod;
 import com.flansmod.common.types.JsonDefinition;
 import com.flansmod.common.types.JsonField;
+import com.flansmod.common.types.crafting.EMaterialType;
 import com.flansmod.common.types.elements.ItemDefinition;
 import com.flansmod.common.types.parts.elements.EngineDefinition;
 import net.minecraft.resources.ResourceLocation;
@@ -34,4 +35,10 @@ public class PartDefinition extends JsonDefinition
 	// Engine properties
 	@JsonField
 	public EngineDefinition engine = new EngineDefinition();
+
+	@JsonField
+	public int materialTier = 0;
+	@JsonField
+	public EMaterialType materialType = EMaterialType.Misc;
+
 }

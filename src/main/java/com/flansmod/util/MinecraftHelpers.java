@@ -7,8 +7,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.renderer.block.model.ItemTransforms;
 import net.minecraft.commands.arguments.item.ItemParser;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.TagParser;
+import net.minecraft.nbt.*;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
@@ -49,6 +48,31 @@ public class MinecraftHelpers
 			return clientLevel;
 
 		return null;
+	}
+
+	public static boolean TagEqual(Tag tag, String stringValue)
+	{
+		if(tag instanceof IntTag intTag)
+		{
+			return intTag.getAsInt() == Integer.parseInt(stringValue);
+		}
+		else if(tag instanceof FloatTag floatTag)
+		{
+			return floatTag.getAsFloat() == Float.parseFloat(stringValue);
+		}
+		else if(tag instanceof StringTag stringTag)
+		{
+			return stringTag.getAsString().equals(stringValue);
+		}
+		else if(tag instanceof DoubleTag doubleTag)
+		{
+			return doubleTag.getAsDouble() == Double.parseDouble(stringValue);
+		}
+		else
+		{
+			FlansMod.LOGGER.warn("Unknown tag type in ingredient");
+		}
+		return true;
 	}
 
 	public static String GetFEString(int fe)
