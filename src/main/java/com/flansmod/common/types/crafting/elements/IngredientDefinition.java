@@ -1,12 +1,13 @@
 package com.flansmod.common.types.crafting.elements;
 
 import com.flansmod.common.types.JsonField;
-import com.flansmod.common.types.crafting.EMaterialType;
+import net.minecraft.world.item.ItemStack;
 
 public class IngredientDefinition
 {
 	@JsonField
 	public int count = 1;
+
 
 	@JsonField
 	public boolean compareItemName = true;
@@ -24,6 +25,8 @@ public class IngredientDefinition
 	public boolean compareItemTags = false;
 	@JsonField
 	public String[] requiredTags = new String[0];
+	@JsonField
+	public String[] materialTags = new String[0];
 	@JsonField
 	public String[] disallowedTags = new String[0];
 

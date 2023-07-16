@@ -1,12 +1,18 @@
 {
     "gravityFactor": 0.5,
-    "maxStackSize": 2,
+    "itemSettings": {
+        "maxStackSize": 2,
+        "tags": [
+            "flansmod:bullet",
+            "flansmod:explosive"
+        ]
+    },
     "roundsPerItem": 1,
     "shootStats": {
         "verticalRecoil": 0.0,
         "horizontalRecoil": 0.0,
         "spread": 1.0,
-        "spreadPattern": "Circle",
+        "spreadPattern": "FilledCircle",
         "hitscan": true,
         "speed": 0.0,
         "bulletCount": 1,
@@ -31,7 +37,7 @@
             "fireSpreadAmount": 0.5,
             "hitSounds": [
                 {
-                    "sound": "bullet",
+                    "sound": "flansmodernweapons:bullet",
                     "length": 1.0,
                     "minPitchMultiplier": 1.0,
                     "maxPitchMultiplier": 1.0,
@@ -43,7 +49,6 @@
             ]
         }
     },
-    "tags": [],
     "onShootActions": [],
     "onClipEmptyActions": [],
     "onReloadActions": []

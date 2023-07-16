@@ -1,4 +1,10 @@
 {
+    "itemSettings": {
+        "maxStackSize": 1,
+        "tags": [
+            "flansmod:gun"
+        ]
+    },
     "paints": {
         "paintjobs": []
     },

@@ -1,4 +1,10 @@
 {
+    "itemSettings": {
+        "maxStackSize": 1,
+        "tags": [
+            "flansmod:vehicle"
+        ]
+    },
     "seats": [
         {
             "attachedTo": "core",
@@ -158,7 +164,7 @@
             "lockSeatToGunAngles": false,
             "traveseIndependently": false,
             "yawSound": {
-                "sound": "",
+                "sound": "flansmodernweapons:",
                 "length": 1.0,
                 "minPitchMultiplier": 1.0,
                 "maxPitchMultiplier": 1.0,
@@ -168,7 +174,7 @@
                 "LODs": []
             },
             "pitchSound": {
-                "sound": "",
+                "sound": "flansmodernweapons:",
                 "length": 1.0,
                 "minPitchMultiplier": 1.0,
                 "maxPitchMultiplier": 1.0,
@@ -243,7 +249,7 @@
             "lockSeatToGunAngles": false,
             "traveseIndependently": false,
             "yawSound": {
-                "sound": "",
+                "sound": "flansmodernweapons:",
                 "length": 1.0,
                 "minPitchMultiplier": 1.0,
                 "maxPitchMultiplier": 1.0,
@@ -253,7 +259,7 @@
                 "LODs": []
             },
             "pitchSound": {
-                "sound": "",
+                "sound": "flansmodernweapons:",
                 "length": 1.0,
                 "minPitchMultiplier": 1.0,
                 "maxPitchMultiplier": 1.0,
@@ -328,7 +334,7 @@
             "lockSeatToGunAngles": false,
             "traveseIndependently": false,
             "yawSound": {
-                "sound": "",
+                "sound": "flansmodernweapons:",
                 "length": 1.0,
                 "minPitchMultiplier": 1.0,
                 "maxPitchMultiplier": 1.0,
@@ -338,7 +344,7 @@
                 "LODs": []
             },
             "pitchSound": {
-                "sound": "",
+                "sound": "flansmodernweapons:",
                 "length": 1.0,
                 "minPitchMultiplier": 1.0,
                 "maxPitchMultiplier": 1.0,

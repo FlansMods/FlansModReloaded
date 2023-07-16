@@ -1,4 +1,10 @@
 {
+    "itemSettings": {
+        "maxStackSize": 16,
+        "tags": [
+            "flansmod:grenade"
+        ]
+    },
     "primaryActions": [],
     "secondaryActions": [
         {

@@ -5,5 +5,12 @@ public enum EPartType
 	cockpit,
 	wing,
 	engine,
-	propeller, BAY, TAIL, WHEEL, CHASSIS, TURRET, FUEL, MISC
+	propeller,
+	bay,
+	tail,
+	wheel,
+	chassis,
+	turret,
+	fuel,
+	misc
 }

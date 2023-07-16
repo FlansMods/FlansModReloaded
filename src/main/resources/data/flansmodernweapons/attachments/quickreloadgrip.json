@@ -1,4 +1,11 @@
 {
+    "itemSettings": {
+        "maxStackSize": 1,
+        "tags": [
+            "flansmod:bullet",
+            "flansmod:grip"
+        ]
+    },
     "attachmentType": "Grip",
     "modifiers": [
         {

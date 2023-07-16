@@ -1,4 +1,10 @@
 {
+    "itemSettings": {
+        "maxStackSize": 1,
+        "tags": [
+            "flansmod:gun"
+        ]
+    },
     "paints": {
         "paintjobs": [
             {
@@ -52,7 +58,7 @@
                     "duration": 0.0,
                     "sounds": [
                         {
-                            "sound": "GL6Reload",
+                            "sound": "flansmodernweapons:gl6reload",
                             "length": 1.0,
                             "minPitchMultiplier": 1.0,
                             "maxPitchMultiplier": 1.0,
@@ -184,25 +190,14 @@
             "repeatCount": 3,
             "spinUpDuration": 1.5,
             "duration": 0.05,
-            "sounds": [
-                {
-                    "sound": "GrenadeLauncherShoot",
-                    "length": 0.0,
-                    "minPitchMultiplier": 0.8333333,
-                    "maxPitchMultiplier": 1.25,
-                    "minVolume": 1.0,
-                    "maxVolume": 1.0,
-                    "maxRange": 100.0,
-                    "LODs": []
-                }
-            ],
+            "sounds": [],
             "itemStack": "",
             "shootStats": [
                 {
                     "verticalRecoil": 10.0,
                     "horizontalRecoil": 0.0,
                     "spread": 30.0,
-                    "spreadPattern": "Circle",
+                    "spreadPattern": "FilledCircle",
                     "hitscan": false,
                     "speed": 2.5,
                     "bulletCount": 1,
@@ -238,6 +233,38 @@
             "toolLevel": 1.0,
             "harvestSpeed": 1.0,
             "reach": 5.0
+        },
+        {
+            "actionType": "PlaySound",
+            "canActUnderwater": true,
+            "canActUnderOtherLiquid": false,
+            "canBeOverriden": false,
+            "twoHanded": false,
+            "repeatMode": "SemiAuto",
+            "repeatDelay": 0.0,
+            "repeatCount": 0,
+            "spinUpDuration": 1.0,
+            "duration": 0.0,
+            "sounds": [
+                {
+                    "sound": "flansmodernweapons:grenade_launcher_shoot",
+                    "length": 0.0,
+                    "minPitchMultiplier": 0.8333333,
+                    "maxPitchMultiplier": 1.25,
+                    "minVolume": 1.0,
+                    "maxVolume": 1.0,
+                    "maxRange": 100.0,
+                    "LODs": []
+                }
+            ],
+            "itemStack": "",
+            "shootStats": [],
+            "fovFactor": 1.25,
+            "scopeOverlay": "",
+            "anim": "",
+            "toolLevel": 1.0,
+            "harvestSpeed": 1.0,
+            "reach": 1.0
         },
         {
             "actionType": "Animation",

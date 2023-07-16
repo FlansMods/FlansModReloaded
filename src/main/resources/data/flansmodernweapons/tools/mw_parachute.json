@@ -1,4 +1,10 @@
 {
+    "itemSettings": {
+        "maxStackSize": 64,
+        "tags": [
+            "flansmod:tool"
+        ]
+    },
     "primaryActions": [],
     "secondaryActions": [],
     "hasDurability": true,

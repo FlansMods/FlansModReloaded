@@ -4,26 +4,24 @@ import com.flansmod.common.FlansMod;
 import com.flansmod.common.crafting.WorkbenchBlockEntity;
 import com.flansmod.common.crafting.WorkbenchMenu;
 import com.flansmod.common.item.FlanItem;
-import com.flansmod.common.item.GunItem;
-import com.flansmod.common.types.attachments.EAttachmentType;
 import com.flansmod.common.types.crafting.WorkbenchDefinition;
-import com.flansmod.common.types.crafting.elements.GunCraftingEntryDefinition;
-import com.flansmod.common.types.crafting.elements.GunCraftingPageDefinition;
+import com.flansmod.common.types.crafting.elements.*;
 import com.flansmod.util.Maths;
 import com.flansmod.util.MinecraftHelpers;
+import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.renderer.GameRenderer;
-import net.minecraft.client.renderer.block.model.ItemTransforms;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class WorkbenchScreen extends AbstractContainerScreen<WorkbenchMenu>
 {
@@ -56,13 +54,8 @@ public class WorkbenchScreen extends AbstractContainerScreen<WorkbenchMenu>
 
 	private final Tab[] AvailableTabs;
 
-	// === GUN CRAFTING ===
-	private ArrayList<GunCraftingEntryDefinition> GunCraftingEntries = new ArrayList<>();
-	private float scrollOffs;
-	private static final int GUN_CRAFTING_COLUMNS = 2;
-	private static final int GUN_CRAFTING_ROWS = 4;
-	private Button[] buttons;
-	private int selectedRecipe = -1;
+
+
 
 	public WorkbenchScreen(WorkbenchMenu menu, Inventory inventory, Component component)
 	{
@@ -96,7 +89,7 @@ public class WorkbenchScreen extends AbstractContainerScreen<WorkbenchMenu>
 		inventoryLabelX = 6;
 		inventoryLabelY = 106;
 
-		scrollOffs = 0.0f;
+		gunSelectorScrollOffset = 0.0f;
 	}
 
 	@Override
@@ -124,24 +117,16 @@ public class WorkbenchScreen extends AbstractContainerScreen<WorkbenchMenu>
 		// Create gun selection buttons
 		if(Workbench.Def.gunCrafting.isActive)
 		{
-			buttons = new Button[GUN_CRAFTING_ROWS * GUN_CRAFTING_COLUMNS];
-			for(int j = 0; j < GUN_CRAFTING_ROWS; j++)
-			{
-				for(int i = 0; i < GUN_CRAFTING_COLUMNS; i++)
-				{
-					final int index = j * GUN_CRAFTING_COLUMNS + i;
-					buttons[index] = Button.builder(Component.empty(),
-						(t) ->
-						{
-							SelectRecipe(index);
-						})
-						.bounds(x + 6 + i*18, y + 23 + j*18, 18, 18)
-						.build();
-					addWidget(buttons[index]);
-				}
-			}
+			InitGunCrafting(x, y);
 		}
 	}
+
+	@Override
+	protected void containerTick()
+	{
+		UpdateGunCrafting();
+	}
+
 
 	@Override
 	public boolean mouseScrolled(double x, double y, double scroll)
@@ -149,17 +134,17 @@ public class WorkbenchScreen extends AbstractContainerScreen<WorkbenchMenu>
 		if (!CanScroll())
 			return false;
 
-		scrollOffs -= scroll;
-		scrollOffs = Maths.Clamp(scrollOffs, 0, GunCraftingEntries.size() / 2);
+		gunSelectorScrollOffset -= scroll;
+		gunSelectorScrollOffset = Maths.Clamp(gunSelectorScrollOffset, 0, GunCraftingEntries.size() / 2);
 
-		for(int i = 0; i < GUN_CRAFTING_COLUMNS; i++)
+		for(int i = 0; i < GUN_SELECTOR_COLUMNS; i++)
 		{
-			for(int j = 0; j < GUN_CRAFTING_ROWS; j++)
+			for(int j = 0; j < GUN_SELECTOR_ROWS; j++)
 			{
-				int buttonIndex = j * GUN_CRAFTING_COLUMNS + i;
-				int recipeIndex = Maths.Floor(scrollOffs) + buttonIndex;
+				int buttonIndex = j * GUN_SELECTOR_COLUMNS + i;
+				int recipeIndex = Maths.Floor(gunSelectorScrollOffset) + buttonIndex;
 
-				buttons[buttonIndex].active = recipeIndex < GunCraftingEntries.size();
+				GunSelectionButtons[buttonIndex].active = recipeIndex < GunCraftingEntries.size();
 			}
 		}
 
@@ -338,6 +323,98 @@ public class WorkbenchScreen extends AbstractContainerScreen<WorkbenchMenu>
 
 
 	// === GUN CRAFTING ===
+	private ArrayList<GunCraftingEntryDefinition> GunCraftingEntries = new ArrayList<>();
+	private float gunSelectorScrollOffset = 0.0f;
+	private float recipeSelectorScrollOffset = 0.0f;
+	private static final int GUN_SELECTOR_COLUMNS = 2;
+	private static final int GUN_SELECTOR_ROWS = 4;
+	private static final int GUN_RECIPE_VIEWER_COLUMNS = 4;
+	private static final int GUN_RECIPE_VIEWER_ROWS = 2;
+	private Button[] GunSelectionButtons;
+	private Button[] PartCraftingButtons;
+	private float ShowPotentialMatchTicker = 0.0f;
+	private int SelectedGunRecipe = -1;
+	private static final ResourceLocation GUN_FABRICATION_BG = new ResourceLocation(FlansMod.MODID, "textures/gui/gun_fabrication.png");
+	private static class GunCraftingSlotInfo
+	{
+		public final RecipePartDefinition Def;
+		public final int Index;
+
+		public final List<ItemStack> PotentialMatches;
+
+		public GunCraftingSlotInfo(RecipePartDefinition part, int slot)
+		{
+			Def = part;
+			Index = slot;
+			PotentialMatches = new ArrayList<>();
+		}
+
+		public boolean IsTieredMaterialIngredient()
+		{
+			return Index < Def.tieredIngredients.length;
+		}
+
+		public TieredIngredientDefinition GetAsTieredDef()
+		{
+			if(Index < Def.tieredIngredients.length)
+				return Def.tieredIngredients[Index];
+			return null;
+		}
+
+		public IngredientDefinition GetAsAdditionalDef()
+		{
+			if(Index >= Def.tieredIngredients.length)
+				return Def.additionalIngredients[Index - Def.tieredIngredients.length];
+			return null;
+		}
+
+		public ItemStack GetPotentialMatch(int index)
+		{
+			if(PotentialMatches.size() > 0)
+				return PotentialMatches.get(index % PotentialMatches.size());
+			else
+				return new ItemStack(Items.BARRIER);
+		}
+	}
+	private final List<GunCraftingSlotInfo> CachedSlotInfo = new ArrayList<>();
+
+	private void InitGunCrafting(int x, int y)
+	{
+		GunSelectionButtons = new Button[GUN_SELECTOR_ROWS * GUN_SELECTOR_COLUMNS];
+		for(int j = 0; j < GUN_SELECTOR_ROWS; j++)
+		{
+			for(int i = 0; i < GUN_SELECTOR_COLUMNS; i++)
+			{
+				final int index = j * GUN_SELECTOR_COLUMNS + i;
+				GunSelectionButtons[index] = Button.builder(Component.empty(),
+						(t) ->
+						{
+							SelectRecipe(index);
+						})
+					.bounds(x + 6 + i*18, y + 23 + j*18, 18, 18)
+					.build();
+				addWidget(GunSelectionButtons[index]);
+			}
+		}
+
+		PartCraftingButtons = new Button[GUN_RECIPE_VIEWER_ROWS * GUN_RECIPE_VIEWER_COLUMNS];
+		for(int j = 0; j < GUN_RECIPE_VIEWER_ROWS; j++)
+		{
+			for(int i = 0; i < GUN_RECIPE_VIEWER_COLUMNS; i++)
+			{
+				final int index = j * GUN_RECIPE_VIEWER_COLUMNS + i;
+				PartCraftingButtons[index] = Button.builder(Component.empty(),
+					(t) ->
+					{
+						GoToPartCrafting(index);
+					})
+					.bounds(x + 57 + 20 * i, y + 75 + 20 * j, 9, 9)
+					.build();
+				addWidget(PartCraftingButtons[index]);
+			}
+		}
+	}
+
 	private void RefreshGunCraftingFilters()
 	{
 		// When we open the gun crafting tab, refresh our filters
@@ -352,46 +429,146 @@ public class WorkbenchScreen extends AbstractContainerScreen<WorkbenchMenu>
 	}
 	private void SelectRecipe(int relativeIndex)
 	{
-		int recipeIndex = Maths.Floor(scrollOffs) + relativeIndex;
+		int recipeIndex = Maths.Floor(gunSelectorScrollOffset) + relativeIndex;
 		if(recipeIndex < GunCraftingEntries.size())
-			selectedRecipe = recipeIndex;
+		{
+			SelectedGunRecipe = recipeIndex;
+
+			GunCraftingEntryDefinition recipe = GunCraftingEntries.get(SelectedGunRecipe);
+			CachedSlotInfo.clear();
+			for (RecipePartDefinition part : recipe.parts)
+			{
+				int count = part.tieredIngredients.length + part.additionalIngredients.length;
+				for (int i = 0; i < count; i++)
+					CachedSlotInfo.add(new GunCraftingSlotInfo(part, count));
+			}
+		}
+		else
+		{
+			FlansMod.LOGGER.warn("Tried to select invalid Gun recipe " + recipeIndex + "/" + GunCraftingEntries.size());
+		}
+	}
+	private void GoToPartCrafting(int relativeIndex)
+	{
+		int partIndex = Maths.Floor(recipeSelectorScrollOffset) + relativeIndex;
+		if(partIndex < CachedSlotInfo.size())
+		{
+			// TODO:
+			SelectTab(Tab.MATERIALS);
+		}
+		else
+		{
+			FlansMod.LOGGER.warn("Tried to select invalid Part recipe " + partIndex + "/" + CachedSlotInfo.size());
+		}
 	}
 	private void RenderGunCraftingBG(PoseStack pose, int i, int j)
 	{
-		// Render a background box
-		blit(pose, i + 5, j + 22, getBlitOffset(), 172, 119, 162, 74, TEXTURE_WIDTH, TEXTURE_HEIGHT);
+		// Render the background image
+		RenderSystem.setShader(GameRenderer::getPositionTexShader);
+		RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
+		RenderSystem.setShaderTexture(0, GUN_FABRICATION_BG);
+		blit(pose, i, j, getBlitOffset(), 0, 0, imageWidth, imageHeight, TEXTURE_WIDTH, TEXTURE_HEIGHT);
 
-		int firstRow = Maths.Floor(scrollOffs);
-		for(int row = 0; row < GUN_CRAFTING_ROWS; row++)
+		// Render a scrollbar
+		int numRows = GunCraftingEntries.size() / GUN_SELECTOR_COLUMNS;
+		RenderScrollbar(pose, i + 40, j + 25, 6, 89, gunSelectorScrollOffset, 0, numRows);
+
+		if(SelectedGunRecipe != -1)
 		{
-			int firstIndexInRow = (firstRow + row) * GUN_CRAFTING_COLUMNS;
-			int numEntriesInRow = Maths.Min(GUN_CRAFTING_COLUMNS, GunCraftingEntries.size() - firstIndexInRow);
+			int firstRow = Maths.Floor(recipeSelectorScrollOffset);
+			int lastRow = firstRow + GUN_RECIPE_VIEWER_ROWS - 1;
+			for(int y = 0; y < GUN_RECIPE_VIEWER_ROWS; y++)
+			{
+				for(int x = 0; x < GUN_RECIPE_VIEWER_COLUMNS; x++)
+				{
+					final int index = y * GUN_RECIPE_VIEWER_COLUMNS + x;
+					if(index < CachedSlotInfo.size())
+					{
+						// Render this button
+						GunCraftingSlotInfo slotInfo = CachedSlotInfo.get(index);
+						TieredIngredientDefinition tieredDef = slotInfo.GetAsTieredDef();
+						if(tieredDef != null)
+						{
+							int tier = tieredDef.GetLowestAllowedTier();
+							blit(pose, i + 48 + 20 * x, j + 75 + 20 * y, getBlitOffset(), 0, 247 + tier * 9, 9, 9, TEXTURE_WIDTH, TEXTURE_HEIGHT);
+						}
+						else
+						{
+							IngredientDefinition additionalDef = slotInfo.GetAsAdditionalDef();
+							// Cover up the part crafting button
+							blit(pose, i + 57 + 20 * x, j + 75 + 20 * y, getBlitOffset(), 229, 62, 9, 9, TEXTURE_WIDTH, TEXTURE_HEIGHT);
+							// Render a faded item stack
+							// (Defer to later)
+						}
+					}
+					else
+					{
+						// Cover up the background for this button
+						blit(pose, i + 48 + x * 20, j + 56 + y * 20, getBlitOffset(), 229, 72, 18, 28, TEXTURE_WIDTH, TEXTURE_HEIGHT);
+					}
+
+				}
+			}
+		}
+		else
+		{
+			// Render over slots as disabled
+		}
+
+
+		// Render all ItemStacks into the menu
+		if(SelectedGunRecipe != -1)
+		{
+			int firstRow = Maths.Floor(recipeSelectorScrollOffset);
+			for(int y = 0; y < GUN_RECIPE_VIEWER_ROWS; y++)
+			{
+				for(int x = 0; x < GUN_RECIPE_VIEWER_COLUMNS; x++)
+				{
+					final int index = (firstRow + y) * GUN_RECIPE_VIEWER_COLUMNS + x;
+					if(index < CachedSlotInfo.size())
+					{
+						// Render an example item that would fit into this slot
+						GunCraftingSlotInfo slotInfo = CachedSlotInfo.get(index);
+						ItemStack stack = slotInfo.GetPotentialMatch(Maths.Floor(ShowPotentialMatchTicker));
+						itemRenderer.renderGuiItem(stack, i + 49 + 20 * x, j + 57 + 20 * y);
+					}
+				}
+			}
+		}
+
+
+
+
+		int firstRow = Maths.Floor(gunSelectorScrollOffset);
+		for(int row = 0; row < GUN_SELECTOR_ROWS; row++)
+		{
+			int firstIndexInRow = (firstRow + row) * GUN_SELECTOR_COLUMNS;
+			int numEntriesInRow = Maths.Min(GUN_SELECTOR_COLUMNS, GunCraftingEntries.size() - firstIndexInRow);
 
 			blit(pose, i + 6, j + 23 + row * 18, getBlitOffset(), 172, 0, 18 * numEntriesInRow, 18, TEXTURE_WIDTH, TEXTURE_HEIGHT);
 
 		}
 
 		// Render scrollbar
-		int scrollbarPxHeight = 18 * GUN_CRAFTING_ROWS;
+		int scrollbarPxHeight = 18 * GUN_SELECTOR_ROWS;
 		int scrollbarMinSize = 8 + 8;
-		int numRows = GunCraftingEntries.size() / GUN_CRAFTING_COLUMNS;
 
-		float rowRatioDisplayable = (float)GUN_CRAFTING_ROWS / (float)numRows;
+		float rowRatioDisplayable = (float) GUN_SELECTOR_ROWS / (float)numRows;
 		if(rowRatioDisplayable < 1f)
 		{
-			blit(pose, i + 6 + 18 * GUN_CRAFTING_COLUMNS, j + 23, getBlitOffset(), 214, 18, 6, 18 * GUN_CRAFTING_ROWS, TEXTURE_WIDTH, TEXTURE_HEIGHT);
+			blit(pose, i + 6 + 18 * GUN_SELECTOR_COLUMNS, j + 23, getBlitOffset(), 214, 18, 6, 18 * GUN_SELECTOR_ROWS, TEXTURE_WIDTH, TEXTURE_HEIGHT);
 
 			float scrollbarSize = Maths.Max(scrollbarPxHeight * rowRatioDisplayable, scrollbarMinSize);
-			float parametricScroll = scrollOffs / numRows;
+			float parametricScroll = gunSelectorScrollOffset / numRows;
 
 			float minPx = Maths.Lerp(0, scrollbarPxHeight - scrollbarSize, parametricScroll);
 			float maxPx = Maths.Lerp(scrollbarSize, scrollbarPxHeight, parametricScroll);
 
-			blit(pose, i + 6 + 18 * GUN_CRAFTING_COLUMNS, j + 23 + Maths.Floor(minPx), getBlitOffset(), 208, 18, 6, Maths.Floor(scrollbarSize) - 8, TEXTURE_WIDTH, TEXTURE_HEIGHT);
-			blit(pose, i + 6 + 18 * GUN_CRAFTING_COLUMNS, j + 23 + Maths.Floor(maxPx) - 8, getBlitOffset(), 208, 82, 6, 8, TEXTURE_WIDTH, TEXTURE_HEIGHT);
+			blit(pose, i + 6 + 18 * GUN_SELECTOR_COLUMNS, j + 23 + Maths.Floor(minPx), getBlitOffset(), 208, 18, 6, Maths.Floor(scrollbarSize) - 8, TEXTURE_WIDTH, TEXTURE_HEIGHT);
+			blit(pose, i + 6 + 18 * GUN_SELECTOR_COLUMNS, j + 23 + Maths.Floor(maxPx) - 8, getBlitOffset(), 208, 82, 6, 8, TEXTURE_WIDTH, TEXTURE_HEIGHT);
 		}
 
-		if(selectedRecipe != -1)
+		if(SelectedGunRecipe != -1)
 		{
 			// If the player has a gun in hand, we can do a comparison
 
@@ -402,6 +579,10 @@ public class WorkbenchScreen extends AbstractContainerScreen<WorkbenchMenu>
 			RenderStatComparisonBar(pose, i + 50, j + 56, 6, 6, 0, 20, 2);
 			RenderStatComparisonBar(pose, i + 50, j + 66, 13, 13, 0, 20, 3);
 		}
+
+	}
+	private void RenderCraftingSlot(PoseStack pose, int x, int y)
+	{
 
 	}
 	private void RenderStatComparisonBar(PoseStack pose, int x, int y, float value, float compareTo, float minValue, float maxValue, int icon)
@@ -440,9 +621,9 @@ public class WorkbenchScreen extends AbstractContainerScreen<WorkbenchMenu>
 	}
 	private void RenderGunCraftingFG(PoseStack pose, int x, int y)
 	{
-		if(selectedRecipe != -1)
+		if(SelectedGunRecipe != -1)
 		{
-			GunCraftingEntryDefinition entry = GunCraftingEntries.get(selectedRecipe);
+			GunCraftingEntryDefinition entry = GunCraftingEntries.get(SelectedGunRecipe);
 			if(entry != null)
 			{
 				font.draw(pose, entry.outputs[0].item,50, 26, 0x101010);
@@ -453,7 +634,26 @@ public class WorkbenchScreen extends AbstractContainerScreen<WorkbenchMenu>
 		}
 	}
 
+	// Misc
+	private void RenderScrollbar(PoseStack pose, int x, int y, int scrollbarPxWidth, int scrollbarPxHeight, float value, float min, float max)
+	{
+		int scrollbarMinSize = 8 + 8;
 
+		float parametric = value / (max - min);
+		float scrollbarPxSize = Maths.Max(scrollbarPxHeight / (max - min), scrollbarMinSize);
+
+		float minPx = Maths.Lerp(0, scrollbarPxHeight - scrollbarPxSize, parametric);
+		float maxPx = Maths.Lerp(scrollbarPxSize, scrollbarPxHeight, parametric);
+
+		blit(pose, x, y + Maths.Floor(minPx), getBlitOffset(), 208, 18, scrollbarPxWidth, Maths.Floor(scrollbarPxSize) - 8, TEXTURE_WIDTH, TEXTURE_HEIGHT);
+		blit(pose, x, y + Maths.Floor(maxPx) - 8, getBlitOffset(), 208, 82, scrollbarPxWidth, 8, TEXTURE_WIDTH, TEXTURE_HEIGHT);
+	}
+
+	private void UpdateGunCrafting()
+	{
+		ShowPotentialMatchTicker += 1.0f / 20.0f;
+
+	}
 }
 
 

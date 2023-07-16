@@ -95,24 +95,36 @@ public abstract class Action
 	public void OnStartServer(ActionContext context)
 	{
 		progress = 0;
-		DoInitialTrigger(context, this::OnTriggerServer);
+		DoInitialTrigger(context, (ActionContext ac) ->
+		{
+			OnTriggerServer(ac);
+		});
 	}
 	public void OnTickServer(ActionContext context)
 	{
 		progress++;
-		CheckRetrigger(context, this::OnTriggerServer);
+		CheckRetrigger(context, (ActionContext ac) ->
+		{
+			OnTriggerServer(ac);
+		});
 	}
 	public void OnFinishServer(ActionContext context) {}
 
 	public void OnStartClient(ActionContext context)
 	{
 		progress = 0;
-		DoInitialTrigger(context, this::OnTriggerClient);
+		DoInitialTrigger(context, (ActionContext ac) ->
+		{
+			OnTriggerClient(ac);
+		});
 	}
 	public void OnTickClient(ActionContext context)
 	{
 		progress++;
-		CheckRetrigger(context, this::OnTriggerClient);
+		CheckRetrigger(context, (ActionContext ac) ->
+		{
+			OnTriggerClient(ac);
+		});
 	}
 	public void OnFinishClient(ActionContext context) {}
 
@@ -122,12 +134,18 @@ public abstract class Action
 	{
 		// We allow *any* non-zero value for repeats, but we should not allow exactly zero.
 		float repeatDelay = RepeatDelay(context);
-		repeatDelay = repeatDelay <= 0.0f ? TICK_RATE : repeatDelay;
-		int count = context.ActionStack().TryShootMultiple(repeatDelay);
-		for(int i = 0; i < count; i++)
+		if(repeatDelay <= 0.0f)
+		{
 			triggerFunc.accept(context);
+		}
+		else
+		{
+			int count = context.ActionStack().TryShootMultiple(repeatDelay);
+			for (int i = 0; i < count; i++)
+				triggerFunc.accept(context);
 
-		numBurstsRemaining = RepeatMode(context) == ERepeatMode.BurstFire ? RepeatCount(context) - 1 : 0;
+			numBurstsRemaining = RepeatMode(context) == ERepeatMode.BurstFire ? RepeatCount(context) - 1 : 0;
+		}
 	}
 
 	private void CheckRetrigger(ActionContext context, Consumer<ActionContext> triggerFunc)

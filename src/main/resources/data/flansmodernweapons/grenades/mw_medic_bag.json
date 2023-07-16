@@ -1,4 +1,10 @@
 {
+    "itemSettings": {
+        "maxStackSize": 1,
+        "tags": [
+            "flansmod:grenade"
+        ]
+    },
     "primaryActions": [
         {
             "actionType": "Animation",
@@ -13,7 +19,7 @@
             "duration": 0.0,
             "sounds": [
                 {
-                    "sound": "",
+                    "sound": "flansmodernweapons:",
                     "length": 1.0,
                     "minPitchMultiplier": 1.0,
                     "maxPitchMultiplier": 1.0,

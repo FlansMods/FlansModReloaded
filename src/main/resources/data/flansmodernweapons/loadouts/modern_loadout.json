@@ -12,10 +12,10 @@
                 "m9",
                 "m67",
                 "mwKnife",
-                "",
-                "",
-                "",
-                ""
+                null,
+                null,
+                null,
+                null
             ]
         },
         {
@@ -24,10 +24,10 @@
                 "ak74",
                 "m67",
                 "mwKnife",
-                "",
-                "",
-                "",
-                ""
+                null,
+                null,
+                null,
+                null
             ]
         },
         {
@@ -36,10 +36,10 @@
                 "makarov",
                 "mwMedKit",
                 "mwKnife",
-                "",
-                "",
-                "",
-                ""
+                null,
+                null,
+                null,
+                null
             ]
         },
         {
@@ -48,10 +48,10 @@
                 "p90",
                 "mwMedKit",
                 "mwKnife",
-                "",
-                "",
-                "",
-                ""
+                null,
+                null,
+                null,
+                null
             ]
         },
         {
@@ -60,10 +60,10 @@
                 "glock",
                 "m67",
                 "mwKnife",
-                "",
-                "",
-                "",
-                ""
+                null,
+                null,
+                null,
+                null
             ]
         }
     ],

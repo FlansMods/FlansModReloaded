@@ -1,4 +1,10 @@
 {
+    "itemSettings": {
+        "maxStackSize": 1,
+        "tags": [
+            "flansmod:vehicle"
+        ]
+    },
     "seats": [
         {
             "attachedTo": "core",
@@ -138,7 +144,7 @@
                     "duration": 0.0,
                     "sounds": [
                         {
-                            "sound": "RPDShoot",
+                            "sound": "flansmodernweapons:rpdshoot",
                             "length": 0.0,
                             "minPitchMultiplier": 0.8333333,
                             "maxPitchMultiplier": 1.25,
@@ -154,7 +160,7 @@
                             "verticalRecoil": 6.0,
                             "horizontalRecoil": 0.0,
                             "spread": 22.0,
-                            "spreadPattern": "Circle",
+                            "spreadPattern": "FilledCircle",
                             "hitscan": true,
                             "speed": 0.0,
                             "bulletCount": 1,
@@ -213,7 +219,7 @@
             "lockSeatToGunAngles": false,
             "traveseIndependently": false,
             "yawSound": {
-                "sound": "",
+                "sound": "flansmodernweapons:",
                 "length": 0.0,
                 "minPitchMultiplier": 1.0,
                 "maxPitchMultiplier": 1.0,
@@ -223,7 +229,7 @@
                 "LODs": []
             },
             "pitchSound": {
-                "sound": "",
+                "sound": "flansmodernweapons:",
                 "length": 0.0,
                 "minPitchMultiplier": 1.0,
                 "maxPitchMultiplier": 1.0,
@@ -298,7 +304,7 @@
             "lockSeatToGunAngles": false,
             "traveseIndependently": false,
             "yawSound": {
-                "sound": "",
+                "sound": "flansmodernweapons:",
                 "length": 1.0,
                 "minPitchMultiplier": 1.0,
                 "maxPitchMultiplier": 1.0,
@@ -308,7 +314,7 @@
                 "LODs": []
             },
             "pitchSound": {
-                "sound": "",
+                "sound": "flansmodernweapons:",
                 "length": 1.0,
                 "minPitchMultiplier": 1.0,
                 "maxPitchMultiplier": 1.0,
@@ -334,7 +340,7 @@
                     "duration": 0.0,
                     "sounds": [
                         {
-                            "sound": "RPDShoot",
+                            "sound": "flansmodernweapons:rpdshoot",
                             "length": 0.0,
                             "minPitchMultiplier": 0.8333333,
                             "maxPitchMultiplier": 1.25,
@@ -350,7 +356,7 @@
                             "verticalRecoil": 6.0,
                             "horizontalRecoil": 0.0,
                             "spread": 22.0,
-                            "spreadPattern": "Circle",
+                            "spreadPattern": "FilledCircle",
                             "hitscan": true,
                             "speed": 0.0,
                             "bulletCount": 1,
@@ -409,7 +415,7 @@
             "lockSeatToGunAngles": false,
             "traveseIndependently": false,
             "yawSound": {
-                "sound": "",
+                "sound": "flansmodernweapons:",
                 "length": 1.0,
                 "minPitchMultiplier": 1.0,
                 "maxPitchMultiplier": 1.0,
@@ -419,7 +425,7 @@
                 "LODs": []
             },
             "pitchSound": {
-                "sound": "",
+                "sound": "flansmodernweapons:",
                 "length": 1.0,
                 "minPitchMultiplier": 1.0,
                 "maxPitchMultiplier": 1.0,

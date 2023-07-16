@@ -1,13 +1,18 @@
 {
     "canPlaceInMachiningTable": false,
     "canPlaceInModificationTable": false,
-    "maxStackSize": 64,
-    "triggersApocalypse": false,
     "compatiblityTags": [
         "mecha",
         "groundVehicle",
         "plane"
     ],
+    "itemSettings": {
+        "maxStackSize": 64,
+        "tags": [
+            "flansmod:part",
+            "flansmod:misc"
+        ]
+    },
     "engine": {
         "maxAcceleration": 1.0,
         "maxDeceleration": 1.0,
