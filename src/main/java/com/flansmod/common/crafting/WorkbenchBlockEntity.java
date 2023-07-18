@@ -101,7 +101,7 @@ public class WorkbenchBlockEntity extends BlockEntity implements MenuProvider, C
 		super(ForgeRegistries.BLOCK_ENTITY_TYPES.getValue(defLoc), pos, state);
 		Def = FlansMod.WORKBENCHES.Get(defLoc);
 
-		if(Def.gunCrafting.isActive)
+		if(Def.gunModifying.isActive)
 		{
 			GunContainer = new RestrictedContainer(
 				this,

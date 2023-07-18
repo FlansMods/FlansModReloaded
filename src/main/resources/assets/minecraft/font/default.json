@@ -1,0 +1,53 @@
+{
+    "providers": [
+        {
+            "type": "bitmap",
+            "file": "flansmod:font/damage.png",
+			"ascent": 8,
+			"height": 9,
+			"chars": ["\uE780"]
+        },
+		{
+            "type": "bitmap",
+            "file": "flansmod:font/recoil.png",
+			"ascent": 9,
+			"height": 9,
+			"chars": ["\uE781"]
+        },
+		{
+            "type": "bitmap",
+            "file": "flansmod:font/speed.png",
+			"ascent": 9,
+			"height": 9,
+			"chars": ["\uE782"]
+        },
+		{
+            "type": "bitmap",
+            "file": "flansmod:font/spread.png",
+			"ascent": 9,
+			"height": 9,
+			"chars": ["\uE783"]
+        },
+		{
+            "type": "bitmap",
+            "file": "flansmod:font/fullauto.png",
+			"ascent": 9,
+			"height": 9,
+			"chars": ["\uE784"]
+        },
+		{
+            "type": "bitmap",
+            "file": "flansmod:font/singlefire.png",
+			"ascent": 9,
+			"height": 9,
+			"chars": ["\uE785"]
+        },
+		{
+            "type": "bitmap",
+            "file": "flansmod:font/toggle.png",
+			"ascent": 9,
+			"height": 9,
+			"chars": ["\uE786"]
+        }
+    ]
+}

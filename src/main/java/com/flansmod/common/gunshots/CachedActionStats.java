@@ -20,6 +20,11 @@ public class CachedActionStats
 	public final float HarvestSpeed;
 	public final float Reach;
 
+	public int RoundsPerMinute()
+	{
+		return RepeatDelay <= 0.00001f ? 0 : Maths.Ceil(60.0f / RepeatDelay);
+	}
+
 	public CachedActionStats(ActionDefinition actionDef, List<ModifierDefinition> modifiers)
 	{
 		RepeatMode = ModifyMode(actionDef.repeatMode, "repeatMode", modifiers);

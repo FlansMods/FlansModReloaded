@@ -69,7 +69,9 @@ public class AttachmentSlot extends RestrictedSlot
 	@Override
 	public boolean mayPlace(ItemStack stack)
 	{
-		return isActive() && stack.getItem() instanceof AttachmentItem;
+		return isActive()
+			&& stack.getItem() instanceof AttachmentItem attachmentItem
+			&& attachmentItem.Def().attachmentType == AttachmentType;
 	}
 	@Override
 	public void initialize(ItemStack stack)

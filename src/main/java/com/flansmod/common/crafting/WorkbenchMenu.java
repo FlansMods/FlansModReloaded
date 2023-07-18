@@ -1,6 +1,7 @@
 package com.flansmod.common.crafting;
 
 import com.flansmod.common.FlansMod;
+import com.flansmod.common.item.GunItem;
 import com.flansmod.common.types.attachments.EAttachmentType;
 import com.flansmod.common.types.crafting.WorkbenchDefinition;
 import net.minecraft.core.BlockPos;
@@ -109,11 +110,18 @@ public class WorkbenchMenu extends AbstractContainerMenu
 
 		if (GunContainer.getContainerSize() > 0)
 		{
-			addSlot(GunSlot = new RestrictedSlot(GunContainer, 0, 120, 99));
+			addSlot(GunSlot = new RestrictedSlot(GunContainer, 0, 34, 51));
 			AttachmentSlots = new AttachmentSlot[ModSlot.values().length];
 			for (ModSlot modSlot : ModSlot.values())
 			{
-				addSlot(AttachmentSlots[modSlot.ordinal()] = new AttachmentSlot(GunSlot, modSlot.attachType, modSlot.attachIndex, GunContainer, modSlot.x, modSlot.y));
+				addSlot(AttachmentSlots[modSlot.ordinal()] =
+					new AttachmentSlot(
+						GunSlot,
+						modSlot.attachType,
+						modSlot.attachIndex,
+						GunContainer,
+						8 + 26 * modSlot.x,
+						25 + 26 * modSlot.y));
 			}
 		}
 		else AttachmentSlots = new AttachmentSlot[0];
@@ -153,7 +161,15 @@ public class WorkbenchMenu extends AbstractContainerMenu
 			addSlot(new RestrictedSlot(playerInventory, x, 6 + x * 18, 178));
 		}
 
-		SwitchToPower();
+		if(GunContainer.getContainerSize() > 0)
+			SwitchToGunModification();
+		else if(MaterialContainer.getContainerSize() > 0)
+			SwitchToMaterials();
+		else if(BatteryContainer.getContainerSize() > 0)
+			SwitchToPower();
+		else if(FuelContainer.getContainerSize() > 0)
+			SwitchToPower();
+		else SwitchToPower();
 	}
 
 	@OnlyIn(Dist.CLIENT)
@@ -225,7 +241,48 @@ public class WorkbenchMenu extends AbstractContainerMenu
 	}
 
 	@Override
-	public ItemStack quickMoveStack(Player player, int slot) { return ItemStack.EMPTY; }
+	public ItemStack quickMoveStack(Player player, int slot)
+	{
+		if(GunSlot != null && slot == GunSlot.index)
+			return QuickStackIntoInventory(player, GunSlot);
+		else if(FuelSlot != null && slot == FuelSlot.index)
+			return QuickStackIntoInventory(player, FuelSlot);
+		else if(BatterySlot != null && slot == BatterySlot.index)
+			return QuickStackIntoInventory(player, BatterySlot);
+		else if(AttachmentSlots.length > 0 && slot >= AttachmentSlots[0].index && slot < AttachmentSlots[0].index + AttachmentSlots.length)
+		{
+			int attachmentSlotIndex = slot - AttachmentSlots[0].index;
+			return QuickStackIntoInventory(player, AttachmentSlots[attachmentSlotIndex]);
+		}
+		else if(MaterialSlots.length > 0 && slot >= MaterialSlots[0].index && slot < MaterialSlots[0].index + MaterialSlots.length)
+		{
+			int materialSlotIndex = slot - MaterialSlots[0].index;
+			return QuickStackIntoInventory(player, MaterialSlots[materialSlotIndex]);
+		}
+		else
+		{
+			// We are shifting from the player into the inventory
+			ItemStack stack = slots.get(slot).getItem();
+			if(GunSlot != null && GunSlot.getItem().isEmpty() && stack.getItem() instanceof GunItem)
+			{
+				GunSlot.set(stack);
+				slots.get(slot).set(ItemStack.EMPTY);
+			}
+		}
+
+
+		return ItemStack.EMPTY;
+	}
+	private ItemStack QuickStackIntoInventory(Player player, Slot slot)
+	{
+		if(player.getInventory().add(slot.getItem()))
+		{
+			slot.set(ItemStack.EMPTY);
+			return ItemStack.EMPTY;
+		}
+		return slot.getItem();
+	}
+
 	@Override
 	public boolean stillValid(Player player) { return true; } //return GunContainer != null && GunContainer.stillValid(player); }
 

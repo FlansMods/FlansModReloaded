@@ -9,6 +9,8 @@ import java.util.List;
 
 public class CachedGunStats
 {
+	public static final CachedGunStats Invalid = new CachedGunStats();
+
 	public final float VerticalRecoil;
 	public final float HorizontalRecoil;
 	public final float Spread;
@@ -25,6 +27,27 @@ public class CachedGunStats
 	public final float FireSpreadRadius;
 	public final float FireSpreadAmount;
 	public final ESpreadPattern SpreadPattern;
+
+	private CachedGunStats()
+	{
+		VerticalRecoil = 0.0f;
+		HorizontalRecoil = 0.0f;
+		Spread = 0.0f;
+		Speed = 0.0f;
+		BulletCount = 0;
+		PenetrationPower = 0.0f;
+		SpreadPattern = ESpreadPattern.Circle;
+
+		BaseDamage = 0.0f;
+		Knockback = 0.0f;
+		MultiplierVsPlayers = 0.0f;
+		MultiplierVsVehicles = 0.0f;
+		SplashDamageRadius = 0.0f;
+		SplashDamageFalloff = 0.0f;
+		SetFireToTarget = 0.0f;
+		FireSpreadRadius = 0.0f;
+		FireSpreadAmount = 0.0f;
+	}
 
 	public CachedGunStats(ShotDefinition shotDef, List<ModifierDefinition> modifiers)
 	{

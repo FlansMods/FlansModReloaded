@@ -172,6 +172,8 @@ public class WorkbenchScreen extends AbstractContainerScreen<WorkbenchMenu>
 	@Override
 	protected void renderBg(PoseStack pose, float f, int x, int y)
 	{
+		pose.pushPose();
+
 		RenderSystem.setShader(GameRenderer::getPositionTexShader);
 		RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
 		RenderSystem.setShaderTexture(0, BACKGROUND_LOCATION);
@@ -258,18 +260,27 @@ public class WorkbenchScreen extends AbstractContainerScreen<WorkbenchMenu>
 							// If this item has this slot, blit the slot BG in
 							if (flanItem.HasAttachmentSlot(modSlot.attachType, modSlot.attachIndex))
 							{
-								blit(pose, i + 5 + 26 * modSlot.x, j + 22 + 26 * modSlot.y, getBlitOffset(), 269 + 26 * modSlot.x, 26 * modSlot.y, 22, 22, TEXTURE_WIDTH, TEXTURE_HEIGHT);
+								blit(pose,
+									i + 5 + 26 * modSlot.x,
+									j + 22 + 26 * modSlot.y,
+									getBlitOffset(),
+									269 + 26 * modSlot.x,
+									26 * modSlot.y,
+									22, 22,
+									TEXTURE_WIDTH, TEXTURE_HEIGHT);
 								//ItemStack attachmentItem = flanItem.GetAttachmentInSlot(gunStack, modSlot.attachType, modSlot.attachIndex);
 
 							}
 						}
 					}
-					blit(pose, i + 3, j + 22, getBlitOffset(), 3, 22, 166, 18, TEXTURE_WIDTH, TEXTURE_HEIGHT);
+					//blit(pose, i + 3, j + 22, getBlitOffset(), 3, 22, 166, 18, TEXTURE_WIDTH, TEXTURE_HEIGHT);
 
 
 				}
 			}
 		}
+
+		pose.popPose();
 
 	}
 
@@ -285,9 +296,19 @@ public class WorkbenchScreen extends AbstractContainerScreen<WorkbenchMenu>
 
 	}
 
+	@Override
+	public void render(PoseStack pose, int x, int y, float f)
+	{
+		super.render(pose, x, y, f);
+		renderTooltip(pose, x, y);
+	}
+
+	@Override
 	protected void renderLabels(PoseStack pose, int x, int y)
 	{
 		super.renderLabels(pose, x, y);
+
+		pose.pushPose();
 
 		int i = imageWidth / 2;
 		int j = imageHeight / 2;
@@ -317,6 +338,10 @@ public class WorkbenchScreen extends AbstractContainerScreen<WorkbenchMenu>
 				RenderGunCraftingFG(pose, x, y);
 			}
 		}
+		pose.popPose();
+
+
+		//renderTooltip(pose, x, y);
 
 
 	}

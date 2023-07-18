@@ -1,0 +1,24 @@
+{
+  "tooltip.format.attached": "\u00A72+%s",
+  "tooltip.format.damage": "\uE780%.0f",
+  "tooltip.format.damage.advanced": "\uE780Impact Damage %.0f",
+  "tooltip.format.recoil": "\uE781%.0f",
+  "tooltip.format.recoil.advanced": "\uE781Recoil %.0f",
+  "tooltip.format.speed": "\uE782%.0f",
+  "tooltip.format.speed.advanced": "\uE782Speed %.0f",
+  "tooltip.format.spread": "\uE783%.0f",
+  "tooltip.format.spread.advanced": "\uE783Bullet Spread %.0f",
+  "tooltip.format.fullautorpm": "\uE784%dRPM",
+  "tooltip.format.fullautorpm.advanced": "\uE784Fully-Automatic %dRPM",
+  "tooltip.format.minigunrpm": "\uE784%dRPM",
+  "tooltip.format.minigunrpm.advanced": "\uE784Charge-Up to Max %dRPM",
+  "tooltip.format.burstfirerpm": "\uE785\uE785\uE785%dRPM",
+  "tooltip.format.burstfirerpm.advanced": "\uE785\uE785\uE785%d Shot Burst %dRPM",
+  "tooltip.format.singlefire": "\uE785",
+  "tooltip.format.singlefire.advanced": "\uE785Semi-Automatic",
+  "tooltip.format.toggle": "\uE786",
+  "tooltip.format.toggle.advanced": "\uE786Toggleable",
+  
+  "tooltip.format.primarystatline": "\uE780%.0f \uE781%.0f %s \uE783%.0f",
+  "tooltip.format.secondarystatline": "Alt.:\uE780%.0f \uE781%.0f %s \uE783%.0f"
+}

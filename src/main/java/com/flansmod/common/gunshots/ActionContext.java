@@ -84,6 +84,8 @@ public class ActionContext
 	@Nonnull
 	public CachedGunStats BuildGunStatCache(ActionDefinition actionDef)
 	{
-		return new CachedGunStats(actionDef.shootStats[0], Gun().GetAllApplicableModifiers(InputType));
+		if(actionDef.shootStats.length > 0)
+			return new CachedGunStats(actionDef.shootStats[0], Gun().GetAllApplicableModifiers(InputType));
+		return CachedGunStats.Invalid;
 	}
 }
