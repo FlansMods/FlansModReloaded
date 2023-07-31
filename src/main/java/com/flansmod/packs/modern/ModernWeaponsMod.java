@@ -97,8 +97,6 @@ public class ModernWeaponsMod
 	public static final RegistryObject<Item> BULLET_AT4 = 						FlansMod.Bullet(ITEMS, MODID, "at4ammo");
 	public static final RegistryObject<Item> BULLET_AUG = 						FlansMod.Bullet(ITEMS, MODID, "aug_ammo");
 	public static final RegistryObject<Item> BULLET_BARRETT = 					FlansMod.Bullet(ITEMS, MODID, "barrett_ammo");
-	public static final RegistryObject<Item> BULLET_BARRETT_COMPACT =			FlansMod.Bullet(ITEMS, MODID, "barrett_compact_ammo");
-	public static final RegistryObject<Item> BULLET_BARRETT_EXPLOSIVE =			FlansMod.Bullet(ITEMS, MODID, "barrett_explosive_ammo");
 	public static final RegistryObject<Item> BULLET_BIZON = 					FlansMod.Bullet(ITEMS, MODID, "bizon_ammo");
 	public static final RegistryObject<Item> BULLET_DESERT_EAGLE = 				FlansMod.Bullet(ITEMS, MODID, "desert_eagle_ammo");
 	public static final RegistryObject<Item> BULLET_DRAGUNOV = 					FlansMod.Bullet(ITEMS, MODID, "dragunov_ammo");
@@ -141,7 +139,24 @@ public class ModernWeaponsMod
 	public static final RegistryObject<Item> BULLET_UZI = 						FlansMod.Bullet(ITEMS, MODID, "uzi_ammo");
 	public static final RegistryObject<Item> BULLET_W1200 = 					FlansMod.Bullet(ITEMS, MODID, "w1200ammo");
 
+	public static final RegistryObject<Item> BULLET_AP_PISTOL = 						FlansMod.Bullet(ITEMS, MODID, "appistolammo");
+	//public static final RegistryObject<Item> BULLET_AP_REVOLVER = 					FlansMod.Bullet(ITEMS, MODID, "ammo");
+	public static final RegistryObject<Item> BULLET_BARRET_COMPACT = 					FlansMod.Bullet(ITEMS, MODID, "barrett_compact_ammo");
+	public static final RegistryObject<Item> BULLET_BARRET_EXPLOSIVE = 					FlansMod.Bullet(ITEMS, MODID, "barrett_explosive_ammo");
+	public static final RegistryObject<Item> BULLET_BETA_C_MAG = 						FlansMod.Bullet(ITEMS, MODID, "beta_cmag");
+	public static final RegistryObject<Item> BULLET_HE_PISTOL = 						FlansMod.Bullet(ITEMS, MODID, "highexpistolammo");
+	public static final RegistryObject<Item> BULLET_MINIGUN_EXPLOSIVE = 				FlansMod.Bullet(ITEMS, MODID, "minigun_explosive_ammo");
+	public static final RegistryObject<Item> BULLET_MINIGUN_PORTABLE = 					FlansMod.Bullet(ITEMS, MODID, "minigun_compact_ammo");
+	public static final RegistryObject<Item> BULLET_SEEKER_RIFLE = 						FlansMod.Bullet(ITEMS, MODID, "seekerrifleammo");
+	public static final RegistryObject<Item> BULLET_SHULKER_SNIPER = 					FlansMod.Bullet(ITEMS, MODID, "shulkersniperammo");
+	public static final RegistryObject<Item> BULLET_SMG_100 = 							FlansMod.Bullet(ITEMS, MODID, "smg100ammo");
+	public static final RegistryObject<Item> BULLET_W1200_INCENDIARY = 					FlansMod.Bullet(ITEMS, MODID, "w1200incendiary_ammo");
+	public static final RegistryObject<Item> BULLET_WITHERING_AK = 						FlansMod.Bullet(ITEMS, MODID, "witheringakammo");
 
+	public static final RegistryObject<Item> BULLET_MK4_ROCKET = 						FlansMod.Bullet(ITEMS, MODID, "mk4rocket");
+	public static final RegistryObject<Item> BULLET_HYDRA70 = 							FlansMod.Bullet(ITEMS, MODID, "hydra70");
+	public static final RegistryObject<Item> BULLET_HELLFIRE = 							FlansMod.Bullet(ITEMS, MODID, "hellfire");
+	public static final RegistryObject<Item> BULLET_TRIGAT = 							FlansMod.Bullet(ITEMS, MODID, "trigat");
 
 	public static final RegistryObject<Item> ATTACHMENT_4X_SCOPE = 						FlansMod.Attachment(ITEMS, MODID, "4x_scope");
 	public static final RegistryObject<Item> ATTACHMENT_ACOG_SCOPE = 					FlansMod.Attachment(ITEMS, MODID, "acog");

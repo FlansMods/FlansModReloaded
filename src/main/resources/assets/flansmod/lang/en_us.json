@@ -23,5 +23,9 @@
   "tooltip.format.multiple_bullet_stack": "%dx %s",
   
   "tooltip.format.primarystatline": "\uE780%.0f \uE781%.0f %s \uE783%.0f",
-  "tooltip.format.secondarystatline": "Alt.:\uE780%.0f \uE781%.0f %s \uE783%.0f"
+  "tooltip.format.secondarystatline": "Alt.:\uE780%.0f \uE781%.0f %s \uE783%.0f",
+  
+  "crafting.disallowed_tag": "Does not have tag '%s'",
+  "crafting.required_tag": "Has tag '%s'",
+  "crafting.switch_to_part_crafting": "Craft this part"  
 }

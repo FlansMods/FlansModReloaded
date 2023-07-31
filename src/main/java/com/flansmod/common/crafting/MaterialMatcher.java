@@ -1,6 +1,7 @@
-package com.flansmod.common.types.crafting;
+package com.flansmod.common.crafting;
 
 import com.flansmod.common.FlansMod;
+import com.flansmod.common.types.crafting.MaterialDefinition;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.tags.TagKey;

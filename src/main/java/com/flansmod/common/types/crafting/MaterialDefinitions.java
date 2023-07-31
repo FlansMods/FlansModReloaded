@@ -1,5 +1,6 @@
 package com.flansmod.common.types.crafting;
 
+import com.flansmod.common.crafting.MaterialMatcher;
 import com.flansmod.common.types.Definitions;
 
 import javax.annotation.Nonnull;

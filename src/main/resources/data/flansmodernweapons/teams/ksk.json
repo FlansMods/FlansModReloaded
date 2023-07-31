@@ -13,25 +13,25 @@
     },
     "textColour": {},
     "hat": {
-        "item": "kskHelmet",
+        "item": "minecraft:ksk_helmet",
         "count": 1,
         "damage": -1,
         "tags": "{}"
     },
     "chest": {
-        "item": "kskBody",
+        "item": "minecraft:ksk_body",
         "count": 1,
         "damage": -1,
         "tags": "{}"
     },
     "legs": {
-        "item": "kskPants",
+        "item": "minecraft:ksk_pants",
         "count": 1,
         "damage": -1,
         "tags": "{}"
     },
     "shoes": {
-        "item": "kskBoots",
+        "item": "minecraft:ksk_boots",
         "count": 1,
         "damage": -1,
         "tags": "{}"

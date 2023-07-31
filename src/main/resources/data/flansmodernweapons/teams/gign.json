@@ -13,25 +13,25 @@
     },
     "textColour": {},
     "hat": {
-        "item": "gignHelmet",
+        "item": "minecraft:gign_helmet",
         "count": 1,
         "damage": -1,
         "tags": "{}"
     },
     "chest": {
-        "item": "gignBody",
+        "item": "minecraft:gign_body",
         "count": 1,
         "damage": -1,
         "tags": "{}"
     },
     "legs": {
-        "item": "gignPants",
+        "item": "minecraft:gign_pants",
         "count": 1,
         "damage": -1,
         "tags": "{}"
     },
     "shoes": {
-        "item": "gignBoots",
+        "item": "minecraft:gign_boots",
         "count": 1,
         "damage": -1,
         "tags": "{}"

@@ -13,25 +13,25 @@
     },
     "textColour": {},
     "hat": {
-        "item": "marineHelmet",
+        "item": "minecraft:marine_helmet",
         "count": 1,
         "damage": -1,
         "tags": "{}"
     },
     "chest": {
-        "item": "marineBody",
+        "item": "minecraft:marine_body",
         "count": 1,
         "damage": -1,
         "tags": "{}"
     },
     "legs": {
-        "item": "marinePants",
+        "item": "minecraft:marine_pants",
         "count": 1,
         "damage": -1,
         "tags": "{}"
     },
     "shoes": {
-        "item": "marineBoots",
+        "item": "minecraft:marine_boots",
         "count": 1,
         "damage": -1,
         "tags": "{}"

@@ -13,25 +13,25 @@
     },
     "textColour": {},
     "hat": {
-        "item": "sasHelmet",
+        "item": "minecraft:sas_helmet",
         "count": 1,
         "damage": -1,
         "tags": "{}"
     },
     "chest": {
-        "item": "sasBody",
+        "item": "minecraft:sas_body",
         "count": 1,
         "damage": -1,
         "tags": "{}"
     },
     "legs": {
-        "item": "sasPants",
+        "item": "minecraft:sas_pants",
         "count": 1,
         "damage": -1,
         "tags": "{}"
     },
     "shoes": {
-        "item": "sasBoots",
+        "item": "minecraft:sas_boots",
         "count": 1,
         "damage": -1,
         "tags": "{}"

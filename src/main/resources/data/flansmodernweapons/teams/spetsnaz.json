@@ -13,25 +13,25 @@
     },
     "textColour": {},
     "hat": {
-        "item": "spetsnazHelmet",
+        "item": "minecraft:spetsnaz_helmet",
         "count": 1,
         "damage": -1,
         "tags": "{}"
     },
     "chest": {
-        "item": "spetsnazBody",
+        "item": "minecraft:spetsnaz_body",
         "count": 1,
         "damage": -1,
         "tags": "{}"
     },
     "legs": {
-        "item": "spetsnazPants",
+        "item": "minecraft:spetsnaz_pants",
         "count": 1,
         "damage": -1,
         "tags": "{}"
     },
     "shoes": {
-        "item": "spetsnazBoots",
+        "item": "minecraft:spetsnaz_boots",
         "count": 1,
         "damage": -1,
         "tags": "{}"
