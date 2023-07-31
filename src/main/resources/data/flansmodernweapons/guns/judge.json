@@ -8,16 +8,16 @@
     "paints": {
         "paintjobs": [
             {
-                "textureName": "Judge_Black"
+                "textureName": "judge_black"
             },
             {
-                "textureName": "Judge_Silver"
+                "textureName": "judge_silver"
             },
             {
-                "textureName": "Judge_Chaos"
+                "textureName": "judge_chaos"
             },
             {
-                "textureName": "Judge_Order"
+                "textureName": "judge_order"
             }
         ]
     },
@@ -358,7 +358,7 @@
             0.0,
             0.0
         ],
-        "hideDefaultMesh": false
+        "hideDefaultMesh": true
     },
     "gripAttachments": {
         "allowlist": [],
@@ -370,7 +370,7 @@
             0.0,
             0.0
         ],
-        "hideDefaultMesh": false
+        "hideDefaultMesh": true
     },
     "stockAttachments": {
         "allowlist": [],
@@ -382,7 +382,7 @@
             0.0,
             0.0
         ],
-        "hideDefaultMesh": false
+        "hideDefaultMesh": true
     },
     "scopeAttachments": {
         "allowlist": [],
@@ -394,7 +394,7 @@
             0.0,
             0.0
         ],
-        "hideDefaultMesh": false
+        "hideDefaultMesh": true
     },
     "genericAttachments": {
         "allowlist": [],
@@ -406,7 +406,7 @@
             0.0,
             0.0
         ],
-        "hideDefaultMesh": false
+        "hideDefaultMesh": true
     },
     "modelParts": [],
     "animationSet": "flansmod:revolver"

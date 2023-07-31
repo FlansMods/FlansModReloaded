@@ -8,13 +8,16 @@
     "paints": {
         "paintjobs": [
             {
-                "textureName": "GL6_Yellow"
+                "textureName": "gl6_yellow"
             },
             {
-                "textureName": "GL6_Red"
+                "textureName": "gl6_red"
             },
             {
-                "textureName": "GL6_Lurid"
+                "textureName": "gl6_lurid"
+            },
+            {
+                "textureName": "gl6_forg"
             }
         ]
     },
@@ -351,7 +354,7 @@
             0.0,
             0.0
         ],
-        "hideDefaultMesh": false
+        "hideDefaultMesh": true
     },
     "gripAttachments": {
         "allowlist": [],
@@ -363,7 +366,7 @@
             0.0,
             0.0
         ],
-        "hideDefaultMesh": false
+        "hideDefaultMesh": true
     },
     "stockAttachments": {
         "allowlist": [],
@@ -375,7 +378,7 @@
             0.0,
             0.0
         ],
-        "hideDefaultMesh": false
+        "hideDefaultMesh": true
     },
     "scopeAttachments": {
         "allowlist": [],
@@ -387,7 +390,7 @@
             0.0,
             0.0
         ],
-        "hideDefaultMesh": false
+        "hideDefaultMesh": true
     },
     "genericAttachments": {
         "allowlist": [],
@@ -399,7 +402,7 @@
             0.0,
             0.0
         ],
-        "hideDefaultMesh": false
+        "hideDefaultMesh": true
     },
     "modelParts": [],
     "animationSet": "flansmod:revolver"

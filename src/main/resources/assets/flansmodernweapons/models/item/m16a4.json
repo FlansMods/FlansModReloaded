@@ -150,6 +150,11 @@
     },
     "parts": {
         "body": {
+            "origin": [
+                0.0,
+                0.0,
+                0.0
+            ],
             "turboelements": [
                 {
                     "verts": [
@@ -3065,7 +3070,12 @@
                 }
             ]
         },
-        "scope": {
+        "sights": {
+            "origin": [
+                0.0,
+                0.0,
+                0.0
+            ],
             "turboelements": [
                 {
                     "verts": [
@@ -3630,6 +3640,11 @@
             ]
         },
         "stock": {
+            "origin": [
+                0.0,
+                0.0,
+                0.0
+            ],
             "turboelements": [
                 {
                     "verts": [
@@ -4082,6 +4097,11 @@
             ]
         },
         "ammo_0": {
+            "origin": [
+                0.0,
+                0.0,
+                0.0
+            ],
             "turboelements": [
                 {
                     "verts": [
@@ -4310,6 +4330,11 @@
             ]
         },
         "slide": {
+            "origin": [
+                0.0,
+                0.0,
+                0.0
+            ],
             "turboelements": [
                 {
                     "verts": [
@@ -4431,8 +4456,8 @@
             "name": "barrel",
             "attachTo": "body",
             "offset": [
-                0.8125,
-                0.203125,
+                13.0,
+                3.25,
                 0.0
             ]
         },
@@ -4440,17 +4465,17 @@
             "name": "stock",
             "attachTo": "body",
             "offset": [
-                -0.0625,
-                0.203125,
+                -1.0,
+                3.25,
                 0.0
             ]
         },
         {
-            "name": "scope",
+            "name": "sights",
             "attachTo": "body",
             "offset": [
-                0.125,
-                0.28125,
+                2.0,
+                4.5,
                 0.0
             ]
         },
@@ -4458,8 +4483,8 @@
             "name": "grip",
             "attachTo": "body",
             "offset": [
-                0.4375,
-                0.15625,
+                7.0,
+                2.5,
                 0.0
             ]
         }

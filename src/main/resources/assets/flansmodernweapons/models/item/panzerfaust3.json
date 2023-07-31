@@ -157,6 +157,11 @@
     },
     "parts": {
         "body": {
+            "origin": [
+                0.0,
+                0.0,
+                0.0
+            ],
             "turboelements": [
                 {
                     "verts": [
@@ -1617,6 +1622,11 @@
             ]
         },
         "ammo_0": {
+            "origin": [
+                0.0,
+                0.0,
+                0.0
+            ],
             "turboelements": [
                 {
                     "verts": [

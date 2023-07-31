@@ -145,6 +145,11 @@
     },
     "parts": {
         "body": {
+            "origin": [
+                0.0,
+                0.0,
+                0.0
+            ],
             "turboelements": [
                 {
                     "verts": [
@@ -5637,6 +5642,11 @@
             ]
         },
         "tail": {
+            "origin": [
+                0.0,
+                0.0,
+                0.0
+            ],
             "turboelements": [
                 {
                     "verts": [
@@ -6537,6 +6547,11 @@
             ]
         },
         "leftWing": {
+            "origin": [
+                0.0,
+                0.0,
+                0.0
+            ],
             "turboelements": [
                 {
                     "verts": [
@@ -7997,6 +8012,11 @@
             ]
         },
         "rightWing": {
+            "origin": [
+                0.0,
+                0.0,
+                0.0
+            ],
             "turboelements": [
                 {
                     "verts": [
@@ -9457,6 +9477,11 @@
             ]
         },
         "yawFlap": {
+            "origin": [
+                0.0,
+                0.0,
+                0.0
+            ],
             "turboelements": [
                 {
                     "verts": [
@@ -9573,6 +9598,11 @@
             ]
         },
         "pitchFlapLeft": {
+            "origin": [
+                0.0,
+                0.0,
+                0.0
+            ],
             "turboelements": [
                 {
                     "verts": [
@@ -9689,6 +9719,11 @@
             ]
         },
         "pitchFlapRight": {
+            "origin": [
+                0.0,
+                0.0,
+                0.0
+            ],
             "turboelements": [
                 {
                     "verts": [
@@ -9805,6 +9840,11 @@
             ]
         },
         "pitchFlapLeftWing": {
+            "origin": [
+                0.0,
+                0.0,
+                0.0
+            ],
             "turboelements": [
                 {
                     "verts": [
@@ -9921,6 +9961,11 @@
             ]
         },
         "pitchFlapRightWing": {
+            "origin": [
+                0.0,
+                0.0,
+                0.0
+            ],
             "turboelements": [
                 {
                     "verts": [
@@ -10037,6 +10082,11 @@
             ]
         },
         "bodyWheel": {
+            "origin": [
+                0.0,
+                0.0,
+                0.0
+            ],
             "turboelements": [
                 {
                     "verts": [
@@ -10937,6 +10987,11 @@
             ]
         },
         "leftWingWheel": {
+            "origin": [
+                0.0,
+                0.0,
+                0.0
+            ],
             "turboelements": [
                 {
                     "verts": [

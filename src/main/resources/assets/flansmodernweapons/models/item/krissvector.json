@@ -147,6 +147,11 @@
     },
     "parts": {
         "body": {
+            "origin": [
+                0.0,
+                0.0,
+                0.0
+            ],
             "turboelements": [
                 {
                     "verts": [
@@ -1943,6 +1948,11 @@
             ]
         },
         "barrel": {
+            "origin": [
+                0.0,
+                0.0,
+                0.0
+            ],
             "turboelements": [
                 {
                     "verts": [
@@ -2058,7 +2068,12 @@
                 }
             ]
         },
-        "scope": {
+        "sights": {
+            "origin": [
+                0.0,
+                0.0,
+                0.0
+            ],
             "turboelements": [
                 {
                     "verts": [
@@ -2399,6 +2414,11 @@
             ]
         },
         "ammo_0": {
+            "origin": [
+                0.0,
+                0.0,
+                0.0
+            ],
             "turboelements": [
                 {
                     "verts": [
@@ -2627,6 +2647,11 @@
             ]
         },
         "slide": {
+            "origin": [
+                0.0,
+                0.0,
+                0.0
+            ],
             "turboelements": [
                 {
                     "verts": [
@@ -2748,17 +2773,17 @@
             "name": "barrel",
             "attachTo": "body",
             "offset": [
-                3.75,
-                0.8125,
+                60.0,
+                13.0,
                 0.0
             ]
         },
         {
-            "name": "scope",
+            "name": "sights",
             "attachTo": "body",
             "offset": [
-                0.375,
-                1.5,
+                6.0,
+                24.0,
                 0.0
             ]
         },
@@ -2766,8 +2791,8 @@
             "name": "grip",
             "attachTo": "body",
             "offset": [
-                2.875,
-                0.625,
+                46.0,
+                10.0,
                 0.0
             ]
         }

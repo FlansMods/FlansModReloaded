@@ -13,7 +13,7 @@ public class GunModel extends FlanItemModel
         super(template, modID, gunName);
 
         addParts("body",
-            "scope",
+            "sights",
             "stock",
             "grip",
             "barrel",

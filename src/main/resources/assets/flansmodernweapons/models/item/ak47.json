@@ -151,6 +151,11 @@
     },
     "parts": {
         "body": {
+            "origin": [
+                0.0,
+                0.0,
+                0.0
+            ],
             "turboelements": [
                 {
                     "verts": [
@@ -1947,6 +1952,11 @@
             ]
         },
         "stock": {
+            "origin": [
+                0.0,
+                0.0,
+                0.0
+            ],
             "turboelements": [
                 {
                     "verts": [
@@ -2287,6 +2297,11 @@
             ]
         },
         "ammo_0": {
+            "origin": [
+                0.0,
+                0.0,
+                0.0
+            ],
             "turboelements": [
                 {
                     "verts": [
@@ -2515,6 +2530,11 @@
             ]
         },
         "slide": {
+            "origin": [
+                0.0,
+                0.0,
+                0.0
+            ],
             "turboelements": [
                 {
                     "verts": [
@@ -2636,8 +2656,8 @@
             "name": "barrel",
             "attachTo": "body",
             "offset": [
-                0.96875,
-                0.203125,
+                15.5,
+                3.25,
                 0.0
             ]
         },
@@ -2645,17 +2665,17 @@
             "name": "stock",
             "attachTo": "body",
             "offset": [
-                -0.03125,
-                0.1875,
+                -0.5,
+                3.0,
                 0.0
             ]
         },
         {
-            "name": "scope",
+            "name": "sights",
             "attachTo": "body",
             "offset": [
-                0.25,
-                0.296875,
+                4.0,
+                4.75,
                 0.0
             ]
         },
@@ -2663,8 +2683,8 @@
             "name": "grip",
             "attachTo": "body",
             "offset": [
-                0.5625,
-                0.171875,
+                9.0,
+                2.75,
                 0.0
             ]
         }

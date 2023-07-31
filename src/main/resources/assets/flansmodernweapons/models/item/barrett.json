@@ -151,6 +151,11 @@
     },
     "parts": {
         "body": {
+            "origin": [
+                0.0,
+                0.0,
+                0.0
+            ],
             "turboelements": [
                 {
                     "verts": [
@@ -1611,6 +1616,11 @@
             ]
         },
         "slide": {
+            "origin": [
+                0.0,
+                0.0,
+                0.0
+            ],
             "turboelements": [
                 {
                     "verts": [
@@ -1838,7 +1848,12 @@
                 }
             ]
         },
-        "scope": {
+        "sights": {
+            "origin": [
+                0.0,
+                0.0,
+                0.0
+            ],
             "turboelements": [
                 {
                     "verts": [
@@ -2291,6 +2306,11 @@
             ]
         },
         "barrel": {
+            "origin": [
+                0.0,
+                0.0,
+                0.0
+            ],
             "turboelements": [
                 {
                     "verts": [
@@ -2407,6 +2427,11 @@
             ]
         },
         "stock": {
+            "origin": [
+                0.0,
+                0.0,
+                0.0
+            ],
             "turboelements": [
                 {
                     "verts": [
@@ -2523,6 +2548,11 @@
             ]
         },
         "ammo_0": {
+            "origin": [
+                0.0,
+                0.0,
+                0.0
+            ],
             "turboelements": [
                 {
                     "verts": [
@@ -2641,11 +2671,11 @@
     },
     "attachPoints": [
         {
-            "name": "scope",
+            "name": "sights",
             "attachTo": "body",
             "offset": [
-                0.1875,
-                0.375,
+                3.0,
+                5.0,
                 0.0
             ]
         },
@@ -2653,8 +2683,8 @@
             "name": "barrel",
             "attachTo": "body",
             "offset": [
-                1.25,
-                0.3125,
+                20.0,
+                4.0,
                 0.0
             ]
         },
@@ -2662,8 +2692,8 @@
             "name": "stock",
             "attachTo": "body",
             "offset": [
-                -0.25,
-                0.0625,
+                -4.0,
+                0.0,
                 0.0
             ]
         }

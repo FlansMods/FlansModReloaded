@@ -155,6 +155,11 @@
     },
     "parts": {
         "body": {
+            "origin": [
+                0.0,
+                0.0,
+                0.0
+            ],
             "turboelements": [
                 {
                     "verts": [
@@ -1279,6 +1284,11 @@
             ]
         },
         "ammo_0": {
+            "origin": [
+                0.0,
+                0.0,
+                0.0
+            ],
             "turboelements": [
                 {
                     "verts": [
@@ -1730,7 +1740,12 @@
                 }
             ]
         },
-        "revolverBarrel": {
+        "revolver": {
+            "origin": [
+                0.0,
+                0.0,
+                0.0
+            ],
             "turboelements": [
                 {
                     "verts": [
@@ -1852,17 +1867,17 @@
             "name": "barrel",
             "attachTo": "body",
             "offset": [
-                0.59375,
-                0.15625,
+                9.5,
+                2.5,
                 0.0
             ]
         },
         {
-            "name": "scope",
+            "name": "sights",
             "attachTo": "body",
             "offset": [
-                0.3125,
-                0.265625,
+                5.0,
+                4.25,
                 0.0
             ]
         }

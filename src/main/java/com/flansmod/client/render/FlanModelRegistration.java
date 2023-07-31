@@ -1,6 +1,7 @@
 package com.flansmod.client.render;
 
 import com.flansmod.client.render.models.TurboRig;
+import com.flansmod.common.FlansMod;
 import com.flansmod.common.item.FlanItem;
 import com.flansmod.util.MinecraftHelpers;
 import net.minecraft.client.Minecraft;
@@ -17,6 +18,7 @@ import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.util.profiling.ProfilerFiller;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.client.event.ModelEvent;
 import net.minecraftforge.client.event.RenderHandEvent;
 import net.minecraftforge.common.MinecraftForge;
@@ -34,12 +36,10 @@ import java.util.concurrent.Executor;
 public class FlanModelRegistration implements PreparableReloadListener
 {
     private static final HashMap<Item, FlanItemModelRenderer> ITEMS_TO_REGISTER = new HashMap<>();
-    private static final Set<Item> ITEMS = new HashSet<>();
 
     public static void preRegisterRenderer(Item item, FlanItemModelRenderer renderer)
     {
         ITEMS_TO_REGISTER.put(item, renderer);
-        ITEMS.add(item);
     }
 
     public void hook(IEventBus modEventBus)
@@ -119,55 +119,40 @@ public class FlanModelRegistration implements PreparableReloadListener
             if(key instanceof  ModelResourceLocation modelKey)
                 key = modelKey.withPath(modelKey.getPath().split("#")[0]);
             Item item = ForgeRegistries.ITEMS.getValue(key);
-            UnbakedModel unbaked = bakery.getModel(kvp.getKey());
-            if(unbaked instanceof BlockModel blockModel)
+            if (ITEMS_TO_REGISTER.containsKey(item))
             {
-                if(blockModel.customData.hasCustomGeometry() && blockModel.customData.getCustomGeometry() instanceof TurboRig unbakedTurbo)
+                UnbakedModel unbaked = bakery.getModel(kvp.getKey());
+                if (unbaked instanceof BlockModel blockModel)
                 {
-                    if (ITEMS_TO_REGISTER.containsKey(item))
+                    if (blockModel.customData.hasCustomGeometry() && blockModel.customData.getCustomGeometry() instanceof TurboRig unbakedTurbo)
                     {
                         ITEMS_TO_REGISTER.get(item).OnUnbakedModelLoaded(unbakedTurbo);
                     }
                 }
-            }
-            else if(unbaked instanceof TurboRig unbakedTurbo)
-            {
-                if (ITEMS_TO_REGISTER.containsKey(item))
+                else if (unbaked instanceof TurboRig unbakedTurbo)
                 {
                     ITEMS_TO_REGISTER.get(item).OnUnbakedModelLoaded(unbakedTurbo);
                 }
-            }
-            else
-            {
+                else
+                {
+                    FlansMod.LOGGER.info("Removed item " + item.toString() + " from the custom renderers");
+                    ITEMS_TO_REGISTER.remove(item);
+                }
             }
         }
     }
 
-    @SubscribeEvent
-    public void OnRenderHands(RenderHandEvent event)
+    public FlanItemModelRenderer GetModelRenderer(ItemStack stack)
     {
-
-        if(event.getItemStack().getItem() instanceof FlanItem flanItem)
+        if(stack.getItem() instanceof FlanItem flanItem)
         {
             ResourceLocation key = ForgeRegistries.ITEMS.getKey(flanItem);
             if(ITEMS_TO_REGISTER.containsKey(flanItem))
             {
-                ITEMS_TO_REGISTER.get(flanItem).RenderFirstPerson(
-                    Minecraft.getInstance().player,
-                    event.getItemStack(),
-                    MinecraftHelpers.GetArm(event.getHand()),
-                    event.getHand() == InteractionHand.OFF_HAND ? ItemTransforms.TransformType.FIRST_PERSON_LEFT_HAND : ItemTransforms.TransformType.FIRST_PERSON_RIGHT_HAND,
-                    event.getPoseStack(),
-                    event.getMultiBufferSource(),
-                    event.getPackedLight(),
-                    0,
-                    event.getEquipProgress());
+                return ITEMS_TO_REGISTER.get(flanItem);
             }
-
-            event.setCanceled(true);
         }
-
-
+        return null;
     }
 
     @Override

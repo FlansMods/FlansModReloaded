@@ -1,18 +1,22 @@
 package com.flansmod.common.crafting;
 
 import com.flansmod.common.FlansMod;
+import com.flansmod.common.item.FlanItem;
 import com.flansmod.common.item.GunItem;
 import com.flansmod.common.types.crafting.WorkbenchDefinition;
+import com.flansmod.common.types.elements.PaintableDefinition;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.Clearable;
+import net.minecraft.world.Container;
 import net.minecraft.world.MenuProvider;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.ContainerData;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -224,6 +228,61 @@ public class WorkbenchBlockEntity extends BlockEntity implements MenuProvider, C
 						workbench.LitTime = burnTime;
 						setChanged(level, pos, state);
 					}
+				}
+			}
+		}
+	}
+
+	public void CraftGun(Player player, int gunIndex)
+	{
+		// TODO: Get neighbours
+		CraftGun(player, new Container[] { MaterialContainer }, Def, gunIndex);
+	}
+	public static void CraftGun(Player player, Container[] attachedContainers, WorkbenchDefinition def, int gunIndex)
+	{
+		// TODO: Survival checks, recipes, unlocks
+
+		if(def.gunCrafting.isActive)
+		{
+			//def.gunCrafting.pages
+		}
+
+		//if(gunContainer.getContainerSize() > 0 && !gunContainer.getItem(0).isEmpty() && gunContainer.getItem(0).getItem() instanceof FlanItem flanItem)
+		//{
+		//	ItemStack gunStack = gunContainer.getItem(0);
+		//	PaintableDefinition paintableDefinition = flanItem.GetPaintDef(gunStack);
+		//	if (paintableDefinition.paintjobs.length > 0)
+		//	{
+		//		if(skinIndex == 0)
+		//		{
+		//			flanItem.SetPaintjobName(gunStack, "default");
+		//		}
+		//		else
+		//		{
+		//			flanItem.SetPaintjobName(gunStack, paintableDefinition.paintjobs[skinIndex - 1].textureName);
+		//		}
+		//	}
+		//}
+	}
+
+	public void PaintGun(Player player, int skinIndex) { PaintGun(player, GunContainer, skinIndex); }
+	public static void PaintGun(Player player, Container gunContainer, int skinIndex)
+	{
+		// TODO: Survival checks, recipes, unlocks
+
+		if(gunContainer.getContainerSize() > 0 && !gunContainer.getItem(0).isEmpty() && gunContainer.getItem(0).getItem() instanceof FlanItem flanItem)
+		{
+			ItemStack gunStack = gunContainer.getItem(0);
+			PaintableDefinition paintableDefinition = flanItem.GetPaintDef();
+			if (paintableDefinition.IsValid())
+			{
+				if(skinIndex == 0)
+				{
+					flanItem.SetPaintjobName(gunStack, "default");
+				}
+				else
+				{
+					flanItem.SetPaintjobName(gunStack, paintableDefinition.paintjobs[skinIndex - 1].textureName);
 				}
 			}
 		}

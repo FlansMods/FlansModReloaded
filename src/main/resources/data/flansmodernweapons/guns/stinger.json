@@ -8,7 +8,7 @@
     "paints": {
         "paintjobs": [
             {
-                "textureName": "Stinger_Pink"
+                "textureName": "stinger_pink"
             }
         ]
     },
@@ -320,7 +320,7 @@
             0.0,
             0.0
         ],
-        "hideDefaultMesh": false
+        "hideDefaultMesh": true
     },
     "gripAttachments": {
         "allowlist": [],
@@ -332,7 +332,7 @@
             0.0,
             0.0
         ],
-        "hideDefaultMesh": false
+        "hideDefaultMesh": true
     },
     "stockAttachments": {
         "allowlist": [],
@@ -344,7 +344,7 @@
             0.0,
             0.0
         ],
-        "hideDefaultMesh": false
+        "hideDefaultMesh": true
     },
     "scopeAttachments": {
         "allowlist": [],
@@ -356,7 +356,7 @@
             0.0,
             0.0
         ],
-        "hideDefaultMesh": false
+        "hideDefaultMesh": true
     },
     "genericAttachments": {
         "allowlist": [],
@@ -368,7 +368,7 @@
             0.0,
             0.0
         ],
-        "hideDefaultMesh": false
+        "hideDefaultMesh": true
     },
     "modelParts": [],
     "animationSet": "flansmod:end_loaded"

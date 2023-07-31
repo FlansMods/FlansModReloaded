@@ -147,6 +147,11 @@
     },
     "parts": {
         "body": {
+            "origin": [
+                0.0,
+                0.0,
+                0.0
+            ],
             "turboelements": [
                 {
                     "verts": [
@@ -822,7 +827,12 @@
                 }
             ]
         },
-        "scope": {
+        "sights": {
+            "origin": [
+                0.0,
+                0.0,
+                0.0
+            ],
             "turboelements": [
                 {
                     "verts": [
@@ -1051,6 +1061,11 @@
             ]
         },
         "ammo_0": {
+            "origin": [
+                0.0,
+                0.0,
+                0.0
+            ],
             "turboelements": [
                 {
                     "verts": [
@@ -1279,6 +1294,11 @@
             ]
         },
         "slide": {
+            "origin": [
+                0.0,
+                0.0,
+                0.0
+            ],
             "turboelements": [
                 {
                     "verts": [
@@ -1512,8 +1532,8 @@
             "name": "barrel",
             "attachTo": "body",
             "offset": [
-                0.43125,
-                0.265625,
+                6.9,
+                4.25,
                 0.0
             ]
         },
@@ -1527,11 +1547,11 @@
             ]
         },
         {
-            "name": "scope",
+            "name": "sights",
             "attachTo": "body",
             "offset": [
-                0.125,
-                0.3125,
+                2.0,
+                5.0,
                 0.0
             ]
         },
@@ -1540,7 +1560,7 @@
             "attachTo": "body",
             "offset": [
                 0.0,
-                0.25,
+                4.0,
                 0.0
             ]
         }

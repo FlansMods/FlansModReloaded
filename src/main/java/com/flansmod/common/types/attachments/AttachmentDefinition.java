@@ -1,6 +1,7 @@
 package com.flansmod.common.types.attachments;
 
 import com.flansmod.common.FlansMod;
+import com.flansmod.common.actions.EActionInput;
 import com.flansmod.common.types.JsonDefinition;
 import com.flansmod.common.types.JsonField;
 import com.flansmod.common.types.elements.ActionDefinition;
@@ -20,6 +21,26 @@ public class AttachmentDefinition extends JsonDefinition
 	public AttachmentDefinition(ResourceLocation resLoc)
 	{
 		super(resLoc);
+	}
+
+	public boolean ShouldReplaceAction(EActionInput inputType)
+	{
+		switch(inputType)
+		{
+			case PRIMARY -> { return replacePrimaryAction; }
+			case SECONDARY -> { return replaceSecondaryAction; }
+			default -> { return false; }
+		}
+	}
+
+	public ActionDefinition[] GetActions(EActionInput inputType)
+	{
+		switch(inputType)
+		{
+			case PRIMARY -> { return primaryActions; }
+			case SECONDARY -> { return secondaryActions; }
+			default -> { return new ActionDefinition[0]; }
+		}
 	}
 
 	@JsonField

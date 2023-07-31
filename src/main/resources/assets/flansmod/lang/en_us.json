@@ -18,6 +18,9 @@
   "tooltip.format.singlefire.advanced": "\uE785Semi-Automatic",
   "tooltip.format.toggle": "\uE786",
   "tooltip.format.toggle.advanced": "\uE786Toggleable",
+  "tooltip.format.single_bullet_stack": "%s",
+  "tooltip.format.single_bullet_stack_with_durability": "%s (%d/%d)",
+  "tooltip.format.multiple_bullet_stack": "%dx %s",
   
   "tooltip.format.primarystatline": "\uE780%.0f \uE781%.0f %s \uE783%.0f",
   "tooltip.format.secondarystatline": "Alt.:\uE780%.0f \uE781%.0f %s \uE783%.0f"

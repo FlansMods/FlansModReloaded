@@ -21,6 +21,17 @@ import java.util.List;
  */
 public class ActionStack
 {
+	public static final ActionStack Invalid = new ActionStack(false) {
+		@Override
+		public void AddAction(ActionContext context, Action action) {}
+		@Override
+		public void AddReload(ActionContext context, ReloadProgress reload) {}
+		@Override
+		public void OnTick(Level level, GunContext gunContext) {}
+		@Override
+		public boolean IsValid() { return false; }
+	};
+
 	private List<Action> ActiveActions = new ArrayList<Action>();
 	private List<ReloadProgress> ActiveReloads = new ArrayList<>();
 	private float ShotCooldown = 0.0f;
@@ -46,6 +57,7 @@ public class ActionStack
 	public List<Action> GetActions() { return ActiveActions; }
 	public boolean IsReloading() { return ActiveReloads.size() > 0; }
 	public void RequestCancel() { cancelActionRequested = true; }
+	public boolean IsValid() { return true; }
 
 	public void AddAction(ActionContext context, Action action)
 	{

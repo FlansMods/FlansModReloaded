@@ -24,10 +24,7 @@ void main() {
     if (color.a < 0.1) {
         discard;
     }
-    color *= vertexColor;// * ColorModulator;
-    //color.rgb = mix(overlayColor.rgb, color.rgb, overlayColor.a);
+    color *= vertexColor * ColorModulator;
     color *= lightMapColor;
     fragColor = linear_fog(color, vertexDistance, FogStart, FogEnd, FogColor);
-	fragColor = normal;
-	fragColor = vec4(0, 0, 0, 1);
 }

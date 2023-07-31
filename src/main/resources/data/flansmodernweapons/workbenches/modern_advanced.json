@@ -15,44 +15,7 @@
                                 "tags": "{}"
                             }
                         ],
-                        "ingredients": [
-                            {
-                                "itemName": "2xingotIron.0",
-                                "count": 1,
-                                "compareDamage": false,
-                                "damage": 0,
-                                "compareNBT": false,
-                                "requiredTags": [],
-                                "disallowedTags": [],
-                                "checkCapabilities": false,
-                                "requiredCapabilities": [],
-                                "disallowedCapabilites": []
-                            },
-                            {
-                                "itemName": "3xfiberglass.0",
-                                "count": 1,
-                                "compareDamage": false,
-                                "damage": 0,
-                                "compareNBT": false,
-                                "requiredTags": [],
-                                "disallowedTags": [],
-                                "checkCapabilities": false,
-                                "requiredCapabilities": [],
-                                "disallowedCapabilites": []
-                            },
-                            {
-                                "itemName": "3xgunpowder.0",
-                                "count": 1,
-                                "compareDamage": false,
-                                "damage": 0,
-                                "compareNBT": false,
-                                "requiredTags": [],
-                                "disallowedTags": [],
-                                "checkCapabilities": false,
-                                "requiredCapabilities": [],
-                                "disallowedCapabilites": []
-                            }
-                        ]
+                        "parts": []
                     },
                     {
                         "outputs": [
@@ -63,44 +26,7 @@
                                 "tags": "{}"
                             }
                         ],
-                        "ingredients": [
-                            {
-                                "itemName": "10xingotIron.0",
-                                "count": 1,
-                                "compareDamage": false,
-                                "damage": 0,
-                                "compareNBT": false,
-                                "requiredTags": [],
-                                "disallowedTags": [],
-                                "checkCapabilities": false,
-                                "requiredCapabilities": [],
-                                "disallowedCapabilites": []
-                            },
-                            {
-                                "itemName": "10xfiberglass.0",
-                                "count": 1,
-                                "compareDamage": false,
-                                "damage": 0,
-                                "compareNBT": false,
-                                "requiredTags": [],
-                                "disallowedTags": [],
-                                "checkCapabilities": false,
-                                "requiredCapabilities": [],
-                                "disallowedCapabilites": []
-                            },
-                            {
-                                "itemName": "5xglass.0",
-                                "count": 1,
-                                "compareDamage": false,
-                                "damage": 0,
-                                "compareNBT": false,
-                                "requiredTags": [],
-                                "disallowedTags": [],
-                                "checkCapabilities": false,
-                                "requiredCapabilities": [],
-                                "disallowedCapabilites": []
-                            }
-                        ]
+                        "parts": []
                     },
                     {
                         "outputs": [
@@ -111,32 +37,7 @@
                                 "tags": "{}"
                             }
                         ],
-                        "ingredients": [
-                            {
-                                "itemName": "4xingotIron.0",
-                                "count": 1,
-                                "compareDamage": false,
-                                "damage": 0,
-                                "compareNBT": false,
-                                "requiredTags": [],
-                                "disallowedTags": [],
-                                "checkCapabilities": false,
-                                "requiredCapabilities": [],
-                                "disallowedCapabilites": []
-                            },
-                            {
-                                "itemName": "3xgunpowder.0",
-                                "count": 1,
-                                "compareDamage": false,
-                                "damage": 0,
-                                "compareNBT": false,
-                                "requiredTags": [],
-                                "disallowedTags": [],
-                                "checkCapabilities": false,
-                                "requiredCapabilities": [],
-                                "disallowedCapabilites": []
-                            }
-                        ]
+                        "parts": []
                     },
                     {
                         "outputs": [
@@ -147,32 +48,7 @@
                                 "tags": "{}"
                             }
                         ],
-                        "ingredients": [
-                            {
-                                "itemName": "4xingotIron.0",
-                                "count": 1,
-                                "compareDamage": false,
-                                "damage": 0,
-                                "compareNBT": false,
-                                "requiredTags": [],
-                                "disallowedTags": [],
-                                "checkCapabilities": false,
-                                "requiredCapabilities": [],
-                                "disallowedCapabilites": []
-                            },
-                            {
-                                "itemName": "5xhighexgunpowder.0",
-                                "count": 1,
-                                "compareDamage": false,
-                                "damage": 0,
-                                "compareNBT": false,
-                                "requiredTags": [],
-                                "disallowedTags": [],
-                                "checkCapabilities": false,
-                                "requiredCapabilities": [],
-                                "disallowedCapabilites": []
-                            }
-                        ]
+                        "parts": []
                     },
                     {
                         "outputs": [
@@ -183,32 +59,7 @@
                                 "tags": "{}"
                             }
                         ],
-                        "ingredients": [
-                            {
-                                "itemName": "20xingotIron.0",
-                                "count": 1,
-                                "compareDamage": false,
-                                "damage": 0,
-                                "compareNBT": false,
-                                "requiredTags": [],
-                                "disallowedTags": [],
-                                "checkCapabilities": false,
-                                "requiredCapabilities": [],
-                                "disallowedCapabilites": []
-                            },
-                            {
-                                "itemName": "5xglass.0",
-                                "count": 1,
-                                "compareDamage": false,
-                                "damage": 0,
-                                "compareNBT": false,
-                                "requiredTags": [],
-                                "disallowedTags": [],
-                                "checkCapabilities": false,
-                                "requiredCapabilities": [],
-                                "disallowedCapabilites": []
-                            }
-                        ]
+                        "parts": []
                     },
                     {
                         "outputs": [
@@ -219,32 +70,7 @@
                                 "tags": "{}"
                             }
                         ],
-                        "ingredients": [
-                            {
-                                "itemName": "3xfiberglass.0",
-                                "count": 1,
-                                "compareDamage": false,
-                                "damage": 0,
-                                "compareNBT": false,
-                                "requiredTags": [],
-                                "disallowedTags": [],
-                                "checkCapabilities": false,
-                                "requiredCapabilities": [],
-                                "disallowedCapabilites": []
-                            },
-                            {
-                                "itemName": "3xgunpowder.0",
-                                "count": 1,
-                                "compareDamage": false,
-                                "damage": 0,
-                                "compareNBT": false,
-                                "requiredTags": [],
-                                "disallowedTags": [],
-                                "checkCapabilities": false,
-                                "requiredCapabilities": [],
-                                "disallowedCapabilites": []
-                            }
-                        ]
+                        "parts": []
                     },
                     {
                         "outputs": [
@@ -255,44 +81,7 @@
                                 "tags": "{}"
                             }
                         ],
-                        "ingredients": [
-                            {
-                                "itemName": "6xingotIron.0",
-                                "count": 1,
-                                "compareDamage": false,
-                                "damage": 0,
-                                "compareNBT": false,
-                                "requiredTags": [],
-                                "disallowedTags": [],
-                                "checkCapabilities": false,
-                                "requiredCapabilities": [],
-                                "disallowedCapabilites": []
-                            },
-                            {
-                                "itemName": "12xfiberglass.0",
-                                "count": 1,
-                                "compareDamage": false,
-                                "damage": 0,
-                                "compareNBT": false,
-                                "requiredTags": [],
-                                "disallowedTags": [],
-                                "checkCapabilities": false,
-                                "requiredCapabilities": [],
-                                "disallowedCapabilites": []
-                            },
-                            {
-                                "itemName": "5xglass.0",
-                                "count": 1,
-                                "compareDamage": false,
-                                "damage": 0,
-                                "compareNBT": false,
-                                "requiredTags": [],
-                                "disallowedTags": [],
-                                "checkCapabilities": false,
-                                "requiredCapabilities": [],
-                                "disallowedCapabilites": []
-                            }
-                        ]
+                        "parts": []
                     },
                     {
                         "outputs": [
@@ -303,32 +92,7 @@
                                 "tags": "{}"
                             }
                         ],
-                        "ingredients": [
-                            {
-                                "itemName": "5xingotIron.0",
-                                "count": 1,
-                                "compareDamage": false,
-                                "damage": 0,
-                                "compareNBT": false,
-                                "requiredTags": [],
-                                "disallowedTags": [],
-                                "checkCapabilities": false,
-                                "requiredCapabilities": [],
-                                "disallowedCapabilites": []
-                            },
-                            {
-                                "itemName": "4xgunpowder.0",
-                                "count": 1,
-                                "compareDamage": false,
-                                "damage": 0,
-                                "compareNBT": false,
-                                "requiredTags": [],
-                                "disallowedTags": [],
-                                "checkCapabilities": false,
-                                "requiredCapabilities": [],
-                                "disallowedCapabilites": []
-                            }
-                        ]
+                        "parts": []
                     },
                     {
                         "outputs": [
@@ -339,44 +103,7 @@
                                 "tags": "{}"
                             }
                         ],
-                        "ingredients": [
-                            {
-                                "itemName": "2xingotIron.0",
-                                "count": 1,
-                                "compareDamage": false,
-                                "damage": 0,
-                                "compareNBT": false,
-                                "requiredTags": [],
-                                "disallowedTags": [],
-                                "checkCapabilities": false,
-                                "requiredCapabilities": [],
-                                "disallowedCapabilites": []
-                            },
-                            {
-                                "itemName": "2xhighexgunpowder.0",
-                                "count": 1,
-                                "compareDamage": false,
-                                "damage": 0,
-                                "compareNBT": false,
-                                "requiredTags": [],
-                                "disallowedTags": [],
-                                "checkCapabilities": false,
-                                "requiredCapabilities": [],
-                                "disallowedCapabilites": []
-                            },
-                            {
-                                "itemName": "1xender_eye.0",
-                                "count": 1,
-                                "compareDamage": false,
-                                "damage": 0,
-                                "compareNBT": false,
-                                "requiredTags": [],
-                                "disallowedTags": [],
-                                "checkCapabilities": false,
-                                "requiredCapabilities": [],
-                                "disallowedCapabilites": []
-                            }
-                        ]
+                        "parts": []
                     },
                     {
                         "outputs": [
@@ -387,32 +114,7 @@
                                 "tags": "{}"
                             }
                         ],
-                        "ingredients": [
-                            {
-                                "itemName": "16xingotIron.0",
-                                "count": 1,
-                                "compareDamage": false,
-                                "damage": 0,
-                                "compareNBT": false,
-                                "requiredTags": [],
-                                "disallowedTags": [],
-                                "checkCapabilities": false,
-                                "requiredCapabilities": [],
-                                "disallowedCapabilites": []
-                            },
-                            {
-                                "itemName": "2xfiberglass.0",
-                                "count": 1,
-                                "compareDamage": false,
-                                "damage": 0,
-                                "compareNBT": false,
-                                "requiredTags": [],
-                                "disallowedTags": [],
-                                "checkCapabilities": false,
-                                "requiredCapabilities": [],
-                                "disallowedCapabilites": []
-                            }
-                        ]
+                        "parts": []
                     }
                 ]
             },
@@ -427,56 +129,7 @@
                                 "tags": "{}"
                             }
                         ],
-                        "ingredients": [
-                            {
-                                "itemName": "10xingotIron.0",
-                                "count": 1,
-                                "compareDamage": false,
-                                "damage": 0,
-                                "compareNBT": false,
-                                "requiredTags": [],
-                                "disallowedTags": [],
-                                "checkCapabilities": false,
-                                "requiredCapabilities": [],
-                                "disallowedCapabilites": []
-                            },
-                            {
-                                "itemName": "10xfiberglass.0",
-                                "count": 1,
-                                "compareDamage": false,
-                                "damage": 0,
-                                "compareNBT": false,
-                                "requiredTags": [],
-                                "disallowedTags": [],
-                                "checkCapabilities": false,
-                                "requiredCapabilities": [],
-                                "disallowedCapabilites": []
-                            },
-                            {
-                                "itemName": "10xgunpowder.0",
-                                "count": 1,
-                                "compareDamage": false,
-                                "damage": 0,
-                                "compareNBT": false,
-                                "requiredTags": [],
-                                "disallowedTags": [],
-                                "checkCapabilities": false,
-                                "requiredCapabilities": [],
-                                "disallowedCapabilites": []
-                            },
-                            {
-                                "itemName": "1xdyePowder.6",
-                                "count": 1,
-                                "compareDamage": false,
-                                "damage": 0,
-                                "compareNBT": false,
-                                "requiredTags": [],
-                                "disallowedTags": [],
-                                "checkCapabilities": false,
-                                "requiredCapabilities": [],
-                                "disallowedCapabilites": []
-                            }
-                        ]
+                        "parts": []
                     },
                     {
                         "outputs": [
@@ -487,32 +140,7 @@
                                 "tags": "{}"
                             }
                         ],
-                        "ingredients": [
-                            {
-                                "itemName": "24xingotIron.0",
-                                "count": 1,
-                                "compareDamage": false,
-                                "damage": 0,
-                                "compareNBT": false,
-                                "requiredTags": [],
-                                "disallowedTags": [],
-                                "checkCapabilities": false,
-                                "requiredCapabilities": [],
-                                "disallowedCapabilites": []
-                            },
-                            {
-                                "itemName": "5xfiberglass.0",
-                                "count": 1,
-                                "compareDamage": false,
-                                "damage": 0,
-                                "compareNBT": false,
-                                "requiredTags": [],
-                                "disallowedTags": [],
-                                "checkCapabilities": false,
-                                "requiredCapabilities": [],
-                                "disallowedCapabilites": []
-                            }
-                        ]
+                        "parts": []
                     },
                     {
                         "outputs": [
@@ -523,32 +151,7 @@
                                 "tags": "{}"
                             }
                         ],
-                        "ingredients": [
-                            {
-                                "itemName": "12xingotIron.0",
-                                "count": 1,
-                                "compareDamage": false,
-                                "damage": 0,
-                                "compareNBT": false,
-                                "requiredTags": [],
-                                "disallowedTags": [],
-                                "checkCapabilities": false,
-                                "requiredCapabilities": [],
-                                "disallowedCapabilites": []
-                            },
-                            {
-                                "itemName": "11xgunpowder.0",
-                                "count": 1,
-                                "compareDamage": false,
-                                "damage": 0,
-                                "compareNBT": false,
-                                "requiredTags": [],
-                                "disallowedTags": [],
-                                "checkCapabilities": false,
-                                "requiredCapabilities": [],
-                                "disallowedCapabilites": []
-                            }
-                        ]
+                        "parts": []
                     },
                     {
                         "outputs": [
@@ -559,44 +162,7 @@
                                 "tags": "{}"
                             }
                         ],
-                        "ingredients": [
-                            {
-                                "itemName": "4xingotIron.0",
-                                "count": 1,
-                                "compareDamage": false,
-                                "damage": 0,
-                                "compareNBT": false,
-                                "requiredTags": [],
-                                "disallowedTags": [],
-                                "checkCapabilities": false,
-                                "requiredCapabilities": [],
-                                "disallowedCapabilites": []
-                            },
-                            {
-                                "itemName": "1xskull.1",
-                                "count": 1,
-                                "compareDamage": false,
-                                "damage": 0,
-                                "compareNBT": false,
-                                "requiredTags": [],
-                                "disallowedTags": [],
-                                "checkCapabilities": false,
-                                "requiredCapabilities": [],
-                                "disallowedCapabilites": []
-                            },
-                            {
-                                "itemName": "3xgunpowder.0",
-                                "count": 1,
-                                "compareDamage": false,
-                                "damage": 0,
-                                "compareNBT": false,
-                                "requiredTags": [],
-                                "disallowedTags": [],
-                                "checkCapabilities": false,
-                                "requiredCapabilities": [],
-                                "disallowedCapabilites": []
-                            }
-                        ]
+                        "parts": []
                     },
                     {
                         "outputs": [
@@ -607,32 +173,7 @@
                                 "tags": "{}"
                             }
                         ],
-                        "ingredients": [
-                            {
-                                "itemName": "20xingotIron.0",
-                                "count": 1,
-                                "compareDamage": false,
-                                "damage": 0,
-                                "compareNBT": false,
-                                "requiredTags": [],
-                                "disallowedTags": [],
-                                "checkCapabilities": false,
-                                "requiredCapabilities": [],
-                                "disallowedCapabilites": []
-                            },
-                            {
-                                "itemName": "5xlog.0",
-                                "count": 1,
-                                "compareDamage": false,
-                                "damage": 0,
-                                "compareNBT": false,
-                                "requiredTags": [],
-                                "disallowedTags": [],
-                                "checkCapabilities": false,
-                                "requiredCapabilities": [],
-                                "disallowedCapabilites": []
-                            }
-                        ]
+                        "parts": []
                     },
                     {
                         "outputs": [
@@ -643,32 +184,7 @@
                                 "tags": "{}"
                             }
                         ],
-                        "ingredients": [
-                            {
-                                "itemName": "6xingotIron.0",
-                                "count": 1,
-                                "compareDamage": false,
-                                "damage": 0,
-                                "compareNBT": false,
-                                "requiredTags": [],
-                                "disallowedTags": [],
-                                "checkCapabilities": false,
-                                "requiredCapabilities": [],
-                                "disallowedCapabilites": []
-                            },
-                            {
-                                "itemName": "4xgunpowder.0",
-                                "count": 1,
-                                "compareDamage": false,
-                                "damage": 0,
-                                "compareNBT": false,
-                                "requiredTags": [],
-                                "disallowedTags": [],
-                                "checkCapabilities": false,
-                                "requiredCapabilities": [],
-                                "disallowedCapabilites": []
-                            }
-                        ]
+                        "parts": []
                     },
                     {
                         "outputs": [
@@ -679,44 +195,7 @@
                                 "tags": "{}"
                             }
                         ],
-                        "ingredients": [
-                            {
-                                "itemName": "4xingotIron.0",
-                                "count": 1,
-                                "compareDamage": false,
-                                "damage": 0,
-                                "compareNBT": false,
-                                "requiredTags": [],
-                                "disallowedTags": [],
-                                "checkCapabilities": false,
-                                "requiredCapabilities": [],
-                                "disallowedCapabilites": []
-                            },
-                            {
-                                "itemName": "1xskull.1",
-                                "count": 1,
-                                "compareDamage": false,
-                                "damage": 0,
-                                "compareNBT": false,
-                                "requiredTags": [],
-                                "disallowedTags": [],
-                                "checkCapabilities": false,
-                                "requiredCapabilities": [],
-                                "disallowedCapabilites": []
-                            },
-                            {
-                                "itemName": "3xgunpowder.0",
-                                "count": 1,
-                                "compareDamage": false,
-                                "damage": 0,
-                                "compareNBT": false,
-                                "requiredTags": [],
-                                "disallowedTags": [],
-                                "checkCapabilities": false,
-                                "requiredCapabilities": [],
-                                "disallowedCapabilites": []
-                            }
-                        ]
+                        "parts": []
                     },
                     {
                         "outputs": [
@@ -727,32 +206,7 @@
                                 "tags": "{}"
                             }
                         ],
-                        "ingredients": [
-                            {
-                                "itemName": "12xingotIron.0",
-                                "count": 1,
-                                "compareDamage": false,
-                                "damage": 0,
-                                "compareNBT": false,
-                                "requiredTags": [],
-                                "disallowedTags": [],
-                                "checkCapabilities": false,
-                                "requiredCapabilities": [],
-                                "disallowedCapabilites": []
-                            },
-                            {
-                                "itemName": "8xlog.0",
-                                "count": 1,
-                                "compareDamage": false,
-                                "damage": 0,
-                                "compareNBT": false,
-                                "requiredTags": [],
-                                "disallowedTags": [],
-                                "checkCapabilities": false,
-                                "requiredCapabilities": [],
-                                "disallowedCapabilites": []
-                            }
-                        ]
+                        "parts": []
                     },
                     {
                         "outputs": [
@@ -763,44 +217,7 @@
                                 "tags": "{}"
                             }
                         ],
-                        "ingredients": [
-                            {
-                                "itemName": "9xingotIron.0",
-                                "count": 1,
-                                "compareDamage": false,
-                                "damage": 0,
-                                "compareNBT": false,
-                                "requiredTags": [],
-                                "disallowedTags": [],
-                                "checkCapabilities": false,
-                                "requiredCapabilities": [],
-                                "disallowedCapabilites": []
-                            },
-                            {
-                                "itemName": "3xfiberglass.0",
-                                "count": 1,
-                                "compareDamage": false,
-                                "damage": 0,
-                                "compareNBT": false,
-                                "requiredTags": [],
-                                "disallowedTags": [],
-                                "checkCapabilities": false,
-                                "requiredCapabilities": [],
-                                "disallowedCapabilites": []
-                            },
-                            {
-                                "itemName": "10xgunpowder.0",
-                                "count": 1,
-                                "compareDamage": false,
-                                "damage": 0,
-                                "compareNBT": false,
-                                "requiredTags": [],
-                                "disallowedTags": [],
-                                "checkCapabilities": false,
-                                "requiredCapabilities": [],
-                                "disallowedCapabilites": []
-                            }
-                        ]
+                        "parts": []
                     },
                     {
                         "outputs": [
@@ -811,20 +228,7 @@
                                 "tags": "{}"
                             }
                         ],
-                        "ingredients": [
-                            {
-                                "itemName": "24xingotIron.0",
-                                "count": 1,
-                                "compareDamage": false,
-                                "damage": 0,
-                                "compareNBT": false,
-                                "requiredTags": [],
-                                "disallowedTags": [],
-                                "checkCapabilities": false,
-                                "requiredCapabilities": [],
-                                "disallowedCapabilites": []
-                            }
-                        ]
+                        "parts": []
                     },
                     {
                         "outputs": [
@@ -835,32 +239,7 @@
                                 "tags": "{}"
                             }
                         ],
-                        "ingredients": [
-                            {
-                                "itemName": "10xingotIron.0",
-                                "count": 1,
-                                "compareDamage": false,
-                                "damage": 0,
-                                "compareNBT": false,
-                                "requiredTags": [],
-                                "disallowedTags": [],
-                                "checkCapabilities": false,
-                                "requiredCapabilities": [],
-                                "disallowedCapabilites": []
-                            },
-                            {
-                                "itemName": "9xgunpowder.0",
-                                "count": 1,
-                                "compareDamage": false,
-                                "damage": 0,
-                                "compareNBT": false,
-                                "requiredTags": [],
-                                "disallowedTags": [],
-                                "checkCapabilities": false,
-                                "requiredCapabilities": [],
-                                "disallowedCapabilites": []
-                            }
-                        ]
+                        "parts": []
                     },
                     {
                         "outputs": [
@@ -871,32 +250,7 @@
                                 "tags": "{}"
                             }
                         ],
-                        "ingredients": [
-                            {
-                                "itemName": "20xingotIron.0",
-                                "count": 1,
-                                "compareDamage": false,
-                                "damage": 0,
-                                "compareNBT": false,
-                                "requiredTags": [],
-                                "disallowedTags": [],
-                                "checkCapabilities": false,
-                                "requiredCapabilities": [],
-                                "disallowedCapabilites": []
-                            },
-                            {
-                                "itemName": "5xfiberglass.0",
-                                "count": 1,
-                                "compareDamage": false,
-                                "damage": 0,
-                                "compareNBT": false,
-                                "requiredTags": [],
-                                "disallowedTags": [],
-                                "checkCapabilities": false,
-                                "requiredCapabilities": [],
-                                "disallowedCapabilites": []
-                            }
-                        ]
+                        "parts": []
                     }
                 ]
             },
@@ -911,32 +265,7 @@
                                 "tags": "{}"
                             }
                         ],
-                        "ingredients": [
-                            {
-                                "itemName": "4xingotIron.0",
-                                "count": 1,
-                                "compareDamage": false,
-                                "damage": 0,
-                                "compareNBT": false,
-                                "requiredTags": [],
-                                "disallowedTags": [],
-                                "checkCapabilities": false,
-                                "requiredCapabilities": [],
-                                "disallowedCapabilites": []
-                            },
-                            {
-                                "itemName": "4xgunpowder.0",
-                                "count": 1,
-                                "compareDamage": false,
-                                "damage": 0,
-                                "compareNBT": false,
-                                "requiredTags": [],
-                                "disallowedTags": [],
-                                "checkCapabilities": false,
-                                "requiredCapabilities": [],
-                                "disallowedCapabilites": []
-                            }
-                        ]
+                        "parts": []
                     },
                     {
                         "outputs": [
@@ -947,32 +276,7 @@
                                 "tags": "{}"
                             }
                         ],
-                        "ingredients": [
-                            {
-                                "itemName": "6xfiberglass.0",
-                                "count": 1,
-                                "compareDamage": false,
-                                "damage": 0,
-                                "compareNBT": false,
-                                "requiredTags": [],
-                                "disallowedTags": [],
-                                "checkCapabilities": false,
-                                "requiredCapabilities": [],
-                                "disallowedCapabilites": []
-                            },
-                            {
-                                "itemName": "9xgunpowder.0",
-                                "count": 1,
-                                "compareDamage": false,
-                                "damage": 0,
-                                "compareNBT": false,
-                                "requiredTags": [],
-                                "disallowedTags": [],
-                                "checkCapabilities": false,
-                                "requiredCapabilities": [],
-                                "disallowedCapabilites": []
-                            }
-                        ]
+                        "parts": []
                     },
                     {
                         "outputs": [
@@ -983,20 +287,7 @@
                                 "tags": "{}"
                             }
                         ],
-                        "ingredients": [
-                            {
-                                "itemName": "14xingotIron.0",
-                                "count": 1,
-                                "compareDamage": false,
-                                "damage": 0,
-                                "compareNBT": false,
-                                "requiredTags": [],
-                                "disallowedTags": [],
-                                "checkCapabilities": false,
-                                "requiredCapabilities": [],
-                                "disallowedCapabilites": []
-                            }
-                        ]
+                        "parts": []
                     },
                     {
                         "outputs": [
@@ -1007,32 +298,7 @@
                                 "tags": "{}"
                             }
                         ],
-                        "ingredients": [
-                            {
-                                "itemName": "4xingotIron.0",
-                                "count": 1,
-                                "compareDamage": false,
-                                "damage": 0,
-                                "compareNBT": false,
-                                "requiredTags": [],
-                                "disallowedTags": [],
-                                "checkCapabilities": false,
-                                "requiredCapabilities": [],
-                                "disallowedCapabilites": []
-                            },
-                            {
-                                "itemName": "4xgunpowder.0",
-                                "count": 1,
-                                "compareDamage": false,
-                                "damage": 0,
-                                "compareNBT": false,
-                                "requiredTags": [],
-                                "disallowedTags": [],
-                                "checkCapabilities": false,
-                                "requiredCapabilities": [],
-                                "disallowedCapabilites": []
-                            }
-                        ]
+                        "parts": []
                     },
                     {
                         "outputs": [
@@ -1043,32 +309,7 @@
                                 "tags": "{}"
                             }
                         ],
-                        "ingredients": [
-                            {
-                                "itemName": "5xingotIron.0",
-                                "count": 1,
-                                "compareDamage": false,
-                                "damage": 0,
-                                "compareNBT": false,
-                                "requiredTags": [],
-                                "disallowedTags": [],
-                                "checkCapabilities": false,
-                                "requiredCapabilities": [],
-                                "disallowedCapabilites": []
-                            },
-                            {
-                                "itemName": "8xfiberglass.0",
-                                "count": 1,
-                                "compareDamage": false,
-                                "damage": 0,
-                                "compareNBT": false,
-                                "requiredTags": [],
-                                "disallowedTags": [],
-                                "checkCapabilities": false,
-                                "requiredCapabilities": [],
-                                "disallowedCapabilites": []
-                            }
-                        ]
+                        "parts": []
                     },
                     {
                         "outputs": [
@@ -1079,32 +320,7 @@
                                 "tags": "{}"
                             }
                         ],
-                        "ingredients": [
-                            {
-                                "itemName": "6xingotIron.0",
-                                "count": 1,
-                                "compareDamage": false,
-                                "damage": 0,
-                                "compareNBT": false,
-                                "requiredTags": [],
-                                "disallowedTags": [],
-                                "checkCapabilities": false,
-                                "requiredCapabilities": [],
-                                "disallowedCapabilites": []
-                            },
-                            {
-                                "itemName": "5xgunpowder.0",
-                                "count": 1,
-                                "compareDamage": false,
-                                "damage": 0,
-                                "compareNBT": false,
-                                "requiredTags": [],
-                                "disallowedTags": [],
-                                "checkCapabilities": false,
-                                "requiredCapabilities": [],
-                                "disallowedCapabilites": []
-                            }
-                        ]
+                        "parts": []
                     },
                     {
                         "outputs": [
@@ -1115,32 +331,7 @@
                                 "tags": "{}"
                             }
                         ],
-                        "ingredients": [
-                            {
-                                "itemName": "8xfiberglass.0",
-                                "count": 1,
-                                "compareDamage": false,
-                                "damage": 0,
-                                "compareNBT": false,
-                                "requiredTags": [],
-                                "disallowedTags": [],
-                                "checkCapabilities": false,
-                                "requiredCapabilities": [],
-                                "disallowedCapabilites": []
-                            },
-                            {
-                                "itemName": "10xgunpowder.0",
-                                "count": 1,
-                                "compareDamage": false,
-                                "damage": 0,
-                                "compareNBT": false,
-                                "requiredTags": [],
-                                "disallowedTags": [],
-                                "checkCapabilities": false,
-                                "requiredCapabilities": [],
-                                "disallowedCapabilites": []
-                            }
-                        ]
+                        "parts": []
                     },
                     {
                         "outputs": [
@@ -1151,32 +342,7 @@
                                 "tags": "{}"
                             }
                         ],
-                        "ingredients": [
-                            {
-                                "itemName": "12xingotIron.0",
-                                "count": 1,
-                                "compareDamage": false,
-                                "damage": 0,
-                                "compareNBT": false,
-                                "requiredTags": [],
-                                "disallowedTags": [],
-                                "checkCapabilities": false,
-                                "requiredCapabilities": [],
-                                "disallowedCapabilites": []
-                            },
-                            {
-                                "itemName": "8xfiberglass.0",
-                                "count": 1,
-                                "compareDamage": false,
-                                "damage": 0,
-                                "compareNBT": false,
-                                "requiredTags": [],
-                                "disallowedTags": [],
-                                "checkCapabilities": false,
-                                "requiredCapabilities": [],
-                                "disallowedCapabilites": []
-                            }
-                        ]
+                        "parts": []
                     },
                     {
                         "outputs": [
@@ -1187,32 +353,7 @@
                                 "tags": "{}"
                             }
                         ],
-                        "ingredients": [
-                            {
-                                "itemName": "8xfiberglass.0",
-                                "count": 1,
-                                "compareDamage": false,
-                                "damage": 0,
-                                "compareNBT": false,
-                                "requiredTags": [],
-                                "disallowedTags": [],
-                                "checkCapabilities": false,
-                                "requiredCapabilities": [],
-                                "disallowedCapabilites": []
-                            },
-                            {
-                                "itemName": "6xgunpowder.0",
-                                "count": 1,
-                                "compareDamage": false,
-                                "damage": 0,
-                                "compareNBT": false,
-                                "requiredTags": [],
-                                "disallowedTags": [],
-                                "checkCapabilities": false,
-                                "requiredCapabilities": [],
-                                "disallowedCapabilites": []
-                            }
-                        ]
+                        "parts": []
                     },
                     {
                         "outputs": [
@@ -1223,32 +364,7 @@
                                 "tags": "{}"
                             }
                         ],
-                        "ingredients": [
-                            {
-                                "itemName": "2xingotIron.0",
-                                "count": 1,
-                                "compareDamage": false,
-                                "damage": 0,
-                                "compareNBT": false,
-                                "requiredTags": [],
-                                "disallowedTags": [],
-                                "checkCapabilities": false,
-                                "requiredCapabilities": [],
-                                "disallowedCapabilites": []
-                            },
-                            {
-                                "itemName": "20xfiberglass.0",
-                                "count": 1,
-                                "compareDamage": false,
-                                "damage": 0,
-                                "compareNBT": false,
-                                "requiredTags": [],
-                                "disallowedTags": [],
-                                "checkCapabilities": false,
-                                "requiredCapabilities": [],
-                                "disallowedCapabilites": []
-                            }
-                        ]
+                        "parts": []
                     }
                 ]
             },
@@ -1263,32 +379,7 @@
                                 "tags": "{}"
                             }
                         ],
-                        "ingredients": [
-                            {
-                                "itemName": "1xfiberglass.0",
-                                "count": 1,
-                                "compareDamage": false,
-                                "damage": 0,
-                                "compareNBT": false,
-                                "requiredTags": [],
-                                "disallowedTags": [],
-                                "checkCapabilities": false,
-                                "requiredCapabilities": [],
-                                "disallowedCapabilites": []
-                            },
-                            {
-                                "itemName": "1xgunpowder.0",
-                                "count": 1,
-                                "compareDamage": false,
-                                "damage": 0,
-                                "compareNBT": false,
-                                "requiredTags": [],
-                                "disallowedTags": [],
-                                "checkCapabilities": false,
-                                "requiredCapabilities": [],
-                                "disallowedCapabilites": []
-                            }
-                        ]
+                        "parts": []
                     },
                     {
                         "outputs": [
@@ -1299,44 +390,7 @@
                                 "tags": "{}"
                             }
                         ],
-                        "ingredients": [
-                            {
-                                "itemName": "1xingotIron.0",
-                                "count": 1,
-                                "compareDamage": false,
-                                "damage": 0,
-                                "compareNBT": false,
-                                "requiredTags": [],
-                                "disallowedTags": [],
-                                "checkCapabilities": false,
-                                "requiredCapabilities": [],
-                                "disallowedCapabilites": []
-                            },
-                            {
-                                "itemName": "1xfiberglass.0",
-                                "count": 1,
-                                "compareDamage": false,
-                                "damage": 0,
-                                "compareNBT": false,
-                                "requiredTags": [],
-                                "disallowedTags": [],
-                                "checkCapabilities": false,
-                                "requiredCapabilities": [],
-                                "disallowedCapabilites": []
-                            },
-                            {
-                                "itemName": "1xgunpowder.0",
-                                "count": 1,
-                                "compareDamage": false,
-                                "damage": 0,
-                                "compareNBT": false,
-                                "requiredTags": [],
-                                "disallowedTags": [],
-                                "checkCapabilities": false,
-                                "requiredCapabilities": [],
-                                "disallowedCapabilites": []
-                            }
-                        ]
+                        "parts": []
                     },
                     {
                         "outputs": [
@@ -1347,44 +401,7 @@
                                 "tags": "{}"
                             }
                         ],
-                        "ingredients": [
-                            {
-                                "itemName": "1xfiberglass.0",
-                                "count": 1,
-                                "compareDamage": false,
-                                "damage": 0,
-                                "compareNBT": false,
-                                "requiredTags": [],
-                                "disallowedTags": [],
-                                "checkCapabilities": false,
-                                "requiredCapabilities": [],
-                                "disallowedCapabilites": []
-                            },
-                            {
-                                "itemName": "1xgunpowder.0",
-                                "count": 1,
-                                "compareDamage": false,
-                                "damage": 0,
-                                "compareNBT": false,
-                                "requiredTags": [],
-                                "disallowedTags": [],
-                                "checkCapabilities": false,
-                                "requiredCapabilities": [],
-                                "disallowedCapabilites": []
-                            },
-                            {
-                                "itemName": "2xblazePowder.0",
-                                "count": 1,
-                                "compareDamage": false,
-                                "damage": 0,
-                                "compareNBT": false,
-                                "requiredTags": [],
-                                "disallowedTags": [],
-                                "checkCapabilities": false,
-                                "requiredCapabilities": [],
-                                "disallowedCapabilites": []
-                            }
-                        ]
+                        "parts": []
                     },
                     {
                         "outputs": [
@@ -1395,44 +412,7 @@
                                 "tags": "{}"
                             }
                         ],
-                        "ingredients": [
-                            {
-                                "itemName": "1xingotIron.0",
-                                "count": 1,
-                                "compareDamage": false,
-                                "damage": 0,
-                                "compareNBT": false,
-                                "requiredTags": [],
-                                "disallowedTags": [],
-                                "checkCapabilities": false,
-                                "requiredCapabilities": [],
-                                "disallowedCapabilites": []
-                            },
-                            {
-                                "itemName": "1xfiberglass.0",
-                                "count": 1,
-                                "compareDamage": false,
-                                "damage": 0,
-                                "compareNBT": false,
-                                "requiredTags": [],
-                                "disallowedTags": [],
-                                "checkCapabilities": false,
-                                "requiredCapabilities": [],
-                                "disallowedCapabilites": []
-                            },
-                            {
-                                "itemName": "1xgunpowder.0",
-                                "count": 1,
-                                "compareDamage": false,
-                                "damage": 0,
-                                "compareNBT": false,
-                                "requiredTags": [],
-                                "disallowedTags": [],
-                                "checkCapabilities": false,
-                                "requiredCapabilities": [],
-                                "disallowedCapabilites": []
-                            }
-                        ]
+                        "parts": []
                     },
                     {
                         "outputs": [
@@ -1443,32 +423,7 @@
                                 "tags": "{}"
                             }
                         ],
-                        "ingredients": [
-                            {
-                                "itemName": "1xfiberglass.0",
-                                "count": 1,
-                                "compareDamage": false,
-                                "damage": 0,
-                                "compareNBT": false,
-                                "requiredTags": [],
-                                "disallowedTags": [],
-                                "checkCapabilities": false,
-                                "requiredCapabilities": [],
-                                "disallowedCapabilites": []
-                            },
-                            {
-                                "itemName": "4xgunpowder.0",
-                                "count": 1,
-                                "compareDamage": false,
-                                "damage": 0,
-                                "compareNBT": false,
-                                "requiredTags": [],
-                                "disallowedTags": [],
-                                "checkCapabilities": false,
-                                "requiredCapabilities": [],
-                                "disallowedCapabilites": []
-                            }
-                        ]
+                        "parts": []
                     },
                     {
                         "outputs": [
@@ -1479,32 +434,7 @@
                                 "tags": "{}"
                             }
                         ],
-                        "ingredients": [
-                            {
-                                "itemName": "8xingotIron.0",
-                                "count": 1,
-                                "compareDamage": false,
-                                "damage": 0,
-                                "compareNBT": false,
-                                "requiredTags": [],
-                                "disallowedTags": [],
-                                "checkCapabilities": false,
-                                "requiredCapabilities": [],
-                                "disallowedCapabilites": []
-                            },
-                            {
-                                "itemName": "4xfiberglass.0",
-                                "count": 1,
-                                "compareDamage": false,
-                                "damage": 0,
-                                "compareNBT": false,
-                                "requiredTags": [],
-                                "disallowedTags": [],
-                                "checkCapabilities": false,
-                                "requiredCapabilities": [],
-                                "disallowedCapabilites": []
-                            }
-                        ]
+                        "parts": []
                     },
                     {
                         "outputs": [
@@ -1515,32 +445,7 @@
                                 "tags": "{}"
                             }
                         ],
-                        "ingredients": [
-                            {
-                                "itemName": "1xfiberglass.0",
-                                "count": 1,
-                                "compareDamage": false,
-                                "damage": 0,
-                                "compareNBT": false,
-                                "requiredTags": [],
-                                "disallowedTags": [],
-                                "checkCapabilities": false,
-                                "requiredCapabilities": [],
-                                "disallowedCapabilites": []
-                            },
-                            {
-                                "itemName": "1xgunpowder.0",
-                                "count": 1,
-                                "compareDamage": false,
-                                "damage": 0,
-                                "compareNBT": false,
-                                "requiredTags": [],
-                                "disallowedTags": [],
-                                "checkCapabilities": false,
-                                "requiredCapabilities": [],
-                                "disallowedCapabilites": []
-                            }
-                        ]
+                        "parts": []
                     },
                     {
                         "outputs": [
@@ -1551,44 +456,7 @@
                                 "tags": "{}"
                             }
                         ],
-                        "ingredients": [
-                            {
-                                "itemName": "1xingotIron.0",
-                                "count": 1,
-                                "compareDamage": false,
-                                "damage": 0,
-                                "compareNBT": false,
-                                "requiredTags": [],
-                                "disallowedTags": [],
-                                "checkCapabilities": false,
-                                "requiredCapabilities": [],
-                                "disallowedCapabilites": []
-                            },
-                            {
-                                "itemName": "1xfiberglass.0",
-                                "count": 1,
-                                "compareDamage": false,
-                                "damage": 0,
-                                "compareNBT": false,
-                                "requiredTags": [],
-                                "disallowedTags": [],
-                                "checkCapabilities": false,
-                                "requiredCapabilities": [],
-                                "disallowedCapabilites": []
-                            },
-                            {
-                                "itemName": "1xgunpowder.0",
-                                "count": 1,
-                                "compareDamage": false,
-                                "damage": 0,
-                                "compareNBT": false,
-                                "requiredTags": [],
-                                "disallowedTags": [],
-                                "checkCapabilities": false,
-                                "requiredCapabilities": [],
-                                "disallowedCapabilites": []
-                            }
-                        ]
+                        "parts": []
                     },
                     {
                         "outputs": [
@@ -1599,44 +467,7 @@
                                 "tags": "{}"
                             }
                         ],
-                        "ingredients": [
-                            {
-                                "itemName": "1xfiberglass.0",
-                                "count": 1,
-                                "compareDamage": false,
-                                "damage": 0,
-                                "compareNBT": false,
-                                "requiredTags": [],
-                                "disallowedTags": [],
-                                "checkCapabilities": false,
-                                "requiredCapabilities": [],
-                                "disallowedCapabilites": []
-                            },
-                            {
-                                "itemName": "1xgunpowder.0",
-                                "count": 1,
-                                "compareDamage": false,
-                                "damage": 0,
-                                "compareNBT": false,
-                                "requiredTags": [],
-                                "disallowedTags": [],
-                                "checkCapabilities": false,
-                                "requiredCapabilities": [],
-                                "disallowedCapabilites": []
-                            },
-                            {
-                                "itemName": "2xblazePowder.0",
-                                "count": 1,
-                                "compareDamage": false,
-                                "damage": 0,
-                                "compareNBT": false,
-                                "requiredTags": [],
-                                "disallowedTags": [],
-                                "checkCapabilities": false,
-                                "requiredCapabilities": [],
-                                "disallowedCapabilites": []
-                            }
-                        ]
+                        "parts": []
                     },
                     {
                         "outputs": [
@@ -1647,44 +478,7 @@
                                 "tags": "{}"
                             }
                         ],
-                        "ingredients": [
-                            {
-                                "itemName": "1xingotIron.0",
-                                "count": 1,
-                                "compareDamage": false,
-                                "damage": 0,
-                                "compareNBT": false,
-                                "requiredTags": [],
-                                "disallowedTags": [],
-                                "checkCapabilities": false,
-                                "requiredCapabilities": [],
-                                "disallowedCapabilites": []
-                            },
-                            {
-                                "itemName": "1xfiberglass.0",
-                                "count": 1,
-                                "compareDamage": false,
-                                "damage": 0,
-                                "compareNBT": false,
-                                "requiredTags": [],
-                                "disallowedTags": [],
-                                "checkCapabilities": false,
-                                "requiredCapabilities": [],
-                                "disallowedCapabilites": []
-                            },
-                            {
-                                "itemName": "1xgunpowder.0",
-                                "count": 1,
-                                "compareDamage": false,
-                                "damage": 0,
-                                "compareNBT": false,
-                                "requiredTags": [],
-                                "disallowedTags": [],
-                                "checkCapabilities": false,
-                                "requiredCapabilities": [],
-                                "disallowedCapabilites": []
-                            }
-                        ]
+                        "parts": []
                     },
                     {
                         "outputs": [
@@ -1695,56 +489,7 @@
                                 "tags": "{}"
                             }
                         ],
-                        "ingredients": [
-                            {
-                                "itemName": "1xingotIron.0",
-                                "count": 1,
-                                "compareDamage": false,
-                                "damage": 0,
-                                "compareNBT": false,
-                                "requiredTags": [],
-                                "disallowedTags": [],
-                                "checkCapabilities": false,
-                                "requiredCapabilities": [],
-                                "disallowedCapabilites": []
-                            },
-                            {
-                                "itemName": "1xfiberglass.0",
-                                "count": 1,
-                                "compareDamage": false,
-                                "damage": 0,
-                                "compareNBT": false,
-                                "requiredTags": [],
-                                "disallowedTags": [],
-                                "checkCapabilities": false,
-                                "requiredCapabilities": [],
-                                "disallowedCapabilites": []
-                            },
-                            {
-                                "itemName": "1xgunpowder.0",
-                                "count": 1,
-                                "compareDamage": false,
-                                "damage": 0,
-                                "compareNBT": false,
-                                "requiredTags": [],
-                                "disallowedTags": [],
-                                "checkCapabilities": false,
-                                "requiredCapabilities": [],
-                                "disallowedCapabilites": []
-                            },
-                            {
-                                "itemName": "1xspiderEye.0",
-                                "count": 1,
-                                "compareDamage": false,
-                                "damage": 0,
-                                "compareNBT": false,
-                                "requiredTags": [],
-                                "disallowedTags": [],
-                                "checkCapabilities": false,
-                                "requiredCapabilities": [],
-                                "disallowedCapabilites": []
-                            }
-                        ]
+                        "parts": []
                     },
                     {
                         "outputs": [
@@ -1755,32 +500,7 @@
                                 "tags": "{}"
                             }
                         ],
-                        "ingredients": [
-                            {
-                                "itemName": "10xingotIron.0",
-                                "count": 1,
-                                "compareDamage": false,
-                                "damage": 0,
-                                "compareNBT": false,
-                                "requiredTags": [],
-                                "disallowedTags": [],
-                                "checkCapabilities": false,
-                                "requiredCapabilities": [],
-                                "disallowedCapabilites": []
-                            },
-                            {
-                                "itemName": "6xlog.0",
-                                "count": 1,
-                                "compareDamage": false,
-                                "damage": 0,
-                                "compareNBT": false,
-                                "requiredTags": [],
-                                "disallowedTags": [],
-                                "checkCapabilities": false,
-                                "requiredCapabilities": [],
-                                "disallowedCapabilites": []
-                            }
-                        ]
+                        "parts": []
                     },
                     {
                         "outputs": [
@@ -1791,44 +511,7 @@
                                 "tags": "{}"
                             }
                         ],
-                        "ingredients": [
-                            {
-                                "itemName": "6xingotIron.0",
-                                "count": 1,
-                                "compareDamage": false,
-                                "damage": 0,
-                                "compareNBT": false,
-                                "requiredTags": [],
-                                "disallowedTags": [],
-                                "checkCapabilities": false,
-                                "requiredCapabilities": [],
-                                "disallowedCapabilites": []
-                            },
-                            {
-                                "itemName": "6xfiberglass.0",
-                                "count": 1,
-                                "compareDamage": false,
-                                "damage": 0,
-                                "compareNBT": false,
-                                "requiredTags": [],
-                                "disallowedTags": [],
-                                "checkCapabilities": false,
-                                "requiredCapabilities": [],
-                                "disallowedCapabilites": []
-                            },
-                            {
-                                "itemName": "8xgunpowder.0",
-                                "count": 1,
-                                "compareDamage": false,
-                                "damage": 0,
-                                "compareNBT": false,
-                                "requiredTags": [],
-                                "disallowedTags": [],
-                                "checkCapabilities": false,
-                                "requiredCapabilities": [],
-                                "disallowedCapabilites": []
-                            }
-                        ]
+                        "parts": []
                     },
                     {
                         "outputs": [
@@ -1839,32 +522,7 @@
                                 "tags": "{}"
                             }
                         ],
-                        "ingredients": [
-                            {
-                                "itemName": "12xingotIron.0",
-                                "count": 1,
-                                "compareDamage": false,
-                                "damage": 0,
-                                "compareNBT": false,
-                                "requiredTags": [],
-                                "disallowedTags": [],
-                                "checkCapabilities": false,
-                                "requiredCapabilities": [],
-                                "disallowedCapabilites": []
-                            },
-                            {
-                                "itemName": "12xfiberglass.0",
-                                "count": 1,
-                                "compareDamage": false,
-                                "damage": 0,
-                                "compareNBT": false,
-                                "requiredTags": [],
-                                "disallowedTags": [],
-                                "checkCapabilities": false,
-                                "requiredCapabilities": [],
-                                "disallowedCapabilites": []
-                            }
-                        ]
+                        "parts": []
                     }
                 ]
             },
@@ -1879,32 +537,7 @@
                                 "tags": "{}"
                             }
                         ],
-                        "ingredients": [
-                            {
-                                "itemName": "8xingotIron.0",
-                                "count": 1,
-                                "compareDamage": false,
-                                "damage": 0,
-                                "compareNBT": false,
-                                "requiredTags": [],
-                                "disallowedTags": [],
-                                "checkCapabilities": false,
-                                "requiredCapabilities": [],
-                                "disallowedCapabilites": []
-                            },
-                            {
-                                "itemName": "32xgunpowder.0",
-                                "count": 1,
-                                "compareDamage": false,
-                                "damage": 0,
-                                "compareNBT": false,
-                                "requiredTags": [],
-                                "disallowedTags": [],
-                                "checkCapabilities": false,
-                                "requiredCapabilities": [],
-                                "disallowedCapabilites": []
-                            }
-                        ]
+                        "parts": []
                     },
                     {
                         "outputs": [
@@ -1915,32 +548,7 @@
                                 "tags": "{}"
                             }
                         ],
-                        "ingredients": [
-                            {
-                                "itemName": "8xingotIron.0",
-                                "count": 1,
-                                "compareDamage": false,
-                                "damage": 0,
-                                "compareNBT": false,
-                                "requiredTags": [],
-                                "disallowedTags": [],
-                                "checkCapabilities": false,
-                                "requiredCapabilities": [],
-                                "disallowedCapabilites": []
-                            },
-                            {
-                                "itemName": "32xhighexgunpowder.0",
-                                "count": 1,
-                                "compareDamage": false,
-                                "damage": 0,
-                                "compareNBT": false,
-                                "requiredTags": [],
-                                "disallowedTags": [],
-                                "checkCapabilities": false,
-                                "requiredCapabilities": [],
-                                "disallowedCapabilites": []
-                            }
-                        ]
+                        "parts": []
                     },
                     {
                         "outputs": [
@@ -1951,44 +559,7 @@
                                 "tags": "{}"
                             }
                         ],
-                        "ingredients": [
-                            {
-                                "itemName": "32xingotIron.0",
-                                "count": 1,
-                                "compareDamage": false,
-                                "damage": 0,
-                                "compareNBT": false,
-                                "requiredTags": [],
-                                "disallowedTags": [],
-                                "checkCapabilities": false,
-                                "requiredCapabilities": [],
-                                "disallowedCapabilites": []
-                            },
-                            {
-                                "itemName": "16xfiberglass.0",
-                                "count": 1,
-                                "compareDamage": false,
-                                "damage": 0,
-                                "compareNBT": false,
-                                "requiredTags": [],
-                                "disallowedTags": [],
-                                "checkCapabilities": false,
-                                "requiredCapabilities": [],
-                                "disallowedCapabilites": []
-                            },
-                            {
-                                "itemName": "16xredstone.0",
-                                "count": 1,
-                                "compareDamage": false,
-                                "damage": 0,
-                                "compareNBT": false,
-                                "requiredTags": [],
-                                "disallowedTags": [],
-                                "checkCapabilities": false,
-                                "requiredCapabilities": [],
-                                "disallowedCapabilites": []
-                            }
-                        ]
+                        "parts": []
                     },
                     {
                         "outputs": [
@@ -1999,32 +570,7 @@
                                 "tags": "{}"
                             }
                         ],
-                        "ingredients": [
-                            {
-                                "itemName": "3xingotIron.0",
-                                "count": 1,
-                                "compareDamage": false,
-                                "damage": 0,
-                                "compareNBT": false,
-                                "requiredTags": [],
-                                "disallowedTags": [],
-                                "checkCapabilities": false,
-                                "requiredCapabilities": [],
-                                "disallowedCapabilites": []
-                            },
-                            {
-                                "itemName": "2xgunpowder.0",
-                                "count": 1,
-                                "compareDamage": false,
-                                "damage": 0,
-                                "compareNBT": false,
-                                "requiredTags": [],
-                                "disallowedTags": [],
-                                "checkCapabilities": false,
-                                "requiredCapabilities": [],
-                                "disallowedCapabilites": []
-                            }
-                        ]
+                        "parts": []
                     },
                     {
                         "outputs": [
@@ -2035,20 +581,7 @@
                                 "tags": "{}"
                             }
                         ],
-                        "ingredients": [
-                            {
-                                "itemName": "12xingotIron.0",
-                                "count": 1,
-                                "compareDamage": false,
-                                "damage": 0,
-                                "compareNBT": false,
-                                "requiredTags": [],
-                                "disallowedTags": [],
-                                "checkCapabilities": false,
-                                "requiredCapabilities": [],
-                                "disallowedCapabilites": []
-                            }
-                        ]
+                        "parts": []
                     },
                     {
                         "outputs": [
@@ -2059,32 +592,7 @@
                                 "tags": "{}"
                             }
                         ],
-                        "ingredients": [
-                            {
-                                "itemName": "3xingotIron.0",
-                                "count": 1,
-                                "compareDamage": false,
-                                "damage": 0,
-                                "compareNBT": false,
-                                "requiredTags": [],
-                                "disallowedTags": [],
-                                "checkCapabilities": false,
-                                "requiredCapabilities": [],
-                                "disallowedCapabilites": []
-                            },
-                            {
-                                "itemName": "2xgunpowder.0",
-                                "count": 1,
-                                "compareDamage": false,
-                                "damage": 0,
-                                "compareNBT": false,
-                                "requiredTags": [],
-                                "disallowedTags": [],
-                                "checkCapabilities": false,
-                                "requiredCapabilities": [],
-                                "disallowedCapabilites": []
-                            }
-                        ]
+                        "parts": []
                     },
                     {
                         "outputs": [
@@ -2095,20 +603,7 @@
                                 "tags": "{}"
                             }
                         ],
-                        "ingredients": [
-                            {
-                                "itemName": "12xingotGold.0",
-                                "count": 1,
-                                "compareDamage": false,
-                                "damage": 0,
-                                "compareNBT": false,
-                                "requiredTags": [],
-                                "disallowedTags": [],
-                                "checkCapabilities": false,
-                                "requiredCapabilities": [],
-                                "disallowedCapabilites": []
-                            }
-                        ]
+                        "parts": []
                     }
                 ]
             },
@@ -2123,32 +618,7 @@
                                 "tags": "{}"
                             }
                         ],
-                        "ingredients": [
-                            {
-                                "itemName": "5xingotIron.0",
-                                "count": 1,
-                                "compareDamage": false,
-                                "damage": 0,
-                                "compareNBT": false,
-                                "requiredTags": [],
-                                "disallowedTags": [],
-                                "checkCapabilities": false,
-                                "requiredCapabilities": [],
-                                "disallowedCapabilites": []
-                            },
-                            {
-                                "itemName": "6xgunpowder.0",
-                                "count": 1,
-                                "compareDamage": false,
-                                "damage": 0,
-                                "compareNBT": false,
-                                "requiredTags": [],
-                                "disallowedTags": [],
-                                "checkCapabilities": false,
-                                "requiredCapabilities": [],
-                                "disallowedCapabilites": []
-                            }
-                        ]
+                        "parts": []
                     },
                     {
                         "outputs": [
@@ -2159,32 +629,7 @@
                                 "tags": "{}"
                             }
                         ],
-                        "ingredients": [
-                            {
-                                "itemName": "25xingotIron.0",
-                                "count": 1,
-                                "compareDamage": false,
-                                "damage": 0,
-                                "compareNBT": false,
-                                "requiredTags": [],
-                                "disallowedTags": [],
-                                "checkCapabilities": false,
-                                "requiredCapabilities": [],
-                                "disallowedCapabilites": []
-                            },
-                            {
-                                "itemName": "10xlog.0",
-                                "count": 1,
-                                "compareDamage": false,
-                                "damage": 0,
-                                "compareNBT": false,
-                                "requiredTags": [],
-                                "disallowedTags": [],
-                                "checkCapabilities": false,
-                                "requiredCapabilities": [],
-                                "disallowedCapabilites": []
-                            }
-                        ]
+                        "parts": []
                     },
                     {
                         "outputs": [
@@ -2195,32 +640,7 @@
                                 "tags": "{}"
                             }
                         ],
-                        "ingredients": [
-                            {
-                                "itemName": "3xingotIron.0",
-                                "count": 1,
-                                "compareDamage": false,
-                                "damage": 0,
-                                "compareNBT": false,
-                                "requiredTags": [],
-                                "disallowedTags": [],
-                                "checkCapabilities": false,
-                                "requiredCapabilities": [],
-                                "disallowedCapabilites": []
-                            },
-                            {
-                                "itemName": "5xgunpowder.0",
-                                "count": 1,
-                                "compareDamage": false,
-                                "damage": 0,
-                                "compareNBT": false,
-                                "requiredTags": [],
-                                "disallowedTags": [],
-                                "checkCapabilities": false,
-                                "requiredCapabilities": [],
-                                "disallowedCapabilites": []
-                            }
-                        ]
+                        "parts": []
                     },
                     {
                         "outputs": [
@@ -2231,32 +651,7 @@
                                 "tags": "{}"
                             }
                         ],
-                        "ingredients": [
-                            {
-                                "itemName": "12xingotIron.0",
-                                "count": 1,
-                                "compareDamage": false,
-                                "damage": 0,
-                                "compareNBT": false,
-                                "requiredTags": [],
-                                "disallowedTags": [],
-                                "checkCapabilities": false,
-                                "requiredCapabilities": [],
-                                "disallowedCapabilites": []
-                            },
-                            {
-                                "itemName": "8xfiberglass.0",
-                                "count": 1,
-                                "compareDamage": false,
-                                "damage": 0,
-                                "compareNBT": false,
-                                "requiredTags": [],
-                                "disallowedTags": [],
-                                "checkCapabilities": false,
-                                "requiredCapabilities": [],
-                                "disallowedCapabilites": []
-                            }
-                        ]
+                        "parts": []
                     },
                     {
                         "outputs": [
@@ -2267,32 +662,7 @@
                                 "tags": "{}"
                             }
                         ],
-                        "ingredients": [
-                            {
-                                "itemName": "3xingotIron.0",
-                                "count": 1,
-                                "compareDamage": false,
-                                "damage": 0,
-                                "compareNBT": false,
-                                "requiredTags": [],
-                                "disallowedTags": [],
-                                "checkCapabilities": false,
-                                "requiredCapabilities": [],
-                                "disallowedCapabilites": []
-                            },
-                            {
-                                "itemName": "5xgunpowder.0",
-                                "count": 1,
-                                "compareDamage": false,
-                                "damage": 0,
-                                "compareNBT": false,
-                                "requiredTags": [],
-                                "disallowedTags": [],
-                                "checkCapabilities": false,
-                                "requiredCapabilities": [],
-                                "disallowedCapabilites": []
-                            }
-                        ]
+                        "parts": []
                     },
                     {
                         "outputs": [
@@ -2303,32 +673,7 @@
                                 "tags": "{}"
                             }
                         ],
-                        "ingredients": [
-                            {
-                                "itemName": "5xfiberglass.0",
-                                "count": 1,
-                                "compareDamage": false,
-                                "damage": 0,
-                                "compareNBT": false,
-                                "requiredTags": [],
-                                "disallowedTags": [],
-                                "checkCapabilities": false,
-                                "requiredCapabilities": [],
-                                "disallowedCapabilites": []
-                            },
-                            {
-                                "itemName": "4xingotIron.0",
-                                "count": 1,
-                                "compareDamage": false,
-                                "damage": 0,
-                                "compareNBT": false,
-                                "requiredTags": [],
-                                "disallowedTags": [],
-                                "checkCapabilities": false,
-                                "requiredCapabilities": [],
-                                "disallowedCapabilites": []
-                            }
-                        ]
+                        "parts": []
                     },
                     {
                         "outputs": [
@@ -2339,56 +684,7 @@
                                 "tags": "{}"
                             }
                         ],
-                        "ingredients": [
-                            {
-                                "itemName": "12xingotIron.0",
-                                "count": 1,
-                                "compareDamage": false,
-                                "damage": 0,
-                                "compareNBT": false,
-                                "requiredTags": [],
-                                "disallowedTags": [],
-                                "checkCapabilities": false,
-                                "requiredCapabilities": [],
-                                "disallowedCapabilites": []
-                            },
-                            {
-                                "itemName": "4xingotGold.0",
-                                "count": 1,
-                                "compareDamage": false,
-                                "damage": 0,
-                                "compareNBT": false,
-                                "requiredTags": [],
-                                "disallowedTags": [],
-                                "checkCapabilities": false,
-                                "requiredCapabilities": [],
-                                "disallowedCapabilites": []
-                            },
-                            {
-                                "itemName": "12xgunpowder.0",
-                                "count": 1,
-                                "compareDamage": false,
-                                "damage": 0,
-                                "compareNBT": false,
-                                "requiredTags": [],
-                                "disallowedTags": [],
-                                "checkCapabilities": false,
-                                "requiredCapabilities": [],
-                                "disallowedCapabilites": []
-                            },
-                            {
-                                "itemName": "6xredstone.0",
-                                "count": 1,
-                                "compareDamage": false,
-                                "damage": 0,
-                                "compareNBT": false,
-                                "requiredTags": [],
-                                "disallowedTags": [],
-                                "checkCapabilities": false,
-                                "requiredCapabilities": [],
-                                "disallowedCapabilites": []
-                            }
-                        ]
+                        "parts": []
                     },
                     {
                         "outputs": [
@@ -2399,44 +695,7 @@
                                 "tags": "{}"
                             }
                         ],
-                        "ingredients": [
-                            {
-                                "itemName": "20xingotIron.0",
-                                "count": 1,
-                                "compareDamage": false,
-                                "damage": 0,
-                                "compareNBT": false,
-                                "requiredTags": [],
-                                "disallowedTags": [],
-                                "checkCapabilities": false,
-                                "requiredCapabilities": [],
-                                "disallowedCapabilites": []
-                            },
-                            {
-                                "itemName": "10xfiberglass.0",
-                                "count": 1,
-                                "compareDamage": false,
-                                "damage": 0,
-                                "compareNBT": false,
-                                "requiredTags": [],
-                                "disallowedTags": [],
-                                "checkCapabilities": false,
-                                "requiredCapabilities": [],
-                                "disallowedCapabilites": []
-                            },
-                            {
-                                "itemName": "20xredstone.0",
-                                "count": 1,
-                                "compareDamage": false,
-                                "damage": 0,
-                                "compareNBT": false,
-                                "requiredTags": [],
-                                "disallowedTags": [],
-                                "checkCapabilities": false,
-                                "requiredCapabilities": [],
-                                "disallowedCapabilites": []
-                            }
-                        ]
+                        "parts": []
                     }
                 ]
             },
@@ -2451,32 +710,7 @@
                                 "tags": "{}"
                             }
                         ],
-                        "ingredients": [
-                            {
-                                "itemName": "3xingotIron.0",
-                                "count": 1,
-                                "compareDamage": false,
-                                "damage": 0,
-                                "compareNBT": false,
-                                "requiredTags": [],
-                                "disallowedTags": [],
-                                "checkCapabilities": false,
-                                "requiredCapabilities": [],
-                                "disallowedCapabilites": []
-                            },
-                            {
-                                "itemName": "5xgunpowder.0",
-                                "count": 1,
-                                "compareDamage": false,
-                                "damage": 0,
-                                "compareNBT": false,
-                                "requiredTags": [],
-                                "disallowedTags": [],
-                                "checkCapabilities": false,
-                                "requiredCapabilities": [],
-                                "disallowedCapabilites": []
-                            }
-                        ]
+                        "parts": []
                     },
                     {
                         "outputs": [
@@ -2487,44 +721,7 @@
                                 "tags": "{}"
                             }
                         ],
-                        "ingredients": [
-                            {
-                                "itemName": "3xingotIron.0",
-                                "count": 1,
-                                "compareDamage": false,
-                                "damage": 0,
-                                "compareNBT": false,
-                                "requiredTags": [],
-                                "disallowedTags": [],
-                                "checkCapabilities": false,
-                                "requiredCapabilities": [],
-                                "disallowedCapabilites": []
-                            },
-                            {
-                                "itemName": "3xgunpowder.0",
-                                "count": 1,
-                                "compareDamage": false,
-                                "damage": 0,
-                                "compareNBT": false,
-                                "requiredTags": [],
-                                "disallowedTags": [],
-                                "checkCapabilities": false,
-                                "requiredCapabilities": [],
-                                "disallowedCapabilites": []
-                            },
-                            {
-                                "itemName": "2xblazePowder.0",
-                                "count": 1,
-                                "compareDamage": false,
-                                "damage": 0,
-                                "compareNBT": false,
-                                "requiredTags": [],
-                                "disallowedTags": [],
-                                "checkCapabilities": false,
-                                "requiredCapabilities": [],
-                                "disallowedCapabilites": []
-                            }
-                        ]
+                        "parts": []
                     },
                     {
                         "outputs": [
@@ -2535,32 +732,7 @@
                                 "tags": "{}"
                             }
                         ],
-                        "ingredients": [
-                            {
-                                "itemName": "12xingotIron.0",
-                                "count": 1,
-                                "compareDamage": false,
-                                "damage": 0,
-                                "compareNBT": false,
-                                "requiredTags": [],
-                                "disallowedTags": [],
-                                "checkCapabilities": false,
-                                "requiredCapabilities": [],
-                                "disallowedCapabilites": []
-                            },
-                            {
-                                "itemName": "6xlog.0",
-                                "count": 1,
-                                "compareDamage": false,
-                                "damage": 0,
-                                "compareNBT": false,
-                                "requiredTags": [],
-                                "disallowedTags": [],
-                                "checkCapabilities": false,
-                                "requiredCapabilities": [],
-                                "disallowedCapabilites": []
-                            }
-                        ]
+                        "parts": []
                     },
                     {
                         "outputs": [
@@ -2571,32 +743,7 @@
                                 "tags": "{}"
                             }
                         ],
-                        "ingredients": [
-                            {
-                                "itemName": "3xingotIron.0",
-                                "count": 1,
-                                "compareDamage": false,
-                                "damage": 0,
-                                "compareNBT": false,
-                                "requiredTags": [],
-                                "disallowedTags": [],
-                                "checkCapabilities": false,
-                                "requiredCapabilities": [],
-                                "disallowedCapabilites": []
-                            },
-                            {
-                                "itemName": "5xgunpowder.0",
-                                "count": 1,
-                                "compareDamage": false,
-                                "damage": 0,
-                                "compareNBT": false,
-                                "requiredTags": [],
-                                "disallowedTags": [],
-                                "checkCapabilities": false,
-                                "requiredCapabilities": [],
-                                "disallowedCapabilites": []
-                            }
-                        ]
+                        "parts": []
                     },
                     {
                         "outputs": [
@@ -2607,44 +754,7 @@
                                 "tags": "{}"
                             }
                         ],
-                        "ingredients": [
-                            {
-                                "itemName": "3xingotIron.0",
-                                "count": 1,
-                                "compareDamage": false,
-                                "damage": 0,
-                                "compareNBT": false,
-                                "requiredTags": [],
-                                "disallowedTags": [],
-                                "checkCapabilities": false,
-                                "requiredCapabilities": [],
-                                "disallowedCapabilites": []
-                            },
-                            {
-                                "itemName": "3xgunpowder.0",
-                                "count": 1,
-                                "compareDamage": false,
-                                "damage": 0,
-                                "compareNBT": false,
-                                "requiredTags": [],
-                                "disallowedTags": [],
-                                "checkCapabilities": false,
-                                "requiredCapabilities": [],
-                                "disallowedCapabilites": []
-                            },
-                            {
-                                "itemName": "4xspiderEye.0",
-                                "count": 1,
-                                "compareDamage": false,
-                                "damage": 0,
-                                "compareNBT": false,
-                                "requiredTags": [],
-                                "disallowedTags": [],
-                                "checkCapabilities": false,
-                                "requiredCapabilities": [],
-                                "disallowedCapabilites": []
-                            }
-                        ]
+                        "parts": []
                     },
                     {
                         "outputs": [
@@ -2655,32 +765,7 @@
                                 "tags": "{}"
                             }
                         ],
-                        "ingredients": [
-                            {
-                                "itemName": "20xingotIron.0",
-                                "count": 1,
-                                "compareDamage": false,
-                                "damage": 0,
-                                "compareNBT": false,
-                                "requiredTags": [],
-                                "disallowedTags": [],
-                                "checkCapabilities": false,
-                                "requiredCapabilities": [],
-                                "disallowedCapabilites": []
-                            },
-                            {
-                                "itemName": "12xfiberglass.0",
-                                "count": 1,
-                                "compareDamage": false,
-                                "damage": 0,
-                                "compareNBT": false,
-                                "requiredTags": [],
-                                "disallowedTags": [],
-                                "checkCapabilities": false,
-                                "requiredCapabilities": [],
-                                "disallowedCapabilites": []
-                            }
-                        ]
+                        "parts": []
                     },
                     {
                         "outputs": [
@@ -2691,44 +776,7 @@
                                 "tags": "{}"
                             }
                         ],
-                        "ingredients": [
-                            {
-                                "itemName": "4xfiberglass.0",
-                                "count": 1,
-                                "compareDamage": false,
-                                "damage": 0,
-                                "compareNBT": false,
-                                "requiredTags": [],
-                                "disallowedTags": [],
-                                "checkCapabilities": false,
-                                "requiredCapabilities": [],
-                                "disallowedCapabilites": []
-                            },
-                            {
-                                "itemName": "2xgunpowder.0",
-                                "count": 1,
-                                "compareDamage": false,
-                                "damage": 0,
-                                "compareNBT": false,
-                                "requiredTags": [],
-                                "disallowedTags": [],
-                                "checkCapabilities": false,
-                                "requiredCapabilities": [],
-                                "disallowedCapabilites": []
-                            },
-                            {
-                                "itemName": "1xredstone.0",
-                                "count": 1,
-                                "compareDamage": false,
-                                "damage": 0,
-                                "compareNBT": false,
-                                "requiredTags": [],
-                                "disallowedTags": [],
-                                "checkCapabilities": false,
-                                "requiredCapabilities": [],
-                                "disallowedCapabilites": []
-                            }
-                        ]
+                        "parts": []
                     },
                     {
                         "outputs": [
@@ -2739,44 +787,7 @@
                                 "tags": "{}"
                             }
                         ],
-                        "ingredients": [
-                            {
-                                "itemName": "3xgunpowder.0",
-                                "count": 1,
-                                "compareDamage": false,
-                                "damage": 0,
-                                "compareNBT": false,
-                                "requiredTags": [],
-                                "disallowedTags": [],
-                                "checkCapabilities": false,
-                                "requiredCapabilities": [],
-                                "disallowedCapabilites": []
-                            },
-                            {
-                                "itemName": "2xslimeball.0",
-                                "count": 1,
-                                "compareDamage": false,
-                                "damage": 0,
-                                "compareNBT": false,
-                                "requiredTags": [],
-                                "disallowedTags": [],
-                                "checkCapabilities": false,
-                                "requiredCapabilities": [],
-                                "disallowedCapabilites": []
-                            },
-                            {
-                                "itemName": "1xredstone.0",
-                                "count": 1,
-                                "compareDamage": false,
-                                "damage": 0,
-                                "compareNBT": false,
-                                "requiredTags": [],
-                                "disallowedTags": [],
-                                "checkCapabilities": false,
-                                "requiredCapabilities": [],
-                                "disallowedCapabilites": []
-                            }
-                        ]
+                        "parts": []
                     },
                     {
                         "outputs": [
@@ -2787,32 +798,7 @@
                                 "tags": "{}"
                             }
                         ],
-                        "ingredients": [
-                            {
-                                "itemName": "1xfiberglass.0",
-                                "count": 1,
-                                "compareDamage": false,
-                                "damage": 0,
-                                "compareNBT": false,
-                                "requiredTags": [],
-                                "disallowedTags": [],
-                                "checkCapabilities": false,
-                                "requiredCapabilities": [],
-                                "disallowedCapabilites": []
-                            },
-                            {
-                                "itemName": "1xredstone.0",
-                                "count": 1,
-                                "compareDamage": false,
-                                "damage": 0,
-                                "compareNBT": false,
-                                "requiredTags": [],
-                                "disallowedTags": [],
-                                "checkCapabilities": false,
-                                "requiredCapabilities": [],
-                                "disallowedCapabilites": []
-                            }
-                        ]
+                        "parts": []
                     }
                 ]
             },
@@ -2827,44 +813,7 @@
                                 "tags": "{}"
                             }
                         ],
-                        "ingredients": [
-                            {
-                                "itemName": "12xfiberglass.0",
-                                "count": 1,
-                                "compareDamage": false,
-                                "damage": 0,
-                                "compareNBT": false,
-                                "requiredTags": [],
-                                "disallowedTags": [],
-                                "checkCapabilities": false,
-                                "requiredCapabilities": [],
-                                "disallowedCapabilites": []
-                            },
-                            {
-                                "itemName": "12xthinGlass.0",
-                                "count": 1,
-                                "compareDamage": false,
-                                "damage": 0,
-                                "compareNBT": false,
-                                "requiredTags": [],
-                                "disallowedTags": [],
-                                "checkCapabilities": false,
-                                "requiredCapabilities": [],
-                                "disallowedCapabilites": []
-                            },
-                            {
-                                "itemName": "16xingotIron.0",
-                                "count": 1,
-                                "compareDamage": false,
-                                "damage": 0,
-                                "compareNBT": false,
-                                "requiredTags": [],
-                                "disallowedTags": [],
-                                "checkCapabilities": false,
-                                "requiredCapabilities": [],
-                                "disallowedCapabilites": []
-                            }
-                        ]
+                        "parts": []
                     },
                     {
                         "outputs": [
@@ -2875,32 +824,7 @@
                                 "tags": "{}"
                             }
                         ],
-                        "ingredients": [
-                            {
-                                "itemName": "19xiron.0",
-                                "count": 1,
-                                "compareDamage": false,
-                                "damage": 0,
-                                "compareNBT": false,
-                                "requiredTags": [],
-                                "disallowedTags": [],
-                                "checkCapabilities": false,
-                                "requiredCapabilities": [],
-                                "disallowedCapabilites": []
-                            },
-                            {
-                                "itemName": "19xgunpowder.0",
-                                "count": 1,
-                                "compareDamage": false,
-                                "damage": 0,
-                                "compareNBT": false,
-                                "requiredTags": [],
-                                "disallowedTags": [],
-                                "checkCapabilities": false,
-                                "requiredCapabilities": [],
-                                "disallowedCapabilites": []
-                            }
-                        ]
+                        "parts": []
                     },
                     {
                         "outputs": [
@@ -2911,56 +835,7 @@
                                 "tags": "{}"
                             }
                         ],
-                        "ingredients": [
-                            {
-                                "itemName": "2xiron.0",
-                                "count": 1,
-                                "compareDamage": false,
-                                "damage": 0,
-                                "compareNBT": false,
-                                "requiredTags": [],
-                                "disallowedTags": [],
-                                "checkCapabilities": false,
-                                "requiredCapabilities": [],
-                                "disallowedCapabilites": []
-                            },
-                            {
-                                "itemName": "4xfiberglass.0",
-                                "count": 1,
-                                "compareDamage": false,
-                                "damage": 0,
-                                "compareNBT": false,
-                                "requiredTags": [],
-                                "disallowedTags": [],
-                                "checkCapabilities": false,
-                                "requiredCapabilities": [],
-                                "disallowedCapabilites": []
-                            },
-                            {
-                                "itemName": "4xgunpowder.0",
-                                "count": 1,
-                                "compareDamage": false,
-                                "damage": 0,
-                                "compareNBT": false,
-                                "requiredTags": [],
-                                "disallowedTags": [],
-                                "checkCapabilities": false,
-                                "requiredCapabilities": [],
-                                "disallowedCapabilites": []
-                            },
-                            {
-                                "itemName": "2xredstone.0",
-                                "count": 1,
-                                "compareDamage": false,
-                                "damage": 0,
-                                "compareNBT": false,
-                                "requiredTags": [],
-                                "disallowedTags": [],
-                                "checkCapabilities": false,
-                                "requiredCapabilities": [],
-                                "disallowedCapabilites": []
-                            }
-                        ]
+                        "parts": []
                     },
                     {
                         "outputs": [
@@ -2971,56 +846,7 @@
                                 "tags": "{}"
                             }
                         ],
-                        "ingredients": [
-                            {
-                                "itemName": "2xiron.0",
-                                "count": 1,
-                                "compareDamage": false,
-                                "damage": 0,
-                                "compareNBT": false,
-                                "requiredTags": [],
-                                "disallowedTags": [],
-                                "checkCapabilities": false,
-                                "requiredCapabilities": [],
-                                "disallowedCapabilites": []
-                            },
-                            {
-                                "itemName": "4xfiberglass.0",
-                                "count": 1,
-                                "compareDamage": false,
-                                "damage": 0,
-                                "compareNBT": false,
-                                "requiredTags": [],
-                                "disallowedTags": [],
-                                "checkCapabilities": false,
-                                "requiredCapabilities": [],
-                                "disallowedCapabilites": []
-                            },
-                            {
-                                "itemName": "5xgunpowder.0",
-                                "count": 1,
-                                "compareDamage": false,
-                                "damage": 0,
-                                "compareNBT": false,
-                                "requiredTags": [],
-                                "disallowedTags": [],
-                                "checkCapabilities": false,
-                                "requiredCapabilities": [],
-                                "disallowedCapabilites": []
-                            },
-                            {
-                                "itemName": "1xredstone.0",
-                                "count": 1,
-                                "compareDamage": false,
-                                "damage": 0,
-                                "compareNBT": false,
-                                "requiredTags": [],
-                                "disallowedTags": [],
-                                "checkCapabilities": false,
-                                "requiredCapabilities": [],
-                                "disallowedCapabilites": []
-                            }
-                        ]
+                        "parts": []
                     }
                 ]
             }

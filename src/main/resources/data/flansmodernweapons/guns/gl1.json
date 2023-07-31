@@ -8,13 +8,13 @@
     "paints": {
         "paintjobs": [
             {
-                "textureName": "GL1_Blackwood"
+                "textureName": "gl1_blackwood"
             },
             {
-                "textureName": "GL1_Birch"
+                "textureName": "gl1_birch"
             },
             {
-                "textureName": "GL1_Static"
+                "textureName": "gl1_static"
             }
         ]
     },
@@ -351,7 +351,7 @@
             0.0,
             0.0
         ],
-        "hideDefaultMesh": false
+        "hideDefaultMesh": true
     },
     "gripAttachments": {
         "allowlist": [],
@@ -363,7 +363,7 @@
             0.0,
             0.0
         ],
-        "hideDefaultMesh": false
+        "hideDefaultMesh": true
     },
     "stockAttachments": {
         "allowlist": [],
@@ -375,19 +375,19 @@
             0.0,
             0.0
         ],
-        "hideDefaultMesh": false
+        "hideDefaultMesh": true
     },
     "scopeAttachments": {
         "allowlist": [],
         "allowAll": true,
         "numAttachmentSlots": 1,
-        "attachToMesh": "body",
+        "attachToMesh": "slide",
         "attachPoint": [
             0.0,
             0.0,
             0.0
         ],
-        "hideDefaultMesh": false
+        "hideDefaultMesh": true
     },
     "genericAttachments": {
         "allowlist": [],
@@ -399,7 +399,7 @@
             0.0,
             0.0
         ],
-        "hideDefaultMesh": false
+        "hideDefaultMesh": true
     },
     "modelParts": [],
     "animationSet": "flansmod:shotgun_break_action"

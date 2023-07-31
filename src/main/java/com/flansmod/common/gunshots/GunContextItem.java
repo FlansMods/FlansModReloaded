@@ -33,7 +33,8 @@ public class GunContextItem extends GunContext
 	@Override
 	public boolean CanPerformActions() { return false; }
 	@Override
-	public ActionStack GetActionStack() { return null; }
+	@Nonnull
+	public ActionStack GetActionStack() { return ActionStack.Invalid; }
 	@Override
 	public boolean CanPerformTwoHandedAction() { return false; }
 

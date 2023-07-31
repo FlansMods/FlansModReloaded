@@ -197,6 +197,38 @@ public class FlansMod
                 });
         });
 
+        event.registerCreativeModeTab(new ResourceLocation(MODID, "creative_tab_parts"), builder ->
+        {
+            builder
+                .title(Component.translatable("item_group." + MODID + ".creative_tab_parts"))
+                .icon(() -> new ItemStack(Items.STICK))
+                .displayItems((enabledFlags, populator, hasPermissions) ->
+                {
+                    populator.accept(GUN_MACHINING_TABLE_ITEM.get());
+                    for(Item item : ForgeRegistries.ITEMS.getValues())
+                    {
+                        if(item instanceof PartItem)
+                            populator.accept(new ItemStack(item));
+                    }
+                });
+        });
+
+        event.registerCreativeModeTab(new ResourceLocation(MODID, "creative_tab_modifiers"), builder ->
+        {
+            builder
+                .title(Component.translatable("item_group." + MODID + ".creative_tab_modifiers"))
+                .icon(() -> new ItemStack(Items.REDSTONE))
+                .displayItems((enabledFlags, populator, hasPermissions) ->
+                {
+                    populator.accept(GUN_MOD_TABLE_ITEM.get());
+                    for(Item item : ForgeRegistries.ITEMS.getValues())
+                    {
+                        if(item instanceof AttachmentItem)
+                            populator.accept(new ItemStack(item));
+                    }
+                });
+        });
+
         event.registerCreativeModeTab(new ResourceLocation(MODID, "creative_tab_vehicles"), builder ->
         {
             builder

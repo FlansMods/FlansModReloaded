@@ -20,6 +20,7 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -30,18 +31,18 @@ public class ActionManager
 	private final boolean IsClient;
 	private HashMap<GunContext, ActionStack> ActionStacks = new HashMap<GunContext, ActionStack>();
 
-	@Nullable
+	@Nonnull
 	public ActionStack GetActionStack(GunContext context)
 	{
 		if(!context.IsValid())
 		{
 			FlansMod.LOGGER.warn("Tried to get action stack for invalid context");
-			return null;
+			return ActionStack.Invalid;
 		}
 		if(!context.GetShooter().IsValid())
 		{
 			FlansMod.LOGGER.warn("Tried to get action stack for a valid context, but without an entity. This may be supported later");
-			return null;
+			return ActionStack.Invalid;
 		}
 
 		ActionStack entitysActionStack = ActionStacks.get(context);
@@ -53,7 +54,7 @@ public class ActionManager
 		return entitysActionStack;
 	}
 
-	@Nullable
+	@Nonnull
 	public static ActionStack SafeGetActionStack(GunContext context)
 	{
 		Level level = context.Level();
@@ -71,7 +72,7 @@ public class ActionManager
 		else
 		{
 			FlansMod.LOGGER.warn("Could not get ActionStack for GunContext " + context.toString());
-			return null;
+			return ActionStack.Invalid;
 		}
 	}
 
@@ -160,7 +161,7 @@ public class ActionManager
 				}
 			}
 			else if(shouldFallbackToReload
-				&& !inputType.IsReload
+				&& !inputType.IsReload()
 				&& inputType.GetReloadType() != null
 				&& !actionContext.ActionStack().IsReloading())
 			{
@@ -260,13 +261,16 @@ public class ActionManager
 
 	public void ClientTick(TickEvent.ClientTickEvent tickEvent)
 	{
-		if(tickEvent.phase == TickEvent.Phase.END)
+		if(tickEvent.phase == TickEvent.Phase.START)
 		{
 			for(var kvp : ActionStacks.entrySet())
 			{
 				GunContext gunContext = kvp.getKey();
 				ActionStack stack = kvp.getValue();
-				stack.OnTick(Minecraft.getInstance().level, gunContext);
+				if(stack.IsValid() && gunContext.IsValid())
+				{
+					stack.OnTick(Minecraft.getInstance().level, gunContext);
+				}
 			}
 		}
 	}
@@ -439,7 +443,7 @@ public class ActionManager
 
 	public void ServerTick(TickEvent.ServerTickEvent tickEvent)
 	{
-		if(tickEvent.phase == TickEvent.Phase.END)
+		if(tickEvent.phase == TickEvent.Phase.START)
 		{
 			for(var kvp : ActionStacks.entrySet())
 			{

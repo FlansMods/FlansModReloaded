@@ -1,6 +1,7 @@
 package com.flansmod.client.render.models;
 
 import com.flansmod.common.FlansMod;
+import com.flansmod.common.item.AttachmentItem;
 import com.flansmod.util.Maths;
 import com.google.gson.*;
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -30,18 +31,38 @@ public class TurboRig implements IUnbakedGeometry<TurboRig>, UnbakedModel
 {
 	public static final Loader LOADER = new Loader();
 
+	public static final class AttachPoint
+	{
+		public final String AttachTo;
+		public final Vector3f Offset;
+		public AttachPoint(String attachTo, Vector3f offset)
+		{
+			AttachTo = attachTo;
+			Offset = offset;
+		}
+		public static final AttachPoint Invalid = new AttachPoint("", new Vector3f());
+	}
+
 	private final Map<String, TurboModel> Parts;
 	private final Map<String, ResourceLocation> Textures;
 	private final ItemTransforms Transforms;
 	private final Map<String, Float> FloatParams;
+	private final Map<String, AttachPoint> AttachPoints;
 
-	public TurboRig(Map<String, TurboModel> parts, Map<String, ResourceLocation> textures, ItemTransforms transforms, Map<String, Float> floatParams)
+	public TurboRig(Map<String, TurboModel> parts,
+					Map<String, ResourceLocation> textures,
+					ItemTransforms transforms,
+					Map<String, Float> floatParams,
+					Map<String, AttachPoint> attachPoints)
 	{
 		Parts = parts;
 		Textures = textures;
 		Transforms = transforms;
 		FloatParams = floatParams;
+		AttachPoints = attachPoints;
 	}
+
+	public AttachPoint GetAttachPoint(String attachmentName) { return AttachPoints.getOrDefault(attachmentName, AttachPoint.Invalid); }
 
 	public Map<String, Float> GetFloatParams() { return FloatParams; }
 
@@ -231,6 +252,20 @@ public class TurboRig implements IUnbakedGeometry<TurboRig>, UnbakedModel
 				}
 			}
 
+			Map<String, AttachPoint> attachPoints = new HashMap<>();
+			if(jObject.has("attachPoints"))
+			{
+				JsonArray jAPArray = GsonHelper.getAsJsonArray(jObject, "attachPoints");
+				for(var jAPElement : jAPArray.asList())
+				{
+					JsonObject jAPObject = jAPElement.getAsJsonObject();
+					String name = jAPObject.get("name").getAsString();
+					String attachTo = jAPObject.get("attachTo").getAsString();
+					Vector3f offset = getVector3f(jAPObject.get("offset"));
+					attachPoints.put(name, new AttachPoint(attachTo, offset));
+				}
+			}
+
 			Map<String, ResourceLocation> textures = new HashMap<>();
 			if (jObject.has("textures"))
 			{
@@ -256,7 +291,16 @@ public class TurboRig implements IUnbakedGeometry<TurboRig>, UnbakedModel
 				}
 			}
 
-			return new TurboRig(parts, textures, itemTransforms, floatParams);
+			return new TurboRig(parts, textures, itemTransforms, floatParams, attachPoints);
+		}
+
+		private Vector3f getVector3f(JsonElement jObject)
+		{
+			JsonArray jArray = jObject.getAsJsonArray();
+			return new Vector3f(
+				jArray.get(0).getAsFloat(),
+				jArray.get(1).getAsFloat(),
+				jArray.get(2).getAsFloat());
 		}
 	}
 }

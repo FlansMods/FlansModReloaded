@@ -4,6 +4,7 @@ import com.flansmod.common.actions.ActionStack;
 import com.flansmod.common.actions.EActionInput;
 import com.flansmod.common.item.AttachmentItem;
 import com.flansmod.common.item.BulletItem;
+import com.flansmod.common.item.FlanItem;
 import com.flansmod.common.item.GunItem;
 import com.flansmod.common.types.attachments.AttachmentDefinition;
 import com.flansmod.common.types.attachments.EAttachmentType;
@@ -98,10 +99,6 @@ public abstract class GunContext
 
 	public boolean IsValid() { return !GetItemStack().isEmpty(); }
 
-	// Cached variables?
-	private CachedGunStats cachedPrimaryAction = null;
-	private CachedGunStats cachedSecondaryAction = null;
-
 	protected GunContext() {}
 
 	/// Public accessors of accumulated stats
@@ -109,7 +106,7 @@ public abstract class GunContext
 	@Nonnull
 	public GunDefinition GunDef()
 	{
-		if(GetItemStack() != null && GetItemStack().getItem() instanceof GunItem gunItem)
+		if(GetItemStack().getItem() instanceof GunItem gunItem)
 			return gunItem.Def();
 		return GunDefinition.INVALID;
 	}
@@ -157,6 +154,28 @@ public abstract class GunContext
 		return ItemStack.of(ammoTags.getCompound(key));
 	}
 
+	public int GetNumBulletStacks(EActionInput inputType)
+	{
+		if(inputType.IsPrimary())
+		{
+			// TODO: This should be a child of the action?
+			return GunDef().numBullets;
+			//ActionDefinition actionDef = GetShootActionDefinition(inputType);
+			//if (actionDef.IsValid() && actionDef.shootStats.length > 0)
+			//{
+			//	return actionDef.shootStats[0].bulletCount;
+			//}
+		}
+		else if(inputType.IsSecondary())
+		{
+			// TODO:
+			return 0;
+		}
+
+
+		return 0;
+	}
+
 	public void SetBulletStack(EActionInput inputType, int index, ItemStack stack)
 	{
 		String ammoKey = inputType.GetAmmoTagName();
@@ -177,7 +196,7 @@ public abstract class GunContext
 		if(!IsShootAction(inputType))
 			return false;
 
-		for(int i = 0; i < GunDef().numBullets; i++)
+		for(int i = 0; i < GetNumBulletStacks(inputType); i++)
 		{
 			if(GetBulletStack(inputType, i).isEmpty())
 				return true;
@@ -225,14 +244,14 @@ public abstract class GunContext
 	{
 		int chamber = GetCurrentChamber(inputType);
 		chamber++;
-		if(chamber >= GunDef().numBullets)
+		if(chamber >= GetNumBulletStacks(inputType))
 			chamber = 0;
 		SetCurrentChamber(inputType, chamber);
 	}
 
 	public int GetNextBulletSlotToLoad(EActionInput inputType)
 	{
-		for(int i = 0; i < GunDef().numBullets; i++)
+		for(int i = 0; i < GetNumBulletStacks(inputType); i++)
 		{
 			if(GetBulletStack(inputType, i).isEmpty())
 				return i;
@@ -242,7 +261,7 @@ public abstract class GunContext
 
 	public void LoadOne(EActionInput inputType, int bulletSlot)
 	{
-		if(bulletSlot < 0 || bulletSlot >= GunDef().numBullets)
+		if(bulletSlot < 0 || bulletSlot >= GetNumBulletStacks(inputType))
 			return;
 
 		ActionDefinition shootActionDef = GetShootActionDefinition(inputType);
@@ -270,7 +289,7 @@ public abstract class GunContext
 	public int FindSlotWithMatchingAmmo(EActionInput inputType, Container inventory)
 	{
 		ActionDefinition shootActionDef = GetShootActionDefinition(inputType);
-		if(shootActionDef.IsValid())
+		if(shootActionDef.IsValid() && shootActionDef.shootStats.length > 0)
 		{
 			for (int i = 0; i < inventory.getContainerSize(); i++)
 			{
@@ -292,6 +311,7 @@ public abstract class GunContext
 	// --------------------------------------------------------------------------
 	// ACTIONS
 	// --------------------------------------------------------------------------
+	@Nonnull
 	public abstract ActionStack GetActionStack();
 	public abstract boolean CanPerformActions();
 
@@ -311,16 +331,25 @@ public abstract class GunContext
 	@Nonnull
 	public ActionDefinition[] GetActionDefinitions(EActionInput inputType)
 	{
+		// First check if any attachments are modifying our actions
+		for(ItemStack attachmentStack : GetAttachmentStacks())
+		{
+			if(attachmentStack.getItem() instanceof AttachmentItem attachmentItem)
+			{
+				if(attachmentItem.Def().ShouldReplaceAction(inputType))
+				{
+					return attachmentItem.Def().GetActions(inputType);
+				}
+			}
+		}
+		// Then defer to the gun definition
 		return GunDef().GetActions(inputType);
 	}
 	public ActionDefinition GetShootActionDefinition(EActionInput inputType)
 	{
-		// TODO: Check attachments for changes in action
-		// e.g. An underslung grenade launcher attachment
-
 		EActionInput shootType = inputType.GetActionType();
 		if(shootType != null)
-			for(ActionDefinition def : GunDef().GetActions(shootType))
+			for(ActionDefinition def : GetActionDefinitions(shootType))
 				if(def.actionType == EActionType.Shoot)
 					return def;
 		return ActionDefinition.Invalid;
@@ -346,42 +375,58 @@ public abstract class GunContext
 	// --------------------------------------------------------------------------
 	// ATTACHMENTS
 	// --------------------------------------------------------------------------
-	public AttachmentDefinition GetAttachmentDefinition(EAttachmentType attachType)
+	public AttachmentDefinition GetAttachmentDefinition(EAttachmentType attachType, int slot)
 	{
-		CompoundTag attachmentTags = GetOrCreateTags("attachments");
-		if(attachmentTags.contains(attachType.toString()))
+		ItemStack attachmentStack = GetAttachmentStack(attachType, slot);
+		if(attachmentStack.getItem() instanceof AttachmentItem attachmentItem)
 		{
-			CompoundTag forThisType = attachmentTags.getCompound(attachType.toString());
-			ItemStack stack = ItemStack.of(forThisType);
-			if(stack.getItem() instanceof AttachmentItem attachmentItem)
-			{
-				return attachmentItem.Def();
-			}
+			return attachmentItem.Def();
 		}
 		return AttachmentDefinition.INVALID;
 	}
 
-	public ItemStack GetAttachmentStack(EAttachmentType attachType)
+	public int GetNumAttachmentStacks(EAttachmentType attachType)
 	{
-		CompoundTag attachmentTags = GetOrCreateTags("attachments");
-		if(attachmentTags.contains(attachType.toString()))
+		return GunDef().GetAttachmentSettings(attachType).numAttachmentSlots;
+	}
+
+	public ItemStack GetAttachmentStack(EAttachmentType attachType, int slot)
+	{
+		ItemStack gunStack = GetItemStack();
+		if(gunStack.getItem() instanceof FlanItem flanItem)
 		{
-			CompoundTag forThisType = attachmentTags.getCompound(attachType.toString());
-			return ItemStack.of(forThisType);
+			return flanItem.GetAttachmentInSlot(gunStack, attachType, slot);
 		}
 		return ItemStack.EMPTY.copy();
 	}
 
+	public void SetAttachmentStack(EAttachmentType attachType, int slot, ItemStack attachmentStack)
+	{
+		ItemStack gunStack = GetItemStack();
+		if(gunStack.getItem() instanceof FlanItem flanItem)
+		{
+			flanItem.SetAttachmentInSlot(gunStack, attachType, slot, attachmentStack);
+		}
+	}
+
+	public ItemStack RemoveAttachmentFromSlot(EAttachmentType attachType, int slot)
+	{
+		ItemStack gunStack = GetItemStack();
+		if(gunStack.getItem() instanceof FlanItem flanItem)
+		{
+			return flanItem.RemoveAttachmentFromSlot(gunStack, attachType, slot);
+		}
+		return ItemStack.EMPTY;
+	}
+
 	public List<ItemStack> GetAttachmentStacks()
 	{
-		List<ItemStack> stacks = new ArrayList<>();
-		CompoundTag attachmentTags = GetOrCreateTags("attachments");
-		for(String key : attachmentTags.getAllKeys())
+		ItemStack gunStack = GetItemStack();
+		if(gunStack.getItem() instanceof FlanItem flanItem)
 		{
-			CompoundTag attachmentStackTags = attachmentTags.getCompound(key);
-			stacks.add(ItemStack.of(attachmentStackTags));
+			return flanItem.GetAttachmentStacks(gunStack);
 		}
-		return stacks;
+		return new ArrayList<>();
 	}
 
 	public List<ModifierDefinition> GetApplicableModifiers(String stat, EActionInput actionSet)

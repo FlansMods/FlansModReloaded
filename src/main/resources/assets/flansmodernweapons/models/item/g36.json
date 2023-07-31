@@ -149,6 +149,11 @@
     },
     "parts": {
         "body": {
+            "origin": [
+                0.0,
+                0.0,
+                0.0
+            ],
             "turboelements": [
                 {
                     "verts": [
@@ -937,6 +942,11 @@
             ]
         },
         "stock": {
+            "origin": [
+                0.0,
+                0.0,
+                0.0
+            ],
             "turboelements": [
                 {
                     "verts": [
@@ -1501,6 +1511,11 @@
             ]
         },
         "grip": {
+            "origin": [
+                0.0,
+                0.0,
+                0.0
+            ],
             "turboelements": [
                 {
                     "verts": [
@@ -1729,6 +1744,11 @@
             ]
         },
         "ammo_0": {
+            "origin": [
+                0.0,
+                0.0,
+                0.0
+            ],
             "turboelements": [
                 {
                     "verts": [
@@ -1847,11 +1867,11 @@
     },
     "attachPoints": [
         {
-            "name": "scope",
+            "name": "sights",
             "attachTo": "body",
             "offset": [
-                0.25,
-                0.3125,
+                4.0,
+                5.0,
                 0.0
             ]
         },
@@ -1859,8 +1879,8 @@
             "name": "stock",
             "attachTo": "body",
             "offset": [
-                -0.25,
-                0.21875,
+                -4.0,
+                3.5,
                 0.0
             ]
         },
@@ -1868,8 +1888,8 @@
             "name": "barrel",
             "attachTo": "body",
             "offset": [
-                0.9375,
-                0.1875,
+                15.0,
+                3.0,
                 0.0
             ]
         },
@@ -1877,8 +1897,8 @@
             "name": "grip",
             "attachTo": "body",
             "offset": [
-                0.625,
-                0.1875,
+                10.0,
+                3.0,
                 0.0
             ]
         }

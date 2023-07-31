@@ -8,13 +8,13 @@
     "paints": {
         "paintjobs": [
             {
-                "textureName": "R700_Red"
+                "textureName": "r700_red"
             },
             {
-                "textureName": "R700_Blue"
+                "textureName": "r700_blue"
             },
             {
-                "textureName": "R700_Markings"
+                "textureName": "r700_markings"
             }
         ]
     },
@@ -329,7 +329,7 @@
             0.0,
             0.0
         ],
-        "hideDefaultMesh": false
+        "hideDefaultMesh": true
     },
     "gripAttachments": {
         "allowlist": [],
@@ -341,7 +341,7 @@
             0.0,
             0.0
         ],
-        "hideDefaultMesh": false
+        "hideDefaultMesh": true
     },
     "stockAttachments": {
         "allowlist": [],
@@ -353,7 +353,7 @@
             0.0,
             0.0
         ],
-        "hideDefaultMesh": false
+        "hideDefaultMesh": true
     },
     "scopeAttachments": {
         "allowlist": [],
@@ -365,7 +365,7 @@
             0.0,
             0.0
         ],
-        "hideDefaultMesh": false
+        "hideDefaultMesh": true
     },
     "genericAttachments": {
         "allowlist": [],
@@ -377,7 +377,7 @@
             0.0,
             0.0
         ],
-        "hideDefaultMesh": false
+        "hideDefaultMesh": true
     },
     "modelParts": [],
     "animationSet": "flansmod:bolt_action_rifle"

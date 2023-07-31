@@ -151,6 +151,11 @@
     },
     "parts": {
         "body": {
+            "origin": [
+                0.0,
+                0.0,
+                0.0
+            ],
             "turboelements": [
                 {
                     "verts": [
@@ -1275,6 +1280,11 @@
             ]
         },
         "ammo_0": {
+            "origin": [
+                0.0,
+                0.0,
+                0.0
+            ],
             "turboelements": [
                 {
                     "verts": [
@@ -1390,7 +1400,12 @@
                 }
             ]
         },
-        "scope": {
+        "sights": {
+            "origin": [
+                0.0,
+                0.0,
+                0.0
+            ],
             "turboelements": [
                 {
                     "verts": [
@@ -1512,8 +1527,8 @@
             "name": "stock",
             "attachTo": "body",
             "offset": [
-                0.1875,
-                0.3125,
+                3.0,
+                5.0,
                 0.0
             ]
         },
@@ -1521,17 +1536,17 @@
             "name": "barrel",
             "attachTo": "body",
             "offset": [
-                0.734375,
-                0.21875,
+                11.75,
+                3.5,
                 0.0
             ]
         },
         {
-            "name": "scope",
+            "name": "sights",
             "attachTo": "body",
             "offset": [
                 0.0,
-                0.3125,
+                5.0,
                 0.0
             ]
         },
@@ -1539,8 +1554,8 @@
             "name": "grip",
             "attachTo": "body",
             "offset": [
-                0.46875,
-                0.125,
+                7.5,
+                2.0,
                 0.0
             ]
         }

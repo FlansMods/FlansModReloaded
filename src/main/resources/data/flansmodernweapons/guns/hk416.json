@@ -12,8 +12,29 @@
         "manualReloadAllowed": true,
         "autoReloadWhenEmpty": true,
         "start": {
-            "duration": 0.0,
+            "duration": 0.5,
             "actions": [
+                {
+                    "actionType": "Animation",
+                    "canActUnderwater": true,
+                    "canActUnderOtherLiquid": false,
+                    "canBeOverriden": false,
+                    "twoHanded": false,
+                    "repeatMode": "SemiAuto",
+                    "repeatDelay": 0.0,
+                    "repeatCount": 0,
+                    "spinUpDuration": 1.0,
+                    "duration": 0.5,
+                    "sounds": [],
+                    "itemStack": "",
+                    "shootStats": [],
+                    "fovFactor": 1.25,
+                    "scopeOverlay": "",
+                    "anim": "reload_start",
+                    "toolLevel": 1.0,
+                    "harvestSpeed": 1.0,
+                    "reach": 1.0
+                },
                 {
                     "actionType": "PlaySound",
                     "canActUnderwater": true,
@@ -49,16 +70,82 @@
             ]
         },
         "eject": {
-            "duration": 0.0,
-            "actions": []
+            "duration": 0.5,
+            "actions": [
+                {
+                    "actionType": "Animation",
+                    "canActUnderwater": true,
+                    "canActUnderOtherLiquid": false,
+                    "canBeOverriden": false,
+                    "twoHanded": false,
+                    "repeatMode": "SemiAuto",
+                    "repeatDelay": 0.0,
+                    "repeatCount": 0,
+                    "spinUpDuration": 1.0,
+                    "duration": 0.5,
+                    "sounds": [],
+                    "itemStack": "",
+                    "shootStats": [],
+                    "fovFactor": 1.25,
+                    "scopeOverlay": "",
+                    "anim": "reload_eject",
+                    "toolLevel": 1.0,
+                    "harvestSpeed": 1.0,
+                    "reach": 1.0
+                }
+            ]
         },
         "loadOne": {
-            "duration": 0.0,
-            "actions": []
+            "duration": 0.5,
+            "actions": [
+                {
+                    "actionType": "Animation",
+                    "canActUnderwater": true,
+                    "canActUnderOtherLiquid": false,
+                    "canBeOverriden": false,
+                    "twoHanded": false,
+                    "repeatMode": "SemiAuto",
+                    "repeatDelay": 0.0,
+                    "repeatCount": 0,
+                    "spinUpDuration": 1.0,
+                    "duration": 0.5,
+                    "sounds": [],
+                    "itemStack": "",
+                    "shootStats": [],
+                    "fovFactor": 1.25,
+                    "scopeOverlay": "",
+                    "anim": "reload_load_one",
+                    "toolLevel": 1.0,
+                    "harvestSpeed": 1.0,
+                    "reach": 1.0
+                }
+            ]
         },
         "end": {
-            "duration": 0.0,
-            "actions": []
+            "duration": 0.5,
+            "actions": [
+                {
+                    "actionType": "Animation",
+                    "canActUnderwater": true,
+                    "canActUnderOtherLiquid": false,
+                    "canBeOverriden": false,
+                    "twoHanded": false,
+                    "repeatMode": "SemiAuto",
+                    "repeatDelay": 0.0,
+                    "repeatCount": 0,
+                    "spinUpDuration": 1.0,
+                    "duration": 0.5,
+                    "sounds": [],
+                    "itemStack": "",
+                    "shootStats": [],
+                    "fovFactor": 1.25,
+                    "scopeOverlay": "",
+                    "anim": "reload_end",
+                    "toolLevel": 1.0,
+                    "harvestSpeed": 1.0,
+                    "reach": 1.0
+                }
+            ]
         }
     },
     "secondaryReload": {
@@ -252,7 +339,7 @@
             0.0,
             0.0
         ],
-        "hideDefaultMesh": false
+        "hideDefaultMesh": true
     },
     "gripAttachments": {
         "allowlist": [],
@@ -264,7 +351,7 @@
             0.0,
             0.0
         ],
-        "hideDefaultMesh": false
+        "hideDefaultMesh": true
     },
     "stockAttachments": {
         "allowlist": [],
@@ -276,7 +363,7 @@
             0.0,
             0.0
         ],
-        "hideDefaultMesh": false
+        "hideDefaultMesh": true
     },
     "scopeAttachments": {
         "allowlist": [],
@@ -288,7 +375,7 @@
             0.0,
             0.0
         ],
-        "hideDefaultMesh": false
+        "hideDefaultMesh": true
     },
     "genericAttachments": {
         "allowlist": [],
@@ -300,7 +387,7 @@
             0.0,
             0.0
         ],
-        "hideDefaultMesh": false
+        "hideDefaultMesh": true
     },
     "modelParts": [],
     "animationSet": "flansmod:ar_load_from_bottom"

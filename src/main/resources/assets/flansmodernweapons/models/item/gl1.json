@@ -160,6 +160,11 @@
     },
     "parts": {
         "body": {
+            "origin": [
+                0.0,
+                0.0,
+                0.0
+            ],
             "turboelements": [
                 {
                     "verts": [
@@ -612,6 +617,11 @@
             ]
         },
         "breakAction": {
+            "origin": [
+                0.0,
+                0.0,
+                0.0
+            ],
             "turboelements": [
                 {
                     "verts": [
@@ -1176,6 +1186,11 @@
             ]
         },
         "ammo_0": {
+            "origin": [
+                0.0,
+                0.0,
+                0.0
+            ],
             "turboelements": [
                 {
                     "verts": [
@@ -1297,17 +1312,17 @@
             "name": "barrel",
             "attachTo": "body",
             "offset": [
-                0.46875,
-                0.25,
+                11.5,
+                4.0,
                 0.0
             ]
         },
         {
-            "name": "scope",
+            "name": "sights",
             "attachTo": "slide",
             "offset": [
-                0.1875,
-                0.3125,
+                7.0,
+                5.0,
                 0.0
             ]
         }

@@ -8,13 +8,13 @@
     "paints": {
         "paintjobs": [
             {
-                "textureName": "M249_White"
+                "textureName": "m249_white"
             },
             {
-                "textureName": "M249_Hazard"
+                "textureName": "m249_hazard"
             },
             {
-                "textureName": "M249_Platypus"
+                "textureName": "m249_platypus"
             }
         ]
     },
@@ -349,7 +349,7 @@
             0.0,
             0.0
         ],
-        "hideDefaultMesh": false
+        "hideDefaultMesh": true
     },
     "gripAttachments": {
         "allowlist": [],
@@ -361,7 +361,7 @@
             0.0,
             0.0
         ],
-        "hideDefaultMesh": false
+        "hideDefaultMesh": true
     },
     "stockAttachments": {
         "allowlist": [],
@@ -373,7 +373,7 @@
             0.0,
             0.0
         ],
-        "hideDefaultMesh": false
+        "hideDefaultMesh": true
     },
     "scopeAttachments": {
         "allowlist": [],
@@ -385,7 +385,7 @@
             0.0,
             0.0
         ],
-        "hideDefaultMesh": false
+        "hideDefaultMesh": true
     },
     "genericAttachments": {
         "allowlist": [],
@@ -397,7 +397,7 @@
             0.0,
             0.0
         ],
-        "hideDefaultMesh": false
+        "hideDefaultMesh": true
     },
     "modelParts": [],
     "animationSet": "flansmod:ar_load_from_bottom"

@@ -8,13 +8,13 @@
     "paints": {
         "paintjobs": [
             {
-                "textureName": "L86_Green"
+                "textureName": "l86_green"
             },
             {
-                "textureName": "L86_Red"
+                "textureName": "l86_red"
             },
             {
-                "textureName": "L86_Blue"
+                "textureName": "l86_blue"
             }
         ]
     },
@@ -349,7 +349,7 @@
             0.0,
             0.0
         ],
-        "hideDefaultMesh": false
+        "hideDefaultMesh": true
     },
     "gripAttachments": {
         "allowlist": [],
@@ -361,7 +361,7 @@
             0.0,
             0.0
         ],
-        "hideDefaultMesh": false
+        "hideDefaultMesh": true
     },
     "stockAttachments": {
         "allowlist": [],
@@ -373,7 +373,7 @@
             0.0,
             0.0
         ],
-        "hideDefaultMesh": false
+        "hideDefaultMesh": true
     },
     "scopeAttachments": {
         "allowlist": [],
@@ -385,7 +385,7 @@
             0.0,
             0.0
         ],
-        "hideDefaultMesh": false
+        "hideDefaultMesh": true
     },
     "genericAttachments": {
         "allowlist": [],
@@ -397,7 +397,7 @@
             0.0,
             0.0
         ],
-        "hideDefaultMesh": false
+        "hideDefaultMesh": true
     },
     "modelParts": [],
     "animationSet": "flansmod:ar_bullpup"

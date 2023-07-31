@@ -57,6 +57,8 @@ public class WorkbenchMenu extends AbstractContainerMenu
 
 	public static final int BUTTON_SELECT_RECIPE_0 = 1000;
 	public static final int BUTTON_SELECT_RECIPE_MAX = 1999;
+	public static final int BUTTON_SELECT_SKIN_0 = 2000;
+	public static final int BUTTON_SELECT_SKIN_MAX = 2999;
 
 	public WorkbenchMenu(int containerID, Inventory inventory,
 						 WorkbenchDefinition def,
@@ -152,13 +154,13 @@ public class WorkbenchMenu extends AbstractContainerMenu
 		{
 			for(int x = 0; x < 9; ++x)
 			{
-				addSlot(new RestrictedSlot(playerInventory, x + y * 9 + 9, 6 + x * 18, 120 + y * 18));
+				addSlot(new RestrictedSlot(playerInventory, x + y * 9 + 9, 6 + x * 18, 137 + y * 18));
 			}
 		}
 
 		for(int x = 0; x < 9; ++x)
 		{
-			addSlot(new RestrictedSlot(playerInventory, x, 6 + x * 18, 178));
+			addSlot(new RestrictedSlot(playerInventory, x, 6 + x * 18, 195));
 		}
 
 		if(GunContainer.getContainerSize() > 0)
@@ -224,7 +226,7 @@ public class WorkbenchMenu extends AbstractContainerMenu
 		{
 			//case BUTTON_CANCEL -> { return true; }
 			default -> {
-				if(BUTTON_SELECT_RECIPE_0 <= buttonID && buttonID < BUTTON_SELECT_RECIPE_MAX)
+				if(BUTTON_SELECT_RECIPE_0 <= buttonID && buttonID <= BUTTON_SELECT_RECIPE_MAX)
 				{
 					int recipeIndex = buttonID - BUTTON_SELECT_RECIPE_0;
 					// Craft
@@ -232,6 +234,12 @@ public class WorkbenchMenu extends AbstractContainerMenu
 
 
 
+					return true;
+				}
+				if(BUTTON_SELECT_SKIN_0 <= buttonID && buttonID <= BUTTON_SELECT_SKIN_MAX)
+				{
+					int skinIndex = buttonID - BUTTON_SELECT_SKIN_0;
+					WorkbenchBlockEntity.PaintGun(player, GunContainer, skinIndex);
 					return true;
 				}
 			}
@@ -267,6 +275,14 @@ public class WorkbenchMenu extends AbstractContainerMenu
 			{
 				GunSlot.set(stack);
 				slots.get(slot).set(ItemStack.EMPTY);
+			}
+			for(AttachmentSlot attachmentSlot : AttachmentSlots)
+			{
+				if(attachmentSlot.mayPlace(stack))
+				{
+					attachmentSlot.set(stack);
+					slots.get(slot).set(ItemStack.EMPTY);
+				}
 			}
 		}
 

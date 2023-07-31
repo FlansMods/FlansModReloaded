@@ -17,6 +17,7 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.context.UseOnContext;
@@ -31,6 +32,7 @@ import net.minecraftforge.event.entity.living.LivingEntityUseItemEvent;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.HashMap;
 import java.util.List;
 import java.util.function.Consumer;
 
@@ -108,6 +110,41 @@ public class GunItem extends FlanItem
             for (ItemStack attachmentStack : gunContext.GetAttachmentStacks())
             {
                 tooltips.add(Component.translatable("tooltip.format.attached", attachmentStack.getHoverName()));
+            }
+
+            int primaryBullets = gunContext.GetNumBulletStacks(EActionInput.PRIMARY);
+            if(primaryBullets == 1)
+            {
+                ItemStack bulletStack = gunContext.GetBulletStack(EActionInput.PRIMARY, 0);
+                if(!bulletStack.isEmpty())
+                {
+                    if (bulletStack.isDamageableItem())
+                        tooltips.add(Component.translatable("tooltip.format.single_bullet_stack_with_durability", bulletStack.getHoverName(), bulletStack.getMaxDamage() - bulletStack.getDamageValue(), bulletStack.getMaxDamage()));
+                    else
+                        tooltips.add(Component.translatable("tooltip.format.single_bullet_stack", bulletStack.getHoverName()));
+                }
+            }
+            else
+            {
+                HashMap<Item, ItemStack> bulletCounts = new HashMap<>();
+                for (int i = 0; i < primaryBullets; i++)
+                {
+                    ItemStack bulletStack = gunContext.GetBulletStack(EActionInput.PRIMARY, i);
+                    if(!bulletStack.isEmpty())
+                    {
+                        if (!bulletCounts.containsKey(bulletStack.getItem()))
+                        {
+                            bulletCounts.put(bulletStack.getItem(), bulletStack.copy());
+                        } else
+                        {
+                            bulletCounts.replace(bulletStack.getItem(), bulletStack.copyWithCount(bulletCounts.get(bulletStack.getItem()).getCount() + 1));
+                        }
+                    }
+                }
+                for(var kvp : bulletCounts.entrySet())
+                {
+                    tooltips.add(Component.translatable("tooltip.format.multiple_bullet_stack", kvp.getValue().getCount(), kvp.getValue().getHoverName()));
+                }
             }
         }
     }

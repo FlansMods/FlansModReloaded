@@ -27,6 +27,7 @@ public class ActionContext
 	// Gun references
 	public GunContext Gun() { return Gun; }
 	public GunDefinition GunDef() { return Gun.GunDef(); }
+	@Nonnull
 	public ActionStack ActionStack() { return Gun.GetActionStack(); }
 
 	public boolean IsValid() { return Gun().IsValid(); }
@@ -57,7 +58,7 @@ public class ActionContext
 
 	public ReloadProgress[] CreateReloads()
 	{
-		if(InputType.IsReload)
+		if(InputType.IsReload())
 		{
 			return new ReloadProgress[] {
 				new ReloadProgress(GunDef().GetReload(InputType), InputType),

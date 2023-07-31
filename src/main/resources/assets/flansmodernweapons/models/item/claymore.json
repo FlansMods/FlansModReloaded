@@ -145,6 +145,11 @@
     },
     "parts": {
         "claymore": {
+            "origin": [
+                0.0,
+                0.0,
+                0.0
+            ],
             "turboelements": [
                 {
                     "verts": [

@@ -157,6 +157,11 @@
     },
     "parts": {
         "body": {
+            "origin": [
+                0.0,
+                0.0,
+                0.0
+            ],
             "turboelements": [
                 {
                     "verts": [
@@ -1393,6 +1398,11 @@
             ]
         },
         "ammo_0": {
+            "origin": [
+                0.0,
+                0.0,
+                0.0
+            ],
             "turboelements": [
                 {
                     "verts": [
@@ -1509,6 +1519,11 @@
             ]
         },
         "pump": {
+            "origin": [
+                0.0,
+                0.0,
+                0.0
+            ],
             "turboelements": [
                 {
                     "verts": [
@@ -1645,11 +1660,11 @@
             ]
         },
         {
-            "name": "scope",
+            "name": "sights",
             "attachTo": "body",
             "offset": [
-                0.3125,
-                0.3125,
+                5.0,
+                5.0,
                 0.0
             ]
         },
@@ -1657,8 +1672,8 @@
             "name": "grip",
             "attachTo": "pump",
             "offset": [
-                0.546875,
-                0.125,
+                8.75,
+                2.0,
                 0.0
             ]
         }

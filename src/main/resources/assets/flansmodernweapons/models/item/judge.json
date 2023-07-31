@@ -155,6 +155,11 @@
     },
     "parts": {
         "body": {
+            "origin": [
+                0.0,
+                0.0,
+                0.0
+            ],
             "turboelements": [
                 {
                     "verts": [
@@ -831,6 +836,11 @@
             ]
         },
         "ammo_0": {
+            "origin": [
+                0.0,
+                0.0,
+                0.0
+            ],
             "turboelements": [
                 {
                     "verts": [
@@ -1282,7 +1292,12 @@
                 }
             ]
         },
-        "revolverBarrel": {
+        "revolver": {
+            "origin": [
+                0.0,
+                0.0,
+                0.0
+            ],
             "turboelements": [
                 {
                     "verts": [
@@ -1404,17 +1419,17 @@
             "name": "grip",
             "attachTo": "body",
             "offset": [
-                0.3125,
-                0.0625,
+                5.0,
+                1.0,
                 0.0
             ]
         },
         {
-            "name": "scope",
+            "name": "sights",
             "attachTo": "body",
             "offset": [
-                0.3125,
-                0.25,
+                5.0,
+                4.0,
                 0.0
             ]
         }

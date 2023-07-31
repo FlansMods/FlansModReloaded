@@ -8,13 +8,13 @@
     "paints": {
         "paintjobs": [
             {
-                "textureName": "M1887_Black"
+                "textureName": "m1887_black"
             },
             {
-                "textureName": "M1887_Jungle"
+                "textureName": "m1887_jungle"
             },
             {
-                "textureName": "M1887_Birch"
+                "textureName": "m1887_birch"
             }
         ]
     },
@@ -333,19 +333,19 @@
             0.0,
             0.0
         ],
-        "hideDefaultMesh": false
+        "hideDefaultMesh": true
     },
     "gripAttachments": {
         "allowlist": [],
         "allowAll": true,
         "numAttachmentSlots": 1,
-        "attachToMesh": "body",
+        "attachToMesh": "pump",
         "attachPoint": [
             0.0,
             0.0,
             0.0
         ],
-        "hideDefaultMesh": false
+        "hideDefaultMesh": true
     },
     "stockAttachments": {
         "allowlist": [],
@@ -357,7 +357,7 @@
             0.0,
             0.0
         ],
-        "hideDefaultMesh": false
+        "hideDefaultMesh": true
     },
     "scopeAttachments": {
         "allowlist": [],
@@ -369,7 +369,7 @@
             0.0,
             0.0
         ],
-        "hideDefaultMesh": false
+        "hideDefaultMesh": true
     },
     "genericAttachments": {
         "allowlist": [],
@@ -381,7 +381,7 @@
             0.0,
             0.0
         ],
-        "hideDefaultMesh": false
+        "hideDefaultMesh": true
     },
     "modelParts": [],
     "animationSet": "flansmod:bolt_action_rifle"

@@ -3,18 +3,52 @@ package com.flansmod.common.actions;
 // The list of actions one can input to a gun
 public enum EActionInput
 {
-	PRIMARY(false),
-	SECONDARY(false),
-	LOOK_AT(false),
-	RELOAD_PRIMARY(true),
-	RELOAD_SECONDARY(true);
+	PRIMARY,
+	SECONDARY,
+	LOOK_AT,
+	RELOAD_PRIMARY,
+	RELOAD_SECONDARY;
 
-	private EActionInput(boolean isReload)
+	public boolean IsPrimary()
 	{
-		IsReload = isReload;
+		switch(this)
+		{
+			case RELOAD_PRIMARY, PRIMARY -> { return true; }
+			default -> { return false; }
+		}
 	}
 
-	public final boolean IsReload;
+	public boolean IsSecondary()
+	{
+		switch(this)
+		{
+			case RELOAD_SECONDARY, SECONDARY -> { return true; }
+			default -> { return false; }
+		}
+	}
+
+	public boolean IsReload()
+	{
+		switch(this)
+		{
+			case RELOAD_PRIMARY, RELOAD_SECONDARY -> { return true; }
+			default -> { return false; }
+		}
+	}
+
+	public boolean IsShoot()
+	{
+		switch(this)
+		{
+			case PRIMARY, SECONDARY -> { return true; }
+			default -> { return false; }
+		}
+	}
+
+	public boolean IsLookAt()
+	{
+		return this == LOOK_AT;
+	}
 
 	public EActionInput GetActionType()
 	{

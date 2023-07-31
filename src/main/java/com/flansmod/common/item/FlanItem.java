@@ -3,11 +3,14 @@ package com.flansmod.common.item;
 import com.flansmod.common.types.JsonDefinition;
 import com.flansmod.common.types.attachments.EAttachmentType;
 import com.flansmod.common.types.elements.AttachmentSettingsDefinition;
+import com.flansmod.common.types.elements.PaintableDefinition;
+import com.flansmod.common.types.elements.PaintjobDefinition;
 import com.flansmod.common.types.guns.GunDefinition;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 
+import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -60,6 +63,26 @@ public abstract class FlanItem extends Item
         return ItemStack.EMPTY;
     }
 
+    public List<ItemStack> GetAttachmentStacks(ItemStack stack)
+    {
+        List<ItemStack> attachmentStacks = new ArrayList<>();
+        if(stack.hasTag())
+        {
+            CompoundTag tags = stack.getTag();
+            if(tags.contains("attachments"))
+            {
+                CompoundTag attachTags = tags.getCompound("attachments");
+                for(String key : attachTags.getAllKeys())
+                {
+                    ItemStack attachmentStack = ItemStack.of(attachTags.getCompound(key));
+                    if(!attachmentStack.isEmpty())
+                        attachmentStacks.add(attachmentStack);
+                }
+            }
+        }
+        return attachmentStacks;
+    }
+
     public void SetAttachmentInSlot(ItemStack stack, EAttachmentType type, int slot, ItemStack attachmentStack)
     {
         CompoundTag tags = stack.getOrCreateTag();
@@ -74,6 +97,15 @@ public abstract class FlanItem extends Item
         ItemStack ret = GetAttachmentInSlot(stack, type, slot);
         SetAttachmentInSlot(stack, type, slot, ItemStack.EMPTY);
         return ret;
+    }
+
+    @Nonnull
+    public PaintableDefinition GetPaintDef()
+    {
+        if(Def() instanceof GunDefinition gunDef)
+            return gunDef.paints;
+
+        return PaintableDefinition.Invalid;
     }
 
     public String GetPaintjobName(ItemStack stack)
