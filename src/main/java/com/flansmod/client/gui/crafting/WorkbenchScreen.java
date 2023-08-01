@@ -8,23 +8,27 @@ import com.flansmod.common.crafting.FabricationRecipeMatcher;
 import com.flansmod.common.crafting.WorkbenchBlockEntity;
 import com.flansmod.common.crafting.WorkbenchMenu;
 import com.flansmod.common.item.FlanItem;
+import com.flansmod.common.item.PartItem;
 import com.flansmod.common.types.crafting.WorkbenchDefinition;
 import com.flansmod.common.types.crafting.elements.*;
 import com.flansmod.common.types.elements.PaintableDefinition;
 import com.flansmod.util.Maths;
 import com.flansmod.util.MinecraftHelpers;
 import com.mojang.blaze3d.platform.GlStateManager;
+import com.mojang.blaze3d.platform.Lighting;
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.BufferUploader;
-import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.blaze3d.vertex.Tesselator;
+import com.mojang.blaze3d.vertex.*;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderBuffers;
+import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.block.model.ItemTransforms;
+import net.minecraft.client.renderer.texture.OverlayTexture;
+import net.minecraft.client.renderer.texture.TextureAtlas;
+import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.FormattedText;
 import net.minecraft.resources.ResourceLocation;
@@ -775,6 +779,40 @@ public class WorkbenchScreen extends AbstractContainerScreen<WorkbenchMenu>
 				return new ItemStack(Items.BARRIER);
 		}
 	}
+	private enum PartBackgroundType
+	{
+		Barrel(0, 0),
+		UpperReceiver(1, 0),
+
+		Generic(2, 1);
+
+		public static PartBackgroundType GetFromStack(ItemStack stack)
+		{
+			if(stack.getItem() instanceof PartItem partItem)
+			{
+				for(String tag : partItem.Def().itemSettings.tags)
+				{
+					switch(tag)
+					{
+						case "barrel": return Barrel;
+						case "upper_receiver": return UpperReceiver;
+					}
+				}
+			}
+
+			return Generic;
+		}
+
+		public final int texX;
+		public final int texY;
+
+		PartBackgroundType(int x, int y)
+		{
+			texX = 2 + x * 18;
+			texY = 220 + y * 18;
+		}
+	}
+
 	private final List<GunCraftingSlotInfo> CachedSlotInfo = new ArrayList<>();
 
 	public boolean HasGunCrafting()
@@ -1050,8 +1088,14 @@ public class WorkbenchScreen extends AbstractContainerScreen<WorkbenchMenu>
 						else
 						{
 							IngredientDefinition additionalDef = slotInfo.GetAsAdditionalDef();
-							// Cover up the part crafting button
-							blit(pose, xOrigin + GUN_RECIPE_VIEWER_X_ORIGIN + 9 + 20 * x, yOrigin + GUN_RECIPE_VIEWER_Y_ORIGIN + 19 + 20 * y, getBlitOffset(), 229, 62, 9, 9, TEXTURE_WIDTH, TEXTURE_HEIGHT);
+							// Cover up the part crafting button if we can't
+							blit(pose, xOrigin + GUN_RECIPE_VIEWER_X_ORIGIN + 10 + 20 * x, yOrigin + GUN_RECIPE_VIEWER_Y_ORIGIN + 20 + 20 * y, getBlitOffset(), 229, 62, 9, 9, TEXTURE_WIDTH, TEXTURE_HEIGHT);
+
+
+							// Render the background shape
+
+
+
 							// Render a faded item stack
 							// (Defer to later)
 						}
@@ -1130,8 +1174,75 @@ public class WorkbenchScreen extends AbstractContainerScreen<WorkbenchMenu>
 						// Render an example item that would fit into this slot
 						GunCraftingSlotInfo slotInfo = CachedSlotInfo.get(index);
 						ItemStack stack = slotInfo.GetPotentialMatch(Maths.Floor(ShowPotentialMatchTicker));
-						itemRenderer.renderGuiItem(stack, GUN_RECIPE_VIEWER_X_ORIGIN + 2 + 20 * x, GUN_RECIPE_VIEWER_Y_ORIGIN + 2 + 20 * y);
-						itemRenderer.renderGuiItemDecorations(font, stack, GUN_RECIPE_VIEWER_X_ORIGIN + 2 + 20 * x, GUN_RECIPE_VIEWER_Y_ORIGIN + 2 + 20 * y, null);
+
+/*
+						//
+						{
+							Minecraft.getInstance().getTextureManager().getTexture(TextureAtlas.LOCATION_BLOCKS).setFilter(false, false);
+							RenderSystem.setShaderTexture(0, TextureAtlas.LOCATION_BLOCKS);
+							RenderSystem.enableBlend();
+							RenderSystem.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
+							RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 0.5F);
+							PoseStack posestack = RenderSystem.getModelViewStack();
+							posestack.pushPose();
+							posestack.translate((float)GUN_RECIPE_VIEWER_X_ORIGIN + 2 + 20 * x,
+										(float)GUN_RECIPE_VIEWER_Y_ORIGIN + 2 + 30 * y,
+										100.0F + getBlitOffset());
+							posestack.translate(8.0F, 8.0F, 0.0F);
+							posestack.scale(1.0F, -1.0F, 1.0F);
+							posestack.scale(16.0F, 16.0F, 16.0F);
+							RenderSystem.applyModelViewMatrix();
+							PoseStack posestack1 = new PoseStack();
+
+
+
+
+							VertexConsumer vc = Minecraft.getInstance().renderBuffers().bufferSource().getBuffer(RenderType.translucent());
+							MultiBufferSource.BufferSource multibuffersource$buffersource = //Minecraft.getInstance().renderBuffers().bufferSource();
+								MultiBufferSource.immediate(Tesselator.getInstance().getBuilder());
+
+
+							BakedModel model = itemRenderer.getModel(stack, null, null, 0);
+							boolean flag = !model.usesBlockLight();
+							if (flag) {
+								Lighting.setupForFlatItems();
+							}
+
+							itemRenderer.render(stack, ItemTransforms.TransformType.GUI, false, posestack1, multibuffersource$buffersource, 15728880, OverlayTexture.NO_OVERLAY, model);
+
+							RenderSystem.enableBlend();
+							RenderSystem.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
+							RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 0.5F);
+
+							multibuffersource$buffersource.endBatch();
+							RenderSystem.enableDepthTest();
+							if (flag) {
+								Lighting.setupFor3DItems();
+							}
+
+							posestack.popPose();
+							RenderSystem.applyModelViewMatrix();
+						}
+*/
+
+
+						itemRenderer.renderGuiItem(stack, GUN_RECIPE_VIEWER_X_ORIGIN + 2 + 20 * x, GUN_RECIPE_VIEWER_Y_ORIGIN + 2 + 30 * y);
+						itemRenderer.renderGuiItemDecorations(font, stack, GUN_RECIPE_VIEWER_X_ORIGIN + 2 + 20 * x, GUN_RECIPE_VIEWER_Y_ORIGIN + 2 + 30 * y, null);
+					}
+				}
+			}
+
+			RenderSystem.setShader(GameRenderer::getPositionTexShader);
+			RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
+			RenderSystem.setShaderTexture(0, GUN_FABRICATION_BG);
+			for(int y = 0; y < GUN_RECIPE_VIEWER_ROWS; y++)
+			{
+				for(int x = 0; x < GUN_RECIPE_VIEWER_COLUMNS; x++)
+				{
+					final int index = (firstRow + y) * GUN_RECIPE_VIEWER_COLUMNS + x;
+					if(index < CachedSlotInfo.size())
+					{
+						//blit(pose, GUN_RECIPE_VIEWER_X_ORIGIN + 2 + 20 * x, GUN_RECIPE_VIEWER_Y_ORIGIN + 2 + 30 * y, getBlitOffset(), 214, 146, 16, 16, TEXTURE_WIDTH, TEXTURE_HEIGHT);
 					}
 				}
 			}

@@ -25,7 +25,10 @@
   "tooltip.format.primarystatline": "\uE780%.0f \uE781%.0f %s \uE783%.0f",
   "tooltip.format.secondarystatline": "Alt.:\uE780%.0f \uE781%.0f %s \uE783%.0f",
   
+  "crafting.exact_stack": "%dx %s",
+  "crafting.match_stack": "%dx An item matching the following:",
   "crafting.disallowed_tag": "Does not have tag '%s'",
   "crafting.required_tag": "Has tag '%s'",
+  "crafting.auto_fill_ingredients": "Insert best match",  
   "crafting.switch_to_part_crafting": "Craft this part"  
 }

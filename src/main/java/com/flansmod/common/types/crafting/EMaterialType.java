@@ -10,9 +10,10 @@ public enum EMaterialType
 	Glass,
 	Metal,
 	Composite,
+	Electronic,
 	Fabric;
 
-	private static final Pattern REGEX = Pattern.compile("(flansmod:items/)(misc|wood|glass|metal|composite|fabric)_tier_([0-9]*)");
+	private static final Pattern REGEX = Pattern.compile("(flansmod:items/)(misc|wood|glass|metal|composite|electronic|fabric)_tier_([0-9]*)");
 
 
 
@@ -61,6 +62,7 @@ public enum EMaterialType
 			case "glass" -> Glass;
 			case "metal" -> Metal;
 			case "composite" -> Composite;
+			case "electronic" -> Electronic;
 			case "fabric" -> Fabric;
 			case "misc" -> Misc;
 			default -> null;
@@ -78,6 +80,7 @@ public enum EMaterialType
 				case "glass" -> Glass;
 				case "metal" -> Metal;
 				case "composite" -> Composite;
+				case "electronic" -> Electronic;
 				case "fabric" -> Fabric;
 				case "misc" -> Misc;
 				default -> null;
