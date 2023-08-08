@@ -68,6 +68,25 @@ public enum EActionInput
 			default -> { return null; }
 		}
 	}
+	public String GetRootTagName()
+	{
+		switch(this)
+		{
+			case PRIMARY, RELOAD_PRIMARY -> { return "primary"; }
+			case SECONDARY, RELOAD_SECONDARY -> { return "secondary"; }
+			case LOOK_AT -> { return "lookat"; }
+			default -> { return null; }
+		}
+	}
+	public String GetMagazineTagName()
+	{
+		switch(this)
+		{
+			case PRIMARY, RELOAD_PRIMARY -> { return "mag_primary"; }
+			case SECONDARY, RELOAD_SECONDARY -> { return "mag_secondary"; }
+			default -> { return null; }
+		}
+	}
 	public String GetAmmoTagName()
 	{
 		switch(this)

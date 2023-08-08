@@ -8,13 +8,12 @@ import net.minecraftforge.common.extensions.IForgeItem;
 
 public class BulletItem extends FlanItem implements IForgeItem
 {
-	private ResourceLocation definitionLocation;
-	public BulletDefinition Def() { return FlansMod.BULLETS.Get(definitionLocation); }
+	@Override
+	public BulletDefinition Def() { return FlansMod.BULLETS.Get(DefinitionLocation); }
 
 	public BulletItem(ResourceLocation defLoc, Properties properties)
 	{
-		super(properties);
-		definitionLocation = defLoc;
+		super(defLoc, properties);
 	}
 
 	@Override

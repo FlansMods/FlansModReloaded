@@ -1,5 +1,7 @@
 package com.flansmod.common.gunshots;
 
+import com.flansmod.common.FlansMod;
+import com.flansmod.common.types.bullets.BulletDefinition;
 import com.flansmod.util.Maths;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -16,6 +18,7 @@ public class Gunshot
 {
 	private static final HitResult[] NO_HITS = new HitResult[0];
 
+	public BulletDefinition bulletDef = BulletDefinition.INVALID;
 	public Vec3 origin = Vec3.ZERO;
 	public Vec3 trajectory = Vec3.ZERO;
 	public HitResult[] hits = NO_HITS;
@@ -52,8 +55,16 @@ public class Gunshot
 		return this;
 	}
 
+	public Gunshot WithBullet(BulletDefinition bullet)
+	{
+		bulletDef = bullet;
+		return this;
+	}
+
 	public static void Encode(Gunshot gunshot, FriendlyByteBuf buf)
 	{
+		buf.writeInt(gunshot.bulletDef.hashCode());
+
 		buf.writeDouble(gunshot.origin.x);
 		buf.writeDouble(gunshot.origin.y);
 		buf.writeDouble(gunshot.origin.z);
@@ -105,6 +116,9 @@ public class Gunshot
 	@Nonnull
 	public static Gunshot Decode(FriendlyByteBuf buf)
 	{
+		int bulletHash = buf.readInt();
+		BulletDefinition bulletDef = FlansMod.BULLETS.ByHash(bulletHash);
+
 		double x = buf.readDouble();
 		double y = buf.readDouble();
 		double z = buf.readDouble();
@@ -152,6 +166,7 @@ public class Gunshot
 		return new Gunshot()
 			.WithOrigin(x, y, z)
 			.WithTrajectory(dx, dy, dz)
-			.WithHits(hits);
+			.WithHits(hits)
+			.WithBullet(bulletDef);
 	}
 }

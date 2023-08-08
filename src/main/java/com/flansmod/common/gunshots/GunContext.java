@@ -1,22 +1,24 @@
 package com.flansmod.common.gunshots;
 
+import com.flansmod.common.FlansMod;
 import com.flansmod.common.actions.ActionStack;
 import com.flansmod.common.actions.EActionInput;
-import com.flansmod.common.item.AttachmentItem;
-import com.flansmod.common.item.BulletItem;
-import com.flansmod.common.item.FlanItem;
-import com.flansmod.common.item.GunItem;
+import com.flansmod.common.item.*;
 import com.flansmod.common.types.attachments.AttachmentDefinition;
 import com.flansmod.common.types.attachments.EAttachmentType;
 import com.flansmod.common.types.elements.ActionDefinition;
 import com.flansmod.common.types.elements.ModifierDefinition;
 import com.flansmod.common.types.guns.*;
+import com.flansmod.common.types.magazines.MagazineDefinition;
+import com.flansmod.common.types.parts.PartDefinition;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.Container;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 
@@ -45,7 +47,14 @@ public abstract class GunContext
 		public ActionStack GetActionStack() { return null; }
 		@Override
 		public boolean CanPerformActions() { return false; }
+		@Override
+		public int HashModifierSources() { return 0; }
+		@Override
+		public void RecalculateModifierCache() { }
 	};
+
+
+
 
 	private static HashMap<String, GunContext> ContextCache = new HashMap<>();
 
@@ -96,11 +105,22 @@ public abstract class GunContext
 	public abstract boolean CanPerformTwoHandedAction();
 	// Not necessarily valid to ask for a hand, but in cases where it is valid, use this
 	public InteractionHand GetHand() { return null; }
+	public abstract int HashModifierSources();
+	public abstract void RecalculateModifierCache();
+	@Nonnull
+	public abstract ActionStack GetActionStack();
+	public abstract boolean CanPerformActions();
 
+
+	// --------------------------------------------------------------------------
+	// Helpers
+	// --------------------------------------------------------------------------
 	public boolean IsValid() { return !GetItemStack().isEmpty(); }
-
-	protected GunContext() {}
-
+	protected GunContext()
+	{
+		ModifierCache = new ArrayList<>();
+		ModifierHash = 0;
+	}
 	/// Public accessors of accumulated stats
 	// Make sure we process attachments when getting stats and results about the gun
 	@Nonnull
@@ -110,17 +130,43 @@ public abstract class GunContext
 			return gunItem.Def();
 		return GunDefinition.INVALID;
 	}
-
 	@Nullable
 	public Level Level()
 	{
-		return GetShooter().Level();
+		return GetShooter() == null ? null : GetShooter().Level();
+	}
+
+	// --------------------------------------------------------------------------
+	// Stat Cache
+	// --------------------------------------------------------------------------
+	protected final List<ModifierDefinition> ModifierCache;
+	private int ModifierHash;
+	@Nonnull
+	public List<ModifierDefinition> GetModifiers()
+	{
+		int updatedModifierHash = HashModifierSources() ^ HashAttachments();
+		if(updatedModifierHash != ModifierHash)
+		{
+			ModifierCache.clear();
+			RecalculateAttachmentModifierCache();
+			RecalculateModifierCache();
+			ModifierHash = updatedModifierHash;
+		}
+		return ModifierCache;
+	}
+	public void Apply(ModifierStack modStack)
+	{
+		GetShooter().Apply(modStack);
+
+		for(ModifierDefinition mod : GetModifiers())
+			modStack.Apply(mod);
 	}
 
 	// --------------------------------------------------------------------------
 	// ItemStack Operations
 	// --------------------------------------------------------------------------
-	private CompoundTag GetOrCreateTags(String key)
+	@Nonnull
+	protected CompoundTag GetOrCreateTags(String key)
 	{
 		CompoundTag root = GetItemStack().getOrCreateTag();
 		if(!root.contains(key))
@@ -130,204 +176,78 @@ public abstract class GunContext
 		return root.getCompound(key);
 	}
 
+	private void UpdateTags(CompoundTag tag)
+	{
+		GetItemStack().setTag(tag);
+	}
+
+	@Nullable
+	private CompoundTag TryGetTags(String key)
+	{
+		if(!GetItemStack().hasTag())
+			return null;
+		if(!GetItemStack().getTag().contains(key))
+			return null;
+		return GetItemStack().getTag().getCompound(key);
+	}
+
+	@Nonnull
+	private CompoundTag GetOrCreatePrimaryTags() { return GetOrCreateTags("primary"); }
+	@Nonnull
+	private CompoundTag GetOrCreateSecondaryTags() { return GetOrCreateTags("secondary"); }
+	@Nullable
+	private CompoundTag GetOrCreateActionTags(EActionInput input)
+	{
+		switch(input)
+		{
+			case PRIMARY, RELOAD_PRIMARY -> { return GetOrCreatePrimaryTags(); }
+			case SECONDARY, RELOAD_SECONDARY -> { return GetOrCreateSecondaryTags(); }
+		}
+		return null;
+	}
+
 
 	// --------------------------------------------------------------------------
-	// AMMO
+	// CRAFTING HISTORY
 	// --------------------------------------------------------------------------
-	public ItemStack GetBulletStack(EActionInput inputType, int index)
+	// Only remember parts that we used, not arbitrary item stacks with NBT
+	public PartDefinition[] GetCraftingInputs()
 	{
-		String ammoKey = inputType.GetAmmoTagName();
-		if(ammoKey == null)
-			return ItemStack.EMPTY;
-
-		CompoundTag ammoTags = GetOrCreateTags(ammoKey);
-		String key = Integer.toString(index);
-		if(!ammoTags.contains(key))
+		CompoundTag craftingTags = TryGetTags("parts");
+		if(craftingTags != null)
 		{
-			CompoundTag itemTags = new CompoundTag();
-			ItemStack empty = ItemStack.EMPTY.copy();
-			empty.save(itemTags);
-			ammoTags.put(key, itemTags);
-			return empty;
-		}
-
-		return ItemStack.of(ammoTags.getCompound(key));
-	}
-
-	public int GetNumBulletStacks(EActionInput inputType)
-	{
-		if(inputType.IsPrimary())
-		{
-			// TODO: This should be a child of the action?
-			return GunDef().numBullets;
-			//ActionDefinition actionDef = GetShootActionDefinition(inputType);
-			//if (actionDef.IsValid() && actionDef.shootStats.length > 0)
-			//{
-			//	return actionDef.shootStats[0].bulletCount;
-			//}
-		}
-		else if(inputType.IsSecondary())
-		{
-			// TODO:
-			return 0;
-		}
-
-
-		return 0;
-	}
-
-	public void SetBulletStack(EActionInput inputType, int index, ItemStack stack)
-	{
-		String ammoKey = inputType.GetAmmoTagName();
-		if(ammoKey == null)
-			return;
-
-		if(stack.isEmpty())
-			stack = ItemStack.EMPTY;
-		CompoundTag ammoTags = GetOrCreateTags(ammoKey);
-		String key = Integer.toString(index);
-		CompoundTag itemTags = new CompoundTag();
-		stack.save(itemTags);
-		ammoTags.put(key, itemTags);
-	}
-
-	public boolean CanBeReloaded(EActionInput inputType)
-	{
-		if(!IsShootAction(inputType))
-			return false;
-
-		for(int i = 0; i < GetNumBulletStacks(inputType); i++)
-		{
-			if(GetBulletStack(inputType, i).isEmpty())
-				return true;
-		}
-		return false;
-	}
-
-	public boolean CanPerformReloadFromAttachedInventory(EActionInput inputType)
-	{
-		if(!CanBeReloaded(inputType))
-			return false;
-
-		if(GetAttachedInventory() != null)
-		{
-			int matchSlot = FindSlotWithMatchingAmmo(inputType, GetAttachedInventory());
-			return matchSlot != Inventory.NOT_FOUND_INDEX;
-		}
-
-		return false;
-	}
-
-	public boolean IsReloadInProgress()
-	{
-		ActionStack actionStack = GetActionStack();
-		return actionStack != null && actionStack.IsReloading();
-	}
-
-	public int GetCurrentChamber(EActionInput inputType)
-	{
-		String chamberKey = inputType.GetChamberTagName();
-		if(chamberKey == null)
-			return 0;
-		return GetItemStack().getOrCreateTag().contains(chamberKey) ? GetItemStack().getTag().getInt(chamberKey) : 0;
-	}
-
-	public void SetCurrentChamber(EActionInput inputType, int chamber)
-	{
-		String chamberKey = inputType.GetChamberTagName();
-		if(chamberKey == null)
-			return;
-		GetItemStack().getOrCreateTag().putInt(chamberKey, chamber);
-	}
-
-	public void AdvanceChamber(EActionInput inputType)
-	{
-		int chamber = GetCurrentChamber(inputType);
-		chamber++;
-		if(chamber >= GetNumBulletStacks(inputType))
-			chamber = 0;
-		SetCurrentChamber(inputType, chamber);
-	}
-
-	public int GetNextBulletSlotToLoad(EActionInput inputType)
-	{
-		for(int i = 0; i < GetNumBulletStacks(inputType); i++)
-		{
-			if(GetBulletStack(inputType, i).isEmpty())
-				return i;
-		}
-		return Inventory.NOT_FOUND_INDEX;
-	}
-
-	public void LoadOne(EActionInput inputType, int bulletSlot)
-	{
-		if(bulletSlot < 0 || bulletSlot >= GetNumBulletStacks(inputType))
-			return;
-
-		ActionDefinition shootActionDef = GetShootActionDefinition(inputType);
-		Container attachedInventory = GetAttachedInventory();
-		if(shootActionDef != null && attachedInventory != null)
-		{
-			int slot = FindSlotWithMatchingAmmo(inputType, attachedInventory);
-			if(slot != Inventory.NOT_FOUND_INDEX)
+			PartDefinition[] parts = new PartDefinition[craftingTags.getAllKeys().size()];
+			int index = 0;
+			for(String key : craftingTags.getAllKeys())
 			{
-				ItemStack stackToLoad;
-				if(GetShooter().IsCreative())
-				{
-					stackToLoad = attachedInventory.getItem(slot).copyWithCount(1);
-				}
-				else
-				{
-					stackToLoad = attachedInventory.removeItem(slot, 1);
-				}
-
-				SetBulletStack(inputType, bulletSlot, stackToLoad);
+				ResourceLocation resLoc = new ResourceLocation(craftingTags.getString(key));
+				parts[index] = FlansMod.PARTS.Get(resLoc);
+				index++;
 			}
+			return parts;
 		}
+		return new PartDefinition[0];
 	}
 
-	public int FindSlotWithMatchingAmmo(EActionInput inputType, Container inventory)
+	public void SetCraftingInputs(ItemStack[] stacks)
 	{
-		ActionDefinition shootActionDef = GetShootActionDefinition(inputType);
-		if(shootActionDef.IsValid() && shootActionDef.shootStats.length > 0)
+		CompoundTag craftingTags = GetOrCreateTags("parts");
+		int index = 0;
+		for(ItemStack stack : stacks)
 		{
-			for (int i = 0; i < inventory.getContainerSize(); i++)
+			if(stack.isEmpty())
+				continue;
+			if(stack.getItem() instanceof PartItem part)
 			{
-				ItemStack stack = inventory.getItem(i);
-				if (stack.isEmpty())
-					continue;
-				if (stack.getItem() instanceof BulletItem bullet)
-				{
-					if (shootActionDef.shootStats[0].GetMatchingBullets().contains(bullet.Def()))
-					{
-						return i;
-					}
-				}
+				craftingTags.putString(Integer.toString(index), part.DefinitionLocation.toString());
 			}
+			index++;
 		}
-		return Inventory.NOT_FOUND_INDEX;
 	}
 
 	// --------------------------------------------------------------------------
 	// ACTIONS
 	// --------------------------------------------------------------------------
-	@Nonnull
-	public abstract ActionStack GetActionStack();
-	public abstract boolean CanPerformActions();
-
-	public boolean IsShootAction(EActionInput inputType)
-	{
-		EActionInput actionInputType = inputType.GetActionType();
-		if(actionInputType != null)
-			for(ActionDefinition def : GunDef().GetActions(actionInputType))
-				if(def.actionType == EActionType.Shoot)
-					return true;
-		return false;
-	}
-	public boolean HasAction(EActionInput inputType)
-	{
-		return GetActionDefinitions(inputType).length > 0;
-	}
 	@Nonnull
 	public ActionDefinition[] GetActionDefinitions(EActionInput inputType)
 	{
@@ -375,6 +295,7 @@ public abstract class GunContext
 	// --------------------------------------------------------------------------
 	// ATTACHMENTS
 	// --------------------------------------------------------------------------
+	@Nonnull
 	public AttachmentDefinition GetAttachmentDefinition(EAttachmentType attachType, int slot)
 	{
 		ItemStack attachmentStack = GetAttachmentStack(attachType, slot);
@@ -389,7 +310,7 @@ public abstract class GunContext
 	{
 		return GunDef().GetAttachmentSettings(attachType).numAttachmentSlots;
 	}
-
+	@Nonnull
 	public ItemStack GetAttachmentStack(EAttachmentType attachType, int slot)
 	{
 		ItemStack gunStack = GetItemStack();
@@ -408,7 +329,7 @@ public abstract class GunContext
 			flanItem.SetAttachmentInSlot(gunStack, attachType, slot, attachmentStack);
 		}
 	}
-
+	@Nonnull
 	public ItemStack RemoveAttachmentFromSlot(EAttachmentType attachType, int slot)
 	{
 		ItemStack gunStack = GetItemStack();
@@ -418,7 +339,7 @@ public abstract class GunContext
 		}
 		return ItemStack.EMPTY;
 	}
-
+	@Nonnull
 	public List<ItemStack> GetAttachmentStacks()
 	{
 		ItemStack gunStack = GetItemStack();
@@ -428,6 +349,17 @@ public abstract class GunContext
 		}
 		return new ArrayList<>();
 	}
+
+	private int HashAttachments()
+	{
+		return 0;
+	}
+	private void RecalculateAttachmentModifierCache()
+	{
+		// TODO:
+	}
+
+
 
 	public List<ModifierDefinition> GetApplicableModifiers(String stat, EActionInput actionSet)
 	{

@@ -77,11 +77,11 @@ public class MinecraftHelpers
 
 	public static String GetFEString(int fe)
 	{
-		if(fe > 1000000000)
+		if(fe >= 1000000000)
 			return String.format("%.2f GFE", fe / 1000000000f);
-		if(fe > 1000000)
+		if(fe >= 1000000)
 			return String.format("%.2f MFE", fe / 1000000f);
-		if(fe > 1000)
+		if(fe >= 1000)
 			return String.format("%.2f KFE", fe / 1000f);
 		return fe + " FE";
 	}

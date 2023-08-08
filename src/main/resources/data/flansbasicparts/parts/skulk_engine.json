@@ -1,0 +1,29 @@
+{
+    "canPlaceInMachiningTable": false,
+    "canPlaceInModificationTable": false,
+    "compatiblityTags": [
+        "mecha",
+        "groundVehicle",
+        "plane"
+    ],
+    "itemSettings": {
+        "maxStackSize": 64,
+        "tags": [
+            "flansmod:part",
+            "flansmod:engine"
+        ]
+    },
+    "engine": {
+        "maxAcceleration": 3.0,
+        "maxDeceleration": 3.0,
+        "maxSpeed": 1.2,
+        "fuelType": "FE",
+        "fuelConsumptionRate": 250.0,
+        "solidFuelSlots": 0,
+        "liquidFuelCapacity": 0,
+        "batterySlots": 3,
+        "FECapacity": 1000000
+    },
+    "materialTier": 3,
+    "materialType": "Electronic"
+}

@@ -57,4 +57,9 @@ public class GunContextItem extends GunContext
 		}
 		return false;
 	}
+	// There are no modifiers to apply right now
+	@Override
+	public int HashModifierSources() { return 0; }
+	@Override
+	public void RecalculateModifierCache() {}
 }

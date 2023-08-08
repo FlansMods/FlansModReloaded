@@ -7,10 +7,15 @@ import com.flansmod.common.types.elements.PaintableDefinition;
 import com.flansmod.common.types.elements.PaintjobDefinition;
 import com.flansmod.common.types.guns.GunDefinition;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.level.Level;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -22,13 +27,26 @@ public abstract class FlanItem extends Item
     {
         return ALL_ITEMS;
     }
-
     public abstract JsonDefinition Def();
+    public final ResourceLocation DefinitionLocation;
 
-    public FlanItem(Properties props)
+    public FlanItem(ResourceLocation definitionLocation, Properties props)
     {
         super(props);
+        DefinitionLocation = definitionLocation;
         ALL_ITEMS.add(this);
+    }
+
+    @Override
+    public void appendHoverText(ItemStack stack,
+                                @Nullable Level level,
+                                List<Component> tooltips,
+                                TooltipFlag flags)
+    {
+        for (ItemStack attachmentStack : GetAttachmentStacks(stack))
+        {
+            tooltips.add(Component.translatable("tooltip.format.attached", attachmentStack.getHoverName()));
+        }
     }
 
     public boolean HasAttachmentSlot(EAttachmentType type, int slot)

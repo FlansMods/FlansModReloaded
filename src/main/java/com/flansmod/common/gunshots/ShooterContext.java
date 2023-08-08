@@ -1,19 +1,20 @@
 package com.flansmod.common.gunshots;
 
 import com.flansmod.common.actions.EActionInput;
-import com.flansmod.common.item.GunItem;
+import com.flansmod.common.types.elements.ModifierDefinition;
 import com.flansmod.util.Transform;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.Container;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.Objects;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 
 public abstract class ShooterContext
 {
@@ -24,7 +25,7 @@ public abstract class ShooterContext
 		@Override
 		public GunContext[] GetAllGunContexts() { return new GunContext[0]; }
 		@Override
-		public ActionContext[] GetPrioritisedActions(EActionInput action) { return new ActionContext[0]; }
+		public ActionGroupContext[] GetPrioritisedActions(EActionInput action) { return new ActionGroupContext[0]; }
 		@Override
 		public Entity Entity() { return null; }
 		@Override
@@ -39,25 +40,61 @@ public abstract class ShooterContext
 		public int hashCode() { return 0; }
 		@Override
 		public Container GetAttachedInventory() { return null; }
+		@Override
+		public int HashModifierSources() { return 0; }
+		@Override
+		public void RecalculateModifierCache() {}
 	};
 
+	// ---------------------------------------------------------------------------------------------------
+	// CONTEXT CACHE
+	// ---------------------------------------------------------------------------------------------------
+	private static class ShooterContextID
+	{
+		public final ResourceKey<Level> Dimension;
+		public final int EntityID;
+		public ShooterContextID(Entity entity)
+		{
+			if(entity != null)
+			{
+				Dimension = entity.getLevel().dimension();
+				EntityID = entity.getId();
+			}
+			else
+			{
+				Dimension = Level.OVERWORLD;
+				EntityID = 0;
+			}
+		}
+		public int hashCode() { return (Dimension.hashCode() << 8) ^ EntityID; }
+	}
+	private static final HashMap<ShooterContextID, ShooterContext> ContextCache = new HashMap<>();
 	@Nonnull
 	public static ShooterContext CreateFrom(Entity entity)
 	{
-		if(entity instanceof Player player)
-			return new ShooterContextPlayer(player);
-		if(entity instanceof LivingEntity living)
-			return new ShooterContextLiving(living);
-		return INVALID;
-	}
-	@Nonnull
-	public static ShooterContext CreateFrom(UseOnContext useOnContext)
-	{
-		if(useOnContext.getPlayer() != null && useOnContext.getItemInHand().getItem() instanceof GunItem gun)
+		ShooterContextID id = new ShooterContextID(entity);
+		if(ContextCache.containsKey(id))
+			return ContextCache.get(id);
+		else
 		{
-			return new ShooterContextLiving(useOnContext.getPlayer());
+			ShooterContext context;
+			if(entity instanceof Player player)
+				context = new ShooterContextPlayer(player);
+			else if(entity instanceof LivingEntity living)
+				context = new ShooterContextLiving(living);
+			else
+				context = INVALID;
+			ContextCache.put(id, context);
+			return context;
 		}
-		return INVALID;
+	}
+	// ---------------------------------------------------------------------------------------------------
+
+
+	public ShooterContext()
+	{
+		ModifierCache = new ArrayList<>();
+		ModifierHash = 0;
 	}
 
 	public boolean IsLocalPlayerOwner()
@@ -71,15 +108,39 @@ public abstract class ShooterContext
 		return Entity() != null ? Entity().level : null;
 	}
 
+	protected final List<ModifierDefinition> ModifierCache;
+	private int ModifierHash;
+	@Nonnull
+	public List<ModifierDefinition> GetModifiers()
+	{
+		int updatedModifierHash = HashModifierSources();
+		if(updatedModifierHash != ModifierHash)
+		{
+			ModifierCache.clear();
+			RecalculateModifierCache();
+			ModifierHash = updatedModifierHash;
+		}
+		return ModifierCache;
+	}
+	public void Apply(ModifierStack modStack)
+	{
+		for(ModifierDefinition mod : GetModifiers())
+			modStack.Apply(mod);
+	}
+
+	// ---------------------------------------------------------------------------------------------------
+	// INTERFACE
+	// ---------------------------------------------------------------------------------------------------
 	public abstract int GetNumValidContexts();
 	public abstract GunContext[] GetAllGunContexts();
-	public abstract ActionContext[] GetPrioritisedActions(EActionInput action);
+	public abstract ActionGroupContext[] GetPrioritisedActions(EActionInput action);
 	public abstract Entity Entity();
 	public abstract Entity Owner();
 	public abstract Container GetAttachedInventory();
 	public abstract Transform GetShootOrigin();
 	public abstract boolean IsValid();
 	public abstract boolean IsCreative();
-
+	public abstract int HashModifierSources();
+	public abstract void RecalculateModifierCache();
 
 }

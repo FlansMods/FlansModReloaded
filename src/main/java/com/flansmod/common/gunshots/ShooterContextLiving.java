@@ -1,11 +1,15 @@
 package com.flansmod.common.gunshots;
 
 import com.flansmod.common.actions.EActionInput;
+import com.flansmod.common.item.FlanItem;
 import com.flansmod.util.Transform;
+import it.unimi.dsi.fastutil.Hash;
 import net.minecraft.world.Container;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.item.ItemStack;
 
 import javax.annotation.Nonnull;
 import java.util.Objects;
@@ -61,17 +65,17 @@ public class ShooterContextLiving extends ShooterContext
 	}
 
 	@Override
-	public ActionContext[] GetPrioritisedActions(EActionInput action)
+	public ActionGroupContext[] GetPrioritisedActions(EActionInput action)
 	{
 		switch(GetNumValidContexts())
 		{
-			case 0: return new ActionContext[0];
+			case 0: return new ActionGroupContext[0];
 			case 1:
 			{
-				return new ActionContext[]{
+				return new ActionGroupContext[]{
 					MainHand.IsValid()
-						? ActionContext.CreateFrom(MainHand, action)
-						: ActionContext.CreateFrom(OffHand, action)
+						? ActionGroupContext.CreateFrom(MainHand, action)
+						: ActionGroupContext.CreateFrom(OffHand, action)
 				};
 			}
 			case 2:
@@ -79,38 +83,38 @@ public class ShooterContextLiving extends ShooterContext
 				switch (action)
 				{
 					case SECONDARY -> {
-						return new ActionContext[]{
-							ActionContext.CreateFrom(OffHand, EActionInput.PRIMARY),
-							ActionContext.CreateFrom(MainHand, EActionInput.PRIMARY)
+						return new ActionGroupContext[]{
+							ActionGroupContext.CreateFrom(OffHand, EActionInput.PRIMARY),
+							ActionGroupContext.CreateFrom(MainHand, EActionInput.PRIMARY)
 						};
 					}
 					case PRIMARY -> {
-						return new ActionContext[]{
-							ActionContext.CreateFrom(MainHand, EActionInput.PRIMARY),
-							ActionContext.CreateFrom(OffHand, EActionInput.PRIMARY)
+						return new ActionGroupContext[]{
+							ActionGroupContext.CreateFrom(MainHand, EActionInput.PRIMARY),
+							ActionGroupContext.CreateFrom(OffHand, EActionInput.PRIMARY)
 						};
 					}
 					case RELOAD_PRIMARY -> {
-						return new ActionContext[]{
-							ActionContext.CreateFrom(MainHand, EActionInput.RELOAD_PRIMARY),
-							ActionContext.CreateFrom(OffHand, EActionInput.RELOAD_PRIMARY)
+						return new ActionGroupContext[]{
+							ActionGroupContext.CreateFrom(MainHand, EActionInput.RELOAD_PRIMARY),
+							ActionGroupContext.CreateFrom(OffHand, EActionInput.RELOAD_PRIMARY)
 						};
 					}
 					case RELOAD_SECONDARY -> {
-						return new ActionContext[]{
-							ActionContext.CreateFrom(OffHand, EActionInput.RELOAD_PRIMARY),
-							ActionContext.CreateFrom(MainHand, EActionInput.RELOAD_PRIMARY)
+						return new ActionGroupContext[]{
+							ActionGroupContext.CreateFrom(OffHand, EActionInput.RELOAD_PRIMARY),
+							ActionGroupContext.CreateFrom(MainHand, EActionInput.RELOAD_PRIMARY)
 						};
 					}
 					default -> {
-						return new ActionContext[]{
-							ActionContext.CreateFrom(MainHand, action),
-							ActionContext.CreateFrom(OffHand, action)
+						return new ActionGroupContext[]{
+							ActionGroupContext.CreateFrom(MainHand, action),
+							ActionGroupContext.CreateFrom(OffHand, action)
 						};
 					}
 				}
 			}
-			default: return new ActionContext[0];
+			default: return new ActionGroupContext[0];
 		}
 	}
 	@Override
@@ -140,4 +144,43 @@ public class ShooterContextLiving extends ShooterContext
 		}
 		return false;
 	}
+
+	//
+	@Override
+	public int HashModifierSources()
+	{
+		int hash = 0;
+
+		hash ^= HashSlot(EquipmentSlot.HEAD);
+		hash ^= HashSlot(EquipmentSlot.CHEST);
+		hash ^= HashSlot(EquipmentSlot.LEGS);
+		hash ^= HashSlot(EquipmentSlot.FEET);
+
+		return hash;
+	}
+	private int HashSlot(EquipmentSlot slot)
+	{
+		if(Shooter.getItemBySlot(EquipmentSlot.HEAD).getItem() instanceof FlanItem flanItem)
+		{
+			int defHash = flanItem.DefinitionLocation.hashCode();
+			return ((defHash << 16) | (defHash >> 16));
+		}
+		return 0;
+	}
+	@Override
+	public void RecalculateModifierCache()
+	{
+		CacheSlot(EquipmentSlot.HEAD);
+		CacheSlot(EquipmentSlot.CHEST);
+		CacheSlot(EquipmentSlot.LEGS);
+		CacheSlot(EquipmentSlot.FEET);
+	}
+	private void CacheSlot(EquipmentSlot slot)
+	{
+		if(Shooter.getItemBySlot(EquipmentSlot.HEAD).getItem() instanceof FlanItem flanItem)
+		{
+			// TODO: Cache armour stats
+		}
+	}
+
 }

@@ -6,9 +6,10 @@ import com.flansmod.common.FlansMod;
 import com.flansmod.common.actions.*;
 import com.flansmod.common.gunshots.*;
 import com.flansmod.common.types.elements.ActionDefinition;
+import com.flansmod.common.types.elements.ModifierDefinition;
 import com.flansmod.common.types.guns.ERepeatMode;
 import com.flansmod.common.types.guns.GunDefinition;
-import net.minecraft.client.KeyboardHandler;
+import com.flansmod.common.types.parts.PartDefinition;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
@@ -38,22 +39,13 @@ import java.util.function.Consumer;
 
 public class GunItem extends FlanItem
 {
-    private ResourceLocation definitionLocation;
-    public GunDefinition Def() { return FlansMod.GUNS.Get(definitionLocation); }
+    public GunDefinition Def() { return FlansMod.GUNS.Get(DefinitionLocation); }
 
     // TODO: Place more generally private ActionStack GunActions;
     
     public GunItem(ResourceLocation defLoc, Properties properties)
     {
-        super(properties);
-    
-        definitionLocation = defLoc;
-    }
-
-    private Properties HackySetBeforeSuper(ResourceLocation defLoc, Properties properties)
-    {
-        definitionLocation = defLoc;
-        return properties;
+        super(defLoc, properties);
     }
 
     public GunContext GetContext(ItemStack stack)
@@ -67,83 +59,99 @@ public class GunItem extends FlanItem
                                 List<Component> tooltips,
                                 TooltipFlag flags)
     {
+        super.appendHoverText(stack, level, tooltips, flags);
+
         GunContext gunContext = GetContext(stack);
         if(gunContext.IsValid())
         {
-            ActionContext actionContext = ActionContext.CreateFrom(gunContext, EActionInput.PRIMARY);
+            PartDefinition[] craftedFromParts = gunContext.GetCraftingInputs();
+            for(PartDefinition craftedFrom : craftedFromParts)
+            {
+                tooltips.add(Component.translatable(
+                    "tooltip.crafted_from",
+                    Component.translatable(craftedFrom.GetLocationString() + ".name")
+                ));
+                for(ModifierDefinition modDef : craftedFrom.modifiers)
+                {
+                    tooltips.add(Component.translatable("tooltip.crafted_from.modifier_format", modDef.GetModifierString()));
+                }
+            }
+
+            ActionGroupContext actionContext = ActionGroupContext.CreateFrom(gunContext, EActionInput.PRIMARY);
             if (actionContext.IsValid())
             {
-                ActionDefinition actionDef = actionContext.GetShootActionDefinition();
-                if(actionDef != null)
+                boolean advanced = flags.isAdvanced();
+                boolean expanded = Minecraft.getInstance().options.keyShift.isDown();
+                Component fireRateString = actionContext.RepeatMode() == ERepeatMode.SemiAuto ?
+                    Component.translatable("tooltip.format.singlefire") :
+                    Component.translatable("tooltip.format.fullautorpm", actionContext.RoundsPerMinute());
+
+                // To calculate base "gun stats" without taking the bullet into consideration, assume a bullet with default stats
+                GunshotContext gunshotContext = GunshotContext.CreateFrom(actionContext);
+                if(gunshotContext.IsValid())
                 {
-                    CachedActionStats actionStats = actionContext.BuildActionStatCache(actionDef);
-                    CachedGunStats gunStats = actionContext.BuildGunStatCache(actionDef);
-
-                    Component fireRateString = actionStats.RepeatMode == ERepeatMode.SemiAuto ?
-                        Component.translatable("tooltip.format.singlefire") :
-                        Component.translatable("tooltip.format.fullautorpm", actionStats.RoundsPerMinute());
-
-                    tooltips.add(Component.translatable(
-                        "tooltip.format.primarystatline",
-                        gunStats.BaseDamage,
-                        gunStats.VerticalRecoil,
-                        fireRateString,
-                        gunStats.Spread));
-
-                    if(flags.isAdvanced() || Minecraft.getInstance().options.keyShift.isDown())
+                    if(expanded)
                     {
-                        tooltips.add(Component.translatable("tooltip.format.damage.advanced", gunStats.BaseDamage));
-                        tooltips.add(Component.translatable("tooltip.format.recoil.advanced", gunStats.VerticalRecoil));
-                        switch(actionStats.RepeatMode)
-                        {
-                            case Toggle -> { tooltips.add(Component.translatable("tooltip.format.toggle.advanced")); }
-                            case FullAuto -> { tooltips.add(Component.translatable("tooltip.format.fullautorpm.advanced", actionStats.RoundsPerMinute())); }
-                            case SemiAuto -> { tooltips.add(Component.translatable("tooltip.format.singlefire.advanced")); }
-                            case Minigun -> { tooltips.add(Component.translatable("tooltip.format.minigunrpm.advanced", actionStats.RoundsPerMinute())); }
-                            case BurstFire -> { tooltips.add(Component.translatable("tooltip.format.burstfirerpm.advanced", actionStats.RoundsPerMinute())); }
-                        }
-                        tooltips.add(Component.translatable("tooltip.format.spread.advanced", gunStats.Spread));
+                        tooltips.add(Component.translatable("tooltip.format.damage.advanced", gunshotContext.ImpactDamage()));
+                        tooltips.add(Component.translatable("tooltip.format.recoil.advanced", gunshotContext.VerticalRecoil()));
+                        tooltips.add(Component.translatable("tooltip.format.spread.advanced", gunshotContext.Spread()));
+                    }
+                    else
+                    {
+                        tooltips.add(Component.translatable(
+                            "tooltip.format.primarystatline",
+                            gunshotContext.ImpactDamage(),
+                            gunshotContext.VerticalRecoil(),
+                            fireRateString,
+                            gunshotContext.Spread()));
                     }
                 }
-            }
 
-            for (ItemStack attachmentStack : gunContext.GetAttachmentStacks())
-            {
-                tooltips.add(Component.translatable("tooltip.format.attached", attachmentStack.getHoverName()));
-            }
-
-            int primaryBullets = gunContext.GetNumBulletStacks(EActionInput.PRIMARY);
-            if(primaryBullets == 1)
-            {
-                ItemStack bulletStack = gunContext.GetBulletStack(EActionInput.PRIMARY, 0);
-                if(!bulletStack.isEmpty())
+                if(!gunshotContext.IsValid() || expanded)
                 {
-                    if (bulletStack.isDamageableItem())
-                        tooltips.add(Component.translatable("tooltip.format.single_bullet_stack_with_durability", bulletStack.getHoverName(), bulletStack.getMaxDamage() - bulletStack.getDamageValue(), bulletStack.getMaxDamage()));
-                    else
-                        tooltips.add(Component.translatable("tooltip.format.single_bullet_stack", bulletStack.getHoverName()));
+                    switch(actionContext.RepeatMode())
+                    {
+                        case Toggle -> { tooltips.add(Component.translatable("tooltip.format.toggle.advanced")); }
+                        case FullAuto -> { tooltips.add(Component.translatable("tooltip.format.fullautorpm.advanced", actionContext.RoundsPerMinute())); }
+                        case SemiAuto -> { tooltips.add(Component.translatable("tooltip.format.singlefire.advanced")); }
+                        case Minigun -> { tooltips.add(Component.translatable("tooltip.format.minigunrpm.advanced", actionContext.RoundsPerMinute())); }
+                        case BurstFire -> { tooltips.add(Component.translatable("tooltip.format.burstfirerpm.advanced", actionContext.RoundsPerMinute())); }
+                    }
                 }
-            }
-            else
-            {
-                HashMap<Item, ItemStack> bulletCounts = new HashMap<>();
-                for (int i = 0; i < primaryBullets; i++)
+
+                int primaryBullets = actionContext.GetMagazineSize(0);
+                if(primaryBullets == 1)
                 {
-                    ItemStack bulletStack = gunContext.GetBulletStack(EActionInput.PRIMARY, i);
+                    ItemStack bulletStack = actionContext.GetBulletAtIndex(0, 0);
                     if(!bulletStack.isEmpty())
                     {
-                        if (!bulletCounts.containsKey(bulletStack.getItem()))
-                        {
-                            bulletCounts.put(bulletStack.getItem(), bulletStack.copy());
-                        } else
-                        {
-                            bulletCounts.replace(bulletStack.getItem(), bulletStack.copyWithCount(bulletCounts.get(bulletStack.getItem()).getCount() + 1));
-                        }
+                        if (bulletStack.isDamageableItem())
+                            tooltips.add(Component.translatable("tooltip.format.single_bullet_stack_with_durability", bulletStack.getHoverName(), bulletStack.getMaxDamage() - bulletStack.getDamageValue(), bulletStack.getMaxDamage()));
+                        else
+                            tooltips.add(Component.translatable("tooltip.format.single_bullet_stack", bulletStack.getHoverName()));
                     }
                 }
-                for(var kvp : bulletCounts.entrySet())
+                else
                 {
-                    tooltips.add(Component.translatable("tooltip.format.multiple_bullet_stack", kvp.getValue().getCount(), kvp.getValue().getHoverName()));
+                    HashMap<Item, ItemStack> bulletCounts = new HashMap<>();
+                    for (int i = 0; i < primaryBullets; i++)
+                    {
+                        ItemStack bulletStack = actionContext.GetBulletAtIndex(0, i);
+                        if(!bulletStack.isEmpty())
+                        {
+                            if (!bulletCounts.containsKey(bulletStack.getItem()))
+                            {
+                                bulletCounts.put(bulletStack.getItem(), bulletStack.copy());
+                            } else
+                            {
+                                bulletCounts.replace(bulletStack.getItem(), bulletStack.copyWithCount(bulletCounts.get(bulletStack.getItem()).getCount() + 1));
+                            }
+                        }
+                    }
+                    for(var kvp : bulletCounts.entrySet())
+                    {
+                        tooltips.add(Component.translatable("tooltip.format.multiple_bullet_stack", kvp.getValue().getCount(), kvp.getValue().getHoverName()));
+                    }
                 }
             }
         }

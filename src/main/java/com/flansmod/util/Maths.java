@@ -26,16 +26,20 @@ public class Maths
     public static int FloorLerp(int a, int b, float t) { return Maths.Floor(a + (b-a)*t); }
 
     // Double maths
+    public static final double Epsilon = 0.000000000001d;
     public static double Abs(double a) { return a < 0 ? -a : a; }
     public static double Clamp(double i, double min, double max) { return i > max ? max : (i < min ? min : i);  }
     public static int Ceil(double d) { return (int)Math.ceil(d); }
     public static int Floor(double d) { return (int)Math.floor(d); }
+    public static int Round(double d) { return (int)Math.round(d); }
     public static double Max(double a, double b) { return a > b ? a : b; }
     public static double Min(double a, double b) { return a < b ? a : b; }
+    public static boolean Approx(double a, double b) { return Abs(a-b) < Epsilon; }
     public static double Lerp(double a, double b, double t) { return a + (b-a)*t; }
     public static double Sign(double d) { return d > 0.0d ? 1.0d : (d < 0.0d ? -1.0d : 0.0d); }
 
     // Float maths
+    public static final float EpsilonF = 0.000001f;
     public static float Clamp(float i, float min, float max)
     {
         return i > max ? max : (i < min ? min : i);
@@ -45,6 +49,8 @@ public class Maths
     public static float Min(float a, float b) { return a < b ? a : b; }
     public static int Ceil(float d) { return (int)Math.ceil(d); }
     public static int Floor(float d) { return (int)Math.floor(d); }
+    public static int Round(float d) { return (int)Math.round(d); }
+    public static boolean Approx(float a, float b) { return Abs(a-b) < EpsilonF; }
     public static float Lerp(float a, float b, float t) { return a + (b-a)*t; }
     public static float Sign(float f) { return f > 0.0f ? 1.0f : (f < 0.0f ? -1.0f : 0.0f); }
 

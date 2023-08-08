@@ -70,4 +70,9 @@ public class GunContextLiving extends GunContext
 	{
 		return "Gun:" + GetItemStack().toString() + " held by " + ShooterContext.Shooter.toString();
 	}
+	// There are no modifiers to apply right now
+	@Override
+	public int HashModifierSources() { return 0; }
+	@Override
+	public void RecalculateModifierCache() {}
 }

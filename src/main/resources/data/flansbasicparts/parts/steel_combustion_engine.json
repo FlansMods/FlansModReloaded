@@ -1,0 +1,29 @@
+{
+    "canPlaceInMachiningTable": false,
+    "canPlaceInModificationTable": false,
+    "compatiblityTags": [
+        "mecha",
+        "groundVehicle",
+        "plane"
+    ],
+    "itemSettings": {
+        "maxStackSize": 64,
+        "tags": [
+            "flansmod:part",
+            "flansmod:engine"
+        ]
+    },
+    "engine": {
+        "maxAcceleration": 1.5,
+        "maxDeceleration": 1.0,
+        "maxSpeed": 1.1,
+        "fuelType": "Blastable",
+        "fuelConsumptionRate": 2.0,
+        "solidFuelSlots": 1,
+        "liquidFuelCapacity": 0,
+        "batterySlots": 0,
+        "FECapacity": 0
+    },
+    "materialTier": 2,
+    "materialType": "Metal"
+}

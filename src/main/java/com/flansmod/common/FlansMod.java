@@ -11,6 +11,7 @@ import com.flansmod.common.types.crafting.WorkbenchDefinitions;
 import com.flansmod.common.types.grenades.GrenadeDefinitions;
 import com.flansmod.common.types.guns.GunDefinitions;
 import com.flansmod.common.types.bullets.BulletDefinitions;
+import com.flansmod.common.types.magazines.MagazineDefinitions;
 import com.flansmod.common.types.parts.PartDefinitions;
 import com.mojang.logging.LogUtils;
 import net.minecraft.network.chat.Component;
@@ -43,6 +44,9 @@ import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegisterEvent;
 import net.minecraftforge.registries.RegistryObject;
 import org.slf4j.Logger;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Mod(FlansMod.MODID)
 public class FlansMod
@@ -94,6 +98,7 @@ public class FlansMod
     public static final PartDefinitions PARTS = new PartDefinitions();
     public static final WorkbenchDefinitions WORKBENCHES = new WorkbenchDefinitions();
     public static final MaterialDefinitions MATERIALS = new MaterialDefinitions();
+    public static final MagazineDefinitions MAGAZINES = new MagazineDefinitions();
 
     // Server handlers
     public static final ActionManager ACTIONS_SERVER = new ActionManager(false);
@@ -179,9 +184,16 @@ public class FlansMod
     {
         event.registerCreativeModeTab(new ResourceLocation(MODID, "creative_tab_guns"), builder ->
         {
+            List<ItemStack> stacks = new ArrayList<>();
+            for(Item item : ForgeRegistries.ITEMS.getValues())
+            {
+                if(item instanceof GunItem || item instanceof BulletItem || item instanceof GrenadeItem)
+                    stacks.add(new ItemStack(item));
+            }
+
             builder
                 .title(Component.translatable("item_group." + MODID + ".creative_tab_guns"))
-                .icon(() -> new ItemStack(Items.DIAMOND))
+                .icon(() -> stacks.size() > 0 ? stacks.get(0) : new ItemStack(Items.DIAMOND))
                 .displayItems((enabledFlags, populator, hasPermissions) ->
                 {
                     populator.accept(GUN_MACHINING_TABLE_ITEM.get());
@@ -189,60 +201,61 @@ public class FlansMod
                     populator.accept(DIESEL_GENERATOR_ITEM.get());
                     populator.accept(COAL_GENERATOR_ITEM.get());
                     populator.accept(WEAPON_CRATE_ITEM.get());
-                    for(Item item : ForgeRegistries.ITEMS.getValues())
-                    {
-                        if(item instanceof GunItem || item instanceof BulletItem || item instanceof GrenadeItem)
-                            populator.accept(new ItemStack(item));
-                    }
+                   for(ItemStack stack : stacks)
+                       populator.accept(stack);
                 });
         });
 
         event.registerCreativeModeTab(new ResourceLocation(MODID, "creative_tab_parts"), builder ->
         {
+            List<ItemStack> stacks = new ArrayList<>();
+            for(Item item : ForgeRegistries.ITEMS.getValues())
+            {
+                if(item instanceof PartItem)
+                    stacks.add(new ItemStack(item));
+            }
+
             builder
                 .title(Component.translatable("item_group." + MODID + ".creative_tab_parts"))
-                .icon(() -> new ItemStack(Items.STICK))
+                .icon(() -> stacks.size() > 0 ? stacks.get(0) : new ItemStack(Items.STICK))
                 .displayItems((enabledFlags, populator, hasPermissions) ->
                 {
                     populator.accept(GUN_MACHINING_TABLE_ITEM.get());
-                    for(Item item : ForgeRegistries.ITEMS.getValues())
-                    {
-                        if(item instanceof PartItem)
-                            populator.accept(new ItemStack(item));
-                    }
+                    for(ItemStack stack : stacks)
+                            populator.accept(stack);
                 });
         });
 
         event.registerCreativeModeTab(new ResourceLocation(MODID, "creative_tab_modifiers"), builder ->
         {
+            List<ItemStack> stacks = new ArrayList<>();
+            for(Item item : ForgeRegistries.ITEMS.getValues())
+            {
+                if(item instanceof AttachmentItem)
+                    stacks.add(new ItemStack(item));
+            }
+
             builder
                 .title(Component.translatable("item_group." + MODID + ".creative_tab_modifiers"))
-                .icon(() -> new ItemStack(Items.REDSTONE))
+                .icon(() -> stacks.size() > 0 ? stacks.get(0) : new ItemStack(Items.BOOK))
                 .displayItems((enabledFlags, populator, hasPermissions) ->
                 {
                     populator.accept(GUN_MOD_TABLE_ITEM.get());
-                    for(Item item : ForgeRegistries.ITEMS.getValues())
-                    {
-                        if(item instanceof AttachmentItem)
-                            populator.accept(new ItemStack(item));
-                    }
+                    for(ItemStack stack : stacks)
+                        populator.accept(stack);
                 });
         });
 
-        event.registerCreativeModeTab(new ResourceLocation(MODID, "creative_tab_vehicles"), builder ->
-        {
-            builder
-                .title(Component.translatable("item_group." + MODID + ".creative_tab_vehicles"))
-                .icon(() -> new ItemStack(Items.DIAMOND))
-                .displayItems((enabledFlags, populator, hasPermissions) ->
-                {
-                    for(Item item : ForgeRegistries.ITEMS.getValues())
-                    {
-                        if(item instanceof GunItem)
-                            populator.accept(new ItemStack(item));
-                    }
-                });
-        });
+        //event.registerCreativeModeTab(new ResourceLocation(MODID, "creative_tab_vehicles"), builder ->
+        //{
+        //    builder
+        //        .title(Component.translatable("item_group." + MODID + ".creative_tab_vehicles"))
+        //        .icon(() -> new ItemStack(Items.DIAMOND))
+        //        .displayItems((enabledFlags, populator, hasPermissions) ->
+        //        {
+        //
+        //        });
+        //});
     }
 
     private void OnRegsiterEvent(RegisterEvent event)
@@ -261,6 +274,7 @@ public class FlansMod
         event.addListener(PARTS);
         event.addListener(WORKBENCHES);
         event.addListener(MATERIALS);
+        event.addListener(MAGAZINES);
 
         if(FMLEnvironment.dist == Dist.CLIENT)
             RegisterClientReloadListeners(event);

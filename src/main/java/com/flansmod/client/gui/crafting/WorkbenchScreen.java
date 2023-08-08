@@ -560,15 +560,29 @@ public class WorkbenchScreen extends AbstractContainerScreen<WorkbenchMenu>
 				if(paintableDefinition.paintjobs.length > 0)
 				{
 					// Default skin button
-					blit(pose, xOrigin + 84, yOrigin + 45, getBlitOffset(), 172, 165, 18, 18, TEXTURE_WIDTH, TEXTURE_HEIGHT);
+					if(flanItem.GetPaintjobName(gunStack).equals("default"))
+					{
+						blit(pose, xOrigin + 84, yOrigin + 50, getBlitOffset(), 172, 201, 18, 18, TEXTURE_WIDTH, TEXTURE_HEIGHT);
+					}
+					else blit(pose, xOrigin + 84, yOrigin + 50, getBlitOffset(), 172, 165, 18, 18, TEXTURE_WIDTH, TEXTURE_HEIGHT);
 
 					// Other skin buttons
 					for(int p = 0; p < paintableDefinition.paintjobs.length; p++)
 					{
 						int xIndex = (p + 1) % SKINS_PER_ROW;
 						int yIndex = (p + 1) / SKINS_PER_ROW;
-						blit(pose, xOrigin + 84 + 18 * xIndex, yOrigin + 45 + 18 * yIndex, getBlitOffset(), 172, 165, 18, 18, TEXTURE_WIDTH, TEXTURE_HEIGHT);
+						if(flanItem.GetPaintjobName(gunStack).equals(paintableDefinition.paintjobs[p].textureName))
+						{
+							blit(pose, xOrigin + 84 + 18 * xIndex, yOrigin + 50 + 18 * yIndex, getBlitOffset(), 172, 201, 18, 18, TEXTURE_WIDTH, TEXTURE_HEIGHT);
+						}
+						else blit(pose, xOrigin + 84 + 18 * xIndex, yOrigin + 50 + 18 * yIndex, getBlitOffset(), 172, 165, 18, 18, TEXTURE_WIDTH, TEXTURE_HEIGHT);
 					}
+				}
+
+				for(int i = 0; i < 4; i++)
+				{
+					// Magazine selector
+					blit(pose, xOrigin + 84 + i * 18, yOrigin + 90, getBlitOffset(), 172, 165, 18, 18, TEXTURE_WIDTH, TEXTURE_HEIGHT);
 				}
 			}
 		}
@@ -591,7 +605,7 @@ public class WorkbenchScreen extends AbstractContainerScreen<WorkbenchMenu>
 					{
 						ItemStack paintedStack = gunStack.copy();
 						flanItem.SetPaintjobName(paintedStack, "default");
-						itemRenderer.renderGuiItem(paintedStack, 85, 46);
+						itemRenderer.renderGuiItem(paintedStack, 85, 51);
 					}
 
 					// And other skins
@@ -601,7 +615,7 @@ public class WorkbenchScreen extends AbstractContainerScreen<WorkbenchMenu>
 						int yIndex = (p + 1) / SKINS_PER_ROW;
 						ItemStack paintedStack = gunStack.copy();
 						flanItem.SetPaintjobName(paintedStack, paintableDefinition.paintjobs[p].textureName);
-						itemRenderer.renderGuiItem(paintedStack, 85 + 18 * xIndex, 46 + 18 * yIndex);
+						itemRenderer.renderGuiItem(paintedStack, 85 + 18 * xIndex, 51 + 18 * yIndex);
 					}
 				}
 			}
@@ -794,8 +808,8 @@ public class WorkbenchScreen extends AbstractContainerScreen<WorkbenchMenu>
 				{
 					switch(tag)
 					{
-						case "barrel": return Barrel;
-						case "upper_receiver": return UpperReceiver;
+						case "flansmod:barrel": return Barrel;
+						case "flansmod:upper_receiver": return UpperReceiver;
 					}
 				}
 			}
@@ -834,13 +848,16 @@ public class WorkbenchScreen extends AbstractContainerScreen<WorkbenchMenu>
 
 	private void UpdateActiveGunSelectionButtons()
 	{
-		for(int j = 0; j < GUN_SELECTOR_ROWS; j++)
+		if(GunSelectionButtons != null)
 		{
-			for (int i = 0; i < GUN_SELECTOR_COLUMNS; i++)
+			for (int j = 0; j < GUN_SELECTOR_ROWS; j++)
 			{
-				final int firstIndex = Maths.Floor(gunSelectorScrollOffset) * GUN_SELECTOR_COLUMNS;
-				final int relativeIndex = i + GUN_SELECTOR_COLUMNS * j;
-				GunSelectionButtons[relativeIndex].active = SelectedTab == Tab.GUN_CRAFTING && (firstIndex + relativeIndex < GunCraftingEntries.size());
+				for (int i = 0; i < GUN_SELECTOR_COLUMNS; i++)
+				{
+					final int firstIndex = Maths.Floor(gunSelectorScrollOffset) * GUN_SELECTOR_COLUMNS;
+					final int relativeIndex = i + GUN_SELECTOR_COLUMNS * j;
+					GunSelectionButtons[relativeIndex].active = SelectedTab == Tab.GUN_CRAFTING && (firstIndex + relativeIndex < GunCraftingEntries.size());
+				}
 			}
 		}
 	}

@@ -2,7 +2,6 @@ package com.flansmod.client.render;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Consumer;
 import java.util.function.Function;
 
 import com.flansmod.client.FlansModClient;
@@ -12,7 +11,6 @@ import com.flansmod.client.render.animation.elements.KeyframeDefinition;
 import com.flansmod.client.render.animation.elements.PoseDefinition;
 import com.flansmod.client.render.animation.elements.SequenceDefinition;
 import com.flansmod.client.render.animation.elements.SequenceEntryDefinition;
-import com.flansmod.client.render.debug.DebugModelPoser;
 import com.flansmod.client.render.models.*;
 import com.flansmod.common.FlansMod;
 import com.flansmod.common.actions.Action;
@@ -21,27 +19,21 @@ import com.flansmod.common.actions.AnimationAction;
 import com.flansmod.common.item.FlanItem;
 import com.flansmod.util.Maths;
 import com.flansmod.util.Transform;
-import com.mojang.blaze3d.platform.GlStateManager;
-import com.mojang.blaze3d.platform.TextureUtil;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.*;
 
 import net.minecraft.Util;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.*;
-import net.minecraft.client.renderer.block.model.BakedQuad;
-import net.minecraft.client.renderer.block.model.ItemTransform;
 import net.minecraft.client.renderer.block.model.ItemTransforms;
 import net.minecraft.client.renderer.entity.ItemRenderer;
 import net.minecraft.client.renderer.texture.MissingTextureAtlasSprite;
-import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.HumanoidArm;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.client.model.IQuadTransformer;
 import net.minecraftforge.client.model.data.ModelData;
 import org.joml.*;
 
@@ -161,7 +153,7 @@ public abstract class FlanItemModelRenderer extends BlockEntityWithoutLevelRende
             List<Transform> poses = new ArrayList<>();
             for (AnimationAction animAction : animActions)
             {
-                SequenceDefinition sequence = animationSet.GetSequence(animAction.actionDef.anim);
+                SequenceDefinition sequence = animationSet.GetSequence(animAction.ActionDef.anim);
                 if (sequence == null)
                     continue;
 

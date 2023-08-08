@@ -1,53 +1,52 @@
 package com.flansmod.common.actions;
 
-import com.flansmod.common.gunshots.ActionContext;
+import com.flansmod.common.gunshots.ActionGroupContext;
 import com.flansmod.common.types.elements.ActionDefinition;
-import com.flansmod.common.gunshots.GunContext;
-import net.minecraft.world.InteractionHand;
+import com.flansmod.common.types.elements.ActionGroupDefinition;
 
 public class AimDownSightAction extends Action
 {
 	protected boolean shouldStop = false;
 
-	public AimDownSightAction(ActionDefinition def, EActionInput inputType)
+	public AimDownSightAction(ActionGroupDefinition groupDef, ActionDefinition def, EActionInput inputType)
 	{
-		super(def, inputType);
+		super(groupDef, def, inputType);
 	}
 
 	@Override
-	public boolean CanStart(ActionContext context)
+	public boolean CanStart(ActionGroupContext context)
 	{
 		// TODO: 2H check
 		return true;
 	}
 
 	@Override
-	protected void OnTriggerClient(ActionContext context)
+	protected void OnTriggerClient(ActionGroupContext context)
 	{
 
 	}
 
 	@Override
-	protected void OnTriggerServer(ActionContext context)
+	protected void OnTriggerServer(ActionGroupContext context)
 	{
 
 	}
 
 	@Override
-	public void OnTickClient(ActionContext context)
+	public void OnTickClient(ActionGroupContext context)
 	{
 		super.OnTickClient(context);
 		CancelActionIfDuplicate(context);
 	}
 
 	@Override
-	public void OnTickServer(ActionContext context)
+	public void OnTickServer(ActionGroupContext context)
 	{
 		super.OnTickClient(context);
 		CancelActionIfDuplicate(context);
 	}
 
-	private void CancelActionIfDuplicate(ActionContext context)
+	private void CancelActionIfDuplicate(ActionGroupContext context)
 	{
 		int numScopeActions = 0;
 		for(Action action : context.ActionStack().GetActions())
@@ -66,7 +65,7 @@ public class AimDownSightAction extends Action
 	}
 
 	@Override
-	public boolean Finished(ActionContext context)
+	public boolean Finished(ActionGroupContext context)
 	{
 		return shouldStop;
 	}

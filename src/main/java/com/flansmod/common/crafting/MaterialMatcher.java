@@ -65,7 +65,7 @@ public class MaterialMatcher
 					}
 				}
 			}
-			else FlansMod.LOGGER.warn("MaterialDefinition " + matDef.data + " was invalid");
+			else FlansMod.LOGGER.warn("MaterialDefinition " + matDef.GetLocationString() + " was invalid");
 		}
 	}
 

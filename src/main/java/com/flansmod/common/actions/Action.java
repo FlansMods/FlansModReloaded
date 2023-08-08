@@ -2,54 +2,47 @@ package com.flansmod.common.actions;
 
 import com.flansmod.common.gunshots.*;
 import com.flansmod.common.types.elements.ActionDefinition;
+import com.flansmod.common.types.elements.ActionGroupDefinition;
 import com.flansmod.common.types.guns.ERepeatMode;
 import com.flansmod.util.Maths;
-import net.minecraft.world.InteractionHand;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.util.function.Consumer;
 
 public abstract class Action
 {
 	public static final float TICK_RATE = 1.0f / 20.0f;
-	public final ActionDefinition actionDef;
-	public final EActionInput inputType;
+	public final ActionGroupDefinition ActionGroupDef;
+	public final ActionDefinition ActionDef;
+	public final EActionInput InputType;
 
-	protected boolean finished = false;
-	protected int progress = 0;
-	protected int duration = 0;
+	protected boolean Finished = false;
+	protected int Progress = 0;
+	protected int Duration = 0;
 
 	// "Minigun" Charge-up / cool-down mode
-	protected float charge = 0.0f;
-	protected boolean isCharging = false;
+	protected float Charge = 0.0f;
+	protected boolean IsCharging = false;
 	// Burst fire mode
-	protected int numBurstsRemaining = 0;
+	protected int NumBurstsRemaining = 0;
 
-	// Caches
-	@Nullable
-	private CachedActionStats ActionStatCache = null;
-	@Nullable
-	private CachedGunStats GunStatCache = null;
+	public int GetProgressTicks() { return Progress; }
+	public int GetDurationTicks() { return Duration; }
+	public float GetProgressSeconds() { return Progress * TICK_RATE; }
+	public float GetDurationSeconds() { return Duration * TICK_RATE; }
 
-	public int GetProgressTicks() { return progress; }
-	public int GetDurationTicks() { return duration; }
-	public float GetProgressSeconds() { return progress * TICK_RATE; }
-	public float GetDurationSeconds() { return duration * TICK_RATE; }
-
-	public boolean Finished(ActionContext context)
+	public boolean Finished(ActionGroupContext context)
 	{
 		switch(RepeatMode(context))
 		{
 			// These modes are all set to wait until a SetFinished call happens externally
-			case Toggle, FullAuto -> { return finished; }
+			case Toggle, FullAuto -> { return Finished; }
 			// When the minigun has spun down completely, this action finishes
-			case Minigun -> { return !isCharging && charge <= 0.0f; }
-			case SemiAuto, BurstFire ->  { return progress > duration; }
+			case Minigun -> { return !IsCharging && Charge <= 0.0f; }
+			case SemiAuto, BurstFire ->  { return Progress > Duration; }
 		}
 		return false;
 	}
-	public void UpdateInputHeld(ActionContext context, boolean held)
+	public void UpdateInputHeld(ActionGroupContext context, boolean held)
 	{
 		switch(RepeatMode(context))
 		{
@@ -60,26 +53,27 @@ public abstract class Action
 			}
 			case Minigun ->
 			{
-				isCharging = held;
+				IsCharging = held;
 			}
 		}
 	}
-	public void SetFinished() { finished = true; }
+	public void SetFinished() { Finished = true; }
 
-	public Action(ActionDefinition def, EActionInput inputType)
+	public Action(ActionGroupDefinition groupDef, ActionDefinition def, EActionInput inputType)
 	{
-		this.actionDef = def;
-		this.inputType = inputType;
-		this.duration = Maths.Ceil(def.duration * 20f);
-		this.progress = 0;
+		this.ActionGroupDef = groupDef;
+		this.ActionDef = def;
+		this.InputType = inputType;
+		this.Duration = Maths.Ceil(def.duration * 20f);
+		this.Progress = 0;
 	}
 
 	public boolean ShouldRender(GunContext context) { return true; }
-	public boolean PropogateToServer(ActionContext context) { return false; }
-	public boolean ShouldFallBackToReload(ActionContext context) { return false; }
-	public boolean CanStart(ActionContext context)
+	public boolean PropogateToServer(ActionGroupContext context) { return false; }
+	public boolean ShouldFallBackToReload(ActionGroupContext context) { return false; }
+	public boolean CanStart(ActionGroupContext context)
 	{
-		if(actionDef.twoHanded)
+		if(ActionGroupDef.twoHanded)
 		{
 			if (!context.Gun().CanPerformTwoHandedAction())
 				return false;
@@ -88,49 +82,49 @@ public abstract class Action
 		return true;
 	}
 
-	protected abstract void OnTriggerClient(ActionContext context);
-	protected abstract void OnTriggerServer(ActionContext context);
+	protected abstract void OnTriggerClient(ActionGroupContext context);
+	protected abstract void OnTriggerServer(ActionGroupContext context);
 
 
-	public void OnStartServer(ActionContext context)
+	public void OnStartServer(ActionGroupContext context)
 	{
-		progress = 0;
-		DoInitialTrigger(context, (ActionContext ac) ->
+		Progress = 0;
+		DoInitialTrigger(context, (ActionGroupContext ac) ->
 		{
 			OnTriggerServer(ac);
 		});
 	}
-	public void OnTickServer(ActionContext context)
+	public void OnTickServer(ActionGroupContext context)
 	{
-		progress++;
-		CheckRetrigger(context, (ActionContext ac) ->
+		Progress++;
+		CheckRetrigger(context, (ActionGroupContext ac) ->
 		{
 			OnTriggerServer(ac);
 		});
 	}
-	public void OnFinishServer(ActionContext context) {}
+	public void OnFinishServer(ActionGroupContext context) {}
 
-	public void OnStartClient(ActionContext context)
+	public void OnStartClient(ActionGroupContext context)
 	{
-		progress = 0;
-		DoInitialTrigger(context, (ActionContext ac) ->
+		Progress = 0;
+		DoInitialTrigger(context, (ActionGroupContext ac) ->
 		{
 			OnTriggerClient(ac);
 		});
 	}
-	public void OnTickClient(ActionContext context)
+	public void OnTickClient(ActionGroupContext context)
 	{
-		progress++;
-		CheckRetrigger(context, (ActionContext ac) ->
+		Progress++;
+		CheckRetrigger(context, (ActionGroupContext ac) ->
 		{
 			OnTriggerClient(ac);
 		});
 	}
-	public void OnFinishClient(ActionContext context) {}
+	public void OnFinishClient(ActionGroupContext context) {}
 
-	public boolean VerifyServer(ActionContext context, GunshotCollection shots) { return true; }
+	public boolean VerifyServer(ActionGroupContext context, GunshotCollection shots) { return true; }
 
-	private void DoInitialTrigger(ActionContext context, Consumer<ActionContext> triggerFunc)
+	private void DoInitialTrigger(ActionGroupContext context, Consumer<ActionGroupContext> triggerFunc)
 	{
 		// We allow *any* non-zero value for repeats, but we should not allow exactly zero.
 		float repeatDelay = RepeatDelay(context);
@@ -144,11 +138,11 @@ public abstract class Action
 			for (int i = 0; i < count; i++)
 				triggerFunc.accept(context);
 
-			numBurstsRemaining = RepeatMode(context) == ERepeatMode.BurstFire ? RepeatCount(context) - 1 : 0;
+			NumBurstsRemaining = RepeatMode(context) == ERepeatMode.BurstFire ? RepeatCount(context) - 1 : 0;
 		}
 	}
 
-	private void CheckRetrigger(ActionContext context, Consumer<ActionContext> triggerFunc)
+	private void CheckRetrigger(ActionGroupContext context, Consumer<ActionGroupContext> triggerFunc)
 	{
 		boolean tryRetrigger = false;
 		switch(RepeatMode(context))
@@ -157,21 +151,21 @@ public abstract class Action
 				tryRetrigger = true;
 			}
 			case BurstFire -> {
-				if (numBurstsRemaining > 0)
+				if (NumBurstsRemaining > 0)
 				{
-					numBurstsRemaining--;
+					NumBurstsRemaining--;
 					tryRetrigger = true;
 				}
 			}
 			case Minigun -> {
-				if(isCharging)
-					charge += TICK_RATE;
+				if(IsCharging)
+					Charge += TICK_RATE;
 				else
-					charge -= TICK_RATE;
-				if(charge >= SpinUpDuration(context))
+					Charge -= TICK_RATE;
+				if(Charge >= SpinUpDuration(context))
 				{
 					tryRetrigger = true;
-					charge = SpinUpDuration(context);
+					Charge = SpinUpDuration(context);
 				}
 			}
 		}
@@ -186,22 +180,16 @@ public abstract class Action
 		}
 	}
 
-	@Nonnull
-	private CachedActionStats GetActionStats(ActionContext context)
-	{
-		if(ActionStatCache == null)
-			ActionStatCache = context.BuildActionStatCache(actionDef);
-		return ActionStatCache;
-	}
-	public ERepeatMode RepeatMode(ActionContext context) { return GetActionStats(context).RepeatMode; }
-	public int RepeatCount(ActionContext context) { return GetActionStats(context).RepeatCount; }
-	public float RepeatDelay(ActionContext context) { return GetActionStats(context).RepeatDelay; }
-	public float SpinUpDuration(ActionContext context) { return GetActionStats(context).SpinUpDuration; }
-	public float Duration(ActionContext context) { return GetActionStats(context).Duration; }
-	public float FOVFactor(ActionContext context) { return GetActionStats(context).FOVFactor; }
-	public float ToolLevel(ActionContext context) { return GetActionStats(context).ToolLevel; }
-	public float HarvestSpeed(ActionContext context) { return GetActionStats(context).HarvestSpeed; }
-	public float Reach(ActionContext context) { return GetActionStats(context).Reach; }
+	// These ones are general for the whole group
+	public ERepeatMode RepeatMode(ActionGroupContext context) { return context.RepeatMode(); }
+	public int RepeatCount(ActionGroupContext context) { return context.RepeatCount(); }
+	public float RepeatDelay(ActionGroupContext context) { return context.RepeatDelay(); }
+	public float SpinUpDuration(ActionGroupContext context) { return context.SpinUpDuration(); }
 
-
+	// These ones are specific to this action
+	public float Duration(ActionGroupContext context) { return context.ModifyFloat("duration", ActionDef.duration); }
+	public float FOVFactor(ActionGroupContext context) { return context.ModifyFloat("FOV_factor", ActionDef.fovFactor); }
+	public float ToolLevel(ActionGroupContext context) { return context.ModifyFloat("tool_level", ActionDef.toolLevel); }
+	public float HarvestSpeed(ActionGroupContext context) { return context.ModifyFloat("harvest_speed", ActionDef.harvestSpeed); }
+	public float Reach(ActionGroupContext context) { return context.ModifyFloat("reach", ActionDef.reach); }
 }

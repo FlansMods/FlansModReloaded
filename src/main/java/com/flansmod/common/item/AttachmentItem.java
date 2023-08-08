@@ -15,15 +15,12 @@ import java.util.function.Consumer;
 
 public class AttachmentItem extends FlanItem
 {
-	private ResourceLocation definitionLocation;
-	public AttachmentDefinition Def() { return FlansMod.ATTACHMENTS.Get(definitionLocation); }
-
+	@Override
+	public AttachmentDefinition Def() { return FlansMod.ATTACHMENTS.Get(DefinitionLocation); }
 
 	public AttachmentItem(ResourceLocation defLoc, Properties properties)
 	{
-		super(properties);
-
-		definitionLocation = defLoc;
+		super(defLoc, properties);
 	}
 
 	@Override

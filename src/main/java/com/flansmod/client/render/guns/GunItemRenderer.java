@@ -13,6 +13,7 @@ import com.flansmod.common.actions.Action;
 import com.flansmod.common.actions.ActionStack;
 import com.flansmod.common.actions.AnimationAction;
 import com.flansmod.common.actions.EActionInput;
+import com.flansmod.common.gunshots.ActionGroupContext;
 import com.flansmod.common.gunshots.ShooterContext;
 import com.flansmod.common.types.attachments.AttachmentDefinition;
 import com.flansmod.common.types.attachments.EAttachmentType;
@@ -54,16 +55,17 @@ public class GunItemRenderer extends FlanItemModelRenderer
         {
             // If there is a valid action stack applicable to this gun, scan it for animation actions
             ActionStack actionStack = gunContext.GetActionStack();
-            if(actionStack != null)
-                for (Action action : actionStack.GetActions())
-                    if (!action.ShouldRender(gunContext))
-                        return;
+            for (Action action : actionStack.GetActions())
+                if (!action.ShouldRender(gunContext))
+                    return;
 
             // Find our animation set
             AnimationDefinition animationSet = FlansModClient.ANIMATIONS.Get(new ResourceLocation(gunContext.GunDef().animationSet));
 
             // Find our skin
             ResourceLocation skin = GetSkin(stack);
+
+
 
             RenderPart(gunContext, animationSet, actionStack, skin, renderContext, "body");
 
@@ -72,10 +74,15 @@ public class GunItemRenderer extends FlanItemModelRenderer
             {
                 ApplyAnimations(renderContext, animationSet, actionStack, "body");
 
+
                 RenderPart(gunContext, animationSet, actionStack, skin, renderContext, "revolver");
                 RenderPart(gunContext, animationSet, actionStack, skin, renderContext, "slide");
                 RenderPart(gunContext, animationSet, actionStack, skin, renderContext, "pump");
-                for (int i = 0; i < gunContext.GetNumBulletStacks(EActionInput.PRIMARY); i++)
+
+                ActionGroupContext primaryContext = ActionGroupContext.CreateFrom(gunContext, EActionInput.PRIMARY);
+                ActionGroupContext secondaryContext = ActionGroupContext.CreateFrom(gunContext, EActionInput.SECONDARY);
+
+                for (int i = 0; i < primaryContext.GetMagazineSize(0); i++)
                     RenderPart(gunContext, animationSet, actionStack, skin, renderContext, "ammo_" + i);
 
                 RenderPartOrAttachment(gunContext, animationSet, actionStack, skin, renderContext, "grip", EAttachmentType.Grip);

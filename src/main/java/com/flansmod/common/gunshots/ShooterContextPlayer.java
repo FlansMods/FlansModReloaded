@@ -1,15 +1,17 @@
 package com.flansmod.common.gunshots;
 
+import com.flansmod.common.item.FlanItem;
 import net.minecraft.world.Container;
-import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
-import org.jetbrains.annotations.NotNull;
+import net.minecraft.world.item.ItemStack;
+
+import javax.annotation.Nonnull;
 
 public class ShooterContextPlayer extends ShooterContextLiving
 {
 	private final Player Player;
 
-	public ShooterContextPlayer(@NotNull Player player)
+	public ShooterContextPlayer(@Nonnull Player player)
 	{
 		super(player);
 		Player = player;

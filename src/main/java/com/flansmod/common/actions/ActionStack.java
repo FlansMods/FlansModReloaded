@@ -1,11 +1,9 @@
 package com.flansmod.common.actions;
 
-import com.flansmod.common.gunshots.ActionContext;
+import com.flansmod.common.gunshots.ActionGroupContext;
 import com.flansmod.common.types.elements.ActionDefinition;
-import com.flansmod.common.types.elements.ReloadDefinition;
 import com.flansmod.common.types.guns.EReloadStage;
 import com.flansmod.common.gunshots.GunContext;
-import net.minecraft.world.InteractionHand;
 import net.minecraft.world.level.Level;
 
 import java.util.ArrayList;
@@ -23,9 +21,9 @@ public class ActionStack
 {
 	public static final ActionStack Invalid = new ActionStack(false) {
 		@Override
-		public void AddAction(ActionContext context, Action action) {}
+		public void AddAction(ActionGroupContext context, Action action) {}
 		@Override
-		public void AddReload(ActionContext context, ReloadProgress reload) {}
+		public void AddReload(ActionGroupContext context, ReloadProgress reload) {}
 		@Override
 		public void OnTick(Level level, GunContext gunContext) {}
 		@Override
@@ -59,7 +57,7 @@ public class ActionStack
 	public void RequestCancel() { cancelActionRequested = true; }
 	public boolean IsValid() { return true; }
 
-	public void AddAction(ActionContext context, Action action)
+	public void AddAction(ActionGroupContext context, Action action)
 	{
 		ActiveActions.add(action);
 		if(IsClient)
@@ -68,7 +66,7 @@ public class ActionStack
 			action.OnStartServer(context);
 	}
 
-	public void AddReload(ActionContext context, ReloadProgress reload)
+	public void AddReload(ActionGroupContext context, ReloadProgress reload)
 	{
 		if(!IsReloading())
 		{
@@ -78,14 +76,14 @@ public class ActionStack
 		}
 	}
 
-	private void EnterReloadState(ActionContext actionContext, ReloadProgress reload, EReloadStage stage)
+	private void EnterReloadState(ActionGroupContext actionContext, ReloadProgress reload, EReloadStage stage)
 	{
 		if(actionContext.IsValid())
 		{
 			ActionDefinition[] reloadActionDefs = reload.Def.GetReloadActions(stage);
 			for (int i = 0; i < reloadActionDefs.length; i++)
 			{
-				Action action = Actions.CreateAction(reloadActionDefs[i], actionContext.InputType());
+				Action action = Actions.CreateAction(actionContext.GroupDef(), reloadActionDefs[i], actionContext.InputType);
 				AddAction(actionContext, action);
 			}
 			reload.CurrentStage = stage;
@@ -95,14 +93,12 @@ public class ActionStack
 			{
 				case LoadOne:
 				{
-					int slotToLoad = actionContext.Gun().GetNextBulletSlotToLoad(actionContext.InputType());
-					actionContext.Gun().LoadOne(actionContext.InputType(), slotToLoad);
+					actionContext.LoadOne(0, actionContext.Gun.GetAttachedInventory());
 					break;
 				}
 			}
 		}
 	}
-
 
 	public void OnTick(Level level, GunContext gunContext)
 	{
@@ -118,6 +114,7 @@ public class ActionStack
 		for(int i = ActiveReloads.size() - 1; i >= 0; i--)
 		{
 			ReloadProgress reload = ActiveReloads.get(i);
+			ActionGroupContext actionContext = ActionGroupContext.CreateFrom(gunContext, reload.ReloadType);
 			reload.TicksInCurrentStage++;
 			if(reload.FinishedCurrentStage())
 			{
@@ -128,7 +125,7 @@ public class ActionStack
 						nextStage = EReloadStage.Eject;
 					}
 					case Eject, LoadOne -> {
-						if(gunContext.CanPerformReloadFromAttachedInventory(reload.ReloadType) && !cancelActionRequested)
+						if(actionContext.CanPerformReloadFromAttachedInventory(0) && !cancelActionRequested)
 							nextStage = EReloadStage.LoadOne;
 						else
 						{
@@ -144,7 +141,6 @@ public class ActionStack
 				}
 				else
 				{
-					ActionContext actionContext = ActionContext.CreateFrom(gunContext, reload.ReloadType);
 					EnterReloadState(actionContext, reload, nextStage);
 				}
 			}
@@ -154,7 +150,7 @@ public class ActionStack
 		for(int i = ActiveActions.size() - 1; i >= 0; i--)
 		{
 			Action action = ActiveActions.get(i);
-			ActionContext actionContext = ActionContext.CreateFrom(gunContext, action.inputType);
+			ActionGroupContext actionContext = ActionGroupContext.CreateFrom(gunContext, action.InputType);
 			if(level.isClientSide)
 				action.OnTickClient(actionContext);
 			else

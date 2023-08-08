@@ -5,13 +5,14 @@ import net.minecraft.resources.ResourceLocation;
 
 public abstract class JsonDefinition
 {
-	public ResourceLocation GetLocation() { return data; }
-	public boolean IsValid() { return !data.getPath().contains("null"); }
+	public String GetLocationString() { return Location.toString(); }
+	public ResourceLocation GetLocation() { return Location; }
+	public boolean IsValid() { return !Location.getPath().contains("null"); }
 
-	public ResourceLocation data;
+	public ResourceLocation Location;
 	public JsonDefinition(ResourceLocation srcLoc)
 	{
-		data = srcLoc;
+		Location = srcLoc;
 	}
 	public abstract String GetTypeName();
 	public void LoadExtra(JsonElement jRoot) {}
@@ -19,6 +20,6 @@ public abstract class JsonDefinition
 	@Override
 	public int hashCode()
 	{
-		return data.hashCode();
+		return Location.hashCode();
 	}
 }

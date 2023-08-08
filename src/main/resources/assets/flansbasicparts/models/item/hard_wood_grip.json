@@ -1,0 +1,42 @@
+{
+    "parent": "item/generated",
+    "textures": {
+        "layer0": "flansbasicparts:item/hard_wood_grip"
+    },
+    "display": {
+        "thirdperson": {
+            "rotation": [
+                -90.0,
+                0.0,
+                0.0
+            ],
+            "translation": [
+                0.0,
+                1.0,
+                -3.0
+            ],
+            "scale": [
+                0.55,
+                0.55,
+                0.55
+            ]
+        },
+        "firstperson": {
+            "rotation": [
+                0.0,
+                -135.0,
+                25.0
+            ],
+            "translation": [
+                0.0,
+                4.0,
+                2.0
+            ],
+            "scale": [
+                1.7,
+                1.7,
+                1.7
+            ]
+        }
+    }
+}

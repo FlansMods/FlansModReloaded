@@ -1,5 +1,6 @@
 package com.flansmod.client.render.models;
 
+import com.flansmod.util.Maths;
 import com.google.common.collect.Maps;
 import com.google.gson.*;
 import net.minecraft.client.renderer.block.model.*;
@@ -78,7 +79,7 @@ public class TurboElement
 		if(applyRotation)
 		{
 			// TODO: Check order
-			Quaternionf rotation = new Quaternionf().rotateZYX(eulerRotations.z, eulerRotations.y, eulerRotations.x);
+			Quaternionf rotation = new Quaternionf().rotateZYX(eulerRotations.z * Maths.DegToRadF, eulerRotations.y * Maths.DegToRadF, eulerRotations.x * Maths.DegToRadF);
 			return new Vector3f[] {
 				new Vector3f(vertices[indices[0]]).rotate(rotation).add(rotationOrigin),
 				new Vector3f(vertices[indices[1]]).rotate(rotation).add(rotationOrigin),

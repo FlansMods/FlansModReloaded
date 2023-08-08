@@ -5,6 +5,7 @@ import com.flansmod.common.types.JsonDefinition;
 import com.flansmod.common.types.JsonField;
 import com.flansmod.common.types.crafting.EMaterialType;
 import com.flansmod.common.types.elements.ItemDefinition;
+import com.flansmod.common.types.elements.ModifierDefinition;
 import com.flansmod.common.types.parts.elements.EngineDefinition;
 import net.minecraft.resources.ResourceLocation;
 
@@ -31,6 +32,8 @@ public class PartDefinition extends JsonDefinition
 
 	@JsonField
 	public ItemDefinition itemSettings = new ItemDefinition();
+	@JsonField
+	public ModifierDefinition[] modifiers = new ModifierDefinition[0];
 
 	// Engine properties
 	@JsonField

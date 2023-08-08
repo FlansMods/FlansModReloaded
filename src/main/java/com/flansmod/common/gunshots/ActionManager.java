@@ -7,7 +7,6 @@ import com.flansmod.common.network.FlansModPacketHandler;
 import com.flansmod.common.network.toclient.ShotFiredMessage;
 import com.flansmod.common.network.toserver.SimpleActionMessage;
 import com.flansmod.common.network.toserver.ShotRequestMessage;
-import com.flansmod.common.types.guns.ERepeatMode;
 import net.minecraft.client.Minecraft;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
@@ -21,7 +20,6 @@ import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -110,9 +108,9 @@ public class ActionManager
 			return;
 
 		// Ask the ShooterContext which actions on which guns we should perform
-		ActionContext[] actionContexts = shooter.GetPrioritisedActions(inputType);
+		ActionGroupContext[] actionContexts = shooter.GetPrioritisedActions(inputType);
 		// Then, in order, perform those actions (with actions able to block subsequent execution)
-		for (ActionContext actionContext : actionContexts)
+		for (ActionGroupContext actionContext : actionContexts)
 		{
 			// First, accumulate our action set and check if they all allow us to start the requested action
 			Action[] actions = actionContext.CreateActions();
@@ -179,8 +177,8 @@ public class ActionManager
 			return;
 
 		// Ask the ShooterContext which actions on which guns we should perform
-		ActionContext[] actionContexts = shooter.GetPrioritisedActions(inputType);
-		for(ActionContext actionContext : actionContexts)
+		ActionGroupContext[] actionContexts = shooter.GetPrioritisedActions(inputType);
+		for(ActionGroupContext actionContext : actionContexts)
 		{
 			// Check the action stack for this action/gun pairing and see if any of them are waiting for mouse release
 			for(Action action : actionContext.ActionStack().GetActions())
@@ -199,8 +197,8 @@ public class ActionManager
 			return;
 
 		// Ask the ShooterContext which actions on which guns we should perform
-		ActionContext[] actionContexts = shooter.GetPrioritisedActions(inputType);
-		for(ActionContext actionContext : actionContexts)
+		ActionGroupContext[] actionContexts = shooter.GetPrioritisedActions(inputType);
+		for(ActionGroupContext actionContext : actionContexts)
 		{
 			// Check the action stack for this action/gun pairing and see if any of them are waiting for mouse release
 			for(Action action : actionContext.ActionStack().GetActions())
@@ -239,7 +237,7 @@ public class ActionManager
 			return;
 		}
 
-		ActionContext actionContext = ActionContext.CreateFrom(gunContext, shotCollection.actionUsed);
+		ActionGroupContext actionContext = ActionGroupContext.CreateFrom(gunContext, shotCollection.actionUsed);
 		Action[] actions = actionContext.CreateActions();
 		for(Action action : actions)
 		{
@@ -304,7 +302,7 @@ public class ActionManager
 			return;
 		}
 
-		ActionContext actionContext = ActionContext.CreateFrom(gunContext, msg.inputType);
+		ActionGroupContext actionContext = ActionGroupContext.CreateFrom(gunContext, msg.inputType);
 		if(!actionContext.IsValid())
 		{
 			FlansMod.LOGGER.warn("OnServerReceivedSimpleAction had invalid action");
@@ -381,7 +379,7 @@ public class ActionManager
 		// TODO: We should hash-check the action set we use, as there could be a race condition
 		// between switching what actions are active for the weapon and triggering this code
 
-		ActionContext actionContext = ActionContext.CreateFrom(gunContext, shotCollection.actionUsed);
+		ActionGroupContext actionContext = ActionGroupContext.CreateFrom(gunContext, shotCollection.actionUsed);
 		Action[] actions = actionContext.CreateActions();
 		boolean verified = true;
 		for(Action action : actions)
@@ -420,7 +418,7 @@ public class ActionManager
 	}
 
 	//
-	private void ServerPropogateShot(ActionContext actionContext, GunshotCollection shotCollection)
+	private void ServerPropogateShot(ActionGroupContext actionContext, GunshotCollection shotCollection)
 	{
 		float noiseLevel = 100.0f; // gunContext.GetNoiseLevel();
 
