@@ -66,7 +66,10 @@ public abstract class ShooterContext
 				EntityID = 0;
 			}
 		}
+		@Override
 		public int hashCode() { return (Dimension.hashCode() << 8) ^ EntityID; }
+		@Override
+		public boolean equals(Object other) { return other instanceof ShooterContextID id && id.hashCode() == hashCode(); }
 	}
 	private static final HashMap<ShooterContextID, ShooterContext> ContextCache = new HashMap<>();
 	@Nonnull

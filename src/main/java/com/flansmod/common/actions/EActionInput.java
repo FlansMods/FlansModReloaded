@@ -1,5 +1,7 @@
 package com.flansmod.common.actions;
 
+import javax.annotation.Nonnull;
+
 // The list of actions one can input to a gun
 public enum EActionInput
 {
@@ -68,14 +70,15 @@ public enum EActionInput
 			default -> { return null; }
 		}
 	}
+
+	@Nonnull
 	public String GetRootTagName()
 	{
 		switch(this)
 		{
 			case PRIMARY, RELOAD_PRIMARY -> { return "primary"; }
 			case SECONDARY, RELOAD_SECONDARY -> { return "secondary"; }
-			case LOOK_AT -> { return "lookat"; }
-			default -> { return null; }
+			default -> { return "lookat"; }
 		}
 	}
 	public String GetMagazineTagName()

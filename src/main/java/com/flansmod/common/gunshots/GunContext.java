@@ -213,35 +213,18 @@ public abstract class GunContext
 	// Only remember parts that we used, not arbitrary item stacks with NBT
 	public PartDefinition[] GetCraftingInputs()
 	{
-		CompoundTag craftingTags = TryGetTags("parts");
-		if(craftingTags != null)
+		if(GetItemStack().getItem() instanceof FlanItem flanItem)
 		{
-			PartDefinition[] parts = new PartDefinition[craftingTags.getAllKeys().size()];
-			int index = 0;
-			for(String key : craftingTags.getAllKeys())
-			{
-				ResourceLocation resLoc = new ResourceLocation(craftingTags.getString(key));
-				parts[index] = FlansMod.PARTS.Get(resLoc);
-				index++;
-			}
-			return parts;
+			return flanItem.GetCraftingInputs(GetItemStack());
 		}
 		return new PartDefinition[0];
 	}
 
 	public void SetCraftingInputs(ItemStack[] stacks)
 	{
-		CompoundTag craftingTags = GetOrCreateTags("parts");
-		int index = 0;
-		for(ItemStack stack : stacks)
+		if(GetItemStack().getItem() instanceof FlanItem flanItem)
 		{
-			if(stack.isEmpty())
-				continue;
-			if(stack.getItem() instanceof PartItem part)
-			{
-				craftingTags.putString(Integer.toString(index), part.DefinitionLocation.toString());
-			}
-			index++;
+			flanItem.SetCraftingInputs(GetItemStack(), stacks);
 		}
 	}
 
@@ -280,16 +263,19 @@ public abstract class GunContext
 	// --------------------------------------------------------------------------
 	public String GetPaintjobName()
 	{
-		if(GetItemStack().hasTag())
+		if(GetItemStack().getItem() instanceof FlanItem flanItem)
 		{
-			return GetItemStack().getTag().getString("paint");
+			return flanItem.GetPaintjobName(GetItemStack());
 		}
 		return "default";
 	}
 
 	public void SetPaintjobName(String paint)
 	{
-		GetItemStack().getOrCreateTag().putString("paint", paint);
+		if(GetItemStack().getItem() instanceof FlanItem flanItem)
+		{
+			flanItem.SetPaintjobName(GetItemStack(), paint);
+		}
 	}
 
 	// --------------------------------------------------------------------------

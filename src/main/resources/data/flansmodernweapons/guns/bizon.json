@@ -26,18 +26,10 @@
             "actions": [
                 {
                     "actionType": "Animation",
-                    "canActUnderwater": true,
-                    "canActUnderOtherLiquid": false,
-                    "canBeOverriden": false,
-                    "twoHanded": false,
-                    "repeatMode": "SemiAuto",
-                    "repeatDelay": 0.0,
-                    "repeatCount": 0,
-                    "spinUpDuration": 1.0,
                     "duration": 0.5,
                     "sounds": [],
                     "itemStack": "",
-                    "shootStats": [],
+                    "modifiers": [],
                     "fovFactor": 1.25,
                     "scopeOverlay": "",
                     "anim": "reload_start",
@@ -47,14 +39,6 @@
                 },
                 {
                     "actionType": "PlaySound",
-                    "canActUnderwater": true,
-                    "canActUnderOtherLiquid": false,
-                    "canBeOverriden": false,
-                    "twoHanded": false,
-                    "repeatMode": "SemiAuto",
-                    "repeatDelay": 0.0,
-                    "repeatCount": 0,
-                    "spinUpDuration": 1.0,
                     "duration": 0.0,
                     "sounds": [
                         {
@@ -69,7 +53,7 @@
                         }
                     ],
                     "itemStack": "",
-                    "shootStats": [],
+                    "modifiers": [],
                     "fovFactor": 1.25,
                     "scopeOverlay": "",
                     "anim": "",
@@ -84,18 +68,10 @@
             "actions": [
                 {
                     "actionType": "Animation",
-                    "canActUnderwater": true,
-                    "canActUnderOtherLiquid": false,
-                    "canBeOverriden": false,
-                    "twoHanded": false,
-                    "repeatMode": "SemiAuto",
-                    "repeatDelay": 0.0,
-                    "repeatCount": 0,
-                    "spinUpDuration": 1.0,
                     "duration": 0.5,
                     "sounds": [],
                     "itemStack": "",
-                    "shootStats": [],
+                    "modifiers": [],
                     "fovFactor": 1.25,
                     "scopeOverlay": "",
                     "anim": "reload_eject",
@@ -110,18 +86,10 @@
             "actions": [
                 {
                     "actionType": "Animation",
-                    "canActUnderwater": true,
-                    "canActUnderOtherLiquid": false,
-                    "canBeOverriden": false,
-                    "twoHanded": false,
-                    "repeatMode": "SemiAuto",
-                    "repeatDelay": 0.0,
-                    "repeatCount": 0,
-                    "spinUpDuration": 1.0,
                     "duration": 0.5,
                     "sounds": [],
                     "itemStack": "",
-                    "shootStats": [],
+                    "modifiers": [],
                     "fovFactor": 1.25,
                     "scopeOverlay": "",
                     "anim": "reload_load_one",
@@ -136,18 +104,10 @@
             "actions": [
                 {
                     "actionType": "Animation",
-                    "canActUnderwater": true,
-                    "canActUnderOtherLiquid": false,
-                    "canBeOverriden": false,
-                    "twoHanded": false,
-                    "repeatMode": "SemiAuto",
-                    "repeatDelay": 0.0,
-                    "repeatCount": 0,
-                    "spinUpDuration": 1.0,
                     "duration": 0.5,
                     "sounds": [],
                     "itemStack": "",
-                    "shootStats": [],
+                    "modifiers": [],
                     "fovFactor": 1.25,
                     "scopeOverlay": "",
                     "anim": "reload_end",
@@ -178,166 +138,146 @@
             "actions": []
         }
     },
-    "primaryActions": [
-        {
-            "actionType": "Shoot",
-            "canActUnderwater": true,
-            "canActUnderOtherLiquid": false,
-            "canBeOverriden": true,
-            "twoHanded": true,
-            "repeatMode": "FullAuto",
-            "repeatDelay": 0.05,
-            "repeatCount": 3,
-            "spinUpDuration": 1.5,
-            "duration": 0.05,
-            "sounds": [],
-            "itemStack": "",
-            "shootStats": [
-                {
-                    "verticalRecoil": 3.0,
-                    "horizontalRecoil": 0.0,
-                    "spread": 8.0,
-                    "spreadPattern": "FilledCircle",
-                    "hitscan": true,
-                    "speed": 0.0,
-                    "bulletCount": 1,
-                    "spinSpeed": 360.0,
-                    "breaksMaterials": [],
-                    "matchAmmoNames": [
-                        "bizon_ammo"
-                    ],
-                    "matchAmmoTags": [],
-                    "penetrationPower": 1.0,
-                    "trailParticles": "",
-                    "impact": {
-                        "decal": "flansmod:effects/bullet_decal.png",
-                        "damageToTarget": 5.0,
-                        "multiplierVsPlayers": 1.0,
-                        "multiplierVsVehicles": 1.0,
-                        "knockback": 0.0,
-                        "splashDamageRadius": 0.0,
-                        "splashDamageFalloff": 0.0,
-                        "setFireToTarget": 0.0,
-                        "fireSpreadRadius": 0.0,
-                        "fireSpreadAmount": 0.0,
-                        "hitSounds": []
+    "primary": {
+        "canActUnderwater": true,
+        "canActUnderOtherLiquid": false,
+        "canBeOverriden": true,
+        "twoHanded": true,
+        "repeatMode": "FullAuto",
+        "repeatDelay": 0.05,
+        "repeatCount": 3,
+        "spinUpDuration": 1.5,
+        "actions": [
+            {
+                "actionType": "Shoot",
+                "duration": 0.05,
+                "sounds": [],
+                "itemStack": "",
+                "modifiers": [],
+                "fovFactor": 1.0,
+                "scopeOverlay": "",
+                "anim": "",
+                "toolLevel": 1.0,
+                "harvestSpeed": 1.0,
+                "reach": 5.0
+            },
+            {
+                "actionType": "PlaySound",
+                "duration": 0.0,
+                "sounds": [
+                    {
+                        "sound": "flansmodernweapons:p90shoot",
+                        "length": 0.0,
+                        "minPitchMultiplier": 0.8333333,
+                        "maxPitchMultiplier": 1.25,
+                        "minVolume": 1.0,
+                        "maxVolume": 1.0,
+                        "maxRange": 100.0,
+                        "LODs": []
                     }
-                }
-            ],
-            "fovFactor": 1.0,
-            "scopeOverlay": "",
-            "anim": "",
-            "toolLevel": 1.0,
-            "harvestSpeed": 1.0,
-            "reach": 5.0
-        },
-        {
-            "actionType": "PlaySound",
-            "canActUnderwater": true,
-            "canActUnderOtherLiquid": false,
-            "canBeOverriden": false,
-            "twoHanded": false,
-            "repeatMode": "SemiAuto",
-            "repeatDelay": 0.0,
-            "repeatCount": 0,
-            "spinUpDuration": 1.0,
-            "duration": 0.0,
-            "sounds": [
-                {
-                    "sound": "flansmodernweapons:p90shoot",
-                    "length": 0.0,
-                    "minPitchMultiplier": 0.8333333,
-                    "maxPitchMultiplier": 1.25,
-                    "minVolume": 1.0,
-                    "maxVolume": 1.0,
-                    "maxRange": 100.0,
-                    "LODs": []
-                }
-            ],
-            "itemStack": "",
-            "shootStats": [],
-            "fovFactor": 1.25,
-            "scopeOverlay": "",
-            "anim": "",
-            "toolLevel": 1.0,
-            "harvestSpeed": 1.0,
-            "reach": 1.0
-        },
-        {
-            "actionType": "Animation",
-            "canActUnderwater": true,
-            "canActUnderOtherLiquid": false,
-            "canBeOverriden": false,
-            "twoHanded": false,
-            "repeatMode": "SemiAuto",
-            "repeatDelay": 0.0,
-            "repeatCount": 0,
-            "spinUpDuration": 1.0,
-            "duration": 0.5,
-            "sounds": [],
-            "itemStack": "",
-            "shootStats": [],
-            "fovFactor": 1.25,
-            "scopeOverlay": "",
-            "anim": "shoot",
-            "toolLevel": 1.0,
-            "harvestSpeed": 1.0,
-            "reach": 1.0
-        }
-    ],
-    "secondaryActions": [
-        {
-            "actionType": "AimDownSights",
-            "canActUnderwater": true,
-            "canActUnderOtherLiquid": false,
-            "canBeOverriden": true,
-            "twoHanded": false,
-            "repeatMode": "SemiAuto",
-            "repeatDelay": 0.0,
-            "repeatCount": 0,
-            "spinUpDuration": 1.0,
-            "duration": 0.0,
-            "sounds": [],
-            "itemStack": "",
-            "shootStats": [],
-            "fovFactor": 1.25,
-            "scopeOverlay": "",
-            "anim": "",
-            "toolLevel": 1.0,
-            "harvestSpeed": 1.0,
-            "reach": 1.0
-        }
-    ],
-    "lookAtActions": [
-        {
-            "actionType": "Animation",
-            "canActUnderwater": true,
-            "canActUnderOtherLiquid": false,
-            "canBeOverriden": false,
-            "twoHanded": false,
-            "repeatMode": "SemiAuto",
-            "repeatDelay": 0.0,
-            "repeatCount": 0,
-            "spinUpDuration": 1.0,
-            "duration": 2.5,
-            "sounds": [],
-            "itemStack": "",
-            "shootStats": [],
-            "fovFactor": 1.25,
-            "scopeOverlay": "",
-            "anim": "look_at",
-            "toolLevel": 1.0,
-            "harvestSpeed": 1.0,
-            "reach": 1.0
-        }
-    ],
+                ],
+                "itemStack": "",
+                "modifiers": [],
+                "fovFactor": 1.25,
+                "scopeOverlay": "",
+                "anim": "",
+                "toolLevel": 1.0,
+                "harvestSpeed": 1.0,
+                "reach": 1.0
+            },
+            {
+                "actionType": "Animation",
+                "duration": 0.1,
+                "sounds": [],
+                "itemStack": "",
+                "modifiers": [],
+                "fovFactor": 1.25,
+                "scopeOverlay": "",
+                "anim": "shoot",
+                "toolLevel": 1.0,
+                "harvestSpeed": 1.0,
+                "reach": 1.0
+            }
+        ]
+    },
+    "secondary": {
+        "canActUnderwater": true,
+        "canActUnderOtherLiquid": false,
+        "canBeOverriden": true,
+        "twoHanded": true,
+        "repeatMode": "FullAuto",
+        "repeatDelay": 0.05,
+        "repeatCount": 3,
+        "spinUpDuration": 1.5,
+        "actions": [
+            {
+                "actionType": "AimDownSights",
+                "duration": 0.0,
+                "sounds": [],
+                "itemStack": "",
+                "modifiers": [],
+                "fovFactor": 1.25,
+                "scopeOverlay": "",
+                "anim": "",
+                "toolLevel": 1.0,
+                "harvestSpeed": 1.0,
+                "reach": 1.0
+            },
+            {
+                "actionType": "Animation",
+                "duration": 0.0,
+                "sounds": [],
+                "itemStack": "",
+                "modifiers": [],
+                "fovFactor": 1.25,
+                "scopeOverlay": "",
+                "anim": "aim_down_sights",
+                "toolLevel": 1.0,
+                "harvestSpeed": 1.0,
+                "reach": 1.0
+            }
+        ]
+    },
+    "lookAt": {
+        "canActUnderwater": true,
+        "canActUnderOtherLiquid": false,
+        "canBeOverriden": false,
+        "twoHanded": false,
+        "repeatMode": "SemiAuto",
+        "repeatDelay": 0.0,
+        "repeatCount": 0,
+        "spinUpDuration": 1.0,
+        "actions": [
+            {
+                "actionType": "Animation",
+                "duration": 2.5,
+                "sounds": [],
+                "itemStack": "",
+                "modifiers": [],
+                "fovFactor": 1.25,
+                "scopeOverlay": "",
+                "anim": "look_at",
+                "toolLevel": 1.0,
+                "harvestSpeed": 1.0,
+                "reach": 1.0
+            }
+        ]
+    },
+    "primaryMagazines": {
+        "matchByNames": [
+            "bizon_ammo"
+        ],
+        "matchByTags": []
+    },
+    "secondaryMagazines": {
+        "matchByNames": [],
+        "matchByTags": []
+    },
     "startSpinUpActions": [],
     "reachMaxSpinActions": [],
     "startSpinDownActions": [],
     "reachZeroSpinActions": [],
     "loopingSounds": [],
-    "numBullets": 1,
-    "AmmoConsumeMode": "LastNonEmpty",
     "barrelAttachments": {
         "allowlist": [],
         "allowAll": true,

@@ -4,6 +4,7 @@ import com.flansmod.client.gui.crafting.WorkbenchScreen;
 import com.flansmod.client.render.ClientRenderHooks;
 import com.flansmod.client.input.ClientInputHooks;
 import com.flansmod.client.render.FlanModelRegistration;
+import com.flansmod.client.render.MagazineTextureAtlas;
 import com.flansmod.client.render.animation.AnimationDefinitions;
 import com.flansmod.client.render.debug.DebugModelPoser;
 import com.flansmod.client.render.debug.DebugRenderer;
@@ -19,6 +20,7 @@ import net.minecraft.client.renderer.ShaderInstance;
 import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.ModelEvent;
+import net.minecraftforge.client.event.RegisterClientReloadListenersEvent;
 import net.minecraftforge.client.event.RegisterShadersEvent;
 import net.minecraftforge.event.AddReloadListenerEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
@@ -41,6 +43,7 @@ public class FlansModClient
 	public static AnimationDefinitions ANIMATIONS = new AnimationDefinitions();
 	public static DecalRenderer DECAL_RENDERER = new DecalRenderer();
 	public static ActionManager ACTIONS_CLIENT = new ActionManager(true);
+	public static MagazineTextureAtlas MAGAZINE_ATLAS = new MagazineTextureAtlas();
 
 	@Nullable
 	private static ShaderInstance GUN_CUTOUT;
@@ -84,12 +87,19 @@ public class FlansModClient
 		new DebugModelPoser().Init();
 		MODEL_REGISTRATION.hook(modEventBus);
 		modEventBus.register(ANIMATIONS);
+		MAGAZINE_ATLAS.Init();
 
 		// Screens
 		MenuScreens.register(FlansMod.WORKBENCH_MENU.get(), WorkbenchScreen::new);
 	}
 
-	public static void RegisterClientReloadListeners(AddReloadListenerEvent event)
+	@SubscribeEvent
+	public static void RegisterClientReloadListeners(RegisterClientReloadListenersEvent event)
+	{
+		event.registerReloadListener(MAGAZINE_ATLAS);
+	}
+
+	public static void RegisterClientDataReloadListeners(AddReloadListenerEvent event)
 	{
 		event.addListener(ANIMATIONS);
 	}

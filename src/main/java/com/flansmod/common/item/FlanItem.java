@@ -1,11 +1,14 @@
 package com.flansmod.common.item;
 
+import com.flansmod.common.FlansMod;
 import com.flansmod.common.types.JsonDefinition;
 import com.flansmod.common.types.attachments.EAttachmentType;
 import com.flansmod.common.types.elements.AttachmentSettingsDefinition;
 import com.flansmod.common.types.elements.PaintableDefinition;
 import com.flansmod.common.types.elements.PaintjobDefinition;
 import com.flansmod.common.types.guns.GunDefinition;
+import com.flansmod.common.types.magazines.MagazineDefinition;
+import com.flansmod.common.types.parts.PartDefinition;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
@@ -13,6 +16,7 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
+import org.checkerframework.checker.units.qual.C;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -108,6 +112,9 @@ public abstract class FlanItem extends Item
         CompoundTag saveTags = new CompoundTag();
         attachmentStack.save(saveTags);
         attachTags.put(GetSlotKey(type, slot), saveTags);
+
+        if(!tags.contains("attachments"))
+            tags.put("attachments", attachTags);
     }
 
     public ItemStack RemoveAttachmentFromSlot(ItemStack stack, EAttachmentType type, int slot)
@@ -138,5 +145,41 @@ public abstract class FlanItem extends Item
     public void SetPaintjobName(ItemStack stack, String paint)
     {
         stack.getOrCreateTag().putString("paint", paint);
+    }
+
+    // Only remember parts that we used, not arbitrary item stacks with NBT
+    public PartDefinition[] GetCraftingInputs(ItemStack stack)
+    {
+        if(stack.hasTag() && stack.getTag().contains("parts"))
+        {
+            CompoundTag craftingTags = stack.getTag().getCompound("parts");
+            PartDefinition[] parts = new PartDefinition[craftingTags.getAllKeys().size()];
+            int index = 0;
+            for(String key : craftingTags.getAllKeys())
+            {
+                ResourceLocation resLoc = new ResourceLocation(craftingTags.getString(key));
+                parts[index] = FlansMod.PARTS.Get(resLoc);
+                index++;
+            }
+            return parts;
+        }
+        return new PartDefinition[0];
+    }
+
+    public void SetCraftingInputs(ItemStack stack, ItemStack[] partStacks)
+    {
+        CompoundTag craftingTags = new CompoundTag();
+        int index = 0;
+        for(ItemStack partStack : partStacks)
+        {
+            if(partStack.isEmpty())
+                continue;
+            if(partStack.getItem() instanceof PartItem part)
+            {
+                craftingTags.putString(Integer.toString(index), part.DefinitionLocation.toString());
+            }
+            index++;
+        }
+        stack.getTag().put("parts", craftingTags);
     }
 }

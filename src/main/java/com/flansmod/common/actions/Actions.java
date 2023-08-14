@@ -4,9 +4,11 @@ import com.flansmod.common.types.elements.ActionDefinition;
 import com.flansmod.common.types.elements.ActionGroupDefinition;
 import net.minecraft.world.InteractionHand;
 
+import javax.annotation.Nonnull;
+
 public class Actions
 {
-	public static Action CreateAction(ActionGroupDefinition groupDef, ActionDefinition def, EActionInput inputType)
+	public static Action CreateAction(@Nonnull ActionGroupDefinition groupDef, @Nonnull ActionDefinition def, EActionInput inputType)
 	{
 		switch(def.actionType)
 		{

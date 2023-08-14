@@ -1,0 +1,15 @@
+{
+    "tags": [
+        "flansvendersgame:fc_hawk"
+    ],
+    "modifiers": [],
+    "ammoLoadMode": "FullMag",
+    "ammoConsumeMode": "FirstNonEmpty",
+    "numRounds": 7,
+    "allRoundsMustBeIdentical": false,
+    "matchBulletNames": [],
+    "requiredBulletTags": [
+        "flansmod:pistol_bullet"
+    ],
+    "disallowedBulletTags": []
+}

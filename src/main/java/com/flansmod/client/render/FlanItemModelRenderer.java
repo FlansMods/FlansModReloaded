@@ -51,6 +51,7 @@ public abstract class FlanItemModelRenderer extends BlockEntityWithoutLevelRende
                     .setShaderState(GUN_CUTOUT_SHADER)
                     .setTextureState(new RenderStateShard.TextureStateShard(p_173204_, false, false))
                     .setTransparencyState(NO_TRANSPARENCY)
+                    .setCullState(CULL)
                     .setOverlayState(OVERLAY)
                     .setLightmapState(LIGHTMAP)
                     .setDepthTestState(LEQUAL_DEPTH_TEST)

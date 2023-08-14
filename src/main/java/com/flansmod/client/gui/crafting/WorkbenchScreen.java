@@ -4,14 +4,19 @@ import com.flansmod.client.FlansModClient;
 import com.flansmod.client.render.FlanItemModelRenderer;
 import com.flansmod.client.render.RenderContext;
 import com.flansmod.common.FlansMod;
+import com.flansmod.common.actions.EActionInput;
 import com.flansmod.common.crafting.FabricationRecipeMatcher;
 import com.flansmod.common.crafting.WorkbenchBlockEntity;
 import com.flansmod.common.crafting.WorkbenchMenu;
 import com.flansmod.common.item.FlanItem;
+import com.flansmod.common.item.GunItem;
 import com.flansmod.common.item.PartItem;
 import com.flansmod.common.types.crafting.WorkbenchDefinition;
 import com.flansmod.common.types.crafting.elements.*;
+import com.flansmod.common.types.elements.MagazineSlotSettingsDefinition;
 import com.flansmod.common.types.elements.PaintableDefinition;
+import com.flansmod.common.types.guns.GunDefinition;
+import com.flansmod.common.types.magazines.MagazineDefinition;
 import com.flansmod.util.Maths;
 import com.flansmod.util.MinecraftHelpers;
 import com.mojang.blaze3d.platform.GlStateManager;
@@ -28,6 +33,7 @@ import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.block.model.ItemTransforms;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.client.renderer.texture.TextureAtlas;
+import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.FormattedText;
@@ -41,6 +47,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraftforge.registries.ForgeRegistries;
 import org.joml.Quaternionf;
+import org.joml.Vector3f;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -197,6 +204,11 @@ public class WorkbenchScreen extends AbstractContainerScreen<WorkbenchMenu>
 	{
 		super.render(pose, xMouse, yMouse, f);
 
+		if (menu.getCarried().isEmpty() && hoveredSlot != null && hoveredSlot.hasItem())
+		{
+			super.renderTooltip(pose, xMouse, yMouse);
+			return;
+		}
 		if(RenderSharedTooltip(pose, xMouse, yMouse))
 			return;
 		switch(SelectedTab)
@@ -206,7 +218,7 @@ public class WorkbenchScreen extends AbstractContainerScreen<WorkbenchMenu>
 			case GUN_CRAFTING -> { if(RenderGunCraftingTooltip(pose, xMouse, yMouse)) return; }
 			case MODIFICATION -> { if(RenderGunModifyingTooltip(pose, xMouse, yMouse)) return; }
 		}
-		renderTooltip(pose, xMouse, yMouse);
+		//renderTooltip(pose, xMouse, yMouse);
 	}
 
 	@Override
@@ -446,9 +458,27 @@ public class WorkbenchScreen extends AbstractContainerScreen<WorkbenchMenu>
 	// ================================================= GUN MODIFYING =================================================
 	// =================================================================================================================
 	private static final ResourceLocation GUN_MODIFICATION_BG = new ResourceLocation(FlansMod.MODID, "textures/gui/gun_modification_table.png");
+
+	private static final int ATTACHMENT_SLOTS_ORIGIN_X = 5;
+	private static final int ATTACHMENT_SLOTS_ORIGIN_Y = 26;
+
+	private static final int PAINT_BUCKET_SLOT_ORIGIN_X = 76;
+	private static final int PAINT_BUCKET_SLOT_ORIGIN_Y = 25;
+	private static final int MAG_UPGRADE_SLOT_ORIGIN_X = 76;
+	private static final int MAG_UPGRADE_SLOT_ORIGIN_Y = 83;
+
+	private static final int SKIN_SELECTOR_ORIGIN_X = 96;
+	private static final int SKIN_SELECTOR_ORIGIN_Y = 16;
 	private static final int SKINS_PER_ROW = 4;
 	private static final int SKIN_ROWS = 3;
 	private final Button[] SkinButtons = new Button[SKINS_PER_ROW * SKIN_ROWS];
+
+	private static final int MAGAZINE_SELECTOR_ORIGIN_X = 96;
+	private static final int MAGAZINE_SELECTOR_ORIGIN_Y = 74;
+	private static final int MAGAZINES_PER_ROW = 4;
+	private static final int MAGAZINE_ROWS = 2;
+	private final Button[] MagazineButtons = new Button[MAGAZINES_PER_ROW * MAGAZINE_ROWS];
+
 
 	private boolean HasGunModifying()
 	{
@@ -484,6 +514,25 @@ public class WorkbenchScreen extends AbstractContainerScreen<WorkbenchMenu>
 						SkinButtons[index].active = index < numSkinButtons;
 				}
 			}
+
+			int numMagButtons = 0;
+			if (enabled && Workbench.GunContainer.getContainerSize() > 0 && Workbench.GunContainer.getItem(0).getItem() instanceof FlanItem flanItem)
+			{
+				if(flanItem.Def() instanceof GunDefinition gunDefinition)
+				{
+					numMagButtons = gunDefinition.primaryMagazines.GetMatchingMagazines().size();
+				}
+			}
+
+			for (int i = 0; i < MAGAZINES_PER_ROW; i++)
+			{
+				for (int j = 0; j < MAGAZINE_ROWS; j++)
+				{
+					final int index = i + j * MAGAZINES_PER_ROW;
+					if (MagazineButtons[index] != null)
+						MagazineButtons[index].active = index < numMagButtons;
+				}
+			}
 		}
 	}
 
@@ -503,9 +552,27 @@ public class WorkbenchScreen extends AbstractContainerScreen<WorkbenchMenu>
 							NetworkedButtonPress(WorkbenchMenu.BUTTON_SELECT_SKIN_0 + index);
 							//SelectSkin(index);
 						})
-						.bounds(xOrigin + 84 + 18 * i, yOrigin + 45 + 18 * j, 18, 18)
+						.bounds(xOrigin + SKIN_SELECTOR_ORIGIN_X + 18 * i, yOrigin + SKIN_SELECTOR_ORIGIN_Y + 18 * j, 18, 18)
 						.build();
 					addWidget(SkinButtons[index]);
+				}
+			}
+
+			for (int i = 0; i < MAGAZINES_PER_ROW; i++)
+			{
+				for (int j = 0; j < MAGAZINE_ROWS; j++)
+				{
+					final int index = i + j * MAGAZINES_PER_ROW;
+					MagazineButtons[index] = Button.builder(
+							Component.empty(),
+							(t) ->
+							{
+								NetworkedButtonPress(WorkbenchMenu.BUTTON_SELECT_MAGAZINE_0 + index);
+								//SelectSkin(index);
+							})
+						.bounds(xOrigin + MAGAZINE_SELECTOR_ORIGIN_X + 18 * i, yOrigin + MAGAZINE_SELECTOR_ORIGIN_Y + 18 * j, 18, 18)
+						.build();
+					addWidget(MagazineButtons[index]);
 				}
 			}
 		}
@@ -513,6 +580,106 @@ public class WorkbenchScreen extends AbstractContainerScreen<WorkbenchMenu>
 
 	private boolean RenderGunModifyingTooltip(PoseStack pose, int xMouse, int yMouse)
 	{
+		int xOrigin = (width - imageWidth) / 2;
+		int yOrigin = (height - imageHeight) / 2;
+
+		if(InBox(xMouse, yMouse, xOrigin + PAINT_BUCKET_SLOT_ORIGIN_X, 18, yOrigin + PAINT_BUCKET_SLOT_ORIGIN_Y, 18))
+		{
+			renderTooltip(pose, Component.translatable("workbench.slot.paint_can"), xMouse, yMouse);
+			return true;
+		}
+		if(InBox(xMouse, yMouse, xOrigin + MAG_UPGRADE_SLOT_ORIGIN_X, 18, yOrigin + MAG_UPGRADE_SLOT_ORIGIN_Y, 18))
+		{
+			renderTooltip(pose, Component.translatable("workbench.slot.mag_upgrade"), xMouse, yMouse);
+			return true;
+		}
+
+
+		if (InBox(xMouse, yMouse, xOrigin + ATTACHMENT_SLOTS_ORIGIN_X + 26, 24, yOrigin + ATTACHMENT_SLOTS_ORIGIN_Y + 26, 24))
+		{
+			renderTooltip(pose, Component.translatable("workbench.slot.gun"), xMouse, yMouse);
+			return true;
+		}
+
+
+
+
+		if (Workbench.GunContainer.getContainerSize() >= 0)
+		{
+			// If we have a gun in that slot, we should render the modification slots that are allowed for this gun
+			if (!Workbench.GunContainer.isEmpty() && Workbench.GunContainer.getItem(0).getItem() instanceof FlanItem flanItem)
+			{
+				ItemStack gunStack = Workbench.GunContainer.getItem(0);
+
+				for (WorkbenchMenu.ModSlot modSlot : WorkbenchMenu.ModSlot.values())
+				{
+					if(flanItem.HasAttachmentSlot(modSlot.attachType, modSlot.attachIndex))
+					{
+						if (InBox(xMouse, yMouse, xOrigin + ATTACHMENT_SLOTS_ORIGIN_X + modSlot.x * 26, 24, yOrigin + ATTACHMENT_SLOTS_ORIGIN_Y + modSlot.y * 26, 24))
+						{
+							renderTooltip(pose, Component.translatable("workbench.slot.attachments." + modSlot.attachType.toString().toLowerCase()), xMouse, yMouse);
+							return true;
+						}
+					}
+				}
+
+				PaintableDefinition paintableDefinition = flanItem.GetPaintDef();
+				if(paintableDefinition.paintjobs.length > 0)
+				{
+					// Default skin button
+					if(InBox(xMouse, yMouse, xOrigin + SKIN_SELECTOR_ORIGIN_X, 18, yOrigin + SKIN_SELECTOR_ORIGIN_Y, 18))
+					{
+						List<FormattedCharSequence> lines = new ArrayList<>();
+						lines.add(Component.translatable("paintjob.default").getVisualOrderText());
+						renderTooltip(pose, lines, xMouse, yMouse);
+						return true;
+					}
+					// Other skin buttons
+					for(int p = 0; p < paintableDefinition.paintjobs.length; p++)
+					{
+						int xIndex = (p + 1) % SKINS_PER_ROW;
+						int yIndex = (p + 1) / SKINS_PER_ROW;
+						if(InBox(xMouse, yMouse, xOrigin + SKIN_SELECTOR_ORIGIN_X + 18 * xIndex, 18, yOrigin + SKIN_SELECTOR_ORIGIN_Y + 18 * yIndex, 18))
+						{
+							List<FormattedCharSequence> lines = new ArrayList<>();
+							lines.add(Component.translatable("paintjob." + flanItem.DefinitionLocation.getNamespace() + "." + paintableDefinition.paintjobs[p].textureName).getVisualOrderText());
+							lines.add(Component.translatable("paintjob.cost").getVisualOrderText());
+
+							renderTooltip(pose, lines, xMouse, yMouse);
+							return true;
+						}
+					}
+				}
+
+				if (flanItem.Def() instanceof GunDefinition gunDef)
+				{
+					MagazineSlotSettingsDefinition magSettings = gunDef.GetMagazineSettings(EActionInput.PRIMARY);
+					List<MagazineDefinition> matchingMags = magSettings.GetMatchingMagazines();
+
+
+
+					for (int j = 0; j < MAGAZINE_ROWS; j++)
+					{
+						for (int i = 0; i < MAGAZINES_PER_ROW; i++)
+						{
+							final int index = j * MAGAZINES_PER_ROW + i;
+							if(index < matchingMags.size())
+							{
+								if(InBox(xMouse, yMouse, xOrigin + MAGAZINE_SELECTOR_ORIGIN_X + 18 * i, 18, yOrigin + MAGAZINE_SELECTOR_ORIGIN_Y + 18 * j, 18))
+								{
+									List<FormattedCharSequence> lines = new ArrayList<>();
+									lines.add(Component.translatable("magazine." + matchingMags.get(i).Location.getNamespace() + "." + matchingMags.get(i).Location.getPath()).getVisualOrderText());
+									lines.add(Component.translatable("magazine.num_rounds", matchingMags.get(i).numRounds).getVisualOrderText());
+
+									renderTooltip(pose, lines, xMouse, yMouse);
+									return true;
+								}
+							}
+						}
+					}
+				}
+			}
+		}
 		return false;
 	}
 
@@ -521,7 +688,16 @@ public class WorkbenchScreen extends AbstractContainerScreen<WorkbenchMenu>
 		// Render the gun before the background so it ends up behind
 		if(Workbench.GunContainer.getContainerSize() > 0)
 		{
-			RenderGunStack(pose, xOrigin + 126, yOrigin + 31, Workbench.GunContainer.getItem(0));
+			pose.pushPose();
+			pose.translate(xOrigin + imageWidth + 64f, yOrigin + 64f, 0f);
+			pose.mulPose(new Quaternionf()
+				.rotateLocalZ(-Maths.PiF * 0.25f)
+				.rotateLocalY(Minecraft.getInstance().level.getGameTime() * 0.01f));
+			pose.translate(-10f, 0f, 0f);
+
+			RenderGunStack(pose, 0, 0, Workbench.GunContainer.getItem(0));
+			//xOrigin + 126, yOrigin + 31
+			pose.popPose();
 		}
 
 		// Render the background image
@@ -534,7 +710,12 @@ public class WorkbenchScreen extends AbstractContainerScreen<WorkbenchMenu>
 		if (Workbench.GunContainer.getContainerSize() >= 0)
 		{
 			// Render the slot BG for the gun slot
-			blit(pose, xOrigin + 31, yOrigin + 48, getBlitOffset(), 198, 26, 22, 22, TEXTURE_WIDTH, TEXTURE_HEIGHT);
+			blit(pose, xOrigin + ATTACHMENT_SLOTS_ORIGIN_X + 26, yOrigin + ATTACHMENT_SLOTS_ORIGIN_Y + 26, getBlitOffset(), 198, 26, 22, 22, TEXTURE_WIDTH, TEXTURE_HEIGHT);
+
+			// Paint Can Slot
+			blit(pose, xOrigin + PAINT_BUCKET_SLOT_ORIGIN_X, yOrigin + PAINT_BUCKET_SLOT_ORIGIN_Y, getBlitOffset(), 208, 201, 18, 18, TEXTURE_WIDTH, TEXTURE_HEIGHT);
+			// Mag Slot
+			blit(pose, xOrigin + MAG_UPGRADE_SLOT_ORIGIN_X, yOrigin + MAG_UPGRADE_SLOT_ORIGIN_Y, getBlitOffset(), 190, 201, 18, 18, TEXTURE_WIDTH, TEXTURE_HEIGHT);
 
 			// If we have a gun in that slot, we should render the modification slots that are allowed for this gun
 			if (!Workbench.GunContainer.isEmpty() && Workbench.GunContainer.getItem(0).getItem() instanceof FlanItem flanItem)
@@ -546,8 +727,8 @@ public class WorkbenchScreen extends AbstractContainerScreen<WorkbenchMenu>
 					if (flanItem.HasAttachmentSlot(modSlot.attachType, modSlot.attachIndex))
 					{
 						blit(pose,
-							xOrigin + 5 + 26 * modSlot.x,
-							yOrigin + 22 + 26 * modSlot.y,
+							xOrigin + ATTACHMENT_SLOTS_ORIGIN_X + 26 * modSlot.x,
+							yOrigin + ATTACHMENT_SLOTS_ORIGIN_Y + 26 * modSlot.y,
 							getBlitOffset(),
 							172 + 26 * modSlot.x,
 							26 * modSlot.y,
@@ -562,9 +743,9 @@ public class WorkbenchScreen extends AbstractContainerScreen<WorkbenchMenu>
 					// Default skin button
 					if(flanItem.GetPaintjobName(gunStack).equals("default"))
 					{
-						blit(pose, xOrigin + 84, yOrigin + 50, getBlitOffset(), 172, 201, 18, 18, TEXTURE_WIDTH, TEXTURE_HEIGHT);
+						blit(pose, xOrigin + SKIN_SELECTOR_ORIGIN_X, yOrigin + SKIN_SELECTOR_ORIGIN_Y, getBlitOffset(), 172, 201, 18, 18, TEXTURE_WIDTH, TEXTURE_HEIGHT);
 					}
-					else blit(pose, xOrigin + 84, yOrigin + 50, getBlitOffset(), 172, 165, 18, 18, TEXTURE_WIDTH, TEXTURE_HEIGHT);
+					else blit(pose, xOrigin + SKIN_SELECTOR_ORIGIN_X, yOrigin + SKIN_SELECTOR_ORIGIN_Y, getBlitOffset(), 172, 165, 18, 18, TEXTURE_WIDTH, TEXTURE_HEIGHT);
 
 					// Other skin buttons
 					for(int p = 0; p < paintableDefinition.paintjobs.length; p++)
@@ -573,16 +754,31 @@ public class WorkbenchScreen extends AbstractContainerScreen<WorkbenchMenu>
 						int yIndex = (p + 1) / SKINS_PER_ROW;
 						if(flanItem.GetPaintjobName(gunStack).equals(paintableDefinition.paintjobs[p].textureName))
 						{
-							blit(pose, xOrigin + 84 + 18 * xIndex, yOrigin + 50 + 18 * yIndex, getBlitOffset(), 172, 201, 18, 18, TEXTURE_WIDTH, TEXTURE_HEIGHT);
+							blit(pose, xOrigin + SKIN_SELECTOR_ORIGIN_X + 18 * xIndex, yOrigin + SKIN_SELECTOR_ORIGIN_Y + 18 * yIndex, getBlitOffset(), 172, 201, 18, 18, TEXTURE_WIDTH, TEXTURE_HEIGHT);
 						}
-						else blit(pose, xOrigin + 84 + 18 * xIndex, yOrigin + 50 + 18 * yIndex, getBlitOffset(), 172, 165, 18, 18, TEXTURE_WIDTH, TEXTURE_HEIGHT);
+						else blit(pose, xOrigin + SKIN_SELECTOR_ORIGIN_X + 18 * xIndex, yOrigin + SKIN_SELECTOR_ORIGIN_Y + 18 * yIndex, getBlitOffset(), 172, 165, 18, 18, TEXTURE_WIDTH, TEXTURE_HEIGHT);
 					}
 				}
 
-				for(int i = 0; i < 4; i++)
+
+				// Magazine selector
+				if(flanItem instanceof GunItem gunItem)
 				{
-					// Magazine selector
-					blit(pose, xOrigin + 84 + i * 18, yOrigin + 90, getBlitOffset(), 172, 165, 18, 18, TEXTURE_WIDTH, TEXTURE_HEIGHT);
+					MagazineSlotSettingsDefinition magSettings = gunItem.Def().GetMagazineSettings(EActionInput.PRIMARY);
+					List<MagazineDefinition> matchingMags = magSettings.GetMatchingMagazines();
+					MagazineDefinition currentMagType = gunItem.GetMagazineType(gunStack, EActionInput.PRIMARY, 0);
+					for(int i = 0; i < matchingMags.size(); i++)
+					{
+						int xIndex = i % SKINS_PER_ROW;
+						int yIndex = i / SKINS_PER_ROW;
+
+						if(matchingMags.get(i) == currentMagType)
+						{
+							blit(pose, xOrigin + MAGAZINE_SELECTOR_ORIGIN_X + xIndex * 18, yOrigin + MAGAZINE_SELECTOR_ORIGIN_Y + yIndex * 18, getBlitOffset(), 172, 201, 18, 18, TEXTURE_WIDTH, TEXTURE_HEIGHT);
+						}
+						else blit(pose, xOrigin + MAGAZINE_SELECTOR_ORIGIN_X + xIndex * 18, yOrigin + MAGAZINE_SELECTOR_ORIGIN_Y + yIndex * 18, getBlitOffset(), 172, 165, 18, 18, TEXTURE_WIDTH, TEXTURE_HEIGHT);
+					}
+
 				}
 			}
 		}
@@ -605,7 +801,7 @@ public class WorkbenchScreen extends AbstractContainerScreen<WorkbenchMenu>
 					{
 						ItemStack paintedStack = gunStack.copy();
 						flanItem.SetPaintjobName(paintedStack, "default");
-						itemRenderer.renderGuiItem(paintedStack, 85, 51);
+						itemRenderer.renderGuiItem(paintedStack, SKIN_SELECTOR_ORIGIN_X + 1,  SKIN_SELECTOR_ORIGIN_Y + 1);
 					}
 
 					// And other skins
@@ -615,11 +811,34 @@ public class WorkbenchScreen extends AbstractContainerScreen<WorkbenchMenu>
 						int yIndex = (p + 1) / SKINS_PER_ROW;
 						ItemStack paintedStack = gunStack.copy();
 						flanItem.SetPaintjobName(paintedStack, paintableDefinition.paintjobs[p].textureName);
-						itemRenderer.renderGuiItem(paintedStack, 85 + 18 * xIndex, 51 + 18 * yIndex);
+						itemRenderer.renderGuiItem(paintedStack, SKIN_SELECTOR_ORIGIN_X + 1 + 18 * xIndex, SKIN_SELECTOR_ORIGIN_Y + 1 + 18 * yIndex);
 					}
+				}
+
+				if(flanItem.Def() instanceof GunDefinition gunDef)
+				{
+					MagazineSlotSettingsDefinition magSettings = gunDef.GetMagazineSettings(EActionInput.PRIMARY);
+					List<MagazineDefinition> matchingMags = magSettings.GetMatchingMagazines();
+					for(int i = 0; i < matchingMags.size(); i++)
+					{
+						int xIndex = i % MAGAZINES_PER_ROW;
+						int yIndex = i / MAGAZINES_PER_ROW;
+
+						// RENDER MAG
+						TextureAtlasSprite sprite = FlansModClient.MAGAZINE_ATLAS.GetIcon(matchingMags.get(i).Location);
+						RenderSystem.setShader(GameRenderer::getPositionTexShader);
+						RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
+						RenderSystem.setShaderTexture(0, sprite.atlasLocation());
+
+
+						blit(pose, MAGAZINE_SELECTOR_ORIGIN_X + 1 + xIndex * 18, MAGAZINE_SELECTOR_ORIGIN_Y + 1 + yIndex * 18, getBlitOffset(), 16, 16, sprite);
+					}
+
 				}
 			}
 		}
+
+
 	}
 
 	// =================================================================================================================
@@ -1380,7 +1599,7 @@ public class WorkbenchScreen extends AbstractContainerScreen<WorkbenchMenu>
 			{
 				MultiBufferSource.BufferSource buffers = Minecraft.getInstance().renderBuffers().bufferSource();
 				pose.translate(x + 8, y + 12, getBlitOffset());
-				pose.scale(32f, 32f, 32f);
+				pose.scale(-32f, 32f, 32f);
 				pose.mulPose(new Quaternionf().rotateLocalX(Maths.PiF));
 				pose.mulPose(new Quaternionf().rotateLocalY(Maths.PiF));
 				gunRenderer.Render(null, gunStack, new RenderContext(

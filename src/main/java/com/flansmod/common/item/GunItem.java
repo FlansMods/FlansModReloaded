@@ -9,9 +9,11 @@ import com.flansmod.common.types.elements.ActionDefinition;
 import com.flansmod.common.types.elements.ModifierDefinition;
 import com.flansmod.common.types.guns.ERepeatMode;
 import com.flansmod.common.types.guns.GunDefinition;
+import com.flansmod.common.types.magazines.MagazineDefinition;
 import com.flansmod.common.types.parts.PartDefinition;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.InteractionHand;
@@ -119,6 +121,8 @@ public class GunItem extends FlanItem
                     }
                 }
 
+                MagazineDefinition magDef = actionContext.GetMagazineType(0);
+                tooltips.add(Component.translatable("magazine." + magDef.Location.getNamespace() + "." + magDef.Location.getPath()));
                 int primaryBullets = actionContext.GetMagazineSize(0);
                 if(primaryBullets == 1)
                 {
@@ -155,6 +159,47 @@ public class GunItem extends FlanItem
                 }
             }
         }
+    }
+
+    public CompoundTag GetRootTag(ItemStack stack, EActionInput inputType)
+    {
+        return stack.getOrCreateTag().getCompound(inputType.GetRootTagName());
+    }
+
+    public CompoundTag GetMagTag(ItemStack stack, EActionInput inputType, int magIndex)
+    {
+        CompoundTag rootTag = GetRootTag(stack, inputType);
+        final String magTag = "mag_" + magIndex;
+        if (!rootTag.contains(magTag))
+            rootTag.put(magTag, new CompoundTag());
+        return rootTag.getCompound(magTag);
+    }
+
+    public MagazineDefinition GetMagazineType(ItemStack stack, EActionInput inputType, int magIndex)
+    {
+        // Get the root tag for our magazine
+        CompoundTag magTags = GetMagTag(stack, inputType, magIndex);
+        if(magTags.contains("type"))
+        {
+            String type = magTags.getString("type");
+            ResourceLocation magLoc = new ResourceLocation(type);
+            return FlansMod.MAGAZINES.Get(magLoc);
+        }
+        List<MagazineDefinition> matches = Def().GetMagazineSettings(inputType).GetMatchingMagazines();
+        if(matches.size() > 0)
+        {
+            FlansMod.LOGGER.warn("ItemStack " + stack + " had no mag type tag, but default found.");
+            SetMagazineType(stack, inputType, magIndex, matches.get(0));
+            return matches.get(0);
+        }
+        FlansMod.LOGGER.warn("ItemStack " + stack + " had no mag type tag, and no default for that gun found.");
+        return MagazineDefinition.INVALID;
+    }
+
+    public void SetMagazineType(ItemStack stack, EActionInput inputType, int magIndex, MagazineDefinition magDef)
+    {
+        CompoundTag magTags = GetMagTag(stack, inputType, magIndex);
+        magTags.putString("type", magDef.GetLocationString());
     }
 
     @OnlyIn(Dist.CLIENT)

@@ -42,7 +42,7 @@
   "tooltip.format.secondarystatline": "Alt.:\uE780%.0f \uE781%.0f %s \uE783%.0f",
   
   "tooltip.crafted_from": "[%s]",
-  "tooltip.crafted_from.modifier": "> %s",
+  "tooltip.crafted_from.modifier_format": "> %s",
 	
   "modifier.increase_stat": "+%s %s",
   "modifier.decrease_stat": "-%s %s",
@@ -71,6 +71,17 @@
   "modifier.stat_name.fire_spread_radius": "Fire Spread Radius",
   "modifier.stat_name.fire_spread_amount": "Fire Spread Coverage",
   
+  "magazine.num_rounds": "%d Rounds",
+  "magazine.flansmod.magazines/null": "INVALID MAGAZINE",
+  "paintjob.default": "Default Paint",
+  "workbench.slot.gun": "Place gun here",
+  "workbench.slot.grip": "Grip",
+  "workbench.slot.stock": "Stock",
+  "workbench.slot.barrel": "Barrel",
+  "workbench.slot.sights": "Sights",
+  "workbench.slot.paint_can": "Add Rainbow Paintcans to paint your gun",
+  "workbench.slot.mag_upgrade": "Add Magazine Upgrades to swap magazine",
+	
   "crafting.exact_stack": "%dx %s",
   "crafting.match_stack": "%dx An item matching the following:",
   "crafting.disallowed_tag": "Does not have tag '%s'",

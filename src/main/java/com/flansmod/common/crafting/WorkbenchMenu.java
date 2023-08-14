@@ -17,6 +17,8 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
+import java.awt.*;
+
 public class WorkbenchMenu extends AbstractContainerMenu
 {
 	public enum ModSlot
@@ -40,6 +42,8 @@ public class WorkbenchMenu extends AbstractContainerMenu
 	}
 
 	public final Container GunContainer;
+	public final Container PaintCanContainer;
+	public final Container MagUpgradeContainer;
 	public final Container MaterialContainer;
 	public final Container BatteryContainer;
 	public final Container FuelContainer;
@@ -48,6 +52,8 @@ public class WorkbenchMenu extends AbstractContainerMenu
 	//public final WorkbenchBlockEntity Workbench;
 
 	private RestrictedSlot GunSlot;
+	private RestrictedSlot PaintCanSlot;
+	private RestrictedSlot MagUpgradeSlot;
 	private RestrictedSlot FuelSlot;
 	private RestrictedSlot BatterySlot;
 	private AttachmentSlot[] AttachmentSlots;
@@ -59,10 +65,14 @@ public class WorkbenchMenu extends AbstractContainerMenu
 	public static final int BUTTON_SELECT_RECIPE_MAX = 1999;
 	public static final int BUTTON_SELECT_SKIN_0 = 2000;
 	public static final int BUTTON_SELECT_SKIN_MAX = 2999;
+	public static final int BUTTON_SELECT_MAGAZINE_0 = 3000;
+	public static final int BUTTON_SELECT_MAGAZINE_MAX = 3999;
 
 	public WorkbenchMenu(int containerID, Inventory inventory,
 						 WorkbenchDefinition def,
 						 Container gunContainer,
+						 Container paintCanContainer,
+						 Container magUpgradeContainer,
 						 Container materialContainer,
 						 Container batteryContainer,
 						 Container fuelContainer,
@@ -71,6 +81,8 @@ public class WorkbenchMenu extends AbstractContainerMenu
 		super(FlansMod.WORKBENCH_MENU.get(), containerID);
 		Def = def;
 		GunContainer = gunContainer;
+		PaintCanContainer = paintCanContainer;
+		MagUpgradeContainer = magUpgradeContainer;
 		MaterialContainer = materialContainer;
 		BatteryContainer = batteryContainer;
 		FuelContainer = fuelContainer;
@@ -88,6 +100,8 @@ public class WorkbenchMenu extends AbstractContainerMenu
 		{
 			Def = workbenchBlockEntity.Def;
 			GunContainer = workbenchBlockEntity.GunContainer;
+			PaintCanContainer = workbenchBlockEntity.PaintCanContainer;
+			MagUpgradeContainer = workbenchBlockEntity.MagUpgradeContainer;
 			MaterialContainer = workbenchBlockEntity.MaterialContainer;
 			BatteryContainer = workbenchBlockEntity.BatteryContainer;
 			FuelContainer = workbenchBlockEntity.FuelContainer;
@@ -98,6 +112,8 @@ public class WorkbenchMenu extends AbstractContainerMenu
 			FlansMod.LOGGER.error("Could not read GunModificationMenu data");
 			Def = WorkbenchDefinition.INVALID;
 			GunContainer = null; // um?
+			PaintCanContainer = null;
+			MagUpgradeContainer = null;
 			MaterialContainer = null;
 			BatteryContainer = null;
 			FuelContainer = null;
@@ -112,7 +128,9 @@ public class WorkbenchMenu extends AbstractContainerMenu
 
 		if (GunContainer.getContainerSize() > 0)
 		{
-			addSlot(GunSlot = new RestrictedSlot(GunContainer, 0, 34, 51));
+			addSlot(GunSlot = new RestrictedSlot(GunContainer, 0, 34, 55));
+			addSlot(PaintCanSlot = new RestrictedSlot(PaintCanContainer, 0, 77, 26));
+			addSlot(MagUpgradeSlot = new RestrictedSlot(MagUpgradeContainer, 0, 77, 84));
 			AttachmentSlots = new AttachmentSlot[ModSlot.values().length];
 			for (ModSlot modSlot : ModSlot.values())
 			{
@@ -123,7 +141,7 @@ public class WorkbenchMenu extends AbstractContainerMenu
 						modSlot.attachIndex,
 						GunContainer,
 						8 + 26 * modSlot.x,
-						25 + 26 * modSlot.y));
+						29 + 26 * modSlot.y));
 			}
 		}
 		else AttachmentSlots = new AttachmentSlot[0];
@@ -181,6 +199,8 @@ public class WorkbenchMenu extends AbstractContainerMenu
 		{
 			HideSlots();
 			GunSlot.SetActive(true);
+			PaintCanSlot.SetActive(true);
+			MagUpgradeSlot.SetActive(true);
 			for(AttachmentSlot slot : AttachmentSlots)
 				slot.SetActive(true);
 		}
@@ -209,6 +229,10 @@ public class WorkbenchMenu extends AbstractContainerMenu
 	{
 		if(GunSlot != null)
 			GunSlot.SetActive(false);
+		if(PaintCanSlot != null)
+			PaintCanSlot.SetActive(false);
+		if(MagUpgradeSlot != null)
+			MagUpgradeSlot.SetActive(false);
 		if(FuelSlot != null)
 			FuelSlot.SetActive(false);
 		if(BatterySlot != null)
@@ -230,16 +254,19 @@ public class WorkbenchMenu extends AbstractContainerMenu
 				{
 					int recipeIndex = buttonID - BUTTON_SELECT_RECIPE_0;
 					// Craft
-
-
-
-
 					return true;
 				}
 				if(BUTTON_SELECT_SKIN_0 <= buttonID && buttonID <= BUTTON_SELECT_SKIN_MAX)
 				{
 					int skinIndex = buttonID - BUTTON_SELECT_SKIN_0;
 					WorkbenchBlockEntity.PaintGun(player, GunContainer, skinIndex);
+					return true;
+				}
+
+				if(BUTTON_SELECT_MAGAZINE_0 <= buttonID && buttonID <= BUTTON_SELECT_MAGAZINE_MAX)
+				{
+					int magIndex = buttonID - BUTTON_SELECT_MAGAZINE_0;
+					WorkbenchBlockEntity.SelectMagazine(player, GunContainer, magIndex);
 					return true;
 				}
 			}
@@ -253,6 +280,10 @@ public class WorkbenchMenu extends AbstractContainerMenu
 	{
 		if(GunSlot != null && slot == GunSlot.index)
 			return QuickStackIntoInventory(player, GunSlot);
+		if(PaintCanSlot != null && slot == PaintCanSlot.index)
+			return QuickStackIntoInventory(player, PaintCanSlot);
+		if(MagUpgradeSlot != null && slot == MagUpgradeSlot.index)
+			return QuickStackIntoInventory(player, MagUpgradeSlot);
 		else if(FuelSlot != null && slot == FuelSlot.index)
 			return QuickStackIntoInventory(player, FuelSlot);
 		else if(BatterySlot != null && slot == BatterySlot.index)
@@ -274,6 +305,16 @@ public class WorkbenchMenu extends AbstractContainerMenu
 			if(GunSlot != null && GunSlot.getItem().isEmpty() && stack.getItem() instanceof GunItem)
 			{
 				GunSlot.set(stack);
+				slots.get(slot).set(ItemStack.EMPTY);
+			}
+			if(PaintCanSlot != null && PaintCanSlot.getItem().isEmpty() && stack.getItem() == FlansMod.RAINBOW_PAINT_CAN_ITEM.get())
+			{
+				PaintCanSlot.set(stack);
+				slots.get(slot).set(ItemStack.EMPTY);
+			}
+			if(MagUpgradeSlot != null && MagUpgradeSlot.getItem().isEmpty() && stack.getItem() == FlansMod.MAG_UPGRADE_ITEM.get())
+			{
+				MagUpgradeSlot.set(stack);
 				slots.get(slot).set(ItemStack.EMPTY);
 			}
 			for(AttachmentSlot attachmentSlot : AttachmentSlots)

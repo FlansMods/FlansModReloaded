@@ -8,44 +8,29 @@
     },
     "roundsPerItem": 30,
     "shootStats": {
-        "verticalRecoil": 0.0,
+        "verticalRecoil": 3.0,
         "horizontalRecoil": 0.0,
-        "spread": 1.0,
+        "spread": 3.0,
         "spreadPattern": "FilledCircle",
         "hitscan": true,
         "speed": 0.0,
         "bulletCount": 1,
         "spinSpeed": 360.0,
-        "breaksMaterials": [
-            "glass"
-        ],
-        "matchAmmoNames": [],
-        "matchAmmoTags": [],
+        "breaksMaterials": [],
         "penetrationPower": 1.0,
         "trailParticles": "",
         "impact": {
-            "decal": "flansmod:effects/bullet_decal.png",
-            "damageToTarget": 1.0,
+            "decal": "",
+            "damageToTarget": 8.0,
             "multiplierVsPlayers": 1.0,
             "multiplierVsVehicles": 1.0,
             "knockback": 0.0,
             "splashDamageRadius": 0.0,
-            "splashDamageFalloff": 0.0,
+            "splashDamageFalloff": 1.0,
             "setFireToTarget": 0.0,
             "fireSpreadRadius": 0.0,
-            "fireSpreadAmount": 0.5,
-            "hitSounds": [
-                {
-                    "sound": "flansmodernweapons:bullet",
-                    "length": 1.0,
-                    "minPitchMultiplier": 1.0,
-                    "maxPitchMultiplier": 1.0,
-                    "minVolume": 1.0,
-                    "maxVolume": 1.0,
-                    "maxRange": 50.0,
-                    "LODs": []
-                }
-            ]
+            "fireSpreadAmount": 0.0,
+            "hitSounds": []
         }
     },
     "onShootActions": [],

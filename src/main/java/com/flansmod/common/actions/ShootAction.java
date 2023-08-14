@@ -75,7 +75,7 @@ public class ShootAction extends Action
 			return false;
 		if(context.ActionStack().GetShotCooldown() > 0.0f)
 			return false;
-		if(context.GetBulletAtIndex(0, 0).isEmpty())
+		if(context.CanShoot(0))
 			return false;
 
 		if(!ActionGroupDef.canActUnderwater)

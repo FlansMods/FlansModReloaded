@@ -59,17 +59,31 @@ public class MagazineDefinition extends JsonDefinition
 		return MatchingBulletReferences;
 	}
 
+	public boolean HasTag(String tag)
+	{
+		for (String s : tags)
+			if (s.equals(tag))
+				return true;
+		return false;
+	}
+
+	@JsonField
+	public String[] tags = new String[0];
 	@JsonField
 	public ModifierDefinition[] modifiers = new ModifierDefinition[0];
-	@JsonField(Min = 0, Max = 32000)
-	public int numRounds = 0;
-	@JsonField
-	public boolean allRoundsMustBeIdentical = true;
 	@JsonField
 	public EAmmoLoadMode ammoLoadMode = EAmmoLoadMode.FullMag;
 	@JsonField
 	public EAmmoConsumeMode ammoConsumeMode = EAmmoConsumeMode.RoundRobin;
 
+
+
+
+	// Bullet matching settings
+	@JsonField(Min = 0, Max = 32000)
+	public int numRounds = 0;
+	@JsonField
+	public boolean allRoundsMustBeIdentical = true;
 	@JsonField
 	public String[] matchBulletNames = new String[0];
 	@JsonField

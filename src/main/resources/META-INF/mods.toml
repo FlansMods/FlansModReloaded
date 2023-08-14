@@ -69,6 +69,17 @@ license="All rights reserved"
     description='''
     Basic Parts
     '''
+
+[[mods]] #mandatory
+    modId="flansvendersgame"
+    version="${file.jarVersion}"
+    displayName="Vender's Game: A Flan's Mod Pack"
+    logoFile="flansmod.png"
+    credits="jamioflan"
+    authors="jamioflan"
+    description='''
+    High Tek and Classic weaponry all in one pack and helpfully distributed by your friend Vender
+    '''
 	
 # A dependency - use the . to indicate dependency for a specific modid. Dependencies are optional.
 [[dependencies.flansmod]] #optional

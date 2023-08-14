@@ -1,10 +1,13 @@
 package com.flansmod.common.crafting;
 
 import com.flansmod.common.FlansMod;
+import com.flansmod.common.actions.EActionInput;
 import com.flansmod.common.item.FlanItem;
 import com.flansmod.common.item.GunItem;
 import com.flansmod.common.types.crafting.WorkbenchDefinition;
 import com.flansmod.common.types.elements.PaintableDefinition;
+import com.flansmod.common.types.guns.GunDefinition;
+import com.flansmod.common.types.magazines.MagazineDefinition;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
@@ -28,12 +31,16 @@ import net.minecraftforge.energy.EnergyStorage;
 import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.Nullable;
 
+import java.awt.*;
+import java.util.List;
 import java.util.Set;
 
 public class WorkbenchBlockEntity extends BlockEntity implements MenuProvider, Clearable
 {
 	public final WorkbenchDefinition Def;
 	public final RestrictedContainer GunContainer;
+	public final RestrictedContainer PaintCanContainer;
+	public final RestrictedContainer MagUpgradeContainer;
 	public final RestrictedContainer MaterialContainer;
 	public final RestrictedContainer BatteryContainer;
 	public final RestrictedContainer FuelContainer;
@@ -114,8 +121,27 @@ public class WorkbenchBlockEntity extends BlockEntity implements MenuProvider, C
 				1,
 				(stack) -> { return stack.getItem() instanceof GunItem; }
 			);
+			PaintCanContainer = new RestrictedContainer(
+				this,
+				INTERACT_RANGE,
+				1,
+				64,
+				(stack) -> { return stack.getItem() == FlansMod.RAINBOW_PAINT_CAN_ITEM.get(); }
+			);
+			MagUpgradeContainer = new RestrictedContainer(
+				this,
+				INTERACT_RANGE,
+				1,
+				64,
+				(stack) -> { return stack.getItem() == FlansMod.MAG_UPGRADE_ITEM.get(); }
+			);
 		}
-		else GunContainer = new RestrictedContainer(this);
+		else
+		{
+			GunContainer = new RestrictedContainer(this);
+			PaintCanContainer = new RestrictedContainer(this);
+			MagUpgradeContainer = new RestrictedContainer(this);
+		}
 
 		if(Def.itemHolding.slots.length > 0)
 		{
@@ -159,6 +185,8 @@ public class WorkbenchBlockEntity extends BlockEntity implements MenuProvider, C
 	{
 		super.saveAdditional(tags);
 		tags.put("gun", GunContainer.save(new CompoundTag()));
+		tags.put("paintcans", PaintCanContainer.save(new CompoundTag()));
+		tags.put("magupgrades", MagUpgradeContainer.save(new CompoundTag()));
 		tags.put("materials", MaterialContainer.save(new CompoundTag()));
 		tags.put("battery", BatteryContainer.save(new CompoundTag()));
 		tags.put("fuel", FuelContainer.save(new CompoundTag()));
@@ -171,6 +199,8 @@ public class WorkbenchBlockEntity extends BlockEntity implements MenuProvider, C
 	{
 		super.load(tags);
 		GunContainer.load(tags.getCompound("gun"));
+		PaintCanContainer.load(tags.getCompound("paintcans"));
+		MagUpgradeContainer.load(tags.getCompound("magupgrades"));
 		MaterialContainer.load(tags.getCompound("materials"));
 		BatteryContainer.load(tags.getCompound("battery"));
 		FuelContainer.load(tags.getCompound("fuel"));
@@ -188,6 +218,8 @@ public class WorkbenchBlockEntity extends BlockEntity implements MenuProvider, C
 	public void clearContent()
 	{
 		GunContainer.clearContent();
+		PaintCanContainer.clearContent();
+		MagUpgradeContainer.clearContent();
 		MaterialContainer.clearContent();
 		BatteryContainer.clearContent();
 		FuelContainer.clearContent();
@@ -198,7 +230,16 @@ public class WorkbenchBlockEntity extends BlockEntity implements MenuProvider, C
 	@Override
 	public AbstractContainerMenu createMenu(int containerID, Inventory inventory, Player player)
 	{
-		return new WorkbenchMenu(containerID, inventory, Def, GunContainer, MaterialContainer, BatteryContainer, FuelContainer, DataAccess);
+		return new WorkbenchMenu(containerID,
+			inventory,
+			Def,
+			GunContainer,
+			PaintCanContainer,
+			MagUpgradeContainer,
+			MaterialContainer,
+			BatteryContainer,
+			FuelContainer,
+			DataAccess);
 	}
 
 	public static void serverTick(Level level, BlockPos pos, BlockState state, WorkbenchBlockEntity workbench)
@@ -284,6 +325,26 @@ public class WorkbenchBlockEntity extends BlockEntity implements MenuProvider, C
 				{
 					flanItem.SetPaintjobName(gunStack, paintableDefinition.paintjobs[skinIndex - 1].textureName);
 				}
+			}
+		}
+	}
+
+	public void SelectMagazine(Player player, int magIndex) { SelectMagazine(player, GunContainer, magIndex); }
+	public static void SelectMagazine(Player player, Container gunContainer, int magIndex)
+	{
+		// TODO: Survival checks, recipes, unlocks
+
+		if(gunContainer.getContainerSize() > 0 && !gunContainer.getItem(0).isEmpty() && gunContainer.getItem(0).getItem() instanceof GunItem gunItem)
+		{
+			ItemStack gunStack = gunContainer.getItem(0);
+			List<MagazineDefinition> mags = gunItem.Def().primaryMagazines.GetMatchingMagazines();
+			if(0 <= magIndex && magIndex < mags.size())
+			{
+				gunItem.SetMagazineType(gunStack, EActionInput.PRIMARY, 0, mags.get(magIndex));
+			}
+			else
+			{
+				FlansMod.LOGGER.warn(player.getName().getString() + " tried to set mag index " + magIndex + " on gun (" + gunItem.Def().Location + ") with only " + mags.size() + " mag options");
 			}
 		}
 	}

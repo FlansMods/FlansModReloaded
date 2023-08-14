@@ -1,6 +1,7 @@
 package com.flansmod.common.types.guns;
 
 import com.flansmod.common.FlansMod;
+import com.flansmod.common.actions.Action;
 import com.flansmod.common.actions.EActionInput;
 import com.flansmod.common.types.JsonDefinition;
 import com.flansmod.common.types.JsonField;
@@ -91,15 +92,15 @@ public class GunDefinition extends JsonDefinition
 		}
 	}
 
-	@Nullable
+	@Nonnull
 	public ActionGroupDefinition GetActionGroup(EActionInput set)
 	{
 		switch(set)
 		{
-			case PRIMARY: return primary;
-			case SECONDARY: return secondary;
+			case PRIMARY, RELOAD_PRIMARY: return primary;
+			case SECONDARY, RELOAD_SECONDARY: return secondary;
 			case LOOK_AT: return lookAt;
-			default: return null;
+			default: return new ActionGroupDefinition();
 		}
 	}
 	@Nonnull

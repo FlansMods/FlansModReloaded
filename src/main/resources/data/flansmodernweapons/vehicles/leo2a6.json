@@ -133,14 +133,6 @@
             "primaryActions": [
                 {
                     "actionType": "Shoot",
-                    "canActUnderwater": false,
-                    "canActUnderOtherLiquid": false,
-                    "canBeOverriden": true,
-                    "twoHanded": false,
-                    "repeatMode": "SemiAuto",
-                    "repeatDelay": 0.0,
-                    "repeatCount": 0,
-                    "spinUpDuration": 1.0,
                     "duration": 0.0,
                     "sounds": [
                         {
@@ -155,39 +147,7 @@
                         }
                     ],
                     "itemStack": "",
-                    "shootStats": [
-                        {
-                            "verticalRecoil": 7.0,
-                            "horizontalRecoil": 0.0,
-                            "spread": 3.0,
-                            "spreadPattern": "FilledCircle",
-                            "hitscan": true,
-                            "speed": 0.0,
-                            "bulletCount": 1,
-                            "spinSpeed": 360.0,
-                            "breaksMaterials": [],
-                            "matchAmmoNames": [
-                                "m60ammo",
-                                "m249ammo"
-                            ],
-                            "matchAmmoTags": [],
-                            "penetrationPower": 1.0,
-                            "trailParticles": "",
-                            "impact": {
-                                "decal": "flansmod:effects/bullet_decal.png",
-                                "damageToTarget": 4.0,
-                                "multiplierVsPlayers": 1.0,
-                                "multiplierVsVehicles": 1.0,
-                                "knockback": 0.0,
-                                "splashDamageRadius": 0.0,
-                                "splashDamageFalloff": 0.0,
-                                "setFireToTarget": 0.0,
-                                "fireSpreadRadius": 0.0,
-                                "fireSpreadAmount": 0.0,
-                                "hitSounds": []
-                            }
-                        }
-                    ],
+                    "modifiers": [],
                     "fovFactor": 1.25,
                     "scopeOverlay": "",
                     "anim": "",
@@ -240,18 +200,10 @@
             "primaryActions": [
                 {
                     "actionType": "Shoot",
-                    "canActUnderwater": true,
-                    "canActUnderOtherLiquid": false,
-                    "canBeOverriden": false,
-                    "twoHanded": false,
-                    "repeatMode": "SemiAuto",
-                    "repeatDelay": 0.0,
-                    "repeatCount": 0,
-                    "spinUpDuration": 1.0,
                     "duration": 0.0,
                     "sounds": [],
                     "itemStack": "",
-                    "shootStats": [],
+                    "modifiers": [],
                     "fovFactor": 1.25,
                     "scopeOverlay": "",
                     "anim": "",
@@ -261,18 +213,10 @@
                 },
                 {
                     "actionType": "Animation",
-                    "canActUnderwater": true,
-                    "canActUnderOtherLiquid": false,
-                    "canBeOverriden": false,
-                    "twoHanded": false,
-                    "repeatMode": "SemiAuto",
-                    "repeatDelay": 0.0,
-                    "repeatCount": 0,
-                    "spinUpDuration": 1.0,
                     "duration": 0.0,
                     "sounds": [],
                     "itemStack": "",
-                    "shootStats": [],
+                    "modifiers": [],
                     "fovFactor": 1.25,
                     "scopeOverlay": "",
                     "anim": "FireMissile",
@@ -325,14 +269,6 @@
             "primaryActions": [
                 {
                     "actionType": "Shoot",
-                    "canActUnderwater": false,
-                    "canActUnderOtherLiquid": false,
-                    "canBeOverriden": true,
-                    "twoHanded": false,
-                    "repeatMode": "SemiAuto",
-                    "repeatDelay": 0.0,
-                    "repeatCount": 0,
-                    "spinUpDuration": 1.0,
                     "duration": 0.0,
                     "sounds": [
                         {
@@ -347,39 +283,7 @@
                         }
                     ],
                     "itemStack": "",
-                    "shootStats": [
-                        {
-                            "verticalRecoil": 7.0,
-                            "horizontalRecoil": 0.0,
-                            "spread": 3.0,
-                            "spreadPattern": "FilledCircle",
-                            "hitscan": true,
-                            "speed": 0.0,
-                            "bulletCount": 1,
-                            "spinSpeed": 360.0,
-                            "breaksMaterials": [],
-                            "matchAmmoNames": [
-                                "m60ammo",
-                                "m249ammo"
-                            ],
-                            "matchAmmoTags": [],
-                            "penetrationPower": 1.0,
-                            "trailParticles": "",
-                            "impact": {
-                                "decal": "flansmod:effects/bullet_decal.png",
-                                "damageToTarget": 4.0,
-                                "multiplierVsPlayers": 1.0,
-                                "multiplierVsVehicles": 1.0,
-                                "knockback": 0.0,
-                                "splashDamageRadius": 0.0,
-                                "splashDamageFalloff": 0.0,
-                                "setFireToTarget": 0.0,
-                                "fireSpreadRadius": 0.0,
-                                "fireSpreadAmount": 0.0,
-                                "hitSounds": []
-                            }
-                        }
-                    ],
+                    "modifiers": [],
                     "fovFactor": 1.25,
                     "scopeOverlay": "",
                     "anim": "",

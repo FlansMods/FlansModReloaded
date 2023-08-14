@@ -3,6 +3,7 @@ package com.flansmod.common.gunshots;
 import com.flansmod.common.FlansMod;
 import com.flansmod.common.actions.*;
 import com.flansmod.common.item.BulletItem;
+import com.flansmod.common.item.GunItem;
 import com.flansmod.common.types.elements.ActionDefinition;
 import com.flansmod.common.types.elements.ActionGroupDefinition;
 import com.flansmod.common.types.elements.ModifierDefinition;
@@ -24,6 +25,7 @@ import net.minecraft.world.item.Items;
 import org.lwjgl.opengl._3DFXTextureCompressionFXT1;
 
 import javax.annotation.Nonnull;
+import java.util.List;
 
 public class ActionGroupContext
 {
@@ -122,21 +124,19 @@ public class ActionGroupContext
 	@Nonnull
 	public MagazineDefinition GetMagazineType(int magIndex)
 	{
-		// Get the root tag for our magazine
-		CompoundTag magTags = GetMagTag(magIndex);
-		if(magTags.contains("type"))
+		if(Gun().GetItemStack().getItem() instanceof GunItem gunItem)
 		{
-			String type = magTags.getString("type");
-			ResourceLocation magLoc = new ResourceLocation(type);
-			return FlansMod.MAGAZINES.Get(magLoc);
+			return gunItem.GetMagazineType(Gun().GetItemStack(), InputType, magIndex);
 		}
 		return MagazineDefinition.INVALID;
 	}
 
 	public void SetMagazineType(int magIndex, MagazineDefinition magDef)
 	{
-		CompoundTag magTags = GetMagTag(magIndex);
-		magTags.putString("type", magDef.GetLocationString());
+		if(Gun().GetItemStack().getItem() instanceof GunItem gunItem)
+		{
+			gunItem.SetMagazineType(Gun().GetItemStack(), InputType, magIndex, magDef);
+		}
 	}
 
 	public int GetMagazineSize(int magIndex)
@@ -444,9 +444,6 @@ public class ActionGroupContext
 	}
 	public boolean CanBeReloaded(int magIndex)
 	{
-		if(!IsShootAction())
-			return false;
-
 		for(int i = 0; i < GetMagazineSize(magIndex); i++)
 		{
 			if(GetBulletAtIndex(magIndex, i).isEmpty())

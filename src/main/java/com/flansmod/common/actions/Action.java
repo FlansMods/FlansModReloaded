@@ -6,6 +6,7 @@ import com.flansmod.common.types.elements.ActionGroupDefinition;
 import com.flansmod.common.types.guns.ERepeatMode;
 import com.flansmod.util.Maths;
 
+import javax.annotation.Nonnull;
 import java.util.function.Consumer;
 
 public abstract class Action
@@ -59,7 +60,7 @@ public abstract class Action
 	}
 	public void SetFinished() { Finished = true; }
 
-	public Action(ActionGroupDefinition groupDef, ActionDefinition def, EActionInput inputType)
+	public Action(@Nonnull ActionGroupDefinition groupDef, @Nonnull ActionDefinition def, EActionInput inputType)
 	{
 		this.ActionGroupDef = groupDef;
 		this.ActionDef = def;

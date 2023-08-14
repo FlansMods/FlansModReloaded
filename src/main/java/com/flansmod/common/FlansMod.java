@@ -60,6 +60,9 @@ public class FlansMod
     public static final DeferredRegister<Item> ITEMS = DeferredRegister.create(ForgeRegistries.ITEMS, MODID);
 
 
+    public static final RegistryObject<Item> RAINBOW_PAINT_CAN_ITEM = ITEMS.register("rainbow_paint_can", () -> new Item(new Item.Properties()));
+    public static final RegistryObject<Item> MAG_UPGRADE_ITEM = ITEMS.register("magazine_upgrade", () -> new Item(new Item.Properties()));
+
     public static final RegistryObject<Block> GUN_MACHINING_TABLE_BLOCK = FlansMod.Workbench_Block(BLOCKS, MODID, "gun_machining_table");
     public static final RegistryObject<Block> GUN_MOD_TABLE_BLOCK = FlansMod.Workbench_Block(BLOCKS, MODID, "gun_modification_table");
     public static final RegistryObject<Block> DIESEL_GENERATOR_BLOCK = FlansMod.Workbench_Block(BLOCKS, MODID, "portable_diesel_generator");
@@ -241,6 +244,8 @@ public class FlansMod
                 .displayItems((enabledFlags, populator, hasPermissions) ->
                 {
                     populator.accept(GUN_MOD_TABLE_ITEM.get());
+                    populator.accept(RAINBOW_PAINT_CAN_ITEM.get());
+                    populator.accept(MAG_UPGRADE_ITEM.get());
                     for(ItemStack stack : stacks)
                         populator.accept(stack);
                 });
@@ -283,6 +288,6 @@ public class FlansMod
     @OnlyIn(Dist.CLIENT)
     private void RegisterClientReloadListeners(AddReloadListenerEvent event)
     {
-        FlansModClient.RegisterClientReloadListeners(event);
+        FlansModClient.RegisterClientDataReloadListeners(event);
     }
 }
