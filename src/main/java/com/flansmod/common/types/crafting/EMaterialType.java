@@ -1,5 +1,7 @@
 package com.flansmod.common.types.crafting;
 
+import net.minecraft.network.chat.Component;
+
 import java.util.regex.MatchResult;
 import java.util.regex.Pattern;
 
@@ -95,5 +97,20 @@ public enum EMaterialType
 		if(result.groupCount() > 2)
 			return Integer.parseInt(result.group(2));
 		return -1;
+	}
+
+	public Component ToComponent()
+	{
+		switch(this)
+		{
+			case Misc -> { return Component.translatable("material.misc"); }
+			case Wood -> { return Component.translatable("material.wood"); }
+			case Glass -> { return Component.translatable("material.glass"); }
+			case Metal -> { return Component.translatable("material.metal"); }
+			case Composite -> { return Component.translatable("material.composite"); }
+			case Electronic -> { return Component.translatable("material.electronic"); }
+			case Fabric -> { return Component.translatable("material.fabric"); }
+			default -> { return Component.translatable("material.unknown"); }
+		}
 	}
 }

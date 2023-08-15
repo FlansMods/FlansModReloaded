@@ -1,6 +1,7 @@
 package com.flansmod.packs.vendersgame;
 
 import com.flansmod.common.FlansMod;
+import com.flansmod.common.crafting.WorkbenchBlockEntity;
 import com.mojang.logging.LogUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.ItemModelShaper;
@@ -36,6 +37,12 @@ public class VendersGameMod
 	public static final RegistryObject<Item> GUN_FC_HAWK = 						FlansMod.Gun(ITEMS, MODID, "fc_hawk");
 	public static final RegistryObject<Item> GUN_FC_PUNCHER = 					FlansMod.Gun(ITEMS, MODID, "fc_puncher");
 
+	public static final RegistryObject<Block> WORKBENCH_BLOCK_FC = 				FlansMod.Workbench_Block(BLOCKS, MODID, "fc_workbench");
+	public static final RegistryObject<Item> WORKBENCH_ITEM_FC = 				FlansMod.Workbench_Item(ITEMS, MODID, "fc_workbench", WORKBENCH_BLOCK_FC);
+	public static final RegistryObject<BlockEntityType<WorkbenchBlockEntity>> WORKBENCH_TILE_ENTITY_FC =
+		FlansMod.Workbench_TileEntityType(TILE_ENTITIES, MODID, "fc_workbench");
+
+
 	// HitMarket Budget Weaponry
 	public static final RegistryObject<Item> GUN_HM_9 = 						FlansMod.Gun(ITEMS, MODID, "hm_9");
 	public static final RegistryObject<Item> GUN_HM_14 = 						FlansMod.Gun(ITEMS, MODID, "hm_14");
@@ -44,6 +51,11 @@ public class VendersGameMod
 	public static final RegistryObject<Item> GUN_HM_COMBINE = 					FlansMod.Gun(ITEMS, MODID, "hm_combine");
 	public static final RegistryObject<Item> GUN_HM_POCKET = 					FlansMod.Gun(ITEMS, MODID, "hm_pocket");
 
+	public static final RegistryObject<Block> WORKBENCH_BLOCK_HM = 				FlansMod.Workbench_Block(BLOCKS, MODID, "hm_workbench");
+	public static final RegistryObject<Item> WORKBENCH_ITEM_HM = 				FlansMod.Workbench_Item(ITEMS, MODID, "hm_workbench", WORKBENCH_BLOCK_HM);
+	public static final RegistryObject<BlockEntityType<WorkbenchBlockEntity>> WORKBENCH_TILE_ENTITY_HM =
+																				FlansMod.Workbench_TileEntityType(TILE_ENTITIES, MODID, "hm_workbench");
+
 	// PhanTek Advanced Guns
 	public static final RegistryObject<Item> GUN_PHANTEK_90 = 					FlansMod.Gun(ITEMS, MODID, "phantek_90");
 	public static final RegistryObject<Item> GUN_PHANTEK_AUTO_12 = 				FlansMod.Gun(ITEMS, MODID, "phantek_auto_12");
@@ -51,6 +63,12 @@ public class VendersGameMod
 	public static final RegistryObject<Item> GUN_PHANTEK_FURY = 				FlansMod.Gun(ITEMS, MODID, "phantek_fury");
 	public static final RegistryObject<Item> GUN_PHANTEK_LOCK = 				FlansMod.Gun(ITEMS, MODID, "phantek_lock");
 	public static final RegistryObject<Item> GUN_PHANTEK_SEEKER = 				FlansMod.Gun(ITEMS, MODID, "phantek_seeker");
+
+	public static final RegistryObject<Block> WORKBENCH_BLOCK_PHANTEK = 		FlansMod.Workbench_Block(BLOCKS, MODID, "phantek_workbench");
+	public static final RegistryObject<Item> WORKBENCH_ITEM_PHANTEK = 			FlansMod.Workbench_Item(ITEMS, MODID, "phantek_workbench", WORKBENCH_BLOCK_PHANTEK);
+	public static final RegistryObject<BlockEntityType<WorkbenchBlockEntity>> WORKBENCH_TILE_ENTITY_PHANTEK =
+		FlansMod.Workbench_TileEntityType(TILE_ENTITIES, MODID, "phantek_workbench");
+
 
 	public VendersGameMod()
 	{

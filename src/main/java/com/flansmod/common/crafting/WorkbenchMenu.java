@@ -225,6 +225,12 @@ public class WorkbenchMenu extends AbstractContainerMenu
 	}
 
 	@OnlyIn(Dist.CLIENT)
+	public void SwitchToGunCrafting()
+	{
+		HideSlots();
+	}
+
+	@OnlyIn(Dist.CLIENT)
 	public void HideSlots()
 	{
 		if(GunSlot != null)

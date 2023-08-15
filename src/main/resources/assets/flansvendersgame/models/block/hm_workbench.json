@@ -1,0 +1,12 @@
+{
+    "parent": "block/cube",
+    "textures": {
+        "particle": "flansvendersgame:block/",
+        "up": "flansvendersgame:block/",
+        "down": "flansvendersgame:block/",
+        "north": "flansvendersgame:block/",
+        "east": "flansvendersgame:block/",
+        "south": "flansvendersgame:block/",
+        "west": "flansvendersgame:block/"
+    }
+}

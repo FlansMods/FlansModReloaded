@@ -11,6 +11,7 @@ import org.joml.Vector3f;
 
 import java.lang.reflect.*;
 import java.util.HashMap;
+import java.util.Locale;
 
 public class DefinitionParser
 {
@@ -28,26 +29,62 @@ public class DefinitionParser
 	private static HashMap<Type, FieldParseMethod> Parsers = new HashMap<>();
 	static
 	{
-		Parsers.put(Integer.TYPE, (ref, jNode, annot) -> { return Maths.Clamp(jNode.getAsInt(), Maths.Ceil(annot.Min()), Maths.Floor(annot.Max())); });
-		Parsers.put(Float.TYPE, (ref, jNode, annot) -> { return Maths.Clamp(jNode.getAsFloat(), (float)annot.Min(), (float)annot.Max()); });
-		Parsers.put(Double.TYPE, (ref, jNode, annot) -> { return Maths.Clamp(jNode.getAsDouble(), annot.Min(), annot.Max()); });
-		Parsers.put(Short.TYPE, (ref, jNode, annot) -> { return Maths.Clamp(jNode.getAsShort(), (short)annot.Min(), (short)annot.Max()); });
-		Parsers.put(Byte.TYPE, (ref, jNode, annot) -> { return jNode.getAsByte(); });
-		Parsers.put(Boolean.TYPE, (ref, jNode, annot) -> { return jNode.getAsBoolean(); });
-		Parsers.put(String.class, (ref, jNode, annot) -> { return jNode.getAsString(); });
+		Parsers.put(Integer.TYPE, (ref, jNode, annot) ->
+		{
+			try { return Maths.Clamp(jNode.getAsInt(), Maths.Ceil(annot.Min()), Maths.Floor(annot.Max())); }
+			catch(Exception e) { FlansMod.LOGGER.error("Failed to parse JsonNode " + jNode + " into " + ref + " as int due to exception: " + e); throw e; }
+		});
+		Parsers.put(Float.TYPE, (ref, jNode, annot) ->
+		{
+			try { return Maths.Clamp(jNode.getAsFloat(), (float)annot.Min(), (float)annot.Max()); }
+			catch(Exception e) { FlansMod.LOGGER.error("Failed to parse JsonNode " + jNode + " into " + ref + " as float due to exception: " + e); throw e; }
+		});
+		Parsers.put(Double.TYPE, (ref, jNode, annot) ->
+		{
+			try { return Maths.Clamp(jNode.getAsDouble(), annot.Min(), annot.Max()); }
+			catch(Exception e) { FlansMod.LOGGER.error("Failed to parse JsonNode " + jNode + " into " + ref + " as double due to exception: " + e); throw e; }
+		});
+		Parsers.put(Short.TYPE, (ref, jNode, annot) ->
+		{
+			try { return Maths.Clamp(jNode.getAsShort(), (short)annot.Min(), (short)annot.Max()); }
+			catch(Exception e) { FlansMod.LOGGER.error("Failed to parse JsonNode " + jNode + " into " + ref + " as short due to exception: " + e); throw e; }
+		});
+		Parsers.put(Byte.TYPE, (ref, jNode, annot) ->
+		{
+			try { return jNode.getAsByte(); }
+			catch(Exception e) { FlansMod.LOGGER.error("Failed to parse JsonNode " + jNode + " into " + ref + " as byte due to exception: " + e); throw e; }
+		});
+		Parsers.put(Boolean.TYPE, (ref, jNode, annot) ->
+		{
+			try { return jNode.getAsBoolean(); }
+			catch(Exception e) { FlansMod.LOGGER.error("Failed to parse JsonNode " + jNode + " into " + ref + " as bool due to exception: " + e); throw e; }
+		});
+		Parsers.put(String.class, (ref, jNode, annot) ->
+		{
+			try { return jNode.getAsString(); }
+			catch(Exception e) { FlansMod.LOGGER.error("Failed to parse JsonNode " + jNode + " into " + ref + " as string due to exception: " + e); throw e; }
+		});
 		Parsers.put(Vec3.class, (ref, jNode, annot) ->
 		{
-			JsonArray jVec = jNode.getAsJsonArray();
-			return new Vec3(jVec.get(0).getAsDouble(),
-				jVec.get(1).getAsDouble(),
-				jVec.get(2).getAsDouble());
+			try
+			{
+				JsonArray jVec = jNode.getAsJsonArray();
+				return new Vec3(jVec.get(0).getAsDouble(),
+					jVec.get(1).getAsDouble(),
+					jVec.get(2).getAsDouble());
+			}
+			catch(Exception e) { FlansMod.LOGGER.error("Failed to parse JsonNode " + jNode + " into " + ref + " as Vec3 due to exception: " + e); throw e; }
 		});
 		Parsers.put(Vector3f.class, (ref, jNode, annot) ->
 		{
-			JsonArray jVec = jNode.getAsJsonArray();
-			return new Vector3f(jVec.get(0).getAsFloat(),
-				jVec.get(1).getAsFloat(),
-				jVec.get(2).getAsFloat());
+			try
+			{
+				JsonArray jVec = jNode.getAsJsonArray();
+				return new Vector3f(jVec.get(0).getAsFloat(),
+					jVec.get(1).getAsFloat(),
+					jVec.get(2).getAsFloat());
+			}
+			catch(Exception e) { FlansMod.LOGGER.error("Failed to parse JsonNode " + jNode + " into " + ref + " as Vector3f due to exception: " + e); throw e; }
 		});
 		Parsers.put(VecWithOverride.class, VecWithOverride::ParseFunc);
 		Parsers.put(ColourDefinition.class, ColourDefinition::ParseFunc);
@@ -119,9 +156,24 @@ public class DefinitionParser
 			{
 				return Enum.valueOf(enumRef, jNode.getAsString());
 			}
-			catch (Exception e)
+			catch (Exception e1)
 			{
-				return Enum.valueOf(enumRef, jNode.getAsString().toLowerCase());
+				try
+				{
+					return Enum.valueOf(enumRef, jNode.getAsString().toLowerCase());
+				}
+				catch (Exception e2)
+				{
+					try
+					{
+						return Enum.valueOf(enumRef, jNode.getAsString().toUpperCase());
+					}
+					catch (Exception e3)
+					{
+						FlansMod.LOGGER.error("Failed to parse JsonNode " + jNode + " into " + ref + " as Enum<" + enumRef + "> due to exception: " + e3);
+						throw e3;
+					}
+				}
 			}
 		}
 	}
@@ -140,19 +192,85 @@ public class DefinitionParser
 		@Override
 		public Object Parse(Object ref, JsonElement jNode, JsonField annotation) throws NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException
 		{
-			JsonArray jArray = jNode.getAsJsonArray();
-			if(jArray != null)
+			try
 			{
-				Object[] array = (Object[])Array.newInstance(elementType, jArray.size());
-				int index = 0;
-				for(JsonElement jElement : jArray)
+				JsonArray jArray = jNode.getAsJsonArray();
+				if (jArray != null)
 				{
-					array[index] = elementParser.Parse(null, jElement, annotation);
-					index++;
+					Object array = Array.newInstance(elementType, jArray.size());
+					if(array instanceof Object[] objArray)
+					{
+						int index = 0;
+						for (JsonElement jElement : jArray)
+						{
+							objArray[index] = elementParser.Parse(null, jElement, annotation);
+							index++;
+						}
+					}
+					else if(array instanceof int[] intArray)
+					{
+						int index = 0;
+						for (JsonElement jElement : jArray)
+						{
+							intArray[index] = (int)elementParser.Parse(null, jElement, annotation);
+							index++;
+						}
+					}
+					else if(array instanceof float[] floatArray)
+					{
+						int index = 0;
+						for (JsonElement jElement : jArray)
+						{
+							floatArray[index] = (float)elementParser.Parse(null, jElement, annotation);
+							index++;
+						}
+					}
+					else if(array instanceof double[] doubleArray)
+					{
+						int index = 0;
+						for (JsonElement jElement : jArray)
+						{
+							doubleArray[index] = (double)elementParser.Parse(null, jElement, annotation);
+							index++;
+						}
+					}
+					else if(array instanceof long[] longArray)
+					{
+						int index = 0;
+						for (JsonElement jElement : jArray)
+						{
+							longArray[index] = (long)elementParser.Parse(null, jElement, annotation);
+							index++;
+						}
+					}
+					else if(array instanceof short[] shortArray)
+					{
+						int index = 0;
+						for (JsonElement jElement : jArray)
+						{
+							shortArray[index] = (short)elementParser.Parse(null, jElement, annotation);
+							index++;
+						}
+					}
+					else if(array instanceof byte[] byteArray)
+					{
+						int index = 0;
+						for (JsonElement jElement : jArray)
+						{
+							byteArray[index] = (byte)elementParser.Parse(null, jElement, annotation);
+							index++;
+						}
+					}
+					else
+					{
+						FlansMod.LOGGER.error("Unknown array type " + array.getClass());
+					}
+
+					return array;
 				}
-				return array;
+				return new Object[0];
 			}
-			return new Object[0];
+			catch(Exception e) { FlansMod.LOGGER.error("Failed to parse JsonNode " + jNode + " into " + ref + " as " + elementType + "[] due to exception: " + e); throw e; }
 		}
 	}
 
@@ -178,26 +296,30 @@ public class DefinitionParser
 		@Override
 		public Object Parse(Object ref, JsonElement jNode, JsonField annotation) throws NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException
 		{
-			if(ref == null)
-				ref = classRef.getDeclaredConstructor().newInstance();
-
-			for (var kvp : jNode.getAsJsonObject().entrySet())
+			try
 			{
+				if (ref == null)
+					ref = classRef.getDeclaredConstructor().newInstance();
 
-				Field targetField = memberFields.get(kvp.getKey());
-				if(targetField != null)
+				for (var kvp : jNode.getAsJsonObject().entrySet())
 				{
-					FieldParseMethod parser = GetParserFor(targetField);
-					if(parser != null)
+
+					Field targetField = memberFields.get(kvp.getKey());
+					if (targetField != null)
 					{
-						Object targetObject = targetField.get(ref);
-						targetObject = parser.Parse(targetObject, kvp.getValue(), targetField.getAnnotation(JsonField.class));
-						targetField.set(ref, targetObject);
+						FieldParseMethod parser = GetParserFor(targetField);
+						if (parser != null)
+						{
+							Object targetObject = targetField.get(ref);
+							targetObject = parser.Parse(targetObject, kvp.getValue(), targetField.getAnnotation(JsonField.class));
+							targetField.set(ref, targetObject);
+						}
 					}
 				}
-			}
 
-			return ref;
+				return ref;
+			}
+			catch(Exception e) { FlansMod.LOGGER.error("Failed to parse JsonNode " + jNode + " into " + ref + " as " + classRef + " due to exception: " + e); throw e; }
 		}
 	}
 
@@ -221,8 +343,12 @@ public class DefinitionParser
 		}
 		catch(Exception e)
 		{
-			FlansMod.LOGGER.error("Failed to load a definition");
+			FlansMod.LOGGER.error("Failed to load " + definition.Location);
 			FlansMod.LOGGER.error(e.getMessage());
+			for(StackTraceElement stackTrace : e.getStackTrace())
+			{
+				FlansMod.LOGGER.error(stackTrace.toString());
+			}
 			return false;
 		}
 	}
