@@ -35,6 +35,7 @@ public class ModernWeaponsMod
 	public static final DeferredRegister<Block> BLOCKS = DeferredRegister.create(ForgeRegistries.BLOCKS, MODID);
 	public static final DeferredRegister<BlockEntityType<?>> TILE_ENTITIES = DeferredRegister.create(ForgeRegistries.BLOCK_ENTITY_TYPES, MODID);
 
+	/*
 	public static final RegistryObject<Item> GUN_A91 = 						FlansMod.Gun(ITEMS, MODID, "a91");
 	public static final RegistryObject<Item> GUN_ACR = 						FlansMod.Gun(ITEMS, MODID, "acr");
 	public static final RegistryObject<Item> GUN_AK47 = 					FlansMod.Gun(ITEMS, MODID, "ak47");
@@ -183,7 +184,7 @@ public class ModernWeaponsMod
 	public static final RegistryObject<Item> WORKBENCH_ITEM_MODERN_ADVANCED = 		FlansMod.Workbench_Item(ITEMS, MODID, "modern_advanced", WORKBENCH_BLOCK_MODERN_ADVANCED);
 	public static final RegistryObject<BlockEntityType<WorkbenchBlockEntity>> WORKBENCH_TILE_ENTITY_MODERN_ADVANCED =
 																					FlansMod.Workbench_TileEntityType(TILE_ENTITIES, MODID, "modern_advanced");
-
+	*/
 	
 	public ModernWeaponsMod()
 	{

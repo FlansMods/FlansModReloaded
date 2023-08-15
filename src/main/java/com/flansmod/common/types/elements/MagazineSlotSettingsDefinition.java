@@ -51,4 +51,7 @@ public class MagazineSlotSettingsDefinition
 
 	@JsonField
 	public String[] matchByTags = new String[0];
+
+	@JsonField(Docs = "How many upgrades are needed to perform a swap (not including the ones associated to the mags themselves)")
+	public int baseCostToSwap = 0;
 }

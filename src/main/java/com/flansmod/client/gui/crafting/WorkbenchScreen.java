@@ -648,15 +648,11 @@ public class WorkbenchScreen extends AbstractContainerScreen<WorkbenchMenu>
 			renderTooltip(pose, Component.translatable("workbench.slot.mag_upgrade"), xMouse, yMouse);
 			return true;
 		}
-
-
 		if (InBox(xMouse, yMouse, xOrigin + ATTACHMENT_SLOTS_ORIGIN_X + 26, 24, yOrigin + ATTACHMENT_SLOTS_ORIGIN_Y + 26, 24))
 		{
 			renderTooltip(pose, Component.translatable("workbench.slot.gun"), xMouse, yMouse);
 			return true;
 		}
-
-
 
 
 		if (Workbench.GunContainer.getContainerSize() >= 0)
@@ -686,6 +682,7 @@ public class WorkbenchScreen extends AbstractContainerScreen<WorkbenchMenu>
 					{
 						List<FormattedCharSequence> lines = new ArrayList<>();
 						lines.add(Component.translatable("paintjob.default").getVisualOrderText());
+						lines.add(Component.translatable("paintjob.free_to_swap").getVisualOrderText());
 						renderTooltip(pose, lines, xMouse, yMouse);
 						return true;
 					}
@@ -698,7 +695,10 @@ public class WorkbenchScreen extends AbstractContainerScreen<WorkbenchMenu>
 						{
 							List<FormattedCharSequence> lines = new ArrayList<>();
 							lines.add(Component.translatable("paintjob." + flanItem.DefinitionLocation.getNamespace() + "." + paintableDefinition.paintjobs[p].textureName).getVisualOrderText());
-							lines.add(Component.translatable("paintjob.cost").getVisualOrderText());
+							int paintCost = WorkbenchBlockEntity.GetPaintUpgradeCost(Workbench.GunContainer, p + 1);
+							if(paintCost == 1)
+								lines.add(Component.translatable("paintjob.cost.1").getVisualOrderText());
+							else lines.add(Component.translatable("paintjob.cost", paintCost).getVisualOrderText());
 
 							renderTooltip(pose, lines, xMouse, yMouse);
 							return true;
@@ -710,9 +710,6 @@ public class WorkbenchScreen extends AbstractContainerScreen<WorkbenchMenu>
 				{
 					MagazineSlotSettingsDefinition magSettings = gunDef.GetMagazineSettings(EActionInput.PRIMARY);
 					List<MagazineDefinition> matchingMags = magSettings.GetMatchingMagazines();
-
-
-
 					for (int j = 0; j < MAGAZINE_ROWS; j++)
 					{
 						for (int i = 0; i < MAGAZINES_PER_ROW; i++)
@@ -725,7 +722,22 @@ public class WorkbenchScreen extends AbstractContainerScreen<WorkbenchMenu>
 									List<FormattedCharSequence> lines = new ArrayList<>();
 									lines.add(Component.translatable("magazine." + matchingMags.get(i).Location.getNamespace() + "." + matchingMags.get(i).Location.getPath()).getVisualOrderText());
 									lines.add(Component.translatable("magazine.num_rounds", matchingMags.get(i).numRounds).getVisualOrderText());
-
+									for(String tag : matchingMags.get(i).matchBulletNames)
+									{
+										lines.add(Component.translatable("magazine.match_bullet_name", tag).getVisualOrderText());
+									}
+									for(String tag : matchingMags.get(i).requiredBulletTags)
+									{
+										lines.add(Component.translatable("magazine.required_bullet_tag", tag).getVisualOrderText());
+									}
+									for(String tag : matchingMags.get(i).disallowedBulletTags)
+									{
+										lines.add(Component.translatable("magazine.disallowed_bullet_tag", tag).getVisualOrderText());
+									}
+									int magCost = WorkbenchBlockEntity.GetMagUpgradeCost(Workbench.GunContainer, index);
+									if(magCost == 1)
+										lines.add(Component.translatable("magazine.cost.1").getVisualOrderText());
+									else lines.add(Component.translatable("magazine.cost", magCost).getVisualOrderText());
 									renderTooltip(pose, lines, xMouse, yMouse);
 									return true;
 								}
@@ -964,6 +976,7 @@ public class WorkbenchScreen extends AbstractContainerScreen<WorkbenchMenu>
 	private static final int GUN_RECIPE_VIEWER_COLUMNS = 4;
 	private static final int GUN_RECIPE_VIEWER_ROWS = 2;
 	private Button[] GoToPartCraftingButtons;
+	private Button[] AutoFillCraftingButtons;
 	private float ShowPotentialMatchTicker = 0.0f;
 	private static final ResourceLocation GUN_FABRICATION_BG = new ResourceLocation(FlansMod.MODID, "textures/gui/gun_fabrication.png");
 	private static class GunCraftingSlotInfo
@@ -987,52 +1000,8 @@ public class WorkbenchScreen extends AbstractContainerScreen<WorkbenchMenu>
 				TieredIngredientDefinition tiered = GetAsTieredDef();
 				if(tiered != null)
 				{
-					List<PartDefinition> parts = FlansMod.PARTS.Find((part) ->
-					{
-						if (tiered.tag != null && !tiered.tag.isEmpty())
-						{
-							boolean foundTag = false;
-							for (String tag : part.itemSettings.tags)
-							{
-								if (tag.equals(tiered.tag))
-								{
-									foundTag = true;
-									break;
-								}
-							}
-							if (!foundTag)
-								return false;
-						}
-
-						boolean foundTier = false;
-						for (int tier : tiered.allowedTiers)
-						{
-							if (part.materialTier == tier)
-							{
-								foundTier = true;
-								break;
-							}
-						}
-						if (!foundTier)
-							return false;
-
-						boolean matchesMaterial = false;
-						for (EMaterialType material : tiered.allowedMaterials)
-						{
-							if (part.materialType == material)
-							{
-								matchesMaterial = true;
-								break;
-							}
-						}
-						return matchesMaterial;
-					});
-					for (PartDefinition part : parts)
-					{
-						Item item = ForgeRegistries.ITEMS.getValue(part.Location);
-						if(item != null)
-							PotentialMatches.add(new ItemStack(item));
-					}
+					PotentialMatches.clear();
+					tiered.GenerateMatches(PotentialMatches);
 				}
 			}
 			else
@@ -1040,54 +1009,8 @@ public class WorkbenchScreen extends AbstractContainerScreen<WorkbenchMenu>
 				IngredientDefinition ingredient = GetAsAdditionalDef();
 				if(ingredient != null)
 				{
-					if (ingredient.compareItemName)
-					{
-						try
-						{
-							ResourceLocation resLoc = new ResourceLocation(ingredient.itemName);
-							Item item = ForgeRegistries.ITEMS.getValue(resLoc);
-							PotentialMatches.add(new ItemStack(item, ingredient.count));
-						} catch (Exception e)
-						{
-							FlansMod.LOGGER.error("Failed to match ingredient " + ingredient.itemName);
-						}
-					}
-					else
-					{
-						try
-						{
-							List<TagKey<Item>> requiredItemTags = new ArrayList<>();
-							for (String tag : ingredient.requiredTags)
-								requiredItemTags.add(ItemTags.create(new ResourceLocation(tag)));
-							List<TagKey<Item>> disallowedItemTags = new ArrayList<>();
-							for (String tag : ingredient.disallowedTags)
-								disallowedItemTags.add(ItemTags.create(new ResourceLocation(tag)));
-
-							for (var kvp : ForgeRegistries.ITEMS.getEntries())
-							{
-								if (ingredient.compareItemTags)
-								{
-									boolean passes = true;
-									for(TagKey<Item> tag : disallowedItemTags)
-										if(kvp.getValue().builtInRegistryHolder().is(tag))
-											passes = false;
-
-									for(TagKey<Item> tag : requiredItemTags)
-										if(!kvp.getValue().builtInRegistryHolder().is(tag))
-											passes = false;
-
-									if(passes)
-									{
-										PotentialMatches.add(new ItemStack(kvp.getValue(), ingredient.count));
-									}
-								}
-							}
-						}
-						catch(Exception e)
-						{
-							FlansMod.LOGGER.error("Failed to match ingredient by tags");
-						}
-					}
+					PotentialMatches.clear();
+					ingredient.GenerateMatches(PotentialMatches);
 				}
 			}
 		}
@@ -1191,12 +1114,14 @@ public class WorkbenchScreen extends AbstractContainerScreen<WorkbenchMenu>
 	{
 		RefreshGunCraftingFilters();
 		UpdateActiveGunSelectionButtons();
+		UpdateActiveRecipeButtons();
 	}
 
 	private void UpdateGunCrafting(boolean enabled)
 	{
 		ShowPotentialMatchTicker += 1.0f / 20.0f;
 		UpdateActiveGunSelectionButtons();
+		UpdateActiveRecipeButtons();
 	}
 
 	private void UpdateActiveGunSelectionButtons()
@@ -1210,6 +1135,26 @@ public class WorkbenchScreen extends AbstractContainerScreen<WorkbenchMenu>
 					final int firstIndex = Maths.Floor(gunSelectorScrollOffset) * GUN_SELECTOR_COLUMNS;
 					final int relativeIndex = i + GUN_SELECTOR_COLUMNS * j;
 					GunSelectionButtons[relativeIndex].active = SelectedTab == Tab.GUN_CRAFTING && (firstIndex + relativeIndex < GunCraftingEntries.size());
+				}
+			}
+		}
+	}
+
+	private void UpdateActiveRecipeButtons()
+	{
+		final int firstIndex = Maths.Floor(recipeSelectorScrollOffset) * GUN_RECIPE_VIEWER_COLUMNS;
+		for (int j = 0; j < GUN_RECIPE_VIEWER_ROWS; j++)
+		{
+			for (int i = 0; i < GUN_RECIPE_VIEWER_COLUMNS; i++)
+			{
+				final int relativeIndex = i + GUN_RECIPE_VIEWER_COLUMNS * j;
+				if(PartCraftingButtons != null)
+				{
+					PartCraftingButtons[relativeIndex].active = SelectedTab == Tab.GUN_CRAFTING && (firstIndex + relativeIndex < CachedSlotInfo.size());
+				}
+				if(AutoFillCraftingButtons != null)
+				{
+					AutoFillCraftingButtons[relativeIndex].active = SelectedTab == Tab.GUN_CRAFTING && (firstIndex + relativeIndex < CachedSlotInfo.size());
 				}
 			}
 		}
@@ -1234,6 +1179,8 @@ public class WorkbenchScreen extends AbstractContainerScreen<WorkbenchMenu>
 			int numRows = Maths.Max(CachedSlotInfo.size() / GUN_RECIPE_VIEWER_COLUMNS - GUN_RECIPE_VIEWER_ROWS + 1, 0);
 			recipeSelectorScrollOffset -= scroll;
 			recipeSelectorScrollOffset = Maths.Clamp(recipeSelectorScrollOffset, 0, numRows);
+			UpdateActiveRecipeButtons();
+			NetworkedButtonPress(WorkbenchMenu.BUTTON_SET_RECIPE_SCROLL_0 + Maths.Floor(recipeSelectorScrollOffset));
 			return true;
 		}
 
@@ -1260,6 +1207,7 @@ public class WorkbenchScreen extends AbstractContainerScreen<WorkbenchMenu>
 		}
 
 		GoToPartCraftingButtons = new Button[GUN_RECIPE_VIEWER_ROWS * GUN_RECIPE_VIEWER_COLUMNS];
+		AutoFillCraftingButtons = new Button[GUN_RECIPE_VIEWER_ROWS * GUN_RECIPE_VIEWER_COLUMNS];
 		for(int j = 0; j < GUN_RECIPE_VIEWER_ROWS; j++)
 		{
 			for(int i = 0; i < GUN_RECIPE_VIEWER_COLUMNS; i++)
@@ -1273,6 +1221,14 @@ public class WorkbenchScreen extends AbstractContainerScreen<WorkbenchMenu>
 					.bounds(xOrigin + GUN_RECIPE_VIEWER_X_ORIGIN + 9 + 20 * i, yOrigin + GUN_RECIPE_VIEWER_Y_ORIGIN + 19 + 20 * j, 9, 9)
 					.build();
 				addWidget(GoToPartCraftingButtons[index]);
+				AutoFillCraftingButtons[index] = Button.builder(Component.empty(),
+					(t) ->
+					{
+						AutoFillCraftingSlot(index);
+					})
+					.bounds(xOrigin + GUN_RECIPE_VIEWER_X_ORIGIN + 20 * i, yOrigin + GUN_RECIPE_VIEWER_Y_ORIGIN + 19 + 20 * j, 9, 9)
+					.build();
+				addWidget(AutoFillCraftingButtons[index]);
 			}
 		}
 	}
@@ -1406,6 +1362,7 @@ public class WorkbenchScreen extends AbstractContainerScreen<WorkbenchMenu>
 		if(recipeIndex < GunCraftingEntries.size())
 		{
 			SelectedGunRecipe = recipeIndex;
+			NetworkedButtonPress(WorkbenchMenu.BUTTON_SELECT_RECIPE_0 + recipeIndex);
 
 			GunCraftingEntryDefinition recipe = GunCraftingEntries.get(SelectedGunRecipe);
 			CachedSlotInfo.clear();
@@ -1426,13 +1383,17 @@ public class WorkbenchScreen extends AbstractContainerScreen<WorkbenchMenu>
 		}
 	}
 
+	private void AutoFillCraftingSlot(int relativeIndex)
+	{
+		NetworkedButtonPress(WorkbenchMenu.BUTTON_AUTO_FILL_INGREDIENT_0 + relativeIndex + Maths.Floor(recipeSelectorScrollOffset));
+	}
 	private void GoToPartCrafting(int relativeIndex)
 	{
 		int partIndex = Maths.Floor(recipeSelectorScrollOffset) + relativeIndex;
 		if(partIndex < CachedSlotInfo.size())
 		{
-			// TODO:
 			SelectTab(Tab.PART_CRAFTING);
+			// TODO: Go to the matching part / set filters
 		}
 		else
 		{

@@ -188,7 +188,7 @@ public class GunItem extends FlanItem
         List<MagazineDefinition> matches = Def().GetMagazineSettings(inputType).GetMatchingMagazines();
         if(matches.size() > 0)
         {
-            FlansMod.LOGGER.warn("ItemStack " + stack + " had no mag type tag, but default found.");
+            //FlansMod.LOGGER.warn("ItemStack " + stack + " had no mag type tag, but default found.");
             SetMagazineType(stack, inputType, magIndex, matches.get(0));
             return matches.get(0);
         }

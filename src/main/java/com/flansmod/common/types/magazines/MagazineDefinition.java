@@ -75,14 +75,14 @@ public class MagazineDefinition extends JsonDefinition
 	public EAmmoLoadMode ammoLoadMode = EAmmoLoadMode.FullMag;
 	@JsonField
 	public EAmmoConsumeMode ammoConsumeMode = EAmmoConsumeMode.RoundRobin;
-
-
+	@JsonField(Docs = "The number of Magazine Upgrade items needed to swap to this mag")
+	public int upgradeCost = 0;
 
 
 	// Bullet matching settings
 	@JsonField(Min = 0, Max = 32000)
 	public int numRounds = 0;
-	@JsonField
+	@JsonField(Docs = "A performance optimisation, recommended if the mag size is 100 or more")
 	public boolean allRoundsMustBeIdentical = true;
 	@JsonField
 	public String[] matchBulletNames = new String[0];

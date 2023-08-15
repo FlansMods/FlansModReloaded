@@ -165,7 +165,22 @@ public abstract class FlanItem extends Item
         }
         return new PartDefinition[0];
     }
-
+    public void SetCraftingInputs(ItemStack stack, List<ItemStack> partStacks)
+    {
+        CompoundTag craftingTags = new CompoundTag();
+        int index = 0;
+        for(ItemStack partStack : partStacks)
+        {
+            if(partStack.isEmpty())
+                continue;
+            if(partStack.getItem() instanceof PartItem part)
+            {
+                craftingTags.putString(Integer.toString(index), part.DefinitionLocation.toString());
+            }
+            index++;
+        }
+        stack.getTag().put("parts", craftingTags);
+    }
     public void SetCraftingInputs(ItemStack stack, ItemStack[] partStacks)
     {
         CompoundTag craftingTags = new CompoundTag();

@@ -1,11 +1,18 @@
 package com.flansmod.common.types.crafting.elements;
 
+import com.flansmod.common.FlansMod;
+import com.flansmod.common.item.PartItem;
 import com.flansmod.common.types.JsonField;
 import com.flansmod.common.types.crafting.EMaterialType;
+import com.flansmod.common.types.parts.PartDefinition;
 import net.minecraft.network.chat.Component;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraftforge.registries.ForgeRegistries;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.List;
 
 public class TieredIngredientDefinition
 {
@@ -80,5 +87,97 @@ public class TieredIngredientDefinition
 		}
 
 		return Component.translatable("crafting.match_tiers_above", low);
+	}
+
+	public void GenerateMatches(List<ItemStack> potentialMatches)
+	{
+		List<PartDefinition> parts = FlansMod.PARTS.Find((part) ->
+		{
+			if (tag != null && !tag.isEmpty())
+			{
+				boolean foundTag = false;
+				for (String tag : part.itemSettings.tags)
+				{
+					if (tag.equals(tag))
+					{
+						foundTag = true;
+						break;
+					}
+				}
+				if (!foundTag)
+					return false;
+			}
+
+			boolean foundTier = false;
+			for (int tier : allowedTiers)
+			{
+				if (part.materialTier == tier)
+				{
+					foundTier = true;
+					break;
+				}
+			}
+			if (!foundTier)
+				return false;
+
+			boolean matchesMaterial = false;
+			for (EMaterialType material : allowedMaterials)
+			{
+				if (part.materialType == material)
+				{
+					matchesMaterial = true;
+					break;
+				}
+			}
+			return matchesMaterial;
+		});
+		for (PartDefinition part : parts)
+		{
+			Item item = ForgeRegistries.ITEMS.getValue(part.Location);
+			if(item != null)
+				potentialMatches.add(new ItemStack(item));
+		}
+	}
+
+	public boolean Matches(ItemStack stack)
+	{
+		if(stack.getItem() instanceof PartItem part)
+		{
+			boolean foundMaterial = false;
+			for(EMaterialType material : allowedMaterials)
+				if(part.Def().materialType == material)
+				{
+					foundMaterial = true;
+					break;
+				}
+			if(!foundMaterial)
+				return false;
+
+			boolean foundTier = false;
+			for(int tier : allowedTiers)
+				if(part.Def().materialTier == tier)
+				{
+					foundTier = true;
+					break;
+				}
+			if(!foundTier)
+				return false;
+
+			if(!tag.isEmpty())
+			{
+				boolean foundTag = false;
+				for(String tag : part.Def().itemSettings.tags)
+					if(tag.equals(tag))
+					{
+						foundTag = true;
+						break;
+					}
+				if(!foundTag)
+					return false;
+			}
+
+			return true;
+		}
+		return false;
 	}
 }
