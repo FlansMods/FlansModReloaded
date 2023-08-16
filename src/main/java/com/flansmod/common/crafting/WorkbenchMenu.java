@@ -63,8 +63,8 @@ public class WorkbenchMenu extends AbstractContainerMenu
 	private RestrictedSlot GunSlot;
 	private RestrictedSlot PaintCanSlot;
 	private RestrictedSlot MagUpgradeSlot;
-	private GunCraftingInputSlot[] CraftingInputSlots;
-	private GunCraftingOutputSlot CraftingOutputSlot;
+	protected GunCraftingInputSlot[] CraftingInputSlots;
+	protected GunCraftingOutputSlot CraftingOutputSlot;
 	private RestrictedSlot FuelSlot;
 	private RestrictedSlot BatterySlot;
 	private AttachmentSlot[] AttachmentSlots;
@@ -184,7 +184,7 @@ public class WorkbenchMenu extends AbstractContainerMenu
 
 		if(CraftingOutputContainer.getContainerSize() > 0)
 		{
-			addSlot(CraftingOutputSlot = new GunCraftingOutputSlot(CraftingOutputContainer, 0, 78, 66));
+			addSlot(CraftingOutputSlot = new GunCraftingOutputSlot(this, CraftingOutputContainer, 0, 150, 77));
 		}
 		if(CraftingInputContainer.getContainerSize() > 0)
 		{
@@ -265,6 +265,17 @@ public class WorkbenchMenu extends AbstractContainerMenu
 	}
 
 	@OnlyIn(Dist.CLIENT)
+	public void SwitchToPartCrafting()
+	{
+		HideSlots();
+	}
+
+	@OnlyIn(Dist.CLIENT)
+	public void SwitchToArmourCrafting()
+	{
+		HideSlots();
+	}
+
 	public void SwitchToGunCrafting()
 	{
 		HideSlots();
@@ -298,6 +309,7 @@ public class WorkbenchMenu extends AbstractContainerMenu
 				active ? 56 + 30 * (i / 4) : -1000);
 
 			replacementSlot.index = CraftingInputSlots[i].index;
+			CraftingInputSlots[i].SetActive(false);
 			slots.set(replacementSlot.index, replacementSlot);
 			CraftingInputSlots[i] = replacementSlot;
 			CraftingInputSlots[i].SetActive(active);
@@ -337,19 +349,22 @@ public class WorkbenchMenu extends AbstractContainerMenu
 				if(BUTTON_SELECT_RECIPE_0 <= buttonID && buttonID <= BUTTON_SELECT_RECIPE_MAX)
 				{
 					SelectedRecipeIndex = buttonID - BUTTON_SELECT_RECIPE_0;
+					UpdateCraftingOutput();
 					SwitchToGunCrafting();
 					return true;
 				}
 				if(BUTTON_SELECT_SKIN_0 <= buttonID && buttonID <= BUTTON_SELECT_SKIN_MAX)
 				{
 					int skinIndex = buttonID - BUTTON_SELECT_SKIN_0;
-					WorkbenchBlockEntity.PaintGun(player, GunContainer, PaintCanContainer, skinIndex);
+					if(!player.level.isClientSide)
+						WorkbenchBlockEntity.PaintGun(player, GunContainer, PaintCanContainer, skinIndex);
 					return true;
 				}
 				if(BUTTON_SELECT_MAGAZINE_0 <= buttonID && buttonID <= BUTTON_SELECT_MAGAZINE_MAX)
 				{
 					int magIndex = buttonID - BUTTON_SELECT_MAGAZINE_0;
-					WorkbenchBlockEntity.SelectMagazine(player, GunContainer, MagUpgradeContainer, magIndex);
+					if(!player.level.isClientSide)
+						WorkbenchBlockEntity.SelectMagazine(player, GunContainer, MagUpgradeContainer, magIndex);
 					return true;
 				}
 				if(BUTTON_AUTO_FILL_INGREDIENT_0 <= buttonID && buttonID <= BUTTON_AUTO_FULL_INGREDIENT_MAX)
@@ -444,7 +459,9 @@ public class WorkbenchMenu extends AbstractContainerMenu
 
 	public void AutoFillCraftingInputSlot(Player player, int inputSlotIndex)
 	{
-		if(SelectedRecipeIndex >= 0 && 0 <= inputSlotIndex && inputSlotIndex < CraftingInputSlots.length)
+		if(SelectedRecipeIndex >= 0
+			&& 0 <= inputSlotIndex && inputSlotIndex < CraftingInputSlots.length
+			&& CraftingInputSlots[inputSlotIndex].getItem().isEmpty())
 		{
 			GunCraftingEntryDefinition selectedEntry = GetEntry(SelectedRecipeIndex);
 			Either<TieredIngredientDefinition, IngredientDefinition> ingredient = selectedEntry.GetIngredient(inputSlotIndex);
@@ -497,6 +514,41 @@ public class WorkbenchMenu extends AbstractContainerMenu
 				});
 			}
 
+		}
+	}
+
+	public void ConsumeCraftingInputs()
+	{
+		if(CraftingOutputContainer.getContainerSize() > 0
+			&& !CraftingOutputContainer.isEmpty()
+			&& CraftingInputContainer.getContainerSize() > 0
+			&& SelectedRecipeIndex >= 0)
+		{
+			GunCraftingEntryDefinition selectedEntry = GetEntry(SelectedRecipeIndex);
+			if(selectedEntry != null)
+			{
+				int inputSlotIndex = 0;
+
+				for(RecipePartDefinition part : selectedEntry.parts)
+				{
+					for(TieredIngredientDefinition tiered : part.tieredIngredients)
+					{
+						ItemStack input = CraftingInputContainer.getItem(inputSlotIndex);
+						if(tiered.Matches(input))
+							input.setCount(input.getCount() - 1);
+
+						inputSlotIndex++;
+					}
+					for(IngredientDefinition specific : part.additionalIngredients)
+					{
+						ItemStack input = CraftingInputContainer.getItem(inputSlotIndex);
+						if(specific.Matches(input))
+							input.setCount(input.getCount() - specific.count);
+
+						inputSlotIndex++;
+					}
+				}
+			}
 		}
 	}
 

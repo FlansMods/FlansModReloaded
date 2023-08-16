@@ -7,6 +7,7 @@ import com.flansmod.common.item.*;
 import com.flansmod.common.types.attachments.AttachmentDefinition;
 import com.flansmod.common.types.attachments.EAttachmentType;
 import com.flansmod.common.types.elements.ActionDefinition;
+import com.flansmod.common.types.elements.ActionGroupDefinition;
 import com.flansmod.common.types.elements.ModifierDefinition;
 import com.flansmod.common.types.guns.*;
 import com.flansmod.common.types.magazines.MagazineDefinition;
@@ -100,6 +101,7 @@ public abstract class GunContext
 	public abstract ItemStack GetItemStack();
 	public abstract void SetItemStack(ItemStack stack);
 	public abstract DamageSource CreateDamageSource();
+	@Nonnull
 	public abstract ShooterContext GetShooter();
 	public abstract Container GetAttachedInventory();
 	public abstract boolean CanPerformTwoHandedAction();
@@ -133,7 +135,7 @@ public abstract class GunContext
 	@Nullable
 	public Level Level()
 	{
-		return GetShooter() == null ? null : GetShooter().Level();
+		return GetShooter().IsValid() ? GetShooter().Level() : null;
 	}
 
 	// --------------------------------------------------------------------------
@@ -150,6 +152,13 @@ public abstract class GunContext
 			ModifierCache.clear();
 			RecalculateAttachmentModifierCache();
 			RecalculateModifierCache();
+			// And base modifiers
+			for(ActionDefinition action : GunDef().GetActions(EActionInput.PRIMARY))
+				if(action.IsValid() && action.actionType == EActionType.Shoot)
+					ModifierCache.addAll(Arrays.asList(action.modifiers));
+			for(ActionDefinition action : GunDef().GetActions(EActionInput.SECONDARY))
+				if(action.IsValid() && action.actionType == EActionType.Shoot)
+					ModifierCache.addAll(Arrays.asList(action.modifiers));
 			ModifierHash = updatedModifierHash;
 		}
 		return ModifierCache;
@@ -186,9 +195,9 @@ public abstract class GunContext
 	{
 		if(!GetItemStack().hasTag())
 			return null;
-		if(!GetItemStack().getTag().contains(key))
+		if(!GetItemStack().getOrCreateTag().contains(key))
 			return null;
-		return GetItemStack().getTag().getCompound(key);
+		return GetItemStack().getOrCreateTag().getCompound(key);
 	}
 
 	@Nonnull
@@ -338,15 +347,24 @@ public abstract class GunContext
 
 	private int HashAttachments()
 	{
-		return 0;
+		int hash = 0xa77ac4;
+		for(ItemStack stack : GetAttachmentStacks())
+		 	if(stack.getItem() instanceof FlanItem flanItem)
+			{
+				int defHash = flanItem.Def().hashCode();
+				hash ^= (defHash << 16) | (defHash >> 16);
+			}
+		return hash;
 	}
 	private void RecalculateAttachmentModifierCache()
 	{
-		// TODO:
+		ModifierCache.clear();
+		for(ItemStack stack : GetAttachmentStacks())
+			if(stack.getItem() instanceof AttachmentItem attachmentItem)
+				ModifierCache.addAll(Arrays.asList(attachmentItem.Def().modifiers));
 	}
 
-
-
+	/*
 	public List<ModifierDefinition> GetApplicableModifiers(String stat, EActionInput actionSet)
 	{
 		List<ModifierDefinition> applicableModifiers = new ArrayList<>();
@@ -415,6 +433,9 @@ public abstract class GunContext
 		}
 		return results;
 	}
+	 */
+
+
 	@Override
 	public String toString()
 	{

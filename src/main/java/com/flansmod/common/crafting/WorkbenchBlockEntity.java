@@ -396,8 +396,6 @@ public class WorkbenchBlockEntity extends BlockEntity implements MenuProvider, C
 				return true;
 
 			// Now we just need to check the cost
-			if (paintCanContainer.isEmpty())
-				return false;
 			int paintCost = paintjobDefinition.paintBucketsRequired;
 			if (paintCanContainer.getItem(0).getCount() < paintCost)
 				return false;
@@ -476,8 +474,6 @@ public class WorkbenchBlockEntity extends BlockEntity implements MenuProvider, C
 				return true;
 
 			// Now we just need to check the cost
-			if (magUpgradeContainer.isEmpty())
-				return false;
 			int magCost = mag.upgradeCost + gunItem.Def().primaryMagazines.baseCostToSwap;
 			if (magUpgradeContainer.getItem(0).getCount() < magCost)
 				return false;

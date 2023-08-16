@@ -4,6 +4,7 @@ import com.flansmod.common.FlansMod;
 import com.flansmod.common.types.JsonDefinition;
 import com.flansmod.common.types.attachments.EAttachmentType;
 import com.flansmod.common.types.elements.AttachmentSettingsDefinition;
+import com.flansmod.common.types.elements.ModifierDefinition;
 import com.flansmod.common.types.elements.PaintableDefinition;
 import com.flansmod.common.types.elements.PaintjobDefinition;
 import com.flansmod.common.types.guns.GunDefinition;
@@ -17,6 +18,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
 import org.checkerframework.checker.units.qual.C;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -25,7 +27,7 @@ import java.util.List;
 
 public abstract class FlanItem extends Item
 {
-    private static List<FlanItem> ALL_ITEMS = new ArrayList(256);
+    private static final List<FlanItem> ALL_ITEMS = new ArrayList<>(256);
 
     public static Iterable<FlanItem> GetAllItems()
     {
@@ -42,11 +44,24 @@ public abstract class FlanItem extends Item
     }
 
     @Override
-    public void appendHoverText(ItemStack stack,
+    public void appendHoverText(@NotNull ItemStack stack,
                                 @Nullable Level level,
-                                List<Component> tooltips,
-                                TooltipFlag flags)
+                                @NotNull List<Component> tooltips,
+                                @NotNull TooltipFlag flags)
     {
+        PartDefinition[] craftedFromParts = GetCraftingInputs(stack);
+        for(PartDefinition craftedFrom : craftedFromParts)
+        {
+            tooltips.add(Component.translatable(
+                "tooltip.crafted_from",
+                Component.translatable(craftedFrom.GetLocationString() + ".name")
+            ));
+            for(ModifierDefinition modDef : craftedFrom.modifiers)
+            {
+                tooltips.add(Component.translatable("tooltip.crafted_from.modifier_format", modDef.GetModifierString()));
+            }
+        }
+
         for (ItemStack attachmentStack : GetAttachmentStacks(stack))
         {
             tooltips.add(Component.translatable("tooltip.format.attached", attachmentStack.getHoverName()));
@@ -72,7 +87,7 @@ public abstract class FlanItem extends Item
     {
         if(stack.hasTag())
         {
-            CompoundTag tags = stack.getTag();
+            CompoundTag tags = stack.getOrCreateTag();
             if(tags.contains("attachments"))
             {
                 CompoundTag attachTags = tags.getCompound("attachments");
@@ -90,7 +105,7 @@ public abstract class FlanItem extends Item
         List<ItemStack> attachmentStacks = new ArrayList<>();
         if(stack.hasTag())
         {
-            CompoundTag tags = stack.getTag();
+            CompoundTag tags = stack.getOrCreateTag();
             if(tags.contains("attachments"))
             {
                 CompoundTag attachTags = tags.getCompound("attachments");
@@ -135,9 +150,9 @@ public abstract class FlanItem extends Item
 
     public String GetPaintjobName(ItemStack stack)
     {
-        if(stack.hasTag() && stack.getTag().contains("paint"))
+        if(stack.hasTag() && stack.getOrCreateTag().contains("paint"))
         {
-            return stack.getTag().getString("paint");
+            return stack.getOrCreateTag().getString("paint");
         }
         return "default";
     }
@@ -150,9 +165,9 @@ public abstract class FlanItem extends Item
     // Only remember parts that we used, not arbitrary item stacks with NBT
     public PartDefinition[] GetCraftingInputs(ItemStack stack)
     {
-        if(stack.hasTag() && stack.getTag().contains("parts"))
+        if(stack.hasTag() && stack.getOrCreateTag().contains("parts"))
         {
-            CompoundTag craftingTags = stack.getTag().getCompound("parts");
+            CompoundTag craftingTags = stack.getOrCreateTag().getCompound("parts");
             PartDefinition[] parts = new PartDefinition[craftingTags.getAllKeys().size()];
             int index = 0;
             for(String key : craftingTags.getAllKeys())
@@ -179,7 +194,7 @@ public abstract class FlanItem extends Item
             }
             index++;
         }
-        stack.getTag().put("parts", craftingTags);
+        stack.getOrCreateTag().put("parts", craftingTags);
     }
     public void SetCraftingInputs(ItemStack stack, ItemStack[] partStacks)
     {
@@ -195,6 +210,6 @@ public abstract class FlanItem extends Item
             }
             index++;
         }
-        stack.getTag().put("parts", craftingTags);
+        stack.getOrCreateTag().put("parts", craftingTags);
     }
 }

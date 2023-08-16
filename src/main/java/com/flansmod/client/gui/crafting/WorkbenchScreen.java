@@ -8,6 +8,8 @@ import com.flansmod.common.actions.EActionInput;
 import com.flansmod.common.crafting.FabricationRecipeMatcher;
 import com.flansmod.common.crafting.WorkbenchBlockEntity;
 import com.flansmod.common.crafting.WorkbenchMenu;
+import com.flansmod.common.gunshots.GunContext;
+import com.flansmod.common.gunshots.ModifierStack;
 import com.flansmod.common.item.FlanItem;
 import com.flansmod.common.item.GunItem;
 import com.flansmod.common.item.PartItem;
@@ -15,6 +17,7 @@ import com.flansmod.common.types.crafting.EMaterialType;
 import com.flansmod.common.types.crafting.WorkbenchDefinition;
 import com.flansmod.common.types.crafting.elements.*;
 import com.flansmod.common.types.elements.MagazineSlotSettingsDefinition;
+import com.flansmod.common.types.elements.ModifierDefinition;
 import com.flansmod.common.types.elements.PaintableDefinition;
 import com.flansmod.common.types.guns.GunDefinition;
 import com.flansmod.common.types.magazines.MagazineDefinition;
@@ -70,8 +73,6 @@ public class WorkbenchScreen extends AbstractContainerScreen<WorkbenchMenu>
 		MODIFICATION
 	}
 
-
-
 	private static final Component[] TAB_TITLES = new Component[]{
 		Component.translatable("workbench.tab_materials"),
 		Component.translatable("workbench.tab_power"),
@@ -86,9 +87,6 @@ public class WorkbenchScreen extends AbstractContainerScreen<WorkbenchMenu>
 	private final WorkbenchDefinition Def;
 
 	private final Tab[] AvailableTabs;
-
-
-
 
 	public WorkbenchScreen(WorkbenchMenu menu, Inventory inventory, Component component)
 	{
@@ -108,6 +106,8 @@ public class WorkbenchScreen extends AbstractContainerScreen<WorkbenchMenu>
 			tabs.add(Tab.ARMOUR_CRAFTING);
 		if(Def.gunModifying.isActive)
 			tabs.add(Tab.MODIFICATION);
+		if(Def.partCrafting.isActive)
+			tabs.add(Tab.PART_CRAFTING);
 		AvailableTabs = new Tab[tabs.size()];
 		for(int i = 0; i < tabs.size(); i++)
 			AvailableTabs[i] = tabs.get(i);
@@ -141,6 +141,10 @@ public class WorkbenchScreen extends AbstractContainerScreen<WorkbenchMenu>
 			InitMaterials(xOrigin, yOrigin);
 		if(HasPowerTab())
 			InitPower(xOrigin, yOrigin);
+		if(HasPartCraftingTab())
+			InitPartCrafting(xOrigin, yOrigin);
+		if(HasArmourCraftingTab())
+			InitArmourCrafting(xOrigin, yOrigin);
 
 		if(AvailableTabs.length > 0)
 			SelectTab(AvailableTabs[0]);
@@ -155,6 +159,8 @@ public class WorkbenchScreen extends AbstractContainerScreen<WorkbenchMenu>
 		UpdateGunModifying(SelectedTab == Tab.MODIFICATION);
 		UpdatePower(SelectedTab == Tab.POWER);
 		UpdateMaterials(SelectedTab == Tab.MATERIALS);
+		UpdateArmourCrafting(SelectedTab == Tab.MATERIALS);
+		UpdatePartCrafting(SelectedTab == Tab.MATERIALS);
 	}
 
 	@Override
@@ -173,21 +179,36 @@ public class WorkbenchScreen extends AbstractContainerScreen<WorkbenchMenu>
 
 	private void SelectTab(WorkbenchScreen.Tab tab)
 	{
+		boolean canSwitch = false;
+		for(Tab available : AvailableTabs)
+		{
+			if(available == tab)
+			{
+				canSwitch = true;
+				break;
+			}
+		}
+		if(!canSwitch)
+		{
+			FlansMod.LOGGER.warn("Tried to switch to " + tab + " tab, which this menu does not have");
+			return;
+		}
+
 		SelectedTab = tab;
 		SetGunCraftingEnabled(tab == Tab.GUN_CRAFTING);
 		SetMaterialsEnabled(tab == Tab.MATERIALS);
 		SetPowerEnabled(tab == Tab.POWER);
 		SetGunModifyingEnabled(tab == Tab.MODIFICATION);
-		//SetPartCraftingEnabled(tab == Tab.PART_CRAFTING);
-		//SetArmourCraftingEnabled(tab == Tab.ARMOUR_CRAFTING);
+		SetPartCraftingEnabled(tab == Tab.PART_CRAFTING);
+		SetArmourCraftingEnabled(tab == Tab.ARMOUR_CRAFTING);
 
 		switch(tab)
 		{
 			case GUN_CRAFTING -> { Workbench.SwitchToGunCrafting(); }
-			//case PART_CRAFTING -> { Workbench.SwitchToPartCrafting(); }
+			case PART_CRAFTING -> { Workbench.SwitchToPartCrafting(); }
 			case POWER -> { Workbench.SwitchToPower(); }
 			case MATERIALS -> { Workbench.SwitchToMaterials(); }
-			//case ARMOUR_CRAFTING -> { Workbench.SwitchToArmourCrafting(); }
+			case ARMOUR_CRAFTING -> { Workbench.SwitchToArmourCrafting(); }
 			case MODIFICATION -> { Workbench.SwitchToGunModification(); }
 		}
 
@@ -208,8 +229,8 @@ public class WorkbenchScreen extends AbstractContainerScreen<WorkbenchMenu>
 				case POWER -> 				{ RenderPowerBG(pose, xOrigin, yOrigin); }
 				case GUN_CRAFTING ->		{ RenderGunCraftingBG(pose, xOrigin, yOrigin); }
 				case MODIFICATION -> 		{ RenderGunModifyingBG(pose, xOrigin, yOrigin); }
-				//case PART_CRAFTING ->		{ RenderPartCraftingBG(pose, xOrigin, yOrigin); }
-				//case ARMOUR_CRAFTING -> 	{ RenderArmourCraftingBG(pose, xOrigin, yOrigin); }
+				case PART_CRAFTING ->		{ RenderPartCraftingBG(pose, xOrigin, yOrigin); }
+				case ARMOUR_CRAFTING -> 	{ RenderArmourCraftingBG(pose, xOrigin, yOrigin); }
 			}
 		}
 		pose.popPose();
@@ -234,8 +255,9 @@ public class WorkbenchScreen extends AbstractContainerScreen<WorkbenchMenu>
 			case POWER -> { if(RenderPowerTooltip(pose, xMouse, yMouse)) return; }
 			case GUN_CRAFTING -> { if(RenderGunCraftingTooltip(pose, xMouse, yMouse)) return; }
 			case MODIFICATION -> { if(RenderGunModifyingTooltip(pose, xMouse, yMouse)) return; }
+			case PART_CRAFTING -> { if(RenderPartCraftingTooltip(pose, xMouse, yMouse)) return; }
+			case ARMOUR_CRAFTING -> { if(RenderArmourCraftingTooltip(pose, xMouse, yMouse)) return; }
 		}
-		//renderTooltip(pose, xMouse, yMouse);
 	}
 
 	@Override
@@ -252,6 +274,8 @@ public class WorkbenchScreen extends AbstractContainerScreen<WorkbenchMenu>
 				case POWER -> 				{ RenderPowerFG(pose, x, y); }
 				case GUN_CRAFTING -> 		{ RenderGunCraftingFG(pose, x, y); }
 				case MODIFICATION -> 		{ RenderGunModifyingFG(pose, x, y); }
+				case PART_CRAFTING -> 		{ RenderPartCraftingFG(pose, x, y); }
+				case ARMOUR_CRAFTING -> 	{ RenderArmourCraftingFG(pose, x, y); }
 			}
 		}
 		pose.popPose();
@@ -913,25 +937,11 @@ public class WorkbenchScreen extends AbstractContainerScreen<WorkbenchMenu>
 	// =================================================================================================================
 	private static final ResourceLocation PART_CRAFTING_BG = new ResourceLocation(FlansMod.MODID, "textures/gui/part_crafting.png");
 
+	private static final int PART_RECIPE_VIEWER_ROWS = 2;
+	private static final int PART_RECIPE_VIEWER_COLUMNS = 2;
+
 	private Button[] PartCraftingButtons;
-
-	/*
-	public boolean HasPartCrafting()
-	{
-		return Workbench.Def.partCrafting.isActive;
-	}
-
-	public void SetPartCraftingEnabled(boolean enable)
-	{
-		RefreshGunCraftingFilters();
-		for(int j = 0; j < PART_RECIPE_VIEWER_ROWS; j++)
-		{
-			for (int i = 0; i < PART_RECIPE_VIEWER_COLUMNS; i++)
-			{
-
-			}
-		}
-	}
+	public boolean HasPartCraftingTab() { return Workbench.Def.partCrafting.isActive; }
 
 	private void InitPartCrafting(int xOrigin, int yOrigin)
 	{
@@ -952,7 +962,105 @@ public class WorkbenchScreen extends AbstractContainerScreen<WorkbenchMenu>
 			}
 		}
 	}
-	*/
+
+	public void SetPartCraftingEnabled(boolean enable)
+	{
+		RefreshGunCraftingFilters();
+		for(int j = 0; j < PART_RECIPE_VIEWER_ROWS; j++)
+		{
+			for (int i = 0; i < PART_RECIPE_VIEWER_COLUMNS; i++)
+			{
+
+			}
+		}
+	}
+
+	private void UpdatePartCrafting(boolean enabled)
+	{
+
+	}
+
+	private boolean RenderPartCraftingTooltip(PoseStack pose, int xMouse, int yMouse)
+	{
+		return false;
+	}
+
+	private void RenderPartCraftingBG(PoseStack pose, int xOrigin, int yOrigin)
+	{
+		// Render the background image
+		RenderSystem.setShader(GameRenderer::getPositionTexShader);
+		RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
+		RenderSystem.setShaderTexture(0, PART_CRAFTING_BG);
+		blit(pose, xOrigin, yOrigin, getBlitOffset(), 0, 0, imageWidth, imageHeight, TEXTURE_WIDTH, TEXTURE_HEIGHT);
+
+		for(int j = 0; j < 5; j++)
+		{
+			int numSlotsOnThisRow = Maths.Min(Workbench.MaterialContainer.getContainerSize() - j * 9, 9);
+			if(numSlotsOnThisRow > 0)
+			{
+				blit(pose, xOrigin + 5, yOrigin + 22 + 18 * j, getBlitOffset(), 5, 136, 18 * numSlotsOnThisRow, 18, TEXTURE_WIDTH, TEXTURE_HEIGHT);
+			}
+		}
+
+	}
+
+	private void RenderPartCraftingFG(PoseStack pose, int xMouse, int yMouse)
+	{
+
+	}
+
+	// =================================================================================================================
+	// ================================================ ARMOUR CRAFTING =================================================
+	// =================================================================================================================
+	private static final ResourceLocation ARMOUR_CRAFTING_BG = new ResourceLocation(FlansMod.MODID, "textures/gui/armour_crafting.png");
+	public boolean HasArmourCraftingTab()
+	{
+		return Workbench.Def.armourCrafting.isActive;
+	}
+
+	private void InitArmourCrafting(int xOrigin, int yOrigin)
+	{
+
+	}
+
+	private void SetArmourCraftingEnabled(boolean enable)
+	{
+
+	}
+
+	private void UpdateArmourCrafting(boolean enabled)
+	{
+
+	}
+
+	private boolean RenderArmourCraftingTooltip(PoseStack pose, int xMouse, int yMouse)
+	{
+		return false;
+	}
+
+	private void RenderArmourCraftingBG(PoseStack pose, int xOrigin, int yOrigin)
+	{
+		// Render the background image
+		RenderSystem.setShader(GameRenderer::getPositionTexShader);
+		RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
+		RenderSystem.setShaderTexture(0, ARMOUR_CRAFTING_BG);
+		blit(pose, xOrigin, yOrigin, getBlitOffset(), 0, 0, imageWidth, imageHeight, TEXTURE_WIDTH, TEXTURE_HEIGHT);
+
+		for(int j = 0; j < 5; j++)
+		{
+			int numSlotsOnThisRow = Maths.Min(Workbench.MaterialContainer.getContainerSize() - j * 9, 9);
+			if(numSlotsOnThisRow > 0)
+			{
+				blit(pose, xOrigin + 5, yOrigin + 22 + 18 * j, getBlitOffset(), 5, 136, 18 * numSlotsOnThisRow, 18, TEXTURE_WIDTH, TEXTURE_HEIGHT);
+			}
+		}
+
+	}
+
+	private void RenderArmourCraftingFG(PoseStack pose, int xMouse, int yMouse)
+	{
+
+	}
 
 	// =================================================================================================================
 	// ================================================= GUN CRAFTING ==================================================
@@ -1148,9 +1256,12 @@ public class WorkbenchScreen extends AbstractContainerScreen<WorkbenchMenu>
 			for (int i = 0; i < GUN_RECIPE_VIEWER_COLUMNS; i++)
 			{
 				final int relativeIndex = i + GUN_RECIPE_VIEWER_COLUMNS * j;
-				if(PartCraftingButtons != null)
+				if(GoToPartCraftingButtons != null)
 				{
-					PartCraftingButtons[relativeIndex].active = SelectedTab == Tab.GUN_CRAFTING && (firstIndex + relativeIndex < CachedSlotInfo.size());
+					GoToPartCraftingButtons[relativeIndex].active =
+						SelectedTab == Tab.GUN_CRAFTING
+							&& Workbench.Def.partCrafting.isActive
+							&& (firstIndex + relativeIndex < CachedSlotInfo.size());
 				}
 				if(AutoFillCraftingButtons != null)
 				{
@@ -1218,7 +1329,7 @@ public class WorkbenchScreen extends AbstractContainerScreen<WorkbenchMenu>
 						{
 							GoToPartCrafting(index);
 						})
-					.bounds(xOrigin + GUN_RECIPE_VIEWER_X_ORIGIN + 9 + 20 * i, yOrigin + GUN_RECIPE_VIEWER_Y_ORIGIN + 19 + 20 * j, 9, 9)
+					.bounds(xOrigin + GUN_RECIPE_VIEWER_X_ORIGIN + 9 + 20 * i, yOrigin + GUN_RECIPE_VIEWER_Y_ORIGIN + 19 + 30 * j, 9, 9)
 					.build();
 				addWidget(GoToPartCraftingButtons[index]);
 				AutoFillCraftingButtons[index] = Button.builder(Component.empty(),
@@ -1226,7 +1337,7 @@ public class WorkbenchScreen extends AbstractContainerScreen<WorkbenchMenu>
 					{
 						AutoFillCraftingSlot(index);
 					})
-					.bounds(xOrigin + GUN_RECIPE_VIEWER_X_ORIGIN + 20 * i, yOrigin + GUN_RECIPE_VIEWER_Y_ORIGIN + 19 + 20 * j, 9, 9)
+					.bounds(xOrigin + GUN_RECIPE_VIEWER_X_ORIGIN + 20 * i, yOrigin + GUN_RECIPE_VIEWER_Y_ORIGIN + 19 + 30 * j, 9, 9)
 					.build();
 				addWidget(AutoFillCraftingButtons[index]);
 			}
@@ -1305,10 +1416,13 @@ public class WorkbenchScreen extends AbstractContainerScreen<WorkbenchMenu>
 							renderTooltip(pose, Component.translatable("crafting.auto_add_best_parts"), xMouse, yMouse);
 							return true;
 						}
-						if (InBox(xMouse, yMouse, xOrigin + GUN_RECIPE_VIEWER_X_ORIGIN + 10 + 20 * i, 9, yOrigin + GUN_RECIPE_VIEWER_Y_ORIGIN + 20 + 30 * j, 9))
+						if(Def.partCrafting.isActive)
 						{
-							renderTooltip(pose, Component.translatable("crafting.switch_to_part_crafting"), xMouse, yMouse);
-							return true;
+							if (InBox(xMouse, yMouse, xOrigin + GUN_RECIPE_VIEWER_X_ORIGIN + 10 + 20 * i, 9, yOrigin + GUN_RECIPE_VIEWER_Y_ORIGIN + 20 + 30 * j, 9))
+							{
+								renderTooltip(pose, Component.translatable("crafting.switch_to_part_crafting"), xMouse, yMouse);
+								return true;
+							}
 						}
 					}
 				}
@@ -1341,6 +1455,48 @@ public class WorkbenchScreen extends AbstractContainerScreen<WorkbenchMenu>
 				}
 			}
 		}
+
+		if(SelectedGunRecipe != -1)
+		{
+
+			GunCraftingEntryDefinition recipe = GunCraftingEntries.get(SelectedGunRecipe);
+			if(recipe != null && recipe.outputs.length > 0)
+			{
+				ItemStack stack = recipe.outputs[0].CreateStack();
+				GunContext context = GunContext.CreateFrom(stack);
+				if(context.IsValid())
+				{
+					int statBoxX = xOrigin + GUN_STATS_X_ORIGIN;
+					int statBoxY = yOrigin + GUN_STATS_Y_ORIGIN + 10;
+					if(RenderTooltipForStatComparison(pose, ModifierDefinition.STAT_SHOT_SPREAD, 1.0f, context, xMouse, yMouse, statBoxX, statBoxY))
+						return true;
+					if(RenderTooltipForStatComparison(pose, ModifierDefinition.STAT_IMPACT_DAMAGE, 1.0f, context, xMouse, yMouse, statBoxX, statBoxY + 10))
+						return true;
+					if(RenderTooltipForStatComparison(pose, ModifierDefinition.STAT_SHOT_SPEED, 1.0f, context, xMouse, yMouse, statBoxX + 32, statBoxY))
+						return true;
+					if(RenderTooltipForStatComparison(pose, ModifierDefinition.STAT_IMPACT_KNOCKBACK, 1.0f, context, xMouse, yMouse, statBoxX + 32, statBoxY + 10))
+						return true;
+					if(RenderTooltipForStatComparison(pose, ModifierDefinition.STAT_SHOT_BULLET_COUNT, 1.0f, context, xMouse, yMouse, statBoxX + 64, statBoxY))
+						return true;
+					if(RenderTooltipForStatComparison(pose, ModifierDefinition.STAT_SHOT_VERTICAL_RECOIL, 1.0f, context, xMouse, yMouse, statBoxX + 64, statBoxY + 10))
+						return true;
+				}
+			}
+		}
+
+
+		return false;
+	}
+
+	private boolean RenderTooltipForStatComparison(PoseStack pose, String stat, float baseValue, GunContext context, int xMouse, int yMouse, int boxX, int boxY)
+	{
+		if (InBox(xMouse, yMouse, boxX, 30, boxY, 9))
+		{
+			ModifierStack modStack = new ModifierStack(stat, EActionInput.PRIMARY);
+			context.Apply(modStack);
+			renderTooltip(pose, Component.translatable("tooltip.format." + stat + ".advanced", modStack.ApplyTo(baseValue)), xMouse, yMouse);
+			return true;
+		}
 		return false;
 	}
 
@@ -1362,6 +1518,7 @@ public class WorkbenchScreen extends AbstractContainerScreen<WorkbenchMenu>
 		if(recipeIndex < GunCraftingEntries.size())
 		{
 			SelectedGunRecipe = recipeIndex;
+			Workbench.SwitchToGunCrafting();
 			NetworkedButtonPress(WorkbenchMenu.BUTTON_SELECT_RECIPE_0 + recipeIndex);
 
 			GunCraftingEntryDefinition recipe = GunCraftingEntries.get(SelectedGunRecipe);
@@ -1403,10 +1560,10 @@ public class WorkbenchScreen extends AbstractContainerScreen<WorkbenchMenu>
 	private void RenderGunCraftingBG(PoseStack pose, int xOrigin, int yOrigin)
 	{
 		// Render the gun before the background so it ends up behind
-		if(SelectedGunRecipe != -1)
+		if (SelectedGunRecipe != -1)
 		{
 			GunCraftingEntryDefinition entry = GunCraftingEntries.get(SelectedGunRecipe);
-			if(entry != null)
+			if (entry != null)
 			{
 				pose.pushPose();
 				pose.translate(xOrigin + imageWidth + 64f, yOrigin + 64f, 0f);
@@ -1428,16 +1585,16 @@ public class WorkbenchScreen extends AbstractContainerScreen<WorkbenchMenu>
 		RenderSystem.setShaderTexture(0, GUN_FABRICATION_BG);
 		blit(pose, xOrigin, yOrigin, getBlitOffset(), 0, 0, imageWidth, imageHeight, TEXTURE_WIDTH, TEXTURE_HEIGHT);
 
-		if(SelectedGunRecipe != -1)
 		{
 			int firstRow = Maths.Floor(recipeSelectorScrollOffset);
 			int lastRow = firstRow + GUN_RECIPE_VIEWER_ROWS - 1;
-			for(int y = 0; y < GUN_RECIPE_VIEWER_ROWS; y++)
+			for (int y = 0; y < GUN_RECIPE_VIEWER_ROWS; y++)
 			{
-				for(int x = 0; x < GUN_RECIPE_VIEWER_COLUMNS; x++)
+				for (int x = 0; x < GUN_RECIPE_VIEWER_COLUMNS; x++)
 				{
 					final int index = y * GUN_RECIPE_VIEWER_COLUMNS + x;
-					if(index < CachedSlotInfo.size())
+
+					if (SelectedGunRecipe != -1 && index < CachedSlotInfo.size())
 					{
 						// Render this button
 						GunCraftingSlotInfo slotInfo = CachedSlotInfo.get(index);
@@ -1446,23 +1603,21 @@ public class WorkbenchScreen extends AbstractContainerScreen<WorkbenchMenu>
 						blit(pose, slotX, slotY, getBlitOffset(), 172, 144, 20, 30, TEXTURE_WIDTH, TEXTURE_HEIGHT);
 
 
-
 						// Render the "Go to Part Crafting" button
-						if(true) // !Def.partCrafting.isActive)
+						if (!Def.partCrafting.isActive)
 						{
 							// Part Crafting Disabled
 							blit(pose, slotX + 10, slotY + 20, getBlitOffset(), 182, 185, 9, 9, TEXTURE_WIDTH, TEXTURE_HEIGHT);
 						}
 
 						TieredIngredientDefinition tieredDef = slotInfo.GetAsTieredDef();
-						if(tieredDef != null)
+						if (tieredDef != null)
 						{
 							int tier = tieredDef.GetLowestAllowedTier();
 							PartBackgroundType bgType = PartBackgroundType.GetFromTag(tieredDef.tag);
 							blit(pose, slotX + 2, slotY + 2, getBlitOffset(), bgType.texX, bgType.texY, 16, 16, TEXTURE_WIDTH, TEXTURE_HEIGHT);
 							blit(pose, slotX, slotY + 9, getBlitOffset(), (tier - 1) * 9, 247, 9, 9, TEXTURE_WIDTH, TEXTURE_HEIGHT);
-						}
-						else
+						} else
 						{
 							IngredientDefinition additionalDef = slotInfo.GetAsAdditionalDef();
 							// Render the background shape
@@ -1470,19 +1625,15 @@ public class WorkbenchScreen extends AbstractContainerScreen<WorkbenchMenu>
 							// Render a faded item stack
 							// (Defer to later)
 						}
-					}
-					else
+					} else if (index < Workbench.CraftingInputContainer.getContainerSize()
+						&& !Workbench.CraftingInputContainer.getItem(index).isEmpty())
 					{
-						// Cover up the background for this button
-						//blit(pose, xOrigin + GUN_RECIPE_VIEWER_X_ORIGIN + x * 20, yOrigin + GUN_RECIPE_VIEWER_Y_ORIGIN + y * 20, getBlitOffset(), 229, 72, 18, 28, TEXTURE_WIDTH, TEXTURE_HEIGHT);
+						int slotX = xOrigin + GUN_RECIPE_VIEWER_X_ORIGIN + x * 20;
+						int slotY = yOrigin + GUN_RECIPE_VIEWER_Y_ORIGIN + y * 30;
+						blit(pose, slotX, slotY, getBlitOffset(), 172, 144, 20, 20, TEXTURE_WIDTH, TEXTURE_HEIGHT);
 					}
-
 				}
 			}
-		}
-		else
-		{
-			// Render over slots as disabled
 		}
 
 		{
@@ -1770,6 +1921,7 @@ public class WorkbenchScreen extends AbstractContainerScreen<WorkbenchMenu>
 	{
 		if(minecraft == null || minecraft.gameMode == null)
 			return false;
+		Workbench.clickMenuButton(minecraft.player, buttonID);
 		minecraft.gameMode.handleInventoryButtonClick(menu.containerId, buttonID);
 		return true;
 	}

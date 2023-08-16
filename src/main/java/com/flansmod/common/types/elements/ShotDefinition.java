@@ -38,12 +38,13 @@ public class ShotDefinition
 	}
 
 
+
 	@JsonField
 	public float verticalRecoil = 3.0f;
 	@JsonField
 	public float horizontalRecoil = 0.0f;
 	@JsonField
-	public float spread = 3.0f;
+	public float spread = 0.0f;
 	@JsonField
 	public ESpreadPattern spreadPattern = ESpreadPattern.FilledCircle;
 	@JsonField

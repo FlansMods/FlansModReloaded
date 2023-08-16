@@ -98,7 +98,7 @@ public class TieredIngredientDefinition
 				boolean foundTag = false;
 				for (String tag : part.itemSettings.tags)
 				{
-					if (tag.equals(tag))
+					if (tag.equals(this.tag))
 					{
 						foundTag = true;
 						break;
@@ -138,45 +138,48 @@ public class TieredIngredientDefinition
 				potentialMatches.add(new ItemStack(item));
 		}
 	}
+	public boolean Matches(PartDefinition part)
+	{
+		boolean foundMaterial = false;
+		for(EMaterialType material : allowedMaterials)
+			if(part.materialType == material)
+			{
+				foundMaterial = true;
+				break;
+			}
+		if(!foundMaterial)
+			return false;
+
+		boolean foundTier = false;
+		for(int tier : allowedTiers)
+			if(part.materialTier == tier)
+			{
+				foundTier = true;
+				break;
+			}
+		if(!foundTier)
+			return false;
+
+		if(!tag.isEmpty())
+		{
+			boolean foundTag = false;
+			for(String tag : part.itemSettings.tags)
+				if(tag.equals(this.tag))
+				{
+					foundTag = true;
+					break;
+				}
+			return foundTag;
+		}
+
+		return true;
+	}
 
 	public boolean Matches(ItemStack stack)
 	{
 		if(stack.getItem() instanceof PartItem part)
 		{
-			boolean foundMaterial = false;
-			for(EMaterialType material : allowedMaterials)
-				if(part.Def().materialType == material)
-				{
-					foundMaterial = true;
-					break;
-				}
-			if(!foundMaterial)
-				return false;
-
-			boolean foundTier = false;
-			for(int tier : allowedTiers)
-				if(part.Def().materialTier == tier)
-				{
-					foundTier = true;
-					break;
-				}
-			if(!foundTier)
-				return false;
-
-			if(!tag.isEmpty())
-			{
-				boolean foundTag = false;
-				for(String tag : part.Def().itemSettings.tags)
-					if(tag.equals(tag))
-					{
-						foundTag = true;
-						break;
-					}
-				if(!foundTag)
-					return false;
-			}
-
-			return true;
+			return Matches(part.Def());
 		}
 		return false;
 	}

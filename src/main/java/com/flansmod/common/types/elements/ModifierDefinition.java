@@ -8,6 +8,24 @@ import net.minecraft.network.chat.Component;
 
 public class ModifierDefinition
 {
+	public static final String STAT_SHOT_SPREAD = "spread";
+	public static final String STAT_SHOT_VERTICAL_RECOIL = "vertical_recoil";
+	public static final String STAT_SHOT_HORIZONTAL_RECOIL = "horizontal_recoil";
+	public static final String STAT_SHOT_SPEED = "speed";
+	public static final String STAT_SHOT_BULLET_COUNT = "bullet_count";
+	public static final String STAT_SHOT_PENETRATION_POWER = "penetration_power";
+	public static final String STAT_SHOT_SPREAD_PATTERN = "spread_pattern";
+
+	public static final String STAT_IMPACT_DAMAGE = "impact_damage";
+	public static final String STAT_IMPACT_KNOCKBACK = "knockback";
+	public static final String STAT_IMPACT_MULTIPLIER_VS_PLAYERS = "multiplier_vs_players";
+	public static final String STAT_IMPACT_MULTIPLIER_VS_VEHICLES = "multiplier_vs_vehicles";
+	public static final String STAT_IMPACT_SPLASH_DAMAGE_RADIUS = "splash_damage_radius";
+	public static final String STAT_IMPACT_SPLASH_DAMAGE_FALLOFF = "splash_damage_falloff";
+	public static final String STAT_IMPACT_SET_FIRE_TO_TARGET = "set_fire_to_target";
+	public static final String STAT_IMPACT_FIRE_SPREAD_RADIUS = "fire_spread_radius";
+	public static final String STAT_IMPACT_FIRE_SPREAD_AMOUNT = "fire_spread_amount";
+
 	@JsonField
 	public String Stat = "";
 	@JsonField

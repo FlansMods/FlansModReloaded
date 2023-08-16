@@ -17,5 +17,6 @@ public class GunCraftingInputSlot extends RestrictedSlot
 	{
 		super.set(stack);
 		Menu.UpdateCraftingOutput();
+		Menu.SwitchToGunCrafting();
 	}
 }

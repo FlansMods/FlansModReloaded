@@ -59,7 +59,7 @@ public class GunContextItem extends GunContext
 	}
 	// There are no modifiers to apply right now
 	@Override
-	public int HashModifierSources() { return 0; }
+	public int HashModifierSources() { return 0x404; }
 	@Override
 	public void RecalculateModifierCache() {}
 }

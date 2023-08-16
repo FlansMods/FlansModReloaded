@@ -6,21 +6,21 @@ import net.minecraft.world.item.ItemStack;
 
 public class GunCraftingOutputSlot extends RestrictedSlot
 {
-
-	public GunCraftingOutputSlot(Container container, int index, int x, int y)
+	public final WorkbenchMenu Workbench;
+	public GunCraftingOutputSlot(WorkbenchMenu workbench, Container container, int index, int x, int y)
 	{
 		super(container, index, x, y);
+		Workbench = workbench;
 	}
 
 	@Override
 	public ItemStack remove(int count)
 	{
 		// Craft action
-
-
-
-
-		return ItemStack.EMPTY;
+		ItemStack output = getItem().copyWithCount(1);
+		Workbench.ConsumeCraftingInputs();
+		getItem().setCount(getItem().getCount() - 1);
+		return output;
 	}
 
 	@Override

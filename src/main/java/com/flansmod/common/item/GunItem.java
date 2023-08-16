@@ -32,6 +32,7 @@ import net.minecraftforge.client.event.InputEvent;
 import net.minecraftforge.client.extensions.common.IClientItemExtensions;
 import net.minecraftforge.common.ToolAction;
 import net.minecraftforge.event.entity.living.LivingEntityUseItemEvent;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -58,7 +59,7 @@ public class GunItem extends FlanItem
     @Override
     public void appendHoverText(ItemStack stack,
                                 @Nullable Level level,
-                                List<Component> tooltips,
+                                @NotNull List<Component> tooltips,
                                 TooltipFlag flags)
     {
         super.appendHoverText(stack, level, tooltips, flags);
@@ -66,19 +67,6 @@ public class GunItem extends FlanItem
         GunContext gunContext = GetContext(stack);
         if(gunContext.IsValid())
         {
-            PartDefinition[] craftedFromParts = gunContext.GetCraftingInputs();
-            for(PartDefinition craftedFrom : craftedFromParts)
-            {
-                tooltips.add(Component.translatable(
-                    "tooltip.crafted_from",
-                    Component.translatable(craftedFrom.GetLocationString() + ".name")
-                ));
-                for(ModifierDefinition modDef : craftedFrom.modifiers)
-                {
-                    tooltips.add(Component.translatable("tooltip.crafted_from.modifier_format", modDef.GetModifierString()));
-                }
-            }
-
             ActionGroupContext actionContext = ActionGroupContext.CreateFrom(gunContext, EActionInput.PRIMARY);
             if (actionContext.IsValid())
             {
@@ -94,9 +82,9 @@ public class GunItem extends FlanItem
                 {
                     if(expanded)
                     {
-                        tooltips.add(Component.translatable("tooltip.format.damage.advanced", gunshotContext.ImpactDamage()));
-                        tooltips.add(Component.translatable("tooltip.format.recoil.advanced", gunshotContext.VerticalRecoil()));
-                        tooltips.add(Component.translatable("tooltip.format.spread.advanced", gunshotContext.Spread()));
+                        tooltips.add(Component.translatable("tooltip.format."+ ModifierDefinition.STAT_IMPACT_DAMAGE + ".advanced", gunshotContext.ImpactDamage()));
+                        tooltips.add(Component.translatable("tooltip.format."+ ModifierDefinition.STAT_SHOT_VERTICAL_RECOIL + ".advanced", gunshotContext.VerticalRecoil()));
+                        tooltips.add(Component.translatable("tooltip.format."+ ModifierDefinition.STAT_SHOT_SPREAD + ".advanced", gunshotContext.Spread()));
                     }
                     else
                     {

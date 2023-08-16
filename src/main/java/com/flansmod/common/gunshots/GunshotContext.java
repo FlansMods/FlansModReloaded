@@ -1,9 +1,12 @@
 package com.flansmod.common.gunshots;
 
 import com.flansmod.common.types.bullets.BulletDefinition;
-import com.flansmod.common.types.guns.ERepeatMode;
+import com.flansmod.common.types.elements.ModifierDefinition;
 import com.flansmod.common.types.guns.ESpreadPattern;
 import com.flansmod.util.Maths;
+
+import java.lang.reflect.Modifier;
+
 
 public class GunshotContext
 {
@@ -60,23 +63,23 @@ public class GunshotContext
 	}
 
 	// Shot settings
-	public float VerticalRecoil() { return ModifyFloat("vertical_recoil", Bullet.shootStats.verticalRecoil); }
-	public float HorizontalRecoil() { return ModifyFloat("horizontal_recoil", Bullet.shootStats.horizontalRecoil); }
-	public float Spread() { return ModifyFloat("spread", Bullet.shootStats.spread); }
-	public float Speed() { return ModifyFloat("speed", Bullet.shootStats.speed); }
-	public int BulletCount() { return Maths.Ceil(ModifyFloat("bullet_count", Bullet.shootStats.bulletCount)); }
-	public float PenetrationPower() { return ModifyFloat("penetration_power", Bullet.shootStats.penetrationPower); }
-	public ESpreadPattern SpreadPattern() { return (ESpreadPattern)ModifyEnum("spread_pattern", Bullet.shootStats.spreadPattern, ESpreadPattern.class); }
+	public float VerticalRecoil() 			{ return ModifyFloat(ModifierDefinition.STAT_SHOT_VERTICAL_RECOIL, Bullet.shootStats.verticalRecoil); }
+	public float HorizontalRecoil() 		{ return ModifyFloat(ModifierDefinition.STAT_SHOT_HORIZONTAL_RECOIL, Bullet.shootStats.horizontalRecoil); }
+	public float Spread() 					{ return ModifyFloat(ModifierDefinition.STAT_SHOT_SPREAD, Bullet.shootStats.spread); }
+	public float Speed() 					{ return ModifyFloat(ModifierDefinition.STAT_SHOT_SPEED, Bullet.shootStats.speed); }
+	public int BulletCount() 				{ return Maths.Ceil(ModifyFloat(ModifierDefinition.STAT_SHOT_BULLET_COUNT, Bullet.shootStats.bulletCount)); }
+	public float PenetrationPower() 		{ return ModifyFloat(ModifierDefinition.STAT_SHOT_PENETRATION_POWER, Bullet.shootStats.penetrationPower); }
+	public ESpreadPattern SpreadPattern() 	{ return (ESpreadPattern)ModifyEnum(ModifierDefinition.STAT_SHOT_SPREAD_PATTERN, Bullet.shootStats.spreadPattern, ESpreadPattern.class); }
 
 	// Impact settings
-	public float ImpactDamage() { return ModifyFloat("impact_damage", Bullet.shootStats.impact.damageToTarget); }
-	public float Knockback() { return ModifyFloat("knockback", Bullet.shootStats.impact.knockback); }
-	public float MultiplierVsPlayers() { return ModifyFloat("multiplier_vs_players", Bullet.shootStats.impact.multiplierVsPlayers); }
-	public float MultiplierVsVehicles() { return ModifyFloat("multiplier_vs_vehicles", Bullet.shootStats.impact.multiplierVsVehicles); }
-	public float SplashDamageRadius() { return ModifyFloat("splash_damage_radius", Bullet.shootStats.impact.splashDamageRadius); }
-	public float SplashDamageFalloff() { return ModifyFloat("splash_damage_falloff", Bullet.shootStats.impact.splashDamageFalloff); }
-	public float SetFireToTarget() { return ModifyFloat("set_fire_to_target", Bullet.shootStats.impact.setFireToTarget); }
-	public float FireSpreadRadius() { return ModifyFloat("fire_spread_radius", Bullet.shootStats.impact.fireSpreadRadius); }
-	public float FireSpreadAmount() { return ModifyFloat("fire_spread_amount", Bullet.shootStats.impact.fireSpreadAmount); }
+	public float ImpactDamage() 			{ return ModifyFloat(ModifierDefinition.STAT_IMPACT_DAMAGE, Bullet.shootStats.impact.damageToTarget); }
+	public float Knockback() 				{ return ModifyFloat(ModifierDefinition.STAT_IMPACT_KNOCKBACK, Bullet.shootStats.impact.knockback); }
+	public float MultiplierVsPlayers() 		{ return ModifyFloat(ModifierDefinition.STAT_IMPACT_MULTIPLIER_VS_PLAYERS, Bullet.shootStats.impact.multiplierVsPlayers); }
+	public float MultiplierVsVehicles() 	{ return ModifyFloat(ModifierDefinition.STAT_IMPACT_MULTIPLIER_VS_VEHICLES, Bullet.shootStats.impact.multiplierVsVehicles); }
+	public float SplashDamageRadius() 		{ return ModifyFloat(ModifierDefinition.STAT_IMPACT_SPLASH_DAMAGE_RADIUS, Bullet.shootStats.impact.splashDamageRadius); }
+	public float SplashDamageFalloff() 		{ return ModifyFloat(ModifierDefinition.STAT_IMPACT_SPLASH_DAMAGE_FALLOFF, Bullet.shootStats.impact.splashDamageFalloff); }
+	public float SetFireToTarget() 			{ return ModifyFloat(ModifierDefinition.STAT_IMPACT_SET_FIRE_TO_TARGET, Bullet.shootStats.impact.setFireToTarget); }
+	public float FireSpreadRadius() 		{ return ModifyFloat(ModifierDefinition.STAT_IMPACT_FIRE_SPREAD_RADIUS, Bullet.shootStats.impact.fireSpreadRadius); }
+	public float FireSpreadAmount() 		{ return ModifyFloat(ModifierDefinition.STAT_IMPACT_FIRE_SPREAD_AMOUNT, Bullet.shootStats.impact.fireSpreadAmount); }
 }
 
