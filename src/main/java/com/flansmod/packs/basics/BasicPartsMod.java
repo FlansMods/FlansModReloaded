@@ -235,9 +235,6 @@ public class BasicPartsMod
 	public static final RegistryObject<Item> BULLET_ARTILLERY_EX =							FlansMod.Bullet(ITEMS, MODID, "artillery_shell_ex");
 	public static final RegistryObject<Item> BULLET_ARTILLERY_INCENDIARY =					FlansMod.Bullet(ITEMS, MODID, "artillery_shell_incendiary");
 
-
-
-
 	public static final RegistryObject<Item> BULLET_SHOTGUN_SHELL =							FlansMod.Bullet(ITEMS, MODID, "shotgun_shell_birdshot");
 	public static final RegistryObject<Item> BULLET_SHOTGUN_SHELL_AP =						FlansMod.Bullet(ITEMS, MODID, "shotgun_shell_ap");
 	public static final RegistryObject<Item> BULLET_SHOTGUN_SHELL_EX =						FlansMod.Bullet(ITEMS, MODID, "shotgun_shell_ex");

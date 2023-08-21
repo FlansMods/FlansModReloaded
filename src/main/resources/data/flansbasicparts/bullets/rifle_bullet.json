@@ -1,0 +1,42 @@
+{
+    "gravityFactor": 0.25,
+    "itemSettings": {
+        "maxStackSize": 64,
+        "tags": [
+            "flansmod:bullet",
+            "flansmod:rifle_bullet"
+        ]
+    },
+    "roundsPerItem": 1,
+    "shootStats": {
+        "verticalRecoil": 1.0,
+        "horizontalRecoil": 0.5,
+        "spread": 1.0,
+        "spreadPattern": "FilledCircle",
+        "hitscan": true,
+        "speed": 0.0,
+        "bulletCount": 1,
+        "spinSpeed": 360.0,
+        "breaksMaterials": [
+            "minecraft:glass"
+        ],
+        "penetrationPower": 1.0,
+        "trailParticles": "",
+        "impact": {
+            "decal": "flansmod:effects/bullet_decal",
+            "damageToTarget": 1.5,
+            "multiplierVsPlayers": 1.0,
+            "multiplierVsVehicles": 1.0,
+            "knockback": 0.0,
+            "splashDamageRadius": 0.0,
+            "splashDamageFalloff": 1.0,
+            "setFireToTarget": 0.0,
+            "fireSpreadRadius": 0.0,
+            "fireSpreadAmount": 0.0,
+            "hitSounds": []
+        }
+    },
+    "onShootActions": [],
+    "onClipEmptyActions": [],
+    "onReloadActions": []
+}

@@ -13,6 +13,7 @@
             "flansmod:engine"
         ]
     },
+    "modifiers": [],
     "engine": {
         "maxAcceleration": 3.0,
         "maxDeceleration": 3.0,

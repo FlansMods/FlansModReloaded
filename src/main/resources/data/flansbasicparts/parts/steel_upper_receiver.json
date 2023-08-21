@@ -13,6 +13,7 @@
             "flansmod:upper_receiver"
         ]
     },
+    "modifiers": [],
     "engine": {
         "maxAcceleration": 1.0,
         "maxDeceleration": 1.0,

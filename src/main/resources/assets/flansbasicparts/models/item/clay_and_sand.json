@@ -1,7 +1,7 @@
 {
     "parent": "item/generated",
     "textures": {
-        "layer0": "flansbasicparts:item/ClayAndSand"
+        "layer0": "flansbasicparts:item/clay_and_sand"
     },
     "display": {
         "thirdperson": {
