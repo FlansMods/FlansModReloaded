@@ -1,9 +1,11 @@
 package com.flansmod.common.types.attachments;
 
 import com.flansmod.common.FlansMod;
+import com.flansmod.common.actions.EActionInput;
 import com.flansmod.common.types.JsonDefinition;
 import com.flansmod.common.types.JsonField;
 import com.flansmod.common.types.elements.ActionDefinition;
+import com.flansmod.common.types.elements.ItemDefinition;
 import com.flansmod.common.types.elements.ModifierDefinition;
 import com.flansmod.common.types.guns.ERepeatMode;
 import net.minecraft.resources.ResourceLocation;
@@ -21,6 +23,28 @@ public class AttachmentDefinition extends JsonDefinition
 		super(resLoc);
 	}
 
+	public boolean ShouldReplaceAction(EActionInput inputType)
+	{
+		switch(inputType)
+		{
+			case PRIMARY -> { return replacePrimaryAction; }
+			case SECONDARY -> { return replaceSecondaryAction; }
+			default -> { return false; }
+		}
+	}
+
+	public ActionDefinition[] GetActions(EActionInput inputType)
+	{
+		switch(inputType)
+		{
+			case PRIMARY -> { return primaryActions; }
+			case SECONDARY -> { return secondaryActions; }
+			default -> { return new ActionDefinition[0]; }
+		}
+	}
+
+	@JsonField
+	public ItemDefinition itemSettings = new ItemDefinition();
 
 	@JsonField
 	public EAttachmentType attachmentType = EAttachmentType.Generic;

@@ -2,7 +2,6 @@ package com.flansmod.common.crafting;
 
 import com.flansmod.common.FlansMod;
 import com.flansmod.common.types.crafting.WorkbenchDefinition;
-import com.flansmod.common.types.guns.GunDefinition;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
@@ -17,9 +16,7 @@ import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.BaseEntityBlock;
 import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.EntityBlock;
 import net.minecraft.world.level.block.RenderShape;
-import net.minecraft.world.level.block.entity.AbstractFurnaceBlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityTicker;
 import net.minecraft.world.level.block.entity.BlockEntityType;
@@ -38,7 +35,7 @@ public class WorkbenchBlock extends BaseEntityBlock
 {
 	public static final DirectionProperty DIRECTION = BlockStateProperties.HORIZONTAL_FACING;
 	private ResourceLocation definitionLocation;
-	public WorkbenchDefinition Def() { return FlansMod.WORKBENCHES.get(definitionLocation); }
+	public WorkbenchDefinition Def() { return FlansMod.WORKBENCHES.Get(definitionLocation); }
 
 	public WorkbenchBlock(ResourceLocation defLoc, Properties props)
 	{

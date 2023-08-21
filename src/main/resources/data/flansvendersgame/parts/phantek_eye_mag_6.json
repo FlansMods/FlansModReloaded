@@ -1,0 +1,15 @@
+{
+    "tags": [
+        "flansvendersgame:phantek_eye"
+    ],
+    "modifiers": [],
+    "ammoLoadMode": "FullMag",
+    "ammoConsumeMode": "FirstNonEmpty",
+    "numRounds": 6,
+    "allRoundsMustBeIdentical": false,
+    "matchBulletNames": [],
+    "requiredBulletTags": [
+        "flansmod:rifle_bullet"
+    ],
+    "disallowedBulletTags": []
+}

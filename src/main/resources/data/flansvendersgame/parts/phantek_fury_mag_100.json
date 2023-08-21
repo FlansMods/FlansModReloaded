@@ -1,0 +1,15 @@
+{
+    "tags": [
+        "flansvendersgame:phantek_fury"
+    ],
+    "modifiers": [],
+    "ammoLoadMode": "FullMag",
+    "ammoConsumeMode": "FirstNonEmpty",
+    "numRounds": 100,
+    "allRoundsMustBeIdentical": true,
+    "matchBulletNames": [],
+    "requiredBulletTags": [
+        "flansmod:rifle_bullet"
+    ],
+    "disallowedBulletTags": []
+}

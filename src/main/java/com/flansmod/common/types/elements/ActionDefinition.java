@@ -12,24 +12,8 @@ public class ActionDefinition
 	// General fields
 	@JsonField
 	public EActionType actionType = EActionType.Invalid;
-	@JsonField
-	public boolean canActUnderwater = true;
-	@JsonField
-	public boolean canActUnderOtherLiquid = false;
-	@JsonField(Docs = "If true, attachments that add an action in the same place will override this one")
-	public boolean canBeOverriden = false;
-	@JsonField(Docs = "If true, then this action will only work if the other hand is empty")
-	public boolean twoHanded = false;
-	@JsonField(Docs = "Refers to gun modes like Full Auto, but applies to all actions")
-	public ERepeatMode repeatMode = ERepeatMode.SemiAuto;
-	@JsonField(Min = 0f, Docs =  "The delay from this action to being able to perform it again (in seconds). If you have a desired Fire Rate in RPM, enter 60 / RPM")
-	public float repeatDelay = 0.0f;
-	@JsonField(Min = 1, Docs = "Number of times to repeat the fire action if we are set to burst fire mode")
-	public int repeatCount = 0;
-	@JsonField(Docs = "If using minigun fire mode, this is the time (in seconds) that it will take to spin up the motor and start shooting")
-	public float spinUpDuration = 1.0f;
 
-	@JsonField(Docs = "")
+	@JsonField(Docs = "In seconds", Min = 0.0f)
 	public float duration = 0.0f;
 
 	@JsonField
@@ -37,9 +21,8 @@ public class ActionDefinition
 	@JsonField
 	public String itemStack = "";
 
-	// Shoot Action Specifics
-	@JsonField
-	public ShotDefinition[] shootStats = new ShotDefinition[0];
+	@JsonField(Docs = "These will be applied to this action if applicable")
+	public ModifierDefinition[] modifiers = new ModifierDefinition[0];
 
 	// IronSight / Scope Action
 	@JsonField

@@ -35,7 +35,8 @@ public class GunContextInventoryItem extends GunContext
 	@Override
 	public boolean CanPerformActions() { return false; }
 	@Override
-	public ActionStack GetActionStack() { return null; }
+	@Nonnull
+	public ActionStack GetActionStack() { return ActionStack.Invalid; }
 	@Override
 	public boolean CanPerformTwoHandedAction() { return false; }
 
@@ -59,4 +60,9 @@ public class GunContextInventoryItem extends GunContext
 	{
 		return "Gun:" + GetItemStack().toString() + " in slot " + Slot + " in inventory " + Inv.toString();
 	}
+	// There are no modifiers to apply right now
+	@Override
+	public int HashModifierSources() { return 0; }
+	@Override
+	public void RecalculateModifierCache() {}
 }

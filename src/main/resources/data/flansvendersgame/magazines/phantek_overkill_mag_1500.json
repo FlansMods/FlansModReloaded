@@ -1,0 +1,15 @@
+{
+    "tags": [
+        "flansvendersgame:phantek_overkill"
+    ],
+    "modifiers": [],
+    "ammoLoadMode": "FullMag",
+    "ammoConsumeMode": "FirstNonEmpty",
+    "numRounds": 1500,
+    "allRoundsMustBeIdentical": true,
+    "matchBulletNames": [],
+    "requiredBulletTags": [
+        "flansmod:rifle_bullet"
+    ],
+    "disallowedBulletTags": []
+}

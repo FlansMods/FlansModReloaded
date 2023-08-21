@@ -4,6 +4,7 @@ import com.flansmod.common.FlansMod;
 import com.flansmod.common.types.JsonDefinition;
 import com.flansmod.common.types.JsonField;
 import com.flansmod.common.types.elements.ActionDefinition;
+import com.flansmod.common.types.elements.ItemDefinition;
 import net.minecraft.resources.ResourceLocation;
 
 public class ToolDefinition extends JsonDefinition
@@ -17,6 +18,9 @@ public class ToolDefinition extends JsonDefinition
 	{
 		super(resLoc);
 	}
+
+	@JsonField
+	public ItemDefinition itemSettings = new ItemDefinition();
 
 	@JsonField
 	public ActionDefinition[] primaryActions = new ActionDefinition[0];

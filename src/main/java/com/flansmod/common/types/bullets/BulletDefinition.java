@@ -5,6 +5,7 @@ import com.flansmod.common.actions.Action;
 import com.flansmod.common.types.JsonDefinition;
 import com.flansmod.common.types.JsonField;
 import com.flansmod.common.types.elements.ActionDefinition;
+import com.flansmod.common.types.elements.ItemDefinition;
 import com.flansmod.common.types.elements.ShotDefinition;
 import net.minecraft.resources.ResourceLocation;
 
@@ -19,14 +20,14 @@ public class BulletDefinition extends JsonDefinition
 
 	public boolean HasTag(String tag)
 	{
-		for (String s : tags)
+		for (String s : itemSettings.tags)
 			if (s.equals(tag))
 				return true;
 		return false;
 	}
 
 	public int GetItemDurability() { return roundsPerItem > 1 ? roundsPerItem : 0; }
-	public int GetMaxStackSize() { return maxStackSize; }
+	public int GetMaxStackSize() { return itemSettings.maxStackSize; }
 
 	public BulletDefinition(ResourceLocation resLoc)
 	{
@@ -36,13 +37,11 @@ public class BulletDefinition extends JsonDefinition
 	@JsonField
 	public float gravityFactor = 0.25f;
 	@JsonField
-	public int maxStackSize = 64;
+	public ItemDefinition itemSettings = new ItemDefinition();
 	@JsonField
 	public int roundsPerItem = 1;
 	@JsonField
 	public ShotDefinition shootStats = new ShotDefinition();
-	@JsonField
-	public String[] tags = new String[0];
 
 	@JsonField
 	public ActionDefinition[] onShootActions = new ActionDefinition[0];

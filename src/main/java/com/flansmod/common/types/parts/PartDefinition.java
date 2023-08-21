@@ -3,7 +3,9 @@ package com.flansmod.common.types.parts;
 import com.flansmod.common.FlansMod;
 import com.flansmod.common.types.JsonDefinition;
 import com.flansmod.common.types.JsonField;
-import com.flansmod.common.types.attachments.EAttachmentType;
+import com.flansmod.common.types.crafting.EMaterialType;
+import com.flansmod.common.types.elements.ItemDefinition;
+import com.flansmod.common.types.elements.ModifierDefinition;
 import com.flansmod.common.types.parts.elements.EngineDefinition;
 import net.minecraft.resources.ResourceLocation;
 
@@ -24,15 +26,22 @@ public class PartDefinition extends JsonDefinition
 	public boolean canPlaceInMachiningTable = false;
 	@JsonField
 	public boolean canPlaceInModificationTable = false;
-	@JsonField
-	public int maxStackSize = 64;
-	@JsonField(Docs = "For use with the FM:Apoc addon")
-	public boolean triggersApocalypse = false;
 
 	@JsonField
 	public String[] compatiblityTags = new String[] { "mecha", "groundVehicle", "plane" };
 
+	@JsonField
+	public ItemDefinition itemSettings = new ItemDefinition();
+	@JsonField
+	public ModifierDefinition[] modifiers = new ModifierDefinition[0];
+
 	// Engine properties
 	@JsonField
 	public EngineDefinition engine = new EngineDefinition();
+
+	@JsonField
+	public int materialTier = 0;
+	@JsonField
+	public EMaterialType materialType = EMaterialType.Misc;
+
 }

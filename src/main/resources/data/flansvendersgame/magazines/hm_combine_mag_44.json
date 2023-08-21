@@ -1,0 +1,15 @@
+{
+    "tags": [
+        "flansvendersgame:hm_combine"
+    ],
+    "modifiers": [],
+    "ammoLoadMode": "FullMag",
+    "ammoConsumeMode": "FirstNonEmpty",
+    "numRounds": 44,
+    "allRoundsMustBeIdentical": true,
+    "matchBulletNames": [],
+    "requiredBulletTags": [
+        "flansmod:rifle_bullet"
+    ],
+    "disallowedBulletTags": []
+}

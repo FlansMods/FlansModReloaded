@@ -10,12 +10,9 @@ import net.minecraft.server.packs.resources.Resource;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.server.packs.resources.SimpleJsonResourceReloadListener;
 import net.minecraft.util.profiling.ProfilerFiller;
-import net.minecraft.world.level.storage.loot.PredicateManager;
 import org.slf4j.Logger;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
@@ -49,7 +46,7 @@ public class Definitions<TDefinitionType extends JsonDefinition> extends SimpleJ
 		DefinitionParser.IterativelyCreateParsers(clazz);
 	}
 
-	public TDefinitionType get(ResourceLocation location)
+	public TDefinitionType Get(ResourceLocation location)
 	{
 		return tables.getOrDefault(location, INVALID);
 	}
@@ -74,6 +71,16 @@ public class Definitions<TDefinitionType extends JsonDefinition> extends SimpleJ
 			if(matchFunction.apply(kvp.getValue()))
 				resultFunction.accept(kvp.getValue());
 		}
+	}
+	public List<TDefinitionType> Find(Function<TDefinitionType, Boolean> matchFunction)
+	{
+		List<TDefinitionType> defs = new ArrayList<>();
+		for(var kvp : tables.entrySet())
+		{
+			if(matchFunction.apply(kvp.getValue()))
+				defs.add(kvp.getValue());
+		}
+		return defs;
 	}
 
 	protected void apply(Map<ResourceLocation, JsonElement> sources, ResourceManager resourceManager, ProfilerFiller p_79216_)

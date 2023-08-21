@@ -7,7 +7,6 @@ import com.flansmod.common.network.FlansModPacketHandler;
 import com.flansmod.common.network.toclient.ShotFiredMessage;
 import com.flansmod.common.network.toserver.SimpleActionMessage;
 import com.flansmod.common.network.toserver.ShotRequestMessage;
-import com.flansmod.common.types.guns.ERepeatMode;
 import net.minecraft.client.Minecraft;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
@@ -20,7 +19,7 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 
-import javax.annotation.Nullable;
+import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -30,18 +29,18 @@ public class ActionManager
 	private final boolean IsClient;
 	private HashMap<GunContext, ActionStack> ActionStacks = new HashMap<GunContext, ActionStack>();
 
-	@Nullable
+	@Nonnull
 	public ActionStack GetActionStack(GunContext context)
 	{
 		if(!context.IsValid())
 		{
 			FlansMod.LOGGER.warn("Tried to get action stack for invalid context");
-			return null;
+			return ActionStack.Invalid;
 		}
 		if(!context.GetShooter().IsValid())
 		{
 			FlansMod.LOGGER.warn("Tried to get action stack for a valid context, but without an entity. This may be supported later");
-			return null;
+			return ActionStack.Invalid;
 		}
 
 		ActionStack entitysActionStack = ActionStacks.get(context);
@@ -53,7 +52,7 @@ public class ActionManager
 		return entitysActionStack;
 	}
 
-	@Nullable
+	@Nonnull
 	public static ActionStack SafeGetActionStack(GunContext context)
 	{
 		Level level = context.Level();
@@ -71,7 +70,7 @@ public class ActionManager
 		else
 		{
 			FlansMod.LOGGER.warn("Could not get ActionStack for GunContext " + context.toString());
-			return null;
+			return ActionStack.Invalid;
 		}
 	}
 
@@ -109,9 +108,9 @@ public class ActionManager
 			return;
 
 		// Ask the ShooterContext which actions on which guns we should perform
-		ActionContext[] actionContexts = shooter.GetPrioritisedActions(inputType);
+		ActionGroupContext[] actionContexts = shooter.GetPrioritisedActions(inputType);
 		// Then, in order, perform those actions (with actions able to block subsequent execution)
-		for (ActionContext actionContext : actionContexts)
+		for (ActionGroupContext actionContext : actionContexts)
 		{
 			// First, accumulate our action set and check if they all allow us to start the requested action
 			Action[] actions = actionContext.CreateActions();
@@ -160,7 +159,7 @@ public class ActionManager
 				}
 			}
 			else if(shouldFallbackToReload
-				&& !inputType.IsReload
+				&& !inputType.IsReload()
 				&& inputType.GetReloadType() != null
 				&& !actionContext.ActionStack().IsReloading())
 			{
@@ -178,8 +177,8 @@ public class ActionManager
 			return;
 
 		// Ask the ShooterContext which actions on which guns we should perform
-		ActionContext[] actionContexts = shooter.GetPrioritisedActions(inputType);
-		for(ActionContext actionContext : actionContexts)
+		ActionGroupContext[] actionContexts = shooter.GetPrioritisedActions(inputType);
+		for(ActionGroupContext actionContext : actionContexts)
 		{
 			// Check the action stack for this action/gun pairing and see if any of them are waiting for mouse release
 			for(Action action : actionContext.ActionStack().GetActions())
@@ -198,8 +197,8 @@ public class ActionManager
 			return;
 
 		// Ask the ShooterContext which actions on which guns we should perform
-		ActionContext[] actionContexts = shooter.GetPrioritisedActions(inputType);
-		for(ActionContext actionContext : actionContexts)
+		ActionGroupContext[] actionContexts = shooter.GetPrioritisedActions(inputType);
+		for(ActionGroupContext actionContext : actionContexts)
 		{
 			// Check the action stack for this action/gun pairing and see if any of them are waiting for mouse release
 			for(Action action : actionContext.ActionStack().GetActions())
@@ -238,7 +237,7 @@ public class ActionManager
 			return;
 		}
 
-		ActionContext actionContext = ActionContext.CreateFrom(gunContext, shotCollection.actionUsed);
+		ActionGroupContext actionContext = ActionGroupContext.CreateFrom(gunContext, shotCollection.actionUsed);
 		Action[] actions = actionContext.CreateActions();
 		for(Action action : actions)
 		{
@@ -260,13 +259,16 @@ public class ActionManager
 
 	public void ClientTick(TickEvent.ClientTickEvent tickEvent)
 	{
-		if(tickEvent.phase == TickEvent.Phase.END)
+		if(tickEvent.phase == TickEvent.Phase.START)
 		{
 			for(var kvp : ActionStacks.entrySet())
 			{
 				GunContext gunContext = kvp.getKey();
 				ActionStack stack = kvp.getValue();
-				stack.OnTick(Minecraft.getInstance().level, gunContext);
+				if(stack.IsValid() && gunContext.IsValid())
+				{
+					stack.OnTick(Minecraft.getInstance().level, gunContext);
+				}
 			}
 		}
 	}
@@ -300,7 +302,7 @@ public class ActionManager
 			return;
 		}
 
-		ActionContext actionContext = ActionContext.CreateFrom(gunContext, msg.inputType);
+		ActionGroupContext actionContext = ActionGroupContext.CreateFrom(gunContext, msg.inputType);
 		if(!actionContext.IsValid())
 		{
 			FlansMod.LOGGER.warn("OnServerReceivedSimpleAction had invalid action");
@@ -377,7 +379,7 @@ public class ActionManager
 		// TODO: We should hash-check the action set we use, as there could be a race condition
 		// between switching what actions are active for the weapon and triggering this code
 
-		ActionContext actionContext = ActionContext.CreateFrom(gunContext, shotCollection.actionUsed);
+		ActionGroupContext actionContext = ActionGroupContext.CreateFrom(gunContext, shotCollection.actionUsed);
 		Action[] actions = actionContext.CreateActions();
 		boolean verified = true;
 		for(Action action : actions)
@@ -416,7 +418,7 @@ public class ActionManager
 	}
 
 	//
-	private void ServerPropogateShot(ActionContext actionContext, GunshotCollection shotCollection)
+	private void ServerPropogateShot(ActionGroupContext actionContext, GunshotCollection shotCollection)
 	{
 		float noiseLevel = 100.0f; // gunContext.GetNoiseLevel();
 
@@ -439,7 +441,7 @@ public class ActionManager
 
 	public void ServerTick(TickEvent.ServerTickEvent tickEvent)
 	{
-		if(tickEvent.phase == TickEvent.Phase.END)
+		if(tickEvent.phase == TickEvent.Phase.START)
 		{
 			for(var kvp : ActionStacks.entrySet())
 			{

@@ -31,6 +31,7 @@ import net.minecraftforge.client.model.geometry.IUnbakedGeometry;
 import net.minecraftforge.client.textures.UnitTextureAtlasSprite;
 import net.minecraftforge.eventbus.api.IEventBus;
 import org.jetbrains.annotations.NotNull;
+import org.joml.Vector3f;
 import org.slf4j.Logger;
 
 import javax.annotation.Nullable;
@@ -50,6 +51,7 @@ public class TurboModel implements IUnbakedGeometry<TurboModel>, UnbakedModel
 	public final boolean hasAmbientOcclusion;
 	private final ItemTransforms transforms;
 	private final List<ItemOverride> overrides;
+	public final Vector3f offset;
 	//public final Map<String, Either<Material, String>> textureMap;
 	public final Map<String, ResourceLocation> textures;
 
@@ -66,7 +68,8 @@ public class TurboModel implements IUnbakedGeometry<TurboModel>, UnbakedModel
 					  boolean hasAmbientOcclusion,
 					  @Nullable BlockModel.GuiLight guiLight,
 					  ItemTransforms transforms,
-					  List<ItemOverride> overrides)
+					  List<ItemOverride> overrides,
+					  Vector3f offset)
 	{
 		this.elements = elements;
 		this.hasAmbientOcclusion = hasAmbientOcclusion;
@@ -76,6 +79,7 @@ public class TurboModel implements IUnbakedGeometry<TurboModel>, UnbakedModel
 		this.parentLocation = parentLocation;
 		this.transforms = transforms;
 		this.overrides = overrides;
+		this.offset = offset;
 	}
 
 	public List<TurboElement> GetElements() { return elements; }
@@ -216,6 +220,12 @@ public class TurboModel implements IUnbakedGeometry<TurboModel>, UnbakedModel
 				blockmodel$guilight = BlockModel.GuiLight.getByName(GsonHelper.getAsString(jObject, "gui_light"));
 			}
 
+			Vector3f offset = new Vector3f();
+			if(jObject.has("origin"))
+			{
+				offset = getVector3f(jObject.get("origin"));
+			}
+
 			ResourceLocation parentLocation = parentName.isEmpty() ? null : new ResourceLocation(parentName);
 			return new TurboModel(
 				parentLocation,
@@ -224,7 +234,8 @@ public class TurboModel implements IUnbakedGeometry<TurboModel>, UnbakedModel
 				flag,
 				blockmodel$guilight,
 				itemTransforms,
-				list1);
+				list1,
+				offset);
 		}
 
 		protected List<ItemOverride> getOverrides(JsonDeserializationContext p_111495_, JsonObject p_111496_) {
@@ -251,6 +262,15 @@ public class TurboModel implements IUnbakedGeometry<TurboModel>, UnbakedModel
 			}
 
 			return map;
+		}
+
+		private Vector3f getVector3f(JsonElement jObject)
+		{
+			JsonArray jArray = jObject.getAsJsonArray();
+			return new Vector3f(
+				jArray.get(0).getAsFloat(),
+				jArray.get(1).getAsFloat(),
+				jArray.get(2).getAsFloat());
 		}
 
 		private static ResourceLocation parseTextureLocationOrReference(String textureName)

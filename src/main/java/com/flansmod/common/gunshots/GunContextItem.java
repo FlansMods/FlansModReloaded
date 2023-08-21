@@ -33,7 +33,8 @@ public class GunContextItem extends GunContext
 	@Override
 	public boolean CanPerformActions() { return false; }
 	@Override
-	public ActionStack GetActionStack() { return null; }
+	@Nonnull
+	public ActionStack GetActionStack() { return ActionStack.Invalid; }
 	@Override
 	public boolean CanPerformTwoHandedAction() { return false; }
 
@@ -56,4 +57,9 @@ public class GunContextItem extends GunContext
 		}
 		return false;
 	}
+	// There are no modifiers to apply right now
+	@Override
+	public int HashModifierSources() { return 0x404; }
+	@Override
+	public void RecalculateModifierCache() {}
 }

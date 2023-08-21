@@ -1,21 +1,33 @@
 package com.flansmod.common.item;
 
+import com.flansmod.client.render.FlanClientItemExtensions;
+import com.flansmod.client.render.guns.AttachmentItemRenderer;
+import com.flansmod.client.render.guns.GunItemRenderer;
 import com.flansmod.common.FlansMod;
 import com.flansmod.common.types.attachments.AttachmentDefinition;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.client.extensions.common.IClientItemExtensions;
+
+import java.util.function.Consumer;
 
 public class AttachmentItem extends FlanItem
 {
-	private ResourceLocation definitionLocation;
-	public AttachmentDefinition Def() { return FlansMod.ATTACHMENTS.get(definitionLocation); }
-
+	@Override
+	public AttachmentDefinition Def() { return FlansMod.ATTACHMENTS.Get(DefinitionLocation); }
 
 	public AttachmentItem(ResourceLocation defLoc, Properties properties)
 	{
-		super(properties);
+		super(defLoc, properties);
+	}
 
-		definitionLocation = defLoc;
+	@Override
+	@OnlyIn(Dist.CLIENT)
+	public void initializeClient(Consumer<IClientItemExtensions> consumer)
+	{
+		consumer.accept(FlanClientItemExtensions.create(this, new AttachmentItemRenderer()));
 	}
 
 	// Random parameter overrides

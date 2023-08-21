@@ -41,6 +41,7 @@ public class GunContextLiving extends GunContext
 	@Override
 	public boolean CanPerformActions() { return true; }
 	@Override
+	@Nonnull
 	public ActionStack GetActionStack() { return ActionManager.SafeGetActionStack(this); }
 	@Override
 	public boolean CanPerformTwoHandedAction() { return ShooterContext.CanPerformTwoHandedAction(); }
@@ -69,4 +70,9 @@ public class GunContextLiving extends GunContext
 	{
 		return "Gun:" + GetItemStack().toString() + " held by " + ShooterContext.Shooter.toString();
 	}
+	// There are no modifiers to apply right now
+	@Override
+	public int HashModifierSources() { return 0; }
+	@Override
+	public void RecalculateModifierCache() {}
 }

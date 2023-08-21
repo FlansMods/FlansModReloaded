@@ -1,0 +1,40 @@
+{
+    "gravityFactor": 0.25,
+    "itemSettings": {
+        "maxStackSize": 64,
+        "tags": [
+            "flansmod:bullet",
+            "flansmod:projectile_grenade"
+        ]
+    },
+    "roundsPerItem": 1,
+    "shootStats": {
+        "verticalRecoil": 1.0,
+        "horizontalRecoil": 0.5,
+        "spread": 1.0,
+        "spreadPattern": "FilledCircle",
+        "hitscan": true,
+        "speed": 0.0,
+        "bulletCount": 1,
+        "spinSpeed": 360.0,
+        "breaksMaterials": [],
+        "penetrationPower": 0.0,
+        "trailParticles": "",
+        "impact": {
+            "decal": "",
+            "damageToTarget": 1.0,
+            "multiplierVsPlayers": 1.0,
+            "multiplierVsVehicles": 10.0,
+            "knockback": 0.0,
+            "splashDamageRadius": 0.0,
+            "splashDamageFalloff": 1.0,
+            "setFireToTarget": 8.0,
+            "fireSpreadRadius": 5.0,
+            "fireSpreadAmount": 1.0,
+            "hitSounds": []
+        }
+    },
+    "onShootActions": [],
+    "onClipEmptyActions": [],
+    "onReloadActions": []
+}

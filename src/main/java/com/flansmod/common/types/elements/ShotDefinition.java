@@ -36,40 +36,15 @@ public class ShotDefinition
 		}
 		return false;
 	}
-	private List<JsonDefinition> MatchingBulletReferences = null;
-	public List<JsonDefinition> GetMatchingBullets()
-	{
-		if(MatchingBulletReferences == null)
-		{
-			MatchingBulletReferences = new ArrayList<>(matchAmmoNames.length + matchAmmoTags.length * 4);
-			for (String matchAmmoName : matchAmmoNames)
-			{
-				FlansMod.BULLETS.RunOnMatch(matchAmmoName, (bullet) ->
-				{
-					if(!MatchingBulletReferences.contains(bullet))
-						MatchingBulletReferences.add(bullet);
-				});
-			}
-			for (final String tag : matchAmmoTags)
-			{
-				FlansMod.BULLETS.RunOnMatches(
-					(bullet) -> bullet.HasTag(tag),
-					(bullet) ->
-					{
-						if (!MatchingBulletReferences.contains(bullet))
-							MatchingBulletReferences.add(bullet);
-					});
-			}
-		}
-		return MatchingBulletReferences;
-	}
+
+
 
 	@JsonField
 	public float verticalRecoil = 3.0f;
 	@JsonField
 	public float horizontalRecoil = 0.0f;
 	@JsonField
-	public float spread = 3.0f;
+	public float spread = 0.0f;
 	@JsonField
 	public ESpreadPattern spreadPattern = ESpreadPattern.FilledCircle;
 	@JsonField
@@ -80,20 +55,12 @@ public class ShotDefinition
 	public int bulletCount = 1;
 	@JsonField(Docs = "If using minigun fire mode, this is the max rotational speed (in degrees/second) of the barrels")
 	public float spinSpeed = 360.0f;
-
 	@JsonField
 	public String[] breaksMaterials = new String[0];
-
-	@JsonField
-	public String[] matchAmmoNames = new String[0];
-	@JsonField
-	public String[] matchAmmoTags = new String[0];
-
 	@JsonField
 	public float penetrationPower = 1.0f;
 	@JsonField
 	public String trailParticles = "";
-
 	@JsonField
 	@Nonnull
 	public ImpactDefinition impact = new ImpactDefinition();

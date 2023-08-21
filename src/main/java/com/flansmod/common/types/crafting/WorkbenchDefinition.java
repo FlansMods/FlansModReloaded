@@ -29,6 +29,8 @@ public class WorkbenchDefinition extends JsonDefinition
 	@JsonField
 	public GunCraftingDefinition gunCrafting = new GunCraftingDefinition();
 	@JsonField
+	public PartCraftingDefinition partCrafting = new PartCraftingDefinition();
+	@JsonField
 	public GunModifyingDefinition gunModifying = new GunModifyingDefinition();
 	@JsonField
 	public EnergyBlockDefinition energy = new EnergyBlockDefinition();

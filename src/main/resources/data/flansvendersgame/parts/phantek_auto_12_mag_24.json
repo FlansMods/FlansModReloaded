@@ -1,0 +1,15 @@
+{
+    "tags": [
+        "flansvendersgame:phantek_auto_12"
+    ],
+    "modifiers": [],
+    "ammoLoadMode": "FullMag",
+    "ammoConsumeMode": "FirstNonEmpty",
+    "numRounds": 24,
+    "allRoundsMustBeIdentical": false,
+    "matchBulletNames": [],
+    "requiredBulletTags": [
+        "flansmod:shotgun_shell"
+    ],
+    "disallowedBulletTags": []
+}

@@ -3,6 +3,7 @@ package com.flansmod.common.types.teams;
 import com.flansmod.common.FlansMod;
 import com.flansmod.common.types.JsonDefinition;
 import com.flansmod.common.types.JsonField;
+import com.flansmod.common.types.elements.ItemDefinition;
 import com.flansmod.common.types.elements.ModifierDefinition;
 import com.flansmod.common.types.teams.elements.EArmourSlot;
 import net.minecraft.resources.ResourceLocation;
@@ -20,6 +21,8 @@ public class ArmourDefinition extends JsonDefinition
 		super(resLoc);
 	}
 
+	@JsonField
+	public ItemDefinition itemSettings = new ItemDefinition();
 
 	@JsonField
 	public EArmourSlot slot = EArmourSlot.HEAD;

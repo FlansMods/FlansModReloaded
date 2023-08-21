@@ -1,0 +1,200 @@
+{
+    "itemSettings": {
+        "maxStackSize": 64,
+        "tags": []
+    },
+    "paints": {
+        "paintjobs": [
+            {
+                "textureName": "fc_hawk_neon"
+            },
+            {
+                "textureName": "fc_hawk_venom"
+            },
+            {
+                "textureName": "fc_hawk_coral_snake"
+            },
+            {
+                "textureName": "fc_hawk_gold"
+            },
+            {
+                "textureName": "fc_hawk_messenger"
+            }
+        ]
+    },
+    "primaryReload": {
+        "manualReloadAllowed": true,
+        "autoReloadWhenEmpty": true,
+        "start": {
+            "duration": 0.0,
+            "actions": [
+                {
+                    "actionType": "PlaySound",
+                    "duration": 0.0,
+                    "sounds": [
+                        {
+                            "sound": "MWLugerReload",
+                            "length": 1.0,
+                            "minPitchMultiplier": 1.0,
+                            "maxPitchMultiplier": 1.0,
+                            "minVolume": 1.0,
+                            "maxVolume": 1.0,
+                            "maxRange": 100.0,
+                            "LODs": []
+                        }
+                    ],
+                    "itemStack": "",
+                    "modifiers": [],
+                    "fovFactor": 1.25,
+                    "scopeOverlay": "",
+                    "anim": "",
+                    "toolLevel": 1.0,
+                    "harvestSpeed": 1.0,
+                    "reach": 1.0
+                }
+            ]
+        },
+        "eject": {
+            "duration": 0.0,
+            "actions": []
+        },
+        "loadOne": {
+            "duration": 0.0,
+            "actions": []
+        },
+        "end": {
+            "duration": 0.0,
+            "actions": []
+        }
+    },
+    "secondaryReload": {
+        "manualReloadAllowed": true,
+        "autoReloadWhenEmpty": true,
+        "start": {
+            "duration": 1.0,
+            "actions": []
+        },
+        "eject": {
+            "duration": 1.0,
+            "actions": []
+        },
+        "loadOne": {
+            "duration": 1.0,
+            "actions": []
+        },
+        "end": {
+            "duration": 1.0,
+            "actions": []
+        }
+    },
+    "primary": {
+        "canActUnderwater": false,
+        "canActUnderOtherLiquid": false,
+        "canBeOverriden": false,
+        "twoHanded": false,
+        "repeatMode": "SemiAuto",
+        "repeatDelay": 0.0,
+        "repeatCount": 0,
+        "spinUpDuration": 1.0,
+        "actions": []
+    },
+    "secondary": {
+        "canActUnderwater": true,
+        "canActUnderOtherLiquid": false,
+        "canBeOverriden": false,
+        "twoHanded": false,
+        "repeatMode": "SemiAuto",
+        "repeatDelay": 0.0,
+        "repeatCount": 0,
+        "spinUpDuration": 1.0,
+        "actions": []
+    },
+    "lookAt": {
+        "canActUnderwater": true,
+        "canActUnderOtherLiquid": false,
+        "canBeOverriden": false,
+        "twoHanded": false,
+        "repeatMode": "SemiAuto",
+        "repeatDelay": 0.0,
+        "repeatCount": 0,
+        "spinUpDuration": 1.0,
+        "actions": []
+    },
+    "primaryMagazines": {
+        "matchByNames": [],
+        "matchByTags": [
+            "flansvendersgame:fc_hawk"
+        ]
+    },
+    "secondaryMagazines": {
+        "matchByNames": [],
+        "matchByTags": []
+    },
+    "startSpinUpActions": [],
+    "reachMaxSpinActions": [],
+    "startSpinDownActions": [],
+    "reachZeroSpinActions": [],
+    "loopingSounds": [],
+    "barrelAttachments": {
+        "allowlist": [],
+        "allowAll": true,
+        "numAttachmentSlots": 1,
+        "attachToMesh": "body",
+        "attachPoint": [
+            0.0,
+            0.0,
+            0.0
+        ],
+        "hideDefaultMesh": false
+    },
+    "gripAttachments": {
+        "allowlist": [],
+        "allowAll": true,
+        "numAttachmentSlots": 0,
+        "attachToMesh": "body",
+        "attachPoint": [
+            0.0,
+            0.0,
+            0.0
+        ],
+        "hideDefaultMesh": false
+    },
+    "stockAttachments": {
+        "allowlist": [],
+        "allowAll": true,
+        "numAttachmentSlots": 0,
+        "attachToMesh": "body",
+        "attachPoint": [
+            0.0,
+            0.0,
+            0.0
+        ],
+        "hideDefaultMesh": false
+    },
+    "scopeAttachments": {
+        "allowlist": [],
+        "allowAll": true,
+        "numAttachmentSlots": 1,
+        "attachToMesh": "body",
+        "attachPoint": [
+            0.0,
+            0.0,
+            0.0
+        ],
+        "hideDefaultMesh": false
+    },
+    "genericAttachments": {
+        "allowlist": [],
+        "allowAll": true,
+        "numAttachmentSlots": 0,
+        "attachToMesh": "body",
+        "attachPoint": [
+            0.0,
+            0.0,
+            0.0
+        ],
+        "hideDefaultMesh": false
+    },
+    "modelParts": [],
+    "animationSet": "flansmod:pistol"
+}

@@ -1,0 +1,16 @@
+{
+    "tags": [
+        "flansmodvendersgame:hm_1200",
+        "flansmodvendersgame:fc_870"
+    ],
+    "modifiers": [],
+    "ammoLoadMode": "OneBulletAtATime",
+    "ammoConsumeMode": "FirstNonEmpty",
+    "numRounds": 7,
+    "allRoundsMustBeIdentical": false,
+    "matchBulletNames": [],
+    "requiredBulletTags": [
+        "flansmod:shotgun_shell"
+    ],
+    "disallowedBulletTags": []
+}

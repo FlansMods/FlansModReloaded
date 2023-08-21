@@ -3,6 +3,7 @@ package com.flansmod.client.render;
 import com.flansmod.client.FlansModClient;
 import com.flansmod.common.FlansMod;
 import com.flansmod.common.actions.*;
+import com.flansmod.common.gunshots.ActionGroupContext;
 import com.flansmod.common.gunshots.GunContext;
 import com.flansmod.common.gunshots.ShooterContext;
 import com.flansmod.util.Maths;
@@ -12,6 +13,7 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.*;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GameRenderer;
+import net.minecraft.client.renderer.block.model.ItemTransforms;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
@@ -24,6 +26,7 @@ import net.minecraft.world.level.levelgen.LegacyRandomSource;
 import net.minecraft.world.phys.Vec2;
 import net.minecraftforge.client.event.ComputeFovModifierEvent;
 import net.minecraftforge.client.event.RenderGuiOverlayEvent;
+import net.minecraftforge.client.event.RenderHandEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -67,7 +70,7 @@ public class ClientRenderHooks
 			{
 				if (action instanceof AimDownSightAction adsAction)
 				{
-					totalFOVModifier += action.actionDef.fovFactor;
+					totalFOVModifier += action.ActionDef.fovFactor;
 					FOVModifierCount++;
 
 				}
@@ -77,6 +80,27 @@ public class ClientRenderHooks
 		if(FOVModifierCount > 0)
 		{
 			event.setNewFovModifier(event.getNewFovModifier() / (totalFOVModifier / FOVModifierCount));
+		}
+	}
+
+	@SubscribeEvent
+	public void OnRenderHands(RenderHandEvent event)
+	{
+		FlanItemModelRenderer renderer = FlansModClient.MODEL_REGISTRATION.GetModelRenderer(event.getItemStack());
+		if(renderer != null && renderer.ShouldRenderWhenHeld)
+		{
+			renderer.RenderFirstPerson(
+				Minecraft.getInstance().player,
+				event.getItemStack(),
+				MinecraftHelpers.GetArm(event.getHand()),
+				event.getHand() == InteractionHand.OFF_HAND ? ItemTransforms.TransformType.FIRST_PERSON_LEFT_HAND : ItemTransforms.TransformType.FIRST_PERSON_RIGHT_HAND,
+				event.getPoseStack(),
+				event.getMultiBufferSource(),
+				event.getPackedLight(),
+				0,
+				event.getEquipProgress());
+
+			event.setCanceled(true);
 		}
 	}
 
@@ -254,21 +278,27 @@ public class ClientRenderHooks
 			Minecraft.getInstance().getItemRenderer().renderGuiItem(mainContext.GetItemStack(), anchorX + 95, anchorY - 40);
 
 			int x = anchorX + 113;
-			for(int i = 0; i < mainContext.GunDef().numBullets; i++)
+
+			ActionGroupContext mainHandPrimaryContext = ActionGroupContext.CreateFrom(mainContext, EActionInput.PRIMARY);
+			if(mainHandPrimaryContext.IsShootAction())
 			{
-				ItemStack bulletStack = mainContext.GetBulletStack(EActionInput.PRIMARY, i);
-				if(!bulletStack.isEmpty())
+				ItemStack[] bulletStacks = mainHandPrimaryContext.GetCombinedBulletStacks(0);
+				for(int i = 0; i < bulletStacks.length; i++)
 				{
-					int y = anchorY - 41 + (i % 2 == 0 ? 2 : 0);
-					Minecraft.getInstance().getItemRenderer().renderGuiItem(bulletStack, x, y);
-					if(bulletStack.isDamageableItem())
+					ItemStack bulletStack = bulletStacks[i];
+					if (!bulletStack.isEmpty())
 					{
-						int countRemaining = bulletStack.getMaxDamage() - bulletStack.getDamageValue();
-						RenderString(poseStack, x + 16, y + 4,  Component.literal(countRemaining + "/" + bulletStack.getMaxDamage()), 0xffffff);
-						x += 32;
+						int y = anchorY - 41 + (i % 2 == 0 ? 2 : 0);
+						Minecraft.getInstance().getItemRenderer().renderGuiItem(bulletStack, x, y);
+						if (bulletStack.isDamageableItem())
+						{
+							int countRemaining = bulletStack.getMaxDamage() - bulletStack.getDamageValue();
+							RenderString(poseStack, x + 16, y + 4, Component.literal(countRemaining + "/" + bulletStack.getMaxDamage()), 0xffffff);
+							x += 32;
+						}
 					}
+					x += 12;
 				}
-				x += 12;
 			}
 
 			RenderString(poseStack, anchorX + 96, anchorY - 50, mainContext.GetItemStack().getHoverName(), 0xffffff);
@@ -284,21 +314,26 @@ public class ClientRenderHooks
 			Minecraft.getInstance().getItemRenderer().renderGuiItem(offContext.GetItemStack(), anchorX - 95 - 16, anchorY - 40);
 
 			int x = anchorX - 113 - 16;
-			for(int i = 0; i < offContext.GunDef().numBullets; i++)
+			ActionGroupContext offHandPrimaryContext = ActionGroupContext.CreateFrom(offContext, EActionInput.PRIMARY);
+			if(offHandPrimaryContext.IsShootAction())
 			{
-				ItemStack bulletStack = offContext.GetBulletStack(EActionInput.PRIMARY, i);
-				if(!bulletStack.isEmpty())
+				ItemStack[] bulletStacks = offHandPrimaryContext.GetCombinedBulletStacks(0);
+				for (int i = 0; i < bulletStacks.length; i++)
 				{
-					int y = anchorY - 41 + (i % 2 == 0 ? 2 : 0);
-					Minecraft.getInstance().getItemRenderer().renderGuiItem(bulletStack, x, y);
-					if(bulletStack.isDamageableItem())
+					ItemStack bulletStack = bulletStacks[i];
+					if (!bulletStack.isEmpty())
 					{
-						int countRemaining = bulletStack.getMaxDamage() - bulletStack.getDamageValue();
-						RenderString(poseStack, x - 12 - 16, y + 4,  Component.literal(countRemaining + "/" + bulletStack.getMaxDamage()), 0xffffff);
-						x -= 32;
+						int y = anchorY - 41 + (i % 2 == 0 ? 2 : 0);
+						Minecraft.getInstance().getItemRenderer().renderGuiItem(bulletStack, x, y);
+						if (bulletStack.isDamageableItem())
+						{
+							int countRemaining = bulletStack.getMaxDamage() - bulletStack.getDamageValue();
+							RenderString(poseStack, x - 12 - 16, y + 4, Component.literal(countRemaining + "/" + bulletStack.getMaxDamage()), 0xffffff);
+							x -= 32;
+						}
 					}
+					x -= 12;
 				}
-				x -= 12;
 			}
 
 			RenderString(poseStack,
@@ -353,5 +388,4 @@ public class ClientRenderHooks
 	{
 		Minecraft.getInstance().font.draw(poseStack, content, x, y, colour);
 	}
-
 }
