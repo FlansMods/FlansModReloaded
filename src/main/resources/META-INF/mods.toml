@@ -71,6 +71,17 @@ license="All rights reserved"
     '''
 
 [[mods]] #mandatory
+    modId="flansworldwars"
+    version="${file.jarVersion}"
+    displayName="Flan's World War II Pack"
+    logoFile="flansmod.png"
+    credits="jamioflan"
+    authors="jamioflan"
+    description='''
+    A selection of weapons from the Second World War across all fronts
+    '''
+
+[[mods]] #mandatory
     modId="flansvendersgame"
     version="${file.jarVersion}"
     displayName="Vender's Game: A Flan's Mod Pack"

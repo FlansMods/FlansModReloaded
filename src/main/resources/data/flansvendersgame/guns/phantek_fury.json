@@ -8,13 +8,19 @@
     "paints": {
         "paintjobs": [
             {
-                "textureName": "phantek_fury_hazard"
+                "textureName": "phantek_fury_hazard",
+                "paintBucketsRequired": 1,
+                "entitlementKey": ""
             },
             {
-                "textureName": "phantek_fury_platypus"
+                "textureName": "phantek_fury_platypus",
+                "paintBucketsRequired": 1,
+                "entitlementKey": ""
             },
             {
-                "textureName": "phantek_fury_white"
+                "textureName": "phantek_fury_white",
+                "paintBucketsRequired": 1,
+                "entitlementKey": ""
             }
         ]
     },
@@ -191,7 +197,7 @@
                         "ApplyToSecondary": false
                     },
                     {
-                        "Stat": "damage_to_target",
+                        "Stat": "impact_damage",
                         "Filter": "",
                         "Add": 0.0,
                         "Multiply": 4.0,
@@ -322,11 +328,13 @@
         "matchByNames": [],
         "matchByTags": [
             "flansvendersgame:phantek_fury"
-        ]
+        ],
+        "baseCostToSwap": 0
     },
     "secondaryMagazines": {
         "matchByNames": [],
-        "matchByTags": []
+        "matchByTags": [],
+        "baseCostToSwap": 0
     },
     "startSpinUpActions": [],
     "reachMaxSpinActions": [],

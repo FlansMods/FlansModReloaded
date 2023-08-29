@@ -3,13 +3,11 @@ package com.flansmod.common.gunshots;
 import com.flansmod.common.actions.EActionInput;
 import com.flansmod.common.item.FlanItem;
 import com.flansmod.util.Transform;
-import it.unimi.dsi.fastutil.Hash;
 import net.minecraft.world.Container;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.item.ItemStack;
 
 import javax.annotation.Nonnull;
 import java.util.Objects;
@@ -18,19 +16,25 @@ public class ShooterContextLiving extends ShooterContext
 {
 	@Nonnull
 	protected final LivingEntity Shooter;
-	private final GunContext MainHand;
-	private final GunContext OffHand;
 
 	public ShooterContextLiving(@Nonnull LivingEntity living)
 	{
 		Shooter = living;
-		MainHand = GunContext.CreateFrom(this, InteractionHand.MAIN_HAND);
-		OffHand = GunContext.CreateFrom(this, InteractionHand.OFF_HAND);
 	}
 
-	public GunContext GetContext(InteractionHand hand) { return hand == InteractionHand.MAIN_HAND ? MainHand : OffHand; }
-	public GunContext GetMainHandContext() { return MainHand; }
-	public GunContext GetOffHandContext() { return OffHand; }
+	@Override
+	public int GetNumValidContexts() { return (GetMainHandContext().IsValid() ? 1 : 0) + (GetOffHandContext().IsValid() ? 1 : 0); }
+	@Override
+	public GunContext[] GetAllActiveGunContexts()
+	{
+		return new GunContext[] { GetMainHandContext(), GetOffHandContext() };
+	}
+	@Override
+	public GunContext CreateForGunIndex(int gunSlotIndex) { return new GunContextLiving(this, gunSlotIndex == 0 ? InteractionHand.MAIN_HAND : InteractionHand.OFF_HAND); }
+
+	public GunContext GetContext(InteractionHand hand) { return GunContext.GetOrCreate(this, hand); }
+	public GunContext GetMainHandContext() { return GunContext.GetOrCreate(this, InteractionHand.MAIN_HAND); }
+	public GunContext GetOffHandContext() { return GunContext.GetOrCreate(this, InteractionHand.OFF_HAND); }
 
 	public boolean CanPerformTwoHandedAction()
 	{
@@ -51,31 +55,22 @@ public class ShooterContextLiving extends ShooterContext
 	public boolean IsValid() { return true; }
 	@Override
 	public boolean IsCreative() { return false; }
-
-	@Override
-	public int GetNumValidContexts()
-	{
-		return (MainHand.IsValid() ? 1 : 0) + (OffHand.IsValid() ? 1 : 0);
-	}
-
-	@Override
-	public GunContext[] GetAllGunContexts()
-	{
-		return new GunContext[] { MainHand, OffHand };
-	}
-
 	@Override
 	public ActionGroupContext[] GetPrioritisedActions(EActionInput action)
 	{
-		switch(GetNumValidContexts())
+		GunContext mainHand = GetMainHandContext();
+		GunContext offHand = GetOffHandContext();
+		int numValid = (mainHand.IsValid() ? 1 : 0) + (offHand.IsValid() ? 1 : 0);
+
+		switch(numValid)
 		{
 			case 0: return new ActionGroupContext[0];
 			case 1:
 			{
 				return new ActionGroupContext[]{
-					MainHand.IsValid()
-						? ActionGroupContext.CreateFrom(MainHand, action)
-						: ActionGroupContext.CreateFrom(OffHand, action)
+					mainHand.IsValid()
+						? ActionGroupContext.CreateFrom(mainHand, action)
+						: ActionGroupContext.CreateFrom(offHand, action)
 				};
 			}
 			case 2:
@@ -84,32 +79,32 @@ public class ShooterContextLiving extends ShooterContext
 				{
 					case SECONDARY -> {
 						return new ActionGroupContext[]{
-							ActionGroupContext.CreateFrom(OffHand, EActionInput.PRIMARY),
-							ActionGroupContext.CreateFrom(MainHand, EActionInput.PRIMARY)
+							ActionGroupContext.CreateFrom(offHand, EActionInput.PRIMARY),
+							ActionGroupContext.CreateFrom(mainHand, EActionInput.PRIMARY)
 						};
 					}
 					case PRIMARY -> {
 						return new ActionGroupContext[]{
-							ActionGroupContext.CreateFrom(MainHand, EActionInput.PRIMARY),
-							ActionGroupContext.CreateFrom(OffHand, EActionInput.PRIMARY)
+							ActionGroupContext.CreateFrom(mainHand, EActionInput.PRIMARY),
+							ActionGroupContext.CreateFrom(offHand, EActionInput.PRIMARY)
 						};
 					}
 					case RELOAD_PRIMARY -> {
 						return new ActionGroupContext[]{
-							ActionGroupContext.CreateFrom(MainHand, EActionInput.RELOAD_PRIMARY),
-							ActionGroupContext.CreateFrom(OffHand, EActionInput.RELOAD_PRIMARY)
+							ActionGroupContext.CreateFrom(mainHand, EActionInput.RELOAD_PRIMARY),
+							ActionGroupContext.CreateFrom(offHand, EActionInput.RELOAD_PRIMARY)
 						};
 					}
 					case RELOAD_SECONDARY -> {
 						return new ActionGroupContext[]{
-							ActionGroupContext.CreateFrom(OffHand, EActionInput.RELOAD_PRIMARY),
-							ActionGroupContext.CreateFrom(MainHand, EActionInput.RELOAD_PRIMARY)
+							ActionGroupContext.CreateFrom(offHand, EActionInput.RELOAD_PRIMARY),
+							ActionGroupContext.CreateFrom(mainHand, EActionInput.RELOAD_PRIMARY)
 						};
 					}
 					default -> {
 						return new ActionGroupContext[]{
-							ActionGroupContext.CreateFrom(MainHand, action),
-							ActionGroupContext.CreateFrom(OffHand, action)
+							ActionGroupContext.CreateFrom(mainHand, action),
+							ActionGroupContext.CreateFrom(offHand, action)
 						};
 					}
 				}

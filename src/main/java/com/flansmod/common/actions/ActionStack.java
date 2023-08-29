@@ -2,10 +2,12 @@ package com.flansmod.common.actions;
 
 import com.flansmod.common.gunshots.ActionGroupContext;
 import com.flansmod.common.types.elements.ActionDefinition;
+import com.flansmod.common.types.elements.ActionGroupDefinition;
 import com.flansmod.common.types.guns.EReloadStage;
 import com.flansmod.common.gunshots.GunContext;
 import net.minecraft.world.level.Level;
 
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -21,7 +23,7 @@ public class ActionStack
 {
 	public static final ActionStack Invalid = new ActionStack(false) {
 		@Override
-		public void AddAction(ActionGroupContext context, Action action) {}
+		public void AddActionGroup(ActionGroupContext context, ActionGroup action) {}
 		@Override
 		public void AddReload(ActionGroupContext context, ReloadProgress reload) {}
 		@Override
@@ -30,8 +32,8 @@ public class ActionStack
 		public boolean IsValid() { return false; }
 	};
 
-	private List<Action> ActiveActions = new ArrayList<Action>();
-	private List<ReloadProgress> ActiveReloads = new ArrayList<>();
+	private final List<ActionGroup> ActiveActionGroups = new ArrayList<>();
+	private final List<ReloadProgress> ActiveReloads = new ArrayList<>();
 	private float ShotCooldown = 0.0f;
 	private boolean cancelActionRequested = false;
 	private final boolean IsClient;
@@ -52,18 +54,27 @@ public class ActionStack
 		return shotCount;
 	}
 	public float GetShotCooldown() { return ShotCooldown; }
-	public List<Action> GetActions() { return ActiveActions; }
+	public List<ActionGroup> GetActiveActionGroups() { return ActiveActionGroups; }
 	public boolean IsReloading() { return ActiveReloads.size() > 0; }
 	public void RequestCancel() { cancelActionRequested = true; }
 	public boolean IsValid() { return true; }
 
-	public void AddAction(ActionGroupContext context, Action action)
+	public void AddActionGroup(ActionGroupContext context, ActionGroup group)
 	{
-		ActiveActions.add(action);
+		ActiveActionGroups.add(group);
 		if(IsClient)
-			action.OnStartClient(context);
+			group.OnStartClient(context);
 		else
-			action.OnStartServer(context);
+			group.OnStartServer(context);
+	}
+
+	@Nullable
+	public ActionGroup FindMatchingActiveGroup(ActionGroupDefinition groupDef)
+	{
+		for(ActionGroup group : ActiveActionGroups)
+			if(group.Def == groupDef)
+				return group;
+		return null;
 	}
 
 	public void AddReload(ActionGroupContext context, ReloadProgress reload)
@@ -80,12 +91,9 @@ public class ActionStack
 	{
 		if(actionContext.IsValid())
 		{
-			ActionDefinition[] reloadActionDefs = reload.Def.GetReloadActions(stage);
-			for (int i = 0; i < reloadActionDefs.length; i++)
-			{
-				Action action = Actions.CreateAction(actionContext.GroupDef(), reloadActionDefs[i], actionContext.InputType);
-				AddAction(actionContext, action);
-			}
+			ActionGroupDefinition reloadActionGroup = reload.Def.GetReloadActionGroup(stage);
+			ActionGroup actionGroup = Actions.CreateActionGroup(reloadActionGroup, reload.ReloadType);
+			AddActionGroup(actionContext, actionGroup);
 			reload.CurrentStage = stage;
 			reload.TicksInCurrentStage = 0;
 
@@ -147,22 +155,22 @@ public class ActionStack
 		}
 
 		// Reverse iterate to delete when done
-		for(int i = ActiveActions.size() - 1; i >= 0; i--)
+		for(int i = ActiveActionGroups.size() - 1; i >= 0; i--)
 		{
-			Action action = ActiveActions.get(i);
-			ActionGroupContext actionContext = ActionGroupContext.CreateFrom(gunContext, action.InputType);
+			ActionGroup actionGroup = ActiveActionGroups.get(i);
+			ActionGroupContext groupContext = ActionGroupContext.CreateFrom(gunContext, actionGroup.InputType);
 			if(level.isClientSide)
-				action.OnTickClient(actionContext);
+				actionGroup.OnTickClient(groupContext);
 			else
-				action.OnTickServer(actionContext);
+				actionGroup.OnTickServer(groupContext);
 
-			if(action.Finished(actionContext))
+			if(actionGroup.Finished(groupContext))
 			{
 				if(level.isClientSide)
-					action.OnFinishClient(actionContext);
+					actionGroup.OnFinishClient(groupContext);
 				else
-					action.OnFinishServer(actionContext);
-				ActiveActions.remove(i);
+					actionGroup.OnFinishServer(groupContext);
+				ActiveActionGroups.remove(i);
 			}
 		}
 	}

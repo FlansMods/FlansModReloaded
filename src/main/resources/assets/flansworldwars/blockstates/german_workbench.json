@@ -1,0 +1,21 @@
+{
+  "variants": {
+	  "facing=north": {
+		  "model": "flansworldwars:block/german_workbench",
+		  "y": 90		  
+	  },
+	  "facing=east": {
+		  "model": "flansworldwars:block/german_workbench",
+		  "y": 180		  
+	  },
+	  "facing=south": {
+		  "model": "flansworldwars:block/german_workbench",
+		  "y": 270		  
+	  },
+	  "facing=west": {
+		  "model": "flansworldwars:block/german_workbench",
+		  "y": 0		  
+	  }
+	  
+  }
+}

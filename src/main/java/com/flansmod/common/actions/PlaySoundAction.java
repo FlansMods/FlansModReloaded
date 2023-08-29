@@ -6,11 +6,13 @@ import com.flansmod.common.types.elements.ActionDefinition;
 import com.flansmod.common.types.elements.ActionGroupDefinition;
 import com.flansmod.common.types.elements.SoundDefinition;
 
+import javax.annotation.Nonnull;
+
 public class PlaySoundAction extends Action
 {
-	public PlaySoundAction(ActionGroupDefinition groupDef, ActionDefinition def, EActionInput inputType)
+	public PlaySoundAction(@Nonnull ActionGroup group, ActionDefinition def)
 	{
-		super(groupDef, def, inputType);
+		super(group, def);
 	}
 
 	public boolean Finished()
@@ -19,14 +21,14 @@ public class PlaySoundAction extends Action
 	}
 
 	@Override
-	protected void OnTriggerServer(ActionGroupContext context)
+	public void OnTriggerServer(ActionGroupContext context, int triggerIndex)
 	{
 
 	}
 	@Override
-	protected void OnTriggerClient(ActionGroupContext context)
+	public void OnTriggerClient(ActionGroupContext context, int triggerIndex)
 	{
-		for(SoundDefinition soundDef : ActionDef.sounds)
+		for(SoundDefinition soundDef : Def.sounds)
 		{
 			SoundLODManager.PlaySound(soundDef, context.Shooter().Entity());
 		}

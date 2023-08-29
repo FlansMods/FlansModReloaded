@@ -6,19 +6,29 @@
     "paints": {
         "paintjobs": [
             {
-                "textureName": "fc_hawk_neon"
+                "textureName": "fc_hawk_neon",
+                "paintBucketsRequired": 1,
+                "entitlementKey": ""
             },
             {
-                "textureName": "fc_hawk_venom"
+                "textureName": "fc_hawk_venom",
+                "paintBucketsRequired": 1,
+                "entitlementKey": ""
             },
             {
-                "textureName": "fc_hawk_coral_snake"
+                "textureName": "fc_hawk_coral_snake",
+                "paintBucketsRequired": 1,
+                "entitlementKey": ""
             },
             {
-                "textureName": "fc_hawk_gold"
+                "textureName": "fc_hawk_gold",
+                "paintBucketsRequired": 1,
+                "entitlementKey": ""
             },
             {
-                "textureName": "fc_hawk_messenger"
+                "textureName": "fc_hawk_messenger",
+                "paintBucketsRequired": 1,
+                "entitlementKey": ""
             }
         ]
     },
@@ -124,11 +134,13 @@
         "matchByNames": [],
         "matchByTags": [
             "flansvendersgame:fc_hawk"
-        ]
+        ],
+        "baseCostToSwap": 0
     },
     "secondaryMagazines": {
         "matchByNames": [],
-        "matchByTags": []
+        "matchByTags": [],
+        "baseCostToSwap": 0
     },
     "startSpinUpActions": [],
     "reachMaxSpinActions": [],

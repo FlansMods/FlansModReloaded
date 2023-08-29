@@ -15,17 +15,17 @@ import com.flansmod.common.types.magazines.EAmmoLoadMode;
 import com.flansmod.common.types.magazines.MagazineDefinition;
 import com.flansmod.util.Maths;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.Container;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
-import org.lwjgl.opengl._3DFXTextureCompressionFXT1;
+import net.minecraft.world.level.Level;
 
 import javax.annotation.Nonnull;
-import java.util.List;
+import javax.annotation.Nullable;
+import java.util.UUID;
 
 public class ActionGroupContext
 {
@@ -35,14 +35,25 @@ public class ActionGroupContext
 	public final EActionInput InputType;
 
 	// Shooter references
+	public static final UUID InvalidShooterUUID = new UUID(0L, 0L);
+	@Nonnull
 	public ShooterContext Shooter() { return Gun.GetShooter(); }
+	@Nullable
 	public Entity Owner() { return Gun.GetShooter().IsValid() ? Gun.GetShooter().Owner() : null; }
+	@Nullable
 	public Entity Entity() { return Gun.GetShooter().IsValid() ? Gun.GetShooter().Entity() : null; }
+	public UUID OwnerUUID() { return Gun.GetShooter().IsValid() ? Gun.GetShooter().Owner().getUUID() : InvalidShooterUUID; }
+	public UUID EntityUUID() { return Gun.GetShooter().IsValid() ? Gun.GetShooter().Owner().getUUID() : InvalidShooterUUID; }
 
 	// Gun references
+	@Nonnull
 	public GunContext Gun() { return Gun; }
+	@Nonnull
 	public GunDefinition GunDef() { return Gun.GunDef(); }
+	@Nonnull
 	public ActionGroupDefinition GroupDef() { return Gun.GunDef().GetActionGroup(InputType); }
+	@Nullable
+	public Level Level() { return Gun.Level(); }
 	@Nonnull
 	public ActionStack ActionStack() { return Gun.GetActionStack(); }
 
@@ -51,8 +62,13 @@ public class ActionGroupContext
 	public static ActionGroupContext CreateFrom(GunContext gunContext, EActionInput inputType)
 	{
 		if(gunContext.IsValid())
-			return new ActionGroupContext(gunContext, inputType);
+			return gunContext.GetOrCreate(inputType);
 		return INVALID;
+	}
+
+	public static ActionGroupContext CreateFrom(UUID entityUUID, int inventorySlot, EActionInput inputType, boolean client)
+	{
+		return CreateFrom(GunContext.GetOrCreate(entityUUID, inventorySlot, client), inputType);
 	}
 
 	protected ActionGroupContext(@Nonnull GunContext gun, @Nonnull EActionInput inputType)
@@ -95,15 +111,9 @@ public class ActionGroupContext
 		return GunDef().GetActions(InputType);
 	}
 
-	public Action[] CreateActions()
+	public ActionGroup CreateActionGroup()
 	{
-		ActionDefinition[] actionDefs = GunDef().GetActions(InputType);
-		Action[] actions = new Action[actionDefs.length];
-		for (int i = 0; i < actionDefs.length; i++)
-		{
-			actions[i] = Actions.CreateAction(GunDef().GetActionGroup(InputType), actionDefs[i], InputType);
-		}
-		return actions;
+		return Actions.CreateActionGroup(GunDef().GetActionGroup(InputType), InputType);
 	}
 
 	public ReloadProgress[] CreateReloads()
@@ -117,6 +127,11 @@ public class ActionGroupContext
 		return new ReloadProgress[0];
 	}
 
+	@Nullable
+	public ActionGroup GetExistingActionGroup()
+	{
+		return Gun.GetActionStack().FindMatchingActiveGroup(GunDef().GetActionGroup(InputType));
+	}
 
 	// --------------------------------------------------------------------------
 	// MAGAZINES
@@ -176,9 +191,15 @@ public class ActionGroupContext
 			{
 				int startIndex = Integer.parseInt(key);
 				ItemStack stack = ItemStack.of(bulletTags.getCompound(key));
+
+				// Apple represents empty spaces because Minecraft hides 5xAir as 0xAir
+				if(stack.getItem() == Items.APPLE)
+					return ItemStack.EMPTY;
+
 				int endIndex = startIndex + stack.getCount();
 				if(startIndex <= bulletIndex && bulletIndex < endIndex)
 				{
+
 					return stack.copyWithCount(1);
 				}
 			}
@@ -194,7 +215,7 @@ public class ActionGroupContext
 			// Extract, set empty, and compact stacks
 			Item[] items = ExtractCompactStacks(magIndex);
 			ItemStack returnStack = new ItemStack(items[bulletIndex], 1);
-			items[bulletIndex] = Items.AIR;
+			items[bulletIndex] = Items.APPLE;
 			CompactStacks(magIndex, items);
 			return returnStack;
 		}
@@ -239,6 +260,7 @@ public class ActionGroupContext
 	@Nonnull
 	public ItemStack LoadBullets(int magIndex, ItemStack bulletStack)
 	{
+		boolean isCreative = Gun.GetShooter().IsCreative();
 		if(bulletStack.getItem() instanceof BulletItem bulletItem)
 		{
 			// Extract, set, and compact stacks
@@ -246,10 +268,11 @@ public class ActionGroupContext
 			MagazineDefinition magDef = GetMagazineType(magIndex);
 			for(int i = 0; i < magDef.numRounds; i++)
 			{
-				if(items[i] == Items.AIR)
+				if(items[i] == null || items[i] == Items.APPLE)
 				{
 					items[i] = bulletStack.getItem();
-					bulletStack.setCount(bulletStack.getCount() - 1);
+					if(!isCreative)
+						bulletStack.setCount(bulletStack.getCount() - 1);
 				}
 
 				if(bulletStack.isEmpty())
@@ -266,6 +289,9 @@ public class ActionGroupContext
 		MagazineDefinition magDef = GetMagazineType(magIndex);
 		CompoundTag magTags = GetMagTag(magIndex);
 		Item[] items = new Item[magDef.numRounds];
+		for(int i = 0; i < magDef.numRounds; i++)
+			items[i] = Items.AIR;
+
 		if (magTags.contains("bullets"))
 		{
 			CompoundTag bulletTags = magTags.getCompound("bullets");
@@ -302,11 +328,15 @@ public class ActionGroupContext
 				continue;
 
 			// If we differ, then the previous lump needs to be placed into a tag
-			ItemStack previousLump = new ItemStack(currentlyParsing, i - sameSinceIndex + 1);
+			ItemStack previousLump = new ItemStack(
+				currentlyParsing == Items.AIR ? Items.APPLE : currentlyParsing,
+				i - sameSinceIndex + 1);
+
+
 			CompoundTag stackTag = new CompoundTag();
 			previousLump.save(stackTag);
 			bulletsTag.put(Integer.toString(sameSinceIndex), stackTag);
-			sameSinceIndex = i;
+			sameSinceIndex = i+1;
 			currentlyParsing = compareAgainst;
 		}
 
@@ -328,7 +358,7 @@ public class ActionGroupContext
 			for (String key : bulletTags.getAllKeys())
 			{
 				ItemStack stack = ItemStack.of(bulletTags.getCompound(key));
-				if(!stack.isEmpty())
+				if(!stack.isEmpty() && stack.getItem() != Items.APPLE)
 					return true;
 			}
 		}
@@ -361,7 +391,7 @@ public class ActionGroupContext
 						int startIndex = Integer.parseInt(key);
 						ItemStack stack = ItemStack.of(bulletTags.getCompound(key));
 						int endIndex = startIndex + stack.getCount();
-						if(!stack.isEmpty())
+						if(!stack.isEmpty() && stack.getItem() != Items.APPLE)
 						{
 							if(magDef.ammoConsumeMode == EAmmoConsumeMode.LastNonEmpty)
 							{
@@ -570,8 +600,10 @@ public class ActionGroupContext
 		return Enum.valueOf(clazz, modified);
 	}
 	public ERepeatMode RepeatMode() { return (ERepeatMode) ModifyEnum("repeat_mode", GroupDef().repeatMode, ERepeatMode.class); }
-	public float RepeatDelay() { return ModifyFloat("repeat_delay", GroupDef().repeatDelay); }
+	public float RepeatDelaySeconds() { return ModifyFloat("repeat_delay", GroupDef().repeatDelay); }
+	public float RepeatDelayTicks() { return RepeatDelaySeconds() * 20.0f; }
 	public int RepeatCount() { return Maths.Ceil(ModifyFloat("repeat_count", GroupDef().repeatCount)); }
 	public float SpinUpDuration() { return ModifyFloat("spin_up_duration", GroupDef().spinUpDuration); }
-	public int RoundsPerMinute() { return RepeatDelay() <= 0.00001f ? 0 : Maths.Ceil(60.0f / RepeatDelay()); }
+	public int RoundsPerMinute() { return RepeatDelaySeconds() <= 0.00001f ? 0 : Maths.Ceil(60.0f / RepeatDelaySeconds()); }
+	public float Loudness() { return ModifyFloat("loudness", GroupDef().loudness); }
 }

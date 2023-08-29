@@ -4,21 +4,20 @@ import com.flansmod.client.FlansModClient;
 import com.flansmod.client.particle.GunshotHitBlockParticle;
 import com.flansmod.common.gunshots.*;
 import com.flansmod.common.item.BulletItem;
-import com.flansmod.common.types.bullets.BulletDefinition;
 import com.flansmod.common.types.elements.ActionDefinition;
-import com.flansmod.common.types.elements.ActionGroupDefinition;
 import com.flansmod.common.types.guns.*;
-import com.flansmod.common.types.elements.ShotDefinition;
 import com.flansmod.util.Maths;
 import com.flansmod.util.Transform;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.particle.ParticleEngine;
-import net.minecraft.core.BlockPos;
 import net.minecraft.core.Vec3i;
 import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.RandomSource;
+import net.minecraft.world.effect.MobEffect;
+import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.boss.EnderDragonPart;
@@ -27,26 +26,80 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.material.Fluids;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
+import net.minecraftforge.registries.ForgeRegistries;
 import org.joml.Vector3d;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 public class ShootAction extends Action
 {
-	private GunshotCollection results;
+	private final HashMap<Integer, GunshotCollection> Results;
 
-	public ShootAction(ActionGroupDefinition groupDef, ActionDefinition def, EActionInput inputType)
+	public static class ShootNetData extends Action.NetData
 	{
-		super(groupDef, def, inputType);
-		results = null;
+		public static final int ID = 1;
+		public static final ShootNetData Invalid = new ShootNetData();
+
+		public final GunshotCollection Results;
+
+		public ShootNetData()
+		{
+			Results = new GunshotCollection();
+		}
+
+		public ShootNetData(GunshotCollection results)
+		{
+			Results = results;
+		}
+
+		@Override
+		public int GetID()
+		{
+			return ID;
+		}
+
+		@Override
+		public void Encode(FriendlyByteBuf buf)
+		{
+			GunshotCollection.Encode(Results, buf);
+		}
+
+		@Override
+		public void Decode(FriendlyByteBuf buf)
+		{
+			GunshotCollection.Decode(Results, buf);
+		}
+	}
+
+	public ShootAction(@Nonnull ActionGroup group, @Nonnull ActionDefinition def)
+	{
+		super(group, def);
+		Results = new HashMap<>();
+	}
+
+	@Nonnull
+	@Override
+	public Action.NetData GetNetDataForTrigger(int triggerIndex)
+	{
+		if (Results.containsKey(triggerIndex))
+			return new ShootNetData(Results.get(triggerIndex));
+		return ShootNetData.Invalid;
+	}
+
+	@Override
+	public void UpdateFromNetData(Action.NetData netData, int triggerIndex)
+	{
+		if(netData instanceof ShootNetData shootNetData)
+		{
+			Results.put(triggerIndex, shootNetData.Results);
+		}
 	}
 
 	@Override
@@ -75,62 +128,89 @@ public class ShootAction extends Action
 			return false;
 		if(context.ActionStack().GetShotCooldown() > 0.0f)
 			return false;
-		if(context.CanShoot(0))
+		if(!context.CanShoot(0))
 			return false;
-
-		if(!ActionGroupDef.canActUnderwater)
-		{
-			if(context.Shooter().Entity().level.isWaterAt(new BlockPos(context.Shooter().GetShootOrigin().PositionVec3())))
-				return false;
-		}
-		if(!ActionGroupDef.canActUnderOtherLiquid)
-		{
-			if(context.Shooter().Entity().level.isFluidAtPosition(new BlockPos(context.Shooter().GetShootOrigin().PositionVec3()), (fluidState) -> { return !fluidState.isEmpty() && !fluidState.isSourceOfType(Fluids.WATER); }))
-				return false;
-		}
 
 		return super.CanStart(context);
 	}
 
-	public boolean VerifyServer(ActionGroupContext context, GunshotCollection shots)
+	@Override
+	public boolean CanRetrigger(ActionGroupContext context)
 	{
-		results = shots;
-
-		// TODO: Big security pass needed
+		if(!context.CanShoot(0))
+			return false;
 
 		return true;
 	}
 
-	public void SetResults(GunshotCollection shots)
+	public boolean VerifyServer(ActionGroupContext context, GunshotCollection shots, int triggerIndex)
 	{
-		results = shots;
+		Results.put(triggerIndex, shots);
+
+		// TODO: Big security pass needed
+
+		// Verify that this shot makes sense by itself
+		// TODO: Check if we can shoot based on our local data about our
+		// a) Inventory, ammo levels
+		// b) Shoot cooldown
+		// c) Handedness
+
+		// TODO: Random spot check later - run a little statistical analysis on this player's shots over some time period
+
+
+		return true;
 	}
 
-	public boolean ValidateAndSetResults(GunContext context, GunshotCollection shots)
+	public void SetResults(GunshotCollection shots, int triggerIndex)
 	{
-		results = shots;
+		Results.put(triggerIndex, shots);
+	}
+
+	public boolean ValidateAndSetResults(GunContext context, GunshotCollection shots, int triggerIndex)
+	{
+		Results.put(triggerIndex, shots);
 
 		// TODO: Verify that these shots could definitely come from this context
 
 		return true;
 	}
 
-	public GunshotCollection GetResults()
+	public GunshotCollection GetResults(int triggerIndex)
 	{
-		return results;
+		return Results.get(triggerIndex);
 	}
 
 	private static final double RAYCAST_LENGTH = 500.0d;
 
-	public void Calculate(ActionGroupContext context)
+	@Override
+	public double GetPropogationRadius(ActionGroupContext context)
 	{
-		if(results == null)
+		return context.Loudness();
+	}
+	@Override
+	public void AddExtraPositionsForNetSync(ActionGroupContext context, int triggerIndex, List<Vec3> positions)
+	{
+		if(Results.containsKey(triggerIndex))
 		{
-			results = new GunshotCollection()
+			GunshotCollection shots = Results.get(triggerIndex);
+			for(int i = 0; i < shots.Count(); i++)
+			{
+				positions.add(shots.Get(i).Endpoint());
+			}
+		}
+	}
+	public void Calculate(ActionGroupContext context, int repeatIndex)
+	{
+		GunshotCollection shots = null;
+		if(Results.containsKey(repeatIndex))
+			shots = Results.get(repeatIndex);
+		else
+		{
+			Results.put(repeatIndex, shots = new GunshotCollection()
 				.FromAction(context.InputType)
 				.WithOwner(context.Owner())
 				.WithShooter(context.Entity())
-				.WithGun(context.GunDef());
+				.WithGun(context.GunDef()));
 		}
 
 		// If we are firing something faster than 1200rpm, that is more than 1 per tick
@@ -175,7 +255,8 @@ public class ShootAction extends Action
 
 					HitResult[] hitArray = new HitResult[hits.size()];
 					hits.toArray(hitArray);
-					results.AddShot(new Gunshot()
+					shots.AddShot(new Gunshot()
+						.FromShot(repeatIndex)
 						.WithOrigin(randomizedDirection.PositionVec3())
 						.WithTrajectory(randomizedDirection.ForwardVec3().scale(RAYCAST_LENGTH))
 						.WithHits(hitArray)
@@ -250,129 +331,156 @@ public class ShootAction extends Action
 	}
 
 	@Override
-	protected void OnTriggerServer(ActionGroupContext context)
+	public void OnTriggerServer(ActionGroupContext context, int triggerIndex)
 	{
 		if(!context.Shooter().IsValid())
 		{
-			SetFinished();
+			Group.SetFinished();
 			return;
 		}
 
 		Level level = context.Shooter().Entity().level;
-
-		if(results != null)
+		// Process shots that were added for this re-trigger in particular
+		GunshotCollection shotCollection = Results.get(triggerIndex);
+		if(shotCollection != null)
 		{
-			for(Gunshot shot : results.shots)
+			for(Gunshot shot : shotCollection.Shots)
 			{
 				GunshotContext gunshotContext = GunshotContext.CreateFrom(context, shot.bulletDef);
-				for(HitResult hit : shot.hits)
-				{
-					// Apply damage etc
-					switch(hit.getType())
-					{
-						case BLOCK ->
-						{
-							if(gunshotContext.Bullet.shootStats.breaksMaterials.length > 0)
-							{
-								BlockHitResult blockHit = (BlockHitResult) hit;
-								BlockState stateHit = level.getBlockState(blockHit.getBlockPos());
-								if(gunshotContext.Bullet.shootStats.BreaksMaterial(stateHit.getMaterial()))
-								{
-									level.destroyBlock(blockHit.getBlockPos(), true, context.Shooter().Entity());
-								}
-							}
-						}
-						case ENTITY ->
-						{
-							Entity entity = null;
-							EPlayerHitArea hitArea = EPlayerHitArea.BODY;
-							if(hit instanceof UnresolvedEntityHitResult unresolvedHit)
-							{
-								entity = level.getEntity(unresolvedHit.EntityID());
-								hitArea = unresolvedHit.HitboxArea();
-							}
-							else if(hit instanceof PlayerHitResult playerHit)
-							{
-								entity = playerHit.getEntity();
-								hitArea = playerHit.GetHitbox().area;
-							}
-							else if(hit instanceof EntityHitResult entityHit)
-							{
-								entity = entityHit.getEntity();
-							}
-
-							// Damage can be applied to anything living, with special multipliers if it was a player
-							float damage = gunshotContext.ImpactDamage();
-							if(entity instanceof Player player)
-							{
-								damage *= gunshotContext.MultiplierVsPlayers();
-								damage *= hitArea.DamageMultiplier();
-
-								// TODO: Shield item damage multipliers
-
-								player.hurt(context.Gun().CreateDamageSource(), damage);
-								// We override the immortality cooldown when firing bullets, as it is too slow
-								player.hurtTime = 0;
-								player.hurtDuration = 0;
-							}
-							else if(entity instanceof LivingEntity living)
-							{
-								living.hurt(context.Gun().CreateDamageSource(), damage);
-								living.hurtTime = 0;
-								living.hurtDuration = 0;
-							}
-
-							// Fire and similar can be apllied to all entities
-							if(entity != null)
-							{
-								entity.setSecondsOnFire(Maths.Floor(gunshotContext.SetFireToTarget() * 20.0f));
-							}
-						}
-					}
-
-					// Apply other impact effects to the surrounding area
-					// TODO:
-				}
+				ServerProcessImpact(level, shot, gunshotContext);
 			}
 		}
 	}
 
+	private void ServerProcessImpact(Level level, Gunshot shot, GunshotContext gunshotContext)
+	{
+		for (HitResult hit : shot.hits)
+		{
+			// Apply damage etc
+			switch (hit.getType())
+			{
+				case BLOCK -> {
+					if (gunshotContext.Bullet.shootStats.breaksMaterials.length > 0)
+					{
+						BlockHitResult blockHit = (BlockHitResult) hit;
+						BlockState stateHit = level.getBlockState(blockHit.getBlockPos());
+						if (gunshotContext.Bullet.shootStats.BreaksMaterial(stateHit.getMaterial()))
+						{
+							level.destroyBlock(blockHit.getBlockPos(), true, gunshotContext.ActionGroup.Shooter().Entity());
+						}
+					}
+				}
+				case ENTITY -> {
+					Entity entity = null;
+					EPlayerHitArea hitArea = EPlayerHitArea.BODY;
+					if (hit instanceof UnresolvedEntityHitResult unresolvedHit)
+					{
+						entity = level.getEntity(unresolvedHit.EntityID());
+						hitArea = unresolvedHit.HitboxArea();
+					} else if (hit instanceof PlayerHitResult playerHit)
+					{
+						entity = playerHit.getEntity();
+						hitArea = playerHit.GetHitbox().area;
+					} else if (hit instanceof EntityHitResult entityHit)
+					{
+						entity = entityHit.getEntity();
+					}
+
+					// Damage can be applied to anything living, with special multipliers if it was a player
+					float damage = gunshotContext.ImpactDamage();
+					if (entity instanceof Player player)
+					{
+						damage *= gunshotContext.MultiplierVsPlayers();
+						damage *= hitArea.DamageMultiplier();
+
+						// TODO: Shield item damage multipliers
+
+						player.hurt(gunshotContext.ActionGroup.Gun().CreateDamageSource(), damage);
+						// We override the immortality cooldown when firing bullets, as it is too slow
+						player.hurtTime = 0;
+						player.hurtDuration = 0;
+					} else if (entity instanceof LivingEntity living)
+					{
+						living.hurt(gunshotContext.ActionGroup.Gun().CreateDamageSource(), damage);
+						living.hurtTime = 0;
+						living.hurtDuration = 0;
+					}
+
+					// Also apply this code to all living entities
+					if(entity instanceof LivingEntity living)
+					{
+						String potionEffect = gunshotContext.PotionEffectOnTarget();
+						if(potionEffect.length() > 0)
+						{
+							String[] parts = potionEffect.split(",");
+							if(parts.length > 0)
+							{
+								int strength = parts.length >= 3 ? Integer.parseInt(parts[2]) : 1;
+								int duration = parts.length >= 2 ? Integer.parseInt(parts[1]) : 20;
+								ResourceLocation resLoc = new ResourceLocation(parts[0]);
+								MobEffect effect = ForgeRegistries.MOB_EFFECTS.getValue(resLoc);
+								if(effect != null)
+								{
+									MobEffectInstance instance = new MobEffectInstance(effect, duration, strength);
+									living.addEffect(instance);
+								}
+							}
+						}
+					}
+
+					// Fire and similar can be apllied to all entities
+					if (entity != null)
+					{
+						entity.setSecondsOnFire(Maths.Floor(gunshotContext.SetFireToTarget() * 20.0f));
+
+
+					}
+				}
+			}
+
+			// Apply other impact effects to the surrounding area
+			// TODO:
+		}
+	}
+
 	@Override
-	protected void OnTriggerClient(ActionGroupContext context)
+	public void OnTriggerClient(ActionGroupContext context, int triggerIndex)
 	{
 		if(context.Shooter().IsLocalPlayerOwner())
 		{
-			Calculate(context);
+			Calculate(context, triggerIndex);
 		}
 
-		if(results != null)
+		GunshotCollection shots = Results.get(triggerIndex);
+		if(shots != null)
 		{
 			boolean hitEntity = false;
 			boolean hitMLG = false;
-			for(Gunshot shot : results.shots)
+			for(Gunshot shot : shots.Shots)
 			{
+				// Create client effects only for bullets that were added in this most recent re-trigger
 				GunshotContext gunshotContext = GunshotContext.CreateFrom(context, shot.bulletDef);
 				// Create a bullet trail render
-				Duration = FlansModClient.SHOT_RENDERER.AddTrail(shot.origin, shot.Endpoint());
+				FlansModClient.SHOT_RENDERER.AddTrail(shot.origin, shot.Endpoint());
 
-				for(HitResult hit : shot.hits)
+				for (HitResult hit : shot.hits)
 				{
-					if(hit.getType() == HitResult.Type.ENTITY)
+					if (hit.getType() == HitResult.Type.ENTITY)
 					{
 						hitEntity = true;
-						if(((EntityHitResult)hit).getEntity() instanceof EnderDragon dragon)
+						if (((EntityHitResult) hit).getEntity() instanceof EnderDragon dragon)
 						{
 							float damage = gunshotContext.ImpactDamage();
 							damage = damage / 4.0F + Math.min(damage, 1.0F);
-							if(dragon.getHealth() <= damage)
+							if (dragon.getHealth() <= damage)
 								hitMLG = true;
 						}
-						else if(((EntityHitResult)hit).getEntity() instanceof EnderDragonPart part)
+						else if (((EntityHitResult) hit).getEntity() instanceof EnderDragonPart part)
 						{
 							float damage = gunshotContext.ImpactDamage();
-							if(part != part.parentMob.head)
+							if (part != part.parentMob.head)
 								damage = damage / 4.0F + Math.min(damage, 1.0F);
-							if(part.parentMob.getHealth() <= damage)
+							if (part.parentMob.getHealth() <= damage)
 								hitMLG = true;
 						}
 					}
@@ -390,90 +498,92 @@ public class ShootAction extends Action
 	@Override
 	public void OnTickClient(ActionGroupContext context)
 	{
-		int tickBefore = GetProgressTicks();
 		super.OnTickClient(context);
 		int tickAfter = GetProgressTicks();
+		int tickBefore = tickAfter - 1;
 
 		boolean playedASoundThisTick = false;
 
 		ParticleEngine particleEngine = Minecraft.getInstance().particleEngine;
 		ActionDefinition shootActionDef = context.GetShootActionDefinition();
 
-		for(Gunshot shot : results.shots)
+		for(GunshotCollection shotCollection : Results.values())
 		{
-			GunshotContext gunshotContext = GunshotContext.CreateFrom(context, shot.bulletDef);
-			for (HitResult hit : shot.hits)
+			for (Gunshot shot : shotCollection.Shots)
 			{
-				// Check if this hit should be processed on this frame
-				double t = Maths.CalculateParameter(shot.origin, shot.Endpoint(), hit.getLocation()) * GetDurationTicks();
-				if(tickBefore <= t && t < tickAfter)
+				double t0 = shot.fromShotIndex * context.RepeatDelayTicks();
+				GunshotContext gunshotContext = GunshotContext.CreateFrom(context, shot.bulletDef);
+				for (HitResult hit : shot.hits)
 				{
-					// Create hit particles
-					switch (hit.getType())
+					// Check if this hit should be processed on this frame
+					double t = Maths.CalculateParameter(shot.origin, shot.Endpoint(), hit.getLocation()) * GetDurationPerTriggerTicks() + t0;
+					if (tickBefore <= t && t < tickAfter)
 					{
-						case BLOCK ->
+						// Create hit particles
+						switch (hit.getType())
 						{
-							ClientLevel level = Minecraft.getInstance().level;
-							BlockHitResult blockHit = (BlockHitResult)hit;
-							if(shootActionDef != null && gunshotContext.Bullet.shootStats.impact.decal != null
-								&& gunshotContext.Bullet.shootStats.impact.decal.length() > 0)
-							{
-								FlansModClient.DECAL_RENDERER.AddDecal(
-									ResourceLocation.tryParse(gunshotContext.Bullet.shootStats.impact.decal).withPrefix("textures/"),
-									blockHit.getLocation(),
-									blockHit.getDirection(),
-									level.random.nextFloat() * 360.0f,
-									1000);
-							}
+							case BLOCK -> {
+								ClientLevel level = Minecraft.getInstance().level;
+								BlockHitResult blockHit = (BlockHitResult) hit;
+								if (shootActionDef != null && gunshotContext.Bullet.shootStats.impact.decal != null
+									&& gunshotContext.Bullet.shootStats.impact.decal.length() > 0)
+								{
+									FlansModClient.DECAL_RENDERER.AddDecal(
+										ResourceLocation.tryParse(gunshotContext.Bullet.shootStats.impact.decal + ".png").withPrefix("textures/"),
+										blockHit.getLocation(),
+										blockHit.getDirection(),
+										level.random.nextFloat() * 360.0f,
+										1000);
+								}
 
-							Vec3[] motions = new Vec3[3];
-							motions[0] = Maths.Reflect(shot.trajectory.normalize(), blockHit.getDirection());
-							Vec3i normal = blockHit.getDirection().getNormal();
-							for(int i = 1; i < motions.length; i++)
-							{
-								motions[i] = new Vec3(
-									normal.getX() + level.random.nextGaussian() * 0.2d,
-									normal.getY() + level.random.nextGaussian() * 0.2d,
-									normal.getZ() + level.random.nextGaussian() * 0.2d);
-								motions[i] = motions[i].normalize().scale(0.3d);
-							}
+								Vec3[] motions = new Vec3[3];
+								motions[0] = Maths.Reflect(shot.trajectory.normalize(), blockHit.getDirection());
+								Vec3i normal = blockHit.getDirection().getNormal();
+								for (int i = 1; i < motions.length; i++)
+								{
+									motions[i] = new Vec3(
+										normal.getX() + level.random.nextGaussian() * 0.2d,
+										normal.getY() + level.random.nextGaussian() * 0.2d,
+										normal.getZ() + level.random.nextGaussian() * 0.2d);
+									motions[i] = motions[i].normalize().scale(0.3d);
+								}
 
-							for(int i = 0; i < motions.length; i++)
-							{
-								BlockState state = level.getBlockState(blockHit.getBlockPos());
-								particleEngine.add(new GunshotHitBlockParticle(
-									level,
+								for (int i = 0; i < motions.length; i++)
+								{
+									BlockState state = level.getBlockState(blockHit.getBlockPos());
+									particleEngine.add(new GunshotHitBlockParticle(
+										level,
+										hit.getLocation().x,
+										hit.getLocation().y,
+										hit.getLocation().z,
+										motions[i].x,
+										motions[i].y,
+										motions[i].z,
+										state,
+										blockHit.getBlockPos())
+										.updateSprite(state, blockHit.getBlockPos())
+										.scale(0.5f));
+								}
+							}
+							case ENTITY -> {
+								Vec3 shotMotion = shot.trajectory.normalize().scale(GetDurationPerTriggerTicks());
+								particleEngine.createParticle(
+									ParticleTypes.DAMAGE_INDICATOR,
 									hit.getLocation().x,
 									hit.getLocation().y,
 									hit.getLocation().z,
-									motions[i].x,
-									motions[i].y,
-									motions[i].z,
-									state,
-									blockHit.getBlockPos())
-									.updateSprite(state, blockHit.getBlockPos())
-									.scale(0.5f));
+									shotMotion.x,
+									shotMotion.y,
+									shotMotion.z);
 							}
 						}
-						case ENTITY ->
-						{
-							Vec3 shotMotion = shot.trajectory.normalize().scale(GetDurationTicks());
-							particleEngine.createParticle(
-								ParticleTypes.DAMAGE_INDICATOR,
-								hit.getLocation().x,
-								hit.getLocation().y,
-								hit.getLocation().z,
-								shotMotion.x,
-								shotMotion.y,
-								shotMotion.z);
-						}
-					}
 
-					// Play a sound, only once per tick to avoid audio overload
-					if(!playedASoundThisTick && gunshotContext.Bullet.shootStats.impact.hitSounds != null)
-					{
-						playedASoundThisTick = true;
-						//Minecraft.getInstance().getSoundManager().play(actionDef.ShootStats.Impact.HitSound);
+						// Play a sound, only once per tick to avoid audio overload
+						if (!playedASoundThisTick && gunshotContext.Bullet.shootStats.impact.hitSounds != null)
+						{
+							playedASoundThisTick = true;
+							//Minecraft.getInstance().getSoundManager().play(actionDef.ShootStats.Impact.HitSound);
+						}
 					}
 				}
 			}

@@ -1,25 +1,21 @@
 package com.flansmod.common.gunshots;
 
-import com.flansmod.common.FlansMod;
 import com.flansmod.common.actions.ActionStack;
 import com.flansmod.common.actions.EActionInput;
 import com.flansmod.common.item.*;
 import com.flansmod.common.types.attachments.AttachmentDefinition;
 import com.flansmod.common.types.attachments.EAttachmentType;
 import com.flansmod.common.types.elements.ActionDefinition;
-import com.flansmod.common.types.elements.ActionGroupDefinition;
 import com.flansmod.common.types.elements.ModifierDefinition;
 import com.flansmod.common.types.guns.*;
-import com.flansmod.common.types.magazines.MagazineDefinition;
 import com.flansmod.common.types.parts.PartDefinition;
+import com.flansmod.util.MinecraftHelpers;
+import com.mojang.datafixers.util.Pair;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.Container;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.player.Inventory;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 
@@ -54,45 +50,78 @@ public abstract class GunContext
 		public void RecalculateModifierCache() { }
 	};
 
-
-
-
-	private static HashMap<String, GunContext> ContextCache = new HashMap<>();
-
+	// ---------------------------------------------------------------------------------------------------
+	// GUN CONTEXT CACHE (Caches are contained within ShooterContext)
+	// ---------------------------------------------------------------------------------------------------
 	@Nonnull
-	public static GunContext CreateFrom(ItemStack stack)
+	public static GunContext GetOrCreate(ItemStack stack)
 	{
+		// No caching, because we don't know where this stack is
 		if(stack.getItem() instanceof GunItem gun)
 			return new GunContextItem(stack);
 		return INVALID;
 	}
 
 	@Nonnull
-	public static GunContext CreateFrom(Inventory inventory, int slot)
+	public static GunContext GetOrCreate(Inventory inventory, int slot)
 	{
+		// No caching, because we don't know where this inventory is
 		if(inventory.getContainerSize() > slot && inventory.getItem(slot).getItem() instanceof GunItem gun)
 			return new GunContextInventoryItem(inventory, slot);
 		return INVALID;
 	}
 
 	@Nonnull
-	public static GunContext CreateFrom(ShooterContext shooter, InteractionHand hand)
+	public static GunContext GetOrCreate(UUID shooterUUID, int slotIndex, boolean client)
+	{
+		ShooterContext shooterContext = ShooterContext.GetOrCreate(shooterUUID, client);
+		if(shooterContext.IsValid())
+			return shooterContext.GetOrCreate(slotIndex);
+
+		return GunContext.INVALID;
+	}
+
+	@Nonnull
+	public static GunContext GetOrCreate(ShooterContext shooter, int inventorySlotIndex)
 	{
 		if(shooter.IsValid())
-		{
-			if(shooter instanceof ShooterContextLiving livingShooter)
-			{
-				if (livingShooter.Shooter.getItemInHand(hand).getItem() instanceof GunItem)
-				{
-					if(livingShooter.Entity() instanceof Player player)
-						return new GunContextPlayer(livingShooter, hand);
-					else
-						return new GunContextLiving(livingShooter, hand);
-				}
-			}
-		}
+			return shooter.GetOrCreate(inventorySlotIndex);
+
 		return INVALID;
 	}
+
+	@Nonnull
+	public static GunContext GetOrCreate(ShooterContext shooter, InteractionHand hand)
+	{
+		if(shooter.IsValid())
+			if(shooter instanceof ShooterContextPlayer playerContext)
+			{
+				return playerContext.GetOrCreate(hand == InteractionHand.MAIN_HAND ? playerContext.Player.getInventory().selected : Inventory.SLOT_OFFHAND);
+			}
+			else
+			{
+				return shooter.GetOrCreate(hand == InteractionHand.MAIN_HAND ? 0 : 1);
+			}
+		return INVALID;
+	}
+
+	// ---------------------------------------------------------------------------------------------------
+	// ACTION GROUP CONTEXT CACHE (Contained in the GunContext and built over time)
+	// ---------------------------------------------------------------------------------------------------
+	private final HashMap<EActionInput, ActionGroupContext> ActionGroupContextCache = new HashMap<>();
+	@Nonnull
+	public ActionGroupContext GetOrCreate(EActionInput inputType)
+	{
+		if(ActionGroupContextCache.containsKey(inputType))
+			return ActionGroupContextCache.get(inputType);
+
+		ActionGroupContext context = new ActionGroupContext(this, inputType);
+		ActionGroupContextCache.put(inputType, context);
+		return context;
+	}
+	// ---------------------------------------------------------------------------------------------------
+
+
 
 	// --------------------------------------------------------------------------
 	// Abstractions
@@ -106,7 +135,7 @@ public abstract class GunContext
 	public abstract Container GetAttachedInventory();
 	public abstract boolean CanPerformTwoHandedAction();
 	// Not necessarily valid to ask for a hand, but in cases where it is valid, use this
-	public InteractionHand GetHand() { return null; }
+	public int GetInventorySlotIndex() { return Inventory.NOT_FOUND_INDEX; }
 	public abstract int HashModifierSources();
 	public abstract void RecalculateModifierCache();
 	@Nonnull

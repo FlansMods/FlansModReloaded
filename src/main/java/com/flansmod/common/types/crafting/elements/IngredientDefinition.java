@@ -102,20 +102,24 @@ public class IngredientDefinition
 	{
 		if(stack.getCount() < count)
 			return false;
+		return Matches(stack.getItem());
+	}
+
+	public boolean Matches(Item item)
+	{
 		if(compareItemName)
 		{
-			if(!stack.getItem().builtInRegistryHolder().is(new ResourceLocation(itemName)))
+			if(!item.builtInRegistryHolder().is(new ResourceLocation(itemName)))
 				return false;
 		}
 		if(compareItemTags)
 		{
 			for (String tag : requiredTags)
-				if(!stack.getItem().builtInRegistryHolder().is(ItemTags.create(new ResourceLocation(tag))))
+				if(!item.builtInRegistryHolder().is(ItemTags.create(new ResourceLocation(tag))))
 					return false;
 			for (String tag : disallowedTags)
-				if(stack.getItem().builtInRegistryHolder().is(ItemTags.create(new ResourceLocation(tag))))
+				if(item.builtInRegistryHolder().is(ItemTags.create(new ResourceLocation(tag))))
 					return false;
-
 		}
 		return true;
 

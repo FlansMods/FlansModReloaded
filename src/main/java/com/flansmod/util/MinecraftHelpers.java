@@ -24,10 +24,16 @@ import net.minecraft.world.level.material.Material;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.fml.DistExecutor;
+import net.minecraftforge.fml.loading.FMLEnvironment;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.server.ServerLifecycleHooks;
+import org.jetbrains.annotations.NotNull;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Locale;
 
 public class MinecraftHelpers
@@ -48,6 +54,22 @@ public class MinecraftHelpers
 			return clientLevel;
 
 		return null;
+	}
+	@Nonnull
+	public static Iterable<? extends Level> GetLoadedLevels()
+	{
+		// Try getting from the running server
+		MinecraftServer server = GetServer();
+		if(server != null && server.isRunning())
+		{
+			return server.getAllLevels();
+		}
+
+		// If not on a server, return the one loaded level
+		Level clientLevel = DistExecutor.safeCallWhenOn(Dist.CLIENT, () -> MinecraftHelpers::Client_GetCurrentLevel);
+		List<Level> list = new ArrayList<>(1);
+		list.add(clientLevel);
+		return list;
 	}
 
 	public static boolean TagEqual(Tag tag, String stringValue)
@@ -75,6 +97,27 @@ public class MinecraftHelpers
 		return true;
 	}
 
+	public static long GetTick()
+	{
+		if(IsClient())
+		{
+			Level level = Client_GetCurrentLevel();
+			if(level != null)
+				return level.getGameTime();
+		}
+		else
+		{
+			MinecraftServer server = GetServer();
+			if(server != null && server.isRunning())
+			{
+				Level level = server.getLevel(Level.OVERWORLD);
+				if(level != null)
+					return level.getGameTime();
+			}
+		}
+		return 0L;
+	}
+
 	public static String GetFEString(int fe)
 	{
 		if(fe >= 1000000000)
@@ -88,14 +131,11 @@ public class MinecraftHelpers
 
 	public static boolean IsClient()
 	{
-		Boolean isClientOrNull = DistExecutor.safeCallWhenOn(Dist.CLIENT, () -> MinecraftHelpers::True );
-		return isClientOrNull != null;
+		return FMLEnvironment.dist == Dist.CLIENT;
 	}
 
-	public static Boolean True() { return true; }
-
 	@Nullable
-	private static MinecraftServer GetServer()
+	public static MinecraftServer GetServer()
 	{
 		return ServerLifecycleHooks.getCurrentServer();
 	}

@@ -4,12 +4,10 @@ import com.flansmod.client.FlansModClient;
 import com.flansmod.common.FlansMod;
 import com.flansmod.common.actions.*;
 import com.flansmod.common.network.FlansModPacketHandler;
-import com.flansmod.common.network.toclient.ShotFiredMessage;
-import com.flansmod.common.network.toserver.SimpleActionMessage;
-import com.flansmod.common.network.toserver.ShotRequestMessage;
+import com.flansmod.common.network.bidirectional.ActionUpdateMessage;
+import com.flansmod.util.Maths;
 import net.minecraft.client.Minecraft;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
@@ -18,6 +16,7 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
@@ -85,16 +84,8 @@ public class ActionManager
 
 	public void HookClient(IEventBus modEventBus)
 	{
-		FlansModPacketHandler.RegisterClientHandler(ShotFiredMessage.class, ShotFiredMessage::new, this::OnClientShotsFired);
+		FlansModPacketHandler.RegisterClientHandler(ActionUpdateMessage.ToClient.class, ActionUpdateMessage.ToClient::new, this::OnClientReceivedActionUpdate);
 		MinecraftForge.EVENT_BUS.addListener(this::ClientTick);
-
-	}
-
-	// You fired a shot, tell the server where you shot
-	@OnlyIn(Dist.CLIENT)
-	private void ClientSendToServerAction(InteractionHand hand, EActionInput inputType)
-	{
-		FlansModPacketHandler.SendToServer(new SimpleActionMessage(hand, inputType));
 	}
 
 	@OnlyIn(Dist.CLIENT)
@@ -103,65 +94,61 @@ public class ActionManager
 		// See if pressing this button should trigger any actions
 		// First on our main hand, then on our off hand
 
-		ShooterContext shooter = ShooterContext.CreateFrom(player);
+		ShooterContext shooter = ShooterContext.GetOrCreate(player);
 		if(!shooter.IsValid())
 			return;
 
 		// Ask the ShooterContext which actions on which guns we should perform
 		ActionGroupContext[] actionContexts = shooter.GetPrioritisedActions(inputType);
 		// Then, in order, perform those actions (with actions able to block subsequent execution)
-		for (ActionGroupContext actionContext : actionContexts)
+		for (ActionGroupContext groupContext : actionContexts)
 		{
 			// First, accumulate our action set and check if they all allow us to start the requested action
-			Action[] actions = actionContext.CreateActions();
-			ReloadProgress[] reloads = actionContext.CreateReloads();
+			ActionGroup actionGroup = groupContext.CreateActionGroup();
+			ReloadProgress[] reloads = groupContext.CreateReloads();
 			boolean needsNetMsg = false;
 			boolean canStart = true;
 			boolean shouldFallbackToReload = false;
-			for (Action action : actions)
+			if(!actionGroup.CanStart(groupContext))
 			{
-				if (!action.CanStart(actionContext))
-				{
-					canStart = false;
-					if(action.ShouldFallBackToReload(actionContext))
-					{
-						shouldFallbackToReload = true;
-					}
-				}
-				if (action.PropogateToServer(actionContext))
-					needsNetMsg = true;
+				canStart = false;
+				if(actionGroup.ShouldFallBackToReload(groupContext))
+					shouldFallbackToReload = true;
 			}
+			if(actionGroup.PropogateToServer(groupContext))
+				needsNetMsg = true;
 
 			// Now we know that they can start, let's trigger them
 			if (canStart)
 			{
-				GunshotCollection shots = null;
-				for (Action action : actions)
-				{
-					actionContext.ActionStack().AddAction(actionContext, action);
-					if(action instanceof ShootAction shootAction)
-					{
-						shots = shootAction.GetResults();
-					}
-				}
+				//GunshotCollection shots = null;
+				//int triggerCount = 0;
+				groupContext.ActionStack().AddActionGroup(groupContext, actionGroup);
+
+				//ShootAction shootAction = actionGroup.GetShootAction();
+				//if(shootAction != null)
+				//{
+				//	shots = shootAction.GetResults(0);
+				//	triggerCount = shootAction.GetTriggerCount();
+				//}
 				for (ReloadProgress reload : reloads)
 				{
-					actionContext.ActionStack().AddReload(actionContext, reload);
+					groupContext.ActionStack().AddReload(groupContext, reload);
 				}
 
 				// Send a message to the server about these actions if required
-				if (needsNetMsg)
+				if(needsNetMsg && actionGroup.NeedsNetSync())
 				{
-					if(shots != null)
-						ClientSendToServer(shots);
-					else
-						ClientSendToServerAction(actionContext.Gun().GetHand(), inputType);
+					ActionUpdateMessage updateMsg = new ActionUpdateMessage(groupContext, EPressType.Press, actionGroup.GetStartedTick());
+					updateMsg.AddTriggers(actionGroup, actionGroup.GetRequiredNetSyncMin(), actionGroup.GetRequiredNetSyncMax());
+					FlansModPacketHandler.SendToServer(new ActionUpdateMessage.ToServer(updateMsg));
+					actionGroup.OnPerformedNetSync(actionGroup.GetRequiredNetSyncMin(), actionGroup.GetRequiredNetSyncMax());
 				}
 			}
 			else if(shouldFallbackToReload
 				&& !inputType.IsReload()
 				&& inputType.GetReloadType() != null
-				&& !actionContext.ActionStack().IsReloading())
+				&& !groupContext.ActionStack().IsReloading())
 			{
 				ClientKeyPressed(player, inputType.GetReloadType());
 			}
@@ -172,27 +159,37 @@ public class ActionManager
 	public void ClientKeyHeld(Player player, EActionInput inputType)
 	{
 		// See if any of the in-progress actions on this gun should stop on release
-		ShooterContext shooter = ShooterContext.CreateFrom(player);
+		ShooterContext shooter = ShooterContext.GetOrCreate(player);
 		if(!shooter.IsValid())
 			return;
 
 		// Ask the ShooterContext which actions on which guns we should perform
-		ActionGroupContext[] actionContexts = shooter.GetPrioritisedActions(inputType);
-		for(ActionGroupContext actionContext : actionContexts)
+		ActionGroupContext[] groupContexts = shooter.GetPrioritisedActions(inputType);
+		for(ActionGroupContext groupContext : groupContexts)
 		{
 			// Check the action stack for this action/gun pairing and see if any of them are waiting for mouse release
-			for(Action action : actionContext.ActionStack().GetActions())
+			ActionGroup activeGroup = groupContext.GetExistingActionGroup();
+			if(activeGroup != null)
 			{
-				action.UpdateInputHeld(actionContext, true);
+				activeGroup.UpdateInputHeld(groupContext, true);
+
+				// Then if this input hold has triggered repeat actions, we may need to send those to the server
+				if(activeGroup.NeedsNetSync())
+				{
+					ActionUpdateMessage updateMsg = new ActionUpdateMessage(groupContext, EPressType.Hold, activeGroup.GetStartedTick());
+					updateMsg.AddTriggers(activeGroup, activeGroup.GetRequiredNetSyncMin(), activeGroup.GetRequiredNetSyncMax());
+					FlansModPacketHandler.SendToServer(new ActionUpdateMessage.ToServer(updateMsg));
+					activeGroup.OnPerformedNetSync(activeGroup.GetRequiredNetSyncMin(), activeGroup.GetRequiredNetSyncMax());
+				}
 			}
 		}
 	}
 
 	@OnlyIn(Dist.CLIENT)
-	public void ClientKeyReleased(Player player, EActionInput inputType)
+	public void ClientKeyReleased(Player player, EActionInput inputType, int ticksSinceHeld)
 	{
 		// See if any of the in-progress actions on this gun should stop on release
-		ShooterContext shooter = ShooterContext.CreateFrom(player);
+		ShooterContext shooter = ShooterContext.GetOrCreate(player);
 		if(!shooter.IsValid())
 			return;
 
@@ -200,52 +197,90 @@ public class ActionManager
 		ActionGroupContext[] actionContexts = shooter.GetPrioritisedActions(inputType);
 		for(ActionGroupContext actionContext : actionContexts)
 		{
-			// Check the action stack for this action/gun pairing and see if any of them are waiting for mouse release
-			for(Action action : actionContext.ActionStack().GetActions())
+			//
+			ActionGroup actionGroup = actionContext.GetExistingActionGroup();
+
+			if(actionGroup != null)
 			{
-				action.UpdateInputHeld(actionContext, false);
+				// Check the action stack for this action/gun pairing and see if any of them are waiting for mouse release
+				actionGroup.UpdateInputHeld(actionContext, false);
+
+				ActionUpdateMessage releaseMsg = new ActionUpdateMessage(actionContext, EPressType.Release, actionGroup.GetStartedTick());
+				releaseMsg.AddTriggers(actionGroup, actionGroup.GetRequiredNetSyncMin(), actionGroup.GetRequiredNetSyncMax());
+				FlansModPacketHandler.SendToServer(new ActionUpdateMessage.ToServer(releaseMsg));
+				actionGroup.OnPerformedNetSync(actionGroup.GetRequiredNetSyncMin(), actionGroup.GetRequiredNetSyncMax());
 			}
 		}
-	}
-
-	// You fired a shot, tell the server where you shot
-	@OnlyIn(Dist.CLIENT)
-	private void ClientSendToServer(GunshotCollection shots)
-	{
-		FlansModPacketHandler.SendToServer(new ShotRequestMessage(shots));
 	}
 
 	// This will only be sent to you when someone else fires a shot. This is where you play various actions in response
 	@OnlyIn(Dist.CLIENT)
-	private void OnClientShotsFired(ShotFiredMessage msg)
+	private void OnClientReceivedActionUpdate(ActionUpdateMessage.ToClient msg)
 	{
-		// Reconstruct the shot details and context
-		GunshotCollection shotCollection = msg.Get();
-		InteractionHand hand = shotCollection.seatID == 0 ? InteractionHand.MAIN_HAND : InteractionHand.OFF_HAND;
-
-		ShooterContext shooterContext = ShooterContext.CreateFrom(shotCollection.Shooter());
-		if(!shooterContext.IsValid())
+		ActionGroupContext actionContext = msg.Data.GetActionGroupContext(true);
+		if(actionContext.IsValid())
 		{
-			FlansMod.LOGGER.warn("OnClientShotsFired received with invalid shooter");
-			return;
-		}
-
-		GunContext gunContext = GunContext.CreateFrom(shooterContext, hand);
-		if(!gunContext.IsValid())
-		{
-			FlansMod.LOGGER.warn("OnClientShotsFired received with invalid gun");
-			return;
-		}
-
-		ActionGroupContext actionContext = ActionGroupContext.CreateFrom(gunContext, shotCollection.actionUsed);
-		Action[] actions = actionContext.CreateActions();
-		for(Action action : actions)
-		{
-			if(action instanceof ShootAction shootAction)
+			if(actionContext.Shooter().Entity() == Minecraft.getInstance().player)
 			{
-				shootAction.SetResults(shotCollection);
+				FlansMod.LOGGER.warn("OnClientReceivedActionUpdate received with data for myself");
+				return;
 			}
-			actionContext.ActionStack().AddAction(actionContext, action);
+
+			// See if we are updating an existing action, or if we need to start fresh
+			ActionGroup actionGroup = actionContext.GetExistingActionGroup();
+			if(actionGroup == null)
+			{
+				if(msg.Data.GetPressType() != EPressType.Press)
+					FlansMod.LOGGER.warn("Received ActionUpdateMessage with wrong press type for action that was not already running");
+				actionGroup = actionContext.CreateActionGroup();
+				actionContext.ActionStack().AddActionGroup(actionContext, actionGroup);
+			}
+
+
+			if(msg.Data.GetPressType() == EPressType.Press)
+				actionGroup.OnStartClientFromNetwork(actionContext, msg.Data.GetStartTick());
+
+			// Now run through all the triggers that are bundled in this message and run any client side effects
+			for(var kvp : msg.Data.GetTriggers())
+			{
+				int triggerIndex = kvp.getKey();
+				int actionIndex = 0;
+				for(Action action : actionGroup.GetActions())
+				{
+					Action.NetData netData = msg.Data.GetNetData(triggerIndex, actionIndex);
+					action.UpdateFromNetData(netData, triggerIndex);
+					action.OnTriggerClient(actionContext, triggerIndex);
+					actionIndex++;
+				}
+			}
+
+			if(msg.Data.GetPressType() == EPressType.Release)
+			{
+				// Check the action stack for this action/gun pairing and see if any of them are waiting for mouse release
+				long numTicks = msg.Data.GetLastTriggerTick() - actionGroup.GetStartedTick();
+				int expectedTriggerCount = Maths.Floor(numTicks / actionContext.RepeatDelayTicks()) + 1;
+				int serverTriggerCount = actionGroup.GetTriggerCount();
+
+				if(expectedTriggerCount > serverTriggerCount)
+				{
+					FlansMod.LOGGER.info("Client expected to trigger " + expectedTriggerCount + " repeat(s), but server only triggered " + serverTriggerCount + " repeat(s)");
+				}
+				else if(expectedTriggerCount < serverTriggerCount)
+				{
+					FlansMod.LOGGER.info("Client expected to trigger " + expectedTriggerCount + " repeat(s), but server triggered " + serverTriggerCount + " many repeat(s)");
+				}
+				actionGroup.UpdateInputHeld(actionContext, false);
+
+				actionGroup.OnFinishClient(actionContext);
+			}
+
+			for(var reload : msg.Data.GetReloads())
+			{
+				actionContext.ActionStack().AddReload(actionContext, new ReloadProgress(
+					actionContext.Gun.GunDef().GetReload(actionContext.InputType),
+					actionContext.InputType
+				));
+			}
 		}
 	}
 
@@ -279,166 +314,118 @@ public class ActionManager
 
 	public void HookServer(IEventBus modEventBus)
 	{
-		FlansModPacketHandler.RegisterServerHandler(ShotRequestMessage.class, ShotRequestMessage::new, this::OnServerReceivedShotData);
-		FlansModPacketHandler.RegisterServerHandler(SimpleActionMessage.class, SimpleActionMessage::new, this::OnServerReceivedSimpleAction);
-		MinecraftForge.EVENT_BUS.addListener(this::ServerTick);
+		FlansModPacketHandler.RegisterServerHandler(
+			ActionUpdateMessage.ToServer.class,
+			ActionUpdateMessage.ToServer::new,
+			this::OnServerReceivedActionUpdate);
+		MinecraftForge.EVENT_BUS.register(this);
 	}
 
 	// When a client tells us they want to reload, we need to process their items
 	private static final double RELOAD_MSG_RADIUS = 50d;
-	private void OnServerReceivedSimpleAction(SimpleActionMessage msg, ServerPlayer from)
+	private void OnServerReceivedActionUpdate(ActionUpdateMessage.ToServer msg, ServerPlayer from)
 	{
-		ShooterContext shooter = ShooterContext.CreateFrom(from);
-		if(!shooter.IsValid())
-		{
-			FlansMod.LOGGER.warn("OnServerReceivedSimpleAction had invalid shooter");
-			return;
-		}
-
-		GunContext gunContext = GunContext.CreateFrom(shooter, msg.hand);
-		if(!gunContext.IsValid())
-		{
-			FlansMod.LOGGER.warn("OnServerReceivedSimpleAction had invalid gun");
-			return;
-		}
-
-		ActionGroupContext actionContext = ActionGroupContext.CreateFrom(gunContext, msg.inputType);
+		// Check that this is a valid context
+		ActionGroupContext actionContext = msg.Data.GetActionGroupContext(false);
 		if(!actionContext.IsValid())
 		{
-			FlansMod.LOGGER.warn("OnServerReceivedSimpleAction had invalid action");
-			return;
-		}
-
-		boolean isValid = true;
-		switch(msg.inputType)
-		{
-			case RELOAD_PRIMARY, RELOAD_SECONDARY -> {
-				actionContext.ActionStack().AddReload(actionContext,
-					new ReloadProgress(gunContext.GunDef().GetReload(msg.inputType), msg.inputType));
-			}
-			case LOOK_AT, PRIMARY, SECONDARY -> {
-				Action[] actions = actionContext.CreateActions();
-				for(Action action : actions)
-				{
-					if(action instanceof ShootAction)
-					{
-						FlansMod.LOGGER.warn("OnServerReceivedSimpleAction was sent a shoot action. These should use the specific shoot messages");
-						isValid = false;
-						break;
-					}
-					if(!action.VerifyServer(actionContext, null))
-					{
-						isValid = false;
-						break;
-					}
-				}
-
-				if(isValid)
-				{
-					for(Action action : actions)
-					{
-						actionContext.ActionStack().AddAction(actionContext, action);
-					}
-				}
-			}
-		}
-
-		// And propogate to players for third person anims
-		if(isValid)
-		{
-			FlansModPacketHandler.SendToAllAroundPoint(
-				new SimpleActionMessage(msg.hand, msg.inputType),
-				from.level.dimension(),
-				from.position(),
-				RELOAD_MSG_RADIUS,
-				actionContext.Owner());
-		}
-	}
-
-	// When a client tells us what they shot, we need to verify it
-	private void OnServerReceivedShotData(ShotRequestMessage msg, ServerPlayer from)
-	{
-		// Reconstruct the shot details and context
-		GunshotCollection shotCollection = msg.Get();
-		InteractionHand hand = shotCollection.seatID == 0 ? InteractionHand.MAIN_HAND : InteractionHand.OFF_HAND;
-
-		ShooterContext shooterContext = ShooterContext.CreateFrom(from);
-		if(!shooterContext.IsValid())
-		{
-			FlansMod.LOGGER.warn("OnServerReceivedShotData recieved message with invalid shooter from " + from.getDisplayName().getString());
-			return;
-		}
-
-		GunContext gunContext = GunContext.CreateFrom(shooterContext, hand);
-		if(!gunContext.IsValid()) // TODO: Check gun hash
-		{
-			FlansMod.LOGGER.warn("OnServerReceivedShotData recieved message with invalid gun from " + from.getDisplayName().getString());
+			FlansMod.LOGGER.warn("OnServerReceivedActionUpdate had invalid action");
 			return;
 		}
 
 		// TODO: We should hash-check the action set we use, as there could be a race condition
 		// between switching what actions are active for the weapon and triggering this code
-
-		ActionGroupContext actionContext = ActionGroupContext.CreateFrom(gunContext, shotCollection.actionUsed);
-		Action[] actions = actionContext.CreateActions();
-		boolean verified = true;
-		for(Action action : actions)
+		ActionGroup actionGroup = null;
+		if(msg.Data.GetPressType() == EPressType.Press)
 		{
-			if(!action.CanStart(actionContext))
-				verified = false;
-			if(!action.VerifyServer(actionContext, shotCollection))
-				verified = false;
+			actionGroup = actionContext.CreateActionGroup();
+			actionContext.ActionStack().AddActionGroup(actionContext, actionGroup);
+		}
+		else
+		{
+			actionGroup = actionContext.GetExistingActionGroup();
 		}
 
-		if(!verified)
+		if(actionGroup == null)
 		{
-			FlansMod.LOGGER.warn("Failed verification of ShotFiredMessage from " + from.getDisplayName().getString());
-			return;
+			FlansMod.LOGGER.warn("Received ActionUpdateMessage with wrong press type or incorrect initial triggerIndex");
+
+			// TODO: Verify that this is okay. Could be the player cheating I guess?
+			actionGroup = actionContext.CreateActionGroup();
+			actionContext.ActionStack().AddActionGroup(actionContext, actionGroup);
 		}
 
-		// Verify that this shot makes sense by itself
-		// TODO: Check if we can shoot based on our local data about our
-		// a) Inventory, ammo levels
-		// b) Shoot cooldown
-		// c) Handedness
-
-
-		// TODO: Random spot check later - run a little statistical analysis on this player's shots over some time period
-
-		// If we are happy, run all the server actions
-		for(Action action : actions)
+		// Now run through all the triggers that are bundled in this message and check whether they should be run
+		boolean isValid = true;
+		for(var kvp : msg.Data.GetTriggers())
 		{
-			actionContext.ActionStack().AddAction(actionContext, action);
+			int triggerIndex = kvp.getKey();
+			// TODO: Verify that this triggerIndex is valid. Rate limit to the gun fire rate for example
+			int actionIndex = 0;
+			for(Action action : actionGroup.GetActions())
+			{
+				if(!action.VerifyServer(actionContext, null))
+					isValid = false;
+
+				Action.NetData netData = msg.Data.GetNetData(triggerIndex, actionIndex);
+				action.UpdateFromNetData(netData, triggerIndex);
+				action.OnTriggerServer(actionContext, triggerIndex);
+				actionIndex++;
+			}
+
+			// When we get a release message, we may need to do a bit of catchup in missed triggers
+			if(msg.Data.GetPressType() == EPressType.Release)
+			{
+				// Check the action stack for this action/gun pairing and see if any of them are waiting for mouse release
+				long numTicks = msg.Data.GetLastTriggerTick() - actionGroup.GetStartedTick();
+				int expectedTriggerCount = Maths.Floor(numTicks / actionContext.RepeatDelayTicks()) + 1;
+				int serverTriggerCount = actionGroup.GetTriggerCount();
+
+				if(expectedTriggerCount > serverTriggerCount)
+				{
+					FlansMod.LOGGER.info("Client expected to trigger " + expectedTriggerCount + " repeat(s), but server only triggered " + serverTriggerCount + " repeat(s)");
+				}
+				else if(expectedTriggerCount < serverTriggerCount)
+				{
+					FlansMod.LOGGER.info("Client expected to trigger " + expectedTriggerCount + " repeat(s), but server triggered " + serverTriggerCount + " many repeat(s)");
+				}
+				actionGroup.UpdateInputHeld(actionContext, false);
+			}
 		}
 
-		// Then propogate the shot to all other interested parties
-		ServerPropogateShot(actionContext, shotCollection);
+		for(var reload : msg.Data.GetReloads())
+		{
+			actionContext.ActionStack().AddReload(actionContext, new ReloadProgress(
+				actionContext.Gun.GunDef().GetReload(actionContext.InputType),
+				 actionContext.InputType
+			));
+		}
 
-		// TODO: And let the shooter know whether we verified their shots or not
+		// And propogate to players for third person anims
+		if(isValid)
+		{
+			double radius = actionGroup.GetPropogationRadius(actionContext);
+
+			// Find out which positions we want to map around
+			List<Vec3> positions = new ArrayList<>(2);
+			for(var kvp : msg.Data.GetTriggers())
+			{
+				actionGroup.AddExtraPositionsForNetSync(actionContext, kvp.getKey(), positions);
+			}
+			if(actionGroup.ShouldAddPlayerPosForNetSync(actionContext))
+				positions.add(actionContext.Shooter().GetShootOrigin().PositionVec3());
+
+			// Then send them some messages about the shot
+			FlansModPacketHandler.SendToAllAroundPoints(
+				new ActionUpdateMessage.ToClient(msg.Data),
+				from.level.dimension(),
+				positions,
+				radius,
+				actionContext.Owner());
+		}
 	}
 
-	//
-	private void ServerPropogateShot(ActionGroupContext actionContext, GunshotCollection shotCollection)
-	{
-		float noiseLevel = 100.0f; // gunContext.GetNoiseLevel();
-
-		// Calculate everyone near the origin or near an endpoint
-		List<Vec3> positions = new ArrayList<>(shotCollection.Count() * 2);
-		for(int i = 0; i < shotCollection.Count(); i++)
-		{
-			positions.add(shotCollection.Get(i).origin);
-			positions.add(shotCollection.Get(i).Endpoint());
-		}
-
-		// Then send them some messages about the shot
-		FlansModPacketHandler.SendToAllAroundPoints(
-			new ShotFiredMessage(shotCollection),
-			shotCollection.dimension,
-			positions,
-			noiseLevel,
-			actionContext.Owner());
-	}
-
+	@SubscribeEvent
 	public void ServerTick(TickEvent.ServerTickEvent tickEvent)
 	{
 		if(tickEvent.phase == TickEvent.Phase.START)

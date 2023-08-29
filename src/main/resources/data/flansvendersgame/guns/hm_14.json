@@ -8,16 +8,24 @@
     "paints": {
         "paintjobs": [
             {
-                "textureName": "hm_14_cluck_cluck"
+                "textureName": "hm_14_cluck_cluck",
+                "paintBucketsRequired": 1,
+                "entitlementKey": ""
             },
             {
-                "textureName": "hm_14_purple"
+                "textureName": "hm_14_purple",
+                "paintBucketsRequired": 1,
+                "entitlementKey": ""
             },
             {
-                "textureName": "hm_14_red"
+                "textureName": "hm_14_red",
+                "paintBucketsRequired": 1,
+                "entitlementKey": ""
             },
             {
-                "textureName": "hm_14_royal_green"
+                "textureName": "hm_14_royal_green",
+                "paintBucketsRequired": 1,
+                "entitlementKey": ""
             }
         ]
     },
@@ -194,7 +202,7 @@
                         "ApplyToSecondary": false
                     },
                     {
-                        "Stat": "damage_to_target",
+                        "Stat": "impact_damage",
                         "Filter": "",
                         "Add": 0.0,
                         "Multiply": 15.0,
@@ -325,11 +333,13 @@
         "matchByNames": [],
         "matchByTags": [
             "flansvendersgame:hm_14"
-        ]
+        ],
+        "baseCostToSwap": 0
     },
     "secondaryMagazines": {
         "matchByNames": [],
-        "matchByTags": []
+        "matchByTags": [],
+        "baseCostToSwap": 0
     },
     "startSpinUpActions": [],
     "reachMaxSpinActions": [],

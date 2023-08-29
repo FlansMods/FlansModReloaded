@@ -8,13 +8,19 @@
     "paints": {
         "paintjobs": [
             {
-                "textureName": "hm_9_midnight"
+                "textureName": "hm_9_midnight",
+                "paintBucketsRequired": 1,
+                "entitlementKey": ""
             },
             {
-                "textureName": "hm_9_sand"
+                "textureName": "hm_9_sand",
+                "paintBucketsRequired": 1,
+                "entitlementKey": ""
             },
             {
-                "textureName": "hm_9_venom"
+                "textureName": "hm_9_venom",
+                "paintBucketsRequired": 1,
+                "entitlementKey": ""
             }
         ]
     },
@@ -191,7 +197,7 @@
                         "ApplyToSecondary": false
                     },
                     {
-                        "Stat": "damage_to_target",
+                        "Stat": "impact_damage",
                         "Filter": "",
                         "Add": 0.0,
                         "Multiply": 5.0,
@@ -322,11 +328,13 @@
         "matchByNames": [],
         "matchByTags": [
             "flansvendersgame:hm_9"
-        ]
+        ],
+        "baseCostToSwap": 0
     },
     "secondaryMagazines": {
         "matchByNames": [],
-        "matchByTags": []
+        "matchByTags": [],
+        "baseCostToSwap": 0
     },
     "startSpinUpActions": [],
     "reachMaxSpinActions": [],

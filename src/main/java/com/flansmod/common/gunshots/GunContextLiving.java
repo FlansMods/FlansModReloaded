@@ -46,7 +46,7 @@ public class GunContextLiving extends GunContext
 	@Override
 	public boolean CanPerformTwoHandedAction() { return ShooterContext.CanPerformTwoHandedAction(); }
 	@Override
-	public InteractionHand GetHand() { return Hand; }
+	public int GetInventorySlotIndex() { return Hand == InteractionHand.MAIN_HAND ? 0 : 1; }
 	@Override
 	public int hashCode()
 	{

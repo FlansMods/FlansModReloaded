@@ -22,8 +22,15 @@ public class Gunshot
 	public Vec3 origin = Vec3.ZERO;
 	public Vec3 trajectory = Vec3.ZERO;
 	public HitResult[] hits = NO_HITS;
+	public int fromShotIndex = 0;
 
 	public Vec3 Endpoint() { return new Vec3(origin.x + trajectory.x, origin.y + trajectory.y, origin.z + trajectory.z); }
+
+	public Gunshot FromShot(int index)
+	{
+		fromShotIndex = index;
+		return this;
+	}
 
 	public Gunshot WithOrigin(double x, double y, double z)
 	{
@@ -64,6 +71,7 @@ public class Gunshot
 	public static void Encode(Gunshot gunshot, FriendlyByteBuf buf)
 	{
 		buf.writeInt(gunshot.bulletDef.hashCode());
+		buf.writeInt(gunshot.fromShotIndex);
 
 		buf.writeDouble(gunshot.origin.x);
 		buf.writeDouble(gunshot.origin.y);
@@ -117,6 +125,7 @@ public class Gunshot
 	public static Gunshot Decode(FriendlyByteBuf buf)
 	{
 		int bulletHash = buf.readInt();
+		int fromShotIndex = buf.readInt();
 		BulletDefinition bulletDef = FlansMod.BULLETS.ByHash(bulletHash);
 
 		double x = buf.readDouble();
@@ -165,6 +174,7 @@ public class Gunshot
 
 		return new Gunshot()
 			.WithOrigin(x, y, z)
+			.FromShot(fromShotIndex)
 			.WithTrajectory(dx, dy, dz)
 			.WithHits(hits)
 			.WithBullet(bulletDef);

@@ -5,12 +5,10 @@ import com.flansmod.client.render.guns.GunItemRenderer;
 import com.flansmod.common.FlansMod;
 import com.flansmod.common.actions.*;
 import com.flansmod.common.gunshots.*;
-import com.flansmod.common.types.elements.ActionDefinition;
 import com.flansmod.common.types.elements.ModifierDefinition;
 import com.flansmod.common.types.guns.ERepeatMode;
 import com.flansmod.common.types.guns.GunDefinition;
 import com.flansmod.common.types.magazines.MagazineDefinition;
-import com.flansmod.common.types.parts.PartDefinition;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
@@ -53,7 +51,7 @@ public class GunItem extends FlanItem
 
     public GunContext GetContext(ItemStack stack)
     {
-        return GunContext.CreateFrom(stack);
+        return GunContext.GetOrCreate(stack);
     }
 
     @Override

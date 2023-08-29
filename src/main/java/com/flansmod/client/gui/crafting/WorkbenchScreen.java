@@ -5,15 +5,12 @@ import com.flansmod.client.render.FlanItemModelRenderer;
 import com.flansmod.client.render.RenderContext;
 import com.flansmod.common.FlansMod;
 import com.flansmod.common.actions.EActionInput;
-import com.flansmod.common.crafting.FabricationRecipeMatcher;
 import com.flansmod.common.crafting.WorkbenchBlockEntity;
 import com.flansmod.common.crafting.WorkbenchMenu;
 import com.flansmod.common.gunshots.GunContext;
 import com.flansmod.common.gunshots.ModifierStack;
 import com.flansmod.common.item.FlanItem;
 import com.flansmod.common.item.GunItem;
-import com.flansmod.common.item.PartItem;
-import com.flansmod.common.types.crafting.EMaterialType;
 import com.flansmod.common.types.crafting.WorkbenchDefinition;
 import com.flansmod.common.types.crafting.elements.*;
 import com.flansmod.common.types.elements.MagazineSlotSettingsDefinition;
@@ -21,11 +18,8 @@ import com.flansmod.common.types.elements.ModifierDefinition;
 import com.flansmod.common.types.elements.PaintableDefinition;
 import com.flansmod.common.types.guns.GunDefinition;
 import com.flansmod.common.types.magazines.MagazineDefinition;
-import com.flansmod.common.types.parts.PartDefinition;
 import com.flansmod.util.Maths;
 import com.flansmod.util.MinecraftHelpers;
-import com.mojang.blaze3d.platform.GlStateManager;
-import com.mojang.blaze3d.platform.Lighting;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.*;
 import net.minecraft.client.Minecraft;
@@ -33,26 +27,15 @@ import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.RenderBuffers;
-import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.block.model.ItemTransforms;
-import net.minecraft.client.renderer.texture.OverlayTexture;
-import net.minecraft.client.renderer.texture.TextureAtlas;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.FormattedText;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.tags.ItemTags;
-import net.minecraft.tags.TagKey;
 import net.minecraft.util.FormattedCharSequence;
 import net.minecraft.world.entity.player.Inventory;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
-import net.minecraftforge.registries.ForgeRegistries;
 import org.joml.Quaternionf;
-import org.joml.Vector3f;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -1463,7 +1446,7 @@ public class WorkbenchScreen extends AbstractContainerScreen<WorkbenchMenu>
 			if(recipe != null && recipe.outputs.length > 0)
 			{
 				ItemStack stack = recipe.outputs[0].CreateStack();
-				GunContext context = GunContext.CreateFrom(stack);
+				GunContext context = GunContext.GetOrCreate(stack);
 				if(context.IsValid())
 				{
 					int statBoxX = xOrigin + GUN_STATS_X_ORIGIN;
@@ -1625,8 +1608,8 @@ public class WorkbenchScreen extends AbstractContainerScreen<WorkbenchMenu>
 							// Render a faded item stack
 							// (Defer to later)
 						}
-					} else if (index < Workbench.CraftingInputContainer.getContainerSize()
-						&& !Workbench.CraftingInputContainer.getItem(index).isEmpty())
+					} else if (index < Workbench.GunCraftingInputContainer.getContainerSize()
+						&& !Workbench.GunCraftingInputContainer.getItem(index).isEmpty())
 					{
 						int slotX = xOrigin + GUN_RECIPE_VIEWER_X_ORIGIN + x * 20;
 						int slotY = yOrigin + GUN_RECIPE_VIEWER_Y_ORIGIN + y * 30;

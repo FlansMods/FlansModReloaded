@@ -13,24 +13,24 @@ public class ReloadDefinition
 	public boolean autoReloadWhenEmpty = true;
 
 	@JsonField(Docs = "The start stage normally covers the player moving their hands into position to enact the reload")
-	public ReloadStageDefinition start = new ReloadStageDefinition();
+	public ActionGroupDefinition start = new ActionGroupDefinition();
 	@JsonField(Docs = "The eject stage is played once")
-	public ReloadStageDefinition eject = new ReloadStageDefinition();
+	public ActionGroupDefinition eject = new ActionGroupDefinition();
 	@JsonField(Docs = "The loadOne stage is played once per ammo item used. This could be once per magazine, once per bullet/shell etc.")
-	public ReloadStageDefinition loadOne = new ReloadStageDefinition();
+	public ActionGroupDefinition loadOne = new ActionGroupDefinition();
 	@JsonField(Docs = "The end stage should return the animations to neutral positions")
-	public ReloadStageDefinition end = new ReloadStageDefinition();
+	public ActionGroupDefinition end = new ActionGroupDefinition();
 
 	@Nonnull
-	public ActionDefinition[] GetReloadActions(EReloadStage stage)
+	public ActionGroupDefinition GetReloadActionGroup(EReloadStage stage)
 	{
 		switch(stage)
 		{
-			case Start -> { return start.actions; }
-			case Eject -> { return eject.actions; }
-			case LoadOne -> { return loadOne.actions; }
-			case End -> { return end.actions; }
+			case Start -> { return start; }
+			case Eject -> { return eject; }
+			case LoadOne -> { return loadOne; }
+			case End -> { return end; }
 		}
-		return new ActionDefinition[0];
+		return new ActionGroupDefinition();
 	}
 }

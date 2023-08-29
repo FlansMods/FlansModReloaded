@@ -17,10 +17,10 @@ public class ReloadProgress
 	{
 		switch(CurrentStage)
 		{
-			case Start -> { return Def.start.duration; }
-			case Eject -> { return Def.eject.duration; }
-			case LoadOne -> { return Def.loadOne.duration; }
-			case End -> { return Def.end.duration; }
+			case Start -> { return Def.start.repeatDelay; }
+			case Eject -> { return Def.eject.repeatDelay; }
+			case LoadOne -> { return Def.loadOne.repeatDelay; }
+			case End -> { return Def.end.repeatDelay; }
 			default -> { return 0f; }
 		}
 	}

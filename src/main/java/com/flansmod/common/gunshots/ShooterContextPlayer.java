@@ -2,6 +2,7 @@ package com.flansmod.common.gunshots;
 
 import com.flansmod.common.item.FlanItem;
 import net.minecraft.world.Container;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 
@@ -9,7 +10,7 @@ import javax.annotation.Nonnull;
 
 public class ShooterContextPlayer extends ShooterContextLiving
 {
-	private final Player Player;
+	public final Player Player;
 
 	public ShooterContextPlayer(@Nonnull Player player)
 	{
@@ -24,4 +25,6 @@ public class ShooterContextPlayer extends ShooterContextLiving
 	{
 		return Player.isCreative();
 	}
+	@Override
+	public GunContext CreateForGunIndex(int gunSlotIndex) { return new GunContextPlayer(this, gunSlotIndex); }
 }

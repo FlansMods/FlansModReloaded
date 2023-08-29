@@ -4,26 +4,32 @@ import com.flansmod.common.gunshots.ActionGroupContext;
 import com.flansmod.common.types.elements.ActionDefinition;
 import com.flansmod.common.types.elements.ActionGroupDefinition;
 
+import javax.annotation.Nonnull;
+
 public class AnimationAction extends Action
 {
-	public AnimationAction(ActionGroupDefinition groupDef, ActionDefinition def, EActionInput inputType)
+	public AnimationAction(@Nonnull ActionGroup group, @Nonnull ActionDefinition def)
 	{
-		super(groupDef, def, inputType);
+		super(group, def);
 	}
 
 	private static final int HOLD_END_POSE_TICKS = 1;
-	@Override
-	public boolean Finished(ActionGroupContext context)
-	{
-		return Progress > Duration;
-	}
-	@Override
-	protected void OnTriggerServer(ActionGroupContext context)
-	{
+	public int AnimFrame = 0;
 
-	}
 	@Override
-	protected void OnTriggerClient(ActionGroupContext context)
+	public void OnTickClient(ActionGroupContext context)
+	{
+		AnimFrame++;
+	}
+
+	@Override
+	public void OnTriggerClient(ActionGroupContext context, int triggerIndex)
+	{
+		AnimFrame = 0;
+	}
+
+	@Override
+	public void OnTriggerServer(ActionGroupContext context, int triggerIndex)
 	{
 
 	}

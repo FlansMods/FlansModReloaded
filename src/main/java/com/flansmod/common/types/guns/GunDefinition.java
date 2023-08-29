@@ -9,6 +9,7 @@ import com.flansmod.common.types.attachments.EAttachmentType;
 import com.flansmod.common.types.elements.*;
 import com.google.gson.JsonElement;
 import net.minecraft.resources.ResourceLocation;
+import org.checkerframework.checker.units.qual.A;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -97,10 +98,11 @@ public class GunDefinition extends JsonDefinition
 	{
 		switch(set)
 		{
-			case PRIMARY, RELOAD_PRIMARY: return primary;
-			case SECONDARY, RELOAD_SECONDARY: return secondary;
+			case PRIMARY: return primary;
+			case SECONDARY: return secondary;
+			case RELOAD_PRIMARY, RELOAD_SECONDARY: return ActionGroupDefinition.INVALID;
 			case LOOK_AT: return lookAt;
-			default: return new ActionGroupDefinition();
+			default: return ActionGroupDefinition.INVALID;
 		}
 	}
 	@Nonnull
@@ -110,8 +112,8 @@ public class GunDefinition extends JsonDefinition
 		{
 			case PRIMARY -> primary.actions;
 			case SECONDARY -> secondary.actions;
-			case RELOAD_PRIMARY -> primaryReload.GetReloadActions(EReloadStage.Start);
-			case RELOAD_SECONDARY -> secondaryReload.GetReloadActions(EReloadStage.Start);
+			case RELOAD_PRIMARY -> primaryReload.GetReloadActionGroup(EReloadStage.Start).actions;
+			case RELOAD_SECONDARY -> secondaryReload.GetReloadActionGroup(EReloadStage.Start).actions;
 			case LOOK_AT -> lookAt.actions;
 		};
 	}

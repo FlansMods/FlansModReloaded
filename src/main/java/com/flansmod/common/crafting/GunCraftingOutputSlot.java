@@ -1,6 +1,5 @@
 package com.flansmod.common.crafting;
 
-import com.flansmod.common.item.FlanItem;
 import net.minecraft.world.Container;
 import net.minecraft.world.item.ItemStack;
 
@@ -18,7 +17,7 @@ public class GunCraftingOutputSlot extends RestrictedSlot
 	{
 		// Craft action
 		ItemStack output = getItem().copyWithCount(1);
-		Workbench.ConsumeCraftingInputs();
+		Workbench.ConsumeGunCraftingInputs();
 		getItem().setCount(getItem().getCount() - 1);
 		return output;
 	}

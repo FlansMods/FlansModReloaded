@@ -8,13 +8,19 @@
     "paints": {
         "paintjobs": [
             {
-                "textureName": "hm_1200_blue"
+                "textureName": "hm_1200_blue",
+                "paintBucketsRequired": 1,
+                "entitlementKey": ""
             },
             {
-                "textureName": "hm_1200_periwinkle"
+                "textureName": "hm_1200_periwinkle",
+                "paintBucketsRequired": 1,
+                "entitlementKey": ""
             },
             {
-                "textureName": "hm_1200_zebra"
+                "textureName": "hm_1200_zebra",
+                "paintBucketsRequired": 1,
+                "entitlementKey": ""
             }
         ]
     },
@@ -177,7 +183,7 @@
                         "ApplyToSecondary": false
                     },
                     {
-                        "Stat": "damage_to_target",
+                        "Stat": "impact_damage",
                         "Filter": "",
                         "Add": 0.0,
                         "Multiply": 1.0,
@@ -308,11 +314,13 @@
         "matchByNames": [],
         "matchByTags": [
             "flansvendersgame:hm_1200"
-        ]
+        ],
+        "baseCostToSwap": 0
     },
     "secondaryMagazines": {
         "matchByNames": [],
-        "matchByTags": []
+        "matchByTags": [],
+        "baseCostToSwap": 0
     },
     "startSpinUpActions": [],
     "reachMaxSpinActions": [],

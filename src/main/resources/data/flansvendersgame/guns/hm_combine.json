@@ -8,19 +8,29 @@
     "paints": {
         "paintjobs": [
             {
-                "textureName": "hm_combine_aquatic"
+                "textureName": "hm_combine_aquatic",
+                "paintBucketsRequired": 1,
+                "entitlementKey": ""
             },
             {
-                "textureName": "hm_combine_electric"
+                "textureName": "hm_combine_electric",
+                "paintBucketsRequired": 1,
+                "entitlementKey": ""
             },
             {
-                "textureName": "hm_combine_quack_quack"
+                "textureName": "hm_combine_quack_quack",
+                "paintBucketsRequired": 1,
+                "entitlementKey": ""
             },
             {
-                "textureName": "hm_combine_red"
+                "textureName": "hm_combine_red",
+                "paintBucketsRequired": 1,
+                "entitlementKey": ""
             },
             {
-                "textureName": "hm_combine_royal_green"
+                "textureName": "hm_combine_royal_green",
+                "paintBucketsRequired": 1,
+                "entitlementKey": ""
             }
         ]
     },
@@ -197,7 +207,7 @@
                         "ApplyToSecondary": false
                     },
                     {
-                        "Stat": "damage_to_target",
+                        "Stat": "impact_damage",
                         "Filter": "",
                         "Add": 0.0,
                         "Multiply": 6.5,
@@ -328,11 +338,13 @@
         "matchByNames": [],
         "matchByTags": [
             "flansvendersgame:hm_combine"
-        ]
+        ],
+        "baseCostToSwap": 0
     },
     "secondaryMagazines": {
         "matchByNames": [],
-        "matchByTags": []
+        "matchByTags": [],
+        "baseCostToSwap": 0
     },
     "startSpinUpActions": [],
     "reachMaxSpinActions": [],

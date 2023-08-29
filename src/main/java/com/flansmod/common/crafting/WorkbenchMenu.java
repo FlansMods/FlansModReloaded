@@ -15,7 +15,6 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.ContainerData;
 import net.minecraft.world.inventory.Slot;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraftforge.api.distmarker.Dist;
@@ -49,8 +48,10 @@ public class WorkbenchMenu extends AbstractContainerMenu
 	public final Container GunContainer;
 	public final Container PaintCanContainer;
 	public final Container MagUpgradeContainer;
-	public final Container CraftingInputContainer;
-	public final Container CraftingOutputContainer;
+	public final Container GunCraftingInputContainer;
+	public final Container GunCraftingOutputContainer;
+	public final Container PartCraftingInputContainer;
+	public final Container PartCraftingOutputContainer;
 	public final Container MaterialContainer;
 	public final Container BatteryContainer;
 	public final Container FuelContainer;
@@ -63,8 +64,10 @@ public class WorkbenchMenu extends AbstractContainerMenu
 	private RestrictedSlot GunSlot;
 	private RestrictedSlot PaintCanSlot;
 	private RestrictedSlot MagUpgradeSlot;
-	protected GunCraftingInputSlot[] CraftingInputSlots;
-	protected GunCraftingOutputSlot CraftingOutputSlot;
+	protected GunCraftingInputSlot[] GunCraftingInputSlots;
+	protected GunCraftingOutputSlot GunCraftingOutputSlot;
+	protected RestrictedSlot[] PartCraftingInputSlots;
+	protected RestrictedSlot[] PartCraftingOutputSlots;
 	private RestrictedSlot FuelSlot;
 	private RestrictedSlot BatterySlot;
 	private AttachmentSlot[] AttachmentSlots;
@@ -89,8 +92,10 @@ public class WorkbenchMenu extends AbstractContainerMenu
 						 Container gunContainer,
 						 Container paintCanContainer,
 						 Container magUpgradeContainer,
-						 Container craftingInputContainer,
-						 Container craftingOutputContainer,
+						 Container gunCraftingInputContainer,
+						 Container gunCraftingOutputContainer,
+						 Container partCraftingInputContainer,
+						 Container partCraftingOutputContainer,
 						 Container materialContainer,
 						 Container batteryContainer,
 						 Container fuelContainer,
@@ -101,8 +106,10 @@ public class WorkbenchMenu extends AbstractContainerMenu
 		GunContainer = gunContainer;
 		PaintCanContainer = paintCanContainer;
 		MagUpgradeContainer = magUpgradeContainer;
-		CraftingInputContainer = craftingInputContainer;
-		CraftingOutputContainer = craftingOutputContainer;
+		GunCraftingInputContainer = gunCraftingInputContainer;
+		GunCraftingOutputContainer = gunCraftingOutputContainer;
+		PartCraftingInputContainer = partCraftingInputContainer;
+		PartCraftingOutputContainer = partCraftingOutputContainer;
 		MaterialContainer = materialContainer;
 		BatteryContainer = batteryContainer;
 		FuelContainer = fuelContainer;
@@ -122,8 +129,10 @@ public class WorkbenchMenu extends AbstractContainerMenu
 			GunContainer = workbenchBlockEntity.GunContainer;
 			PaintCanContainer = workbenchBlockEntity.PaintCanContainer;
 			MagUpgradeContainer = workbenchBlockEntity.MagUpgradeContainer;
-			CraftingInputContainer = workbenchBlockEntity.CraftingInputContainer;
-			CraftingOutputContainer = workbenchBlockEntity.CraftingOutputContainer;
+			GunCraftingInputContainer = workbenchBlockEntity.GunCraftingInputContainer;
+			GunCraftingOutputContainer = workbenchBlockEntity.GunCraftingOutputContainer;
+			PartCraftingInputContainer = workbenchBlockEntity.PartCraftingInputContainer;
+			PartCraftingOutputContainer = workbenchBlockEntity.PartCraftingOutputContainer;
 			MaterialContainer = workbenchBlockEntity.MaterialContainer;
 			BatteryContainer = workbenchBlockEntity.BatteryContainer;
 			FuelContainer = workbenchBlockEntity.FuelContainer;
@@ -136,8 +145,10 @@ public class WorkbenchMenu extends AbstractContainerMenu
 			GunContainer = null; // um?
 			PaintCanContainer = null;
 			MagUpgradeContainer = null;
-			CraftingInputContainer = null;
-			CraftingOutputContainer = null;
+			GunCraftingInputContainer = null;
+			GunCraftingOutputContainer = null;
+			PartCraftingInputContainer = null;
+			PartCraftingOutputContainer = null;
 			MaterialContainer = null;
 			BatteryContainer = null;
 			FuelContainer = null;
@@ -148,6 +159,9 @@ public class WorkbenchMenu extends AbstractContainerMenu
 
 	private void CreateSlots(Inventory playerInventory)
 	{
+		if(GunContainer == null)
+			return;
+
 		addDataSlots(WorkbenchData);
 
 		if (GunContainer.getContainerSize() > 0)
@@ -182,16 +196,33 @@ public class WorkbenchMenu extends AbstractContainerMenu
 			}
 		}
 
-		if(CraftingOutputContainer.getContainerSize() > 0)
+		if(GunCraftingOutputContainer.getContainerSize() > 0)
 		{
-			addSlot(CraftingOutputSlot = new GunCraftingOutputSlot(this, CraftingOutputContainer, 0, 150, 77));
+			addSlot(GunCraftingOutputSlot = new GunCraftingOutputSlot(this, GunCraftingOutputContainer, 0, 150, 77));
 		}
-		if(CraftingInputContainer.getContainerSize() > 0)
+		GunCraftingInputSlots = new GunCraftingInputSlot[GunCraftingInputContainer.getContainerSize()];
+		if(GunCraftingInputContainer.getContainerSize() > 0)
 		{
-			CraftingInputSlots = new GunCraftingInputSlot[CraftingInputContainer.getContainerSize()];
-			for(int i = 0; i < CraftingInputContainer.getContainerSize(); i++)
+			for(int i = 0; i < GunCraftingInputContainer.getContainerSize(); i++)
 			{
-				addSlot(CraftingInputSlots[i] = new GunCraftingInputSlot(this, CraftingInputContainer, i, 78, 66));
+				addSlot(GunCraftingInputSlots[i] = new GunCraftingInputSlot(this, GunCraftingInputContainer, i, 78, 66));
+			}
+		}
+
+		PartCraftingInputSlots = new RestrictedSlot[PartCraftingInputContainer.getContainerSize()];
+		if(PartCraftingInputContainer.getContainerSize() > 0)
+		{
+			for(int i = 0; i < PartCraftingInputContainer.getContainerSize(); i++)
+			{
+				addSlot(PartCraftingInputSlots[i] = new RestrictedSlot(PartCraftingInputContainer, i, 78, 66));
+			}
+		}
+		PartCraftingOutputSlots = new RestrictedSlot[PartCraftingOutputContainer.getContainerSize()];
+		if(PartCraftingOutputContainer.getContainerSize() > 0)
+		{
+			for(int i = 0; i < PartCraftingOutputContainer.getContainerSize(); i++)
+			{
+				addSlot(PartCraftingOutputSlots[i] = new RestrictedSlot(PartCraftingOutputContainer, i, 78, 66));
 			}
 		}
 
@@ -219,8 +250,10 @@ public class WorkbenchMenu extends AbstractContainerMenu
 			addSlot(new RestrictedSlot(playerInventory, x, 6 + x * 18, 195));
 		}
 
-		if(CraftingOutputContainer.getContainerSize() > 0)
+		if(GunCraftingOutputContainer.getContainerSize() > 0)
 			SwitchToGunCrafting();
+		else if(PartCraftingOutputContainer.getContainerSize() > 0)
+			SwitchToPartCrafting();
 		else if(GunContainer.getContainerSize() > 0)
 			SwitchToGunModification();
 		else if(MaterialContainer.getContainerSize() > 0)
@@ -268,6 +301,10 @@ public class WorkbenchMenu extends AbstractContainerMenu
 	public void SwitchToPartCrafting()
 	{
 		HideSlots();
+		for (RestrictedSlot slot : PartCraftingInputSlots)
+			slot.SetActive(true);
+		for (RestrictedSlot slot : PartCraftingOutputSlots)
+			slot.SetActive(true);
 	}
 
 	@OnlyIn(Dist.CLIENT)
@@ -279,13 +316,13 @@ public class WorkbenchMenu extends AbstractContainerMenu
 	public void SwitchToGunCrafting()
 	{
 		HideSlots();
-		if(CraftingOutputSlot != null)
-			CraftingOutputSlot.SetActive(true);
+		if(GunCraftingOutputSlot != null)
+			GunCraftingOutputSlot.SetActive(true);
 		// TODO: Check scroller and move them
-		for(int i = 0; i < CraftingInputSlots.length; i++)
+		for(int i = 0; i < GunCraftingInputSlots.length; i++)
 		{
 			boolean active = false;
-			if(!CraftingInputSlots[i].getItem().isEmpty())
+			if(!GunCraftingInputSlots[i].getItem().isEmpty())
 				active = true;
 			if(SelectedRecipeIndex >= 0)
 			{
@@ -303,16 +340,16 @@ public class WorkbenchMenu extends AbstractContainerMenu
 			// x,y are final. Let's hack
 			GunCraftingInputSlot replacementSlot = new GunCraftingInputSlot(
 				this,
-				CraftingInputContainer,
+				GunCraftingInputContainer,
 				i,
 				active ? 50 + 20 * (i % 4) : -1000,
 				active ? 56 + 30 * (i / 4) : -1000);
 
-			replacementSlot.index = CraftingInputSlots[i].index;
-			CraftingInputSlots[i].SetActive(false);
+			replacementSlot.index = GunCraftingInputSlots[i].index;
+			GunCraftingInputSlots[i].SetActive(false);
 			slots.set(replacementSlot.index, replacementSlot);
-			CraftingInputSlots[i] = replacementSlot;
-			CraftingInputSlots[i].SetActive(active);
+			GunCraftingInputSlots[i] = replacementSlot;
+			GunCraftingInputSlots[i].SetActive(active);
 		}
 	}
 
@@ -325,9 +362,9 @@ public class WorkbenchMenu extends AbstractContainerMenu
 			PaintCanSlot.SetActive(false);
 		if(MagUpgradeSlot != null)
 			MagUpgradeSlot.SetActive(false);
-		if(CraftingOutputSlot != null)
-			CraftingOutputSlot.SetActive(false);
-		for(GunCraftingInputSlot slot : CraftingInputSlots)
+		if(GunCraftingOutputSlot != null)
+			GunCraftingOutputSlot.SetActive(false);
+		for(GunCraftingInputSlot slot : GunCraftingInputSlots)
 			slot.SetActive(false);
 		if(FuelSlot != null)
 			FuelSlot.SetActive(false);
@@ -336,6 +373,10 @@ public class WorkbenchMenu extends AbstractContainerMenu
 		for(AttachmentSlot slot : AttachmentSlots)
 			slot.SetActive(false);
 		for(RestrictedSlot slot : MaterialSlots)
+			slot.SetActive(false);
+		for (RestrictedSlot slot : PartCraftingInputSlots)
+			slot.SetActive(false);
+		for (RestrictedSlot slot : PartCraftingOutputSlots)
 			slot.SetActive(false);
 	}
 
@@ -349,7 +390,7 @@ public class WorkbenchMenu extends AbstractContainerMenu
 				if(BUTTON_SELECT_RECIPE_0 <= buttonID && buttonID <= BUTTON_SELECT_RECIPE_MAX)
 				{
 					SelectedRecipeIndex = buttonID - BUTTON_SELECT_RECIPE_0;
-					UpdateCraftingOutput();
+					UpdateGunCraftingOutput();
 					SwitchToGunCrafting();
 					return true;
 				}
@@ -371,7 +412,7 @@ public class WorkbenchMenu extends AbstractContainerMenu
 				{
 					int ingredientIndex = buttonID - BUTTON_AUTO_FILL_INGREDIENT_0;
 					// Auto fill operates only on the containers, so we can do it in the Menu, not the BlockEntity
-					AutoFillCraftingInputSlot(player, ingredientIndex);
+					AutoFillGunCraftingInputSlot(player, ingredientIndex);
 					return true;
 				}
 				if(BUTTON_SET_RECIPE_SCROLL_0 <= buttonID && buttonID <= BUTTON_SET_RECIPE_SCROLL_MAX)
@@ -399,12 +440,22 @@ public class WorkbenchMenu extends AbstractContainerMenu
 			return QuickStackIntoInventory(player, PaintCanSlot);
 		else if(MagUpgradeSlot != null && slot == MagUpgradeSlot.index)
 			return QuickStackIntoInventory(player, MagUpgradeSlot);
-		else if(CraftingOutputSlot != null && slot == CraftingOutputSlot.index)
-			return QuickStackIntoInventory(player, CraftingOutputSlot);
-		else if(CraftingInputSlots != null && slot >= CraftingInputSlots[0].index && slot < CraftingInputSlots[0].index + CraftingInputSlots.length)
+		else if(GunCraftingOutputSlot != null && slot == GunCraftingOutputSlot.index)
+			return QuickStackIntoInventory(player, GunCraftingOutputSlot);
+		else if(GunCraftingInputSlots != null && slot >= GunCraftingInputSlots[0].index && slot < GunCraftingInputSlots[0].index + GunCraftingInputSlots.length)
 		{
-			int craftingInputSlotIndex = slot - CraftingInputSlots[0].index;
-			return QuickStackIntoInventory(player, CraftingInputSlots[craftingInputSlotIndex]);
+			int craftingInputSlotIndex = slot - GunCraftingInputSlots[0].index;
+			return QuickStackIntoInventory(player, GunCraftingInputSlots[craftingInputSlotIndex]);
+		}
+		else if(PartCraftingInputSlots != null && slot >= PartCraftingInputSlots[0].index && slot < PartCraftingInputSlots[0].index + PartCraftingInputSlots.length)
+		{
+			int craftingInputSlotIndex = slot - PartCraftingInputSlots[0].index;
+			return QuickStackIntoInventory(player, PartCraftingInputSlots[craftingInputSlotIndex]);
+		}
+		else if(PartCraftingOutputSlots != null && slot >= PartCraftingOutputSlots[0].index && slot < PartCraftingOutputSlots[0].index + PartCraftingOutputSlots.length)
+		{
+			int craftingOutputSlotIndex = slot - PartCraftingOutputSlots[0].index;
+			return QuickStackIntoInventory(player, PartCraftingOutputSlots[craftingOutputSlotIndex]);
 		}
 		else if(FuelSlot != null && slot == FuelSlot.index)
 			return QuickStackIntoInventory(player, FuelSlot);
@@ -457,11 +508,11 @@ public class WorkbenchMenu extends AbstractContainerMenu
 		return ItemStack.EMPTY;
 	}
 
-	public void AutoFillCraftingInputSlot(Player player, int inputSlotIndex)
+	public void AutoFillGunCraftingInputSlot(Player player, int inputSlotIndex)
 	{
 		if(SelectedRecipeIndex >= 0
-			&& 0 <= inputSlotIndex && inputSlotIndex < CraftingInputSlots.length
-			&& CraftingInputSlots[inputSlotIndex].getItem().isEmpty())
+			&& 0 <= inputSlotIndex && inputSlotIndex < GunCraftingInputSlots.length
+			&& GunCraftingInputSlots[inputSlotIndex].getItem().isEmpty())
 		{
 			GunCraftingEntryDefinition selectedEntry = GetEntry(SelectedRecipeIndex);
 			Either<TieredIngredientDefinition, IngredientDefinition> ingredient = selectedEntry.GetIngredient(inputSlotIndex);
@@ -473,7 +524,7 @@ public class WorkbenchMenu extends AbstractContainerMenu
 						List<ItemStack> options = new ArrayList<>();
 						tiered.GenerateMatches(options);
 						if(options.size() > 0)
-							CraftingInputSlots[inputSlotIndex].set(options.get(0));
+							GunCraftingInputSlots[inputSlotIndex].set(options.get(0));
 					}
 					else
 					{
@@ -482,7 +533,7 @@ public class WorkbenchMenu extends AbstractContainerMenu
 							ItemStack playerItem = player.getInventory().getItem(i);
 							if(tiered.Matches(playerItem))
 							{
-								CraftingInputSlots[inputSlotIndex].set(playerItem.copyWithCount(1));
+								GunCraftingInputSlots[inputSlotIndex].set(playerItem.copyWithCount(1));
 								playerItem.setCount(playerItem.getCount() - 1);
 								break;
 							}
@@ -496,7 +547,7 @@ public class WorkbenchMenu extends AbstractContainerMenu
 						List<ItemStack> options = new ArrayList<>();
 						basic.GenerateMatches(options);
 						if(options.size() > 0)
-							CraftingInputSlots[inputSlotIndex].set(options.get(0));
+							GunCraftingInputSlots[inputSlotIndex].set(options.get(0));
 					}
 					else
 					{
@@ -505,7 +556,7 @@ public class WorkbenchMenu extends AbstractContainerMenu
 							ItemStack playerItem = player.getInventory().getItem(i);
 							if(basic.Matches(playerItem))
 							{
-								CraftingInputSlots[inputSlotIndex].set(playerItem.copyWithCount(1));
+								GunCraftingInputSlots[inputSlotIndex].set(playerItem.copyWithCount(1));
 								playerItem.setCount(playerItem.getCount() - 1);
 								break;
 							}
@@ -517,11 +568,11 @@ public class WorkbenchMenu extends AbstractContainerMenu
 		}
 	}
 
-	public void ConsumeCraftingInputs()
+	public void ConsumeGunCraftingInputs()
 	{
-		if(CraftingOutputContainer.getContainerSize() > 0
-			&& !CraftingOutputContainer.isEmpty()
-			&& CraftingInputContainer.getContainerSize() > 0
+		if(GunCraftingOutputContainer.getContainerSize() > 0
+			&& !GunCraftingOutputContainer.isEmpty()
+			&& GunCraftingInputContainer.getContainerSize() > 0
 			&& SelectedRecipeIndex >= 0)
 		{
 			GunCraftingEntryDefinition selectedEntry = GetEntry(SelectedRecipeIndex);
@@ -533,7 +584,7 @@ public class WorkbenchMenu extends AbstractContainerMenu
 				{
 					for(TieredIngredientDefinition tiered : part.tieredIngredients)
 					{
-						ItemStack input = CraftingInputContainer.getItem(inputSlotIndex);
+						ItemStack input = GunCraftingInputContainer.getItem(inputSlotIndex);
 						if(tiered.Matches(input))
 							input.setCount(input.getCount() - 1);
 
@@ -541,7 +592,7 @@ public class WorkbenchMenu extends AbstractContainerMenu
 					}
 					for(IngredientDefinition specific : part.additionalIngredients)
 					{
-						ItemStack input = CraftingInputContainer.getItem(inputSlotIndex);
+						ItemStack input = GunCraftingInputContainer.getItem(inputSlotIndex);
 						if(specific.Matches(input))
 							input.setCount(input.getCount() - specific.count);
 
@@ -552,9 +603,9 @@ public class WorkbenchMenu extends AbstractContainerMenu
 		}
 	}
 
-	public void UpdateCraftingOutput()
+	public void UpdateGunCraftingOutput()
 	{
-		if(CraftingOutputContainer.getContainerSize() > 0 && CraftingInputContainer.getContainerSize() > 0 && SelectedRecipeIndex >= 0)
+		if(GunCraftingOutputContainer.getContainerSize() > 0 && GunCraftingInputContainer.getContainerSize() > 0 && SelectedRecipeIndex >= 0)
 		{
 			GunCraftingEntryDefinition selectedEntry = GetEntry(SelectedRecipeIndex);
 			if(selectedEntry != null)
@@ -567,7 +618,7 @@ public class WorkbenchMenu extends AbstractContainerMenu
 				{
 					for(TieredIngredientDefinition tiered : part.tieredIngredients)
 					{
-						ItemStack input = CraftingInputContainer.getItem(inputSlotIndex);
+						ItemStack input = GunCraftingInputContainer.getItem(inputSlotIndex);
 						if(tiered.Matches(input))
 							craftedFromParts.add(input);
 						else
@@ -577,7 +628,7 @@ public class WorkbenchMenu extends AbstractContainerMenu
 					}
 					for(IngredientDefinition specific : part.additionalIngredients)
 					{
-						ItemStack input = CraftingInputContainer.getItem(inputSlotIndex);
+						ItemStack input = GunCraftingInputContainer.getItem(inputSlotIndex);
 						if(specific.Matches(input))
 							craftedFromParts.add(input);
 						else
@@ -594,11 +645,11 @@ public class WorkbenchMenu extends AbstractContainerMenu
 					{
 						flanItem.SetCraftingInputs(stack, craftedFromParts);
 					}
-					CraftingOutputContainer.setItem(0, stack);
+					GunCraftingOutputContainer.setItem(0, stack);
 				}
 				else
 				{
-					CraftingOutputContainer.setItem(0, ItemStack.EMPTY);
+					GunCraftingOutputContainer.setItem(0, ItemStack.EMPTY);
 				}
 			}
 		}

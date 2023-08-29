@@ -4,14 +4,10 @@ import com.flansmod.client.FlansModClient;
 import com.flansmod.client.render.FlanItemModelRenderer;
 import com.flansmod.client.render.RenderContext;
 import com.flansmod.client.render.animation.*;
-import com.flansmod.client.render.animation.elements.KeyframeDefinition;
-import com.flansmod.client.render.animation.elements.PoseDefinition;
-import com.flansmod.client.render.animation.elements.SequenceDefinition;
-import com.flansmod.client.render.animation.elements.SequenceEntryDefinition;
 import com.flansmod.client.render.models.TurboRig;
 import com.flansmod.common.actions.Action;
+import com.flansmod.common.actions.ActionGroup;
 import com.flansmod.common.actions.ActionStack;
-import com.flansmod.common.actions.AnimationAction;
 import com.flansmod.common.actions.EActionInput;
 import com.flansmod.common.gunshots.ActionGroupContext;
 import com.flansmod.common.gunshots.ShooterContext;
@@ -19,23 +15,11 @@ import com.flansmod.common.types.attachments.AttachmentDefinition;
 import com.flansmod.common.types.attachments.EAttachmentType;
 import com.flansmod.common.types.elements.AttachmentSettingsDefinition;
 import com.flansmod.common.gunshots.GunContext;
-import com.flansmod.util.Maths;
 import com.flansmod.util.MinecraftHelpers;
-import com.flansmod.util.Transform;
-import com.mojang.blaze3d.vertex.PoseStack;
 
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.block.model.ItemTransforms;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.item.ItemStack;
-import org.joml.Quaternionf;
-import org.joml.Vector3f;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.function.Consumer;
 
 public class GunItemRenderer extends FlanItemModelRenderer
 {
@@ -47,17 +31,18 @@ public class GunItemRenderer extends FlanItemModelRenderer
     @Override
     protected void DoRender(Entity heldByEntity, ItemStack stack, RenderContext renderContext)
     {
-        ShooterContext shooterContext = ShooterContext.CreateFrom(heldByEntity);
+        ShooterContext shooterContext = ShooterContext.GetOrCreate(heldByEntity);
         GunContext gunContext = shooterContext.IsValid() ?
-            GunContext.CreateFrom(shooterContext, MinecraftHelpers.GetHand(renderContext.TransformType)) :
-            GunContext.CreateFrom(stack);
+            GunContext.GetOrCreate(shooterContext, MinecraftHelpers.GetHand(renderContext.TransformType)) :
+            GunContext.GetOrCreate(stack);
         if(gunContext.IsValid())
         {
             // If there is a valid action stack applicable to this gun, scan it for animation actions
             ActionStack actionStack = gunContext.GetActionStack();
-            for (Action action : actionStack.GetActions())
-                if (!action.ShouldRender(gunContext))
-                    return;
+            for(ActionGroup group : actionStack.GetActiveActionGroups())
+                for (Action action : group.GetActions())
+                    if (!action.ShouldRender(gunContext))
+                        return;
 
             // Find our animation set
             AnimationDefinition animationSet = FlansModClient.ANIMATIONS.Get(new ResourceLocation(gunContext.GunDef().animationSet));

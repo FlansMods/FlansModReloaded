@@ -6,6 +6,7 @@
     "modifiers": [],
     "ammoLoadMode": "OneBulletAtATime",
     "ammoConsumeMode": "FirstNonEmpty",
+    "upgradeCost": 0,
     "numRounds": 7,
     "allRoundsMustBeIdentical": false,
     "matchBulletNames": [],

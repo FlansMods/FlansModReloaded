@@ -73,12 +73,16 @@ public class GunshotContext
 
 	// Impact settings
 	public float ImpactDamage() 			{ return ModifyFloat(ModifierDefinition.STAT_IMPACT_DAMAGE, Bullet.shootStats.impact.damageToTarget); }
+	public String PotionEffectOnTarget()	{ return ModifyString(ModifierDefinition.STAT_IMPACT_POTION_EFFECT_ON_TARGET, Bullet.shootStats.impact.potionEffectOnTarget); }
+	public float SetFireToTarget() 			{ return ModifyFloat(ModifierDefinition.STAT_IMPACT_SET_FIRE_TO_TARGET, Bullet.shootStats.impact.setFireToTarget); }
 	public float Knockback() 				{ return ModifyFloat(ModifierDefinition.STAT_IMPACT_KNOCKBACK, Bullet.shootStats.impact.knockback); }
 	public float MultiplierVsPlayers() 		{ return ModifyFloat(ModifierDefinition.STAT_IMPACT_MULTIPLIER_VS_PLAYERS, Bullet.shootStats.impact.multiplierVsPlayers); }
 	public float MultiplierVsVehicles() 	{ return ModifyFloat(ModifierDefinition.STAT_IMPACT_MULTIPLIER_VS_VEHICLES, Bullet.shootStats.impact.multiplierVsVehicles); }
+
 	public float SplashDamageRadius() 		{ return ModifyFloat(ModifierDefinition.STAT_IMPACT_SPLASH_DAMAGE_RADIUS, Bullet.shootStats.impact.splashDamageRadius); }
 	public float SplashDamageFalloff() 		{ return ModifyFloat(ModifierDefinition.STAT_IMPACT_SPLASH_DAMAGE_FALLOFF, Bullet.shootStats.impact.splashDamageFalloff); }
-	public float SetFireToTarget() 			{ return ModifyFloat(ModifierDefinition.STAT_IMPACT_SET_FIRE_TO_TARGET, Bullet.shootStats.impact.setFireToTarget); }
+	public String PotionEffectOnSplash()	{ return ModifyString(ModifierDefinition.STAT_IMPACT_POTION_EFFECT_ON_SPLASH, Bullet.shootStats.impact.potionEffectOnSplash); }
+
 	public float FireSpreadRadius() 		{ return ModifyFloat(ModifierDefinition.STAT_IMPACT_FIRE_SPREAD_RADIUS, Bullet.shootStats.impact.fireSpreadRadius); }
 	public float FireSpreadAmount() 		{ return ModifyFloat(ModifierDefinition.STAT_IMPACT_FIRE_SPREAD_AMOUNT, Bullet.shootStats.impact.fireSpreadAmount); }
 }

@@ -22,8 +22,11 @@ public class ActionGroupDefinition
 	public int repeatCount = 0;
 	@JsonField(Docs = "If using minigun fire mode, this is the time (in seconds) that it will take to spin up the motor and start shooting")
 	public float spinUpDuration = 1.0f;
-
+	@JsonField(Docs = "The distance this action should be 'heard' from, in block radius. Modify this for silenced actions to not even show up in the net msgs of other players")
+	public float loudness = 150f;
 
 	@JsonField
 	public ActionDefinition[] actions = new ActionDefinition[0];
+
+	public static final ActionGroupDefinition INVALID = new ActionGroupDefinition();
 }

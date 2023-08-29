@@ -1,6 +1,7 @@
 package com.flansmod.common.network;
 
 import com.flansmod.common.FlansMod;
+import com.flansmod.common.network.bidirectional.ActionUpdateMessage;
 import net.minecraft.network.Connection;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.resources.ResourceKey;

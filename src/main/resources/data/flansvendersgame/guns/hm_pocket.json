@@ -8,10 +8,14 @@
     "paints": {
         "paintjobs": [
             {
-                "textureName": "hm_pocket_red"
+                "textureName": "hm_pocket_red",
+                "paintBucketsRequired": 1,
+                "entitlementKey": ""
             },
             {
-                "textureName": "hm_pocket_yellow"
+                "textureName": "hm_pocket_yellow",
+                "paintBucketsRequired": 1,
+                "entitlementKey": ""
             }
         ]
     },
@@ -188,7 +192,7 @@
                         "ApplyToSecondary": false
                     },
                     {
-                        "Stat": "damage_to_target",
+                        "Stat": "impact_damage",
                         "Filter": "",
                         "Add": 0.0,
                         "Multiply": 5.0,
@@ -319,11 +323,13 @@
         "matchByNames": [],
         "matchByTags": [
             "flansvendersgame:hm_pocket"
-        ]
+        ],
+        "baseCostToSwap": 0
     },
     "secondaryMagazines": {
         "matchByNames": [],
-        "matchByTags": []
+        "matchByTags": [],
+        "baseCostToSwap": 0
     },
     "startSpinUpActions": [],
     "reachMaxSpinActions": [],

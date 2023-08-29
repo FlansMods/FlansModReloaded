@@ -15,6 +15,7 @@
     ],
     "ammoLoadMode": "OneBulletAtATime",
     "ammoConsumeMode": "FirstNonEmpty",
+    "upgradeCost": 0,
     "numRounds": 5,
     "allRoundsMustBeIdentical": false,
     "matchBulletNames": [],

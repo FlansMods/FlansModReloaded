@@ -14,6 +14,7 @@ import com.flansmod.client.render.animation.elements.SequenceEntryDefinition;
 import com.flansmod.client.render.models.*;
 import com.flansmod.common.FlansMod;
 import com.flansmod.common.actions.Action;
+import com.flansmod.common.actions.ActionGroup;
 import com.flansmod.common.actions.ActionStack;
 import com.flansmod.common.actions.AnimationAction;
 import com.flansmod.common.item.FlanItem;
@@ -140,27 +141,26 @@ public abstract class FlanItemModelRenderer extends BlockEntityWithoutLevelRende
     {
         if(actionStack != null)
         {
-            Action[] cache = new Action[actionStack.GetActions().size()];
-            actionStack.GetActions().toArray(cache);
             List<AnimationAction> animActions = new ArrayList<>();
-            for(Action action : cache)
-            {
-                if (action instanceof AnimationAction animAction)
+            for(ActionGroup group : actionStack.GetActiveActionGroups())
+                for(Action action : group.GetActions())
                 {
-                    animActions.add(animAction);
+                    if (action instanceof AnimationAction animAction)
+                    {
+                        animActions.add(animAction);
+                    }
                 }
-            }
 
             List<Transform> poses = new ArrayList<>();
             for (AnimationAction animAction : animActions)
             {
-                SequenceDefinition sequence = animationSet.GetSequence(animAction.ActionDef.anim);
+                SequenceDefinition sequence = animationSet.GetSequence(animAction.Def.anim);
                 if (sequence == null)
                     continue;
 
                 // Make sure we scale the sequence (which can be played at any speed) with the target duration of this specific animation action
-                float progress = animAction.GetProgressTicks() + Minecraft.getInstance().getPartialTick();
-                float animMultiplier = sequence.Duration() / animAction.GetDurationTicks();
+                float progress = animAction.AnimFrame + Minecraft.getInstance().getPartialTick();
+                float animMultiplier = sequence.Duration() / (animAction.Def.duration * 20f);
                 progress *= animMultiplier;
 
                 // Find the segment of this animation that we need

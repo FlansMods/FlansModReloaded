@@ -5,11 +5,13 @@ import com.flansmod.common.gunshots.GunContext;
 import com.flansmod.common.types.elements.ActionGroupDefinition;
 import net.minecraft.resources.ResourceLocation;
 
+import javax.annotation.Nonnull;
+
 public class ScopeAction extends AimDownSightAction
 {
-	public ScopeAction(ActionGroupDefinition groupDef, ActionDefinition def, EActionInput inputType)
+	public ScopeAction(@Nonnull ActionGroup group, @Nonnull ActionDefinition def)
 	{
-		super(groupDef, def, inputType);
+		super(group, def);
 	}
 
 	public boolean ApplyOverlay()
@@ -19,7 +21,7 @@ public class ScopeAction extends AimDownSightAction
 
 	public ResourceLocation GetOverlayLocation()
 	{
-		return new ResourceLocation("flansmod", "textures/scopes/" + ActionDef.scopeOverlay + ".png");
+		return new ResourceLocation("flansmod", "textures/scopes/" + Def.scopeOverlay + ".png");
 	}
 
 	@Override

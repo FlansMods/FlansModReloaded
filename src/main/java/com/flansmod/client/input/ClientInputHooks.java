@@ -29,14 +29,17 @@ public class ClientInputHooks
 	private static boolean UseHeldLastFrame = false;
 	private static boolean AttackHeldThisFrame = false;
 	private static boolean AttackHeldLastFrame = false;
+	private static int FramesSinceUseToggled = 0;
+	private static int FramesSinceAttackToggled = 0;
 
 	public static boolean IsUsePressed() { return UseHeldThisFrame && !UseHeldLastFrame; }
 	public static boolean IsUseHeld() { return UseHeldThisFrame; }
 	public static boolean IsUseReleased() { return UseHeldLastFrame && !UseHeldThisFrame; }
+	public static int TicksSinceUseToggled() { return FramesSinceUseToggled; }
 	public static boolean IsAttackPressed() { return AttackHeldThisFrame && !AttackHeldLastFrame; }
 	public static boolean IsAttackHeld() { return AttackHeldThisFrame; }
 	public static boolean IsAttackReleased() { return AttackHeldLastFrame && !AttackHeldThisFrame; }
-
+	public static int TicksSinceAttackToggled() { return FramesSinceAttackToggled; }
 
 	public static final Lazy<KeyMapping> LOOK_AT_MAPPING = Lazy.of(() -> { return new KeyMapping(
 		"key.flansmod.look_at",
@@ -108,19 +111,27 @@ public class ClientInputHooks
 			UseHeldThisFrame = Minecraft.getInstance().options.keyUse.isDown();
 			AttackHeldThisFrame = Minecraft.getInstance().options.keyAttack.isDown();
 
+			FramesSinceUseToggled++;
+			FramesSinceAttackToggled++;
+
 			if(IsAttackPressed())
 				FlansModClient.ACTIONS_CLIENT.ClientKeyPressed(player, EActionInput.PRIMARY);
 			if(IsAttackHeld())
 				FlansModClient.ACTIONS_CLIENT.ClientKeyHeld(player, EActionInput.PRIMARY);
 			if(IsAttackReleased())
-				FlansModClient.ACTIONS_CLIENT.ClientKeyReleased(player, EActionInput.PRIMARY);
+				FlansModClient.ACTIONS_CLIENT.ClientKeyReleased(player, EActionInput.PRIMARY, FramesSinceAttackToggled);
 
 			if(IsUsePressed())
 				FlansModClient.ACTIONS_CLIENT.ClientKeyPressed(player, EActionInput.SECONDARY);
 			if(IsUseHeld())
 				FlansModClient.ACTIONS_CLIENT.ClientKeyHeld(player, EActionInput.SECONDARY);
 			if(IsUseReleased())
-				FlansModClient.ACTIONS_CLIENT.ClientKeyReleased(player, EActionInput.SECONDARY);
+				FlansModClient.ACTIONS_CLIENT.ClientKeyReleased(player, EActionInput.SECONDARY, FramesSinceUseToggled);
+
+			if(UseHeldThisFrame != UseHeldLastFrame)
+				FramesSinceUseToggled = 0;
+			if(AttackHeldThisFrame != AttackHeldLastFrame)
+				FramesSinceAttackToggled = 0;
 		}
 	}
 }

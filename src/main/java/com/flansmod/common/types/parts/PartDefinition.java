@@ -4,6 +4,9 @@ import com.flansmod.common.FlansMod;
 import com.flansmod.common.types.JsonDefinition;
 import com.flansmod.common.types.JsonField;
 import com.flansmod.common.types.crafting.EMaterialType;
+import com.flansmod.common.types.crafting.elements.IngredientDefinition;
+import com.flansmod.common.types.crafting.elements.RecipePartDefinition;
+import com.flansmod.common.types.crafting.elements.TieredIngredientDefinition;
 import com.flansmod.common.types.elements.ItemDefinition;
 import com.flansmod.common.types.elements.ModifierDefinition;
 import com.flansmod.common.types.parts.elements.EngineDefinition;
@@ -29,6 +32,9 @@ public class PartDefinition extends JsonDefinition
 
 	@JsonField
 	public String[] compatiblityTags = new String[] { "mecha", "groundVehicle", "plane" };
+
+	@JsonField
+	public IngredientDefinition[] recipeIngredients = new IngredientDefinition[0];
 
 	@JsonField
 	public ItemDefinition itemSettings = new ItemDefinition();

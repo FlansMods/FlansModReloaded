@@ -14,8 +14,16 @@ public class PartCraftingDefinition
 	public boolean isActive = false;
 
 	@JsonField
-	public String[] partsByName = new String[0];
+	public int inputSlots = 8;
+	@JsonField
+	public int outputSlots = 8;
+	@JsonField(Docs = "In seconds")
+	public float timePerCraft = 1.0f;
+	@JsonField
+	public float FECostPerCraft = 0.0f;
 
+	@JsonField
+	public String[] partsByName = new String[0];
 	@JsonField
 	public TieredIngredientDefinition[] partsByTier = new TieredIngredientDefinition[0];
 

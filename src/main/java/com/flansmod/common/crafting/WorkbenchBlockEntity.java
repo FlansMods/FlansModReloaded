@@ -5,10 +5,12 @@ import com.flansmod.common.actions.EActionInput;
 import com.flansmod.common.item.FlanItem;
 import com.flansmod.common.item.GunItem;
 import com.flansmod.common.types.crafting.WorkbenchDefinition;
+import com.flansmod.common.types.crafting.elements.IngredientDefinition;
 import com.flansmod.common.types.elements.PaintableDefinition;
 import com.flansmod.common.types.elements.PaintjobDefinition;
-import com.flansmod.common.types.guns.GunDefinition;
 import com.flansmod.common.types.magazines.MagazineDefinition;
+import com.flansmod.common.types.parts.PartDefinition;
+import com.flansmod.util.Maths;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
@@ -20,7 +22,9 @@ import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.ContainerData;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -32,7 +36,7 @@ import net.minecraftforge.energy.EnergyStorage;
 import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.Nullable;
 
-import java.awt.*;
+import javax.annotation.Nonnull;
 import java.util.List;
 import java.util.Set;
 
@@ -42,8 +46,10 @@ public class WorkbenchBlockEntity extends BlockEntity implements MenuProvider, C
 	public final RestrictedContainer GunContainer;
 	public final RestrictedContainer PaintCanContainer;
 	public final RestrictedContainer MagUpgradeContainer;
-	public final RestrictedContainer CraftingInputContainer;
-	public final RestrictedContainer CraftingOutputContainer;
+	public final RestrictedContainer GunCraftingInputContainer;
+	public final RestrictedContainer GunCraftingOutputContainer;
+	public final RestrictedContainer PartCraftingInputContainer;
+	public final RestrictedContainer PartCraftingOutputContainer;
 	public final RestrictedContainer MaterialContainer;
 	public final RestrictedContainer BatteryContainer;
 	public final RestrictedContainer FuelContainer;
@@ -53,8 +59,20 @@ public class WorkbenchBlockEntity extends BlockEntity implements MenuProvider, C
 	public static final int DATA_LIT_TIME = 0;
 	public static final int DATA_LIT_DURATION = 1;
 	public static final int DATA_FORGE_ENERGY = 2;
+
+	public static final int DATA_CRAFT_QUEUE_COUNT = 3;
+	public static final int DATA_CRAFT_TIME = 4;
+	public static final int DATA_CRAFT_DURATION = 5;
+	public static final int DATA_CRAFT_SELECTION = 6;
+
 	public int LitTime = 0;
 	public int LitDuration = 0;
+
+	public int CraftTime = 0;
+	public int CraftDuration = 0;
+	public int CraftQueueCount = 0;
+	@Nonnull
+	public PartDefinition CraftingPart = PartDefinition.INVALID;
 
 	protected final ContainerData DataAccess = new ContainerData()
 	{
@@ -66,6 +84,10 @@ public class WorkbenchBlockEntity extends BlockEntity implements MenuProvider, C
 				case DATA_LIT_TIME -> { return LitTime; }
 				case DATA_LIT_DURATION -> { return LitDuration; }
 				case DATA_FORGE_ENERGY -> { return EnergyStorage == null ? 0 : EnergyStorage.getEnergyStored(); }
+				case DATA_CRAFT_QUEUE_COUNT -> { return CraftQueueCount; }
+				case DATA_CRAFT_TIME -> { return CraftTime; }
+				case DATA_CRAFT_DURATION -> { return CraftDuration; }
+				case DATA_CRAFT_SELECTION -> { return CraftingPart.hashCode(); }
 				default -> { return 0; }
 			}
 		}
@@ -78,6 +100,10 @@ public class WorkbenchBlockEntity extends BlockEntity implements MenuProvider, C
 				case DATA_LIT_TIME -> { LitTime = value; }
 				case DATA_LIT_DURATION -> { LitDuration = value; }
 				case DATA_FORGE_ENERGY -> { if(EnergyStorage != null) EnergyStorage.receiveEnergy(value - EnergyStorage.getEnergyStored(), false); }
+				case DATA_CRAFT_QUEUE_COUNT -> { CraftQueueCount = value; }
+				case DATA_CRAFT_TIME -> { CraftTime = value; }
+				case DATA_CRAFT_DURATION -> { CraftDuration = value;}
+				case DATA_CRAFT_SELECTION -> { CraftingPart = FlansMod.PARTS.ByHash(value);	}
 			}
 		}
 
@@ -148,23 +174,44 @@ public class WorkbenchBlockEntity extends BlockEntity implements MenuProvider, C
 
 		if(Def.gunCrafting.isActive)
 		{
-			CraftingInputContainer = new RestrictedContainer(
+			GunCraftingInputContainer = new RestrictedContainer(
 				this,
 				INTERACT_RANGE,
 				Def.gunCrafting.GetMaxInputSlots(),
 				64,
 				(stack) -> { return true; } );
-			CraftingOutputContainer = new RestrictedContainer(
+			GunCraftingOutputContainer = new RestrictedContainer(
 				this,
 				INTERACT_RANGE,
 				1,
 				64,
-				(stack) -> { return false; } );
+				ItemStack::isEmpty );
 		}
 		else
 		{
-			CraftingInputContainer = new RestrictedContainer(this);
-			CraftingOutputContainer = new RestrictedContainer(this);
+			GunCraftingInputContainer = new RestrictedContainer(this);
+			GunCraftingOutputContainer = new RestrictedContainer(this);
+		}
+
+		if(Def.partCrafting.isActive)
+		{
+			PartCraftingInputContainer = new RestrictedContainer(
+				this,
+				INTERACT_RANGE,
+				Def.partCrafting.inputSlots,
+				64,
+				(stack) -> { return true; } );
+			PartCraftingOutputContainer = new RestrictedContainer(
+				this,
+				INTERACT_RANGE,
+				Def.partCrafting.outputSlots,
+				64,
+				ItemStack::isEmpty);
+		}
+		else
+		{
+			PartCraftingInputContainer = new RestrictedContainer(this);
+			PartCraftingOutputContainer = new RestrictedContainer(this);
 		}
 
 		if(Def.itemHolding.slots.length > 0)
@@ -211,13 +258,22 @@ public class WorkbenchBlockEntity extends BlockEntity implements MenuProvider, C
 		tags.put("gun", GunContainer.save(new CompoundTag()));
 		tags.put("paintcans", PaintCanContainer.save(new CompoundTag()));
 		tags.put("magupgrades", MagUpgradeContainer.save(new CompoundTag()));
-		tags.put("input", CraftingInputContainer.save(new CompoundTag()));
-		tags.put("output", CraftingOutputContainer.save(new CompoundTag()));
+		tags.put("gun_input", GunCraftingInputContainer.save(new CompoundTag()));
+		tags.put("gun_output", GunCraftingOutputContainer.save(new CompoundTag()));
+		tags.put("part_input", PartCraftingInputContainer.save(new CompoundTag()));
+		tags.put("part_output", PartCraftingOutputContainer.save(new CompoundTag()));
 		tags.put("materials", MaterialContainer.save(new CompoundTag()));
 		tags.put("battery", BatteryContainer.save(new CompoundTag()));
 		tags.put("fuel", FuelContainer.save(new CompoundTag()));
 		if(EnergyStorage != null)
 			tags.put("energy", EnergyStorage.serializeNBT());
+
+		tags.putInt("lit_time", LitTime);
+		tags.putInt("lit_duration", LitDuration);
+		tags.putInt("craft_queue", CraftQueueCount);
+		tags.putInt("craft_duration", CraftDuration);
+		tags.putInt("craft_time", CraftTime);
+		tags.putString("craft_selection", CraftingPart.GetLocation().toString());
 	}
 
 	@Override
@@ -227,13 +283,22 @@ public class WorkbenchBlockEntity extends BlockEntity implements MenuProvider, C
 		GunContainer.load(tags.getCompound("gun"));
 		PaintCanContainer.load(tags.getCompound("paintcans"));
 		MagUpgradeContainer.load(tags.getCompound("magupgrades"));
-		CraftingInputContainer.load(tags.getCompound("input"));
-		CraftingOutputContainer.load(tags.getCompound("output"));
+		GunCraftingInputContainer.load(tags.getCompound("gun_input"));
+		GunCraftingOutputContainer.load(tags.getCompound("gun_output"));
+		PartCraftingInputContainer.load(tags.getCompound("part_input"));
+		PartCraftingOutputContainer.load(tags.getCompound("part_output"));
 		MaterialContainer.load(tags.getCompound("materials"));
 		BatteryContainer.load(tags.getCompound("battery"));
 		FuelContainer.load(tags.getCompound("fuel"));
 		if(EnergyStorage != null)
 			EnergyStorage.deserializeNBT(tags.getCompound("energy"));
+
+		LitTime = tags.getInt("lit_time");
+		LitDuration = tags.getInt("lit_duration");
+		CraftQueueCount = tags.getInt("craft_queue");
+		CraftDuration = tags.getInt("craft_duration");
+		CraftTime = tags.getInt("craft_time");
+		CraftingPart = FlansMod.PARTS.Get(new ResourceLocation(tags.getString("craft_selection")));
 	}
 
 	@Override
@@ -248,8 +313,10 @@ public class WorkbenchBlockEntity extends BlockEntity implements MenuProvider, C
 		GunContainer.clearContent();
 		PaintCanContainer.clearContent();
 		MagUpgradeContainer.clearContent();
-		CraftingInputContainer.clearContent();
-		CraftingOutputContainer.clearContent();
+		GunCraftingInputContainer.clearContent();
+		GunCraftingOutputContainer.clearContent();
+		PartCraftingInputContainer.clearContent();
+		PartCraftingOutputContainer.clearContent();
 		MaterialContainer.clearContent();
 		BatteryContainer.clearContent();
 		FuelContainer.clearContent();
@@ -266,8 +333,10 @@ public class WorkbenchBlockEntity extends BlockEntity implements MenuProvider, C
 			GunContainer,
 			PaintCanContainer,
 			MagUpgradeContainer,
-			CraftingInputContainer,
-			CraftingOutputContainer,
+			GunCraftingInputContainer,
+			GunCraftingOutputContainer,
+			PartCraftingInputContainer,
+			PartCraftingOutputContainer,
 			MaterialContainer,
 			BatteryContainer,
 			FuelContainer,
@@ -304,38 +373,138 @@ public class WorkbenchBlockEntity extends BlockEntity implements MenuProvider, C
 				}
 			}
 		}
-	}
 
-	public void CraftGun(Player player, int gunIndex)
-	{
-		// TODO: Get neighbours
-		CraftGun(player, new Container[] { MaterialContainer }, Def, gunIndex);
-	}
-	public static void CraftGun(Player player, Container[] attachedContainers, WorkbenchDefinition def, int gunIndex)
-	{
-		// TODO: Survival checks, recipes, unlocks
-
-		if(def.gunCrafting.isActive)
+		if(workbench.PartCraftingOutputContainer.getContainerSize() > 0)
 		{
-			//def.gunCrafting.pages
+			if(workbench.CraftTime > 0)
+			{
+				workbench.CraftTime--;
+				if(workbench.CraftTime <= 0)
+				{
+					workbench.CraftDuration = 0;
+					boolean success = CraftOnePart(workbench);
+					if(success)
+						setChanged(level, pos, state);
+				}
+			}
+
+			// Then try find a new craft
+			if(workbench.CraftTime <= 0 && workbench.CraftQueueCount > 0)
+			{
+				int inputCount = GetMaxPartsCraftableFromInput(workbench);
+				boolean canOutput = GetOutputSlotToCraftPart(workbench) != Inventory.NOT_FOUND_INDEX;
+				boolean canPower = true;
+				if(workbench.Def.partCrafting.FECostPerCraft > 0)
+				{
+					canPower = workbench.EnergyStorage.getEnergyStored() >= workbench.Def.partCrafting.FECostPerCraft;
+				}
+				if(inputCount > 0 && canOutput && canPower)
+				{
+					workbench.CraftTime = Maths.Floor(workbench.Def.partCrafting.timePerCraft * 20);
+					workbench.CraftDuration = workbench.CraftTime;
+					workbench.CraftQueueCount--;
+					setChanged(level, pos, state);
+				}
+			}
+		}
+	}
+
+	public static int GetMaxPartsCraftableFromInput(WorkbenchBlockEntity workbench)
+	{
+		if(!workbench.CraftingPart.IsValid())
+			return 0;
+
+		Item[] inputItems = new Item[workbench.PartCraftingInputContainer.getContainerSize()];
+		int[] inputCounts = new int[workbench.PartCraftingInputContainer.getContainerSize()];
+		for(int i = 0; i < workbench.PartCraftingInputContainer.getContainerSize(); i++)
+		{
+			inputItems[i] = workbench.PartCraftingInputContainer.getItem(i).getItem();
+			inputCounts[i] = workbench.PartCraftingInputContainer.getItem(i).getCount();
 		}
 
-		//if(gunContainer.getContainerSize() > 0 && !gunContainer.getItem(0).isEmpty() && gunContainer.getItem(0).getItem() instanceof FlanItem flanItem)
-		//{
-		//	ItemStack gunStack = gunContainer.getItem(0);
-		//	PaintableDefinition paintableDefinition = flanItem.GetPaintDef(gunStack);
-		//	if (paintableDefinition.paintjobs.length > 0)
-		//	{
-		//		if(skinIndex == 0)
-		//		{
-		//			flanItem.SetPaintjobName(gunStack, "default");
-		//		}
-		//		else
-		//		{
-		//			flanItem.SetPaintjobName(gunStack, paintableDefinition.paintjobs[skinIndex - 1].textureName);
-		//		}
-		//	}
-		//}
+		int amountCanCraft = 0;
+		while(amountCanCraft < 99)
+		{
+			for (int i = 0; i < workbench.CraftingPart.recipeIngredients.length; i++)
+			{
+				IngredientDefinition ingredient = workbench.CraftingPart.recipeIngredients[i];
+				int countNeeded = ingredient.count;
+				int checkSlot = 0;
+				while (checkSlot < inputItems.length)
+				{
+					if (ingredient.Matches(inputItems[checkSlot]))
+					{
+						int amountToTake = Maths.Min(countNeeded, inputCounts[checkSlot]);
+						inputCounts[checkSlot] -= amountToTake;
+						countNeeded -= amountToTake;
+
+						if (inputCounts[checkSlot] <= 0)
+							inputItems[checkSlot] = Items.AIR;
+						if (countNeeded <= 0)
+							break;
+					}
+					checkSlot++;
+				}
+
+				// We won't be able to craft another one of these. Time to quit
+				if (countNeeded > 0)
+					return amountCanCraft;
+			}
+
+			// All ingredients were successfully consumed from our copied inventory
+			// Tally up and try another
+			amountCanCraft++;
+		}
+
+		return amountCanCraft;
+	}
+
+	public static int GetOutputSlotToCraftPart(WorkbenchBlockEntity workbench)
+	{
+		if(!workbench.CraftingPart.IsValid())
+			return Inventory.NOT_FOUND_INDEX;
+		Item item = ForgeRegistries.ITEMS.getValue(workbench.CraftingPart.GetLocation());
+		if(item == null)
+		{
+			FlansMod.LOGGER.error("Tried to craft part " + workbench.CraftingPart.GetLocation() + " without a valid item");
+			return Inventory.NOT_FOUND_INDEX;
+		}
+
+		// First pass, find a similar item to stack with
+		for(int i = 0; i < workbench.PartCraftingOutputContainer.getContainerSize(); i++)
+		{
+			ItemStack stackInSlot = workbench.PartCraftingOutputContainer.getItem(i);
+			if(stackInSlot.getItem() == item)
+				if(stackInSlot.getCount() < workbench.PartCraftingOutputContainer.getMaxStackSize())
+					return i;
+		}
+
+		// Second pass, find an empty slot
+		for(int i = 0; i < workbench.PartCraftingOutputContainer.getContainerSize(); i++)
+		{
+			if(workbench.PartCraftingOutputContainer.getItem(i).getItem() == Items.AIR)
+				return i;
+		}
+
+		return Inventory.NOT_FOUND_INDEX;
+	}
+
+	public static boolean CraftOnePart(WorkbenchBlockEntity workbench)
+	{
+		int outputSlot = GetOutputSlotToCraftPart(workbench);
+		if(outputSlot != Inventory.NOT_FOUND_INDEX)
+		{
+			Item item = ForgeRegistries.ITEMS.getValue(workbench.CraftingPart.GetLocation());
+			ItemStack existing = workbench.PartCraftingOutputContainer.getItem(outputSlot);
+			if(existing.isEmpty())
+				workbench.PartCraftingOutputContainer.setItem(outputSlot, new ItemStack(item, 1));
+			else if(existing.getItem() == item)
+				existing.setCount(existing.getCount() + 1);
+			else
+				FlansMod.LOGGER.error("CraftOnePart tried to craft into invalid slot " + outputSlot);
+			return true;
+		}
+		return false;
 	}
 
 	public static int GetPaintUpgradeCost(Container gunContainer, int paintIndex)

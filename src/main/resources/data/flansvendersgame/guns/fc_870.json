@@ -8,13 +8,19 @@
     "paints": {
         "paintjobs": [
             {
-                "textureName": "fc_870_birch"
+                "textureName": "fc_870_birch",
+                "paintBucketsRequired": 1,
+                "entitlementKey": ""
             },
             {
-                "textureName": "fc_870_redwood"
+                "textureName": "fc_870_redwood",
+                "paintBucketsRequired": 1,
+                "entitlementKey": ""
             },
             {
-                "textureName": "fc_870_vroom_vroom"
+                "textureName": "fc_870_vroom_vroom",
+                "paintBucketsRequired": 1,
+                "entitlementKey": ""
             }
         ]
     },
@@ -177,7 +183,7 @@
                         "ApplyToSecondary": false
                     },
                     {
-                        "Stat": "damage_to_target",
+                        "Stat": "impact_damage",
                         "Filter": "",
                         "Add": 0.0,
                         "Multiply": 1.0,
@@ -308,11 +314,13 @@
         "matchByNames": [],
         "matchByTags": [
             "flansmodvendersgame:fc_870"
-        ]
+        ],
+        "baseCostToSwap": 0
     },
     "secondaryMagazines": {
         "matchByNames": [],
-        "matchByTags": []
+        "matchByTags": [],
+        "baseCostToSwap": 0
     },
     "startSpinUpActions": [],
     "reachMaxSpinActions": [],

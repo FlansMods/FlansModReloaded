@@ -8,10 +8,14 @@
     "paints": {
         "paintjobs": [
             {
-                "textureName": "phantek_auto_12_magma"
+                "textureName": "phantek_auto_12_magma",
+                "paintBucketsRequired": 1,
+                "entitlementKey": ""
             },
             {
-                "textureName": "phantek_auto_12_undergrowth"
+                "textureName": "phantek_auto_12_undergrowth",
+                "paintBucketsRequired": 1,
+                "entitlementKey": ""
             }
         ]
     },
@@ -188,7 +192,7 @@
                         "ApplyToSecondary": false
                     },
                     {
-                        "Stat": "damage_to_target",
+                        "Stat": "impact_damage",
                         "Filter": "",
                         "Add": 0.0,
                         "Multiply": 1.0,
@@ -319,11 +323,13 @@
         "matchByNames": [],
         "matchByTags": [
             "flansvendersgame:phantek_auto_12"
-        ]
+        ],
+        "baseCostToSwap": 0
     },
     "secondaryMagazines": {
         "matchByNames": [],
-        "matchByTags": []
+        "matchByTags": [],
+        "baseCostToSwap": 0
     },
     "startSpinUpActions": [],
     "reachMaxSpinActions": [],

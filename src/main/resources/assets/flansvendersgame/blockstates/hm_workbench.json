@@ -1,0 +1,21 @@
+{
+  "variants": {
+	  "facing=north": {
+		  "model": "flansmod:block/hm_workbench",
+		  "y": 90		  
+	  },
+	  "facing=east": {
+		  "model": "flansmod:block/hm_workbench",
+		  "y": 180		  
+	  },
+	  "facing=south": {
+		  "model": "flansmod:block/hm_workbench",
+		  "y": 270		  
+	  },
+	  "facing=west": {
+		  "model": "flansmod:block/hm_workbench",
+		  "y": 0		  
+	  }
+	  
+  }
+}

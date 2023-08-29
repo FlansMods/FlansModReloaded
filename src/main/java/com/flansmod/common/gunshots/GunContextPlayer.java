@@ -11,12 +11,12 @@ public class GunContextPlayer extends GunContextLiving
 	private final Player Player;
 	private final int InventorySlot;
 
-	public GunContextPlayer(ShooterContextLiving shooter, InteractionHand hand)
+	public GunContextPlayer(ShooterContextPlayer shooter, int inventorySlot)
 	{
-		super(shooter, hand);
+		super(shooter, inventorySlot == ((Player)shooter.Shooter).getInventory().selected ? InteractionHand.MAIN_HAND : InteractionHand.OFF_HAND);
 
 		Player = (Player)shooter.Shooter;
-		InventorySlot = hand == InteractionHand.MAIN_HAND ? Player.getInventory().selected :Inventory.SLOT_OFFHAND;
+		InventorySlot = inventorySlot;
 	}
 
 	@Override
@@ -24,6 +24,9 @@ public class GunContextPlayer extends GunContextLiving
 	{
 		return Player.getInventory();
 	}
+
+	@Override
+	public int GetInventorySlotIndex() { return InventorySlot; }
 
 	@Override
 	public int hashCode()

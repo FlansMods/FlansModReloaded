@@ -19,101 +19,119 @@ import java.util.List;
 public class GunshotCollection
 {
 	// Raw data is reference-free for networking
-	public int ownerEntityID;
-	public int shooterEntityID;
-	public int seatID; // If relevant to this entity type, it will specify the seat number
-	public int bulletHash;
-	public int gunHash;
-	public EActionInput actionUsed;
-	public ResourceKey<Level> dimension;
-	public List<Gunshot> shots = new ArrayList<>(2);
+	public ResourceKey<Level> OwnerDimension;
+	public int OwnerEntityID;
+	public ResourceKey<Level> ShooterDimension;
+	public int ShooterEntityID;
+	public int SeatID; // If relevant to this entity type, it will specify the seat number
+	public int GunHash;
+	public EActionInput InputType;
+	public List<Gunshot> Shots = new ArrayList<>(2);
 
 	// Accessors
 	public GunDefinition Gun()
 	{
-		return FlansMod.GUNS.ByHash(gunHash);
+		return FlansMod.GUNS.ByHash(GunHash);
 	}
-	public BulletDefinition Bullet()
-	{
-		return FlansMod.BULLETS.ByHash(bulletHash);
-	}
-	public Gunshot Get(int index) { return shots.get(index); }
-
-	//public Entity shooterEntity() { return }
-	public int Count() { return shots.size(); }
-
+	public Gunshot Get(int index) { return Shots.get(index); }
+	public int Count() { return Shots.size(); }
 
 	public GunshotCollection()
 	{
-		shots = new ArrayList<>(8);
+		Shots = new ArrayList<>(8);
+	}
+
+	public GunshotCollection CopySubset(int triggerMin, int triggerMax)
+	{
+		GunshotCollection copy = new GunshotCollection()
+			.WithGun(GunHash)
+			.WithOwner(OwnerDimension, OwnerEntityID)
+			.WithShooter(ShooterDimension, ShooterEntityID)
+			.FromAction(InputType);
+
+		for(Gunshot shot : Shots)
+		{
+			if(triggerMin <= shot.fromShotIndex && shot.fromShotIndex <= triggerMax)
+				copy.AddShot(shot);
+		}
+
+		return copy;
+	}
+
+	public GunshotCollection WithGun(int gunHash)
+	{
+		this.GunHash = gunHash;
+		return this;
 	}
 
 	public GunshotCollection WithGun(GunDefinition gun)
 	{
-		gunHash = gun.hashCode();
+		GunHash = gun.hashCode();
 		return this;
 	}
 
-	public GunshotCollection WithBullet(BulletDefinition bullet)
+	public GunshotCollection WithOwner(ResourceKey<Level> ownerDimension, int ownerEntityID)
 	{
-		bulletHash = bullet.hashCode();
+		OwnerDimension = ownerDimension;
+		OwnerEntityID = ownerEntityID;
 		return this;
 	}
 
 	public GunshotCollection WithOwner(Entity owner)
 	{
-		dimension = owner.getLevel().dimension();
-		ownerEntityID = owner.getId();
+		OwnerDimension = owner.getLevel().dimension();
+		OwnerEntityID = owner.getId();
+		return this;
+	}
+
+	public GunshotCollection WithShooter(ResourceKey<Level> shooterDimension, int shooterEntityID)
+	{
+		ShooterDimension = shooterDimension;
+		ShooterEntityID = shooterEntityID;
 		return this;
 	}
 
 	public GunshotCollection WithShooter(Entity owner)
 	{
-		dimension = owner.getLevel().dimension();
-		shooterEntityID = owner.getId();
+		ShooterDimension = owner.getLevel().dimension();
+		ShooterEntityID = owner.getId();
 		return this;
 	}
 
 	public GunshotCollection FromAction(EActionInput actionSet)
 	{
-		actionUsed = actionSet;
-		return this;
-	}
-
-	public GunshotCollection AddShot(Vec3 origin, Vec3 trajectory)
-	{
-		shots.add(new Gunshot().WithOrigin(origin).WithTrajectory(trajectory));
+		InputType = actionSet;
 		return this;
 	}
 
 	public GunshotCollection AddShot(Gunshot shot)
 	{
-		shots.add(shot);
+		Shots.add(shot);
 		return this;
 	}
 
 	public Level Dimension()
 	{
-		return MinecraftHelpers.GetLevel(dimension);
+		return MinecraftHelpers.GetLevel(ShooterDimension);
 	}
 
-	public boolean HasOwner() { return ownerEntityID > 0; }
+	public boolean HasOwner() { return OwnerEntityID > 0; }
 	@Nullable
 	public Entity Owner()
 	{
 		Level level = Dimension();
 		if(level != null)
-			return level.getEntity(ownerEntityID);
+			return level.getEntity(OwnerEntityID);
 		return null;
 	}
 
-	public boolean HasShooter() { return shooterEntityID > 0; }
+	public boolean HasShooter() { return ShooterEntityID > 0; }
 	@Nullable
 	public Entity Shooter()
 	{
 		Level level = Dimension();
 		if(level != null)
-			return level.getEntity(shooterEntityID);
+			return level.getEntity(ShooterEntityID);
 		return null;
 	}
 
@@ -132,13 +150,12 @@ public class GunshotCollection
 				Gunshot.Encode(gunshot, buf);
 			}
 
-			buf.writeInt(shotCollection.ownerEntityID);
-			buf.writeInt(shotCollection.shooterEntityID);
-			buf.writeInt(shotCollection.seatID);
-			buf.writeInt(shotCollection.bulletHash);
-			buf.writeInt(shotCollection.gunHash);
-			buf.writeBoolean(shotCollection.actionUsed == EActionInput.PRIMARY);
-			buf.writeResourceKey(shotCollection.dimension);
+			buf.writeInt(shotCollection.OwnerEntityID);
+			buf.writeInt(shotCollection.ShooterEntityID);
+			buf.writeInt(shotCollection.SeatID);
+			buf.writeInt(shotCollection.GunHash);
+			buf.writeBoolean(shotCollection.InputType == EActionInput.PRIMARY);
+			buf.writeResourceKey(shotCollection.ShooterDimension);
 		}
 	}
 
@@ -149,16 +166,15 @@ public class GunshotCollection
 		{
 			for(int i = 0; i < numShots; i++)
 			{
-				shotCollection.shots.add(Gunshot.Decode(buf));
+				shotCollection.Shots.add(Gunshot.Decode(buf));
 			}
 
-			shotCollection.ownerEntityID = buf.readInt();
-			shotCollection.shooterEntityID = buf.readInt();
-			shotCollection.seatID = buf.readInt();
-			shotCollection.bulletHash = buf.readInt();
-			shotCollection.gunHash = buf.readInt();
-			shotCollection.actionUsed = buf.readBoolean() ? EActionInput.PRIMARY : EActionInput.SECONDARY;
-			shotCollection.dimension = buf.readResourceKey(Registries.DIMENSION);
+			shotCollection.OwnerEntityID = buf.readInt();
+			shotCollection.ShooterEntityID = buf.readInt();
+			shotCollection.SeatID = buf.readInt();
+			shotCollection.GunHash = buf.readInt();
+			shotCollection.InputType = buf.readBoolean() ? EActionInput.PRIMARY : EActionInput.SECONDARY;
+			shotCollection.ShooterDimension = buf.readResourceKey(Registries.DIMENSION);
 		}
 	}
 }
