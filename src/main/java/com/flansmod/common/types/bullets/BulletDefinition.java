@@ -34,8 +34,7 @@ public class BulletDefinition extends JsonDefinition
 		super(resLoc);
 	}
 
-	@JsonField
-	public float gravityFactor = 0.25f;
+
 	@JsonField
 	public ItemDefinition itemSettings = new ItemDefinition();
 	@JsonField

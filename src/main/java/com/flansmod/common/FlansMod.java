@@ -5,6 +5,7 @@ import com.flansmod.common.crafting.*;
 import com.flansmod.common.gunshots.ActionManager;
 import com.flansmod.common.gunshots.Raytracer;
 import com.flansmod.common.item.*;
+import com.flansmod.common.projectiles.BulletEntity;
 import com.flansmod.common.types.attachments.AttachmentDefinitions;
 import com.flansmod.common.types.crafting.MaterialDefinitions;
 import com.flansmod.common.types.crafting.WorkbenchDefinitions;
@@ -12,10 +13,13 @@ import com.flansmod.common.types.grenades.GrenadeDefinitions;
 import com.flansmod.common.types.guns.GunDefinitions;
 import com.flansmod.common.types.bullets.BulletDefinitions;
 import com.flansmod.common.types.magazines.MagazineDefinitions;
+import com.flansmod.common.types.npc.NpcDefinitions;
 import com.flansmod.common.types.parts.PartDefinitions;
 import com.mojang.logging.LogUtils;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.MobCategory;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
@@ -58,7 +62,16 @@ public class FlansMod
     // Core mod blocks & items
     public static final DeferredRegister<Block> BLOCKS = DeferredRegister.create(ForgeRegistries.BLOCKS, MODID);
     public static final DeferredRegister<Item> ITEMS = DeferredRegister.create(ForgeRegistries.ITEMS, MODID);
+    public static final DeferredRegister<EntityType<?>> ENTITY_TYPES = DeferredRegister.create(ForgeRegistries.ENTITY_TYPES, MODID);
 
+
+    public static final RegistryObject<EntityType<BulletEntity>> ENT_TYPE_BULLET = ENTITY_TYPES.register(
+        "bullet",
+        () -> EntityType.Builder.of(
+            BulletEntity::new,
+            MobCategory.MISC)
+            .sized(0.5f, 0.5f)
+            .build("bullet"));
 
     public static final RegistryObject<Item> RAINBOW_PAINT_CAN_ITEM = ITEMS.register("rainbow_paint_can", () -> new Item(new Item.Properties()));
     public static final RegistryObject<Item> MAG_UPGRADE_ITEM = ITEMS.register("magazine_upgrade", () -> new Item(new Item.Properties()));
@@ -102,6 +115,7 @@ public class FlansMod
     public static final WorkbenchDefinitions WORKBENCHES = new WorkbenchDefinitions();
     public static final MaterialDefinitions MATERIALS = new MaterialDefinitions();
     public static final MagazineDefinitions MAGAZINES = new MagazineDefinitions();
+    public static final NpcDefinitions NPCS = new NpcDefinitions();
 
     // Server handlers
     public static final ActionManager ACTIONS_SERVER = new ActionManager(false);
@@ -109,7 +123,7 @@ public class FlansMod
     public static RegistryObject<Item> Gun(DeferredRegister<Item> itemRegister, String modID, String name)
     {
         ResourceLocation loc = new ResourceLocation(modID, name);
-        return itemRegister.register(name, () -> new GunItem(loc, new Item.Properties()));
+        return itemRegister.register(name, () -> new GunItem(loc, new Item.Properties().stacksTo(1)));
     }
 
     public static RegistryObject<Item> Bullet(DeferredRegister<Item> itemRegister, String modID, String name)
@@ -165,6 +179,7 @@ public class FlansMod
         ITEMS.register(modEventBus);
         TILE_ENTITIES.register(modEventBus);
         MENUS.register(modEventBus);
+        ENTITY_TYPES.register(modEventBus);
 
     }
 
@@ -280,6 +295,7 @@ public class FlansMod
         event.addListener(WORKBENCHES);
         event.addListener(MATERIALS);
         event.addListener(MAGAZINES);
+        event.addListener(NPCS);
 
         if(FMLEnvironment.dist == Dist.CLIENT)
             RegisterClientReloadListeners(event);

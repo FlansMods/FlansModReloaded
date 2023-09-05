@@ -22,21 +22,35 @@ public class GunContextLiving extends GunContext
 
 	public GunContextLiving(ShooterContextLiving shooterContext, InteractionHand hand)
 	{
-		super();
+		super(hand == InteractionHand.MAIN_HAND ? shooterContext.Shooter.getMainHandItem() : shooterContext.Shooter.getOffhandItem());
+		ShooterContext = shooterContext;
+		Hand = hand;
+	}
+
+	public GunContextLiving(ShooterContextLiving shooterContext, InteractionHand hand, ItemStack withItemOverride)
+	{
+		super(withItemOverride);
 		ShooterContext = shooterContext;
 		Hand = hand;
 	}
 
 	@Override
-	@Nonnull
-	public ItemStack GetItemStack() { return ShooterContext.Shooter.getItemInHand(Hand); }
+	public void OnItemStackChanged(ItemStack stack)
+	{
+		ItemStack stackInHand = Hand == InteractionHand.MAIN_HAND ? ShooterContext.Shooter.getMainHandItem() : ShooterContext.Shooter.getOffhandItem();
+		if(!StackUpdateWouldInvalidate(stackInHand))
+		{
+			ShooterContext.Shooter.setItemInHand(Hand, stack);
+		}
+	}
 	@Override
-	public void SetItemStack(ItemStack stack) { ShooterContext.Shooter.setItemInHand(Hand, stack); }
+	public boolean IsItemStackStillInPlace() { return !StackUpdateWouldInvalidate(Hand == InteractionHand.MAIN_HAND ? ShooterContext.Shooter.getMainHandItem() : ShooterContext.Shooter.getOffhandItem()); }
 	@Override
 	public Container GetAttachedInventory() { return ShooterContext.GetAttachedInventory(); }
 	@Override
 	public DamageSource CreateDamageSource() { return new IndirectEntityDamageSource("gun", ShooterContext.Shooter, ShooterContext.Shooter); }
 	@Override
+	@Nonnull
 	public ShooterContext GetShooter() { return ShooterContext; }
 	@Override
 	public boolean CanPerformActions() { return true; }
@@ -48,27 +62,9 @@ public class GunContextLiving extends GunContext
 	@Override
 	public int GetInventorySlotIndex() { return Hand == InteractionHand.MAIN_HAND ? 0 : 1; }
 	@Override
-	public int hashCode()
-	{
-		return Objects.hash(
-			ShooterContext,
-			Hand);
-	}
-	@Override
-	public boolean equals(Object other)
-	{
-		if(other == this) return true;
-		if(other instanceof GunContextLiving otherContext)
-		{
-			return otherContext.Hand == Hand &&
-				otherContext.ShooterContext.equals(ShooterContext);
-		}
-		return false;
-	}
-	@Override
 	public String toString()
 	{
-		return "Gun:" + GetItemStack().toString() + " held by " + ShooterContext.Shooter.toString();
+		return "GunContext:" + GetItemStack().toString() + " held by " + ShooterContext.Shooter.toString();
 	}
 	// There are no modifiers to apply right now
 	@Override

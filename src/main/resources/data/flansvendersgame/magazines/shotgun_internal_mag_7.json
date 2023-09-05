@@ -1,7 +1,7 @@
 {
     "tags": [
-        "flansmodvendersgame:hm_1200",
-        "flansmodvendersgame:fc_870"
+        "flansvendersgame:hm_1200",
+        "flansvendersgame:fc_870"
     ],
     "modifiers": [],
     "ammoLoadMode": "OneBulletAtATime",

@@ -1,0 +1,11 @@
+{
+  "type": "minecraft:blasting",
+  "category": "misc",
+  "cookingtime": 100,
+  "experience": 1.0,
+  "group": "steel_nugget",
+  "ingredient": {
+    "item": "minecraft:iron_nugget"
+  },
+  "result": "flansbasicparts:steel_nugget"
+}

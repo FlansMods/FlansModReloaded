@@ -1,0 +1,11 @@
+{
+  "type": "minecraft:blasting",
+  "category": "misc",
+  "cookingtime": 6400,
+  "experience": 800.0,
+  "group": "nethersteel_ingot",
+  "ingredient": {
+    "item": "minecraft:netherite_ingot"
+  },
+  "result": "flansbasicparts:nethersteel_ingot"
+}

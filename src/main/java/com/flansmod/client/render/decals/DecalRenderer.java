@@ -1,8 +1,6 @@
 package com.flansmod.client.render.decals;
 
-import com.flansmod.client.render.guns.ShotRenderer;
 import com.flansmod.util.Maths;
-import com.mojang.blaze3d.platform.GlConst;
 import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.*;
@@ -17,7 +15,6 @@ import net.minecraftforge.client.event.RenderLevelStageEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.TickEvent;
 import org.joml.Quaternionf;
-import org.joml.Vector4f;
 
 import java.util.ArrayList;
 import java.util.HashMap;

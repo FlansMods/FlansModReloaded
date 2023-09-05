@@ -21,12 +21,14 @@ public class ModifierDefinition
 	public static final String STAT_IMPACT_KNOCKBACK = "knockback";
 	public static final String STAT_IMPACT_MULTIPLIER_VS_PLAYERS = "multiplier_vs_players";
 	public static final String STAT_IMPACT_MULTIPLIER_VS_VEHICLES = "multiplier_vs_vehicles";
+	public static final String STAT_IMPACT_SPLASH_DAMAGE = "splash_damage";
 	public static final String STAT_IMPACT_SPLASH_DAMAGE_RADIUS = "splash_damage_radius";
 	public static final String STAT_IMPACT_SPLASH_DAMAGE_FALLOFF = "splash_damage_falloff";
 	public static final String STAT_IMPACT_POTION_EFFECT_ON_SPLASH = "potion_effect_on_splash";
 	public static final String STAT_IMPACT_SET_FIRE_TO_TARGET = "set_fire_to_target";
 	public static final String STAT_IMPACT_FIRE_SPREAD_RADIUS = "fire_spread_radius";
 	public static final String STAT_IMPACT_FIRE_SPREAD_AMOUNT = "fire_spread_amount";
+	public static final String STAT_IMPACT_EXPLOSION_RADIUS = "explosion_radius";
 
 	@JsonField
 	public String Stat = "";

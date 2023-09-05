@@ -14,6 +14,7 @@ import com.flansmod.common.types.guns.GunDefinition;
 import com.flansmod.common.types.magazines.EAmmoLoadMode;
 import com.flansmod.common.types.magazines.MagazineDefinition;
 import com.flansmod.util.Maths;
+import net.minecraft.client.player.Input;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.Container;
 import net.minecraft.world.entity.Entity;
@@ -435,7 +436,7 @@ public class ActionGroupContext
 							return Integer.parseInt(key);
 					}
 				}
-				return INVALID_FIRE_INDEX;
+				return 0;
 			}
 			case OneBulletAtATime_Revolver -> {
 				return GetCurrentChamber();
@@ -541,9 +542,12 @@ public class ActionGroupContext
 							{
 								// Both of these modes are LoadOne, but differ in how they select an index
 								int bulletIndex = GetNextIndexToLoad(magIndex);
-								stack = LoadOneBulletIntoSlot(magIndex, bulletIndex, stack);
-								inventory.setItem(i, stack);
-								inventory.setChanged();
+								if(bulletIndex != Inventory.NOT_FOUND_INDEX)
+								{
+									stack = LoadOneBulletIntoSlot(magIndex, bulletIndex, stack);
+									inventory.setItem(i, stack);
+									inventory.setChanged();
+								}
 								// And break because we only want to load one bullet
 								break;
 							}
@@ -606,4 +610,25 @@ public class ActionGroupContext
 	public float SpinUpDuration() { return ModifyFloat("spin_up_duration", GroupDef().spinUpDuration); }
 	public int RoundsPerMinute() { return RepeatDelaySeconds() <= 0.00001f ? 0 : Maths.Ceil(60.0f / RepeatDelaySeconds()); }
 	public float Loudness() { return ModifyFloat("loudness", GroupDef().loudness); }
+
+	// UTIL
+
+	public void Save(CompoundTag tags)
+	{
+		CompoundTag gunTags = new CompoundTag();
+		Gun.Save(gunTags);
+		tags.put("gun", gunTags);
+		tags.putInt("input", InputType.ordinal());
+	}
+
+	public static ActionGroupContext Load(CompoundTag tags, boolean client)
+	{
+		EActionInput inputType = EActionInput.values()[tags.getInt("input")];
+		GunContext gunContext = GunContext.Load(tags.getCompound("gun"), client);
+		if(gunContext.IsValid())
+			return gunContext.GetOrCreate(inputType);
+
+		// If we don't have a good gun context, there's no point making an action group context
+		return ActionGroupContext.INVALID;
+	}
 }

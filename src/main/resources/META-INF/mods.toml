@@ -71,6 +71,17 @@ license="All rights reserved"
     '''
 
 [[mods]] #mandatory
+    modId="flansclockworkcalamity"
+    version="${file.jarVersion}"
+    displayName="Flan's Clockwork Calamity"
+    logoFile="flansmod.png"
+    credits="jamioflan"
+    authors="jamioflan"
+    description='''
+    Wacky designs, clockwork contraptions and... frogs?!
+    '''
+
+[[mods]] #mandatory
     modId="flansworldwars"
     version="${file.jarVersion}"
     displayName="Flan's World War II Pack"

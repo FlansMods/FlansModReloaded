@@ -1,0 +1,14 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "building",
+  "ingredients": [
+    {
+      "item": "flansbasicparts:steel_ingot"
+    }
+  ],
+  "result": {
+    "item": "flansbasicparts:steel_nugget",
+	"count": 9
+  },
+  "show_notification": true
+}

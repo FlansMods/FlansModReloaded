@@ -1,0 +1,274 @@
+{
+    "voiceLines": [
+        {
+            "type": "Hello",
+            "unlocalisedstring": "npc.vender.hello.neutral.1",
+            "audioClip": {
+                "sound": "flansvendersgame:sounds/vender/hello_neutral",
+                "length": 2.0,
+                "minPitchMultiplier": 1.0,
+                "maxPitchMultiplier": 1.0,
+                "minVolume": 1.0,
+                "maxVolume": 1.0,
+                "maxRange": 50.0,
+                "LODs": []
+            }
+        },
+        {
+            "type": "Hello",
+            "unlocalisedstring": "npc.vender.hello.neutral.2",
+            "audioClip": {
+                "sound": "flansvendersgame:sounds/vender/hello_neutral",
+                "length": 2.0,
+                "minPitchMultiplier": 1.0,
+                "maxPitchMultiplier": 1.0,
+                "minVolume": 1.0,
+                "maxVolume": 1.0,
+                "maxRange": 50.0,
+                "LODs": []
+            }
+        },
+        {
+            "type": "HelloUnhappy",
+            "unlocalisedstring": "npc.vender.hello.angry",
+            "audioClip": {
+                "sound": "flansvendersgame:sounds/vender/hello_angry",
+                "length": 2.0,
+                "minPitchMultiplier": 1.0,
+                "maxPitchMultiplier": 1.0,
+                "minVolume": 1.0,
+                "maxVolume": 1.0,
+                "maxRange": 50.0,
+                "LODs": []
+            }
+        },
+        {
+            "type": "HelloHappy",
+            "unlocalisedstring": "npc.vender.hello.happy",
+            "audioClip": {
+                "sound": "flansvendersgame:sounds/vender/hello_happy",
+                "length": 2.0,
+                "minPitchMultiplier": 1.0,
+                "maxPitchMultiplier": 1.0,
+                "minVolume": 1.0,
+                "maxVolume": 1.0,
+                "maxRange": 50.0,
+                "LODs": []
+            }
+        },
+        {
+            "type": "Chat",
+            "unlocalisedstring": "npc.vender.chat.1",
+            "audioClip": {
+                "sound": "flansvendersgame:sounds/vender/chat",
+                "length": 2.0,
+                "minPitchMultiplier": 1.0,
+                "maxPitchMultiplier": 1.0,
+                "minVolume": 1.0,
+                "maxVolume": 1.0,
+                "maxRange": 50.0,
+                "LODs": []
+            }
+        },
+        {
+            "type": "Chat",
+            "unlocalisedstring": "npc.vender.chat.2",
+            "audioClip": {
+                "sound": "flansvendersgame:sounds/vender/chat",
+                "length": 2.0,
+                "minPitchMultiplier": 1.0,
+                "maxPitchMultiplier": 1.0,
+                "minVolume": 1.0,
+                "maxVolume": 1.0,
+                "maxRange": 50.0,
+                "LODs": []
+            }
+        },
+        {
+            "type": "BoughtFromPlayer",
+            "unlocalisedstring": "npc.vender.buy_from_player.1",
+            "audioClip": {
+                "sound": "flansvendersgame:sounds/vender/buy_from_player",
+                "length": 2.0,
+                "minPitchMultiplier": 1.0,
+                "maxPitchMultiplier": 1.0,
+                "minVolume": 1.0,
+                "maxVolume": 1.0,
+                "maxRange": 50.0,
+                "LODs": []
+            }
+        },
+        {
+            "type": "BoughtFromPlayer",
+            "unlocalisedstring": "npc.vender.buy_from_player.2",
+            "audioClip": {
+                "sound": "flansvendersgame:sounds/vender/buy_from_player",
+                "length": 2.0,
+                "minPitchMultiplier": 1.0,
+                "maxPitchMultiplier": 1.0,
+                "minVolume": 1.0,
+                "maxVolume": 1.0,
+                "maxRange": 50.0,
+                "LODs": []
+            }
+        },
+        {
+            "type": "SoldToPlayer",
+            "unlocalisedstring": "npc.vender.sell_to_player.1",
+            "audioClip": {
+                "sound": "flansvendersgame:sounds/vender/sell_to_player",
+                "length": 2.0,
+                "minPitchMultiplier": 1.0,
+                "maxPitchMultiplier": 1.0,
+                "minVolume": 1.0,
+                "maxVolume": 1.0,
+                "maxRange": 50.0,
+                "LODs": []
+            }
+        },
+        {
+            "type": "SoldToPlayer",
+            "unlocalisedstring": "npc.vender.sell_to_player.2",
+            "audioClip": {
+                "sound": "flansvendersgame:sounds/vender/sell_to_player",
+                "length": 2.0,
+                "minPitchMultiplier": 1.0,
+                "maxPitchMultiplier": 1.0,
+                "minVolume": 1.0,
+                "maxVolume": 1.0,
+                "maxRange": 50.0,
+                "LODs": []
+            }
+        },
+        {
+            "type": "Goodbye",
+            "unlocalisedstring": "npc.vender.goodbye.1",
+            "audioClip": {
+                "sound": "flansvendersgame:sounds/vender/goodbye",
+                "length": 2.0,
+                "minPitchMultiplier": 1.0,
+                "maxPitchMultiplier": 1.0,
+                "minVolume": 1.0,
+                "maxVolume": 1.0,
+                "maxRange": 50.0,
+                "LODs": []
+            }
+        },
+        {
+            "type": "Goodbye",
+            "unlocalisedstring": "npc.vender.goodbye.2",
+            "audioClip": {
+                "sound": "flansvendersgame:sounds/vender/goodbye",
+                "length": 2.0,
+                "minPitchMultiplier": 1.0,
+                "maxPitchMultiplier": 1.0,
+                "minVolume": 1.0,
+                "maxVolume": 1.0,
+                "maxRange": 50.0,
+                "LODs": []
+            }
+        },
+        {
+            "type": "Hurt",
+            "unlocalisedstring": "npc.vender.hurt.1",
+            "audioClip": {
+                "sound": "flansvendersgame:sounds/vender/hurt",
+                "length": 2.0,
+                "minPitchMultiplier": 1.0,
+                "maxPitchMultiplier": 1.0,
+                "minVolume": 1.0,
+                "maxVolume": 1.0,
+                "maxRange": 50.0,
+                "LODs": []
+            }
+        },
+        {
+            "type": "Hurt",
+            "unlocalisedstring": "npc.vender.hurt.2",
+            "audioClip": {
+                "sound": "flansvendersgame:sounds/vender/hurt",
+                "length": 2.0,
+                "minPitchMultiplier": 1.0,
+                "maxPitchMultiplier": 1.0,
+                "minVolume": 1.0,
+                "maxVolume": 1.0,
+                "maxRange": 50.0,
+                "LODs": []
+            }
+        }
+    ],
+    "hat": {
+        "item": "minecraft:air",
+        "count": 1,
+        "damage": 0,
+        "tags": "{}"
+    },
+    "chest": {
+        "item": "minecraft:air",
+        "count": 1,
+        "damage": 0,
+        "tags": "{}"
+    },
+    "legs": {
+        "item": "minecraft:air",
+        "count": 1,
+        "damage": 0,
+        "tags": "{}"
+    },
+    "shoes": {
+        "item": "minecraft:air",
+        "count": 1,
+        "damage": 0,
+        "tags": "{}"
+    },
+    "mainHand": {
+        "item": "minecraft:air",
+        "count": 1,
+        "damage": 0,
+        "tags": "{}"
+    },
+    "offHand": {
+        "item": "minecraft:air",
+        "count": 1,
+        "damage": 0,
+        "tags": "{}"
+    },
+    "maxMerchantLevel": 5,
+    "xpPerMerchantLevel": [
+        15,
+        45,
+        120,
+        300,
+        700
+    ],
+    "offers": [
+        {
+            "weighting": 1.0,
+            "merchantLevel": 1,
+            "inputs": [
+                {
+                    "count": 16,
+                    "compareItemName": true,
+                    "itemName": "minecraft:emerald",
+                    "compareDamage": false,
+                    "minAllowedDamage": 0,
+                    "maxAllowedDamage": 0,
+                    "compareItemTags": false,
+                    "requiredTags": [],
+                    "materialTags": [],
+                    "disallowedTags": [],
+                    "compareNBT": false,
+                    "requiredNBT": [],
+                    "disallowedNBT": []
+                }
+            ],
+            "output": {
+                "item": "flansvendersgame:fc_700",
+                "count": 1,
+                "damage": 0,
+                "tags": ""
+            },
+            "merchantXP": 0.0
+        }
+    ]
+}

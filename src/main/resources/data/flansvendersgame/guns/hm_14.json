@@ -33,7 +33,15 @@
         "manualReloadAllowed": true,
         "autoReloadWhenEmpty": true,
         "start": {
-            "duration": 0.5,
+            "canActUnderwater": true,
+            "canActUnderOtherLiquid": false,
+            "canBeOverriden": false,
+            "twoHanded": false,
+            "repeatMode": "SemiAuto",
+            "repeatDelay": 0.0,
+            "repeatCount": 0,
+            "spinUpDuration": 1.0,
+            "loudness": 150.0,
             "actions": [
                 {
                     "actionType": "Animation",
@@ -75,7 +83,15 @@
             ]
         },
         "eject": {
-            "duration": 0.5,
+            "canActUnderwater": true,
+            "canActUnderOtherLiquid": false,
+            "canBeOverriden": false,
+            "twoHanded": false,
+            "repeatMode": "SemiAuto",
+            "repeatDelay": 0.0,
+            "repeatCount": 0,
+            "spinUpDuration": 1.0,
+            "loudness": 150.0,
             "actions": [
                 {
                     "actionType": "Animation",
@@ -93,7 +109,15 @@
             ]
         },
         "loadOne": {
-            "duration": 0.5,
+            "canActUnderwater": true,
+            "canActUnderOtherLiquid": false,
+            "canBeOverriden": false,
+            "twoHanded": false,
+            "repeatMode": "SemiAuto",
+            "repeatDelay": 0.0,
+            "repeatCount": 0,
+            "spinUpDuration": 1.0,
+            "loudness": 150.0,
             "actions": [
                 {
                     "actionType": "Animation",
@@ -111,7 +135,15 @@
             ]
         },
         "end": {
-            "duration": 0.5,
+            "canActUnderwater": true,
+            "canActUnderOtherLiquid": false,
+            "canBeOverriden": false,
+            "twoHanded": false,
+            "repeatMode": "SemiAuto",
+            "repeatDelay": 0.0,
+            "repeatCount": 0,
+            "spinUpDuration": 1.0,
+            "loudness": 150.0,
             "actions": [
                 {
                     "actionType": "Animation",
@@ -133,19 +165,51 @@
         "manualReloadAllowed": true,
         "autoReloadWhenEmpty": true,
         "start": {
-            "duration": 1.0,
+            "canActUnderwater": true,
+            "canActUnderOtherLiquid": false,
+            "canBeOverriden": false,
+            "twoHanded": false,
+            "repeatMode": "SemiAuto",
+            "repeatDelay": 0.0,
+            "repeatCount": 0,
+            "spinUpDuration": 1.0,
+            "loudness": 150.0,
             "actions": []
         },
         "eject": {
-            "duration": 1.0,
+            "canActUnderwater": true,
+            "canActUnderOtherLiquid": false,
+            "canBeOverriden": false,
+            "twoHanded": false,
+            "repeatMode": "SemiAuto",
+            "repeatDelay": 0.0,
+            "repeatCount": 0,
+            "spinUpDuration": 1.0,
+            "loudness": 150.0,
             "actions": []
         },
         "loadOne": {
-            "duration": 1.0,
+            "canActUnderwater": true,
+            "canActUnderOtherLiquid": false,
+            "canBeOverriden": false,
+            "twoHanded": false,
+            "repeatMode": "SemiAuto",
+            "repeatDelay": 0.0,
+            "repeatCount": 0,
+            "spinUpDuration": 1.0,
+            "loudness": 150.0,
             "actions": []
         },
         "end": {
-            "duration": 1.0,
+            "canActUnderwater": true,
+            "canActUnderOtherLiquid": false,
+            "canBeOverriden": false,
+            "twoHanded": false,
+            "repeatMode": "SemiAuto",
+            "repeatDelay": 0.0,
+            "repeatCount": 0,
+            "spinUpDuration": 1.0,
+            "loudness": 150.0,
             "actions": []
         }
     },
@@ -158,6 +222,7 @@
         "repeatDelay": 0.05,
         "repeatCount": 3,
         "spinUpDuration": 1.5,
+        "loudness": 150.0,
         "actions": [
             {
                 "actionType": "Shoot",
@@ -275,6 +340,7 @@
         "repeatDelay": 0.05,
         "repeatCount": 3,
         "spinUpDuration": 1.5,
+        "loudness": 150.0,
         "actions": [
             {
                 "actionType": "AimDownSights",
@@ -313,6 +379,7 @@
         "repeatDelay": 0.0,
         "repeatCount": 0,
         "spinUpDuration": 1.0,
+        "loudness": 150.0,
         "actions": [
             {
                 "actionType": "Animation",

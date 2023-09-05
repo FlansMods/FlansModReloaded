@@ -17,10 +17,10 @@ public class ReloadProgress
 	{
 		switch(CurrentStage)
 		{
-			case Start -> { return Def.start.repeatDelay; }
-			case Eject -> { return Def.eject.repeatDelay; }
-			case LoadOne -> { return Def.loadOne.repeatDelay; }
-			case End -> { return Def.end.repeatDelay; }
+			case Start -> { return Def.start.GetMaxDurationSeconds(); }
+			case Eject -> { return Def.eject.GetMaxDurationSeconds(); }
+			case LoadOne -> { return Def.loadOne.GetMaxDurationSeconds(); }
+			case End -> { return Def.end.GetMaxDurationSeconds(); }
 			default -> { return 0f; }
 		}
 	}

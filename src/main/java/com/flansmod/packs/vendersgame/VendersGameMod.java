@@ -2,15 +2,22 @@ package com.flansmod.packs.vendersgame;
 
 import com.flansmod.common.FlansMod;
 import com.flansmod.common.crafting.WorkbenchBlockEntity;
+import com.flansmod.packs.vendersgame.client.VenderModel;
+import com.flansmod.packs.vendersgame.client.VenderRenderer;
+import com.flansmod.packs.vendersgame.common.VenderEntity;
 import com.mojang.logging.LogUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.ItemModelShaper;
 import net.minecraft.client.resources.model.ModelResourceLocation;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.MobCategory;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.client.event.EntityRenderersEvent;
 import net.minecraftforge.client.event.ModelEvent;
+import net.minecraftforge.event.entity.EntityAttributeCreationEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -30,6 +37,7 @@ public class VendersGameMod
 	public static final DeferredRegister<Item> ITEMS = DeferredRegister.create(ForgeRegistries.ITEMS, MODID);
 	public static final DeferredRegister<Block> BLOCKS = DeferredRegister.create(ForgeRegistries.BLOCKS, MODID);
 	public static final DeferredRegister<BlockEntityType<?>> TILE_ENTITIES = DeferredRegister.create(ForgeRegistries.BLOCK_ENTITY_TYPES, MODID);
+	public static final DeferredRegister<EntityType<?>> ENTITY_TYPES = DeferredRegister.create(ForgeRegistries.ENTITY_TYPES, MODID);
 
 	// Flint & Cobblesons Premium Guns
 	public static final RegistryObject<Item> GUN_FC_700 = 						FlansMod.Gun(ITEMS, MODID, "fc_700");
@@ -70,17 +78,41 @@ public class VendersGameMod
 		FlansMod.Workbench_TileEntityType(TILE_ENTITIES, MODID, "phantek_workbench");
 
 
+	// Vender NPC
+	public static final RegistryObject<EntityType<VenderEntity>> ENTITY_TYPE_VENDER = ENTITY_TYPES.register(
+		"vender",
+		() -> EntityType.Builder.of(
+				VenderEntity::new,
+				MobCategory.CREATURE)
+			.sized(0.8f, 1.65f)
+			.build("vender"));
+
+
 	public VendersGameMod()
 	{
 		IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
 		ITEMS.register(modEventBus);
 		BLOCKS.register(modEventBus);
 		TILE_ENTITIES.register(modEventBus);
+		ENTITY_TYPES.register(modEventBus);
+		modEventBus.register(this);
+	}
+
+	@SubscribeEvent
+	public void SupplyAttributes(EntityAttributeCreationEvent event)
+	{
+		event.put(ENTITY_TYPE_VENDER.get(), VenderEntity.createAttributes().build());
 	}
 
 	@Mod.EventBusSubscriber(value = Dist.CLIENT, bus = Mod.EventBusSubscriber.Bus.MOD, modid = MODID)
 	public static class ClientMod
 	{
+		@SubscribeEvent
+		public static void RegisterLayerDefinitions(EntityRenderersEvent.RegisterLayerDefinitions event)
+		{
+			event.registerLayerDefinition(VenderModel.MODEL_LAYER_LOCATION, VenderModel::createBodyLayer);
+		}
+
 		@SubscribeEvent
 		public static void ModelRegistryEvent(ModelEvent.RegisterAdditional event)
 		{
@@ -91,6 +123,12 @@ public class VendersGameMod
 				event.register(new ModelResourceLocation(MODID, entry.getId().getPath() + "_inventory", "inventory"));
 				shaper.register(entry.get(), new ModelResourceLocation(MODID, entry.getId().getPath() + "_inventory", "inventory"));
 			}
+		}
+
+		@SubscribeEvent
+		public static void EntityRenderEvent(EntityRenderersEvent.RegisterRenderers event)
+		{
+			event.registerEntityRenderer(ENTITY_TYPE_VENDER.get(), VenderRenderer::new);
 		}
 	}
 }

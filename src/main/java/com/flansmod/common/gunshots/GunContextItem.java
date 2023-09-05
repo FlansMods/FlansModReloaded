@@ -12,21 +12,20 @@ import java.util.Objects;
 
 public class GunContextItem extends GunContext
 {
-	private final ItemStack Stack;
 	public GunContextItem(ItemStack stack)
 	{
-		super();
-		Stack = stack;
+		super(stack);
 	}
-
+	// We don't even know where this ItemStack lives, no-op
 	@Override
-	@Nonnull
-	public ItemStack GetItemStack() { return Stack; }
+	public void OnItemStackChanged(ItemStack stack) { }
+	// Kinda want to return a "Maybe" here
 	@Override
-	public void SetItemStack(ItemStack stack) { } // Can't set an itemstack if we don't know where it is
+	public boolean IsItemStackStillInPlace() { return false; }
 	@Override
 	public DamageSource CreateDamageSource() { return DamageSource.GENERIC; }
 	@Override
+	@Nonnull
 	public ShooterContext GetShooter() { return ShooterContext.INVALID; }
 	@Override
 	public Container GetAttachedInventory() { return null; }

@@ -38,6 +38,7 @@ public class Maths
     public static double Lerp(double a, double b, double t) { return a + (b-a)*t; }
     public static double Sign(double d) { return d > 0.0d ? 1.0d : (d < 0.0d ? -1.0d : 0.0d); }
 
+
     // Float maths
     public static final float EpsilonF = 0.000001f;
     public static float Clamp(float i, float min, float max)
@@ -63,6 +64,12 @@ public class Maths
     public static final float TauF = (float)Tau;
     public static final float DegToRadF = (float)DegToRad;
     public static final float RadToDegF = (float)RadToDeg;
+
+    public static double Sin(double f) { return Math.sin(f); }
+    public static double Cos(double f) { return Math.cos(f); }
+    public static double Sqrt(double f) { return Math.sqrt(f); }
+    public static double Atan(double f) { return Math.atan(f); }
+    public static double Atan2(double a, double b) { return Math.atan2(a, b); }
 
     public static float SinF(float f) { return (float)Math.sin(f); }
     public static float CosF(float f) { return (float)Math.cos(f); }
@@ -108,6 +115,11 @@ public class Maths
         if(f >= 180f) return f - 360f;
         if(f < -180f) return f + 360f;
         return f;
+    }
+    public static float LerpDegrees(float a, float b, float t)
+    {
+        float delta = ClampDegrees(b - a);
+        return a + delta * t;
     }
 
     public static double CalculateParameter(Vec3 v0, Vec3 v1, Vec3 vT)

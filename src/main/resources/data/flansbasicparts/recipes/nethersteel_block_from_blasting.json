@@ -1,0 +1,11 @@
+{
+  "type": "minecraft:blasting",
+  "category": "misc",
+  "cookingtime": 51200,
+  "experience": 6400.0,
+  "group": "nethersteel_block",
+  "ingredient": {
+    "item": "minecraft:netherite_block"
+  },
+  "result": "flansbasicparts:nethersteel_block"
+}

@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:block/cube_all",
+  "textures": {
+    "all": "flansbasicparts:block/carbon_fiber_block"
+  }
+}

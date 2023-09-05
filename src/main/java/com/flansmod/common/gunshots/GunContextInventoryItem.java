@@ -16,19 +16,25 @@ public class GunContextInventoryItem extends GunContext
 	private final int Slot;
 	public GunContextInventoryItem(Container inv, int slot)
 	{
-		super();
+		super(inv.getItem(slot));
 		Inv = inv;
 		Slot = slot;
 	}
 
 	@Override
-	@Nonnull
-	public ItemStack GetItemStack() { return Inv.getItem(Slot); }
+	public void OnItemStackChanged(ItemStack stack)
+	{
+		if(!StackUpdateWouldInvalidate(Inv.getItem(Slot)))
+		{
+			Inv.setItem(Slot, stack);
+		}
+	}
 	@Override
-	public void SetItemStack(ItemStack stack) { Inv.setItem(Slot, stack); }
+	public boolean IsItemStackStillInPlace() { return !StackUpdateWouldInvalidate(Inv.getItem(Slot)); }
 	@Override
 	public DamageSource CreateDamageSource() { return DamageSource.GENERIC; }
 	@Override
+	@Nonnull
 	public ShooterContext GetShooter() { return ShooterContext.INVALID; }
 	@Override
 	public Container GetAttachedInventory() { return Inv; }

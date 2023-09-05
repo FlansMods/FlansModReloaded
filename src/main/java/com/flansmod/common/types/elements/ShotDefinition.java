@@ -39,6 +39,9 @@ public class ShotDefinition
 
 
 
+
+
+	// These apply to all bullet types
 	@JsonField
 	public float verticalRecoil = 3.0f;
 	@JsonField
@@ -47,8 +50,6 @@ public class ShotDefinition
 	public float spread = 0.0f;
 	@JsonField
 	public ESpreadPattern spreadPattern = ESpreadPattern.FilledCircle;
-	@JsonField
-	public boolean hitscan = true;
 	@JsonField
 	public float speed = 0.0f;
 	@JsonField(Docs = "Number of raycasts or bullet entities to create", Min = 0, Max = 128)
@@ -60,8 +61,29 @@ public class ShotDefinition
 	@JsonField
 	public float penetrationPower = 1.0f;
 	@JsonField
-	public String trailParticles = "";
-	@JsonField
 	@Nonnull
 	public ImpactDefinition impact = new ImpactDefinition();
+
+	@JsonField
+	public boolean hitscan = true;
+
+	// The following only apply to spawned bullets (non-hitscan)
+	@JsonField(Docs = "If set to a non-zero amount, this projectile will have a fuse timer, in seconds")
+	public float fuseTime = 0.0f;
+	@JsonField
+	public float gravityFactor = 1.0f;
+	@JsonField
+	public boolean sticky = false;
+	@JsonField(Docs = "How quickly a projectile rotates to face the direction of travel")
+	public float turnRate = 0.5f;
+	@JsonField(Docs = "Percent speed loss per tick (1/20s)")
+	public float dragInAir = 0.01f;
+	@JsonField
+	public String trailParticles = "";
+	@JsonField
+	public float secondsBetweenTrailParticles = 0.25f;
+	@JsonField(Docs = "Percent speed loss per tick (1/20s)")
+	public float dragInWater = 0.2f;
+	@JsonField
+	public String waterParticles = "";
 }

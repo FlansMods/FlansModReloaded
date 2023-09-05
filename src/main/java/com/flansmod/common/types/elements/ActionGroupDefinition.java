@@ -29,4 +29,15 @@ public class ActionGroupDefinition
 	public ActionDefinition[] actions = new ActionDefinition[0];
 
 	public static final ActionGroupDefinition INVALID = new ActionGroupDefinition();
+
+	public float GetMaxDurationSeconds()
+	{
+		float duration = repeatDelay;
+		for(ActionDefinition actionDef : actions)
+		{
+			if(actionDef.duration > duration)
+				duration = actionDef.duration;
+		}
+		return duration;
+	}
 }

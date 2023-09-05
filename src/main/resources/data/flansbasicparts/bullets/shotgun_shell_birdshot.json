@@ -1,5 +1,4 @@
 {
-    "gravityFactor": 0.25,
     "itemSettings": {
         "maxStackSize": 64,
         "tags": [
@@ -13,7 +12,6 @@
         "horizontalRecoil": 0.5,
         "spread": 3.0,
         "spreadPattern": "FilledCircle",
-        "hitscan": true,
         "speed": 0.0,
         "bulletCount": 6,
         "spinSpeed": 360.0,
@@ -21,20 +19,32 @@
             "minecraft:glass"
         ],
         "penetrationPower": 1.0,
-        "trailParticles": "",
         "impact": {
             "decal": "flansmod:effects/bullet_decal",
             "damageToTarget": 0.2,
             "multiplierVsPlayers": 1.0,
             "multiplierVsVehicles": 1.0,
             "knockback": 0.0,
+            "potionEffectOnTarget": "",
             "splashDamageRadius": 0.0,
             "splashDamageFalloff": 1.0,
+            "potionEffectOnSplash": "",
             "setFireToTarget": 0.0,
             "fireSpreadRadius": 0.0,
             "fireSpreadAmount": 0.0,
-            "hitSounds": []
-        }
+            "explosionRadius": 0.0,
+            "hitSounds": [],
+            "onImpactActions": []
+        },
+        "hitscan": true,
+        "fuseTime": 0.0,
+        "gravityFactor": 1.0,
+        "turnRate": 0.5,
+        "dragInAir": 0.01,
+        "trailParticles": "",
+        "secondsBetweenTrailParticles": 0.25,
+        "dragInWater": 0.2,
+        "waterParticles": ""
     },
     "onShootActions": [],
     "onClipEmptyActions": [],

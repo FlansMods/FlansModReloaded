@@ -27,4 +27,7 @@ public class ShooterContextPlayer extends ShooterContextLiving
 	}
 	@Override
 	public GunContext CreateForGunIndex(int gunSlotIndex) { return new GunContextPlayer(this, gunSlotIndex); }
+	@Override
+	public GunContext CreateForSpecificStack(int gunSlotIndex, ItemStack stack) { return new GunContextPlayer(this, gunSlotIndex, stack); }
+
 }

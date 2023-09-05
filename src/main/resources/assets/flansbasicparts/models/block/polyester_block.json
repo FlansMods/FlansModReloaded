@@ -1,0 +1,12 @@
+{
+  "parent": "block/cube",
+  "textures": {
+    "particle": "flansbasicparts:block/polyester_block_side",
+    "down": "flansbasicparts:block/polyester_block_top",
+    "up": "flansbasicparts:block/polyester_block_top",
+    "north": "flansbasicparts:block/polyester_block_side",
+    "east": "flansbasicparts:block/polyester_block_side",
+    "south": "flansbasicparts:block/polyester_block_side",
+    "west": "flansbasicparts:block/polyester_block_side"
+  }
+}

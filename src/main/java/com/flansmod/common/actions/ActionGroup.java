@@ -2,6 +2,7 @@ package com.flansmod.common.actions;
 
 import com.flansmod.common.FlansMod;
 import com.flansmod.common.gunshots.ActionGroupContext;
+import com.flansmod.common.types.elements.ActionDefinition;
 import com.flansmod.common.types.elements.ActionGroupDefinition;
 import com.flansmod.common.types.guns.ERepeatMode;
 import com.flansmod.util.Maths;
@@ -49,6 +50,9 @@ public class ActionGroup
 		InputType = inputType;
 		Def = groupDef;
 		Duration = Maths.Floor(Def.repeatDelay * 20.0f);
+		for(ActionDefinition actionDefinition : groupDef.actions)
+			if(actionDefinition.duration * 20.0f > Duration)
+				Duration = Maths.Floor(actionDefinition.duration * 20.0f);
 		Actions = new ArrayList<>();
 	}
 
@@ -202,6 +206,9 @@ public class ActionGroup
 
 	public boolean Finished(ActionGroupContext context)
 	{
+		if(Finished)
+			return true;
+
 		switch(RepeatMode(context))
 		{
 			// These modes are all set to wait until a SetFinished call happens externally

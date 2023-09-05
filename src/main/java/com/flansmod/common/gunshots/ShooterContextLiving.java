@@ -8,6 +8,7 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.item.ItemStack;
 
 import javax.annotation.Nonnull;
 import java.util.Objects;
@@ -31,7 +32,8 @@ public class ShooterContextLiving extends ShooterContext
 	}
 	@Override
 	public GunContext CreateForGunIndex(int gunSlotIndex) { return new GunContextLiving(this, gunSlotIndex == 0 ? InteractionHand.MAIN_HAND : InteractionHand.OFF_HAND); }
-
+	@Override
+	public GunContext CreateForSpecificStack(int gunSlotIndex, ItemStack stack) { return new GunContextLiving(this, gunSlotIndex == 0 ? InteractionHand.MAIN_HAND : InteractionHand.OFF_HAND, stack); }
 	public GunContext GetContext(InteractionHand hand) { return GunContext.GetOrCreate(this, hand); }
 	public GunContext GetMainHandContext() { return GunContext.GetOrCreate(this, InteractionHand.MAIN_HAND); }
 	public GunContext GetOffHandContext() { return GunContext.GetOrCreate(this, InteractionHand.OFF_HAND); }

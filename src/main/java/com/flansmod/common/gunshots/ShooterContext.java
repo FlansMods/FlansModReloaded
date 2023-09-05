@@ -2,15 +2,18 @@ package com.flansmod.common.gunshots;
 
 import com.flansmod.common.actions.EActionInput;
 import com.flansmod.common.types.elements.ModifierDefinition;
+import com.flansmod.common.types.guns.GunDefinition;
 import com.flansmod.util.MinecraftHelpers;
 import com.flansmod.util.Transform;
 import net.minecraft.client.Minecraft;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.Container;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -31,7 +34,9 @@ public abstract class ShooterContext
 		@Override
 		public GunContext[] GetAllActiveGunContexts() { return new GunContext[0]; }
 		@Override
-		public  GunContext CreateForGunIndex(int gunSlotIndex) { return GunContext.INVALID; }
+		public GunContext CreateForGunIndex(int gunSlotIndex) { return GunContext.INVALID; }
+		@Override
+		public GunContext CreateForSpecificStack(int gunSlotIndex, ItemStack stack) { return GunContext.GetOrCreate(stack); }
 		@Override
 		public ActionGroupContext[] GetPrioritisedActions(EActionInput action) { return new ActionGroupContext[0]; }
 		@Override
@@ -93,67 +98,132 @@ public abstract class ShooterContext
 			return context;
 		}
 	}
+
 	@Nonnull
-	public static ShooterContext GetOrCreate(UUID uuid, boolean client)
+	public static ShooterContext GetOrCreate(UUID ownerUUID, UUID shooterUUID, boolean client)
 	{
 		var cache = ContextCache(client);
-		if(cache.containsKey(uuid))
-			return cache.get(uuid);
+		if(cache.containsKey(shooterUUID))
+			return cache.get(shooterUUID);
 		else
 		{
 			if(client)
 			{
-				return Client_GetOrCreate(uuid);
+				return Client_GetOrCreate(shooterUUID, ownerUUID);
 			}
 			else
 			{
-				return Server_GetOrCreate(uuid);
+				return Server_GetOrCreate(shooterUUID, ownerUUID);
 			}
 		}
 	}
 
+	@Nonnull
+	public static ShooterContext GetOrCreate(UUID uuid, boolean client)
+	{
+		return GetOrCreate(uuid, uuid, client);
+	}
+
 	@OnlyIn(Dist.CLIENT)
-	private static ShooterContext Client_GetOrCreate(UUID uuid)
+	private static ShooterContext Client_GetOrCreate(UUID shooterUUID, UUID ownerUUID)
 	{
 		if(Minecraft.getInstance().level != null)
 		{
 			for (Entity entity : Minecraft.getInstance().level.entitiesForRendering())
 			{
-				if(entity.getUUID().equals(uuid))
+				if(entity.getUUID().equals(shooterUUID))
 					return GetOrCreate(entity);
 			}
 		}
-		return ShooterContext.INVALID;
+		return new ShooterContextUnresolvedEntity(ownerUUID, shooterUUID);
 	}
 
-	private static ShooterContext Server_GetOrCreate(UUID uuid)
+	private static ShooterContext Server_GetOrCreate(UUID shooterUUID, UUID ownerUUID)
 	{
 		MinecraftServer server = MinecraftHelpers.GetServer();
 		if(server != null && server.isRunning())
 		{
 			for(ServerLevel serverLevel : server.getAllLevels())
 			{
-				Entity entity = serverLevel.getEntity(uuid);
-				if(entity != null)
-					return GetOrCreate(entity);
+				Entity shooter = serverLevel.getEntity(shooterUUID);
+				if(shooter != null)
+					return GetOrCreate(shooter);
 			}
 		}
-		return ShooterContext.INVALID;
+		return new ShooterContextUnresolvedEntity(ownerUUID, shooterUUID);
 	}
 	// ---------------------------------------------------------------------------------------------------
 
 	// ---------------------------------------------------------------------------------------------------
 	// GUN CONTEXT CACHE (Contained in the ShooterContext and built over time)
 	// ---------------------------------------------------------------------------------------------------
-	private final HashMap<Integer, GunContext> GunContextCache = new HashMap<>();
+	private final HashMap<Integer, List<GunContext>> GunContextCache = new HashMap<>();
+	@Nonnull
+	public GunContext GetOrCreateSpecificContext(int slotIndex, int contextHash)
+	{
+		// Check we have a cache for this inventory slot
+		if(!GunContextCache.containsKey(slotIndex))
+			GunContextCache.put(slotIndex, new ArrayList<>());
+
+		// Then check the most recent gun in that slot
+		List<GunContext> gunsInSlot = GunContextCache.get(slotIndex);
+		for(int i = gunsInSlot.size() - 1; i >= 0; i--)
+		{
+			GunContext gunInSlot = gunsInSlot.get(i);
+			if(gunInSlot.IsValid() && gunInSlot.hashCode() == contextHash)
+			{
+				return gunInSlot;
+			}
+		}
+
+		// If our gun wasn't found, maybe it hasn't been cached yet, so check the slot
+		GunContext context = CreateForGunIndex(slotIndex);
+		if(context.IsValid())
+		{
+			gunsInSlot.add(context);
+			// If the current slot has a good context, check it is the one we are asking for before returning it
+			if(context.hashCode() == contextHash)
+				return context;
+		}
+
+		// We want a specific context, not just the latest, so return invalid
+		return GunContext.INVALID;
+	}
+
+	@Nonnull
+	public GunContext CreateOldGunContext(int slotIndex, int contextHash, ItemStack snapshotOfStack)
+	{
+		GunContext currentMatch = GetOrCreateSpecificContext(slotIndex, contextHash);
+		if(currentMatch.IsValid())
+			return currentMatch;
+
+		// Otherwise, this is a context of an old gun that is no longer in that slot,
+		// and was probably last in that slot on a previous session
+		return CreateForSpecificStack(slotIndex, snapshotOfStack);
+	}
+
 	@Nonnull
 	public GunContext GetOrCreate(int slotIndex)
 	{
-		if(GunContextCache.containsKey(slotIndex))
-			return GunContextCache.get(slotIndex);
+		// Check we have a cache for this inventory slot
+		if(!GunContextCache.containsKey(slotIndex))
+			GunContextCache.put(slotIndex, new ArrayList<>());
 
+		// Then check the most recent gun in that slot
+		List<GunContext> gunsInSlot = GunContextCache.get(slotIndex);
+		if(gunsInSlot.size() != 0)
+		{
+			GunContext mostRecentGun = gunsInSlot.get(gunsInSlot.size() - 1);
+			if (mostRecentGun.IsValid() && mostRecentGun.IsItemStackStillInPlace())
+				return mostRecentGun;
+		}
+
+		// If there wasn't a good most recent gun, we should check to see if the slot has a new gun in it
 		GunContext context = CreateForGunIndex(slotIndex);
-		GunContextCache.put(slotIndex, context);
+		if(context.IsValid())
+			gunsInSlot.add(context);
+
+		// Now return this context, whether it is invalid or not
 		return context;
 	}
 	// ---------------------------------------------------------------------------------------------------
@@ -175,6 +245,10 @@ public abstract class ShooterContext
 	{
 		return Entity() != null ? Entity().level : null;
 	}
+	@Nonnull
+	public UUID EntityUUID() { return Entity() != null ? Entity().getUUID() : InvalidShooterContextUUID; }
+	@Nonnull
+	public UUID OwnerUUID() { return Owner() != null ? Owner().getUUID() : InvalidShooterContextUUID; }
 
 	protected final List<ModifierDefinition> ModifierCache;
 	private int ModifierHash;
@@ -196,12 +270,26 @@ public abstract class ShooterContext
 			modStack.Apply(mod);
 	}
 
+	public void Save(CompoundTag tags)
+	{
+		tags.putUUID("owner", OwnerUUID());
+		tags.putUUID("entity", EntityUUID());
+	}
+
+	public static ShooterContext Load(CompoundTag tags, boolean client)
+	{
+		UUID ownerID = tags.getUUID("owner");
+		UUID entityID = tags.getUUID("entity");
+		return ShooterContext.GetOrCreate(ownerID, entityID, client);
+	}
+
 	// ---------------------------------------------------------------------------------------------------
 	// INTERFACE
 	// ---------------------------------------------------------------------------------------------------
 	public abstract int GetNumValidContexts();
 	public abstract GunContext[] GetAllActiveGunContexts();
 	public abstract GunContext CreateForGunIndex(int gunSlotIndex);
+	public abstract GunContext CreateForSpecificStack(int gunSlotIndex, ItemStack stack);
 	public abstract ActionGroupContext[] GetPrioritisedActions(EActionInput action);
 	public abstract Entity Entity();
 	public abstract Entity Owner();

@@ -1,0 +1,14 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "building",
+  "ingredients": [
+    {
+      "item": "flansbasicparts:nethersteel_ingot"
+    }
+  ],
+  "result": {
+    "item": "flansbasicparts:nethersteel_nugget",
+	"count": 9
+  },
+  "show_notification": true
+}

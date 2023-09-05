@@ -292,11 +292,10 @@ public class ClientRenderHooks
 				MagazineDefinition magDef = mainHandPrimaryContext.GetMagazineType(0);
 				ItemStack[] bulletStacks = mainHandPrimaryContext.GetCombinedBulletStacks(0);
 
-				if(magDef.numRounds <= 50)
+				if(magDef.numRounds <= 32)
 				{
 					int stackIndex = 0;
 					int bulletIndex = 0;
-					int renderIndex = 0;
 					for(int i = 0; i < magDef.numRounds; i++)
 					{
 						if(stackIndex < bulletStacks.length)
@@ -315,61 +314,24 @@ public class ClientRenderHooks
 									int y = anchorY - 41 + (i % 4 == 3 ? 2 : (i % 4 == 2 ? 0 : (i % 4 == 1 ? 1 : 3)));
 									Minecraft.getInstance().getItemRenderer().renderGuiItem(bulletStacks[stackIndex], x, y);
 									x += 5;
-									renderIndex++;
 								}
 								bulletIndex++;
 							}
 						}
-						else
-						{
-							// Huh?
-						}
 					}
 				}
-
-				/*
-				// Count out the number of each type of bullet
-				HashMap<Item, Integer> counts = new HashMap<>();
-				for(ItemStack stack : bulletStacks)
-					if(!stack.isEmpty())
-					{
-						if(counts.containsKey(stack.getItem()))
-							counts.put(stack.getItem(), counts.get(stack.getItem()) + stack.getCount());
-						else
-							counts.put(stack.getItem(), stack.getCount());
-					}
-
-				if(counts.size() == 1)
+				else
 				{
-					for(var kvp : counts.entrySet())
+					for (ItemStack bulletStack : bulletStacks)
 					{
+						if (bulletStack.isEmpty() || bulletStack.getItem() == Items.APPLE)
+							continue;
 						int y = anchorY - 41;
-						Minecraft.getInstance().getItemRenderer().renderGuiItem(new ItemStack(kvp.getKey()), x, y);
-						RenderString(poseStack, x + 16, y + 4, Component.literal(kvp.getValue() + "/" + magDef.numRounds), 0xffffff);
-					}
-				}
-				else if(counts.size() >= 2)
-				{
-
-				}
-
-				for(int i = 0; i < bulletStacks.length; i++)
-				{
-					ItemStack bulletStack = bulletStacks[i];
-					if (!bulletStack.isEmpty())
-					{
-						int y = anchorY - 41 + (i % 2 == 0 ? 2 : 0);
 						Minecraft.getInstance().getItemRenderer().renderGuiItem(bulletStack, x, y);
-
-						if(magDef.allRoundsMustBeIdentical)
-						{
-							RenderString(poseStack, x + 16, y + 4, Component.literal(bulletStack.getCount() + "/" + magDef.numRounds), 0xffffff);
-							x += 32;
-						}
+						Minecraft.getInstance().getItemRenderer().renderGuiItemDecorations(Minecraft.getInstance().font, bulletStack, x, y);
+						x += 16;
 					}
-					x += 12;
 				}
-				 */
 			}
 
 			RenderString(poseStack, anchorX + 96, anchorY - 50, mainContext.GetItemStack().getHoverName(), 0xffffff);
@@ -388,22 +350,48 @@ public class ClientRenderHooks
 			ActionGroupContext offHandPrimaryContext = ActionGroupContext.CreateFrom(offContext, EActionInput.PRIMARY);
 			if(offHandPrimaryContext.IsShootAction())
 			{
+				MagazineDefinition magDef = offHandPrimaryContext.GetMagazineType(0);
 				ItemStack[] bulletStacks = offHandPrimaryContext.GetCombinedBulletStacks(0);
-				for (int i = 0; i < bulletStacks.length; i++)
+
+				if(magDef.numRounds <= 32)
 				{
-					ItemStack bulletStack = bulletStacks[i];
-					if (!bulletStack.isEmpty())
+					int stackIndex = 0;
+					int bulletIndex = 0;
+					for(int i = 0; i < magDef.numRounds; i++)
 					{
-						int y = anchorY - 41 + (i % 2 == 0 ? 2 : 0);
-						Minecraft.getInstance().getItemRenderer().renderGuiItem(bulletStack, x, y);
-						if (bulletStack.isDamageableItem())
+						if(stackIndex < bulletStacks.length)
 						{
-							int countRemaining = bulletStack.getMaxDamage() - bulletStack.getDamageValue();
-							RenderString(poseStack, x - 12 - 16, y + 4, Component.literal(countRemaining + "/" + bulletStack.getMaxDamage()), 0xffffff);
-							x -= 32;
+							if(bulletIndex == bulletStacks[stackIndex].getCount())
+							{
+								stackIndex++;
+								bulletIndex = 0;
+							}
+
+							if(stackIndex < bulletStacks.length
+								&& bulletIndex < bulletStacks[stackIndex].getCount())
+							{
+								if(!bulletStacks[stackIndex].isEmpty() && bulletStacks[stackIndex].getItem() != Items.APPLE)
+								{
+									int y = anchorY - 41 + (i % 4 == 3 ? 2 : (i % 4 == 2 ? 0 : (i % 4 == 1 ? 1 : 3)));
+									Minecraft.getInstance().getItemRenderer().renderGuiItem(bulletStacks[stackIndex], x, y);
+									x -= 5;
+								}
+								bulletIndex++;
+							}
 						}
 					}
-					x -= 12;
+				}
+				else
+				{
+					for (ItemStack bulletStack : bulletStacks)
+					{
+						if (bulletStack.isEmpty() || bulletStack.getItem() == Items.APPLE)
+							continue;
+						int y = anchorY - 41;
+						Minecraft.getInstance().getItemRenderer().renderGuiItem(bulletStack, x, y);
+						Minecraft.getInstance().getItemRenderer().renderGuiItemDecorations(Minecraft.getInstance().font, bulletStack, x, y);
+						x -= 16;
+					}
 				}
 			}
 

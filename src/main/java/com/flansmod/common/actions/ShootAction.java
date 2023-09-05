@@ -2,8 +2,10 @@ package com.flansmod.common.actions;
 
 import com.flansmod.client.FlansModClient;
 import com.flansmod.client.particle.GunshotHitBlockParticle;
+import com.flansmod.common.FlansMod;
 import com.flansmod.common.gunshots.*;
 import com.flansmod.common.item.BulletItem;
+import com.flansmod.common.projectiles.BulletEntity;
 import com.flansmod.common.types.elements.ActionDefinition;
 import com.flansmod.common.types.guns.*;
 import com.flansmod.util.Maths;
@@ -11,6 +13,7 @@ import com.flansmod.util.Transform;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.particle.ParticleEngine;
+import net.minecraft.commands.arguments.EntityAnchorArgument;
 import net.minecraft.core.Vec3i;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.FriendlyByteBuf;
@@ -139,6 +142,8 @@ public class ShootAction extends Action
 	{
 		if(!context.CanShoot(0))
 			return false;
+		if(!context.Gun().IsItemStackStillInPlace())
+			return false;
 
 		return true;
 	}
@@ -243,24 +248,38 @@ public class ShootAction extends Action
 
 					float penetrationPower = shotContext.PenetrationPower();
 
-					List<HitResult> hits = new ArrayList<HitResult>(8);
-					Raytracer.ForLevel(context.Shooter().Entity().level).CastBullet(
-						context.Shooter().Entity(),
-						randomizedDirection.PositionVec3(),
-						randomizedDirection.ForwardVec3().scale(RAYCAST_LENGTH),
-						penetrationPower,
-						penetrationPower,
-						hits
-					);
+					if (shotContext.Bullet.shootStats.hitscan)
+					{
+						// Hitscan: Use the raytracer on client, find our hits and let the server know what they were
+						// Server will verify these results
+						List<HitResult> hits = new ArrayList<HitResult>(8);
+						Raytracer.ForLevel(context.Shooter().Entity().level).CastBullet(
+							context.Shooter().Entity(),
+							randomizedDirection.PositionVec3(),
+							randomizedDirection.ForwardVec3().scale(RAYCAST_LENGTH),
+							penetrationPower,
+							penetrationPower,
+							hits
+						);
 
-					HitResult[] hitArray = new HitResult[hits.size()];
-					hits.toArray(hitArray);
-					shots.AddShot(new Gunshot()
-						.FromShot(repeatIndex)
-						.WithOrigin(randomizedDirection.PositionVec3())
-						.WithTrajectory(randomizedDirection.ForwardVec3().scale(RAYCAST_LENGTH))
-						.WithHits(hitArray)
-						.WithBullet(bulletItem.Def()));
+						HitResult[] hitArray = new HitResult[hits.size()];
+						hits.toArray(hitArray);
+						shots.AddShot(new Gunshot()
+							.FromShot(repeatIndex)
+							.WithOrigin(randomizedDirection.PositionVec3())
+							.WithTrajectory(randomizedDirection.ForwardVec3().scale(RAYCAST_LENGTH))
+							.WithHits(hitArray)
+							.WithBullet(bulletItem.Def()));
+					}
+					else
+					{
+						// Non-hitscan: The server will simulate the entity, so we just say where it should be going and leave them to it
+						shots.AddShot(new Gunshot()
+							.FromShot(repeatIndex)
+							.WithOrigin(randomizedDirection.PositionVec3())
+							.WithTrajectory(randomizedDirection.ForwardVec3().scale(shotContext.Speed()))
+							.WithBullet(shotContext.Bullet));
+					}
 				}
 			}
 		}
@@ -347,100 +366,37 @@ public class ShootAction extends Action
 			for(Gunshot shot : shotCollection.Shots)
 			{
 				GunshotContext gunshotContext = GunshotContext.CreateFrom(context, shot.bulletDef);
-				ServerProcessImpact(level, shot, gunshotContext);
+				if(gunshotContext.IsValid())
+				{
+					if(gunshotContext.Bullet.shootStats.hitscan)
+					{
+						// Hitscan weapons we resolve the hits instantly
+						ServerProcessImpact(level, shot, gunshotContext);
+					}
+					else
+					{
+						// Otherwise, a bullet entity will need to be spawned
+						ServerSpawnBullet(level, shot, gunshotContext);
+					}
+				}
+				else FlansMod.LOGGER.error("Invalid shot with bullet " + shot.bulletDef);
 			}
 		}
 	}
 
+	private void ServerSpawnBullet(Level level, Gunshot shot, GunshotContext gunshotContext)
+	{
+		BulletEntity bullet = new BulletEntity(FlansMod.ENT_TYPE_BULLET.get(), level);
+		bullet.InitContext(gunshotContext);
+		bullet.SetVelocity(shot.trajectory.scale(1d/20d));
+		bullet.setPos(shot.origin);
+		bullet.lookAt(EntityAnchorArgument.Anchor.FEET, shot.trajectory);
+		level.addFreshEntity(bullet);
+	}
+
 	private void ServerProcessImpact(Level level, Gunshot shot, GunshotContext gunshotContext)
 	{
-		for (HitResult hit : shot.hits)
-		{
-			// Apply damage etc
-			switch (hit.getType())
-			{
-				case BLOCK -> {
-					if (gunshotContext.Bullet.shootStats.breaksMaterials.length > 0)
-					{
-						BlockHitResult blockHit = (BlockHitResult) hit;
-						BlockState stateHit = level.getBlockState(blockHit.getBlockPos());
-						if (gunshotContext.Bullet.shootStats.BreaksMaterial(stateHit.getMaterial()))
-						{
-							level.destroyBlock(blockHit.getBlockPos(), true, gunshotContext.ActionGroup.Shooter().Entity());
-						}
-					}
-				}
-				case ENTITY -> {
-					Entity entity = null;
-					EPlayerHitArea hitArea = EPlayerHitArea.BODY;
-					if (hit instanceof UnresolvedEntityHitResult unresolvedHit)
-					{
-						entity = level.getEntity(unresolvedHit.EntityID());
-						hitArea = unresolvedHit.HitboxArea();
-					} else if (hit instanceof PlayerHitResult playerHit)
-					{
-						entity = playerHit.getEntity();
-						hitArea = playerHit.GetHitbox().area;
-					} else if (hit instanceof EntityHitResult entityHit)
-					{
-						entity = entityHit.getEntity();
-					}
-
-					// Damage can be applied to anything living, with special multipliers if it was a player
-					float damage = gunshotContext.ImpactDamage();
-					if (entity instanceof Player player)
-					{
-						damage *= gunshotContext.MultiplierVsPlayers();
-						damage *= hitArea.DamageMultiplier();
-
-						// TODO: Shield item damage multipliers
-
-						player.hurt(gunshotContext.ActionGroup.Gun().CreateDamageSource(), damage);
-						// We override the immortality cooldown when firing bullets, as it is too slow
-						player.hurtTime = 0;
-						player.hurtDuration = 0;
-					} else if (entity instanceof LivingEntity living)
-					{
-						living.hurt(gunshotContext.ActionGroup.Gun().CreateDamageSource(), damage);
-						living.hurtTime = 0;
-						living.hurtDuration = 0;
-					}
-
-					// Also apply this code to all living entities
-					if(entity instanceof LivingEntity living)
-					{
-						String potionEffect = gunshotContext.PotionEffectOnTarget();
-						if(potionEffect.length() > 0)
-						{
-							String[] parts = potionEffect.split(",");
-							if(parts.length > 0)
-							{
-								int strength = parts.length >= 3 ? Integer.parseInt(parts[2]) : 1;
-								int duration = parts.length >= 2 ? Integer.parseInt(parts[1]) : 20;
-								ResourceLocation resLoc = new ResourceLocation(parts[0]);
-								MobEffect effect = ForgeRegistries.MOB_EFFECTS.getValue(resLoc);
-								if(effect != null)
-								{
-									MobEffectInstance instance = new MobEffectInstance(effect, duration, strength);
-									living.addEffect(instance);
-								}
-							}
-						}
-					}
-
-					// Fire and similar can be apllied to all entities
-					if (entity != null)
-					{
-						entity.setSecondsOnFire(Maths.Floor(gunshotContext.SetFireToTarget() * 20.0f));
-
-
-					}
-				}
-			}
-
-			// Apply other impact effects to the surrounding area
-			// TODO:
-		}
+		gunshotContext.ProcessImpact(level, shot);
 	}
 
 	@Override
@@ -460,28 +416,35 @@ public class ShootAction extends Action
 			{
 				// Create client effects only for bullets that were added in this most recent re-trigger
 				GunshotContext gunshotContext = GunshotContext.CreateFrom(context, shot.bulletDef);
-				// Create a bullet trail render
-				FlansModClient.SHOT_RENDERER.AddTrail(shot.origin, shot.Endpoint());
 
-				for (HitResult hit : shot.hits)
+				if(gunshotContext.Bullet.shootStats.hitscan)
 				{
-					if (hit.getType() == HitResult.Type.ENTITY)
+					// Create a bullet trail render
+					FlansModClient.SHOT_RENDERER.AddTrail(shot.origin, shot.Endpoint());
+
+					for (HitResult hit : shot.hits)
 					{
-						hitEntity = true;
-						if (((EntityHitResult) hit).getEntity() instanceof EnderDragon dragon)
+						if (hit.getType() == HitResult.Type.ENTITY)
 						{
-							float damage = gunshotContext.ImpactDamage();
-							damage = damage / 4.0F + Math.min(damage, 1.0F);
-							if (dragon.getHealth() <= damage)
-								hitMLG = true;
-						}
-						else if (((EntityHitResult) hit).getEntity() instanceof EnderDragonPart part)
-						{
-							float damage = gunshotContext.ImpactDamage();
-							if (part != part.parentMob.head)
+							// Check bullet invulnerability
+							if (!((EntityHitResult) hit).getEntity().isAttackable())
+								continue;
+
+							hitEntity = true;
+							if (((EntityHitResult) hit).getEntity() instanceof EnderDragon dragon)
+							{
+								float damage = gunshotContext.ImpactDamage();
 								damage = damage / 4.0F + Math.min(damage, 1.0F);
-							if (part.parentMob.getHealth() <= damage)
-								hitMLG = true;
+								if (dragon.getHealth() <= damage)
+									hitMLG = true;
+							} else if (((EntityHitResult) hit).getEntity() instanceof EnderDragonPart part)
+							{
+								float damage = gunshotContext.ImpactDamage();
+								if (part != part.parentMob.head)
+									damage = damage / 4.0F + Math.min(damage, 1.0F);
+								if (part.parentMob.getHealth() <= damage)
+									hitMLG = true;
+							}
 						}
 					}
 				}
@@ -566,15 +529,19 @@ public class ShootAction extends Action
 								}
 							}
 							case ENTITY -> {
-								Vec3 shotMotion = shot.trajectory.normalize().scale(GetDurationPerTriggerTicks());
-								particleEngine.createParticle(
-									ParticleTypes.DAMAGE_INDICATOR,
-									hit.getLocation().x,
-									hit.getLocation().y,
-									hit.getLocation().z,
-									shotMotion.x,
-									shotMotion.y,
-									shotMotion.z);
+								EntityHitResult entityHitResult = (EntityHitResult)hit;
+								if(entityHitResult.getEntity().isAttackable())
+								{
+									Vec3 shotMotion = shot.trajectory.normalize().scale(GetDurationPerTriggerTicks());
+									particleEngine.createParticle(
+										ParticleTypes.DAMAGE_INDICATOR,
+										hit.getLocation().x,
+										hit.getLocation().y,
+										hit.getLocation().z,
+										shotMotion.x,
+										shotMotion.y,
+										shotMotion.z);
+								}
 							}
 						}
 

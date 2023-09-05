@@ -1,0 +1,11 @@
+{
+  "type": "minecraft:blasting",
+  "category": "misc",
+  "cookingtime": 6400,
+  "experience": 80.0,
+  "group": "steel_block",
+  "ingredient": {
+    "item": "minecraft:iron_block"
+  },
+  "result": "flansbasicparts:steel_block"
+}

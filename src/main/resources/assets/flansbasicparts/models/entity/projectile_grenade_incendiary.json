@@ -1,0 +1,22 @@
+{
+	"credit": "Made with Blockbench",
+	"texture_size": [8, 8],
+	"textures": {
+		"0": "flansmod:entity/projectile_grenade_incendiary",
+		"particle": "flansmod:entity/projectile_grenade_incendiary"
+	},
+	"elements": [
+		{
+			"from": [-1, -1, -1.5],
+			"to": [1, 1, 1.5],
+			"faces": {
+				"north": {"uv": [8, 0, 12, 4], "texture": "#0"},
+				"east": {"uv": [4, 4, 8, 10], "rotation": 270, "texture": "#0"},
+				"south": {"uv": [4, 0, 8, 4], "texture": "#0"},
+				"west": {"uv": [12, 4, 16, 10], "rotation": 90, "texture": "#0"},
+				"up": {"uv": [4, 10, 0, 4], "texture": "#0"},
+				"down": {"uv": [12, 4, 8, 10], "texture": "#0"}
+			}
+		}
+	]
+}

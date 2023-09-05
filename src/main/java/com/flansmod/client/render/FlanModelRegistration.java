@@ -3,10 +3,9 @@ package com.flansmod.client.render;
 import com.flansmod.client.render.models.TurboRig;
 import com.flansmod.common.FlansMod;
 import com.flansmod.common.item.FlanItem;
-import com.flansmod.util.MinecraftHelpers;
+import com.flansmod.common.types.JsonDefinition;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.block.model.BlockModel;
-import net.minecraft.client.renderer.block.model.ItemTransforms;
 import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.client.resources.model.ModelBakery;
@@ -16,30 +15,30 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.PreparableReloadListener;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.util.profiling.ProfilerFiller;
-import net.minecraft.world.InteractionHand;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.client.event.ModelEvent;
-import net.minecraftforge.client.event.RenderHandEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.IEventBus;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.registries.ForgeRegistries;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 
 public class FlanModelRegistration implements PreparableReloadListener
 {
     private static final HashMap<Item, FlanItemModelRenderer> ITEMS_TO_REGISTER = new HashMap<>();
+    private static final HashMap<ResourceLocation, BakedModel> ENTITY_MODELS_TO_REGISTER = new HashMap<>();
 
     public static void preRegisterRenderer(Item item, FlanItemModelRenderer renderer)
     {
         ITEMS_TO_REGISTER.put(item, renderer);
+    }
+
+    public static void PreRegisterEntityModel(ResourceLocation location)
+    {
+        ENTITY_MODELS_TO_REGISTER.put(location, null);
     }
 
     public void hook(IEventBus modEventBus)
@@ -63,16 +62,17 @@ public class FlanModelRegistration implements PreparableReloadListener
             event.register(new ModelResourceLocation(itemID, "inventory"));
 
             //UnbakedModel unbaked = Minecraft.getInstance().getModelManager().getModelBakery().getModel(itemID);
-
-
-
             //FlanItemModel model = kvp.getValue().createModel(null, itemID.getNamespace(), itemID.getPath());
-
             //if(model != null)
             //{
              //   for(var location : model.getModelLocations())
               //      event.register(new ModelResourceLocation(location, "inventory"));
             //}
+        }
+
+        for(ResourceLocation loc : ENTITY_MODELS_TO_REGISTER.keySet())
+        {
+            event.register(loc);
         }
     }
 
@@ -105,6 +105,20 @@ public class FlanModelRegistration implements PreparableReloadListener
 
 
             //modelRegistry.put(modelID, compoundModel);
+        }
+
+        List<ResourceLocation> locations = new ArrayList<>(ENTITY_MODELS_TO_REGISTER.keySet());
+        for(ResourceLocation loc : locations)
+        {
+            BakedModel bakedModel = modelRegistry.get(loc);
+            if(bakedModel != null)
+            {
+                ENTITY_MODELS_TO_REGISTER.put(loc, bakedModel);
+            }
+            else
+            {
+                FlansMod.LOGGER.warn("Failed to load entity model " + loc);
+            }
         }
     }
 

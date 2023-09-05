@@ -1,4 +1,4 @@
-package com.flansmod.client.render.guns;
+package com.flansmod.client.render.bullets;
 
 import com.flansmod.util.Maths;
 import com.mojang.blaze3d.systems.RenderSystem;

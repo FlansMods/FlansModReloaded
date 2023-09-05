@@ -1,5 +1,7 @@
 package com.flansmod.packs.basics;
 
+import com.flansmod.client.FlansModClient;
+import com.flansmod.client.render.FlanModelRegistration;
 import com.flansmod.common.FlansMod;
 import com.flansmod.packs.modern.ModernWeaponsMod;
 import com.mojang.logging.LogUtils;
@@ -234,12 +236,18 @@ public class BasicPartsMod
 	public static final RegistryObject<Item> BULLET_ARTILLERY_AP =							FlansMod.Bullet(ITEMS, MODID, "artillery_shell_ap");
 	public static final RegistryObject<Item> BULLET_ARTILLERY_EX =							FlansMod.Bullet(ITEMS, MODID, "artillery_shell_ex");
 	public static final RegistryObject<Item> BULLET_ARTILLERY_INCENDIARY =					FlansMod.Bullet(ITEMS, MODID, "artillery_shell_incendiary");
+	public static final RegistryObject<Item> BULLET_PROJECTILE_GRENADE_IMPACT =				FlansMod.Bullet(ITEMS, MODID, "projectile_grenade_impact");
+	public static final RegistryObject<Item> BULLET_PROJECTILE_GRENADE_STICKY =				FlansMod.Bullet(ITEMS, MODID, "projectile_grenade_sticky");
+	public static final RegistryObject<Item> BULLET_PROJECTILE_GRENADE_EX =					FlansMod.Bullet(ITEMS, MODID, "projectile_grenade_ex");
+	public static final RegistryObject<Item> BULLET_PROJECTILE_GRENADE_INCENDIARY =			FlansMod.Bullet(ITEMS, MODID, "projectile_grenade_incendiary");
 
-	public static final RegistryObject<Item> BULLET_SHOTGUN_SHELL =							FlansMod.Bullet(ITEMS, MODID, "shotgun_shell_birdshot");
+	public static final RegistryObject<Item> BULLET_SHOTGUN_SHELL_BUCKSHOT =				FlansMod.Bullet(ITEMS, MODID, "shotgun_shell_buckshot");
+	public static final RegistryObject<Item> BULLET_SHOTGUN_SHELL_BIRDSHOT =				FlansMod.Bullet(ITEMS, MODID, "shotgun_shell_birdshot");
 	public static final RegistryObject<Item> BULLET_SHOTGUN_SHELL_AP =						FlansMod.Bullet(ITEMS, MODID, "shotgun_shell_ap");
 	public static final RegistryObject<Item> BULLET_SHOTGUN_SHELL_EX =						FlansMod.Bullet(ITEMS, MODID, "shotgun_shell_ex");
 	public static final RegistryObject<Item> BULLET_SHOTGUN_SHELL_INCENDIARY =				FlansMod.Bullet(ITEMS, MODID, "shotgun_shell_incendiary");
-
+	public static final RegistryObject<Item> BULLET_SHOTGUN_SHELL_FLECHETTE =				FlansMod.Bullet(ITEMS, MODID, "shotgun_shell_flechette");
+	public static final RegistryObject<Item> BULLET_SHOTGUN_SHELL_FLECHETTE_POISONED =		FlansMod.Bullet(ITEMS, MODID, "shotgun_shell_flechette_poisoned");
 
 	public BasicPartsMod()
 	{
@@ -251,6 +259,26 @@ public class BasicPartsMod
 	@Mod.EventBusSubscriber(value = Dist.CLIENT, bus = Mod.EventBusSubscriber.Bus.MOD, modid = MODID)
 	public static class ClientMod
 	{
+		static
+		{
+			FlanModelRegistration.PreRegisterEntityModel(new ModelResourceLocation(MODID, "entity/artillery_shell", "inventory"));
+			FlanModelRegistration.PreRegisterEntityModel(new ModelResourceLocation(MODID, "entity/artillery_shell_ap", "inventory"));
+			FlanModelRegistration.PreRegisterEntityModel(new ModelResourceLocation(MODID, "entity/artillery_shell_ex", "inventory"));
+			FlanModelRegistration.PreRegisterEntityModel(new ModelResourceLocation(MODID, "entity/artillery_shell_incendiary", "inventory"));
+			FlanModelRegistration.PreRegisterEntityModel(new ModelResourceLocation(MODID, "entity/pistol_bullet", "inventory"));
+			FlanModelRegistration.PreRegisterEntityModel(new ModelResourceLocation(MODID, "entity/pistol_bullet_ap", "inventory"));
+			FlanModelRegistration.PreRegisterEntityModel(new ModelResourceLocation(MODID, "entity/pistol_bullet_ex", "inventory"));
+			FlanModelRegistration.PreRegisterEntityModel(new ModelResourceLocation(MODID, "entity/pistol_bullet_incendiary", "inventory"));
+			FlanModelRegistration.PreRegisterEntityModel(new ModelResourceLocation(MODID, "entity/projectile_grenade_impact", "inventory"));
+			FlanModelRegistration.PreRegisterEntityModel(new ModelResourceLocation(MODID, "entity/projectile_grenade_sticky", "inventory"));
+			FlanModelRegistration.PreRegisterEntityModel(new ModelResourceLocation(MODID, "entity/projectile_grenade_ex", "inventory"));
+			FlanModelRegistration.PreRegisterEntityModel(new ModelResourceLocation(MODID, "entity/projectile_grenade_incendiary", "inventory"));
+			FlanModelRegistration.PreRegisterEntityModel(new ModelResourceLocation(MODID, "entity/rifle_bullet", "inventory"));
+			FlanModelRegistration.PreRegisterEntityModel(new ModelResourceLocation(MODID, "entity/rifle_bullet_ap", "inventory"));
+			FlanModelRegistration.PreRegisterEntityModel(new ModelResourceLocation(MODID, "entity/rifle_bullet_ex", "inventory"));
+			FlanModelRegistration.PreRegisterEntityModel(new ModelResourceLocation(MODID, "entity/rifle_bullet_incendiary", "inventory"));
+		}
+
 		@SubscribeEvent
 		public static void ModelRegistryEvent(ModelEvent.BakingCompleted event)
 		{

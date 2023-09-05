@@ -127,6 +127,13 @@ public class ActionStack
 			if(reload.FinishedCurrentStage())
 			{
 				EReloadStage nextStage = null;
+				for(ActionGroup group : actionContext.ActionStack().GetActiveActionGroups())
+				{
+					if(group.Def == gunContext.GunDef().GetReload(reload.ReloadType).GetReloadActionGroup(reload.CurrentStage))
+					{
+						group.SetFinished();
+					}
+				}
 				switch(reload.CurrentStage)
 				{
 					case Start -> {

@@ -1,5 +1,6 @@
 package com.flansmod.common.gunshots;
 
+import com.flansmod.common.FlansMod;
 import com.flansmod.common.actions.ActionStack;
 import com.flansmod.common.actions.EActionInput;
 import com.flansmod.common.item.*;
@@ -9,8 +10,6 @@ import com.flansmod.common.types.elements.ActionDefinition;
 import com.flansmod.common.types.elements.ModifierDefinition;
 import com.flansmod.common.types.guns.*;
 import com.flansmod.common.types.parts.PartDefinition;
-import com.flansmod.util.MinecraftHelpers;
-import com.mojang.datafixers.util.Pair;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.Container;
 import net.minecraft.world.InteractionHand;
@@ -25,23 +24,24 @@ import java.util.*;
 
 public abstract class GunContext
 {
-	public static final GunContext INVALID = new GunContext()
+	public static final GunContext INVALID = new GunContext(ItemStack.EMPTY)
 	{
 		@Override
-		@Nonnull
-		public ItemStack GetItemStack() { return ItemStack.EMPTY; }
+		public void OnItemStackChanged(ItemStack stack) {}
 		@Override
-		public void SetItemStack(ItemStack stack) {}
+		public boolean IsItemStackStillInPlace() { return false; }
 		@Override
 		public DamageSource CreateDamageSource() { return null; }
 		@Override
-		public ShooterContext GetShooter() { return null; }
+		@Nonnull
+		public ShooterContext GetShooter() { return ShooterContext.INVALID; }
 		@Override
 		public Inventory GetAttachedInventory() { return null; }
 		@Override
 		public boolean CanPerformTwoHandedAction() { return false; }
 		@Override
-		public ActionStack GetActionStack() { return null; }
+		@Nonnull
+		public ActionStack GetActionStack() { return ActionStack.Invalid; }
 		@Override
 		public boolean CanPerformActions() { return false; }
 		@Override
@@ -121,14 +121,15 @@ public abstract class GunContext
 	}
 	// ---------------------------------------------------------------------------------------------------
 
-
+	protected final List<ModifierDefinition> ModifierCache;
+	private int ModifierHash;
+	protected ItemStack Stack;
 
 	// --------------------------------------------------------------------------
 	// Abstractions
 	// --------------------------------------------------------------------------
-	@Nonnull
-	public abstract ItemStack GetItemStack();
-	public abstract void SetItemStack(ItemStack stack);
+	public abstract void OnItemStackChanged(ItemStack stack);
+	public abstract boolean IsItemStackStillInPlace();
 	public abstract DamageSource CreateDamageSource();
 	@Nonnull
 	public abstract ShooterContext GetShooter();
@@ -146,9 +147,29 @@ public abstract class GunContext
 	// --------------------------------------------------------------------------
 	// Helpers
 	// --------------------------------------------------------------------------
-	public boolean IsValid() { return !GetItemStack().isEmpty(); }
-	protected GunContext()
+	public ItemStack GetItemStack() { return Stack; }
+	public void SetItemStack(ItemStack stack)
 	{
+		if(StackUpdateWouldInvalidate(stack))
+		{
+			FlansMod.LOGGER.error("Trying to update GunStack with an invalidating change: " + Stack + " to " + stack);
+			return;
+		}
+
+		Stack = stack;
+		OnItemStackChanged(stack);
+	}
+	public boolean IsValid()
+	{
+		if(Stack.isEmpty())
+			return false;
+		if(Stack.getItem() instanceof FlanItem flanItem)
+			return flanItem.Def().IsValid();
+		return false;
+	}
+	protected GunContext(ItemStack stackAtTimeOfCreation)
+	{
+		Stack = stackAtTimeOfCreation.copy();
 		ModifierCache = new ArrayList<>();
 		ModifierHash = 0;
 	}
@@ -167,11 +188,32 @@ public abstract class GunContext
 		return GetShooter().IsValid() ? GetShooter().Level() : null;
 	}
 
+	// This should identify "the same gun", or things that do not change during use
+	// e.g. You can hash the "CraftedFrom" list, but not the "Ammo" currently in the gun
+	// TODO: Potentially just add an NBT tag with a UUID
+	public static int HashGunOrigins(ItemStack stack)
+	{
+		int hash = 0;
+		if(stack.getItem() instanceof FlanItem flanItem)
+		{
+			hash = flanItem.DefinitionLocation.hashCode();
+			for(PartDefinition part : flanItem.GetCraftingInputs(stack))
+			{
+				hash ^= (part.hashCode() << 16) | (part.hashCode() >> 16);
+			}
+		}
+		return hash;
+	}
+	public boolean StackUpdateWouldInvalidate(ItemStack stack)
+	{
+		int newHash = HashGunOrigins(stack);
+		int oldHash = HashGunOrigins(Stack);
+		return newHash != oldHash;
+	}
+
 	// --------------------------------------------------------------------------
 	// Stat Cache
 	// --------------------------------------------------------------------------
-	protected final List<ModifierDefinition> ModifierCache;
-	private int ModifierHash;
 	@Nonnull
 	public List<ModifierDefinition> GetModifiers()
 	{
@@ -393,81 +435,53 @@ public abstract class GunContext
 				ModifierCache.addAll(Arrays.asList(attachmentItem.Def().modifiers));
 	}
 
-	/*
-	public List<ModifierDefinition> GetApplicableModifiers(String stat, EActionInput actionSet)
+	// -----------------------------------------------------------------------------------------------------------------
+	// Util methods
+	// -----------------------------------------------------------------------------------------------------------------
+
+	public void Save(CompoundTag tags)
 	{
-		List<ModifierDefinition> applicableModifiers = new ArrayList<>();
-		List<ItemStack> attachmentStacks = GetAttachmentStacks();
-		for(ItemStack attachmentStack : attachmentStacks)
-		{
-			if(attachmentStack.getItem() instanceof AttachmentItem attachmentItem)
-			{
-				AttachmentDefinition attachDef = attachmentItem.Def();
-				for(ModifierDefinition modifierDef : attachDef.modifiers)
-				{
-					if(modifierDef.AppliesTo(stat, actionSet))
-					{
-						applicableModifiers.add(modifierDef);
-					}
-				}
-			}
-		}
-		return applicableModifiers;
+		CompoundTag stackTags = new CompoundTag();
+		Stack.save(stackTags);
+		tags.put("stack", stackTags);
+		tags.putInt("slot", GetInventorySlotIndex());
+
+		CompoundTag shooterTags = new CompoundTag();
+		GetShooter().Save(shooterTags);
+		tags.put("shooter", shooterTags);
 	}
 
-	public List<ModifierDefinition> GetAllApplicableModifiers(EActionInput actionSet)
+	public static GunContext Load(CompoundTag tags, boolean client)
 	{
-		List<ModifierDefinition> results = new ArrayList<>();
-		List<ItemStack> attachmentStacks = GetAttachmentStacks();
-		for (ItemStack attachmentStack : attachmentStacks)
-		{
-			if (attachmentStack.getItem() instanceof AttachmentItem attachmentItem)
-			{
-				AttachmentDefinition attachDef = attachmentItem.Def();
-				for (ModifierDefinition modifierDef : attachDef.modifiers)
-				{
-					if (modifierDef.AppliesTo(actionSet))
-					{
-						results.add(modifierDef);
-					}
-				}
-			}
-		}
-		return results;
+		ItemStack stack = ItemStack.of(tags.getCompound("stack"));
+		int slot = tags.getInt("slot");
+		int contextHash = HashGunOrigins(stack);
+		ShooterContext shooter = ShooterContext.Load(tags.getCompound("shooter"), client);
+		if(shooter.IsValid())
+			return shooter.CreateOldGunContext(slot, contextHash, stack);
+
+		// Last option, we don't know who made this, but we can give an isolated context to allow _some_ functionality
+		return GunContext.GetOrCreate(stack);
 	}
 
-	public Map<String, List<ModifierDefinition>> GetAllApplicableModifiersMap(EActionInput actionSet)
+	@Override
+	public int hashCode()
 	{
-		Map<String, List<ModifierDefinition>> results = new IdentityHashMap<>();
-		List<ItemStack> attachmentStacks = GetAttachmentStacks();
-		for (ItemStack attachmentStack : attachmentStacks)
-		{
-			if (attachmentStack.getItem() instanceof AttachmentItem attachmentItem)
-			{
-				AttachmentDefinition attachDef = attachmentItem.Def();
-				for (ModifierDefinition modifierDef : attachDef.modifiers)
-				{
-					if (modifierDef.AppliesTo(actionSet))
-					{
-						List<ModifierDefinition> modList = results.get(modifierDef.Stat);
-						if (modList == null)
-						{
-							modList = new ArrayList<>();
-							results.put(modifierDef.Stat, modList);
-						}
-						modList.add(modifierDef);
-					}
-				}
-			}
-		}
-		return results;
+		return HashGunOrigins(Stack);
 	}
-	 */
-
-
+	@Override
+	public boolean equals(Object other)
+	{
+		if(other == this) return true;
+		if(other instanceof GunContext otherContext)
+		{
+			return HashGunOrigins(Stack) == HashGunOrigins(otherContext.Stack);
+		}
+		return false;
+	}
 	@Override
 	public String toString()
 	{
-		return "Gun:" + GetItemStack().toString();
+		return "GunContext:" + GetItemStack().toString();
 	}
 }

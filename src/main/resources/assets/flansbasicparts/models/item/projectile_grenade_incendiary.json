@@ -1,7 +1,7 @@
 {
     "parent": "item/generated",
     "textures": {
-        "layer0": "flansbasicparts:item/artillery_shell_incendiary"
+        "layer0": "flansbasicparts:item/grenade_launcher_incendiary"
     },
     "display": {
         "thirdperson": {

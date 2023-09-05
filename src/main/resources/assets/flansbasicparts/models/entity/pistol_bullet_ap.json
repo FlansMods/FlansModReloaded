@@ -1,0 +1,22 @@
+{
+	"credit": "Made with Blockbench",
+	"texture_size": [8, 8],
+	"textures": {
+		"0": "flansmod:entity/bullet_ap",
+		"particle": "flansmod:entity/bullet_ap"
+	},
+	"elements": [
+		{
+			"from": [-0.5, -0.5, -1],
+			"to": [0.5, 0.5, 1],
+			"faces": {
+				"north": {"uv": [4, 0, 6, 2], "texture": "#0"},
+				"east": {"uv": [2, 2, 4, 6], "rotation": 270, "texture": "#0"},
+				"south": {"uv": [2, 0, 4, 2], "texture": "#0"},
+				"west": {"uv": [6, 2, 8, 6], "rotation": 90, "texture": "#0"},
+				"up": {"uv": [2, 6, 0, 2], "texture": "#0"},
+				"down": {"uv": [6, 2, 4, 6], "texture": "#0"}
+			}
+		}
+	]
+}

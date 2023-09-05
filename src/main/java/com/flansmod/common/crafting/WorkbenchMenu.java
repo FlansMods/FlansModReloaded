@@ -442,17 +442,17 @@ public class WorkbenchMenu extends AbstractContainerMenu
 			return QuickStackIntoInventory(player, MagUpgradeSlot);
 		else if(GunCraftingOutputSlot != null && slot == GunCraftingOutputSlot.index)
 			return QuickStackIntoInventory(player, GunCraftingOutputSlot);
-		else if(GunCraftingInputSlots != null && slot >= GunCraftingInputSlots[0].index && slot < GunCraftingInputSlots[0].index + GunCraftingInputSlots.length)
+		else if(GunCraftingInputSlots != null && GunCraftingInputSlots.length > 0 && slot >= GunCraftingInputSlots[0].index && slot < GunCraftingInputSlots[0].index + GunCraftingInputSlots.length)
 		{
 			int craftingInputSlotIndex = slot - GunCraftingInputSlots[0].index;
 			return QuickStackIntoInventory(player, GunCraftingInputSlots[craftingInputSlotIndex]);
 		}
-		else if(PartCraftingInputSlots != null && slot >= PartCraftingInputSlots[0].index && slot < PartCraftingInputSlots[0].index + PartCraftingInputSlots.length)
+		else if(PartCraftingInputSlots != null && PartCraftingInputSlots.length > 0 && slot >= PartCraftingInputSlots[0].index && slot < PartCraftingInputSlots[0].index + PartCraftingInputSlots.length)
 		{
 			int craftingInputSlotIndex = slot - PartCraftingInputSlots[0].index;
 			return QuickStackIntoInventory(player, PartCraftingInputSlots[craftingInputSlotIndex]);
 		}
-		else if(PartCraftingOutputSlots != null && slot >= PartCraftingOutputSlots[0].index && slot < PartCraftingOutputSlots[0].index + PartCraftingOutputSlots.length)
+		else if(PartCraftingOutputSlots != null && PartCraftingOutputSlots.length > 0 && slot >= PartCraftingOutputSlots[0].index && slot < PartCraftingOutputSlots[0].index + PartCraftingOutputSlots.length)
 		{
 			int craftingOutputSlotIndex = slot - PartCraftingOutputSlots[0].index;
 			return QuickStackIntoInventory(player, PartCraftingOutputSlots[craftingOutputSlotIndex]);

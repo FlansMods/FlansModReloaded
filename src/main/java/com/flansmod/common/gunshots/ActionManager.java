@@ -348,9 +348,9 @@ public class ActionManager
 
 		if(actionGroup == null)
 		{
-			FlansMod.LOGGER.warn("Received ActionUpdateMessage with wrong press type or incorrect initial triggerIndex");
+			// Most likely just out of order packets?
+			//FlansMod.LOGGER.warn("Received ActionUpdateMessage with wrong press type or incorrect initial triggerIndex");
 
-			// TODO: Verify that this is okay. Could be the player cheating I guess?
 			actionGroup = actionContext.CreateActionGroup();
 			actionContext.ActionStack().AddActionGroup(actionContext, actionGroup);
 		}

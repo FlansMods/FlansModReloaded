@@ -1,0 +1,14 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "building",
+  "ingredients": [
+    {
+      "item": "flansbasicparts:steel_block"
+    }
+  ],
+  "result": {
+    "item": "flansbasicparts:steel_ingot",
+	"count": 9
+  },
+  "show_notification": true
+}

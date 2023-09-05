@@ -1,0 +1,14 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "building",
+  "ingredients": [
+    {
+      "item": "flansbasicparts:kevlar_block"
+    }
+  ],
+  "result": {
+    "item": "flansbasicparts:kevlar_panel",
+	"count": 9
+  },
+  "show_notification": true
+}

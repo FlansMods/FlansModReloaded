@@ -2,15 +2,22 @@ package com.flansmod.packs.worldwars;
 
 import com.flansmod.common.FlansMod;
 import com.flansmod.common.crafting.WorkbenchBlockEntity;
+import com.flansmod.packs.worldwars.client.JanModel;
+import com.flansmod.packs.worldwars.client.JanRenderer;
+import com.flansmod.packs.worldwars.common.JanEntity;
 import com.mojang.logging.LogUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.ItemModelShaper;
 import net.minecraft.client.resources.model.ModelResourceLocation;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.MobCategory;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.client.event.EntityRenderersEvent;
 import net.minecraftforge.client.event.ModelEvent;
+import net.minecraftforge.event.entity.EntityAttributeCreationEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -30,6 +37,8 @@ public class WorldWarsMod
 	public static final DeferredRegister<Item> ITEMS = DeferredRegister.create(ForgeRegistries.ITEMS, MODID);
 	public static final DeferredRegister<Block> BLOCKS = DeferredRegister.create(ForgeRegistries.BLOCKS, MODID);
 	public static final DeferredRegister<BlockEntityType<?>> TILE_ENTITIES = DeferredRegister.create(ForgeRegistries.BLOCK_ENTITY_TYPES, MODID);
+	public static final DeferredRegister<EntityType<?>> ENTITY_TYPES = DeferredRegister.create(ForgeRegistries.ENTITY_TYPES, MODID);
+
 
 	// British
 	public static final RegistryObject<Block> WORKBENCH_BLOCK_BRITISH = 			FlansMod.Workbench_Block(BLOCKS, MODID, "british_workbench");
@@ -65,17 +74,41 @@ public class WorldWarsMod
 	public static final RegistryObject<BlockEntityType<WorkbenchBlockEntity>> WORKBENCH_TILE_ENTITY_JAPANESE =
 		FlansMod.Workbench_TileEntityType(TILE_ENTITIES, MODID, "japanese_workbench");
 
+	// Jan NPC
+	public static final RegistryObject<EntityType<JanEntity>> ENTITY_TYPE_JAN = ENTITY_TYPES.register(
+		"jan",
+		() -> EntityType.Builder.of(
+				JanEntity::new,
+				MobCategory.CREATURE)
+			.sized(0.6f, 2.6f)
+			.build("jan"));
+
+
 	public WorldWarsMod()
 	{
 		IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
 		ITEMS.register(modEventBus);
 		BLOCKS.register(modEventBus);
 		TILE_ENTITIES.register(modEventBus);
+		ENTITY_TYPES.register(modEventBus);
+		modEventBus.register(this);
+	}
+
+	@SubscribeEvent
+	public void SupplyAttributes(EntityAttributeCreationEvent event)
+	{
+		event.put(ENTITY_TYPE_JAN.get(), JanEntity.createAttributes().build());
 	}
 
 	@Mod.EventBusSubscriber(value = Dist.CLIENT, bus = Mod.EventBusSubscriber.Bus.MOD, modid = MODID)
 	public static class ClientMod
 	{
+		@SubscribeEvent
+		public static void RegisterLayerDefinitions(EntityRenderersEvent.RegisterLayerDefinitions event)
+		{
+			event.registerLayerDefinition(JanModel.MODEL_LAYER_LOCATION, JanModel::createBodyLayer);
+		}
+
 		@SubscribeEvent
 		public static void ModelRegistryEvent(ModelEvent.RegisterAdditional event)
 		{
@@ -86,6 +119,12 @@ public class WorldWarsMod
 				event.register(new ModelResourceLocation(MODID, entry.getId().getPath() + "_inventory", "inventory"));
 				shaper.register(entry.get(), new ModelResourceLocation(MODID, entry.getId().getPath() + "_inventory", "inventory"));
 			}
+		}
+
+		@SubscribeEvent
+		public static void EntityRenderEvent(EntityRenderersEvent.RegisterRenderers event)
+		{
+			event.registerEntityRenderer(ENTITY_TYPE_JAN.get(), JanRenderer::new);
 		}
 	}
 }
