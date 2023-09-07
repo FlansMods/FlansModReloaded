@@ -29,22 +29,25 @@ import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+import net.minecraftforge.fml.util.ObfuscationReflectionHelper;
 
 import javax.annotation.Nullable;
+import java.lang.reflect.Field;
 
 
 @Mod.EventBusSubscriber(value = Dist.CLIENT, bus = Mod.EventBusSubscriber.Bus.MOD, modid = FlansMod.MODID)
 public class FlansModClient
 {
-	public static ShotRenderer SHOT_RENDERER= new ShotRenderer();
-	public static DebugRenderer DEBUG_RENDERER = new DebugRenderer();
-	public static ClientInputHooks CLIENT_INPUT_HOOKS = new ClientInputHooks();
-	public static ClientRenderHooks CLIENT_OVERLAY_HOOKS = new ClientRenderHooks();
-	public static FlanModelRegistration MODEL_REGISTRATION = new FlanModelRegistration();
-	public static AnimationDefinitions ANIMATIONS = new AnimationDefinitions();
-	public static DecalRenderer DECAL_RENDERER = new DecalRenderer();
-	public static ActionManager ACTIONS_CLIENT = new ActionManager(true);
-	public static MagazineTextureAtlas MAGAZINE_ATLAS = new MagazineTextureAtlas();
+	public static final ShotRenderer SHOT_RENDERER= new ShotRenderer();
+	public static final DebugRenderer DEBUG_RENDERER = new DebugRenderer();
+	public static final ClientInputHooks CLIENT_INPUT_HOOKS = new ClientInputHooks();
+	public static final ClientRenderHooks CLIENT_OVERLAY_HOOKS = new ClientRenderHooks();
+	public static final FlanModelRegistration MODEL_REGISTRATION = new FlanModelRegistration();
+	public static final AnimationDefinitions ANIMATIONS = new AnimationDefinitions();
+	public static final DecalRenderer DECAL_RENDERER = new DecalRenderer();
+	public static final ActionManager ACTIONS_CLIENT = new ActionManager(true);
+	public static final MagazineTextureAtlas MAGAZINE_ATLAS = new MagazineTextureAtlas();
+	public static final RecoilManager RECOIL = new RecoilManager();
 
 	@Nullable
 	private static ShaderInstance GUN_CUTOUT;
@@ -65,6 +68,18 @@ public class FlansModClient
 	}
 
 	public static ShaderInstance GetGunCutoutShader() { return GUN_CUTOUT; }
+
+	public static void SetMissTime(int missTime)
+	{
+		try
+		{
+			MINECRAFT_MISS_TIME.set(Minecraft.getInstance(), missTime);
+		}
+		catch (Exception e)
+		{
+			FlansMod.LOGGER.error("Failed to SetMissTime due to " + e);
+		}
+	}
 
 	@SubscribeEvent
 	public static void ShaderRegistryEvent(RegisterShadersEvent event)
@@ -89,6 +104,7 @@ public class FlansModClient
 		MODEL_REGISTRATION.hook(modEventBus);
 		modEventBus.register(ANIMATIONS);
 		MAGAZINE_ATLAS.Init();
+		InitReflection();
 
 		// Screens
 		MenuScreens.register(FlansMod.WORKBENCH_MENU.get(), WorkbenchScreen::new);
@@ -107,4 +123,15 @@ public class FlansModClient
 	{
 		event.addListener(ANIMATIONS);
 	}
+
+
+	// ---------------------------
+	// REFLECTION
+	// ---------------------------
+	private static final Field MINECRAFT_MISS_TIME = ObfuscationReflectionHelper.findField(Minecraft.class, "missTime");
+	private static void InitReflection()
+	{
+		MINECRAFT_MISS_TIME.setAccessible(true);
+	}
+
 }

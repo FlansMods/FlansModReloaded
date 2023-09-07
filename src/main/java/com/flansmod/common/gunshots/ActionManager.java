@@ -134,10 +134,11 @@ public class ActionManager
 				for (ReloadProgress reload : reloads)
 				{
 					groupContext.ActionStack().AddReload(groupContext, reload);
+					needsNetMsg = true;
 				}
 
 				// Send a message to the server about these actions if required
-				if(needsNetMsg && actionGroup.NeedsNetSync())
+				if(needsNetMsg || actionGroup.NeedsNetSync())
 				{
 					ActionUpdateMessage updateMsg = new ActionUpdateMessage(groupContext, EPressType.Press, actionGroup.GetStartedTick());
 					updateMsg.AddTriggers(actionGroup, actionGroup.GetRequiredNetSyncMin(), actionGroup.GetRequiredNetSyncMax());
@@ -339,7 +340,12 @@ public class ActionManager
 		if(msg.Data.GetPressType() == EPressType.Press)
 		{
 			actionGroup = actionContext.CreateActionGroup();
-			actionContext.ActionStack().AddActionGroup(actionContext, actionGroup);
+			if(actionGroup.GetActions().size() > 0)
+				actionContext.ActionStack().AddActionGroup(actionContext, actionGroup);
+
+			ReloadProgress[] reloads = actionContext.CreateReloads();
+			for(ReloadProgress reload : reloads)
+				actionContext.ActionStack().AddReload(actionContext, reload);
 		}
 		else
 		{

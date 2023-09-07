@@ -200,9 +200,22 @@ public class ActionGroup
 			if(!action.CanStart(context))
 				return false;
 
+		if(InputType.IsReload())
+		{
+			if(!context.CanPerformReloadFromAttachedInventory(0))
+				return false;
+		}
+
 		return true;
 	}
 
+	public void SkipTicks(ActionGroupContext context, int ticks)
+	{
+		for(Action action : Actions)
+			action.SkipTicks(context, ticks);
+
+		Progress += ticks;
+	}
 
 	public boolean Finished(ActionGroupContext context)
 	{

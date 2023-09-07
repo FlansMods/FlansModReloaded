@@ -1,5 +1,6 @@
 package com.flansmod.packs.clockwork;
 
+import com.flansmod.common.FlansMod;
 import com.flansmod.packs.clockwork.client.ChipModel;
 import com.flansmod.packs.clockwork.client.ChipRenderer;
 import com.flansmod.packs.clockwork.client.SadieModel;
@@ -42,6 +43,13 @@ public class ClockworkCalamityMod
 	public static final DeferredRegister<Block> BLOCKS = DeferredRegister.create(ForgeRegistries.BLOCKS, MODID);
 	public static final DeferredRegister<BlockEntityType<?>> TILE_ENTITIES = DeferredRegister.create(ForgeRegistries.BLOCK_ENTITY_TYPES, MODID);
 	public static final DeferredRegister<EntityType<?>> ENTITY_TYPES = DeferredRegister.create(ForgeRegistries.ENTITY_TYPES, MODID);
+
+
+	// Clockwork Guns
+	public static final RegistryObject<Item> GUN_CLOCKWORK_OVERKILL = 						FlansMod.Gun(ITEMS, MODID, "clockwork_overkill");
+
+
+
 
 	// Sadie NPC
 	public static final RegistryObject<EntityType<SadieEntity>> ENTITY_TYPE_SADIE = ENTITY_TYPES.register(

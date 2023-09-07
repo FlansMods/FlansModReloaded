@@ -38,6 +38,18 @@ public enum EActionInput
 		}
 	}
 
+	public EActionInput GetOpposite()
+	{
+		switch(this)
+		{
+			case RELOAD_PRIMARY -> { return RELOAD_SECONDARY; }
+			case RELOAD_SECONDARY -> { return RELOAD_PRIMARY; }
+			case PRIMARY -> { return SECONDARY; }
+			case SECONDARY -> { return PRIMARY; }
+			default -> { return this; }
+		}
+	}
+
 	public boolean IsShoot()
 	{
 		switch(this)

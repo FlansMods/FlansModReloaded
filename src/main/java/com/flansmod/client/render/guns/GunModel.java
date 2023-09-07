@@ -17,7 +17,8 @@ public class GunModel extends FlanItemModel
             "stock",
             "grip",
             "barrel",
-            "magazine"
+            "magazine",
+            "break_action"
             );
 
         //GunDefinition gunDef = FlansMod.GUNS.get(new ResourceLocation(modID, gunName));

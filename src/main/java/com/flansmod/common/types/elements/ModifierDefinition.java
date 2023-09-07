@@ -30,6 +30,21 @@ public class ModifierDefinition
 	public static final String STAT_IMPACT_FIRE_SPREAD_AMOUNT = "fire_spread_amount";
 	public static final String STAT_IMPACT_EXPLOSION_RADIUS = "explosion_radius";
 
+	public static final String STAT_MELEE_DAMAGE = "melee_damage";
+	public static final String STAT_TOOL_REACH = "reach";
+	public static final String STAT_TOOL_HARVEST_LEVEL = "tool_level";
+	public static final String STAT_TOOL_HARVEST_SPEED = "harvest_speed";
+	public static final String STAT_ZOOM_FOV_FACTOR = "fov_factor";
+	public static final String STAT_ZOOM_SCOPE_OVERLAY = "scope_overlay";
+	public static final String STAT_ANIM = "anim";
+	public static final String STAT_BLOCK_ID = "block_id";
+	public static final String STAT_DURATION = "duration";
+	public static final String STAT_HEAL_AMOUNT = "heal_amount";
+	public static final String STAT_FEED_AMOUNT = "feed_amount";
+	public static final String STAT_FEED_SATURATION = "feed_saturation";
+	public static final String STAT_ENTITY_TAG = "entity_tag";
+	public static final String STAT_ENTITY_ID = "entity_id";
+
 	@JsonField
 	public String Stat = "";
 	@JsonField

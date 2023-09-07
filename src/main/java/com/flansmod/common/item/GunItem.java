@@ -1,39 +1,55 @@
 package com.flansmod.common.item;
 
+import com.flansmod.client.FlansModClient;
 import com.flansmod.client.render.FlanClientItemExtensions;
 import com.flansmod.client.render.guns.GunItemRenderer;
 import com.flansmod.common.FlansMod;
 import com.flansmod.common.actions.*;
 import com.flansmod.common.gunshots.*;
+import com.flansmod.common.types.elements.ActionDefinition;
 import com.flansmod.common.types.elements.ModifierDefinition;
+import com.flansmod.common.types.guns.EActionType;
 import com.flansmod.common.types.guns.ERepeatMode;
 import com.flansmod.common.types.guns.GunDefinition;
 import com.flansmod.common.types.magazines.MagazineDefinition;
+import com.google.common.collect.ImmutableMultimap;
+import com.google.common.collect.Multimap;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.tags.BlockTags;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.InteractionResultHolder;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.ai.attributes.Attribute;
+import net.minecraft.world.entity.ai.attributes.AttributeModifier;
+import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.item.*;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.event.InputEvent;
 import net.minecraftforge.client.extensions.common.IClientItemExtensions;
+import net.minecraftforge.common.TierSortingRegistry;
 import net.minecraftforge.common.ToolAction;
+import net.minecraftforge.common.ToolActions;
 import net.minecraftforge.event.entity.living.LivingEntityUseItemEvent;
+import net.minecraftforge.fml.util.ObfuscationReflectionHelper;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.lang.reflect.Field;
 import java.util.HashMap;
 import java.util.List;
 import java.util.function.Consumer;
@@ -42,8 +58,6 @@ public class GunItem extends FlanItem
 {
     public GunDefinition Def() { return FlansMod.GUNS.Get(DefinitionLocation); }
 
-    // TODO: Place more generally private ActionStack GunActions;
-    
     public GunItem(ResourceLocation defLoc, Properties properties)
     {
         super(defLoc, properties);
@@ -210,48 +224,257 @@ public class GunItem extends FlanItem
        // event.setDuration(useRemaining);
     }
 
-    @Nonnull
+    // Left-click vanilla actions
     @Override
-    public InteractionResult useOn(UseOnContext context)
-    {
-        /*
-        GunDefinition def = Def();
-        GunContext gunContext = GunContext.CreateFromContext(context);
-
-        int actionsStarted = 0;
-        for(ActionDefinition actionDef : def.secondaryActions)
-        {
-            Action action = Actions.CreateAction(actionDef);
-            if(action.CanStart(gunContext))
-            {
-                GunActions.AddAction(action);
-                actionsStarted++;
-            }
-        }
-        actionsStarted > 0 ? InteractionResult.SUCCESS :
-*/
-
-        return InteractionResult.FAIL;
-    }
-
     public boolean canAttackBlock(BlockState blockState, Level world, BlockPos blockPos, Player player)
     {
+        if(player.isCreative())
+            return false;
+
+        for (ActionDefinition actionDef : Def().GetActions(EActionInput.PRIMARY))
+        {
+            switch (actionDef.actionType)
+            {
+                case Axe, Pickaxe, Hoe, Shovel, Melee -> {
+                    return true;
+                }
+            }
+        }
+
         return false;
     }
-
     @Override
-    public boolean canPerformAction(ItemStack stack, ToolAction toolAction)
+    public boolean isCorrectToolForDrops(ItemStack stack, BlockState blockState)
     {
-        return FlansToolActions.DEFAULT_GUN_ACTIONS.contains(toolAction);
+        List<Tier> tiers = TierSortingRegistry.getSortedTiers();
+        for (ActionDefinition actionDef : Def().GetActions(EActionInput.PRIMARY))
+        {
+            int harvestLevel = actionDef.ToolLevel(EActionInput.PRIMARY);
+            switch (actionDef.actionType)
+            {
+                case Melee -> { return blockState.is(Blocks.COBWEB); }
+                case Axe ->
+                {
+                    if(blockState.is(BlockTags.MINEABLE_WITH_AXE))
+                        for(Tier tier : tiers)
+                            if(tier.getLevel() >= harvestLevel)
+                                if(TierSortingRegistry.isCorrectTierForDrops(tier, blockState))
+                                    return true;
+                }
+                case Pickaxe ->
+                {
+                    if(blockState.is(BlockTags.MINEABLE_WITH_PICKAXE))
+                        for(Tier tier : tiers)
+                            if(tier.getLevel() >= harvestLevel)
+                                if(TierSortingRegistry.isCorrectTierForDrops(tier, blockState))
+                                    return true;
+                }
+                case Hoe ->
+                {
+                    if(blockState.is(BlockTags.MINEABLE_WITH_HOE))
+                        for(Tier tier : tiers)
+                            if(tier.getLevel() >= harvestLevel)
+                                if(TierSortingRegistry.isCorrectTierForDrops(tier, blockState))
+                                    return true;
+                }
+                case Shovel ->
+                {
+                    if(blockState.is(BlockTags.MINEABLE_WITH_SHOVEL))
+                        for(Tier tier : tiers)
+                            if(tier.getLevel() >= harvestLevel)
+                                if(TierSortingRegistry.isCorrectTierForDrops(tier, blockState))
+                                    return true;
+                }
+            }
+        }
+        return false;
+    }
+    @Override
+    public void inventoryTick(ItemStack stack, Level level, Entity entity, int i, boolean b)
+    {
+        if(level.isClientSide)
+        {
+            // If we have a vanilla left-click action, don't do anything
+            for (ActionDefinition actionDef : Def().GetActions(EActionInput.PRIMARY))
+            {
+                switch (actionDef.actionType)
+                {
+                    case Axe, Pickaxe, Hoe, Shovel, Melee -> {
+                        return;
+                    }
+                }
+            }
+
+            // Otherwise, block input
+            FlansModClient.SetMissTime(10);
+        }
+
+    }
+    @Override
+    public Multimap<Attribute, AttributeModifier> getAttributeModifiers(EquipmentSlot slot, ItemStack stack)
+    {
+        GunContext context = GunContext.GetOrCreate(stack);
+        if(context.IsValid())
+        {
+            ActionGroupContext actionGroupContext = context.GetOrCreate(EActionInput.PRIMARY);
+            if(actionGroupContext.IsValid())
+            {
+                ImmutableMultimap.Builder<Attribute, AttributeModifier> builder = ImmutableMultimap.builder();
+                for(ActionDefinition actionDef : Def().GetActions(EActionInput.PRIMARY))
+                {
+                    if(actionDef.actionType == EActionType.Melee)
+                    {
+                        float meleeDamage = actionGroupContext.ModifyFloat(ModifierDefinition.STAT_MELEE_DAMAGE, 1.0f);
+                        builder.put(Attributes.ATTACK_DAMAGE,
+                            new AttributeModifier(BASE_ATTACK_DAMAGE_UUID, "Gun modifier", meleeDamage, AttributeModifier.Operation.ADDITION));
+                    }
+                }
+                return builder.build();
+            }
+        }
+        return ImmutableMultimap.of();
+    }
+    // This is a response event to when this has been used in a melee attack, not the code to create a melee attack
+    @Override
+    public boolean hurtEnemy(ItemStack stack, LivingEntity wielder, LivingEntity victim)
+    {
+        stack.hurtAndBreak(2, victim, (entity) -> {
+            entity.broadcastBreakEvent(EquipmentSlot.MAINHAND);
+        });
+        return true;
+    }
+    // This is a response event to when this has been used to mine a block, not the code to mine a block
+    @Override
+    public boolean mineBlock(ItemStack stack, Level level, BlockState blockState, BlockPos blockPos, LivingEntity wielder)
+    {
+        if (!level.isClientSide && blockState.getDestroySpeed(level, blockPos) != 0.0F)
+        {
+            stack.hurtAndBreak(1, wielder, (entity) -> {
+                entity.broadcastBreakEvent(EquipmentSlot.MAINHAND);
+            });
+        }
+        return true;
     }
 
+    // Right-click vanilla actions
+    @Override
+    public UseAnim getUseAnimation(ItemStack stack)
+    {
+        for (ActionDefinition actionDef : Def().GetActions(EActionInput.SECONDARY))
+        {
+            switch (actionDef.actionType)
+            {
+                case Shield -> { return UseAnim.BLOCK; }
+            }
+        }
+        return UseAnim.NONE;
+    }
+    @Override
+    public int getUseDuration(ItemStack stack)
+    {
+        for (ActionDefinition actionDef : Def().GetActions(EActionInput.SECONDARY))
+        {
+            switch (actionDef.actionType)
+            {
+                case Shield -> { return 72000; }
+            }
+        }
+        return 0;
+    }
     @Nonnull
     @Override
     public InteractionResultHolder<ItemStack> use(Level world, Player player, InteractionHand hand)
     {
+        for (ActionDefinition actionDef : Def().GetActions(EActionInput.SECONDARY))
+        {
+            switch (actionDef.actionType)
+            {
+                case Shield -> {
+                    ItemStack stackInHand = player.getItemInHand(hand);
+                    player.startUsingItem(hand);
+                    return InteractionResultHolder.consume(stackInHand);
+                }
+            }
+        }
         ItemStack itemstack = player.getItemInHand(hand);
         return InteractionResultHolder.pass(itemstack);
     }
+    @Nonnull
+    @Override
+    public InteractionResult useOn(UseOnContext context)
+    {
+        ShooterContext shooter = ShooterContext.GetOrCreate(context.getPlayer());
+        GunContext gun = shooter.CreateForGunIndex(context.getHand() == InteractionHand.MAIN_HAND ? context.getPlayer().getInventory().selected : Inventory.SLOT_OFFHAND);
+        if(gun.IsValid())
+        {
+            // Always secondary, this is a use action
+            ActionGroupContext actionGroupContext = gun.GetOrCreate(EActionInput.SECONDARY);
+            ActionGroup actionGroup = actionGroupContext.CreateActionGroup();
+            if(actionGroup.CanStart(actionGroupContext))
+            {
+                for(Action action : actionGroup.GetActions())
+                {
+                    switch (action.Def.actionType)
+                    {
+                        case Strip -> { return Items.WOODEN_AXE.useOn(context); }
+                        case Shear -> { return Items.SHEARS.useOn(context); }
+                        case Flatten -> { return Items.WOODEN_SHOVEL.useOn(context); }
+                        case Till -> { return Items.WOODEN_HOE.useOn(context); }
+                    }
+                }
+            }
+        }
+        return InteractionResult.CONSUME;
+    }
+
+
+    @Override
+    public boolean canPerformAction(ItemStack stack, ToolAction toolAction)
+    {
+        GunContext gun = GunContext.GetOrCreate(stack);
+        if(gun.IsValid())
+        {
+            // If this is a right click action, check secondary
+            if(toolAction == ToolActions.AXE_STRIP
+            || toolAction == ToolActions.SHEARS_HARVEST
+            || toolAction == ToolActions.SHOVEL_FLATTEN
+            || toolAction == ToolActions.HOE_TILL)
+            {
+                for (ActionDefinition actionDef : gun.GetActionDefinitions(EActionInput.SECONDARY))
+                {
+                    switch(actionDef.actionType)
+                    {
+                        case Strip -> { if(toolAction == ToolActions.AXE_STRIP) return true; }
+                        case Shear -> { if(toolAction == ToolActions.SHEARS_HARVEST) return true; }
+                        case Flatten -> { if(toolAction == ToolActions.SHOVEL_FLATTEN) return true; }
+                        case Till -> { if(toolAction == ToolActions.HOE_TILL) return true; }
+                    }
+                }
+            }
+            // If this is a left click action, check primary
+            else if(toolAction == ToolActions.AXE_DIG
+            || toolAction == ToolActions.PICKAXE_DIG
+            || toolAction == ToolActions.SHOVEL_DIG
+            || toolAction == ToolActions.HOE_DIG
+            || toolAction == ToolActions.SHIELD_BLOCK)
+            {
+                for (ActionDefinition actionDef : gun.GetActionDefinitions(EActionInput.PRIMARY))
+                {
+                    switch(actionDef.actionType)
+                    {
+                        case Axe -> { if(toolAction == ToolActions.AXE_DIG) return true; }
+                        case Pickaxe -> { if(toolAction == ToolActions.PICKAXE_DIG) return true; }
+                        case Shovel -> { if(toolAction == ToolActions.SHOVEL_DIG) return true; }
+                        case Hoe -> { if(toolAction == ToolActions.HOE_DIG) return true; }
+                        case Shield -> { if(toolAction == ToolActions.SHIELD_BLOCK) return true; }
+                    }
+                }
+            }
+        }
+
+        return false;
+    }
+
 
     @Override
     @OnlyIn(Dist.CLIENT)

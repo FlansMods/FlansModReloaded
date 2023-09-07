@@ -51,26 +51,4 @@ public class GunContextPlayer extends GunContextLiving
 	}
 	@Override
 	public int GetInventorySlotIndex() { return InventorySlot; }
-
-	@Override
-	public int hashCode()
-	{
-		return Objects.hash(
-			ShooterContext,
-			Hand,
-			InventorySlot);
-	}
-
-	@Override
-	public boolean equals(Object other)
-	{
-		if(other == this) return true;
-		if(other instanceof GunContextPlayer otherContext)
-		{
-			return otherContext.Hand == Hand &&
-				otherContext.InventorySlot == InventorySlot &&
-				otherContext.ShooterContext.equals(ShooterContext);
-		}
-		return false;
-	}
 }

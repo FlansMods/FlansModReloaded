@@ -49,7 +49,10 @@ public class ClientRenderHooks
 	@SubscribeEvent
 	public void OnClientTick(TickEvent.ClientTickEvent event)
 	{
-		UpdateHitMarkers();
+		if(event.phase == TickEvent.Phase.END)
+		{
+			UpdateHitMarkers();
+		}
 	}
 
 	@SubscribeEvent

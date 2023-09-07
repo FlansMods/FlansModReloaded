@@ -13,8 +13,10 @@ public class AnimationAction extends Action
 		super(group, def);
 	}
 
-	private static final int HOLD_END_POSE_TICKS = 1;
 	public int AnimFrame = 0;
+
+	@Override
+	public boolean PropogateToServer(ActionGroupContext context) { return false; }
 
 	@Override
 	public void OnTickClient(ActionGroupContext context)

@@ -2,6 +2,7 @@ package com.flansmod.common.actions;
 
 import com.flansmod.common.gunshots.*;
 import com.flansmod.common.types.elements.ActionDefinition;
+import com.flansmod.common.types.elements.ModifierDefinition;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.phys.Vec3;
 
@@ -56,7 +57,7 @@ public abstract class Action
 	}
 
 	public boolean ShouldRender(GunContext context) { return true; }
-	public boolean PropogateToServer(ActionGroupContext context) { return false; }
+	public boolean PropogateToServer(ActionGroupContext context) { return true; }
 	public boolean ShouldFallBackToReload(ActionGroupContext context) { return false; }
 	public boolean CanStart(ActionGroupContext context) { return true; }
 	public boolean CanRetrigger(ActionGroupContext context) { return true; }
@@ -68,6 +69,7 @@ public abstract class Action
 	public void OnStartClient(ActionGroupContext context) {}
 	public void OnTickClient(ActionGroupContext context) {}
 	public void OnFinishClient(ActionGroupContext context) {}
+	public void SkipTicks(ActionGroupContext context, int ticks) {}
 
 	// NetData and sync
 	// Careful when changing this. The action group will only propogate to players within range of the furthest action in the group
@@ -84,9 +86,8 @@ public abstract class Action
 	public boolean VerifyServer(ActionGroupContext context, GunshotCollection shots) { return true; }
 
 	// These ones are specific to this action
-	public float Duration(ActionGroupContext context) { return context.ModifyFloat("duration", Def.duration); }
-	public float FOVFactor(ActionGroupContext context) { return context.ModifyFloat("FOV_factor", Def.fovFactor); }
-	public float ToolLevel(ActionGroupContext context) { return context.ModifyFloat("tool_level", Def.toolLevel); }
-	public float HarvestSpeed(ActionGroupContext context) { return context.ModifyFloat("harvest_speed", Def.harvestSpeed); }
-	public float Reach(ActionGroupContext context) { return context.ModifyFloat("reach", Def.reach); }
+	public float Duration(ActionGroupContext context) { return context.ModifyFloat(ModifierDefinition.STAT_DURATION, Def.duration); }
+	public float ToolLevel(ActionGroupContext context) { return context.ModifyFloat(ModifierDefinition.STAT_TOOL_HARVEST_LEVEL, Def.toolLevel); }
+	public float HarvestSpeed(ActionGroupContext context) { return context.ModifyFloat(ModifierDefinition.STAT_TOOL_HARVEST_SPEED, Def.harvestSpeed); }
+	public float Reach(ActionGroupContext context) { return context.ModifyFloat(ModifierDefinition.STAT_TOOL_REACH, Def.reach); }
 }

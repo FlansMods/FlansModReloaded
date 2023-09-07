@@ -37,7 +37,7 @@ public class Maths
     public static boolean Approx(double a, double b) { return Abs(a-b) < Epsilon; }
     public static double Lerp(double a, double b, double t) { return a + (b-a)*t; }
     public static double Sign(double d) { return d > 0.0d ? 1.0d : (d < 0.0d ? -1.0d : 0.0d); }
-
+    public static double Exp(double d) { return Math.exp(d); }
 
     // Float maths
     public static final float EpsilonF = 0.000001f;
@@ -54,6 +54,7 @@ public class Maths
     public static boolean Approx(float a, float b) { return Abs(a-b) < EpsilonF; }
     public static float Lerp(float a, float b, float t) { return a + (b-a)*t; }
     public static float Sign(float f) { return f > 0.0f ? 1.0f : (f < 0.0f ? -1.0f : 0.0f); }
+    public static float ExpF(float f) { return (float)Math.exp(f); }
 
     public static final double Pi = 3.1415926535897932384626433832795028841971d;
     public static final double Tau = 2.0d * Pi;

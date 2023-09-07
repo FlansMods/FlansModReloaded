@@ -112,7 +112,7 @@ public class ShootAction extends Action
 	{
 		if(!context.CanShoot(0))
 		{
-			if(context.CanBeReloaded(0))
+			if(context.CanPerformReloadFromAttachedInventory(0))
 				return true;
 		}
 
@@ -407,6 +407,9 @@ public class ShootAction extends Action
 			Calculate(context, triggerIndex);
 		}
 
+		float verticalRecoil = 0.0f;
+		float horizontalRecoil = 0.0f;
+
 		GunshotCollection shots = Results.get(triggerIndex);
 		if(shots != null)
 		{
@@ -416,6 +419,9 @@ public class ShootAction extends Action
 			{
 				// Create client effects only for bullets that were added in this most recent re-trigger
 				GunshotContext gunshotContext = GunshotContext.CreateFrom(context, shot.bulletDef);
+
+				verticalRecoil = Maths.Max(verticalRecoil, gunshotContext.VerticalRecoil());
+				horizontalRecoil = Maths.Max(horizontalRecoil, gunshotContext.HorizontalRecoil());
 
 				if(gunshotContext.Bullet.shootStats.hitscan)
 				{
@@ -450,10 +456,21 @@ public class ShootAction extends Action
 				}
 			}
 
-			// If this was my shot, and it hit, hit marker me
-			if(hitEntity && context.Shooter().IsLocalPlayerOwner())
+			if(context.Shooter().IsLocalPlayerOwner())
 			{
-				FlansModClient.CLIENT_OVERLAY_HOOKS.ApplyHitMarker(hitMLG ? 100.0f : 10.0f, hitMLG);
+				// If this was my shot, and it hit, hit marker me
+				if(hitEntity)
+				{
+					FlansModClient.CLIENT_OVERLAY_HOOKS.ApplyHitMarker(hitMLG ? 100.0f : 10.0f, hitMLG);
+				}
+
+				if (context.Shooter().Entity() instanceof Player player)
+				{
+					FlansModClient.RECOIL.AddRecoil(
+						horizontalRecoil * (float)player.getRandom().nextGaussian(),
+						verticalRecoil * (0.125f + 0.375f * Maths.ExpF(-triggerIndex * 0.125f))
+					);
+				}
 			}
 		}
 	}

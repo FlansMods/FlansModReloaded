@@ -1,6 +1,7 @@
 package com.flansmod.common.projectiles;
 
 import com.flansmod.common.FlansMod;
+import com.flansmod.common.actions.ActionGroup;
 import com.flansmod.common.actions.ActionStack;
 import com.flansmod.common.gunshots.Gunshot;
 import com.flansmod.common.gunshots.GunshotContext;
@@ -66,7 +67,14 @@ public class BulletEntity extends Projectile
 		Def = context.Bullet;
 		entityData.set(DATA_BULLET_DEF, Def.hashCode());
 		if(Def.shootStats.fuseTime > 0.0f)
+		{
 			FuseRemaining = Maths.Floor(Def.shootStats.fuseTime * 20f);
+			ActionGroup group = context.ActionGroup.GetExistingActionGroup();
+			if(group != null && group.GetProgressTicks() > 0)
+			{
+				FuseRemaining -= group.GetProgressTicks();
+			}
+		}
 	}
 
 	public void SetVelocity(Vec3 velocity)
@@ -102,6 +110,9 @@ public class BulletEntity extends Projectile
 	public void tick()
 	{
 		super.tick();
+
+		if(Stuck)
+			setDeltaMovement(Vec3.ZERO);
 
 		Vec3 motion = getDeltaMovement();
 		motion = ApplyDrag(motion);
@@ -161,10 +172,6 @@ public class BulletEntity extends Projectile
 
 	protected Vec3 OnImpact(Vec3 motion)
 	{
-		// Fused projectiles don't do anything on impact
-		if(Def.shootStats.fuseTime > 0.0f)
-			return motion;
-
 		// Work out which thing we collided with (Minecraft is bad at telling us this...)
 		HitResult hitResult = ProjectileUtil.getHitResult(this, this::CanHitEntity);
 		switch(hitResult.getType())
