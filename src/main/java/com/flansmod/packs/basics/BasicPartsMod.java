@@ -3,6 +3,7 @@ package com.flansmod.packs.basics;
 import com.flansmod.client.FlansModClient;
 import com.flansmod.client.render.FlanModelRegistration;
 import com.flansmod.common.FlansMod;
+import com.flansmod.common.crafting.WorkbenchBlockEntity;
 import com.flansmod.packs.modern.ModernWeaponsMod;
 import com.mojang.logging.LogUtils;
 import net.minecraft.client.Minecraft;
@@ -12,6 +13,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.material.Material;
 import net.minecraftforge.api.distmarker.Dist;
@@ -34,6 +36,7 @@ public class BasicPartsMod
 	// Item registration
 	public static final DeferredRegister<Item> ITEMS = DeferredRegister.create(ForgeRegistries.ITEMS, MODID);
 	public static final DeferredRegister<Block> BLOCKS = DeferredRegister.create(ForgeRegistries.BLOCKS, MODID);
+	public static final DeferredRegister<BlockEntityType<?>> TILE_ENTITIES = DeferredRegister.create(ForgeRegistries.BLOCK_ENTITY_TYPES, MODID);
 
 	// Storage helper blocks
 	public static final RegistryObject<Block> GUNPOWDER_BLOCK = BLOCKS.register("gunpowder_block", () -> new Block(BlockBehaviour.Properties.of(Material.STONE)));
@@ -249,11 +252,23 @@ public class BasicPartsMod
 	public static final RegistryObject<Item> BULLET_SHOTGUN_SHELL_FLECHETTE =				FlansMod.Bullet(ITEMS, MODID, "shotgun_shell_flechette");
 	public static final RegistryObject<Item> BULLET_SHOTGUN_SHELL_FLECHETTE_POISONED =		FlansMod.Bullet(ITEMS, MODID, "shotgun_shell_flechette_poisoned");
 
+
+	public static final RegistryObject<Block> WORKBENCH_BLOCK_PARTS = 						FlansMod.Workbench_Block(BLOCKS, MODID, "part_fabricator");
+	public static final RegistryObject<Item> WORKBENCH_ITEM_PARTS = 						FlansMod.Workbench_Item(ITEMS, MODID, "part_fabricator", WORKBENCH_BLOCK_PARTS);
+	public static final RegistryObject<BlockEntityType<WorkbenchBlockEntity>> WORKBENCH_TILE_ENTITY_PARTS =
+		FlansMod.Workbench_TileEntityType(TILE_ENTITIES, MODID, "part_fabricator");
+	public static final RegistryObject<Block> WORKBENCH_BLOCK_BULLETS = 					FlansMod.Workbench_Block(BLOCKS, MODID, "bullet_fabricator");
+	public static final RegistryObject<Item> WORKBENCH_ITEM_BULLETS = 						FlansMod.Workbench_Item(ITEMS, MODID, "bullet_fabricator", WORKBENCH_BLOCK_BULLETS);
+	public static final RegistryObject<BlockEntityType<WorkbenchBlockEntity>> WORKBENCH_TILE_ENTITY_BULLETS =
+		FlansMod.Workbench_TileEntityType(TILE_ENTITIES, MODID, "bullet_fabricator");
+
+
 	public BasicPartsMod()
 	{
 		IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
 		ITEMS.register(modEventBus);
 		BLOCKS.register(modEventBus);
+		TILE_ENTITIES.register(modEventBus);
 	}
 
 	@Mod.EventBusSubscriber(value = Dist.CLIENT, bus = Mod.EventBusSubscriber.Bus.MOD, modid = MODID)

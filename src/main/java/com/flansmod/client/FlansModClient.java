@@ -14,6 +14,7 @@ import com.flansmod.client.render.bullets.ShotRenderer;
 import com.flansmod.common.FlansMod;
 import com.flansmod.common.gunshots.ActionManager;
 import com.mojang.blaze3d.vertex.DefaultVertexFormat;
+import cpw.mods.modlauncher.api.INameMappingService;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraft.client.renderer.ItemModelShaper;
@@ -29,6 +30,7 @@ import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+import net.minecraftforge.fml.loading.FMLLoader;
 import net.minecraftforge.fml.util.ObfuscationReflectionHelper;
 
 import javax.annotation.Nullable;
@@ -128,7 +130,7 @@ public class FlansModClient
 	// ---------------------------
 	// REFLECTION
 	// ---------------------------
-	private static final Field MINECRAFT_MISS_TIME = ObfuscationReflectionHelper.findField(Minecraft.class, "missTime");
+	private static final Field MINECRAFT_MISS_TIME = ObfuscationReflectionHelper.findField(Minecraft.class, "f_91078_");
 	private static void InitReflection()
 	{
 		MINECRAFT_MISS_TIME.setAccessible(true);

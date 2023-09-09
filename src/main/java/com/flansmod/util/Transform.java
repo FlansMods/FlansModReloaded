@@ -1,6 +1,7 @@
 package com.flansmod.util;
 
 import com.flansmod.common.FlansMod;
+import net.minecraft.core.BlockPos;
 import net.minecraft.world.phys.Vec3;
 import org.joml.*;
 
@@ -92,6 +93,7 @@ public class Transform
     private static Vec3 ToVec3(Vector3d v) { return new Vec3(v.x, v.y, v.z); }
     private static Vector3d ToVec3d(Vec3 v) { return new Vector3d(v.x, v.y, v.z); }
 
+    public BlockPos BlockPos() { return new BlockPos(Maths.Floor(position.x), Maths.Floor(position.y), Maths.Floor(position.z)); }
     public Vec3 PositionVec3() { return new Vec3(position.x, position.y, position.z); }
     public Vec3 UpVec3() { return ToVec3(Up()); }
     public Vec3 RightVec3() { return ToVec3(Right()); }

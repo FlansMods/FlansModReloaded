@@ -40,7 +40,7 @@
         "hitscan": false,
         "fuseTime": 5.0,
         "gravityFactor": 1.0,
-        "sticky": false,
+        "sticky": true,
         "turnRate": 0.5,
         "dragInAir": 0.01,
         "trailParticles": "",

@@ -29,7 +29,7 @@ import java.util.concurrent.Executor;
 public class FlanModelRegistration implements PreparableReloadListener
 {
     private static final HashMap<Item, FlanItemModelRenderer> ITEMS_TO_REGISTER = new HashMap<>();
-    private static final HashMap<ResourceLocation, BakedModel> ENTITY_MODELS_TO_REGISTER = new HashMap<>();
+    private static final HashMap<ModelResourceLocation, BakedModel> ENTITY_MODELS_TO_REGISTER = new HashMap<>();
 
     public static void preRegisterRenderer(Item item, FlanItemModelRenderer renderer)
     {
@@ -38,7 +38,8 @@ public class FlanModelRegistration implements PreparableReloadListener
 
     public static void PreRegisterEntityModel(ResourceLocation location)
     {
-        ENTITY_MODELS_TO_REGISTER.put(location, null);
+        ModelResourceLocation modelLoc = new ModelResourceLocation(location, "inventory");
+        ENTITY_MODELS_TO_REGISTER.put(modelLoc, null);
     }
 
     public void hook(IEventBus modEventBus)
@@ -70,9 +71,9 @@ public class FlanModelRegistration implements PreparableReloadListener
             //}
         }
 
-        for(ResourceLocation loc : ENTITY_MODELS_TO_REGISTER.keySet())
+        for(ModelResourceLocation modelLoc : ENTITY_MODELS_TO_REGISTER.keySet())
         {
-            event.register(loc);
+            event.register(modelLoc);
         }
     }
 
@@ -107,8 +108,8 @@ public class FlanModelRegistration implements PreparableReloadListener
             //modelRegistry.put(modelID, compoundModel);
         }
 
-        List<ResourceLocation> locations = new ArrayList<>(ENTITY_MODELS_TO_REGISTER.keySet());
-        for(ResourceLocation loc : locations)
+        List<ModelResourceLocation> locations = new ArrayList<>(ENTITY_MODELS_TO_REGISTER.keySet());
+        for(ModelResourceLocation loc : locations)
         {
             BakedModel bakedModel = modelRegistry.get(loc);
             if(bakedModel != null)
@@ -125,7 +126,7 @@ public class FlanModelRegistration implements PreparableReloadListener
     public void OnBakingComplete(ModelEvent.BakingCompleted event)
     {
         ModelBakery bakery = Minecraft.getInstance().getModelManager().getModelBakery();
-            for(var kvp : bakery.getBakedTopLevelModels().entrySet())
+        for(var kvp : bakery.getBakedTopLevelModels().entrySet())
         {
             if(kvp.getKey().getNamespace().equals("minecraft"))
                 continue;

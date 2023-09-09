@@ -45,9 +45,11 @@ public class BulletEntityRenderer extends EntityRenderer<BulletEntity>
 			ModelPart model = LoadedModels.get(bullet.Def.Location);
 			if (model == null)
 			{
+
+
 				try
 				{
-					model = EntityModels.bakeLayer(new ModelLayerLocation(bullet.Def.Location.withPrefix("entity/"), "main"));
+					model = EntityModels.bakeLayer(new ModelLayerLocation(bullet.Def.Location.withPrefix("item/entity/"), "inventory"));
 					LoadedModels.put(bullet.Def.Location, model);
 				}
 				catch(Exception e)

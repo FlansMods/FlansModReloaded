@@ -21,5 +21,7 @@
   "item.flansbasicparts.shotgun_shell_ex": "Explosive Shell",
   "item.flansbasicparts.shotgun_shell_flechette": "Flechette Shell",
   "item.flansbasicparts.shotgun_shell_flechette_poisoned": "Poisoned Flechette Shell",
-  "item.flansbasicparts.shotgun_shell_incendiary": "Incendiary Shell"
+  "item.flansbasicparts.shotgun_shell_incendiary": "Incendiary Shell",
+  "item.flansbasicparts.bullet_fabricator": "Bullet Fabricator",
+  "item.flansbasicparts.part_fabricator": "Part Fabricator"
 }

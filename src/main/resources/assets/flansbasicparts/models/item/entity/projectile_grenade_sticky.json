@@ -2,8 +2,8 @@
 	"credit": "Made with Blockbench",
 	"texture_size": [8, 8],
 	"textures": {
-		"0": "flansmod:entity/projectile_grenade_ex",
-		"particle": "flansmod:entity/projectile_grenade_ex"
+		"0": "flansbasicparts:entity/projectile_grenade_sticky",
+		"particle": "flansbasicparts:entity/projectile_grenade_sticky"
 	},
 	"elements": [
 		{

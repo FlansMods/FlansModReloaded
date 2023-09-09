@@ -1,0 +1,21 @@
+{
+  "variants": {
+	  "facing=north": {
+		  "model": "flansbasicparts:block/part_fabricator",
+		  "y": 90		  
+	  },
+	  "facing=east": {
+		  "model": "flansbasicparts:block/part_fabricator",
+		  "y": 180		  
+	  },
+	  "facing=south": {
+		  "model": "flansbasicparts:block/part_fabricator",
+		  "y": 270		  
+	  },
+	  "facing=west": {
+		  "model": "flansbasicparts:block/part_fabricator",
+		  "y": 0		  
+	  }
+	  
+  }
+}
