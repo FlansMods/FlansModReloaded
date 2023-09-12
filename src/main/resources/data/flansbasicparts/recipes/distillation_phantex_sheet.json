@@ -1,0 +1,13 @@
+{
+  "type": "flansbasicparts:distillation",
+  "category": "building",
+  "input": {
+	  "item": "minecraft:phantom_membrane"
+  },
+  "output": {
+	  "item": "flansbasicparts:phantex_sheet"
+  },
+  "fraction_depth":2,
+  "distillation_time":900,
+  "show_notification": true
+}

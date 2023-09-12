@@ -1,0 +1,34 @@
+{
+    "sources": [
+        {
+            "matchItems": [],
+            "matchTags": [
+                "forge:nuggets/iron"
+            ],
+            "count": 1
+        },
+        {
+            "matchItems": [],
+            "matchTags": [
+                "forge:ingots/iron"
+            ],
+            "count": 9
+        },
+        {
+            "matchItems": [],
+            "matchTags": [
+                "forge:plates/iron"
+            ],
+            "count": 10
+        },
+        {
+            "matchItems": [],
+            "matchTags": [
+                "forge:blocks/iron"
+            ],
+            "count": 81
+        }
+    ],
+    "craftingTier": 1,
+    "materialType": "Metal"
+}

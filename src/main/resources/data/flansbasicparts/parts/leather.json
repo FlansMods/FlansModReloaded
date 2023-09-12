@@ -1,0 +1,20 @@
+{
+    "sources": [
+        {
+            "matchItems": [
+                "minecraft:rabbit_hide"
+            ],
+            "matchTags": [],
+            "count": 1
+        },
+        {
+            "matchItems": [
+                "minecraft:leather"
+            ],
+            "matchTags": [],
+            "count": 4
+        }
+    ],
+    "craftingTier": 2,
+    "materialType": "Fabric"
+}

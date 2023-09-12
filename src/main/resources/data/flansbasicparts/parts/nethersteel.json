@@ -1,0 +1,34 @@
+{
+    "sources": [
+        {
+            "matchItems": [],
+            "matchTags": [
+                "forge:nuggets/nethersteel"
+            ],
+            "count": 1
+        },
+        {
+            "matchItems": [],
+            "matchTags": [
+                "forge:ingots/nethersteel"
+            ],
+            "count": 9
+        },
+        {
+            "matchItems": [],
+            "matchTags": [
+                "forge:plates/nethersteel"
+            ],
+            "count": 10
+        },
+        {
+            "matchItems": [],
+            "matchTags": [
+                "forge:blocks/nethersteel"
+            ],
+            "count": 81
+        }
+    ],
+    "craftingTier": 3,
+    "materialType": "Metal"
+}

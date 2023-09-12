@@ -1,0 +1,13 @@
+{
+  "type": "flansbasicparts:distillation",
+  "category": "building",
+  "input": {
+	  "item": "flansbasicparts:clay_and_sand_mixture"
+  },
+  "output": {
+	  "item": "flansbasicparts:kevlar_panel"
+  },
+  "fraction_depth":2,
+  "distillation_time":800,
+  "show_notification": true
+}

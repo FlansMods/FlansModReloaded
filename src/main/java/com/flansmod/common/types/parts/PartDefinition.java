@@ -49,5 +49,4 @@ public class PartDefinition extends JsonDefinition
 	public int materialTier = 0;
 	@JsonField
 	public EMaterialType materialType = EMaterialType.Misc;
-
 }

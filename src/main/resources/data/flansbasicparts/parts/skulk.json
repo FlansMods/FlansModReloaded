@@ -1,0 +1,13 @@
+{
+    "sources": [
+        {
+            "matchItems": [
+                "minecraft:echo_shard"
+            ],
+            "matchTags": [],
+            "count": 1
+        }
+    ],
+    "craftingTier": 3,
+    "materialType": "Electronic"
+}

@@ -54,6 +54,7 @@ import org.slf4j.Logger;
 import java.util.ArrayList;
 import java.util.List;
 
+@SuppressWarnings("unused")
 @Mod(FlansMod.MODID)
 public class FlansMod
 {
@@ -149,7 +150,7 @@ public class FlansMod
     public static RegistryObject<Block> Workbench_Block(DeferredRegister<Block> blockRegister, String modID, String name)
     {
         ResourceLocation loc = new ResourceLocation(modID, name);
-        return blockRegister.register(name, () -> new WorkbenchBlock(loc, BlockBehaviour.Properties.of(Material.STONE)));
+        return blockRegister.register(name, () -> new WorkbenchBlock(loc, BlockBehaviour.Properties.of(Material.STONE).dynamicShape()));
     }
 
     public static RegistryObject<Item> Workbench_Item(DeferredRegister<Item> itemRegister, String modID, String name, RegistryObject<Block> block)
@@ -161,7 +162,7 @@ public class FlansMod
     public static RegistryObject<BlockEntityType<WorkbenchBlockEntity>> Workbench_TileEntityType(DeferredRegister<BlockEntityType<?>> tileEntityTypeRegister, String modID, String name)
     {
         ResourceLocation loc = new ResourceLocation(modID, name);
-        return tileEntityTypeRegister.register(name, () -> { return new WorkbenchBlockEntity.WorkbenchBlockEntityTypeHolder(loc).CreateType(); });
+        return tileEntityTypeRegister.register(name, () -> new WorkbenchBlockEntity.WorkbenchBlockEntityTypeHolder(loc).CreateType());
     }
 
 
@@ -200,6 +201,11 @@ public class FlansMod
         FlansModClient.Init();
     }
 
+    public static final Component CREATIVE_TAB_NAME_GUNS = Component.translatable("item_group." + MODID + ".creative_tab_guns");
+    public static final Component CREATIVE_TAB_NAME_PARTS = Component.translatable("item_group." + MODID + ".creative_tab_parts");
+    public static final Component CREATIVE_TAB_NAME_BULLETS = Component.translatable("item_group." + MODID + ".creative_tab_bullets");
+    public static final Component CREATIVE_TAB_NAME_MODIFIERS = Component.translatable("item_group." + MODID + ".creative_tab_modifiers");
+
     private void onCreativeTabRegistry(CreativeModeTabEvent.Register event)
     {
         event.registerCreativeModeTab(new ResourceLocation(MODID, "creative_tab_guns"), builder ->
@@ -207,12 +213,21 @@ public class FlansMod
             List<ItemStack> stacks = new ArrayList<>();
             for(Item item : ForgeRegistries.ITEMS.getValues())
             {
-                if(item instanceof GunItem || item instanceof BulletItem || item instanceof GrenadeItem)
+                if(item instanceof GunItem)
                     stacks.add(new ItemStack(item));
+
+                if(item instanceof BlockItem blockItem)
+                {
+                    if(blockItem.getBlock() instanceof WorkbenchBlock workbenchBlock)
+                    {
+                        if(workbenchBlock.Def().gunCrafting.isActive)
+                            stacks.add(new ItemStack(item));
+                    }
+                }
             }
 
             builder
-                .title(Component.translatable("item_group." + MODID + ".creative_tab_guns"))
+                .title(CREATIVE_TAB_NAME_GUNS)
                 .icon(() -> stacks.size() > 0 ? stacks.get(0) : new ItemStack(Items.DIAMOND))
                 .displayItems((enabledFlags, populator, hasPermissions) ->
                 {
@@ -226,6 +241,35 @@ public class FlansMod
                 });
         });
 
+        event.registerCreativeModeTab(new ResourceLocation(MODID, "creative_tab_bullets"), builder ->
+        {
+            List<ItemStack> stacks = new ArrayList<>();
+            for(Item item : ForgeRegistries.ITEMS.getValues())
+            {
+                if(item instanceof BulletItem || item instanceof GrenadeItem)
+                    stacks.add(new ItemStack(item));
+
+                if(item instanceof BlockItem blockItem)
+                {
+                    if(blockItem.getBlock() instanceof WorkbenchBlock workbenchBlock)
+                    {
+                        if(workbenchBlock.Def().partCrafting.isActive)
+                            stacks.add(new ItemStack(item));
+                    }
+                }
+            }
+
+            builder
+                .title(CREATIVE_TAB_NAME_BULLETS)
+                .icon(() -> stacks.size() > 0 ? stacks.get(0) : new ItemStack(Items.STICK))
+                .displayItems((enabledFlags, populator, hasPermissions) ->
+                {
+                    populator.accept(GUN_MACHINING_TABLE_ITEM.get());
+                    for(ItemStack stack : stacks)
+                        populator.accept(stack);
+                });
+        });
+
         event.registerCreativeModeTab(new ResourceLocation(MODID, "creative_tab_parts"), builder ->
         {
             List<ItemStack> stacks = new ArrayList<>();
@@ -233,10 +277,19 @@ public class FlansMod
             {
                 if(item instanceof PartItem)
                     stacks.add(new ItemStack(item));
+
+                if(item instanceof BlockItem blockItem)
+                {
+                    if(blockItem.getBlock() instanceof WorkbenchBlock workbenchBlock)
+                    {
+                        if(workbenchBlock.Def().partCrafting.isActive)
+                            stacks.add(new ItemStack(item));
+                    }
+                }
             }
 
             builder
-                .title(Component.translatable("item_group." + MODID + ".creative_tab_parts"))
+                .title(CREATIVE_TAB_NAME_PARTS)
                 .icon(() -> stacks.size() > 0 ? stacks.get(0) : new ItemStack(Items.STICK))
                 .displayItems((enabledFlags, populator, hasPermissions) ->
                 {
@@ -256,7 +309,7 @@ public class FlansMod
             }
 
             builder
-                .title(Component.translatable("item_group." + MODID + ".creative_tab_modifiers"))
+                .title(CREATIVE_TAB_NAME_MODIFIERS)
                 .icon(() -> stacks.size() > 0 ? stacks.get(0) : new ItemStack(Items.BOOK))
                 .displayItems((enabledFlags, populator, hasPermissions) ->
                 {

@@ -1,0 +1,13 @@
+{
+  "type": "flansbasicparts:distillation",
+  "category": "building",
+  "input": {
+	  "item": "minecraft:phantom_membrane"
+  },
+  "output": {
+	  "item": "flansbasicparts:phantasmal_residue"
+  },
+  "fraction_depth":1,
+  "distillation_time":100,
+  "show_notification": true
+}

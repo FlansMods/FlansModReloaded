@@ -1,0 +1,21 @@
+{
+  "variants": {
+	  "facing=north": {
+		  "model": "flansbasicparts:block/distillation_tower",
+		  "y": 180		  
+	  },
+	  "facing=east": {
+		  "model": "flansbasicparts:block/distillation_tower",
+		  "y": 270		  
+	  },
+	  "facing=south": {
+		  "model": "flansbasicparts:block/distillation_tower",
+		  "y": 0		  
+	  },
+	  "facing=west": {
+		  "model": "flansbasicparts:block/distillation_tower",
+		  "y": 270		  
+	  }
+	  
+  }
+}

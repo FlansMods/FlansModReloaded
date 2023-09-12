@@ -1,0 +1,14 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "building",
+  "ingredients": [
+    {
+      "item": "flansbasicparts:phantex_block"
+    }
+  ],
+  "result": {
+    "item": "flansbasicparts:phantex_sheet",
+	"count": 9
+  },
+  "show_notification": true
+}

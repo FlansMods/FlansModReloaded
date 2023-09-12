@@ -1,0 +1,13 @@
+{
+  "type": "flansbasicparts:distillation",
+  "category": "building",
+  "input": {
+	  "tag": "minecraft:coals"
+  },
+  "output": {
+	  "item": "flansbasicparts:carbon_heavy_coal"
+  },
+  "fraction_depth":1,
+  "distillation_time":200,
+  "show_notification": true
+}

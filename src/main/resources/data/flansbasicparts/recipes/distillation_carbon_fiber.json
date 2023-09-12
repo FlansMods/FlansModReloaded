@@ -1,0 +1,13 @@
+{
+  "type": "flansbasicparts:distillation",
+  "category": "building",
+  "input": {
+	  "tag": "minecraft:coals"
+  },
+  "output": {
+	  "item": "flansbasicparts:carbon_fiber_sheet"
+  },
+  "fraction_depth":3,
+  "distillation_time":1200,
+  "show_notification": true
+}

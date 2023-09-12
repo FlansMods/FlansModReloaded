@@ -1,32 +1,45 @@
 package com.flansmod.packs.basics;
 
-import com.flansmod.client.FlansModClient;
 import com.flansmod.client.render.FlanModelRegistration;
 import com.flansmod.common.FlansMod;
 import com.flansmod.common.crafting.WorkbenchBlockEntity;
-import com.flansmod.packs.modern.ModernWeaponsMod;
+import com.flansmod.packs.basics.client.DistillationTowerScreen;
+import com.flansmod.packs.basics.common.DistillationRecipe;
+import com.flansmod.packs.basics.common.DistillationTowerBlock;
+import com.flansmod.packs.basics.common.DistillationTowerBlockEntity;
+import com.flansmod.packs.basics.common.DistillationTowerMenu;
 import com.mojang.logging.LogUtils;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraft.client.renderer.ItemModelShaper;
 import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.item.crafting.RecipeSerializer;
+import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.material.Material;
 import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.event.ModelEvent;
+import net.minecraftforge.common.extensions.IForgeMenuType;
+import net.minecraftforge.event.CreativeModeTabEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
 import org.slf4j.Logger;
 
+@SuppressWarnings("unused")
 @Mod(BasicPartsMod.MODID)
 public class BasicPartsMod
 {
@@ -37,6 +50,9 @@ public class BasicPartsMod
 	public static final DeferredRegister<Item> ITEMS = DeferredRegister.create(ForgeRegistries.ITEMS, MODID);
 	public static final DeferredRegister<Block> BLOCKS = DeferredRegister.create(ForgeRegistries.BLOCKS, MODID);
 	public static final DeferredRegister<BlockEntityType<?>> TILE_ENTITIES = DeferredRegister.create(ForgeRegistries.BLOCK_ENTITY_TYPES, MODID);
+	public static final DeferredRegister<MenuType<?>> MENUS = DeferredRegister.create(ForgeRegistries.MENU_TYPES, MODID);
+	public static final DeferredRegister<RecipeType<?>> RECIPE_TYPES = DeferredRegister.create(ForgeRegistries.RECIPE_TYPES, MODID);
+	public static final DeferredRegister<RecipeSerializer<?>> RECIPE_SERIALIZERS = DeferredRegister.create(ForgeRegistries.RECIPE_SERIALIZERS, MODID);
 
 	// Storage helper blocks
 	public static final RegistryObject<Block> GUNPOWDER_BLOCK = BLOCKS.register("gunpowder_block", () -> new Block(BlockBehaviour.Properties.of(Material.STONE)));
@@ -70,11 +86,13 @@ public class BasicPartsMod
 	public static final RegistryObject<Block> FIBERGLASS_BLOCK = BLOCKS.register("fiberglass_block", () -> new Block(BlockBehaviour.Properties.of(Material.CLAY)));
 	public static final RegistryObject<Item> FIBERGLASS_BLOCK_ITEM = ITEMS.register("fiberglass_block", () -> new BlockItem(FIBERGLASS_BLOCK.get(), new Item.Properties()));
 	// Tier II = Phantom Membrane
-	public static final RegistryObject<Item> PHANTEX = ITEMS.register("phantex", () -> new Item(new Item.Properties()));
+	public static final RegistryObject<Item> PHANTASMAL_RESIDUE = ITEMS.register("phantasmal_residue", () -> new Item(new Item.Properties()));
+	public static final RegistryObject<Item> PHANTEX_SHEET = ITEMS.register("phantex_sheet", () -> new Item(new Item.Properties()));
 	public static final RegistryObject<Block> PHANTEX_BLOCK = BLOCKS.register("phantex_block", () -> new Block(BlockBehaviour.Properties.of(Material.CLAY)));
 	public static final RegistryObject<Item> PHANTEX_BLOCK_ITEM = ITEMS.register("phantex_block", () -> new BlockItem(PHANTEX_BLOCK.get(), new Item.Properties()));
 	// Tier III = Carbon Fiber
-	public static final RegistryObject<Item> CARBON_HEAVY_SOLUTION = ITEMS.register("carbon_heavy_solution", () -> new Item(new Item.Properties()));
+	public static final RegistryObject<Item> CARBON_HEAVY_COAL = ITEMS.register("carbon_heavy_coal", () -> new Item(new Item.Properties()));
+	public static final RegistryObject<Item> CARBON_PRECURSOR_CRYSTAL = ITEMS.register("carbon_precursor_crystal", () -> new Item(new Item.Properties()));
 	public static final RegistryObject<Item> CARBON_FIBER_SHEET = ITEMS.register("carbon_fiber_sheet", () -> new Item(new Item.Properties()));
 	public static final RegistryObject<Block> CARBON_FIBER_BLOCK = BLOCKS.register("carbon_fiber_block", () -> new Block(BlockBehaviour.Properties.of(Material.HEAVY_METAL)));
 	public static final RegistryObject<Item> CARBON_FIBER_BLOCK_ITEM = ITEMS.register("carbon_fiber_block", () -> new BlockItem(CARBON_FIBER_BLOCK.get(), new Item.Properties()));
@@ -95,7 +113,7 @@ public class BasicPartsMod
 	// Tier II = Hard Wood = { Spruce, Jungle, Mangrove, Cherry }
 	// Tier III = Dense Wood = { Warped, Crimson }
 
-	// Transparents
+	// Transparent
 	// Tier I - Glass
 	// Tier II - Plexiglass
 	// Tier III - Bulletproof Glass
@@ -263,12 +281,75 @@ public class BasicPartsMod
 		FlansMod.Workbench_TileEntityType(TILE_ENTITIES, MODID, "bullet_fabricator");
 
 
+	public static final RegistryObject<Block> DISTILLATION_TOWER_TOP = 						BLOCKS.register("distillation_tower_top", () -> new DistillationTowerBlock(true, BlockBehaviour.Properties.of(Material.HEAVY_METAL)));
+	public static final RegistryObject<Block> DISTILLATION_TOWER = 							BLOCKS.register("distillation_tower", () -> new DistillationTowerBlock(false, BlockBehaviour.Properties.of(Material.HEAVY_METAL)));
+	public static final RegistryObject<Item> DISTILLATION_TOWER_TOP_ITEM = 					ITEMS.register("distillation_tower_top", () -> new BlockItem(DISTILLATION_TOWER_TOP.get(), new Item.Properties()));
+	public static final RegistryObject<Item> DISTILLATION_TOWER_ITEM = 						ITEMS.register("distillation_tower", () -> new BlockItem(DISTILLATION_TOWER.get(), new Item.Properties()));
+	public static final RegistryObject<BlockEntityType<DistillationTowerBlockEntity>> DISTILLATION_TOWER_TOP_TILE_ENTITY =
+		TILE_ENTITIES.register("distillation_tower_top", () -> new DistillationTowerBlockEntity.DistillationTowerBlockEntityTypeHolder(true).CreateType());
+	public static final RegistryObject<BlockEntityType<DistillationTowerBlockEntity>> DISTILLATION_TOWER_TILE_ENTITY =
+		TILE_ENTITIES.register("distillation_tower", () -> new DistillationTowerBlockEntity.DistillationTowerBlockEntityTypeHolder(false).CreateType());
+	public static final RegistryObject<MenuType<DistillationTowerMenu>> DISTILLATION_TOWER_MENU = MENUS.register("distillation_tower", () -> IForgeMenuType.create(DistillationTowerMenu::new));
+	public static final RegistryObject<RecipeType<DistillationRecipe>> DISTILLATION_RECIPE_TYPE = RECIPE_TYPES.register("distillation", () -> RecipeType.simple(new ResourceLocation(MODID, "distillation")));
+	public static final RegistryObject<RecipeSerializer<DistillationRecipe>> DISTILLATION_RECIPE_SERIALIZER = RECIPE_SERIALIZERS.register("distillation", DistillationRecipe.Serializer::new);
+
+
 	public BasicPartsMod()
 	{
 		IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
 		ITEMS.register(modEventBus);
 		BLOCKS.register(modEventBus);
 		TILE_ENTITIES.register(modEventBus);
+		MENUS.register(modEventBus);
+		RECIPE_TYPES.register(modEventBus);
+		RECIPE_SERIALIZERS.register(modEventBus);
+		modEventBus.register(this);
+
+	}
+
+	@SubscribeEvent
+	public void OnCreativeTabs(CreativeModeTabEvent.BuildContents event)
+	{
+		if(event.getTab().getDisplayName() == FlansMod.CREATIVE_TAB_NAME_PARTS)
+		{
+			event.accept(DISTILLATION_TOWER_ITEM);
+			event.accept(DISTILLATION_TOWER_TOP_ITEM);
+
+
+			event.accept(PHANTASMAL_RESIDUE);
+			event.accept(CARBON_HEAVY_COAL);
+			event.accept(CARBON_PRECURSOR_CRYSTAL);
+
+			event.accept(STEEL_NUGGET);
+			event.accept(STEEL_INGOT);
+			event.accept(STEEL_BLOCK_ITEM);
+
+			event.accept(ALUMINIUM_NUGGET);
+			event.accept(ALUMINIUM_INGOT);
+			event.accept(ALUMINIUM_BLOCK_ITEM);
+
+			event.accept(NETHERSTEEL_NUGGET);
+			event.accept(NETHERSTEEL_INGOT);
+			event.accept(NETHERSTEEL_BLOCK_ITEM);
+
+			event.accept(FIBERGLASS);
+			event.accept(FIBERGLASS_BLOCK_ITEM);
+
+			event.accept(PHANTEX_SHEET);
+			event.accept(PHANTEX_BLOCK_ITEM);
+
+			event.accept(CARBON_FIBER_SHEET);
+			event.accept(CARBON_FIBER_BLOCK_ITEM);
+
+			event.accept(POLYESTER_THREAD);
+			event.accept(POLYESTER_BLOCK_ITEM);
+
+			event.accept(KEVLAR_PANEL);
+			event.accept(KEVLAR_BLOCK_ITEM);
+
+			event.accept(Items.GUNPOWDER);
+			event.accept(GUNPOWDER_BLOCK_ITEM);
+		}
 	}
 
 	@Mod.EventBusSubscriber(value = Dist.CLIENT, bus = Mod.EventBusSubscriber.Bus.MOD, modid = MODID)
@@ -292,6 +373,14 @@ public class BasicPartsMod
 			FlanModelRegistration.PreRegisterEntityModel(new ModelResourceLocation(MODID, "entity/rifle_bullet_ap", "inventory"));
 			FlanModelRegistration.PreRegisterEntityModel(new ModelResourceLocation(MODID, "entity/rifle_bullet_ex", "inventory"));
 			FlanModelRegistration.PreRegisterEntityModel(new ModelResourceLocation(MODID, "entity/rifle_bullet_incendiary", "inventory"));
+		}
+
+		@OnlyIn(Dist.CLIENT)
+		@SubscribeEvent
+		public static void ClientInit(final FMLClientSetupEvent event)
+		{
+			// Screens
+			MenuScreens.register(BasicPartsMod.DISTILLATION_TOWER_MENU.get(), DistillationTowerScreen::new);
 		}
 
 		@SubscribeEvent

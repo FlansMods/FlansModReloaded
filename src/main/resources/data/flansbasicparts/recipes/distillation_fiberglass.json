@@ -1,0 +1,13 @@
+{
+  "type": "flansbasicparts:distillation",
+  "category": "building",
+  "input": {
+	  "item": "flansbasicparts:clay_and_sand_mixture"
+  },
+  "output": {
+	  "item": "flansbasicparts:fiberglass"
+  },
+  "fraction_depth":1,
+  "distillation_time":200,
+  "show_notification": true
+}

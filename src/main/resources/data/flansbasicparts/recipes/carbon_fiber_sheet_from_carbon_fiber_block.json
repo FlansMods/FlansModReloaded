@@ -1,0 +1,14 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "group": "gunpowder",
+  "ingredients": [
+    {
+      "item": "flansbasicparts:carbon_fiber_block"
+    }
+  ],
+  "result": {
+    "count": 9,
+    "item": "flansbasicparts:carbon_fiber_sheet"
+  }
+}

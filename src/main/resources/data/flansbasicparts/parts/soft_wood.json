@@ -1,0 +1,26 @@
+{
+    "sources": [
+        {
+            "matchItems": [],
+            "matchTags": [
+                "minecraft:oak_planks",
+                "minecraft:birch_planks",
+                "minecraft:acacia_planks",
+                "minecraft:spruce_planks"
+            ],
+            "count": 1
+        },
+        {
+            "matchItems": [],
+            "matchTags": [
+                "minecraft:oak_logs",
+                "minecraft:birch_logs",
+                "minecraft:acacia_logs",
+                "minecraft:spruce_logs"
+            ],
+            "count": 4
+        }
+    ],
+    "craftingTier": 1,
+    "materialType": "Wood"
+}

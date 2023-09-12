@@ -1,0 +1,13 @@
+{
+  "type": "flansbasicparts:distillation",
+  "category": "building",
+  "input": {
+	  "tag": "minecraft:coals"
+  },
+  "output": {
+	  "item": "flansbasicparts:carbon_precursor_crystal"
+  },
+  "fraction_depth":2,
+  "distillation_time":600,
+  "show_notification": true
+}

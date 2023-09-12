@@ -3,6 +3,7 @@ package com.flansmod.common.types.crafting;
 import com.flansmod.common.FlansMod;
 import com.flansmod.common.types.JsonDefinition;
 import com.flansmod.common.types.JsonField;
+import com.flansmod.common.types.elements.MaterialSourceDefinition;
 import net.minecraft.resources.ResourceLocation;
 
 public class MaterialDefinition extends JsonDefinition
@@ -19,9 +20,7 @@ public class MaterialDefinition extends JsonDefinition
 	}
 
 	@JsonField
-	public String[] matchItems = new String[0];
-	@JsonField
-	public String[] matchTags = new String[0];
+	public MaterialSourceDefinition[] sources = new MaterialSourceDefinition[0];
 	@JsonField
 	public int craftingTier = 1;
 	@JsonField

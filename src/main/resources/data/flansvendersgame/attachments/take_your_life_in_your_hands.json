@@ -1,0 +1,19 @@
+{
+    "itemSettings": {
+        "maxStackSize": 1,
+        "tags": [
+            "flansmod:bullet",
+            "flansmod:grip"
+        ]
+    },
+    "attachmentType": "Grip",
+    "modifiers": [],
+    "mechaEffects": [],
+    "mechaEffectFilter": "",
+    "primaryActions": [],
+    "secondaryActions": [],
+    "replacePrimaryAction": false,
+    "replaceSecondaryAction": false,
+    "modeOverride": "FullAuto",
+    "overrideFireMode": false
+}

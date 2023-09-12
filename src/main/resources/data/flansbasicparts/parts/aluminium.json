@@ -1,0 +1,38 @@
+{
+    "sources": [
+        {
+            "matchItems": [],
+            "matchTags": [
+                "forge:nuggets/aluminum",
+                "forge:nuggets/aluminium"
+            ],
+            "count": 1
+        },
+        {
+            "matchItems": [],
+            "matchTags": [
+                "forge:ingots/aluminum",
+                "forge:ingots/aluminium"
+            ],
+            "count": 9
+        },
+        {
+            "matchItems": [],
+            "matchTags": [
+                "forge:plates/aluminum",
+                "forge:plates/aluminium"
+            ],
+            "count": 10
+        },
+        {
+            "matchItems": [],
+            "matchTags": [
+                "forge:blocks/aluminum",
+                "forge:blocks/aluminium"
+            ],
+            "count": 81
+        }
+    ],
+    "craftingTier": 2,
+    "materialType": "Metal"
+}

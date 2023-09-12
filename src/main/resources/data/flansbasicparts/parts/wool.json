@@ -1,0 +1,20 @@
+{
+    "sources": [
+        {
+            "matchItems": [
+                "minecraft:string"
+            ],
+            "matchTags": [],
+            "count": 1
+        },
+        {
+            "matchItems": [],
+            "matchTags": [
+                "minecraft:wool"
+            ],
+            "count": 4
+        }
+    ],
+    "craftingTier": 1,
+    "materialType": "Fabric"
+}

@@ -33,15 +33,16 @@ public class PartItem extends FlanItem
 
 		if(Def().materialTier != 0)
 		{
+			Component colourCode = Component.translatable("tooltip.tier_colour."+ Def().materialTier);
 			switch(Def().materialType)
 			{
-				case Misc -> { tooltips.add(Component.translatable("tooltip.format.part_misc_tier", Def().materialTier)); }
-				case Wood -> { tooltips.add(Component.translatable("tooltip.format.part_wood_tier", Def().materialTier)); }
-				case Glass -> { tooltips.add(Component.translatable("tooltip.format.part_glass_tier", Def().materialTier)); }
-				case Metal -> { tooltips.add(Component.translatable("tooltip.format.part_metal_tier", Def().materialTier)); }
-				case Composite -> { tooltips.add(Component.translatable("tooltip.format.part_composite_tier", Def().materialTier)); }
-				case Electronic -> { tooltips.add(Component.translatable("tooltip.format.part_electronic_tier", Def().materialTier)); }
-				case Fabric -> { tooltips.add(Component.translatable("tooltip.format.part_fabric_tier", Def().materialTier)); }
+				case Misc -> { tooltips.add(Component.translatable("tooltip.format.part_misc_tier", colourCode, Def().materialTier)); }
+				case Wood -> { tooltips.add(Component.translatable("tooltip.format.part_wood_tier", colourCode, Def().materialTier)); }
+				case Glass -> { tooltips.add(Component.translatable("tooltip.format.part_glass_tier", colourCode, Def().materialTier)); }
+				case Metal -> { tooltips.add(Component.translatable("tooltip.format.part_metal_tier", colourCode, Def().materialTier)); }
+				case Composite -> { tooltips.add(Component.translatable("tooltip.format.part_composite_tier", colourCode, Def().materialTier)); }
+				case Electronic -> { tooltips.add(Component.translatable("tooltip.format.part_electronic_tier", colourCode, Def().materialTier)); }
+				case Fabric -> { tooltips.add(Component.translatable("tooltip.format.part_fabric_tier", colourCode, Def().materialTier)); }
 			}
 		}
 

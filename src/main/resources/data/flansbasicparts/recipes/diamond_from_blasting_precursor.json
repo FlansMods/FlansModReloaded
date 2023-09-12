@@ -1,0 +1,11 @@
+{
+  "type": "minecraft:blasting",
+  "category": "misc",
+  "cookingtime": 6400,
+  "experience": 800.0,
+  "group": "diamond",
+  "ingredient": {
+    "item": "flansbasicparts:carbon_precursor_crystal"
+  },
+  "result": "minecraft:diamond"
+}

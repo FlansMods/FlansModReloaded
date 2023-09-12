@@ -27,6 +27,7 @@ import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
 import org.slf4j.Logger;
 
+@SuppressWarnings("unused")
 @Mod(VendersGameMod.MODID)
 public class VendersGameMod
 {
@@ -50,6 +51,9 @@ public class VendersGameMod
 	public static final RegistryObject<BlockEntityType<WorkbenchBlockEntity>> WORKBENCH_TILE_ENTITY_FC =
 		FlansMod.Workbench_TileEntityType(TILE_ENTITIES, MODID, "fc_workbench");
 
+	public static final RegistryObject<Item> ATTACHMENT_FC_DELUXE_COMPENSATOR = FlansMod.Attachment(ITEMS, MODID, "fc_deluxe_compensator");
+	public static final RegistryObject<Item> ATTACHMENT_FC_DELUXE_FOREGRIP =	FlansMod.Attachment(ITEMS, MODID, "fc_deluxe_foregrip");
+	public static final RegistryObject<Item> ATTACHMENT_FC_PREMIUM_FOREGRIP = 	FlansMod.Attachment(ITEMS, MODID, "fc_premium_foregrip");
 
 	// HitMarket Budget Weaponry
 	public static final RegistryObject<Item> GUN_HM_9 = 						FlansMod.Gun(ITEMS, MODID, "hm_9");
@@ -64,6 +68,14 @@ public class VendersGameMod
 	public static final RegistryObject<BlockEntityType<WorkbenchBlockEntity>> WORKBENCH_TILE_ENTITY_HM =
 																				FlansMod.Workbench_TileEntityType(TILE_ENTITIES, MODID, "hm_workbench");
 
+	public static final RegistryObject<Item> ATTACHMENT_HM_FLASHLIGHT = 		FlansMod.Attachment(ITEMS, MODID, "hm_flashlight");
+	public static final RegistryObject<Item> ATTACHMENT_HM_FLASHLIGHT_MINI =	FlansMod.Attachment(ITEMS, MODID, "hm_flashlight_mini");
+	public static final RegistryObject<Item> ATTACHMENT_HM_PINPOINT_SIGHT = 	FlansMod.Attachment(ITEMS, MODID, "hm_pinpoint_sight");
+	public static final RegistryObject<Item> ATTACHMENT_HM_POCKET_SILENCER = 	FlansMod.Attachment(ITEMS, MODID, "hm_pocket_silencer");
+	public static final RegistryObject<Item> ATTACHMENT_HM_PRECISION_BARREL = 	FlansMod.Attachment(ITEMS, MODID, "hm_precision_barrel");
+	public static final RegistryObject<Item> ATTACHMENT_HM_RED_DOT =		 	FlansMod.Attachment(ITEMS, MODID, "hm_red_dot");
+	public static final RegistryObject<Item> ATTACHMENT_HM_STEADY_FOREGRIP = 	FlansMod.Attachment(ITEMS, MODID, "hm_steady_foregrip");
+
 	// PhanTek Advanced Guns
 	public static final RegistryObject<Item> GUN_PHANTEK_90 = 					FlansMod.Gun(ITEMS, MODID, "phantek_90");
 	public static final RegistryObject<Item> GUN_PHANTEK_AUTO_12 = 				FlansMod.Gun(ITEMS, MODID, "phantek_auto_12");
@@ -77,6 +89,14 @@ public class VendersGameMod
 	public static final RegistryObject<BlockEntityType<WorkbenchBlockEntity>> WORKBENCH_TILE_ENTITY_PHANTEK =
 		FlansMod.Workbench_TileEntityType(TILE_ENTITIES, MODID, "phantek_workbench");
 
+	public static final RegistryObject<Item> ATTACHMENT_PHANTEK_4X_OPTIC = 		FlansMod.Attachment(ITEMS, MODID, "phantek_4x_optic");
+	public static final RegistryObject<Item> ATTACHMENT_PHANTEK_SHOTGUN_SILENCER = FlansMod.Attachment(ITEMS, MODID, "phantek_shotgun_silencer");
+	public static final RegistryObject<Item> ATTACHMENT_PHANTEK_SILENCER = 		FlansMod.Attachment(ITEMS, MODID, "phantek_silencer");
+
+	// Vender Customs and Rare Items
+	public static final RegistryObject<Item> GUN_VENDERS_CUSTOMS_VIPER =		FlansMod.Gun(ITEMS, MODID, "venders_customs_viper");
+	public static final RegistryObject<Item> ATTACHMENT_DRAGONS_BREATH_INFUSER =FlansMod.Attachment(ITEMS, MODID, "dragons_breath_infuser");
+	public static final RegistryObject<Item> ATTACHMENT_TAKE_YOUR_LIFE_IN_YOUR_HANDS = FlansMod.Attachment(ITEMS, MODID, "take_your_life_in_your_hands");
 
 	// Vender NPC
 	public static final RegistryObject<EntityType<VenderEntity>> ENTITY_TYPE_VENDER = ENTITY_TYPES.register(

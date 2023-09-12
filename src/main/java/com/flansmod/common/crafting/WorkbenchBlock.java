@@ -13,6 +13,7 @@ import net.minecraft.world.MenuProvider;
 import net.minecraft.world.SimpleMenuProvider;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.context.BlockPlaceContext;
+import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.BaseEntityBlock;
 import net.minecraft.world.level.block.Block;
@@ -25,14 +26,18 @@ import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.DirectionProperty;
 import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.shapes.CollisionContext;
+import net.minecraft.world.phys.shapes.VoxelShape;
 import net.minecraftforge.network.NetworkHooks;
 import net.minecraftforge.registries.ForgeRegistries;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 @SuppressWarnings("deprecation")
 public class WorkbenchBlock extends BaseEntityBlock
 {
+	protected static final VoxelShape DEFAULT_SHAPE = Block.box(1.0D, 0.0D, 1.0D, 15.0D, 12.0D, 15.0D);
 	public static final DirectionProperty DIRECTION = BlockStateProperties.HORIZONTAL_FACING;
 	private ResourceLocation definitionLocation;
 	public WorkbenchDefinition Def() { return FlansMod.WORKBENCHES.Get(definitionLocation); }
@@ -47,8 +52,15 @@ public class WorkbenchBlock extends BaseEntityBlock
 			.setValue(DIRECTION, Direction.NORTH));
 	}
 
-	public RenderShape getRenderShape(BlockState p_49232_) {
+	@Override
+	public RenderShape getRenderShape(BlockState state) {
 		return RenderShape.MODEL;
+	}
+
+	@Override
+	public VoxelShape getShape(BlockState state, BlockGetter getter, BlockPos pos, CollisionContext context)
+	{
+		return DEFAULT_SHAPE;
 	}
 
 	@Override
@@ -66,6 +78,7 @@ public class WorkbenchBlock extends BaseEntityBlock
 	}
 
 	@Override
+	@Nonnull
 	public InteractionResult use(BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit)
 	{
 		BlockEntity blockEntity = level.getBlockEntity(pos);

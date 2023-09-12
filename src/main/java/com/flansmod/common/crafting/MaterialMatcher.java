@@ -2,6 +2,7 @@ package com.flansmod.common.crafting;
 
 import com.flansmod.common.FlansMod;
 import com.flansmod.common.types.crafting.MaterialDefinition;
+import com.flansmod.common.types.elements.MaterialSourceDefinition;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.tags.TagKey;
@@ -15,7 +16,19 @@ import java.util.List;
 public class MaterialMatcher
 {
 	public final List<MaterialDefinition> MaterialDefs;
-	private List<Item> MatchItems = null;
+
+	private class MaterialMatchInfo
+	{
+		public Item Item;
+		public int Count;
+
+		public MaterialMatchInfo(Item item, int count)
+		{
+			Item = item;
+			Count = count;
+		}
+	}
+	private List<MaterialMatchInfo> MatchItems = null;
 
 	public MaterialMatcher(List<MaterialDefinition> materialDefs)
 	{
@@ -29,39 +42,42 @@ public class MaterialMatcher
 		{
 			if(matDef.IsValid())
 			{
-				for(String itemId : matDef.matchItems)
+				for(MaterialSourceDefinition source : matDef.sources)
 				{
-					ResourceLocation itemResLoc = ResourceLocation.tryParse(itemId);
-					if(itemResLoc != null)
+					for (String itemId : source.matchItems)
 					{
-						Item item = ForgeRegistries.ITEMS.getValue(itemResLoc);
-						if(item != null)
+						ResourceLocation itemResLoc = ResourceLocation.tryParse(itemId);
+						if (itemResLoc != null)
 						{
-							if(!MatchItems.contains(item))
-								MatchItems.add(item);
+							Item item = ForgeRegistries.ITEMS.getValue(itemResLoc);
+							if (item != null)
+							{
+								if (!MatchItems.contains(item))
+									MatchItems.add(new MaterialMatchInfo(item, source.count));
+							} else
+								FlansMod.LOGGER.warn("Failed to find item with ResourceLocation " + itemResLoc + " for MaterialDefinition");
+						} else
+							FlansMod.LOGGER.warn("Failed to parse item ResourceLocation " + itemId + " for MaterialDefinition");
+					}
+
+					List<TagKey<Item>> tagKeys = new ArrayList<>();
+					for (String tag : source.matchTags)
+					{
+						ResourceLocation tagResLoc = ResourceLocation.tryParse(tag);
+						if (tagResLoc != null)
+						{
+							tagKeys.add(ItemTags.create(tagResLoc));
+						} else
+							FlansMod.LOGGER.warn("Failed to parse tag ResourceLocation " + tag + " for MaterialDefinition");
+					}
+
+					for (var kvp : ForgeRegistries.ITEMS.getEntries())
+					{
+						for (TagKey<Item> tagKey : tagKeys)
+						{
+							if (kvp.getValue().builtInRegistryHolder().is(tagKey) && !MatchItems.contains(kvp.getValue()))
+								MatchItems.add(new MaterialMatchInfo(kvp.getValue(), source.count));
 						}
-						else FlansMod.LOGGER.warn("Failed to find item with ResourceLocation " + itemResLoc + " for MaterialDefinition");
-					}
-					else FlansMod.LOGGER.warn("Failed to parse item ResourceLocation " + itemId + " for MaterialDefinition");
-				}
-
-				List<TagKey<Item>> tagKeys = new ArrayList<>();
-				for(String tag : matDef.matchTags)
-				{
-					ResourceLocation tagResLoc = ResourceLocation.tryParse(tag);
-					if(tagResLoc != null)
-					{
-						tagKeys.add(ItemTags.create(tagResLoc));
-					}
-					else FlansMod.LOGGER.warn("Failed to parse tag ResourceLocation " + tag + " for MaterialDefinition");
-				}
-
-				for(var kvp : ForgeRegistries.ITEMS.getEntries())
-				{
-					for(TagKey<Item> tagKey : tagKeys)
-					{
-						if(kvp.getValue().builtInRegistryHolder().is(tagKey) && !MatchItems.contains(kvp.getValue()))
-							MatchItems.add(kvp.getValue());
 					}
 				}
 			}
@@ -70,15 +86,15 @@ public class MaterialMatcher
 	}
 
 
-	public boolean Matches(ItemStack stack)
+	public int Matches(ItemStack stack)
 	{
 		if(MatchItems == null)
 			InitializeCache();
 
-		for(Item item : MatchItems)
-			if(stack.is(item))
-				return true;
+		for(MaterialMatchInfo kvp : MatchItems)
+			if(stack.is(kvp.Item))
+				return kvp.Count;
 
-		return false;
+		return 0;
 	}
 }

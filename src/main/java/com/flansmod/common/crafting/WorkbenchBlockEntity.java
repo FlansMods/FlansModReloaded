@@ -65,6 +65,8 @@ public class WorkbenchBlockEntity extends BlockEntity implements MenuProvider, C
 	public static final int DATA_CRAFT_DURATION = 5;
 	public static final int DATA_CRAFT_SELECTION = 6;
 
+	public static final int NUM_DATA_MEMBERS = 7;
+
 	public int LitTime = 0;
 	public int LitDuration = 0;
 
@@ -108,7 +110,7 @@ public class WorkbenchBlockEntity extends BlockEntity implements MenuProvider, C
 		}
 
 		@Override
-		public int getCount() { return 3; }
+		public int getCount() { return NUM_DATA_MEMBERS; }
 	};
 
 	public static class WorkbenchBlockEntityTypeHolder implements BlockEntityType.BlockEntitySupplier<WorkbenchBlockEntity>

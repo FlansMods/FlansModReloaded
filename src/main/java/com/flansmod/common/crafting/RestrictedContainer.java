@@ -12,12 +12,12 @@ import java.util.function.Function;
 
 public class RestrictedContainer implements Container, ContainerData
 {
-	private final BlockEntity OwnedBy;
-	private final int SlotCount;
-	private final double InteractRange;
-	private final int MaxStackSize;
-	private final Function<ItemStack, Boolean> AllowFunction;
-	private final ItemStack[] Slots;
+	public final BlockEntity OwnedBy;
+	public final int SlotCount;
+	public final double InteractRange;
+	public final int MaxStackSize;
+	public final Function<ItemStack, Boolean> AllowFunction;
+	public final ItemStack[] Slots;
 
 	public RestrictedContainer(BlockEntity parent)
 	{

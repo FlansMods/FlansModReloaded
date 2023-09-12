@@ -1,0 +1,13 @@
+{
+  "type": "flansbasicparts:distillation",
+  "category": "building",
+  "input": {
+	  "item": "minecraft:slime_ball"
+  },
+  "output": {
+	  "item": "flansbasicparts:polyester_thread"
+  },
+  "fraction_depth":1,
+  "distillation_time":160,
+  "show_notification": true
+}
