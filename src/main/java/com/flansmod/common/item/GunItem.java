@@ -294,19 +294,25 @@ public class GunItem extends FlanItem
     {
         if(level.isClientSide)
         {
-            // If we have a vanilla left-click action, don't do anything
-            for (ActionDefinition actionDef : Def().GetActions(EActionInput.PRIMARY))
+            if(entity instanceof Player player)
             {
-                switch (actionDef.actionType)
+                if (player.getInventory().selected == i)
                 {
-                    case Axe, Pickaxe, Hoe, Shovel, Melee -> {
-                        return;
+                    // If we have a vanilla left-click action, don't do anything
+                    for (ActionDefinition actionDef : Def().GetActions(EActionInput.PRIMARY))
+                    {
+                        switch (actionDef.actionType)
+                        {
+                            case Axe, Pickaxe, Hoe, Shovel, Melee -> {
+                                return;
+                            }
+                        }
                     }
+
+                    // Otherwise, block input
+                    FlansModClient.SetMissTime(10);
                 }
             }
-
-            // Otherwise, block input
-            FlansModClient.SetMissTime(10);
         }
 
     }

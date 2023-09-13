@@ -220,7 +220,7 @@ public class FlansMod
                 {
                     if(blockItem.getBlock() instanceof WorkbenchBlock workbenchBlock)
                     {
-                        if(workbenchBlock.Def().gunCrafting.isActive)
+                        if(workbenchBlock.Def().gunCrafting.isActive || workbenchBlock.Def().gunModifying.isActive)
                             stacks.add(new ItemStack(item));
                     }
                 }
@@ -306,6 +306,15 @@ public class FlansMod
             {
                 if(item instanceof AttachmentItem)
                     stacks.add(new ItemStack(item));
+
+                if(item instanceof BlockItem blockItem)
+                {
+                    if(blockItem.getBlock() instanceof WorkbenchBlock workbenchBlock)
+                    {
+                        if(workbenchBlock.Def().gunModifying.isActive)
+                            stacks.add(new ItemStack(item));
+                    }
+                }
             }
 
             builder

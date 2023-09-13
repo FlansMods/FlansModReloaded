@@ -11,6 +11,7 @@ import net.minecraft.world.InteractionResult;
 import net.minecraft.world.MenuProvider;
 import net.minecraft.world.SimpleMenuProvider;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
@@ -96,6 +97,14 @@ public class DistillationTowerBlock extends BaseEntityBlock
 	@Nonnull
 	public InteractionResult use(BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit)
 	{
+		if(player.getItemInHand(hand).getItem() instanceof BlockItem blockItem)
+		{
+			if(blockItem.getBlock() instanceof DistillationTowerBlock)
+			{
+				return InteractionResult.PASS;
+			}
+		}
+
 		BlockEntity blockEntity = level.getBlockEntity(pos);
 		if(!level.isClientSide && blockEntity != null && player instanceof ServerPlayer serverPlayer)
 		{
@@ -143,8 +152,8 @@ public class DistillationTowerBlock extends BaseEntityBlock
 		{
 			return GetTopBlock(level, pos.above(), level.getBlockState(pos.above()));
 		}
-		FlansMod.LOGGER.error("Called GetTopBlock on a non-distillation tower block: " + state + "@" + pos);
-		return pos;
+		// We hit non-distillation, go back one.
+		return pos.below();
 	}
 
 	@javax.annotation.Nullable

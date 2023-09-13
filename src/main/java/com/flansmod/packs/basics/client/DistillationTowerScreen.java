@@ -64,20 +64,27 @@ public class DistillationTowerScreen extends AbstractContainerScreen<Distillatio
 		DistillationTowerBlockEntity[] distillerStack = DistillationTower.Distiller.GetStack();
 		DistillationTowerBlockEntity topDistiller = distillerStack[0];
 
+		// Hint warning labels
+		if(topDistiller == null || !topDistiller.IsTop)
+			blit(pose, xOrigin + 102, yOrigin + 13, getBlitOffset(), 207, 176, 49, 20, TEXTURE_WIDTH, TEXTURE_HEIGHT);
+		else if(distillerStack[1] == null || distillerStack[1].IsTop)
+			blit(pose, xOrigin + 102, yOrigin + 38, getBlitOffset(), 207, 196, 49, 20, TEXTURE_WIDTH, TEXTURE_HEIGHT);
+		else if(distillerStack[2] == null || distillerStack[2].IsTop)
+			blit(pose, xOrigin + 102, yOrigin + 58, getBlitOffset(), 207, 216, 49, 20, TEXTURE_WIDTH, TEXTURE_HEIGHT);
+		else if(distillerStack[3] == null || distillerStack[3].IsTop)
+			blit(pose, xOrigin + 102, yOrigin + 78, getBlitOffset(), 207, 236, 49, 20, TEXTURE_WIDTH, TEXTURE_HEIGHT);
+
 		// Hide the input if there is no top on the stack
-		if(topDistiller == null)
+		if(topDistiller == null || !topDistiller.IsTop)
 			blit(pose, xOrigin + 10, yOrigin + 18, getBlitOffset(), 172, 101, 47, 68, TEXTURE_WIDTH, TEXTURE_HEIGHT);
-
 		// Hide output 1 if there is no output in the stack
-		if(distillerStack[1] == null)
+		if(distillerStack[1] == null || distillerStack[1].IsTop)
 			blit(pose, xOrigin + 43, yOrigin + 39, getBlitOffset(), 172, 39, 53, 19, TEXTURE_WIDTH, TEXTURE_HEIGHT);
-
 		// Hide output 2 if the stack is only 1 high
-		if(distillerStack[2] == null)
+		if(distillerStack[2] == null || distillerStack[2].IsTop)
 			blit(pose, xOrigin + 43, yOrigin + 58, getBlitOffset(), 172, 58, 53, 20, TEXTURE_WIDTH, TEXTURE_HEIGHT);
-
 		// Hide output 3 if the stack is 1 or 2 high
-		if(distillerStack[3] == null)
+		if(distillerStack[3] == null || distillerStack[3].IsTop)
 			blit(pose, xOrigin + 43, yOrigin + 78, getBlitOffset(), 172, 78, 53, 20, TEXTURE_WIDTH, TEXTURE_HEIGHT);
 
 		if(topDistiller != null)
@@ -109,6 +116,41 @@ public class DistillationTowerScreen extends AbstractContainerScreen<Distillatio
 		{
 			super.renderTooltip(pose, xMouse, yMouse);
 		}
+		else
+		{
+			int xOrigin = (width - imageWidth) / 2;
+			int yOrigin = (height - imageHeight) / 2;
+
+			int x = xMouse - xOrigin;
+			int y = yMouse - yOrigin;
+
+			if(99 <= x && x < 139)
+			{
+				DistillationTowerBlockEntity[] distillerStack = DistillationTower.Distiller.GetStack();
+				DistillationTowerBlockEntity topDistiller = distillerStack[0];
+
+				if(topDistiller == null || !topDistiller.IsTop)
+				{
+					if (20 <= y && y < 40)
+						renderTooltip(pose, HINT_TOP_NOT_INSTALLED, xMouse, yMouse);
+				}
+				else if(distillerStack[1] == null)
+				{
+					if (40 <= y && y < 60)
+						renderTooltip(pose, HINT_STACKS_NOT_INSTALLED, xMouse, yMouse);
+				}
+				else if(distillerStack[2] == null)
+				{
+					if (60 <= y && y < 80)
+						renderTooltip(pose, HINT_TIER_2_OUTPUT_AVAILABLE, xMouse, yMouse);
+				}
+				else if(distillerStack[3] == null)
+				{
+					if (80 <= y && y < 100)
+						renderTooltip(pose, HINT_TIER_3_OUTPUT_AVAILABLE, xMouse, yMouse);
+				}
+			}
+		}
 	}
 
 	@Override
@@ -119,20 +161,20 @@ public class DistillationTowerScreen extends AbstractContainerScreen<Distillatio
 		DistillationTowerBlockEntity[] distillerStack = DistillationTower.Distiller.GetStack();
 
 
-		// If this stack lacks a top piece, hint the player
-		if(distillerStack[0] == null)
-			font.draw(pose, HINT_TOP_NOT_INSTALLED, 62, 25, 0x404040);
-
-		// If this stack lacks any stack pieces, hint the player
-		if(distillerStack[1] == null)
-			font.draw(pose, HINT_STACKS_NOT_INSTALLED, 99, 45, 0x404040);
-
-		// If this stack is capped at 1 and there is a possible output at 2, hint
-		if(distillerStack[2] == null)
-			font.draw(pose, HINT_TIER_2_OUTPUT_AVAILABLE, 99, 65, 0x404040);
-
-		// If this stack is capped at 2 and there is a possible output at 3, hint
-		if(distillerStack[3] == null)
-			font.draw(pose, HINT_TIER_3_OUTPUT_AVAILABLE, 99, 85, 0x404040);
+		//// If this stack lacks a top piece, hint the player
+		//if(distillerStack[0] == null)
+		//	font.draw(pose, HINT_TOP_NOT_INSTALLED, 62, 25, 0x404040);
+//
+		//// If this stack lacks any stack pieces, hint the player
+		//if(distillerStack[1] == null)
+		//	font.draw(pose, HINT_STACKS_NOT_INSTALLED, 99, 45, 0x404040);
+//
+		//// If this stack is capped at 1 and there is a possible output at 2, hint
+		//if(distillerStack[2] == null)
+		//	font.draw(pose, HINT_TIER_2_OUTPUT_AVAILABLE, 99, 65, 0x404040);
+//
+		//// If this stack is capped at 2 and there is a possible output at 3, hint
+		//if(distillerStack[3] == null)
+		//	font.draw(pose, HINT_TIER_3_OUTPUT_AVAILABLE, 99, 85, 0x404040);
 	}
 }

@@ -44,7 +44,6 @@
   "item.flansbasicparts.carbon_fiber_stock": "Carbon Fiber Stock",
   "item.flansbasicparts.carbon_fiber_structural_parts": "Carbon Fiber Structural Parts",
   "item.flansbasicparts.carbon_fiber_upper_receiver": "Carbon Fiber Upper Receiver",
-  "item.flansbasicparts.carbon_heavy_coal": "Carbon-Heavy Coal",
   "item.flansbasicparts.carbon_precursor_crystal": "Carbon Precursor Crystal",
   "item.flansbasicparts.clay_and_sand_mixture": "Silicate Mix",
   "item.flansbasicparts.dense_wood_armour": "Dense Wood Armour Plating",
@@ -99,7 +98,6 @@
   "item.flansbasicparts.nethersteel_stock": "Nethersteel Stock",
   "item.flansbasicparts.nethersteel_structural_parts": "Nethersteel Structural Parts",
   "item.flansbasicparts.nethersteel_upper_receiver": "Nethersteel Upper Receiver",
-  "item.flansbasicparts.phantasmal_residue": "Phantasmal Residue",
   "item.flansbasicparts.phantex_barrel": "Phantex Barrel",
   "item.flansbasicparts.phantex_grip": "Phantex Grip",
   "item.flansbasicparts.phantex_lower_receiver": "Phantex Lower Receiver",
@@ -147,8 +145,8 @@
   "item.flansbasicparts.part_fabricator": "Part Fabricator",
   "distillation.menu.top_not_installed": "Needs Distillation Cap",
   "distillation.menu.stacks_not_installed": "Needs Distilling Stacks",
-  "distillation.menu.extra_output_available.2": "Output 2 is available",
-  "distillation.menu.extra_output_available.3": "Output 3 is available",
+  "distillation.menu.extra_output_available.2": "There may be an additional output available",
+  "distillation.menu.extra_output_available.3": "There may be an additional output available",
   "block.flansbasicparts.gunpowder_block": "Gunpowder Block",
   "block.flansbasicparts.steel_block": "Steel Block",
   "block.flansbasicparts.aluminium_block": "Aluminium Block",
@@ -158,6 +156,6 @@
   "block.flansbasicparts.carbon_fiber_block": "Carbon Fiber Block",
   "block.flansbasicparts.polyester_block": "Polyester Spool",
   "block.flansbasicparts.kevlar_block": "Kevlar Block",
-  "block.flansbasicparts.distillation_tower": "Fractional Distillation Output",
-  "block.flansbasicparts.distillation_tower_top": "Fractional Distillation Primer"
+  "block.flansbasicparts.distillation_tower": "Fractional Distillation Stack",
+  "block.flansbasicparts.distillation_tower_top": "Fractional Distillation Cap"
 }

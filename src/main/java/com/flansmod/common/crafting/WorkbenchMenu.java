@@ -505,7 +505,7 @@ public class WorkbenchMenu extends AbstractContainerMenu
 		}
 
 
-		return ItemStack.EMPTY;
+		return  slots.get(slot).getItem();
 	}
 
 	public void AutoFillGunCraftingInputSlot(Player player, int inputSlotIndex)

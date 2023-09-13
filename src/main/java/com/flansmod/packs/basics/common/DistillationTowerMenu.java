@@ -12,8 +12,11 @@ import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.ContainerData;
+import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraftforge.common.ForgeHooks;
 
 import javax.annotation.Nonnull;
 
@@ -22,6 +25,9 @@ public class DistillationTowerMenu extends AbstractContainerMenu
 	public final boolean IsTop;
 	public final DistillationTowerBlockEntity Distiller;
 	public final ContainerData DistillationDataContainer;
+
+	public RestrictedSlot InputSlot;
+	public RestrictedSlot FuelSlot;
 
 	public DistillationTowerMenu(int containerID, Inventory inventory,
 						 boolean isTop,
@@ -69,11 +75,11 @@ public class DistillationTowerMenu extends AbstractContainerMenu
 
 		DistillationTowerBlockEntity[] distillerStack = Distiller.GetStack();
 
-		boolean hasTop = distillerStack[0] != null;
+		boolean hasTop = distillerStack[0] != null && distillerStack[0].IsTop;
 		if(hasTop)
 		{
-			addSlot(new RestrictedSlot(distillerStack[0], DistillationTowerBlockEntity.INPUT_SLOT,15, 23));
-			addSlot(new RestrictedSlot(distillerStack[0], DistillationTowerBlockEntity.FUEL_SLOT,15, 67));
+			addSlot(InputSlot = new RestrictedSlot(distillerStack[0], DistillationTowerBlockEntity.INPUT_SLOT,15, 23));
+			addSlot(FuelSlot = new RestrictedSlot(distillerStack[0], DistillationTowerBlockEntity.FUEL_SLOT,15, 67));
 		}
 
 		for(int i = 0; i < DistillationTowerBlockEntity.MAX_DISTILLATION_STACK_HEIGHT; i++)
@@ -102,11 +108,38 @@ public class DistillationTowerMenu extends AbstractContainerMenu
 
 	@Override
 	@Nonnull
-	public ItemStack quickMoveStack(@Nonnull Player player, int slot)
+	public ItemStack quickMoveStack(@Nonnull Player player, int slotIndex)
 	{
-		// TODO:
-		return null;
+		Slot slot = slots.get(slotIndex);
+		if(slot.container instanceof Inventory)
+		{
+			ItemStack stack = slot.getItem();
+			if(ForgeHooks.getBurnTime(stack, RecipeType.SMELTING) > 0 && FuelSlot != null && FuelSlot.getItem().isEmpty())
+			{
+				FuelSlot.set(stack);
+				slot.set(ItemStack.EMPTY);
+			}
+			else if(InputSlot != null && InputSlot.getItem().isEmpty())
+			{
+				InputSlot.set(stack);
+				slot.set(ItemStack.EMPTY);
+			}
+		}
+		else if(slot.container instanceof DistillationTowerBlockEntity)
+		{
+			QuickStackIntoInventory(player, slot);
+		}
+		return ItemStack.EMPTY;
 	}
 
+	private ItemStack QuickStackIntoInventory(Player player, Slot slot)
+	{
+		if(player.getInventory().add(slot.getItem()))
+		{
+			slot.set(ItemStack.EMPTY);
+			return ItemStack.EMPTY;
+		}
+		return slot.getItem();
+	}
 
 }
