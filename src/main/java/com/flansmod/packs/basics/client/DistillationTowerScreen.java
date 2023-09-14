@@ -33,8 +33,8 @@ public class DistillationTowerScreen extends AbstractContainerScreen<Distillatio
 
 		imageWidth = 172;
 		imageHeight = 217;
-
-		titleLabelY = -1000;
+		titleLabelX = 6;
+		titleLabelY = 6;
 		inventoryLabelX = 6;
 		inventoryLabelY = 124;
 	}

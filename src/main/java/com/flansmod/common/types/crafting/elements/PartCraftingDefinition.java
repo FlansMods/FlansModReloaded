@@ -4,6 +4,9 @@ import com.flansmod.common.FlansMod;
 import com.flansmod.common.types.JsonField;
 import com.flansmod.common.types.parts.PartDefinition;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraftforge.registries.ForgeRegistries;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,6 +29,30 @@ public class PartCraftingDefinition
 	public String[] partsByName = new String[0];
 	@JsonField
 	public TieredIngredientDefinition[] partsByTier = new TieredIngredientDefinition[0];
+
+	private List<ItemStack> Matches = null;
+	public List<ItemStack> GetMatches()
+	{
+		if(Matches == null)
+		{
+			Matches = new ArrayList<>();
+			List<ResourceLocation> matchResLocs = new ArrayList<>(partsByName.length);
+
+			// Check for items by name first
+			for(String name : partsByName)
+				matchResLocs.add(new ResourceLocation(name));
+			for(Item item : ForgeRegistries.ITEMS.getValues())
+			{
+				if(matchResLocs.contains(item.builtInRegistryHolder().key().registry()))
+					Matches.add(new ItemStack(item));
+			}
+
+			// Then add tiered & tagged parts that match
+			for(TieredIngredientDefinition tierDef : partsByTier)
+				tierDef.GenerateMatches(Matches);
+		}
+		return Matches;
+	}
 
 	private List<PartDefinition> Parts = null;
 	public List<PartDefinition> GetPartList()

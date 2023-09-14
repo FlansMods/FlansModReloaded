@@ -11,6 +11,8 @@ import com.flansmod.common.gunshots.GunContext;
 import com.flansmod.common.gunshots.ModifierStack;
 import com.flansmod.common.item.FlanItem;
 import com.flansmod.common.item.GunItem;
+import com.flansmod.common.item.PartItem;
+import com.flansmod.common.types.crafting.EMaterialType;
 import com.flansmod.common.types.crafting.WorkbenchDefinition;
 import com.flansmod.common.types.crafting.elements.*;
 import com.flansmod.common.types.elements.MagazineSlotSettingsDefinition;
@@ -30,15 +32,19 @@ import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.block.model.ItemTransforms;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.FormattedText;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.FormattedCharSequence;
 import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import org.joml.Quaternionf;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Filter;
 
 public class WorkbenchScreen extends AbstractContainerScreen<WorkbenchMenu>
 {
@@ -151,11 +157,8 @@ public class WorkbenchScreen extends AbstractContainerScreen<WorkbenchMenu>
 	{
 		switch(SelectedTab)
 		{
-			case GUN_CRAFTING ->
-			{
-				return UpdateScrollGunCrafting(Maths.Floor(x), Maths.Floor(y), scroll);
-
-			}
+			case GUN_CRAFTING -> { return UpdateScrollGunCrafting(Maths.Floor(x), Maths.Floor(y), scroll); }
+			case PART_CRAFTING -> { return UpdateScrollPartCrafting(Maths.Floor(x), Maths.Floor(y), scroll); }
 		}
 		return true;
 	}
@@ -217,6 +220,7 @@ public class WorkbenchScreen extends AbstractContainerScreen<WorkbenchMenu>
 			}
 		}
 		pose.popPose();
+
 
 	}
 
@@ -918,37 +922,111 @@ public class WorkbenchScreen extends AbstractContainerScreen<WorkbenchMenu>
 	// =================================================================================================================
 	// ================================================ PART CRAFTING ==================================================
 	// =================================================================================================================
-	private static final ResourceLocation PART_CRAFTING_BG = new ResourceLocation(FlansMod.MODID, "textures/gui/part_crafting.png");
+	private static final ResourceLocation PART_CRAFTING_BG = new ResourceLocation(FlansMod.MODID, "textures/gui/part_fabrication.png");
 
 	private static final int PART_RECIPE_VIEWER_ROWS = 2;
-	private static final int PART_RECIPE_VIEWER_COLUMNS = 2;
+	private static final int PART_RECIPE_VIEWER_COLUMNS = 4;
 
-	private Button[] PartCraftingButtons;
+	private static final int PART_CRAFTING_NUM_SLOTS_X = WorkbenchMenu.PART_CRAFTING_NUM_SLOTS_X;
+	private static final int PART_CRAFTING_NUM_SLOTS_Y = WorkbenchMenu.PART_CRAFTING_NUM_SLOTS_Y;
+
+	private static final int PART_CRAFTING_INPUT_SLOTS_X = 5;
+	private static final int PART_CRAFTING_INPUT_SLOTS_Y = 18;
+	private static final int PART_CRAFTING_OUTPUT_SLOTS_X = 131;
+	private static final int PART_CRAFTING_OUTPUT_SLOTS_Y = 18;
+
+	private static final int PART_RECIPE_VIEWER_ORIGIN_X = 45;
+	private static final int PART_RECIPE_VIEWER_ORIGIN_Y = 18;
+
+	private float partSelectorScrollOffset = 0.0f;
+
+	private final List<ResourceKey<Item>> TagFilters = new ArrayList<>();
+	private final List<Integer> TierFilters = new ArrayList<>();
+	private final List<EMaterialType> MaterialFilters = new ArrayList<>();
+	private boolean OnlyCraftableFilter = false;
+
+	private final List<ItemStack> FilteredPartsList = new ArrayList<>();
+	private int SelectedPartIndex = -1;
+	private Button[] PartSelectionButtons;
 	public boolean HasPartCraftingTab() { return Workbench.Def.partCrafting.isActive; }
 
 	private void InitPartCrafting(int xOrigin, int yOrigin)
 	{
-		PartCraftingButtons = new Button[PART_RECIPE_VIEWER_ROWS * PART_RECIPE_VIEWER_COLUMNS];
+		PartSelectionButtons = new Button[PART_RECIPE_VIEWER_ROWS * PART_RECIPE_VIEWER_COLUMNS];
 		for(int j = 0; j < PART_RECIPE_VIEWER_ROWS; j++)
 		{
 			for(int i = 0; i < PART_RECIPE_VIEWER_COLUMNS; i++)
 			{
 				final int index = j * PART_RECIPE_VIEWER_COLUMNS + i;
-				PartCraftingButtons[index] = Button.builder(Component.empty(),
+				PartSelectionButtons[index] = Button.builder(Component.empty(),
 						(t) ->
 						{
-							GoToPartCrafting(index);
+							SelectPartRecipe(index);
 						})
-					.bounds(xOrigin + 57 + 20 * i, yOrigin + 75 + 20 * j, 9, 9)
+					.bounds(xOrigin + PART_RECIPE_VIEWER_ORIGIN_X + 18 * i, yOrigin + PART_RECIPE_VIEWER_ORIGIN_Y + 18 * j, 18, 18)
 					.build();
-				addWidget(PartCraftingButtons[index]);
+				addWidget(PartSelectionButtons[index]);
 			}
 		}
+
+		addRenderableWidget(Button.builder(Component.literal("+1"),
+			(t) -> { CraftSelectedPart(1); })
+			.bounds(xOrigin + 42, yOrigin + 92, 18, 20)
+			.build());
+		addRenderableWidget(Button.builder(Component.literal("+5"),
+				(t) -> { CraftSelectedPart(5); })
+			.bounds(xOrigin + 62, yOrigin + 92, 18, 20)
+			.build());
+		addRenderableWidget(Button.builder(Component.literal("All"),
+				(t) -> { CraftSelectedPart(-1); })
+			.bounds(xOrigin + 82, yOrigin + 92, 28, 20)
+			.build());
+		addRenderableWidget(Button.builder(Component.literal("X"),
+				(t) -> { CraftSelectedPart(-1); })
+			.bounds(xOrigin + 112, yOrigin + 92, 18, 20)
+			.build());
+	}
+
+	private void RefreshPartCraftingFilters()
+	{
+		FilteredPartsList.clear();
+		for(ItemStack stack : Workbench.Def.partCrafting.GetMatches())
+		{
+			// Apply filters
+			if(TierFilters.size() > 0)
+				if(!TierFilters.contains(GetPartTier(stack)))
+					continue;
+
+			if(MaterialFilters.size() > 0)
+				if(!MaterialFilters.contains(GetPartMaterial(stack)))
+					continue;
+
+			if(OnlyCraftableFilter)
+			{
+				// TODO: Craftable filter
+			}
+
+			FilteredPartsList.add(stack);
+		}
+	}
+
+	private int GetPartTier(ItemStack stack)
+	{
+		if(stack.getItem() instanceof PartItem partItem)
+			return partItem.Def().materialTier;
+		return 0;
+	}
+
+	private EMaterialType GetPartMaterial(ItemStack stack)
+	{
+		if(stack.getItem() instanceof PartItem partItem)
+			return partItem.Def().materialType;
+		return EMaterialType.Misc;
 	}
 
 	public void SetPartCraftingEnabled(boolean enable)
 	{
-		RefreshGunCraftingFilters();
+		RefreshPartCraftingFilters();
 		for(int j = 0; j < PART_RECIPE_VIEWER_ROWS; j++)
 		{
 			for (int i = 0; i < PART_RECIPE_VIEWER_COLUMNS; i++)
@@ -956,6 +1034,52 @@ public class WorkbenchScreen extends AbstractContainerScreen<WorkbenchMenu>
 
 			}
 		}
+		UpdateActivePartSelectionButtons();
+	}
+
+	private boolean UpdateScrollPartCrafting(int xMouse, int yMouse, double scroll)
+	{
+		int xOrigin = (width - imageWidth) / 2;
+		int yOrigin = (height - imageHeight) / 2;
+
+		if(InBox(xMouse, yMouse, xOrigin + PART_RECIPE_VIEWER_ORIGIN_X, 18 * PART_RECIPE_VIEWER_COLUMNS + 6, yOrigin + PART_RECIPE_VIEWER_ORIGIN_Y, 18 * PART_RECIPE_VIEWER_ROWS))
+		{
+			int numRows = Maths.Max(FilteredPartsList.size() / PART_RECIPE_VIEWER_COLUMNS - PART_RECIPE_VIEWER_ROWS + 1, 0);
+			partSelectorScrollOffset -= scroll;
+			partSelectorScrollOffset = Maths.Clamp(partSelectorScrollOffset, 0, numRows);
+			UpdateActivePartSelectionButtons();
+			return true;
+		}
+
+		return false;
+	}
+
+	private void UpdateActivePartSelectionButtons()
+	{
+		if(PartSelectionButtons != null)
+		{
+			for (int j = 0; j < PART_RECIPE_VIEWER_ROWS; j++)
+			{
+				for (int i = 0; i < PART_RECIPE_VIEWER_COLUMNS; i++)
+				{
+					final int firstIndex = Maths.Floor(partSelectorScrollOffset) * PART_RECIPE_VIEWER_COLUMNS;
+					final int relativeIndex = i + PART_RECIPE_VIEWER_COLUMNS * j;
+					PartSelectionButtons[relativeIndex].active = SelectedTab == Tab.PART_CRAFTING && (firstIndex + relativeIndex < FilteredPartsList.size());
+				}
+			}
+		}
+	}
+
+	private void SelectPartRecipe(int relativeIndex)
+	{
+		SelectedPartIndex = Maths.Floor(partSelectorScrollOffset) + relativeIndex;
+		if(SelectedPartIndex >= FilteredPartsList.size())
+			SelectedPartIndex = -1;
+	}
+
+	private void CraftSelectedPart(int count)
+	{
+
 	}
 
 	private void UpdatePartCrafting(boolean enabled)
@@ -976,20 +1100,76 @@ public class WorkbenchScreen extends AbstractContainerScreen<WorkbenchMenu>
 		RenderSystem.setShaderTexture(0, PART_CRAFTING_BG);
 		blit(pose, xOrigin, yOrigin, getBlitOffset(), 0, 0, imageWidth, imageHeight, TEXTURE_WIDTH, TEXTURE_HEIGHT);
 
-		for(int j = 0; j < 5; j++)
+		// Input and Output Slot Backgrounds
+		for(int j = 0; j < PART_CRAFTING_NUM_SLOTS_Y; j++)
 		{
-			int numSlotsOnThisRow = Maths.Min(Workbench.MaterialContainer.getContainerSize() - j * 9, 9);
+			int numSlotsOnThisRow = Maths.Min(Workbench.PartCraftingInputContainer.getContainerSize() - j * PART_CRAFTING_NUM_SLOTS_X, PART_CRAFTING_NUM_SLOTS_X);
 			if(numSlotsOnThisRow > 0)
 			{
-				blit(pose, xOrigin + 5, yOrigin + 22 + 18 * j, getBlitOffset(), 5, 136, 18 * numSlotsOnThisRow, 18, TEXTURE_WIDTH, TEXTURE_HEIGHT);
+				blit(pose, xOrigin + PART_CRAFTING_INPUT_SLOTS_X, yOrigin + PART_CRAFTING_INPUT_SLOTS_Y + 18 * j, getBlitOffset(), 5, 136, 18 * numSlotsOnThisRow, 18, TEXTURE_WIDTH, TEXTURE_HEIGHT);
+			}
+
+			int numOutputSlotsOnThisRow = Maths.Min(Workbench.PartCraftingOutputContainer.getContainerSize() - j * PART_CRAFTING_NUM_SLOTS_X, PART_CRAFTING_NUM_SLOTS_X);
+			if(numOutputSlotsOnThisRow > 0)
+			{
+				blit(pose, xOrigin + PART_CRAFTING_OUTPUT_SLOTS_X, yOrigin + PART_CRAFTING_OUTPUT_SLOTS_Y + 18 * j, getBlitOffset(), 5, 136, 18 * numOutputSlotsOnThisRow, 18, TEXTURE_WIDTH, TEXTURE_HEIGHT);
 			}
 		}
 
+		// Recipe selector scroller
+
+		for(int j = 0; j < PART_RECIPE_VIEWER_ROWS; j++)
+		{
+			int rowIndex = Maths.Floor(partSelectorScrollOffset) + j;
+			int numSlotsOnThisRow = Maths.Min(FilteredPartsList.size() - j * PART_RECIPE_VIEWER_COLUMNS, PART_RECIPE_VIEWER_COLUMNS);
+			if(numSlotsOnThisRow > 0)
+			{
+				blit(pose, xOrigin + PART_RECIPE_VIEWER_ORIGIN_X, yOrigin + PART_RECIPE_VIEWER_ORIGIN_Y + 18 * j, getBlitOffset(), 0, 219, 18 * numSlotsOnThisRow, 18, TEXTURE_WIDTH, TEXTURE_HEIGHT);
+			}
+		}
+
+		int numRows = FilteredPartsList.size() / PART_RECIPE_VIEWER_COLUMNS - PART_RECIPE_VIEWER_ROWS + 1;
+		RenderScrollbar(pose, xOrigin + PART_RECIPE_VIEWER_ORIGIN_X + PART_RECIPE_VIEWER_COLUMNS * 18, yOrigin + PART_RECIPE_VIEWER_ORIGIN_Y, 6, 18 * PART_RECIPE_VIEWER_ROWS, partSelectorScrollOffset, 0, numRows);
 	}
 
 	private void RenderPartCraftingFG(PoseStack pose, int xMouse, int yMouse)
 	{
+		for(int i = 0; i < PART_RECIPE_VIEWER_COLUMNS; i++)
+		{
+			for (int j = 0; j < PART_RECIPE_VIEWER_ROWS; j++)
+			{
+				int rowIndex = Maths.Floor(partSelectorScrollOffset) + j;
+				int numSlotsOnThisRow = Maths.Min(FilteredPartsList.size() - j * PART_RECIPE_VIEWER_COLUMNS, PART_RECIPE_VIEWER_COLUMNS);
 
+			}
+		}
+
+		// Render info about the selected part
+		if(SelectedPartIndex >= 0 && SelectedPartIndex < FilteredPartsList.size())
+		{
+			ItemStack selectedPart = FilteredPartsList.get(SelectedPartIndex);
+			List<FormattedCharSequence> wordWrap = font.split(selectedPart.getHoverName(), 60);
+			font.draw(pose, wordWrap.get(0), 46, 56, 0x404040);
+		}
+
+		// Render part icons into the selector scrollbar
+		int firstRow = Maths.Floor(partSelectorScrollOffset);
+		for (int row = 0; row < PART_RECIPE_VIEWER_ROWS; row++)
+		{
+			int firstIndexInRow = (firstRow + row) * PART_RECIPE_VIEWER_COLUMNS;
+			for(int col = 0; col < PART_RECIPE_VIEWER_COLUMNS; col++)
+			{
+				int index = firstIndexInRow + col;
+
+				if(index < FilteredPartsList.size())
+				{
+					ItemStack entry = FilteredPartsList.get(index);
+					itemRenderer.renderGuiItem(entry, PART_RECIPE_VIEWER_ORIGIN_X + 1 + 18 * col, PART_RECIPE_VIEWER_ORIGIN_Y + 1 + 18 * row);
+					itemRenderer.renderGuiItemDecorations(font, entry, PART_RECIPE_VIEWER_ORIGIN_X + 2 + 20 * col, PART_RECIPE_VIEWER_ORIGIN_Y + 2 + 20 * row, null);
+				}
+			}
+
+		}
 	}
 
 	// =================================================================================================================

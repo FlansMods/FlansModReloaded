@@ -4,8 +4,13 @@ import com.flansmod.common.FlansMod;
 import com.flansmod.common.crafting.WorkbenchBlockEntity;
 import com.flansmod.packs.basics.BasicPartsMod;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.MenuProvider;
@@ -32,6 +37,7 @@ import net.minecraftforge.network.NetworkHooks;
 import org.jetbrains.annotations.Nullable;
 
 import javax.annotation.Nonnull;
+import java.util.Optional;
 
 public class DistillationTowerBlock extends BaseEntityBlock
 {
@@ -156,7 +162,7 @@ public class DistillationTowerBlock extends BaseEntityBlock
 		return pos.below();
 	}
 
-	@javax.annotation.Nullable
+	@Nullable
 	@Override
 	public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState state, BlockEntityType<T> type)
 	{
@@ -172,9 +178,65 @@ public class DistillationTowerBlock extends BaseEntityBlock
 	}
 
 
-	@javax.annotation.Nullable
+	@Nullable
 	protected static <T extends BlockEntity> BlockEntityTicker<T> createFurnaceTicker(Level level, BlockEntityType<T> type, BlockEntityType<? extends DistillationTowerBlockEntity> workbenchType)
 	{
 		return level.isClientSide ? null : createTickerHelper(type, workbenchType, DistillationTowerBlockEntity::serverTick);
+	}
+
+	@Override
+	public void animateTick(@Nonnull BlockState state, @Nonnull Level level, @Nonnull BlockPos pos, @Nonnull RandomSource rand)
+	{
+		double x = (double)pos.getX() + 0.5D;
+		double y = (double)pos.getY();
+		double z = (double)pos.getZ() + 0.5D;
+
+		if(IsTop)
+		{
+			DistillationTowerBlockEntity tileEntity = level.getBlockEntity(pos, BasicPartsMod.DISTILLATION_TOWER_TOP_TILE_ENTITY.get()).orElse(null);
+			if (tileEntity != null && tileEntity.IsLit())
+			{
+				if (rand.nextDouble() < 0.1D)
+				{
+					level.playLocalSound(x, y, z, SoundEvents.FURNACE_FIRE_CRACKLE, SoundSource.BLOCKS, 1.0F, 1.0F, false);
+				}
+				Direction direction = state.getValue(DIRECTION);
+				Direction.Axis direction$axis = direction.getAxis();
+				final double offsetFromCenter = -0.48D;
+				double leftRightRng = rand.nextDouble() * 0.3D - 0.15D;
+				double xOffset = direction$axis == Direction.Axis.X ? (double) direction.getStepX() * offsetFromCenter : leftRightRng;
+				double yOffset = (rand.nextDouble() * 3.0D + 3.0D) / 16.0D;
+				double zOffset = direction$axis == Direction.Axis.Z ? (double) direction.getStepZ() * offsetFromCenter : leftRightRng;
+				level.addParticle(ParticleTypes.SMOKE, x + xOffset, y + yOffset, z + zOffset, 0.0D, 0.0D, 0.0D);
+				level.addParticle(ParticleTypes.FLAME, x + xOffset, y + yOffset, z + zOffset, 0.0D, 0.0D, 0.0D);
+
+			}
+		}
+		else
+		{
+			DistillationTowerBlockEntity tileEntity = level.getBlockEntity(pos, BasicPartsMod.DISTILLATION_TOWER_TILE_ENTITY.get()).orElse(null);
+			if(tileEntity != null)
+			{
+				DistillationTowerBlockEntity topTileEntity = tileEntity.GetTopDistillationTileEntity();
+				if(topTileEntity != null && topTileEntity.IsDistillationInProgress())
+				{
+					if (rand.nextDouble() < 0.1D)
+					{
+						level.playLocalSound(x, y, z, SoundEvents.BUBBLE_COLUMN_BUBBLE_POP, SoundSource.BLOCKS, 1.0F, 1.0F, false);
+					}
+
+					Direction direction = state.getValue(DIRECTION);
+					Direction.Axis direction$axis = direction.getAxis();
+					final double offsetFromCenter = -0.56D;
+
+					double leftRightRng = rand.nextDouble() * 0.3D - 0.15D;
+					double xOffset = direction$axis == Direction.Axis.X ? (double) direction.getStepX() * offsetFromCenter : leftRightRng;
+					double yOffset = (rand.nextDouble() * 2.0D + 4.0D) / 16.0D;
+					double zOffset = direction$axis == Direction.Axis.Z ? (double) direction.getStepZ() * offsetFromCenter : leftRightRng;
+
+					level.addParticle(ParticleTypes.BUBBLE_POP, x - xOffset, y + yOffset, z - zOffset, 0.0D, 0.0D, 0.0D);
+				}
+			}
+		}
 	}
 }

@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "building",
+  "key": {
+    "#": { "item": "flansbasicparts:steel_ingot" },
+	"G": { "item": "minecraft:glass_bottle" },
+	"F": { "item": "minecraft:furnace" },
+	"C": { "item": "minecraft:copper_ingot" }
+  },
+  "pattern": [
+    "G G",
+    "CFC",
+    "###"
+  ],
+  "result": {
+    "item": "flansbasicparts:distillation_tower_top"
+  },
+  "show_notification": true
+}

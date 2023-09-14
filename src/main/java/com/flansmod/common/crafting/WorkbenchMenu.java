@@ -73,6 +73,11 @@ public class WorkbenchMenu extends AbstractContainerMenu
 	private AttachmentSlot[] AttachmentSlots;
 	private RestrictedSlot[] MaterialSlots;
 
+	public static final int PART_CRAFTING_NUM_SLOTS_X = 2;
+	public static final int PART_CRAFTING_NUM_SLOTS_Y = 4;
+	public static final int GUN_CRAFTING_NUM_SLOTS_X = 4;
+	public static final int GUN_CRAFTING_NUM_SLOTS_Y = 2;
+
 	public int ScrollIndex = 0;
 	//public static final int BUTTON_CANCEL = 0;
 
@@ -214,7 +219,9 @@ public class WorkbenchMenu extends AbstractContainerMenu
 		{
 			for(int i = 0; i < PartCraftingInputContainer.getContainerSize(); i++)
 			{
-				addSlot(PartCraftingInputSlots[i] = new RestrictedSlot(PartCraftingInputContainer, i, 78, 66));
+				int x = i % PART_CRAFTING_NUM_SLOTS_X;
+				int y = i / PART_CRAFTING_NUM_SLOTS_X;
+				addSlot(PartCraftingInputSlots[i] = new RestrictedSlot(PartCraftingInputContainer, i, 6 + x * 18, 19 + y * 18));
 			}
 		}
 		PartCraftingOutputSlots = new RestrictedSlot[PartCraftingOutputContainer.getContainerSize()];
@@ -222,7 +229,9 @@ public class WorkbenchMenu extends AbstractContainerMenu
 		{
 			for(int i = 0; i < PartCraftingOutputContainer.getContainerSize(); i++)
 			{
-				addSlot(PartCraftingOutputSlots[i] = new RestrictedSlot(PartCraftingOutputContainer, i, 78, 66));
+				int x = i % PART_CRAFTING_NUM_SLOTS_X;
+				int y = i / PART_CRAFTING_NUM_SLOTS_X;
+				addSlot(PartCraftingOutputSlots[i] = new RestrictedSlot(PartCraftingOutputContainer, i, 132 + x * 18, 19 + y * 18));
 			}
 		}
 
@@ -342,8 +351,8 @@ public class WorkbenchMenu extends AbstractContainerMenu
 				this,
 				GunCraftingInputContainer,
 				i,
-				active ? 50 + 20 * (i % 4) : -1000,
-				active ? 56 + 30 * (i / 4) : -1000);
+				active ? 50 + 20 * (i % GUN_CRAFTING_NUM_SLOTS_X) : -1000,
+				active ? 56 + 30 * (i / GUN_CRAFTING_NUM_SLOTS_X) : -1000);
 
 			replacementSlot.index = GunCraftingInputSlots[i].index;
 			GunCraftingInputSlots[i].SetActive(false);

@@ -184,21 +184,21 @@ public class DistillationTowerBlockEntity extends BaseContainerBlockEntity imple
 		if(IsTop)
 			return LitTime > 0;
 		DistillationTowerBlockEntity topTileEntity = GetTopDistillationTileEntity();
-		return topTileEntity != null && topTileEntity.IsLit();
+		return topTileEntity != null && topTileEntity != this && topTileEntity.IsLit();
 	}
 	public boolean IsDistillationInProgress()
 	{
 		if(IsTop)
 			return DistillingTotalTime > 0;
 		DistillationTowerBlockEntity topTileEntity = GetTopDistillationTileEntity();
-		return topTileEntity != null && topTileEntity.IsDistillationInProgress();
+		return topTileEntity != null && topTileEntity != this && topTileEntity.IsDistillationInProgress();
 	}
 	public boolean IsRecipeValid(int depth)
 	{
 		if(IsTop)
 			return RecipesValid[depth] || !RecipesInProgress[depth].isEmpty();
 		DistillationTowerBlockEntity topTileEntity = GetTopDistillationTileEntity();
-		return topTileEntity != null && topTileEntity.IsRecipeValid(depth);
+		return topTileEntity != null && topTileEntity != this && topTileEntity.IsRecipeValid(depth);
 	}
 
 	@Override @Nonnull
