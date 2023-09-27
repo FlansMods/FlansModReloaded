@@ -310,11 +310,16 @@ public class BasicPartsMod
 	@SubscribeEvent
 	public void OnCreativeTabs(CreativeModeTabEvent.BuildContents event)
 	{
-		if(event.getTab().getDisplayName() == FlansMod.CREATIVE_TAB_NAME_PARTS)
+		if(event.getTab().getDisplayName() == FlansMod.CREATIVE_TAB_NAME_BULLETS)
+		{
+			event.accept(WORKBENCH_ITEM_BULLETS);
+		}
+		else if(event.getTab().getDisplayName() == FlansMod.CREATIVE_TAB_NAME_PARTS)
 		{
 			event.accept(DISTILLATION_TOWER_ITEM);
 			event.accept(DISTILLATION_TOWER_TOP_ITEM);
 
+			event.accept(WORKBENCH_ITEM_PARTS);
 
 			event.accept(PHANTASMAL_RESIDUE);
 			event.accept(CARBON_HEAVY_COAL);
@@ -349,6 +354,10 @@ public class BasicPartsMod
 
 			event.accept(Items.GUNPOWDER);
 			event.accept(GUNPOWDER_BLOCK_ITEM);
+
+			event.accept(REDSTONE_CIRCUITRY);
+			event.accept(QUARTZ_CIRCUITRY);
+			event.accept(SKULK_CIRCUITRY);
 		}
 	}
 

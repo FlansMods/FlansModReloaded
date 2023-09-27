@@ -22,6 +22,7 @@ public enum EActionType
 	PlaceFluid,			// TODO:
 	SpawnEntity,		// Implemented, untested
 	DeleteEntity,		// Implemented, untested
+	SummonNpc,			// Implemented, untested
 
 	Melee,				// Vanilla, untested
 	Shield,				// Vanilla, untested

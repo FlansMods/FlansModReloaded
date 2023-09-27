@@ -4,7 +4,8 @@
         "tags": [
             "flansmod:bullet",
             "flansmod:barrel"
-        ]
+        ],
+        "recipe": []
     },
     "attachmentType": "Barrel",
     "modifiers": [

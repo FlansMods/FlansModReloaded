@@ -6,6 +6,8 @@ import com.flansmod.common.item.FlanItem;
 import com.flansmod.common.item.GunItem;
 import com.flansmod.common.types.crafting.WorkbenchDefinition;
 import com.flansmod.common.types.crafting.elements.IngredientDefinition;
+import com.flansmod.common.types.crafting.elements.RecipePartDefinition;
+import com.flansmod.common.types.crafting.elements.TieredIngredientDefinition;
 import com.flansmod.common.types.elements.PaintableDefinition;
 import com.flansmod.common.types.elements.PaintjobDefinition;
 import com.flansmod.common.types.magazines.MagazineDefinition;
@@ -34,6 +36,7 @@ import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.energy.EnergyStorage;
 import net.minecraftforge.registries.ForgeRegistries;
+import org.checkerframework.checker.units.qual.C;
 import org.jetbrains.annotations.Nullable;
 
 import javax.annotation.Nonnull;
@@ -74,7 +77,7 @@ public class WorkbenchBlockEntity extends BlockEntity implements MenuProvider, C
 	public int CraftDuration = 0;
 	public int CraftQueueCount = 0;
 	@Nonnull
-	public PartDefinition CraftingPart = PartDefinition.INVALID;
+	public ItemStack CraftingPart = ItemStack.EMPTY;
 
 	protected final ContainerData DataAccess = new ContainerData()
 	{
@@ -99,13 +102,13 @@ public class WorkbenchBlockEntity extends BlockEntity implements MenuProvider, C
 		{
 			switch (id)
 			{
-				case DATA_LIT_TIME -> { LitTime = value; }
-				case DATA_LIT_DURATION -> { LitDuration = value; }
+				case DATA_LIT_TIME -> LitTime = value;
+				case DATA_LIT_DURATION -> LitDuration = value;
 				case DATA_FORGE_ENERGY -> { if(EnergyStorage != null) EnergyStorage.receiveEnergy(value - EnergyStorage.getEnergyStored(), false); }
-				case DATA_CRAFT_QUEUE_COUNT -> { CraftQueueCount = value; }
-				case DATA_CRAFT_TIME -> { CraftTime = value; }
-				case DATA_CRAFT_DURATION -> { CraftDuration = value;}
-				case DATA_CRAFT_SELECTION -> { CraftingPart = FlansMod.PARTS.ByHash(value);	}
+				case DATA_CRAFT_QUEUE_COUNT -> CraftQueueCount = value;
+				case DATA_CRAFT_TIME -> CraftTime = value;
+				case DATA_CRAFT_DURATION -> CraftDuration = value;
+				case DATA_CRAFT_SELECTION -> CraftingPart = ItemStack.EMPTY; // TODO: FlansMod.PARTS.ByHash(value);
 			}
 		}
 
@@ -123,7 +126,8 @@ public class WorkbenchBlockEntity extends BlockEntity implements MenuProvider, C
 		}
 
 		@Override
-		public WorkbenchBlockEntity create(BlockPos pos, BlockState state)
+		@Nonnull
+		public WorkbenchBlockEntity create(@Nonnull BlockPos pos, @Nonnull BlockState state)
 		{
 			return new WorkbenchBlockEntity(DefLoc, pos, state);
 		}
@@ -133,7 +137,7 @@ public class WorkbenchBlockEntity extends BlockEntity implements MenuProvider, C
 			return new BlockEntityType<WorkbenchBlockEntity>(this, Set.of(), null)
 			{
 				@Override
-				public boolean isValid(BlockState state) { return state.getBlock() instanceof WorkbenchBlock; }
+				public boolean isValid(@Nonnull BlockState state) { return state.getBlock() instanceof WorkbenchBlock; }
 			};
 		}
 	}
@@ -254,7 +258,7 @@ public class WorkbenchBlockEntity extends BlockEntity implements MenuProvider, C
 	}
 
 	@Override
-	protected void saveAdditional(CompoundTag tags)
+	protected void saveAdditional(@Nonnull CompoundTag tags)
 	{
 		super.saveAdditional(tags);
 		tags.put("gun", GunContainer.save(new CompoundTag()));
@@ -275,11 +279,11 @@ public class WorkbenchBlockEntity extends BlockEntity implements MenuProvider, C
 		tags.putInt("craft_queue", CraftQueueCount);
 		tags.putInt("craft_duration", CraftDuration);
 		tags.putInt("craft_time", CraftTime);
-		tags.putString("craft_selection", CraftingPart.GetLocation().toString());
+		tags.put("craft_selection", CraftingPart.save(new CompoundTag()));
 	}
 
 	@Override
-	public void load(CompoundTag tags)
+	public void load(@Nonnull CompoundTag tags)
 	{
 		super.load(tags);
 		GunContainer.load(tags.getCompound("gun"));
@@ -300,14 +304,13 @@ public class WorkbenchBlockEntity extends BlockEntity implements MenuProvider, C
 		CraftQueueCount = tags.getInt("craft_queue");
 		CraftDuration = tags.getInt("craft_duration");
 		CraftTime = tags.getInt("craft_time");
-		CraftingPart = FlansMod.PARTS.Get(new ResourceLocation(tags.getString("craft_selection")));
+		CraftingPart = ItemStack.of(tags.getCompound("craft_selection"));
 	}
 
+	private static final Component DISPLAY_NAME = Component.translatable("workbench.title");
 	@Override
-	public Component getDisplayName()
-	{
-		return null;
-	}
+	@Nonnull
+	public Component getDisplayName() { return DISPLAY_NAME; }
 
 	@Override
 	public void clearContent()
@@ -327,11 +330,12 @@ public class WorkbenchBlockEntity extends BlockEntity implements MenuProvider, C
 
 	@Nullable
 	@Override
-	public AbstractContainerMenu createMenu(int containerID, Inventory inventory, Player player)
+	public AbstractContainerMenu createMenu(int containerID, @Nonnull Inventory inventory, @Nonnull Player player)
 	{
 		return new WorkbenchMenu(containerID,
 			inventory,
 			Def,
+			this,
 			GunContainer,
 			PaintCanContainer,
 			MagUpgradeContainer,
@@ -345,7 +349,7 @@ public class WorkbenchBlockEntity extends BlockEntity implements MenuProvider, C
 			DataAccess);
 	}
 
-	public static void serverTick(Level level, BlockPos pos, BlockState state, WorkbenchBlockEntity workbench)
+	public static void serverTick(@Nonnull Level level, @Nonnull BlockPos pos, @Nonnull BlockState state, @Nonnull WorkbenchBlockEntity workbench)
 	{
 		if(workbench.EnergyStorage != null)
 		{
@@ -411,9 +415,14 @@ public class WorkbenchBlockEntity extends BlockEntity implements MenuProvider, C
 		}
 	}
 
+	public static void SelectPartCraftingRecipe(WorkbenchBlockEntity workbench, ItemStack stack)
+	{
+		workbench.CraftingPart = stack;
+	}
+
 	public static int GetMaxPartsCraftableFromInput(WorkbenchBlockEntity workbench)
 	{
-		if(!workbench.CraftingPart.IsValid())
+		if(!workbench.CraftingPart.isEmpty())
 			return 0;
 
 		Item[] inputItems = new Item[workbench.PartCraftingInputContainer.getContainerSize()];
@@ -427,30 +436,58 @@ public class WorkbenchBlockEntity extends BlockEntity implements MenuProvider, C
 		int amountCanCraft = 0;
 		while(amountCanCraft < 99)
 		{
-			for (int i = 0; i < workbench.CraftingPart.recipeIngredients.length; i++)
+			for (int i = 0; i < workbench.CraftingPart.itemSettings.recipe.length; i++)
 			{
-				IngredientDefinition ingredient = workbench.CraftingPart.recipeIngredients[i];
-				int countNeeded = ingredient.count;
-				int checkSlot = 0;
-				while (checkSlot < inputItems.length)
+				RecipePartDefinition recipePart = workbench.CraftingPart.itemSettings.recipe[i];
+				for(TieredIngredientDefinition tiered : recipePart.tieredIngredients)
 				{
-					if (ingredient.Matches(inputItems[checkSlot]))
+					int countNeeded = 1;
+					int checkSlot = 0;
+					while (checkSlot < inputItems.length)
 					{
-						int amountToTake = Maths.Min(countNeeded, inputCounts[checkSlot]);
-						inputCounts[checkSlot] -= amountToTake;
-						countNeeded -= amountToTake;
+						if (tiered.Matches(new ItemStack(inputItems[checkSlot])))
+						{
+							int amountToTake = Maths.Min(countNeeded, inputCounts[checkSlot]);
+							inputCounts[checkSlot] -= amountToTake;
+							countNeeded -= amountToTake;
 
-						if (inputCounts[checkSlot] <= 0)
-							inputItems[checkSlot] = Items.AIR;
-						if (countNeeded <= 0)
-							break;
+							if (inputCounts[checkSlot] <= 0)
+								inputItems[checkSlot] = Items.AIR;
+							if (countNeeded <= 0)
+								break;
+						}
+						checkSlot++;
 					}
-					checkSlot++;
+
+					// We won't be able to craft another one of these. Time to quit
+					if (countNeeded > 0)
+						return amountCanCraft;
 				}
 
-				// We won't be able to craft another one of these. Time to quit
-				if (countNeeded > 0)
-					return amountCanCraft;
+				for(IngredientDefinition ingredient : recipePart.additionalIngredients)
+				{
+					int countNeeded = ingredient.count;
+					int checkSlot = 0;
+					while (checkSlot < inputItems.length)
+					{
+						if (ingredient.Matches(inputItems[checkSlot]))
+						{
+							int amountToTake = Maths.Min(countNeeded, inputCounts[checkSlot]);
+							inputCounts[checkSlot] -= amountToTake;
+							countNeeded -= amountToTake;
+
+							if (inputCounts[checkSlot] <= 0)
+								inputItems[checkSlot] = Items.AIR;
+							if (countNeeded <= 0)
+								break;
+						}
+						checkSlot++;
+					}
+
+					// We won't be able to craft another one of these. Time to quit
+					if (countNeeded > 0)
+						return amountCanCraft;
+				}
 			}
 
 			// All ingredients were successfully consumed from our copied inventory
@@ -577,8 +614,8 @@ public class WorkbenchBlockEntity extends BlockEntity implements MenuProvider, C
 		return false;
 	}
 
-	public void PaintGun(Player player, int skinIndex) { PaintGun(player, GunContainer, PaintCanContainer, skinIndex); }
-	public static void PaintGun(Player player, Container gunContainer, Container paintCanContainer, int skinIndex)
+	public void PaintGun(@Nonnull Player player, int skinIndex) { PaintGun(player, GunContainer, PaintCanContainer, skinIndex); }
+	public static void PaintGun(@Nonnull Player player, @Nonnull Container gunContainer, @Nonnull Container paintCanContainer, int skinIndex)
 	{
 		if(CanPaintGun(player, gunContainer, paintCanContainer, skinIndex))
 		{
@@ -602,7 +639,7 @@ public class WorkbenchBlockEntity extends BlockEntity implements MenuProvider, C
 		}
 	}
 
-	public static int GetMagUpgradeCost(Container gunContainer, int magIndex)
+	public static int GetMagUpgradeCost(@Nonnull Container gunContainer, int magIndex)
 	{
 		if (gunContainer.getContainerSize() <= 0)
 			return 0;
@@ -618,7 +655,7 @@ public class WorkbenchBlockEntity extends BlockEntity implements MenuProvider, C
 		}
 		return 0;
 	}
-	public static boolean CanSelectMagazine(Player player, Container gunContainer, Container magUpgradeContainer, int magIndex)
+	public static boolean CanSelectMagazine(@Nonnull Player player, @Nonnull Container gunContainer, @Nonnull Container magUpgradeContainer, int magIndex)
 	{
 		// Check some obvious errors
 		if(magIndex < 0)
@@ -654,8 +691,8 @@ public class WorkbenchBlockEntity extends BlockEntity implements MenuProvider, C
 		}
 		return false;
 	}
-	public void SelectMagazine(Player player, int magIndex) { SelectMagazine(player, GunContainer, MagUpgradeContainer, magIndex); }
-	public static void SelectMagazine(Player player, Container gunContainer, Container magUpgradeContainer, int magIndex)
+	public void SelectMagazine(@Nonnull Player player, int magIndex) { SelectMagazine(player, GunContainer, MagUpgradeContainer, magIndex); }
+	public static void SelectMagazine(@Nonnull Player player, @Nonnull Container gunContainer, @Nonnull Container magUpgradeContainer, int magIndex)
 	{
 		if(CanSelectMagazine(player, gunContainer, magUpgradeContainer, magIndex))
 		{

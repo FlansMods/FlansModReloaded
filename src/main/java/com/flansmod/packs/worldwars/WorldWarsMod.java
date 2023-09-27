@@ -17,6 +17,7 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.EntityRenderersEvent;
 import net.minecraftforge.client.event.ModelEvent;
+import net.minecraftforge.event.CreativeModeTabEvent;
 import net.minecraftforge.event.entity.EntityAttributeCreationEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -39,6 +40,46 @@ public class WorldWarsMod
 	public static final DeferredRegister<BlockEntityType<?>> TILE_ENTITIES = DeferredRegister.create(ForgeRegistries.BLOCK_ENTITY_TYPES, MODID);
 	public static final DeferredRegister<EntityType<?>> ENTITY_TYPES = DeferredRegister.create(ForgeRegistries.ENTITY_TYPES, MODID);
 
+	public static final RegistryObject<Item> GUN_BAR = 								FlansMod.Gun(ITEMS, MODID, "bar");
+	public static final RegistryObject<Item> GUN_BAZOOKA = 							FlansMod.Gun(ITEMS, MODID, "bazooka");
+	public static final RegistryObject<Item> GUN_BREN = 							FlansMod.Gun(ITEMS, MODID, "bren");
+	public static final RegistryObject<Item> GUN_BROWNING = 						FlansMod.Gun(ITEMS, MODID, "browning");
+	public static final RegistryObject<Item> GUN_COLT = 							FlansMod.Gun(ITEMS, MODID, "colt");
+	public static final RegistryObject<Item> GUN_DP28 = 							FlansMod.Gun(ITEMS, MODID, "dp28");
+	public static final RegistryObject<Item> GUN_FG42 = 							FlansMod.Gun(ITEMS, MODID, "fg42");
+	public static final RegistryObject<Item> GUN_FLAMETHROWER = 					FlansMod.Gun(ITEMS, MODID, "flamethrower");
+	public static final RegistryObject<Item> GUN_G43 = 								FlansMod.Gun(ITEMS, MODID, "g43");
+	public static final RegistryObject<Item> GUN_KAR98K = 							FlansMod.Gun(ITEMS, MODID, "kar98k");
+	public static final RegistryObject<Item> GUN_KAR98K_SNIPER = 					FlansMod.Gun(ITEMS, MODID, "kar98k_sniper");
+	public static final RegistryObject<Item> GUN_LEE_ENFIELD = 						FlansMod.Gun(ITEMS, MODID, "lee_enfield");
+	public static final RegistryObject<Item> GUN_LEE_ENFIELD_SNIPER = 				FlansMod.Gun(ITEMS, MODID, "lee_enfield_sniper");
+	public static final RegistryObject<Item> GUN_LUGER = 							FlansMod.Gun(ITEMS, MODID, "luger");
+	public static final RegistryObject<Item> GUN_M1_CARBINE = 						FlansMod.Gun(ITEMS, MODID, "m1_carbine");
+	public static final RegistryObject<Item> GUN_M1_GARAND = 						FlansMod.Gun(ITEMS, MODID, "m1_garand");
+	public static final RegistryObject<Item> GUN_M3A1 = 							FlansMod.Gun(ITEMS, MODID, "m3a1");
+	public static final RegistryObject<Item> GUN_MG42 = 							FlansMod.Gun(ITEMS, MODID, "mg42");
+	public static final RegistryObject<Item> GUN_MP40 = 							FlansMod.Gun(ITEMS, MODID, "mp40");
+	public static final RegistryObject<Item> GUN_MP44 = 							FlansMod.Gun(ITEMS, MODID, "mp44");
+	public static final RegistryObject<Item> GUN_NAGANT = 							FlansMod.Gun(ITEMS, MODID, "nagant");
+	public static final RegistryObject<Item> GUN_NAGANT_SNIPER = 					FlansMod.Gun(ITEMS, MODID, "nagant_sniper");
+	public static final RegistryObject<Item> GUN_PANZERFAUST = 						FlansMod.Gun(ITEMS, MODID, "panzerfaust");
+	public static final RegistryObject<Item> GUN_PANZERSCHRECK = 					FlansMod.Gun(ITEMS, MODID, "panzerschreck");
+	public static final RegistryObject<Item> GUN_PIAT = 							FlansMod.Gun(ITEMS, MODID, "piat");
+	public static final RegistryObject<Item> GUN_PPSH = 							FlansMod.Gun(ITEMS, MODID, "ppsh");
+	public static final RegistryObject<Item> GUN_SPRINGFIELD = 						FlansMod.Gun(ITEMS, MODID, "springfield");
+	public static final RegistryObject<Item> GUN_STEN = 							FlansMod.Gun(ITEMS, MODID, "sten");
+	public static final RegistryObject<Item> GUN_THOMPSON = 						FlansMod.Gun(ITEMS, MODID, "thompson");
+	public static final RegistryObject<Item> GUN_TRENCHGUN = 						FlansMod.Gun(ITEMS, MODID, "trenchgun");
+	public static final RegistryObject<Item> GUN_TT33 = 							FlansMod.Gun(ITEMS, MODID, "tt33");
+	public static final RegistryObject<Item> GUN_TYPE14 = 							FlansMod.Gun(ITEMS, MODID, "type14");
+	public static final RegistryObject<Item> GUN_TYPE38 = 							FlansMod.Gun(ITEMS, MODID, "type38");
+	public static final RegistryObject<Item> GUN_TYPE38_SNIPER = 					FlansMod.Gun(ITEMS, MODID, "type38_sniper");
+	public static final RegistryObject<Item> GUN_TYPE99 = 							FlansMod.Gun(ITEMS, MODID, "type99");
+	public static final RegistryObject<Item> GUN_TYPE100 = 							FlansMod.Gun(ITEMS, MODID, "type100");
+	public static final RegistryObject<Item> GUN_WEBLEY = 							FlansMod.Gun(ITEMS, MODID, "webley");
+
+	public static final RegistryObject<Item> GUN_BINOCULARS = 						FlansMod.Gun(ITEMS, MODID, "binoculars");
+	public static final RegistryObject<Item> GUN_KNIFE = 							FlansMod.Gun(ITEMS, MODID, "knife");
 
 	// British
 	public static final RegistryObject<Block> WORKBENCH_BLOCK_BRITISH = 			FlansMod.Workbench_Block(BLOCKS, MODID, "british_workbench");
@@ -92,6 +133,19 @@ public class WorldWarsMod
 		TILE_ENTITIES.register(modEventBus);
 		ENTITY_TYPES.register(modEventBus);
 		modEventBus.register(this);
+	}
+
+	@SubscribeEvent
+	public void OnCreativeTabs(CreativeModeTabEvent.BuildContents event)
+	{
+		if (event.getTab().getDisplayName() == FlansMod.CREATIVE_TAB_NAME_GUNS)
+		{
+			event.accept(WORKBENCH_ITEM_RUSSIAN);
+			event.accept(WORKBENCH_ITEM_AMERICAN);
+			event.accept(WORKBENCH_ITEM_BRITISH);
+			event.accept(WORKBENCH_ITEM_GERMAN);
+			event.accept(WORKBENCH_ITEM_JAPANESE);
+		}
 	}
 
 	@SubscribeEvent

@@ -2,6 +2,7 @@ package com.flansmod.common;
 
 import com.flansmod.client.FlansModClient;
 import com.flansmod.common.crafting.*;
+import com.flansmod.common.entity.NpcRelationshipCapabilityAttacher;
 import com.flansmod.common.gunshots.ActionManager;
 import com.flansmod.common.gunshots.Raytracer;
 import com.flansmod.common.item.*;
@@ -79,32 +80,19 @@ public class FlansMod
     public static final RegistryObject<Item> RAINBOW_PAINT_CAN_ITEM = ITEMS.register("rainbow_paint_can", () -> new Item(new Item.Properties()));
     public static final RegistryObject<Item> MAG_UPGRADE_ITEM = ITEMS.register("magazine_upgrade", () -> new Item(new Item.Properties()));
 
-    public static final RegistryObject<Block> GUN_MACHINING_TABLE_BLOCK = FlansMod.Workbench_Block(BLOCKS, MODID, "gun_machining_table");
     public static final RegistryObject<Block> GUN_MOD_TABLE_BLOCK = FlansMod.Workbench_Block(BLOCKS, MODID, "gun_modification_table");
     public static final RegistryObject<Block> DIESEL_GENERATOR_BLOCK = FlansMod.Workbench_Block(BLOCKS, MODID, "portable_diesel_generator");
     public static final RegistryObject<Block> COAL_GENERATOR_BLOCK = FlansMod.Workbench_Block(BLOCKS, MODID, "portable_coal_generator");
-    public static final RegistryObject<Block> WEAPON_CRATE = FlansMod.Workbench_Block(BLOCKS, MODID, "weapon_crate");
-
-
-    public static final RegistryObject<Item> GUN_MACHINING_TABLE_ITEM = ITEMS.register("gun_machining_table", () -> new BlockItem(GUN_MACHINING_TABLE_BLOCK.get(), new Item.Properties()));
     public static final RegistryObject<Item> GUN_MOD_TABLE_ITEM = ITEMS.register("gun_modification_table", () -> new BlockItem(GUN_MOD_TABLE_BLOCK.get(), new Item.Properties()));
     public static final RegistryObject<Item> DIESEL_GENERATOR_ITEM = ITEMS.register("portable_diesel_generator", () -> new BlockItem(DIESEL_GENERATOR_BLOCK.get(), new Item.Properties()));
     public static final RegistryObject<Item> COAL_GENERATOR_ITEM = ITEMS.register("portable_coal_generator", () -> new BlockItem(COAL_GENERATOR_BLOCK.get(), new Item.Properties()));
-    public static final RegistryObject<Item> WEAPON_CRATE_ITEM = ITEMS.register("weapon_crate", () -> new BlockItem(WEAPON_CRATE.get(), new Item.Properties()));
 
     // Tile entities
     public static final DeferredRegister<BlockEntityType<?>> TILE_ENTITIES = DeferredRegister.create(ForgeRegistries.BLOCK_ENTITY_TYPES, MODID);
-    //public static final RegistryObject<BlockEntityType<GunModBlockEntity>> GUN_MOD_TILE_ENTITY = TILE_ENTITIES.register("gun_modification_table", () -> BlockEntityType.Builder.of(GunModBlockEntity::new, GUN_MOD_TABLE_BLOCK.get()).build(null));
-    //public static final RegistryObject<BlockEntityType<GeneratorBlockEntity>> DIESEL_GENERATOR_TILE_ENTITY = TILE_ENTITIES.register("diesel_generator", () -> BlockEntityType.Builder.of(GeneratorBlockEntity::new, DIESEL_GENERATOR_BLOCK.get()).build(null));
-    public static final RegistryObject<BlockEntityType<WorkbenchBlockEntity>> GUN_CRAFTING_TILE_ENTITY = Workbench_TileEntityType(TILE_ENTITIES, MODID, "gun_machining_table");
     public static final RegistryObject<BlockEntityType<WorkbenchBlockEntity>> DIESEL_GENERATOR_TILE_ENTITY = Workbench_TileEntityType(TILE_ENTITIES, MODID, "portable_diesel_generator");
     public static final RegistryObject<BlockEntityType<WorkbenchBlockEntity>> COAL_GENERATOR_TILE_ENTITY = Workbench_TileEntityType(TILE_ENTITIES, MODID, "portable_coal_generator");
     public static final RegistryObject<BlockEntityType<WorkbenchBlockEntity>> GUN_MODIFICATION_TILE_ENTITY = Workbench_TileEntityType(TILE_ENTITIES, MODID, "gun_modification_table");
-    public static final RegistryObject<BlockEntityType<WorkbenchBlockEntity>> WEAPON_CRATE_TILE_ENTITY = Workbench_TileEntityType(TILE_ENTITIES, MODID, "weapon_crate");
 
-
-    // Creative Mode Tabs
-    //public static final RegistryObject<CreativeModeTabs> GUNS_TAB = new CreativeModeTabFlansMod("");
     // Menus
     public static final DeferredRegister<MenuType<?>> MENUS = DeferredRegister.create(ForgeRegistries.MENU_TYPES, MODID);
     public static final RegistryObject<MenuType<WorkbenchMenu>> WORKBENCH_MENU = MENUS.register("workbench", () -> IForgeMenuType.create(WorkbenchMenu::new));
@@ -128,6 +116,13 @@ public class FlansMod
         ResourceLocation loc = new ResourceLocation(modID, name);
         return itemRegister.register(name, () -> new GunItem(loc, new Item.Properties().stacksTo(1)));
     }
+
+    public static RegistryObject<Item> Tool(DeferredRegister<Item> itemRegister, String modID, String name)
+    {
+        // TODO: Check that this actually works correctly
+        return Gun(itemRegister, modID, name);
+    }
+
 
     public static RegistryObject<Item> Bullet(DeferredRegister<Item> itemRegister, String modID, String name)
     {
@@ -178,12 +173,13 @@ public class FlansMod
         modEventBus.addListener(this::onCreativeTabRegistry);
         modEventBus.addListener(this::OnRegsiterEvent);
 
+        new NpcRelationshipCapabilityAttacher();
+
         BLOCKS.register(modEventBus);
         ITEMS.register(modEventBus);
         TILE_ENTITIES.register(modEventBus);
         MENUS.register(modEventBus);
         ENTITY_TYPES.register(modEventBus);
-
     }
 
     private void CommonInit(final FMLCommonSetupEvent event)
@@ -215,15 +211,6 @@ public class FlansMod
             {
                 if(item instanceof GunItem)
                     stacks.add(new ItemStack(item));
-
-                if(item instanceof BlockItem blockItem)
-                {
-                    if(blockItem.getBlock() instanceof WorkbenchBlock workbenchBlock)
-                    {
-                        if(workbenchBlock.Def().gunCrafting.isActive || workbenchBlock.Def().gunModifying.isActive)
-                            stacks.add(new ItemStack(item));
-                    }
-                }
             }
 
             builder
@@ -231,11 +218,9 @@ public class FlansMod
                 .icon(() -> stacks.size() > 0 ? stacks.get(0) : new ItemStack(Items.DIAMOND))
                 .displayItems((enabledFlags, populator, hasPermissions) ->
                 {
-                    populator.accept(GUN_MACHINING_TABLE_ITEM.get());
                     populator.accept(GUN_MOD_TABLE_ITEM.get());
                     populator.accept(DIESEL_GENERATOR_ITEM.get());
                     populator.accept(COAL_GENERATOR_ITEM.get());
-                    populator.accept(WEAPON_CRATE_ITEM.get());
                    for(ItemStack stack : stacks)
                        populator.accept(stack);
                 });
@@ -248,15 +233,6 @@ public class FlansMod
             {
                 if(item instanceof BulletItem || item instanceof GrenadeItem)
                     stacks.add(new ItemStack(item));
-
-                if(item instanceof BlockItem blockItem)
-                {
-                    if(blockItem.getBlock() instanceof WorkbenchBlock workbenchBlock)
-                    {
-                        if(workbenchBlock.Def().partCrafting.isActive)
-                            stacks.add(new ItemStack(item));
-                    }
-                }
             }
 
             builder
@@ -264,7 +240,6 @@ public class FlansMod
                 .icon(() -> stacks.size() > 0 ? stacks.get(0) : new ItemStack(Items.STICK))
                 .displayItems((enabledFlags, populator, hasPermissions) ->
                 {
-                    populator.accept(GUN_MACHINING_TABLE_ITEM.get());
                     for(ItemStack stack : stacks)
                         populator.accept(stack);
                 });
@@ -277,15 +252,6 @@ public class FlansMod
             {
                 if(item instanceof PartItem)
                     stacks.add(new ItemStack(item));
-
-                if(item instanceof BlockItem blockItem)
-                {
-                    if(blockItem.getBlock() instanceof WorkbenchBlock workbenchBlock)
-                    {
-                        if(workbenchBlock.Def().partCrafting.isActive)
-                            stacks.add(new ItemStack(item));
-                    }
-                }
             }
 
             builder
@@ -293,7 +259,6 @@ public class FlansMod
                 .icon(() -> stacks.size() > 0 ? stacks.get(0) : new ItemStack(Items.STICK))
                 .displayItems((enabledFlags, populator, hasPermissions) ->
                 {
-                    populator.accept(GUN_MACHINING_TABLE_ITEM.get());
                     for(ItemStack stack : stacks)
                             populator.accept(stack);
                 });
@@ -306,15 +271,6 @@ public class FlansMod
             {
                 if(item instanceof AttachmentItem)
                     stacks.add(new ItemStack(item));
-
-                if(item instanceof BlockItem blockItem)
-                {
-                    if(blockItem.getBlock() instanceof WorkbenchBlock workbenchBlock)
-                    {
-                        if(workbenchBlock.Def().gunModifying.isActive)
-                            stacks.add(new ItemStack(item));
-                    }
-                }
             }
 
             builder
@@ -329,17 +285,6 @@ public class FlansMod
                         populator.accept(stack);
                 });
         });
-
-        //event.registerCreativeModeTab(new ResourceLocation(MODID, "creative_tab_vehicles"), builder ->
-        //{
-        //    builder
-        //        .title(Component.translatable("item_group." + MODID + ".creative_tab_vehicles"))
-        //        .icon(() -> new ItemStack(Items.DIAMOND))
-        //        .displayItems((enabledFlags, populator, hasPermissions) ->
-        //        {
-        //
-        //        });
-        //});
     }
 
     private void OnRegsiterEvent(RegisterEvent event)

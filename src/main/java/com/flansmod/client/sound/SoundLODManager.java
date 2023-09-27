@@ -47,22 +47,11 @@ public class SoundLODManager
 					onEntity.position().z,
 					SoundEvent.createFixedRangeEvent(soundToPlay, soundDef.maxRange),
 					SoundSource.HOSTILE,
-					GetVolume(soundDef, Minecraft.getInstance().level.random),
-					GetPitch(soundDef, Minecraft.getInstance().level.random),
+					soundDef.PickRandomVolume(Minecraft.getInstance().level.random),
+					soundDef.PickRandomPitch(Minecraft.getInstance().level.random),
 					true);
 			}
 		}
 	}
 
-	public static float GetVolume(SoundDefinition soundDef, RandomSource random)
-	{
-		return soundDef.minVolume
-			+ random.nextFloat() * (soundDef.maxVolume - soundDef.minVolume);
-	}
-
-	public static float GetPitch(SoundDefinition soundDef, RandomSource random)
-	{
-		return soundDef.minPitchMultiplier
-			+ random.nextFloat() * (soundDef.maxPitchMultiplier - soundDef.minVolume);
-	}
 }

@@ -3,23 +3,29 @@ package com.flansmod.common.crafting;
 import com.flansmod.common.FlansMod;
 import com.flansmod.common.item.FlanItem;
 import com.flansmod.common.item.GunItem;
+import com.flansmod.common.item.PartItem;
 import com.flansmod.common.types.attachments.EAttachmentType;
+import com.flansmod.common.types.crafting.EMaterialType;
 import com.flansmod.common.types.crafting.WorkbenchDefinition;
 import com.flansmod.common.types.crafting.elements.*;
+import com.flansmod.common.types.parts.PartDefinition;
 import com.mojang.datafixers.util.Either;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.Container;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.ContainerData;
 import net.minecraft.world.inventory.Slot;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
+import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -57,9 +63,11 @@ public class WorkbenchMenu extends AbstractContainerMenu
 	public final Container FuelContainer;
 	public final WorkbenchDefinition Def;
 	public final ContainerData WorkbenchData;
-	//public final WorkbenchBlockEntity Workbench;
+	public final WorkbenchBlockEntity BlockEntity;
 
-	public int SelectedRecipeIndex = -1;
+	public static final int NO_RECIPE_SELECTED = -1;
+	public int SelectedGunRecipeIndex = NO_RECIPE_SELECTED;
+	public int SelectedPartRecipeIndex = NO_RECIPE_SELECTED;
 
 	private RestrictedSlot GunSlot;
 	private RestrictedSlot PaintCanSlot;
@@ -73,6 +81,13 @@ public class WorkbenchMenu extends AbstractContainerMenu
 	private AttachmentSlot[] AttachmentSlots;
 	private RestrictedSlot[] MaterialSlots;
 
+
+	public final List<ResourceKey<Item>> TagFilters = new ArrayList<>();
+	public final List<Integer> TierFilters = new ArrayList<>();
+	public final List<EMaterialType> MaterialFilters = new ArrayList<>();
+	public boolean OnlyCraftableFilter = false;
+	public final List<ItemStack> FilteredPartsList = new ArrayList<>();
+
 	public static final int PART_CRAFTING_NUM_SLOTS_X = 2;
 	public static final int PART_CRAFTING_NUM_SLOTS_Y = 4;
 	public static final int GUN_CRAFTING_NUM_SLOTS_X = 4;
@@ -81,8 +96,8 @@ public class WorkbenchMenu extends AbstractContainerMenu
 	public int ScrollIndex = 0;
 	//public static final int BUTTON_CANCEL = 0;
 
-	public static final int BUTTON_SELECT_RECIPE_0 = 1000;
-	public static final int BUTTON_SELECT_RECIPE_MAX = 1999;
+	public static final int BUTTON_SELECT_GUN_RECIPE_0 = 1000;
+	public static final int BUTTON_SELECT_GUN_RECIPE_MAX = 1999;
 	public static final int BUTTON_SELECT_SKIN_0 = 2000;
 	public static final int BUTTON_SELECT_SKIN_MAX = 2999;
 	public static final int BUTTON_SELECT_MAGAZINE_0 = 3000;
@@ -91,9 +106,17 @@ public class WorkbenchMenu extends AbstractContainerMenu
 	public static final int BUTTON_AUTO_FULL_INGREDIENT_MAX = 4999;
 	public static final int BUTTON_SET_RECIPE_SCROLL_0 = 5000;
 	public static final int BUTTON_SET_RECIPE_SCROLL_MAX = 5999;
+	public static final int BUTTON_CRAFT_CANCEL = 6000;
+	public static final int BUTTON_CRAFT_1 = 6001;
+	public static final int BUTTON_CRAFT_5 = 6005;
+	public static final int BUTTON_CRAFT_ALL = 6999;
+	public static final int BUTTON_SELECT_PART_RECIPE_0 = 7000;
+	public static final int BUTTON_SELECT_PART_RECIPE_MAX = 7999;
+
 
 	public WorkbenchMenu(int containerID, Inventory inventory,
 						 WorkbenchDefinition def,
+						 WorkbenchBlockEntity workbench,
 						 Container gunContainer,
 						 Container paintCanContainer,
 						 Container magUpgradeContainer,
@@ -108,6 +131,7 @@ public class WorkbenchMenu extends AbstractContainerMenu
 	{
 		super(FlansMod.WORKBENCH_MENU.get(), containerID);
 		Def = def;
+		BlockEntity = workbench;
 		GunContainer = gunContainer;
 		PaintCanContainer = paintCanContainer;
 		MagUpgradeContainer = magUpgradeContainer;
@@ -131,6 +155,7 @@ public class WorkbenchMenu extends AbstractContainerMenu
 		if(blockEntity instanceof WorkbenchBlockEntity workbenchBlockEntity)
 		{
 			Def = workbenchBlockEntity.Def;
+			BlockEntity = workbenchBlockEntity;
 			GunContainer = workbenchBlockEntity.GunContainer;
 			PaintCanContainer = workbenchBlockEntity.PaintCanContainer;
 			MagUpgradeContainer = workbenchBlockEntity.MagUpgradeContainer;
@@ -147,6 +172,7 @@ public class WorkbenchMenu extends AbstractContainerMenu
 		{
 			FlansMod.LOGGER.error("Could not read GunModificationMenu data");
 			Def = WorkbenchDefinition.INVALID;
+			BlockEntity = null;
 			GunContainer = null; // um?
 			PaintCanContainer = null;
 			MagUpgradeContainer = null;
@@ -314,6 +340,8 @@ public class WorkbenchMenu extends AbstractContainerMenu
 			slot.SetActive(true);
 		for (RestrictedSlot slot : PartCraftingOutputSlots)
 			slot.SetActive(true);
+
+		RefreshPartCraftingFilters();
 	}
 
 	@OnlyIn(Dist.CLIENT)
@@ -333,9 +361,9 @@ public class WorkbenchMenu extends AbstractContainerMenu
 			boolean active = false;
 			if(!GunCraftingInputSlots[i].getItem().isEmpty())
 				active = true;
-			if(SelectedRecipeIndex >= 0)
+			if(SelectedGunRecipeIndex >= 0)
 			{
-				GunCraftingEntryDefinition selectedEntry = GetEntry(SelectedRecipeIndex);
+				GunCraftingEntryDefinition selectedEntry = GetEntry(SelectedGunRecipeIndex);
 				if(selectedEntry != null)
 				{
 					int slotCount = 0;
@@ -390,15 +418,23 @@ public class WorkbenchMenu extends AbstractContainerMenu
 	}
 
 	@Override
-	public boolean clickMenuButton(Player player, int buttonID)
+	public boolean clickMenuButton(@Nonnull Player player, int buttonID)
 	{
 		switch(buttonID)
 		{
 			//case BUTTON_CANCEL -> { return true; }
+			case BUTTON_CRAFT_CANCEL -> {
+				CancelPartCrafting();
+				return true;
+			}
+			case BUTTON_CRAFT_ALL -> {
+				CraftParts(-1);
+				return true;
+			}
 			default -> {
-				if(BUTTON_SELECT_RECIPE_0 <= buttonID && buttonID <= BUTTON_SELECT_RECIPE_MAX)
+				if(BUTTON_SELECT_GUN_RECIPE_0 <= buttonID && buttonID <= BUTTON_SELECT_GUN_RECIPE_MAX)
 				{
-					SelectedRecipeIndex = buttonID - BUTTON_SELECT_RECIPE_0;
+					SelectedGunRecipeIndex = buttonID - BUTTON_SELECT_GUN_RECIPE_0;
 					UpdateGunCraftingOutput();
 					SwitchToGunCrafting();
 					return true;
@@ -432,6 +468,19 @@ public class WorkbenchMenu extends AbstractContainerMenu
 						ScrollIndex = scrollIndex;
 						SwitchToGunCrafting();
 					}
+					return true;
+				}
+				if(BUTTON_CRAFT_1 <= buttonID && buttonID < BUTTON_CRAFT_ALL)
+				{
+					int craftCount = buttonID - BUTTON_CRAFT_1 + 1;
+					CraftParts(craftCount);
+					return true;
+				}
+				if(BUTTON_SELECT_PART_RECIPE_0 <= buttonID && buttonID <= BUTTON_SELECT_PART_RECIPE_MAX)
+				{
+					SelectedPartRecipeIndex = buttonID - BUTTON_SELECT_PART_RECIPE_0;
+					WorkbenchBlockEntity.SelectPartCraftingRecipe(BlockEntity, FilteredPartsList.get(SelectedPartRecipeIndex));
+					SwitchToPartCrafting();
 					return true;
 				}
 			}
@@ -513,17 +562,49 @@ public class WorkbenchMenu extends AbstractContainerMenu
 			}
 		}
 
-
 		return  slots.get(slot).getItem();
+	}
+
+	private void RefreshPartCraftingFilters()
+	{
+		FilteredPartsList.clear();
+		for(ItemStack stack : Def.partCrafting.GetMatches())
+		{
+			// Apply filters
+			if(TierFilters.size() > 0)
+				if(!TierFilters.contains(PartDefinition.GetPartTier(stack)))
+					continue;
+
+			if(MaterialFilters.size() > 0)
+				if(!MaterialFilters.contains(PartDefinition.GetPartMaterial(stack)))
+					continue;
+
+			if(OnlyCraftableFilter)
+			{
+				// TODO: Craftable filter
+			}
+
+			FilteredPartsList.add(stack);
+		}
+	}
+
+	public void CraftParts(int count)
+	{
+		int max = WorkbenchBlockEntity.GetMaxPartsCraftableFromInput(BlockEntity);
+	}
+
+	public void CancelPartCrafting()
+	{
+
 	}
 
 	public void AutoFillGunCraftingInputSlot(Player player, int inputSlotIndex)
 	{
-		if(SelectedRecipeIndex >= 0
+		if(SelectedGunRecipeIndex >= 0
 			&& 0 <= inputSlotIndex && inputSlotIndex < GunCraftingInputSlots.length
 			&& GunCraftingInputSlots[inputSlotIndex].getItem().isEmpty())
 		{
-			GunCraftingEntryDefinition selectedEntry = GetEntry(SelectedRecipeIndex);
+			GunCraftingEntryDefinition selectedEntry = GetEntry(SelectedGunRecipeIndex);
 			Either<TieredIngredientDefinition, IngredientDefinition> ingredient = selectedEntry.GetIngredient(inputSlotIndex);
 			if(ingredient != null)
 			{
@@ -582,9 +663,9 @@ public class WorkbenchMenu extends AbstractContainerMenu
 		if(GunCraftingOutputContainer.getContainerSize() > 0
 			&& !GunCraftingOutputContainer.isEmpty()
 			&& GunCraftingInputContainer.getContainerSize() > 0
-			&& SelectedRecipeIndex >= 0)
+			&& SelectedGunRecipeIndex >= 0)
 		{
-			GunCraftingEntryDefinition selectedEntry = GetEntry(SelectedRecipeIndex);
+			GunCraftingEntryDefinition selectedEntry = GetEntry(SelectedGunRecipeIndex);
 			if(selectedEntry != null)
 			{
 				int inputSlotIndex = 0;
@@ -614,9 +695,9 @@ public class WorkbenchMenu extends AbstractContainerMenu
 
 	public void UpdateGunCraftingOutput()
 	{
-		if(GunCraftingOutputContainer.getContainerSize() > 0 && GunCraftingInputContainer.getContainerSize() > 0 && SelectedRecipeIndex >= 0)
+		if(GunCraftingOutputContainer.getContainerSize() > 0 && GunCraftingInputContainer.getContainerSize() > 0 && SelectedGunRecipeIndex >= 0)
 		{
-			GunCraftingEntryDefinition selectedEntry = GetEntry(SelectedRecipeIndex);
+			GunCraftingEntryDefinition selectedEntry = GetEntry(SelectedGunRecipeIndex);
 			if(selectedEntry != null)
 			{
 				int inputSlotIndex = 0;

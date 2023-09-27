@@ -3,7 +3,8 @@
         "maxStackSize": 1,
         "tags": [
             "flansmod:gun"
-        ]
+        ],
+        "recipe": []
     },
     "paints": {
         "paintjobs": [

@@ -10,5 +10,7 @@ public class RecipePartDefinition
 	@JsonField
 	public TieredIngredientDefinition[] tieredIngredients = new TieredIngredientDefinition[0];
 	@JsonField
+	public RawIngredientDefinition[] rawIngredients = new RawIngredientDefinition[0];
+	@JsonField
 	public IngredientDefinition[] additionalIngredients = new IngredientDefinition[0];
 }

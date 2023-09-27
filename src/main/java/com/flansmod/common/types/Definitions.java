@@ -53,7 +53,7 @@ public class Definitions<TDefinitionType extends JsonDefinition> extends SimpleJ
 
 	public TDefinitionType ByHash(int hash)
 	{
-		return hashmap.get(hash);
+		return hashmap.getOrDefault(hash, INVALID);
 	}
 
 	public void RunOnMatch(String key, Consumer<TDefinitionType> resultFunction)

@@ -7,18 +7,7 @@
         "recipe": []
     },
     "paints": {
-        "paintjobs": [
-            {
-                "textureName": "phantek_auto_12_magma",
-                "paintBucketsRequired": 1,
-                "entitlementKey": ""
-            },
-            {
-                "textureName": "phantek_auto_12_undergrowth",
-                "paintBucketsRequired": 1,
-                "entitlementKey": ""
-            }
-        ]
+        "paintjobs": []
     },
     "primaryReload": {
         "manualReloadAllowed": true,
@@ -36,7 +25,7 @@
             "actions": [
                 {
                     "actionType": "Animation",
-                    "duration": 0.5,
+                    "duration": 1.0,
                     "sounds": [],
                     "itemStack": "",
                     "modifiers": [],
@@ -52,7 +41,7 @@
                     "duration": 0.0,
                     "sounds": [
                         {
-                            "sound": "flansmodernweapons:mwmp44reload",
+                            "sound": "flansmodernweapons:mwbazooka_reload",
                             "length": 1.0,
                             "minPitchMultiplier": 1.0,
                             "maxPitchMultiplier": 1.0,
@@ -83,21 +72,7 @@
             "repeatCount": 0,
             "spinUpDuration": 1.0,
             "loudness": 150.0,
-            "actions": [
-                {
-                    "actionType": "Animation",
-                    "duration": 0.5,
-                    "sounds": [],
-                    "itemStack": "",
-                    "modifiers": [],
-                    "fovFactor": 1.25,
-                    "scopeOverlay": "",
-                    "anim": "reload_eject",
-                    "toolLevel": 1.0,
-                    "harvestSpeed": 1.0,
-                    "reach": 1.0
-                }
-            ]
+            "actions": []
         },
         "loadOne": {
             "canActUnderwater": true,
@@ -112,7 +87,7 @@
             "actions": [
                 {
                     "actionType": "Animation",
-                    "duration": 0.5,
+                    "duration": 1.0,
                     "sounds": [],
                     "itemStack": "",
                     "modifiers": [],
@@ -138,7 +113,7 @@
             "actions": [
                 {
                     "actionType": "Animation",
-                    "duration": 0.5,
+                    "duration": 1.0,
                     "sounds": [],
                     "itemStack": "",
                     "modifiers": [],
@@ -208,70 +183,25 @@
         "canActUnderwater": true,
         "canActUnderOtherLiquid": false,
         "canBeOverriden": true,
-        "twoHanded": true,
-        "repeatMode": "FullAuto",
-        "repeatDelay": 0.2,
+        "twoHanded": false,
+        "repeatMode": "SemiAuto",
+        "repeatDelay": 0.05,
         "repeatCount": 3,
         "spinUpDuration": 1.5,
         "loudness": 150.0,
         "actions": [
             {
-                "actionType": "Shoot",
-                "duration": 0.2,
+                "actionType": "SummonNpc",
+                "duration": 0.05,
                 "sounds": [],
                 "itemStack": "",
                 "modifiers": [
                     {
-                        "Stat": "vertical_recoil",
+                        "Stat": "entity_id",
                         "Filter": "",
                         "Add": 0.0,
-                        "Multiply": 6.0,
-                        "SetValue": "",
-                        "ApplyToPrimary": true,
-                        "ApplyToSecondary": false
-                    },
-                    {
-                        "Stat": "spread",
-                        "Filter": "",
-                        "Add": 0.0,
-                        "Multiply": 50.0,
-                        "SetValue": "",
-                        "ApplyToPrimary": true,
-                        "ApplyToSecondary": false
-                    },
-                    {
-                        "Stat": "speed",
-                        "Filter": "",
-                        "Add": 0.0,
-                        "Multiply": 0.0,
-                        "SetValue": "",
-                        "ApplyToPrimary": true,
-                        "ApplyToSecondary": false
-                    },
-                    {
-                        "Stat": "bullet_count",
-                        "Filter": "",
-                        "Add": 0.0,
-                        "Multiply": 1.0,
-                        "SetValue": "",
-                        "ApplyToPrimary": true,
-                        "ApplyToSecondary": false
-                    },
-                    {
-                        "Stat": "impact_damage",
-                        "Filter": "",
-                        "Add": 0.0,
-                        "Multiply": 1.0,
-                        "SetValue": "",
-                        "ApplyToPrimary": true,
-                        "ApplyToSecondary": false
-                    },
-                    {
-                        "Stat": "knockback",
-                        "Filter": "",
-                        "Add": 0.0,
-                        "Multiply": 0.0,
-                        "SetValue": "",
+                        "Multiply": 25.0,
+                        "SetValue": "flansvendersgame:vender",
                         "ApplyToPrimary": true,
                         "ApplyToSecondary": false
                     }
@@ -282,84 +212,20 @@
                 "toolLevel": 1.0,
                 "harvestSpeed": 1.0,
                 "reach": 5.0
-            },
-            {
-                "actionType": "PlaySound",
-                "duration": 0.0,
-                "sounds": [
-                    {
-                        "sound": "flansmodernweapons:r870shoot",
-                        "length": 0.0,
-                        "minPitchMultiplier": 0.8333333,
-                        "maxPitchMultiplier": 1.25,
-                        "minVolume": 1.0,
-                        "maxVolume": 1.0,
-                        "maxRange": 100.0,
-                        "LODs": []
-                    }
-                ],
-                "itemStack": "",
-                "modifiers": [],
-                "fovFactor": 1.25,
-                "scopeOverlay": "",
-                "anim": "",
-                "toolLevel": 1.0,
-                "harvestSpeed": 1.0,
-                "reach": 1.0
-            },
-            {
-                "actionType": "Animation",
-                "duration": 0.2,
-                "sounds": [],
-                "itemStack": "",
-                "modifiers": [],
-                "fovFactor": 1.25,
-                "scopeOverlay": "",
-                "anim": "shoot",
-                "toolLevel": 1.0,
-                "harvestSpeed": 1.0,
-                "reach": 1.0
             }
         ]
     },
     "secondary": {
-        "canActUnderwater": true,
+        "canActUnderwater": false,
         "canActUnderOtherLiquid": false,
-        "canBeOverriden": true,
-        "twoHanded": true,
-        "repeatMode": "FullAuto",
-        "repeatDelay": 0.2,
+        "canBeOverriden": false,
+        "twoHanded": false,
+        "repeatMode": "SemiAuto",
+        "repeatDelay": 0.05,
         "repeatCount": 3,
         "spinUpDuration": 1.5,
         "loudness": 150.0,
-        "actions": [
-            {
-                "actionType": "AimDownSights",
-                "duration": 0.0,
-                "sounds": [],
-                "itemStack": "",
-                "modifiers": [],
-                "fovFactor": 1.25,
-                "scopeOverlay": "",
-                "anim": "",
-                "toolLevel": 1.0,
-                "harvestSpeed": 1.0,
-                "reach": 1.0
-            },
-            {
-                "actionType": "Animation",
-                "duration": 0.0,
-                "sounds": [],
-                "itemStack": "",
-                "modifiers": [],
-                "fovFactor": 1.25,
-                "scopeOverlay": "",
-                "anim": "aim_down_sights",
-                "toolLevel": 1.0,
-                "harvestSpeed": 1.0,
-                "reach": 1.0
-            }
-        ]
+        "actions": []
     },
     "lookAt": {
         "canActUnderwater": true,
@@ -389,9 +255,7 @@
     },
     "primaryMagazines": {
         "matchByNames": [],
-        "matchByTags": [
-            "flansvendersgame:phantek_auto_12"
-        ],
+        "matchByTags": [],
         "baseCostToSwap": 0
     },
     "secondaryMagazines": {
@@ -407,7 +271,7 @@
     "barrelAttachments": {
         "allowlist": [],
         "allowAll": true,
-        "numAttachmentSlots": 1,
+        "numAttachmentSlots": 0,
         "attachToMesh": "body",
         "attachPoint": [
             0.0,
@@ -418,8 +282,8 @@
     },
     "gripAttachments": {
         "allowlist": [],
-        "allowAll": true,
-        "numAttachmentSlots": 1,
+        "allowAll": false,
+        "numAttachmentSlots": 0,
         "attachToMesh": "body",
         "attachPoint": [
             0.0,
@@ -430,7 +294,7 @@
     },
     "stockAttachments": {
         "allowlist": [],
-        "allowAll": true,
+        "allowAll": false,
         "numAttachmentSlots": 0,
         "attachToMesh": "body",
         "attachPoint": [
@@ -442,7 +306,7 @@
     },
     "scopeAttachments": {
         "allowlist": [],
-        "allowAll": true,
+        "allowAll": false,
         "numAttachmentSlots": 1,
         "attachToMesh": "body",
         "attachPoint": [
@@ -454,7 +318,7 @@
     },
     "genericAttachments": {
         "allowlist": [],
-        "allowAll": true,
+        "allowAll": false,
         "numAttachmentSlots": 0,
         "attachToMesh": "body",
         "attachPoint": [
@@ -465,5 +329,5 @@
         "hideDefaultMesh": true
     },
     "modelParts": [],
-    "animationSet": "flansmod:ar_load_from_bottom"
+    "animationSet": "flansmod:end_loaded"
 }

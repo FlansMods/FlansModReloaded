@@ -2,6 +2,9 @@ package com.flansmod.packs.vendersgame;
 
 import com.flansmod.common.FlansMod;
 import com.flansmod.common.crafting.WorkbenchBlockEntity;
+import com.flansmod.common.item.AttachmentItem;
+import com.flansmod.common.item.GunItem;
+import com.flansmod.common.types.guns.GunDefinition;
 import com.flansmod.packs.vendersgame.client.VenderModel;
 import com.flansmod.packs.vendersgame.client.VenderRenderer;
 import com.flansmod.packs.vendersgame.common.VenderEntity;
@@ -17,6 +20,7 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.EntityRenderersEvent;
 import net.minecraftforge.client.event.ModelEvent;
+import net.minecraftforge.event.CreativeModeTabEvent;
 import net.minecraftforge.event.entity.EntityAttributeCreationEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -97,6 +101,7 @@ public class VendersGameMod
 	public static final RegistryObject<Item> GUN_VENDERS_CUSTOMS_VIPER =		FlansMod.Gun(ITEMS, MODID, "venders_customs_viper");
 	public static final RegistryObject<Item> ATTACHMENT_DRAGONS_BREATH_INFUSER =FlansMod.Attachment(ITEMS, MODID, "dragons_breath_infuser");
 	public static final RegistryObject<Item> ATTACHMENT_TAKE_YOUR_LIFE_IN_YOUR_HANDS = FlansMod.Attachment(ITEMS, MODID, "take_your_life_in_your_hands");
+	public static final RegistryObject<Item> TOOL_VENDERS_RADIO =				FlansMod.Tool(ITEMS, MODID, "venders_radio");
 
 	// Vender NPC
 	public static final RegistryObject<EntityType<VenderEntity>> ENTITY_TYPE_VENDER = ENTITY_TYPES.register(
@@ -124,6 +129,17 @@ public class VendersGameMod
 		event.put(ENTITY_TYPE_VENDER.get(), VenderEntity.createAttributes().build());
 	}
 
+	@SubscribeEvent
+	public void OnCreativeTabs(CreativeModeTabEvent.BuildContents event)
+	{
+		if (event.getTab().getDisplayName() == FlansMod.CREATIVE_TAB_NAME_GUNS)
+		{
+			event.accept(WORKBENCH_ITEM_HM);
+			event.accept(WORKBENCH_ITEM_PHANTEK);
+			event.accept(WORKBENCH_ITEM_FC);
+		}
+	}
+
 	@Mod.EventBusSubscriber(value = Dist.CLIENT, bus = Mod.EventBusSubscriber.Bus.MOD, modid = MODID)
 	public static class ClientMod
 	{
@@ -140,8 +156,15 @@ public class VendersGameMod
 
 			for (var entry : ITEMS.getEntries())
 			{
-				event.register(new ModelResourceLocation(MODID, entry.getId().getPath() + "_inventory", "inventory"));
-				shaper.register(entry.get(), new ModelResourceLocation(MODID, entry.getId().getPath() + "_inventory", "inventory"));
+				if(entry.get() instanceof GunItem || entry.get() instanceof AttachmentItem)
+				{
+					event.register(new ModelResourceLocation(MODID, entry.getId().getPath() + "_inventory", "inventory"));
+					shaper.register(entry.get(), new ModelResourceLocation(MODID, entry.getId().getPath() + "_inventory", "inventory"));
+				}
+				else
+				{
+					shaper.register(entry.get(), new ModelResourceLocation(entry.getId(), "inventory"));
+				}
 			}
 		}
 

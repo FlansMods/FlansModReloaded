@@ -33,6 +33,7 @@ public class Actions
 			case CookGrenade 		-> { return new CookGrenadeAction(group, def); }
 			case Heal				-> { return new HealAction(group, def); }
 			case SpawnEntity		-> { return new SpawnEntityAction(group, def); }
+			case SummonNpc 			-> { return new SummonNpcAction(group, def); }
 			case DeleteEntity 		-> { return new DeleteEntityAction(group, def); }
 			case Drop 				-> { return new DropAction(group, def); }
 			case Feed				-> { return new FeedAction(group, def); }

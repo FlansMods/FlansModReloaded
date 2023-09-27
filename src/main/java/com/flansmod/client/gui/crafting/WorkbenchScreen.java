@@ -32,7 +32,6 @@ import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.block.model.ItemTransforms;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.FormattedText;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.FormattedCharSequence;
@@ -44,7 +43,6 @@ import org.joml.Quaternionf;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Filter;
 
 public class WorkbenchScreen extends AbstractContainerScreen<WorkbenchMenu>
 {
@@ -939,15 +937,10 @@ public class WorkbenchScreen extends AbstractContainerScreen<WorkbenchMenu>
 	private static final int PART_RECIPE_VIEWER_ORIGIN_Y = 18;
 
 	private float partSelectorScrollOffset = 0.0f;
-
-	private final List<ResourceKey<Item>> TagFilters = new ArrayList<>();
-	private final List<Integer> TierFilters = new ArrayList<>();
-	private final List<EMaterialType> MaterialFilters = new ArrayList<>();
-	private boolean OnlyCraftableFilter = false;
-
-	private final List<ItemStack> FilteredPartsList = new ArrayList<>();
 	private int SelectedPartIndex = -1;
+	private int CachedMaxPartsCraftable = 0;
 	private Button[] PartSelectionButtons;
+	private Button[] PartCraftingButtons;
 	public boolean HasPartCraftingTab() { return Workbench.Def.partCrafting.isActive; }
 
 	private void InitPartCrafting(int xOrigin, int yOrigin)
@@ -969,64 +962,27 @@ public class WorkbenchScreen extends AbstractContainerScreen<WorkbenchMenu>
 			}
 		}
 
-		addRenderableWidget(Button.builder(Component.literal("+1"),
+		PartCraftingButtons = new Button[4];
+		addRenderableWidget(PartCraftingButtons[0] = Button.builder(Component.literal("+1"),
 			(t) -> { CraftSelectedPart(1); })
-			.bounds(xOrigin + 42, yOrigin + 92, 18, 20)
+			.bounds(xOrigin + 7, yOrigin + 92, 18, 20)
 			.build());
-		addRenderableWidget(Button.builder(Component.literal("+5"),
+		addRenderableWidget(PartCraftingButtons[1] = Button.builder(Component.literal("+5"),
 				(t) -> { CraftSelectedPart(5); })
-			.bounds(xOrigin + 62, yOrigin + 92, 18, 20)
+			.bounds(xOrigin + 27, yOrigin + 92, 18, 20)
 			.build());
-		addRenderableWidget(Button.builder(Component.literal("All"),
+		addRenderableWidget(PartCraftingButtons[2] = Button.builder(Component.literal("All"),
 				(t) -> { CraftSelectedPart(-1); })
-			.bounds(xOrigin + 82, yOrigin + 92, 28, 20)
+			.bounds(xOrigin + 47, yOrigin + 92, 28, 20)
 			.build());
-		addRenderableWidget(Button.builder(Component.literal("X"),
-				(t) -> { CraftSelectedPart(-1); })
-			.bounds(xOrigin + 112, yOrigin + 92, 18, 20)
+		addRenderableWidget(PartCraftingButtons[3] = Button.builder(Component.literal("X"),
+				(t) -> { CancelPartCrafting(); })
+			.bounds(xOrigin + 77, yOrigin + 92, 18, 20)
 			.build());
-	}
-
-	private void RefreshPartCraftingFilters()
-	{
-		FilteredPartsList.clear();
-		for(ItemStack stack : Workbench.Def.partCrafting.GetMatches())
-		{
-			// Apply filters
-			if(TierFilters.size() > 0)
-				if(!TierFilters.contains(GetPartTier(stack)))
-					continue;
-
-			if(MaterialFilters.size() > 0)
-				if(!MaterialFilters.contains(GetPartMaterial(stack)))
-					continue;
-
-			if(OnlyCraftableFilter)
-			{
-				// TODO: Craftable filter
-			}
-
-			FilteredPartsList.add(stack);
-		}
-	}
-
-	private int GetPartTier(ItemStack stack)
-	{
-		if(stack.getItem() instanceof PartItem partItem)
-			return partItem.Def().materialTier;
-		return 0;
-	}
-
-	private EMaterialType GetPartMaterial(ItemStack stack)
-	{
-		if(stack.getItem() instanceof PartItem partItem)
-			return partItem.Def().materialType;
-		return EMaterialType.Misc;
 	}
 
 	public void SetPartCraftingEnabled(boolean enable)
 	{
-		RefreshPartCraftingFilters();
 		for(int j = 0; j < PART_RECIPE_VIEWER_ROWS; j++)
 		{
 			for (int i = 0; i < PART_RECIPE_VIEWER_COLUMNS; i++)
@@ -1044,7 +1000,7 @@ public class WorkbenchScreen extends AbstractContainerScreen<WorkbenchMenu>
 
 		if(InBox(xMouse, yMouse, xOrigin + PART_RECIPE_VIEWER_ORIGIN_X, 18 * PART_RECIPE_VIEWER_COLUMNS + 6, yOrigin + PART_RECIPE_VIEWER_ORIGIN_Y, 18 * PART_RECIPE_VIEWER_ROWS))
 		{
-			int numRows = Maths.Max(FilteredPartsList.size() / PART_RECIPE_VIEWER_COLUMNS - PART_RECIPE_VIEWER_ROWS + 1, 0);
+			int numRows = Maths.Max(Workbench.FilteredPartsList.size() / PART_RECIPE_VIEWER_COLUMNS - PART_RECIPE_VIEWER_ROWS + 1, 0);
 			partSelectorScrollOffset -= scroll;
 			partSelectorScrollOffset = Maths.Clamp(partSelectorScrollOffset, 0, numRows);
 			UpdateActivePartSelectionButtons();
@@ -1064,22 +1020,43 @@ public class WorkbenchScreen extends AbstractContainerScreen<WorkbenchMenu>
 				{
 					final int firstIndex = Maths.Floor(partSelectorScrollOffset) * PART_RECIPE_VIEWER_COLUMNS;
 					final int relativeIndex = i + PART_RECIPE_VIEWER_COLUMNS * j;
-					PartSelectionButtons[relativeIndex].active = SelectedTab == Tab.PART_CRAFTING && (firstIndex + relativeIndex < FilteredPartsList.size());
+					PartSelectionButtons[relativeIndex].active = SelectedTab == Tab.PART_CRAFTING && (firstIndex + relativeIndex < Workbench.FilteredPartsList.size());
 				}
 			}
+		}
+		if(PartCraftingButtons != null)
+		{
+			for(int i = 0; i < 3; i++)
+				PartCraftingButtons[i].active = SelectedTab == Tab.PART_CRAFTING && SelectedPartIndex != -1;
+			PartCraftingButtons[3].active = SelectedTab == Tab.PART_CRAFTING;
 		}
 	}
 
 	private void SelectPartRecipe(int relativeIndex)
 	{
 		SelectedPartIndex = Maths.Floor(partSelectorScrollOffset) + relativeIndex;
-		if(SelectedPartIndex >= FilteredPartsList.size())
+		if(SelectedPartIndex >= Workbench.FilteredPartsList.size())
 			SelectedPartIndex = -1;
+		UpdateActivePartSelectionButtons();
+
+		NetworkedButtonPress(WorkbenchMenu.BUTTON_SELECT_PART_RECIPE_0 + SelectedPartIndex);
+
+
+		CachedMaxPartsCraftable = WorkbenchBlockEntity.GetMaxPartsCraftableFromInput(Workbench.BlockEntity);
+
 	}
 
 	private void CraftSelectedPart(int count)
 	{
+		if(count <= 0)
+			NetworkedButtonPress(WorkbenchMenu.BUTTON_CRAFT_ALL);
+		else
+			NetworkedButtonPress(WorkbenchMenu.BUTTON_CRAFT_1 + (count - 1));
+	}
 
+	private void CancelPartCrafting()
+	{
+		NetworkedButtonPress(WorkbenchMenu.BUTTON_CRAFT_CANCEL);
 	}
 
 	private void UpdatePartCrafting(boolean enabled)
@@ -1116,19 +1093,28 @@ public class WorkbenchScreen extends AbstractContainerScreen<WorkbenchMenu>
 			}
 		}
 
+		int craftingSelection = Workbench.WorkbenchData.get(WorkbenchBlockEntity.DATA_CRAFT_SELECTION);
+		int craftingCount = Workbench.WorkbenchData.get(WorkbenchBlockEntity.DATA_CRAFT_QUEUE_COUNT);
+		int craftingTime = Workbench.WorkbenchData.get(WorkbenchBlockEntity.DATA_CRAFT_TIME);
+		int craftingDuration = Workbench.WorkbenchData.get(WorkbenchBlockEntity.DATA_CRAFT_DURATION);
+		if(craftingSelection != -1)
+		{
+
+		}
+
 		// Recipe selector scroller
 
 		for(int j = 0; j < PART_RECIPE_VIEWER_ROWS; j++)
 		{
 			int rowIndex = Maths.Floor(partSelectorScrollOffset) + j;
-			int numSlotsOnThisRow = Maths.Min(FilteredPartsList.size() - j * PART_RECIPE_VIEWER_COLUMNS, PART_RECIPE_VIEWER_COLUMNS);
+			int numSlotsOnThisRow = Maths.Min(Workbench.FilteredPartsList.size() - j * PART_RECIPE_VIEWER_COLUMNS, PART_RECIPE_VIEWER_COLUMNS);
 			if(numSlotsOnThisRow > 0)
 			{
 				blit(pose, xOrigin + PART_RECIPE_VIEWER_ORIGIN_X, yOrigin + PART_RECIPE_VIEWER_ORIGIN_Y + 18 * j, getBlitOffset(), 0, 219, 18 * numSlotsOnThisRow, 18, TEXTURE_WIDTH, TEXTURE_HEIGHT);
 			}
 		}
 
-		int numRows = FilteredPartsList.size() / PART_RECIPE_VIEWER_COLUMNS - PART_RECIPE_VIEWER_ROWS + 1;
+		int numRows = Workbench.FilteredPartsList.size() / PART_RECIPE_VIEWER_COLUMNS - PART_RECIPE_VIEWER_ROWS + 1;
 		RenderScrollbar(pose, xOrigin + PART_RECIPE_VIEWER_ORIGIN_X + PART_RECIPE_VIEWER_COLUMNS * 18, yOrigin + PART_RECIPE_VIEWER_ORIGIN_Y, 6, 18 * PART_RECIPE_VIEWER_ROWS, partSelectorScrollOffset, 0, numRows);
 	}
 
@@ -1139,18 +1125,28 @@ public class WorkbenchScreen extends AbstractContainerScreen<WorkbenchMenu>
 			for (int j = 0; j < PART_RECIPE_VIEWER_ROWS; j++)
 			{
 				int rowIndex = Maths.Floor(partSelectorScrollOffset) + j;
-				int numSlotsOnThisRow = Maths.Min(FilteredPartsList.size() - j * PART_RECIPE_VIEWER_COLUMNS, PART_RECIPE_VIEWER_COLUMNS);
+				int numSlotsOnThisRow = Maths.Min(Workbench.FilteredPartsList.size() - j * PART_RECIPE_VIEWER_COLUMNS, PART_RECIPE_VIEWER_COLUMNS);
 
 			}
 		}
 
 		// Render info about the selected part
-		if(SelectedPartIndex >= 0 && SelectedPartIndex < FilteredPartsList.size())
+		if(SelectedPartIndex >= 0 && SelectedPartIndex < Workbench.FilteredPartsList.size())
 		{
-			ItemStack selectedPart = FilteredPartsList.get(SelectedPartIndex);
+			ItemStack selectedPart = Workbench.FilteredPartsList.get(SelectedPartIndex);
 			List<FormattedCharSequence> wordWrap = font.split(selectedPart.getHoverName(), 60);
 			font.draw(pose, wordWrap.get(0), 46, 56, 0x404040);
 		}
+
+		int craftingSelection = Workbench.WorkbenchData.get(WorkbenchBlockEntity.DATA_CRAFT_SELECTION);
+		int craftingCount = Workbench.WorkbenchData.get(WorkbenchBlockEntity.DATA_CRAFT_QUEUE_COUNT);
+		int craftingTime = Workbench.WorkbenchData.get(WorkbenchBlockEntity.DATA_CRAFT_TIME);
+		int craftingDuration = Workbench.WorkbenchData.get(WorkbenchBlockEntity.DATA_CRAFT_DURATION);
+		if(craftingSelection != -1)
+		{
+			font.draw(pose, Component.translatable("crafting.parts.num_in_progress", CachedMaxPartsCraftable), 97, 99, 0x404040);
+		}
+
 
 		// Render part icons into the selector scrollbar
 		int firstRow = Maths.Floor(partSelectorScrollOffset);
@@ -1161,9 +1157,9 @@ public class WorkbenchScreen extends AbstractContainerScreen<WorkbenchMenu>
 			{
 				int index = firstIndexInRow + col;
 
-				if(index < FilteredPartsList.size())
+				if(index < Workbench.FilteredPartsList.size())
 				{
-					ItemStack entry = FilteredPartsList.get(index);
+					ItemStack entry = Workbench.FilteredPartsList.get(index);
 					itemRenderer.renderGuiItem(entry, PART_RECIPE_VIEWER_ORIGIN_X + 1 + 18 * col, PART_RECIPE_VIEWER_ORIGIN_Y + 1 + 18 * row);
 					itemRenderer.renderGuiItemDecorations(font, entry, PART_RECIPE_VIEWER_ORIGIN_X + 2 + 20 * col, PART_RECIPE_VIEWER_ORIGIN_Y + 2 + 20 * row, null);
 				}
@@ -1682,7 +1678,7 @@ public class WorkbenchScreen extends AbstractContainerScreen<WorkbenchMenu>
 		{
 			SelectedGunRecipe = recipeIndex;
 			Workbench.SwitchToGunCrafting();
-			NetworkedButtonPress(WorkbenchMenu.BUTTON_SELECT_RECIPE_0 + recipeIndex);
+			NetworkedButtonPress(WorkbenchMenu.BUTTON_SELECT_GUN_RECIPE_0 + recipeIndex);
 
 			GunCraftingEntryDefinition recipe = GunCraftingEntries.get(SelectedGunRecipe);
 			CachedSlotInfo.clear();

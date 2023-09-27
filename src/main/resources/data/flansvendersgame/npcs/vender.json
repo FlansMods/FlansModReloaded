@@ -233,6 +233,9 @@
         "damage": 0,
         "tags": "{}"
     },
+    "validActions": [],
+    "cooldownSecondsFriendly": 120.0,
+    "cooldownSecondsHostile": 300.0,
     "maxMerchantLevel": 5,
     "xpPerMerchantLevel": [
         15,

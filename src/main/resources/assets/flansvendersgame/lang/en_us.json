@@ -30,6 +30,7 @@
   "item.flansvendersgame.phantek_fury": "PhanTek Fury",
   "item.flansvendersgame.phantek_lock": "PhanTek Lock",
   "item.flansvendersgame.phantek_seeker": "PhanTek Seeker",
+  "item.flansvendersgame.venders_radio": "Vender's Interdimensional Rapid Response Relay",
   "magazine.flansvendersgame.bolt_action_internal_mag_4": "Internal 4 Round Magazine",
   "magazine.flansvendersgame.bolt_action_internal_mag_5": "Internal 5 Round Magazine",
   "magazine.flansvendersgame.bolt_action_internal_mag_7": "Internal 7 Round Magazine",
@@ -74,5 +75,8 @@
   "npc.vender.hurt.2": "AAAAAAAH FOE FOE FOE!",
   "item.flansvendersgame.fc_workbench": "Flint & Cobbleson's Handcrafting Station",
   "item.flansvendersgame.hm_workbench": "HitMarket Foldable Workstation",
-  "item.flansvendersgame.phantek_workbench": "PhanTek Fabrikator"
+  "item.flansvendersgame.phantek_workbench": "PhanTek Fabrikator",
+  "block.flansvendersgame.hm_workbench": "HitMarket Foldable Workstation",
+  "block.flansvendersgame.phantek_workbench": "PhanTek Fabrikator",
+  "block.flansvendersgame.fc_workbench": "Flint & Cobbleson's Handcrafting Station"
 }
