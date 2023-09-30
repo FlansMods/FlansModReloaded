@@ -1,0 +1,20 @@
+{
+  "type": "flansmod:part_fabrication",
+  "category": "material",
+  "ingredients": [
+	{
+		"type": "flansmod:tiered_material",
+		"material": "flansbasicparts:soft_wood",
+		"count": 63
+	},
+	{
+		"type": "minecraft:item",
+		"item": "flansbasicparts:redstone_circuitry"
+	}
+  ],
+  "result": {
+    "item": "flansbasicparts:soft_wood_mechanical_parts"
+  },
+  "craft_time": 630,
+  "show_notification": true
+}

@@ -1,14 +1,17 @@
 package com.flansmod.common.types.crafting.elements;
 
 import com.flansmod.common.FlansMod;
+import com.flansmod.common.crafting.PartFabricationRecipe;
 import com.flansmod.common.types.JsonField;
-import com.flansmod.common.types.parts.PartDefinition;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
 import net.minecraftforge.registries.ForgeRegistries;
 
+import javax.annotation.Nonnull;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 public class PartCraftingDefinition
@@ -31,7 +34,8 @@ public class PartCraftingDefinition
 	public TieredIngredientDefinition[] partsByTier = new TieredIngredientDefinition[0];
 
 	private List<ItemStack> Matches = null;
-	public List<ItemStack> GetMatches()
+	@Nonnull
+	public List<ItemStack> GetAllOutputs()
 	{
 		if(Matches == null)
 		{
@@ -54,27 +58,32 @@ public class PartCraftingDefinition
 		return Matches;
 	}
 
-	private List<PartDefinition> Parts = null;
-	public List<PartDefinition> GetPartList()
+	private final HashMap<Level, List<PartFabricationRecipe>> RecipeCaches = new HashMap<>();
+	@Nonnull
+	public List<PartFabricationRecipe> GetAllRecipes(Level level)
 	{
-		if(Parts == null)
+		List<ItemStack> allOutputs = GetAllOutputs();
+
+		if(!RecipeCaches.containsKey(level))
 		{
-			Parts = FlansMod.PARTS.Find((part) ->
+			List<PartFabricationRecipe> recipeCache = new ArrayList<>();
+			if (level != null)
 			{
-				for (String name : partsByName)
+				List<PartFabricationRecipe> allRecipes = level.getRecipeManager().getAllRecipesFor(FlansMod.PART_FABRICATION_RECIPE_TYPE.get());
+				for (PartFabricationRecipe recipe : allRecipes)
 				{
-					ResourceLocation resLoc = new ResourceLocation(name);
-					if (part.Location.equals(resLoc))
-						return true;
+					boolean allowed = false;
+					for (ItemStack validOutput : allOutputs)
+						if (validOutput.sameItem(recipe.getResultItem()))
+							allowed = true;
+					if (allowed)
+						recipeCache.add(recipe);
 				}
-				for(TieredIngredientDefinition tieredDef : partsByTier)
-				{
-					if(tieredDef.Matches(part))
-						return true;
-				}
-				return false;
-			});
+			}
+			RecipeCaches.put(level, recipeCache);
 		}
-		return Parts;
+		return RecipeCaches.get(level);
 	}
+
+
 }

@@ -1,0 +1,23 @@
+{
+  "type": "flansmod:part_fabrication",
+  "category": "material",
+  "ingredients": [
+	{
+		"type": "minecraft:item",
+		"item": "minecraft:sculk_sensor"
+	},
+	{
+		"type": "minecraft:item",
+		"item": "minecraft:echo_shard"
+	},
+	{
+		"type": "minecraft:item",
+		"item": "minecraft:sculk_sensor"
+	}
+  ],
+  "result": {
+    "item": "flansbasicparts:sculk_circuitry"
+  },
+  "craft_time": 1200,
+  "show_notification": true
+}

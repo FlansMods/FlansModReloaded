@@ -1,8 +1,7 @@
 {
     "itemSettings": {
         "maxStackSize": 64,
-        "tags": [],
-        "recipe": []
+        "tags": []
     },
     "paints": {
         "paintjobs": [

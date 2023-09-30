@@ -1,0 +1,23 @@
+{
+  "type": "flansmod:part_fabrication",
+  "category": "material",
+  "ingredients": [
+	{
+		"type": "minecraft:item",
+		"item": "minecraft:comparator"
+	},
+	{
+		"type": "minecraft:item",
+		"item": "minecraft:repeater"
+	},
+	{
+		"type": "minecraft:item",
+		"item": "minecraft:comparator"
+	}
+  ],
+  "result": {
+    "item": "flansbasicparts:quartz_circuitry"
+  },
+  "craft_time": 900,
+  "show_notification": true
+}

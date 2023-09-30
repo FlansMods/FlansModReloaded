@@ -3,7 +3,6 @@ package com.flansmod.common.crafting;
 import com.flansmod.common.FlansMod;
 import com.flansmod.common.item.FlanItem;
 import com.flansmod.common.item.GunItem;
-import com.flansmod.common.item.PartItem;
 import com.flansmod.common.types.attachments.EAttachmentType;
 import com.flansmod.common.types.crafting.EMaterialType;
 import com.flansmod.common.types.crafting.WorkbenchDefinition;
@@ -479,7 +478,7 @@ public class WorkbenchMenu extends AbstractContainerMenu
 				if(BUTTON_SELECT_PART_RECIPE_0 <= buttonID && buttonID <= BUTTON_SELECT_PART_RECIPE_MAX)
 				{
 					SelectedPartRecipeIndex = buttonID - BUTTON_SELECT_PART_RECIPE_0;
-					WorkbenchBlockEntity.SelectPartCraftingRecipe(BlockEntity, FilteredPartsList.get(SelectedPartRecipeIndex));
+					BlockEntity.SelectPartCraftingRecipe(SelectedPartRecipeIndex);
 					SwitchToPartCrafting();
 					return true;
 				}
@@ -568,7 +567,7 @@ public class WorkbenchMenu extends AbstractContainerMenu
 	private void RefreshPartCraftingFilters()
 	{
 		FilteredPartsList.clear();
-		for(ItemStack stack : Def.partCrafting.GetMatches())
+		for(ItemStack stack : Def.partCrafting.GetAllOutputs())
 		{
 			// Apply filters
 			if(TierFilters.size() > 0)
@@ -590,12 +589,12 @@ public class WorkbenchMenu extends AbstractContainerMenu
 
 	public void CraftParts(int count)
 	{
-		int max = WorkbenchBlockEntity.GetMaxPartsCraftableFromInput(BlockEntity);
+		BlockEntity.QueueCrafting(count);
 	}
 
 	public void CancelPartCrafting()
 	{
-
+		BlockEntity.CancelQueue();
 	}
 
 	public void AutoFillGunCraftingInputSlot(Player player, int inputSlotIndex)

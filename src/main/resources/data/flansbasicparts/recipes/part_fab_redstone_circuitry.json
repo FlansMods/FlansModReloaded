@@ -1,0 +1,23 @@
+{
+  "type": "flansmod:part_fabrication",
+  "category": "material",
+  "ingredients": [
+	{
+		"type": "minecraft:item",
+		"item": "minecraft:redstone"
+	},
+	{
+		"type": "minecraft:item",
+		"item": "minecraft:repeater"
+	},
+	{
+		"type": "minecraft:item",
+		"item": "minecraft:redstone_torch"
+	}
+  ],
+  "result": {
+    "item": "flansbasicparts:redstone_circuitry"
+  },
+  "craft_time": 600,
+  "show_notification": true
+}

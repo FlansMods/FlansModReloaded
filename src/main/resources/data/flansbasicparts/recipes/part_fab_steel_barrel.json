@@ -1,0 +1,16 @@
+{
+  "type": "flansmod:part_fabrication",
+  "category": "material",
+  "ingredients": [
+	{
+		"type": "flansmod:tiered_material",
+		"material": "flansbasicparts:steel",
+		"count": 27
+	}
+  ],
+  "result": {
+    "item": "flansbasicparts:steel_barrel"
+  },
+  "craft_time": 270,
+  "show_notification": true
+}

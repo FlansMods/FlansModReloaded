@@ -1,0 +1,21 @@
+{
+  "type": "flansmod:part_fabrication",
+  "category": "material",
+  "ingredients": [
+		{
+		"type": "flansmod:tiered_material",
+		"material": "flansbasicparts:sculk",
+		"count": 4
+	},
+	{
+		"type": "flansmod:tiered_material",
+		"material": "flansbasicparts:nethersteel",
+		"count": 27
+	}
+  ],
+  "result": {
+    "item": "flansbasicparts:sculk_engine"
+  },
+  "craft_time": 1200,
+  "show_notification": true
+}

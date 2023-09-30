@@ -1042,7 +1042,7 @@ public class WorkbenchScreen extends AbstractContainerScreen<WorkbenchMenu>
 		NetworkedButtonPress(WorkbenchMenu.BUTTON_SELECT_PART_RECIPE_0 + SelectedPartIndex);
 
 
-		CachedMaxPartsCraftable = WorkbenchBlockEntity.GetMaxPartsCraftableFromInput(Workbench.BlockEntity);
+		CachedMaxPartsCraftable = Workbench.BlockEntity.GetMaxPartsCraftableFromInput();
 
 	}
 

@@ -1,0 +1,20 @@
+{
+  "type": "flansmod:part_fabrication",
+  "category": "material",
+  "ingredients": [
+	{
+		"type": "flansmod:tiered_material",
+		"material": "flansbasicparts:iron",
+		"count": 9
+	},
+	{
+		"type": "minecraft:item",
+		"item": "minecraft:flint"
+	}
+  ],
+  "result": {
+    "item": "flansbasicparts:sparkplug"
+  },
+  "craft_time": 45,
+  "show_notification": true
+}

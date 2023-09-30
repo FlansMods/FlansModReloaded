@@ -1,0 +1,16 @@
+{
+  "type": "flansmod:part_fabrication",
+  "category": "material",
+  "ingredients": [
+	{
+		"type": "flansmod:tiered_material",
+		"material": "flansbasicparts:dense_wood",
+		"count": 108
+	}
+  ],
+  "result": {
+    "item": "flansbasicparts:dense_wood_structural_parts"
+  },
+  "craft_time": 1080,
+  "show_notification": true
+}

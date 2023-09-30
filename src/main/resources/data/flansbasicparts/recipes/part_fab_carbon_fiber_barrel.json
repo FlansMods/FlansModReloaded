@@ -1,0 +1,16 @@
+{
+  "type": "flansmod:part_fabrication",
+  "category": "material",
+  "ingredients": [
+	{
+		"type": "flansmod:tiered_material",
+		"material": "flansbasicparts:carbon_fiber",
+		"count": 27
+	}
+  ],
+  "result": {
+    "item": "flansbasicparts:carbon_fiber_barrel"
+  },
+  "craft_time": 270,
+  "show_notification": true
+}

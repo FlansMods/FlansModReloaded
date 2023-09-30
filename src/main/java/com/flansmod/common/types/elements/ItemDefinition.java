@@ -10,7 +10,4 @@ public class ItemDefinition
 	public int maxStackSize = 64;
 	@JsonField
 	public String[] tags = new String[0];
-
-	@JsonField(Docs = "If non-empty, this will show up in part crafting tables")
-	public RecipePartDefinition[] recipe = new RecipePartDefinition[0];
 }

@@ -1,0 +1,16 @@
+{
+  "type": "flansmod:part_fabrication",
+  "category": "material",
+  "ingredients": [
+	{
+		"type": "flansmod:tiered_material",
+		"material": "flansbasicparts:wool",
+		"count": 8
+	}
+  ],
+  "result": {
+    "item": "flansbasicparts:wool_wheel"
+  },
+  "craft_time": 400,
+  "show_notification": true
+}

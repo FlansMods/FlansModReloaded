@@ -123,8 +123,8 @@ public class BasicPartsMod
 	public static final RegistryObject<Item> REDSTONE_CIRCUITRY = ITEMS.register("redstone_circuitry", () -> new Item(new Item.Properties()));
 	// Tier II = Quartz
 	public static final RegistryObject<Item> QUARTZ_CIRCUITRY = ITEMS.register("quartz_circuitry", () -> new Item(new Item.Properties()));
-	// Tier III = Skulk
-	public static final RegistryObject<Item> SKULK_CIRCUITRY = ITEMS.register("skulk_circuitry", () -> new Item(new Item.Properties()));
+	// Tier III = Sculk
+	public static final RegistryObject<Item> SCULK_CIRCUITRY = ITEMS.register("sculk_circuitry", () -> new Item(new Item.Properties()));
 
 	// Engines in Metal or Electronic
 	public static final RegistryObject<Item> PART_IRON_COMBUSTION_ENGINE = 					FlansMod.Part(ITEMS, MODID, "iron_combustion_engine");
@@ -133,7 +133,7 @@ public class BasicPartsMod
 	public static final RegistryObject<Item> PART_NETHERSTEEL_COMBUSTION_ENGINE = 			FlansMod.Part(ITEMS, MODID, "nethersteel_combustion_engine");
 	public static final RegistryObject<Item> PART_REDSTONE_ENGINE = 						FlansMod.Part(ITEMS, MODID, "redstone_engine");
 	public static final RegistryObject<Item> PART_QUARTZ_ENGINE = 							FlansMod.Part(ITEMS, MODID, "quartz_engine");
-	public static final RegistryObject<Item> PART_SKULK_ENGINE = 							FlansMod.Part(ITEMS, MODID, "skulk_engine");
+	public static final RegistryObject<Item> PART_SCULK_ENGINE = 							FlansMod.Part(ITEMS, MODID, "sculk_engine");
 
 	// Vehicle parts in Metal or Wood
 	public static final RegistryObject<Item> PART_IRON_MECHANICAL_PARTS = 					FlansMod.Part(ITEMS, MODID, "iron_mechanical_parts");
@@ -357,7 +357,7 @@ public class BasicPartsMod
 
 			event.accept(REDSTONE_CIRCUITRY);
 			event.accept(QUARTZ_CIRCUITRY);
-			event.accept(SKULK_CIRCUITRY);
+			event.accept(SCULK_CIRCUITRY);
 		}
 	}
 

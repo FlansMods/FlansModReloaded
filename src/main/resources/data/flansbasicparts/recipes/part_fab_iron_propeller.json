@@ -1,0 +1,16 @@
+{
+  "type": "flansmod:part_fabrication",
+  "category": "material",
+  "ingredients": [
+	{
+		"type": "flansmod:tiered_material",
+		"material": "flansbasicparts:iron",
+		"count": 45
+	}
+  ],
+  "result": {
+    "item": "flansbasicparts:iron_propeller"
+  },
+  "craft_time": 450,
+  "show_notification": true
+}

@@ -1,0 +1,16 @@
+{
+  "type": "flansmod:part_fabrication",
+  "category": "material",
+  "ingredients": [
+	{
+		"type": "flansmod:tiered_material",
+		"material": "flansbasicparts:nethersteel",
+		"count": 45
+	}
+  ],
+  "result": {
+    "item": "flansbasicparts:nethersteel_propeller"
+  },
+  "craft_time": 450,
+  "show_notification": true
+}

@@ -6,7 +6,6 @@
         "groundVehicle",
         "plane"
     ],
-    "recipeIngredients": [],
     "itemSettings": {
         "maxStackSize": 64,
         "tags": [

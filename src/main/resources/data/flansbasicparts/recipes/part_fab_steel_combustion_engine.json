@@ -1,0 +1,40 @@
+{
+  "type": "flansmod:part_fabrication",
+  "category": "material",
+  "ingredients": [
+	{
+		"type": "flansmod:tiered_material",
+		"material": "flansbasicparts:steel",
+		"count": 216
+	},
+	{
+		"type": "minecraft:item",
+		"item": "flansbasicparts:sparkplug"
+	},
+	{
+		"type": "minecraft:item",
+		"item": "flansbasicparts:sparkplug"
+	},
+	{
+		"type": "minecraft:item",
+		"item": "flansbasicparts:sparkplug"
+	},
+	{
+		"type": "minecraft:item",
+		"item": "flansbasicparts:sparkplug"
+	},
+	{
+		"type": "minecraft:item",
+		"item": "flansbasicparts:sparkplug"
+	},
+	{
+		"type": "minecraft:item",
+		"item": "flansbasicparts:sparkplug"
+	}
+  ],
+  "result": {
+    "item": "flansbasicparts:steel_combustion_engine"
+  },
+  "craft_time": 2160,
+  "show_notification": true
+}
