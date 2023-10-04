@@ -163,6 +163,9 @@ public class GunItem extends FlanItem
 
     public CompoundTag GetRootTag(ItemStack stack, EActionInput inputType)
     {
+        if(!stack.getOrCreateTag().contains(inputType.GetRootTagName()))
+            stack.getOrCreateTag().put(inputType.GetRootTagName(), new CompoundTag());
+
         return stack.getOrCreateTag().getCompound(inputType.GetRootTagName());
     }
 

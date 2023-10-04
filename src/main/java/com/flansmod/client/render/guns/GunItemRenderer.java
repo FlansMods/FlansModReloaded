@@ -63,6 +63,7 @@ public class GunItemRenderer extends FlanItemModelRenderer
                 RenderPart(gunContext, animationSet, actionStack, skin, renderContext, "revolver");
                 RenderPart(gunContext, animationSet, actionStack, skin, renderContext, "slide");
                 RenderPart(gunContext, animationSet, actionStack, skin, renderContext, "pump");
+                RenderPart(gunContext, animationSet, actionStack, skin, renderContext, "break_action");
 
                 ActionGroupContext primaryContext = ActionGroupContext.CreateFrom(gunContext, EActionInput.PRIMARY);
                 ActionGroupContext secondaryContext = ActionGroupContext.CreateFrom(gunContext, EActionInput.SECONDARY);
