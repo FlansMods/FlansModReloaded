@@ -6,16 +6,6 @@
     "paints": {
         "paintjobs": [
             {
-                "textureName": "fc_hawk_neon",
-                "paintBucketsRequired": 1,
-                "entitlementKey": ""
-            },
-            {
-                "textureName": "fc_hawk_venom",
-                "paintBucketsRequired": 1,
-                "entitlementKey": ""
-            },
-            {
                 "textureName": "fc_hawk_coral_snake",
                 "paintBucketsRequired": 1,
                 "entitlementKey": ""
@@ -27,6 +17,21 @@
             },
             {
                 "textureName": "fc_hawk_messenger",
+                "paintBucketsRequired": 1,
+                "entitlementKey": ""
+            },
+            {
+                "textureName": "fc_hawk_metal",
+                "paintBucketsRequired": 1,
+                "entitlementKey": ""
+            },
+            {
+                "textureName": "fc_hawk_neon",
+                "paintBucketsRequired": 1,
+                "entitlementKey": ""
+            },
+            {
+                "textureName": "fc_hawk_venom",
                 "paintBucketsRequired": 1,
                 "entitlementKey": ""
             }

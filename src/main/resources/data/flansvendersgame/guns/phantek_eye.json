@@ -8,6 +8,11 @@
     "paints": {
         "paintjobs": [
             {
+                "textureName": "phantek_eye_gravel",
+                "paintBucketsRequired": 1,
+                "entitlementKey": ""
+            },
+            {
                 "textureName": "phantek_eye_hazard",
                 "paintBucketsRequired": 1,
                 "entitlementKey": ""

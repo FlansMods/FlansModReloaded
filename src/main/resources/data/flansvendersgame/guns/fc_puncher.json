@@ -18,6 +18,11 @@
                 "entitlementKey": ""
             },
             {
+                "textureName": "fc_puncher_dark",
+                "paintBucketsRequired": 1,
+                "entitlementKey": ""
+            },
+            {
                 "textureName": "fc_puncher_static",
                 "paintBucketsRequired": 1,
                 "entitlementKey": ""

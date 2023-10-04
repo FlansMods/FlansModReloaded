@@ -5,6 +5,12 @@
             "predicate": {
                 "custom_model_data": 1
             },
+            "model": "flansvendersgame:item/phantek_seeker/phantek_seeker_forest"
+        },
+        {
+            "predicate": {
+                "custom_model_data": 2
+            },
             "model": "flansvendersgame:item/phantek_seeker/phantek_seeker_pink"
         }
     ]

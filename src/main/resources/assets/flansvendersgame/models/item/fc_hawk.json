@@ -1,11 +1,12 @@
 {
     "loader": "flansmod:turborig",
     "textures": {
-        "fc_hawk_neon": "flansvendersgame:skins/fc_hawk_neon",
-        "fc_hawk_venom": "flansvendersgame:skins/fc_hawk_venom",
         "fc_hawk_coral_snake": "flansvendersgame:skins/fc_hawk_coral_snake",
         "fc_hawk_gold": "flansvendersgame:skins/fc_hawk_gold",
         "fc_hawk_messenger": "flansvendersgame:skins/fc_hawk_messenger",
+        "fc_hawk_metal": "flansvendersgame:skins/fc_hawk_metal",
+        "fc_hawk_neon": "flansvendersgame:skins/fc_hawk_neon",
+        "fc_hawk_venom": "flansvendersgame:skins/fc_hawk_venom",
         "default": "flansvendersgame:skins/fc_hawk",
         "particle": "minecraft:block/iron_block"
     },

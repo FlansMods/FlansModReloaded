@@ -5,31 +5,37 @@
             "predicate": {
                 "custom_model_data": 1
             },
-            "model": "flansvendersgame:item/fc_hawk/fc_hawk_neon"
+            "model": "flansvendersgame:item/fc_hawk/fc_hawk_coral_snake"
         },
         {
             "predicate": {
                 "custom_model_data": 2
             },
-            "model": "flansvendersgame:item/fc_hawk/fc_hawk_venom"
+            "model": "flansvendersgame:item/fc_hawk/fc_hawk_gold"
         },
         {
             "predicate": {
                 "custom_model_data": 3
             },
-            "model": "flansvendersgame:item/fc_hawk/fc_hawk_coral_snake"
+            "model": "flansvendersgame:item/fc_hawk/fc_hawk_messenger"
         },
         {
             "predicate": {
                 "custom_model_data": 4
             },
-            "model": "flansvendersgame:item/fc_hawk/fc_hawk_gold"
+            "model": "flansvendersgame:item/fc_hawk/fc_hawk_metal"
         },
         {
             "predicate": {
                 "custom_model_data": 5
             },
-            "model": "flansvendersgame:item/fc_hawk/fc_hawk_messenger"
+            "model": "flansvendersgame:item/fc_hawk/fc_hawk_neon"
+        },
+        {
+            "predicate": {
+                "custom_model_data": 6
+            },
+            "model": "flansvendersgame:item/fc_hawk/fc_hawk_venom"
         }
     ]
 }

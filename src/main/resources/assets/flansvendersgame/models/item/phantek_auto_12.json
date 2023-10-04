@@ -2,6 +2,7 @@
     "loader": "flansmod:turborig",
     "textures": {
         "phantek_auto_12_magma": "flansvendersgame:skins/phantek_auto_12_magma",
+        "phantek_auto_12_sleek": "flansvendersgame:skins/phantek_auto_12_sleek",
         "phantek_auto_12_undergrowth": "flansvendersgame:skins/phantek_auto_12_undergrowth",
         "default": "flansvendersgame:skins/phantek_auto_12",
         "particle": "minecraft:block/iron_block"

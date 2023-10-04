@@ -1,6 +1,7 @@
 {
     "loader": "flansmod:turborig",
     "textures": {
+        "phantek_seeker_forest": "flansvendersgame:skins/phantek_seeker_forest",
         "phantek_seeker_pink": "flansvendersgame:skins/phantek_seeker_pink",
         "default": "flansvendersgame:skins/phantek_seeker",
         "particle": "minecraft:block/iron_block"

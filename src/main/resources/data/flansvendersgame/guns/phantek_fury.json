@@ -8,6 +8,11 @@
     "paints": {
         "paintjobs": [
             {
+                "textureName": "phantek_fury_aqua",
+                "paintBucketsRequired": 1,
+                "entitlementKey": ""
+            },
+            {
                 "textureName": "phantek_fury_hazard",
                 "paintBucketsRequired": 1,
                 "entitlementKey": ""

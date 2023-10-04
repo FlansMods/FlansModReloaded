@@ -11,11 +11,17 @@
             "predicate": {
                 "custom_model_data": 2
             },
-            "model": "flansvendersgame:item/phantek_lock/phantek_lock_fade"
+            "model": "flansvendersgame:item/phantek_lock/phantek_lock_deepslate"
         },
         {
             "predicate": {
                 "custom_model_data": 3
+            },
+            "model": "flansvendersgame:item/phantek_lock/phantek_lock_fade"
+        },
+        {
+            "predicate": {
+                "custom_model_data": 4
             },
             "model": "flansvendersgame:item/phantek_lock/phantek_lock_venom"
         }

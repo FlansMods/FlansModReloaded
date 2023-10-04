@@ -2,6 +2,7 @@
     "loader": "flansmod:turborig",
     "textures": {
         "phantek_lock_cottonmouth": "flansvendersgame:skins/phantek_lock_cottonmouth",
+        "phantek_lock_deepslate": "flansvendersgame:skins/phantek_lock_deepslate",
         "phantek_lock_fade": "flansvendersgame:skins/phantek_lock_fade",
         "phantek_lock_venom": "flansvendersgame:skins/phantek_lock_venom",
         "default": "flansvendersgame:skins/phantek_lock",

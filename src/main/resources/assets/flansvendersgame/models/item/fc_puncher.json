@@ -3,6 +3,7 @@
     "textures": {
         "fc_puncher_birch": "flansvendersgame:skins/fc_puncher_birch",
         "fc_puncher_blackwood": "flansvendersgame:skins/fc_puncher_blackwood",
+        "fc_puncher_dark": "flansvendersgame:skins/fc_puncher_dark",
         "fc_puncher_static": "flansvendersgame:skins/fc_puncher_static",
         "default": "flansvendersgame:skins/fc_puncher",
         "particle": "minecraft:block/iron_block"

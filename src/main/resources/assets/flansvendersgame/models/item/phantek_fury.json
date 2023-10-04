@@ -1,6 +1,7 @@
 {
     "loader": "flansmod:turborig",
     "textures": {
+        "phantek_fury_aqua": "flansvendersgame:skins/phantek_fury_aqua",
         "phantek_fury_hazard": "flansvendersgame:skins/phantek_fury_hazard",
         "phantek_fury_platypus": "flansvendersgame:skins/phantek_fury_platypus",
         "phantek_fury_white": "flansvendersgame:skins/phantek_fury_white",

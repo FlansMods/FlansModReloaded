@@ -5,17 +5,23 @@
             "predicate": {
                 "custom_model_data": 1
             },
-            "model": "flansvendersgame:item/phantek_eye/phantek_eye_hazard"
+            "model": "flansvendersgame:item/phantek_eye/phantek_eye_gravel"
         },
         {
             "predicate": {
                 "custom_model_data": 2
             },
-            "model": "flansvendersgame:item/phantek_eye/phantek_eye_periwinkle"
+            "model": "flansvendersgame:item/phantek_eye/phantek_eye_hazard"
         },
         {
             "predicate": {
                 "custom_model_data": 3
+            },
+            "model": "flansvendersgame:item/phantek_eye/phantek_eye_periwinkle"
+        },
+        {
+            "predicate": {
+                "custom_model_data": 4
             },
             "model": "flansvendersgame:item/phantek_eye/phantek_eye_pulse"
         }

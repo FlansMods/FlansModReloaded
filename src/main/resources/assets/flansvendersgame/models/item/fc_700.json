@@ -2,6 +2,7 @@
     "loader": "flansmod:turborig",
     "textures": {
         "fc_700_blue_digital": "flansvendersgame:skins/fc_700_blue_digital",
+        "fc_700_dark": "flansvendersgame:skins/fc_700_dark",
         "fc_700_markings": "flansvendersgame:skins/fc_700_markings",
         "fc_700_red_digital": "flansvendersgame:skins/fc_700_red_digital",
         "default": "flansvendersgame:skins/fc_700",

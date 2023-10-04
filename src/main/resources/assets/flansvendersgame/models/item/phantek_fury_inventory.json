@@ -5,17 +5,23 @@
             "predicate": {
                 "custom_model_data": 1
             },
-            "model": "flansvendersgame:item/phantek_fury/phantek_fury_hazard"
+            "model": "flansvendersgame:item/phantek_fury/phantek_fury_aqua"
         },
         {
             "predicate": {
                 "custom_model_data": 2
             },
-            "model": "flansvendersgame:item/phantek_fury/phantek_fury_platypus"
+            "model": "flansvendersgame:item/phantek_fury/phantek_fury_hazard"
         },
         {
             "predicate": {
                 "custom_model_data": 3
+            },
+            "model": "flansvendersgame:item/phantek_fury/phantek_fury_platypus"
+        },
+        {
+            "predicate": {
+                "custom_model_data": 4
             },
             "model": "flansvendersgame:item/phantek_fury/phantek_fury_white"
         }

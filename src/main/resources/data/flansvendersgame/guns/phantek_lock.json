@@ -13,6 +13,11 @@
                 "entitlementKey": ""
             },
             {
+                "textureName": "phantek_lock_deepslate",
+                "paintBucketsRequired": 1,
+                "entitlementKey": ""
+            },
+            {
                 "textureName": "phantek_lock_fade",
                 "paintBucketsRequired": 1,
                 "entitlementKey": ""

@@ -1,6 +1,7 @@
 {
     "loader": "flansmod:turborig",
     "textures": {
+        "phantek_eye_gravel": "flansvendersgame:skins/phantek_eye_gravel",
         "phantek_eye_hazard": "flansvendersgame:skins/phantek_eye_hazard",
         "phantek_eye_periwinkle": "flansvendersgame:skins/phantek_eye_periwinkle",
         "phantek_eye_pulse": "flansvendersgame:skins/phantek_eye_pulse",

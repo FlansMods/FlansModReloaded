@@ -13,6 +13,11 @@
                 "entitlementKey": ""
             },
             {
+                "textureName": "fc_700_dark",
+                "paintBucketsRequired": 1,
+                "entitlementKey": ""
+            },
+            {
                 "textureName": "fc_700_markings",
                 "paintBucketsRequired": 1,
                 "entitlementKey": ""

@@ -2,6 +2,7 @@
     "loader": "flansmod:turborig",
     "textures": {
         "fc_870_birch": "flansvendersgame:skins/fc_870_birch",
+        "fc_870_dark": "flansvendersgame:skins/fc_870_dark",
         "fc_870_redwood": "flansvendersgame:skins/fc_870_redwood",
         "fc_870_vroom_vroom": "flansvendersgame:skins/fc_870_vroom_vroom",
         "default": "flansvendersgame:skins/fc_870",

@@ -11,11 +11,17 @@
             "predicate": {
                 "custom_model_data": 2
             },
-            "model": "flansvendersgame:item/fc_700/fc_700_markings"
+            "model": "flansvendersgame:item/fc_700/fc_700_dark"
         },
         {
             "predicate": {
                 "custom_model_data": 3
+            },
+            "model": "flansvendersgame:item/fc_700/fc_700_markings"
+        },
+        {
+            "predicate": {
+                "custom_model_data": 4
             },
             "model": "flansvendersgame:item/fc_700/fc_700_red_digital"
         }

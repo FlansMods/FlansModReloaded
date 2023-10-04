@@ -11,11 +11,17 @@
             "predicate": {
                 "custom_model_data": 2
             },
-            "model": "flansvendersgame:item/fc_870/fc_870_redwood"
+            "model": "flansvendersgame:item/fc_870/fc_870_dark"
         },
         {
             "predicate": {
                 "custom_model_data": 3
+            },
+            "model": "flansvendersgame:item/fc_870/fc_870_redwood"
+        },
+        {
+            "predicate": {
+                "custom_model_data": 4
             },
             "model": "flansvendersgame:item/fc_870/fc_870_vroom_vroom"
         }

@@ -8,6 +8,11 @@
     "paints": {
         "paintjobs": [
             {
+                "textureName": "phantek_seeker_forest",
+                "paintBucketsRequired": 1,
+                "entitlementKey": ""
+            },
+            {
                 "textureName": "phantek_seeker_pink",
                 "paintBucketsRequired": 1,
                 "entitlementKey": ""
