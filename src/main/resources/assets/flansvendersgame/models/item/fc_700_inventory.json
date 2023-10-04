@@ -1,42 +1,23 @@
 {
-    "parent": "item/generated",
-    "textures": {
-        "layer0": "flansvendersgame:item/fc_700"
-    },
-    "display": {
-        "thirdperson": {
-            "rotation": [
-                -90.0,
-                0.0,
-                0.0
-            ],
-            "translation": [
-                0.0,
-                1.0,
-                -3.0
-            ],
-            "scale": [
-                0.55,
-                0.55,
-                0.55
-            ]
+    "parent": "flansvendersgame:item/fc_700/default",
+    "overrides": [
+        {
+            "predicate": {
+                "custom_model_data": 1
+            },
+            "model": "flansvendersgame:item/fc_700/fc_700_blue_digital"
         },
-        "firstperson": {
-            "rotation": [
-                0.0,
-                -135.0,
-                25.0
-            ],
-            "translation": [
-                0.0,
-                4.0,
-                2.0
-            ],
-            "scale": [
-                1.7,
-                1.7,
-                1.7
-            ]
+        {
+            "predicate": {
+                "custom_model_data": 2
+            },
+            "model": "flansvendersgame:item/fc_700/fc_700_markings"
+        },
+        {
+            "predicate": {
+                "custom_model_data": 3
+            },
+            "model": "flansvendersgame:item/fc_700/fc_700_red_digital"
         }
-    }
+    ]
 }

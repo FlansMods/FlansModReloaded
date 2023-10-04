@@ -1,42 +1,35 @@
 {
-    "parent": "item/generated",
-    "textures": {
-        "layer0": "flansvendersgame:item/hm_combine"
-    },
-    "display": {
-        "thirdperson": {
-            "rotation": [
-                -90.0,
-                0.0,
-                0.0
-            ],
-            "translation": [
-                0.0,
-                1.0,
-                -3.0
-            ],
-            "scale": [
-                0.55,
-                0.55,
-                0.55
-            ]
+    "parent": "flansvendersgame:item/hm_combine/default",
+    "overrides": [
+        {
+            "predicate": {
+                "custom_model_data": 1
+            },
+            "model": "flansvendersgame:item/hm_combine/hm_combine_aquatic"
         },
-        "firstperson": {
-            "rotation": [
-                0.0,
-                -135.0,
-                25.0
-            ],
-            "translation": [
-                0.0,
-                4.0,
-                2.0
-            ],
-            "scale": [
-                1.7,
-                1.7,
-                1.7
-            ]
+        {
+            "predicate": {
+                "custom_model_data": 2
+            },
+            "model": "flansvendersgame:item/hm_combine/hm_combine_electric"
+        },
+        {
+            "predicate": {
+                "custom_model_data": 3
+            },
+            "model": "flansvendersgame:item/hm_combine/hm_combine_quack_quack"
+        },
+        {
+            "predicate": {
+                "custom_model_data": 4
+            },
+            "model": "flansvendersgame:item/hm_combine/hm_combine_red"
+        },
+        {
+            "predicate": {
+                "custom_model_data": 5
+            },
+            "model": "flansvendersgame:item/hm_combine/hm_combine_royal_green"
         }
-    }
+    ]
 }

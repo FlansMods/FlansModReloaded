@@ -8,7 +8,7 @@
     },
     "partCrafting": {
         "isActive": true,
-        "inputSlots": 8,
+        "inputSlots": 16,
         "outputSlots": 8,
         "timePerCraft": 1.0,
         "FECostPerCraft": 0.0,

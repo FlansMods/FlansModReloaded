@@ -5,7 +5,10 @@ import com.flansmod.common.types.JsonDefinition;
 import com.flansmod.common.types.JsonField;
 import com.flansmod.common.types.crafting.elements.*;
 import com.flansmod.common.types.parts.PartDefinition;
+import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
+
+import javax.annotation.Nullable;
 
 public class WorkbenchDefinition extends JsonDefinition
 {
@@ -41,4 +44,13 @@ public class WorkbenchDefinition extends JsonDefinition
 
 	@JsonField
 	public WorkbenchSideDefinition[] sides = new WorkbenchSideDefinition[0];
+
+	@Nullable
+	public WorkbenchSideDefinition GetSideDef(Direction direction)
+	{
+		for(WorkbenchSideDefinition side : sides)
+			if(side.side == direction)
+				return side;
+		return null;
+	}
 }

@@ -6,11 +6,9 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.InteractionHand;
-import net.minecraft.world.InteractionResult;
-import net.minecraft.world.MenuProvider;
-import net.minecraft.world.SimpleMenuProvider;
+import net.minecraft.world.*;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
@@ -39,10 +37,10 @@ public class WorkbenchBlock extends BaseEntityBlock
 {
 	protected static final VoxelShape DEFAULT_SHAPE = Block.box(1.0D, 0.0D, 1.0D, 15.0D, 12.0D, 15.0D);
 	public static final DirectionProperty DIRECTION = BlockStateProperties.HORIZONTAL_FACING;
-	private ResourceLocation definitionLocation;
+	private final ResourceLocation definitionLocation;
 	public WorkbenchDefinition Def() { return FlansMod.WORKBENCHES.Get(definitionLocation); }
 
-	public WorkbenchBlock(ResourceLocation defLoc, Properties props)
+	public WorkbenchBlock(@Nonnull ResourceLocation defLoc, @Nonnull Properties props)
 	{
 		super(props);
 
@@ -53,18 +51,20 @@ public class WorkbenchBlock extends BaseEntityBlock
 	}
 
 	@Override
-	public RenderShape getRenderShape(BlockState state) {
+	@Nonnull
+	public RenderShape getRenderShape(@Nonnull BlockState state) {
 		return RenderShape.MODEL;
 	}
 
 	@Override
-	public VoxelShape getShape(BlockState state, BlockGetter getter, BlockPos pos, CollisionContext context)
+	@Nonnull
+	public VoxelShape getShape(@Nonnull BlockState state, @Nonnull BlockGetter getter, @Nonnull BlockPos pos, @Nonnull CollisionContext context)
 	{
 		return DEFAULT_SHAPE;
 	}
 
 	@Override
-	public MenuProvider getMenuProvider(BlockState state, Level level, BlockPos pos)
+	public MenuProvider getMenuProvider(@Nonnull BlockState state, @Nonnull Level level, @Nonnull BlockPos pos)
 	{
 		return new SimpleMenuProvider(
 			(containerID, inventory, playerEntity) ->
@@ -79,7 +79,7 @@ public class WorkbenchBlock extends BaseEntityBlock
 
 	@Override
 	@Nonnull
-	public InteractionResult use(BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit)
+	public InteractionResult use(@Nonnull BlockState state, Level level, @Nonnull BlockPos pos, @Nonnull Player player, @Nonnull InteractionHand hand, @Nonnull BlockHitResult hit)
 	{
 		BlockEntity blockEntity = level.getBlockEntity(pos);
 		if(!level.isClientSide && blockEntity != null && player instanceof ServerPlayer serverPlayer)
@@ -91,9 +91,12 @@ public class WorkbenchBlock extends BaseEntityBlock
 
 	@Nullable
 	@Override
-	public BlockEntity newBlockEntity(BlockPos pos, BlockState state)
+	public BlockEntity newBlockEntity(@Nonnull BlockPos pos, @Nonnull BlockState state)
 	{
-		return ForgeRegistries.BLOCK_ENTITY_TYPES.getValue(definitionLocation).create(pos, state);
+		BlockEntityType<?> type = ForgeRegistries.BLOCK_ENTITY_TYPES.getValue(definitionLocation);
+		if(type != null)
+			return type.create(pos, state);
+		return null;
 	}
 
 	@Override
@@ -111,23 +114,31 @@ public class WorkbenchBlock extends BaseEntityBlock
 
 	@Nullable
 	@Override
-	public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState state, BlockEntityType<T> type)
+	public <T extends BlockEntity> BlockEntityTicker<T> getTicker(@Nonnull Level level, @Nonnull BlockState state, @Nonnull BlockEntityType<T> type)
 	{
-		return level.isClientSide ? null : new BlockEntityTicker<T>()
+		return level.isClientSide ? null : (level1, pos1, state1, blockEntity) ->
 		{
-			@Override
-			public void tick(Level level1, BlockPos pos1, BlockState state1, T blockEntity)
-			{
-				if(blockEntity instanceof WorkbenchBlockEntity workbenchBlockEntity)
-					WorkbenchBlockEntity.serverTick(level1, pos1, state1, workbenchBlockEntity);
-			}
+			if(blockEntity instanceof WorkbenchBlockEntity workbenchBlockEntity)
+				WorkbenchBlockEntity.serverTick(level1, pos1, state1, workbenchBlockEntity);
 		};
 	}
 
-
-	@Nullable
-	protected static <T extends BlockEntity> BlockEntityTicker<T> createFurnaceTicker(Level level, BlockEntityType<T> type, BlockEntityType<? extends WorkbenchBlockEntity> workbenchType)
+	@Override
+	public void onRemove(@Nonnull BlockState blockState, @Nonnull Level level, @Nonnull BlockPos pos, BlockState newState, boolean flag)
 	{
-		return level.isClientSide ? null : createTickerHelper(type, workbenchType, WorkbenchBlockEntity::serverTick);
+		if (!blockState.is(newState.getBlock()))
+		{
+			BlockEntity blockentity = level.getBlockEntity(pos);
+			if (blockentity instanceof WorkbenchBlockEntity workbenchBlockEntity)
+			{
+				if (level instanceof ServerLevel)
+				{
+					Containers.dropContents(level, pos, workbenchBlockEntity);
+				}
+
+				level.updateNeighbourForOutputSignal(pos, this);
+			}
+			super.onRemove(blockState, level, pos, newState, flag);
+		}
 	}
 }

@@ -4,10 +4,10 @@ import com.flansmod.common.FlansMod;
 import com.flansmod.common.actions.EActionInput;
 import com.flansmod.common.item.FlanItem;
 import com.flansmod.common.item.GunItem;
+import com.flansmod.common.types.crafting.EWorkbenchInventoryType;
 import com.flansmod.common.types.crafting.WorkbenchDefinition;
-import com.flansmod.common.types.crafting.elements.IngredientDefinition;
-import com.flansmod.common.types.crafting.elements.RecipePartDefinition;
-import com.flansmod.common.types.crafting.elements.TieredIngredientDefinition;
+import com.flansmod.common.types.crafting.elements.WorkbenchIOSettingDefinition;
+import com.flansmod.common.types.crafting.elements.WorkbenchSideDefinition;
 import com.flansmod.common.types.elements.MaterialSourceDefinition;
 import com.flansmod.common.types.elements.PaintableDefinition;
 import com.flansmod.common.types.elements.PaintjobDefinition;
@@ -15,31 +15,38 @@ import com.flansmod.common.types.magazines.MagazineDefinition;
 import com.flansmod.util.Maths;
 import com.mojang.datafixers.util.Pair;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.Clearable;
 import net.minecraft.world.Container;
 import net.minecraft.world.MenuProvider;
+import net.minecraft.world.WorldlyContainer;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.ContainerData;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.Ingredient;
-import net.minecraft.world.item.crafting.RecipeManager;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.common.ForgeHooks;
+import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ForgeCapabilities;
+import net.minecraftforge.common.capabilities.ICapabilityProvider;
+import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.energy.EnergyStorage;
+import net.minecraftforge.energy.IEnergyStorage;
+import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.registries.ForgeRegistries;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.annotation.Nonnull;
@@ -47,7 +54,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-public class WorkbenchBlockEntity extends BlockEntity implements Container, MenuProvider, Clearable
+public class WorkbenchBlockEntity extends BlockEntity implements WorldlyContainer, MenuProvider, Clearable, ICapabilityProvider
 {
 	public final WorkbenchDefinition Def;
 	public final RestrictedContainer GunContainer;
@@ -60,7 +67,13 @@ public class WorkbenchBlockEntity extends BlockEntity implements Container, Menu
 	public final RestrictedContainer MaterialContainer;
 	public final RestrictedContainer BatteryContainer;
 	public final RestrictedContainer FuelContainer;
+
 	private EnergyStorage EnergyStorage;
+	private final LazyOptional<IEnergyStorage> EnergyStorageLazyOptional;
+	private ItemCapabilityMultiContainer[] DirectionalItemCaps;
+	private final List<LazyOptional<IItemHandler>> DirectionalItemCapLazyOptionals;
+
+
 	private static final double INTERACT_RANGE = 5.0d;
 	public static final int NUM_CRAFTING_QUEUE_SLOTS = 4;
 
@@ -150,7 +163,145 @@ public class WorkbenchBlockEntity extends BlockEntity implements Container, Menu
 		public int getCount() { return NUM_DATA_MEMBERS; }
 	};
 
+	public WorkbenchBlockEntity(ResourceLocation defLoc, BlockPos pos, BlockState state)
+	{
+		super(ForgeRegistries.BLOCK_ENTITY_TYPES.getValue(defLoc), pos, state);
+		Def = FlansMod.WORKBENCHES.Get(defLoc);
+
+		DirectionalItemCapLazyOptionals = new ArrayList<>(6);
+		DirectionalItemCapLazyOptionals.add(LazyOptional.of(() -> SupplyItemCapability(Direction.DOWN)));
+		DirectionalItemCapLazyOptionals.add(LazyOptional.of(() -> SupplyItemCapability(Direction.UP)));
+		DirectionalItemCapLazyOptionals.add(LazyOptional.of(() -> SupplyItemCapability(Direction.NORTH)));
+		DirectionalItemCapLazyOptionals.add(LazyOptional.of(() -> SupplyItemCapability(Direction.SOUTH)));
+		DirectionalItemCapLazyOptionals.add(LazyOptional.of(() -> SupplyItemCapability(Direction.WEST)));
+		DirectionalItemCapLazyOptionals.add(LazyOptional.of(() -> SupplyItemCapability(Direction.EAST)));
+		EnergyStorageLazyOptional = LazyOptional.of(() -> EnergyStorage );
+
+		if(Def.gunModifying.isActive)
+		{
+			GunContainer = new RestrictedContainer(
+				this,
+				INTERACT_RANGE,
+				1,
+				1,
+				(stack) -> stack.getItem() instanceof GunItem
+			);
+			PaintCanContainer = new RestrictedContainer(
+				this,
+				INTERACT_RANGE,
+				1,
+				64,
+				(stack) -> stack.getItem() == FlansMod.RAINBOW_PAINT_CAN_ITEM.get()
+			);
+			MagUpgradeContainer = new RestrictedContainer(
+				this,
+				INTERACT_RANGE,
+				1,
+				64,
+				(stack) -> stack.getItem() == FlansMod.MAG_UPGRADE_ITEM.get()
+			);
+		}
+		else
+		{
+			GunContainer = new RestrictedContainer(this);
+			PaintCanContainer = new RestrictedContainer(this);
+			MagUpgradeContainer = new RestrictedContainer(this);
+		}
+
+		if(Def.gunCrafting.isActive)
+		{
+			GunCraftingInputContainer = new RestrictedContainer(
+				this,
+				INTERACT_RANGE,
+				Def.gunCrafting.GetMaxInputSlots(),
+				64,
+				(stack) -> true);
+			GunCraftingOutputContainer = new RestrictedContainer(
+				this,
+				INTERACT_RANGE,
+				1,
+				64,
+				ItemStack::isEmpty );
+		}
+		else
+		{
+			GunCraftingInputContainer = new RestrictedContainer(this);
+			GunCraftingOutputContainer = new RestrictedContainer(this);
+		}
+
+		if(Def.partCrafting.isActive)
+		{
+			PartCraftingInputContainer = new RestrictedContainer(
+				this,
+				INTERACT_RANGE,
+				Def.partCrafting.inputSlots,
+				64,
+				(stack) -> true);
+			PartCraftingOutputContainer = new RestrictedContainer(
+				this,
+				INTERACT_RANGE,
+				Def.partCrafting.outputSlots,
+				64,
+				ItemStack::isEmpty);
+		}
+		else
+		{
+			PartCraftingInputContainer = new RestrictedContainer(this);
+			PartCraftingOutputContainer = new RestrictedContainer(this);
+		}
+
+		if(Def.itemHolding.slots.length > 0)
+		{
+			MaterialContainer = new RestrictedContainer(
+				this,
+				INTERACT_RANGE,
+				Def.itemHolding.slots.length,
+				Def.itemHolding.maxStackSize,
+				(stack) -> true
+			);
+		}
+		else MaterialContainer = new RestrictedContainer(this);
+
+		if(Def.energy.maxFE > 0)
+		{
+			EnergyStorage = new EnergyStorage(Def.energy.maxFE, Def.energy.acceptFEPerTick, Def.energy.disperseFEPerTick);
+			BatteryContainer = new RestrictedContainer(
+				this,
+				INTERACT_RANGE,
+				Def.energy.numBatterySlots,
+				Def.energy.batterySlotStackSize,
+				(stack) -> stack.getCapability(ForgeCapabilities.ENERGY).isPresent()
+			);
+			FuelContainer = new RestrictedContainer(
+				this,
+				INTERACT_RANGE,
+				Def.energy.numSolidFuelSlots,
+				64,
+				(stack) -> ForgeHooks.getBurnTime(stack, RecipeType.SMELTING) > 0.0f
+			);
+		}
+		else
+		{
+			EnergyStorage = null;
+			BatteryContainer = new RestrictedContainer(this);
+			FuelContainer = new RestrictedContainer(this);
+		}
+	}
+
 	// As a container
+	@Override
+	@Nonnull
+	public int[] getSlotsForFace(@Nonnull Direction direction) { return new int[0]; }
+	@Override
+	public boolean canPlaceItemThroughFace(int p_19235_, @Nonnull ItemStack stack, @Nullable Direction direction)
+	{
+		return false;
+	}
+	@Override
+	public boolean canTakeItemThroughFace(int p_19239_, @Nonnull ItemStack stack, @Nonnull Direction direction)
+	{
+		return false;
+	}
 	@Override
 	public int getContainerSize()
 	{
@@ -234,7 +385,6 @@ public class WorkbenchBlockEntity extends BlockEntity implements Container, Menu
 
 		if(slot < BatteryContainer.getContainerSize())
 			return Pair.of(BatteryContainer, slot);
-		else slot -= BatteryContainer.getContainerSize();
 
 		// Huh?
 		return Pair.of(null, Inventory.NOT_FOUND_INDEX);
@@ -298,126 +448,14 @@ public class WorkbenchBlockEntity extends BlockEntity implements Container, Menu
 
 		public BlockEntityType<WorkbenchBlockEntity> CreateType()
 		{
-			return new BlockEntityType<WorkbenchBlockEntity>(this, Set.of(), null)
+			return new BlockEntityType<>(this, Set.of(), null)
 			{
 				@Override
-				public boolean isValid(@Nonnull BlockState state) { return state.getBlock() instanceof WorkbenchBlock; }
+				public boolean isValid(@Nonnull BlockState state)
+				{
+					return state.getBlock() instanceof WorkbenchBlock;
+				}
 			};
-		}
-	}
-
-	public WorkbenchBlockEntity(ResourceLocation defLoc, BlockPos pos, BlockState state)
-	{
-		super(ForgeRegistries.BLOCK_ENTITY_TYPES.getValue(defLoc), pos, state);
-		Def = FlansMod.WORKBENCHES.Get(defLoc);
-
-		if(Def.gunModifying.isActive)
-		{
-			GunContainer = new RestrictedContainer(
-				this,
-				INTERACT_RANGE,
-				1,
-				1,
-				(stack) -> { return stack.getItem() instanceof GunItem; }
-			);
-			PaintCanContainer = new RestrictedContainer(
-				this,
-				INTERACT_RANGE,
-				1,
-				64,
-				(stack) -> { return stack.getItem() == FlansMod.RAINBOW_PAINT_CAN_ITEM.get(); }
-			);
-			MagUpgradeContainer = new RestrictedContainer(
-				this,
-				INTERACT_RANGE,
-				1,
-				64,
-				(stack) -> { return stack.getItem() == FlansMod.MAG_UPGRADE_ITEM.get(); }
-			);
-		}
-		else
-		{
-			GunContainer = new RestrictedContainer(this);
-			PaintCanContainer = new RestrictedContainer(this);
-			MagUpgradeContainer = new RestrictedContainer(this);
-		}
-
-		if(Def.gunCrafting.isActive)
-		{
-			GunCraftingInputContainer = new RestrictedContainer(
-				this,
-				INTERACT_RANGE,
-				Def.gunCrafting.GetMaxInputSlots(),
-				64,
-				(stack) -> { return true; } );
-			GunCraftingOutputContainer = new RestrictedContainer(
-				this,
-				INTERACT_RANGE,
-				1,
-				64,
-				ItemStack::isEmpty );
-		}
-		else
-		{
-			GunCraftingInputContainer = new RestrictedContainer(this);
-			GunCraftingOutputContainer = new RestrictedContainer(this);
-		}
-
-		if(Def.partCrafting.isActive)
-		{
-			PartCraftingInputContainer = new RestrictedContainer(
-				this,
-				INTERACT_RANGE,
-				Def.partCrafting.inputSlots,
-				64,
-				(stack) -> { return true; } );
-			PartCraftingOutputContainer = new RestrictedContainer(
-				this,
-				INTERACT_RANGE,
-				Def.partCrafting.outputSlots,
-				64,
-				ItemStack::isEmpty);
-		}
-		else
-		{
-			PartCraftingInputContainer = new RestrictedContainer(this);
-			PartCraftingOutputContainer = new RestrictedContainer(this);
-		}
-
-		if(Def.itemHolding.slots.length > 0)
-		{
-			MaterialContainer = new RestrictedContainer(
-				this,
-				INTERACT_RANGE,
-				Def.itemHolding.slots.length,
-				Def.itemHolding.maxStackSize,
-				(stack) -> { return true; }
-			);
-		}
-		else MaterialContainer = new RestrictedContainer(this);
-
-		if(Def.energy.maxFE > 0)
-		{
-			EnergyStorage = new EnergyStorage(Def.energy.maxFE);
-			BatteryContainer = new RestrictedContainer(
-				this,
-				INTERACT_RANGE,
-				Def.energy.numBatterySlots,
-				Def.energy.batterySlotStackSize,
-				(stack) -> { return stack.getCapability(ForgeCapabilities.ENERGY).isPresent(); }
-			);
-			FuelContainer = new RestrictedContainer(
-				this,
-				INTERACT_RANGE,
-				Def.energy.numSolidFuelSlots,
-				64,
-				(stack) -> { return ForgeHooks.getBurnTime(stack, RecipeType.SMELTING) > 0.0f; }
-			);
-		}
-		else
-		{
-			BatteryContainer = new RestrictedContainer(this);
-			FuelContainer = new RestrictedContainer(this);
 		}
 	}
 
@@ -643,7 +681,7 @@ public class WorkbenchBlockEntity extends BlockEntity implements Container, Menu
 		for (int i = 0; i < recipe.getIngredients().size(); i++)
 		{
 			Ingredient ingredient = recipe.getIngredients().get(i);
-			int required = 0;
+			int required;
 			int matching = CountInputMatching(ingredient);
 			if (ingredient instanceof StackedIngredient stacked)
 				required = stacked.Count;
@@ -814,6 +852,7 @@ public class WorkbenchBlockEntity extends BlockEntity implements Container, Menu
 							getBlockPos().getCenter().y,
 							getBlockPos().getCenter().z,
 							leftover);
+						level.addFreshEntity(leftoverEntity);
 					}
 				}
 				else
@@ -879,6 +918,10 @@ public class WorkbenchBlockEntity extends BlockEntity implements Container, Menu
 				existing.setCount(existing.getCount() + result.getCount());
 			else
 				FlansMod.LOGGER.error("CraftOnePart tried to craft into invalid slot " + outputSlot);
+
+			if(level != null)
+				level.playSound(null, getBlockPos(), SoundEvents.IRON_GOLEM_STEP, SoundSource.BLOCKS, 1.0F, 1.0F);
+
 			return true;
 		}
 		return false;
@@ -918,8 +961,6 @@ public class WorkbenchBlockEntity extends BlockEntity implements Container, Menu
 			// We can always revert to the default skin, no matter what, and for free.
 			if(skinIndex == 0)
 				return true;
-
-			ItemStack gunStack = gunContainer.getItem(0);
 
 			// Check if the item is paintable and our selection makes sense
 			PaintableDefinition paintableDefinition = flanItem.GetPaintDef();
@@ -1050,5 +1091,228 @@ public class WorkbenchBlockEntity extends BlockEntity implements Container, Menu
 				}
 			}
 		}
+	}
+
+	public static class ItemCapabilityMultiContainer implements IItemHandler
+	{
+		public static final ItemCapabilityMultiContainer Invalid = new ItemCapabilityMultiContainer(new Container[] { }, false, false);
+
+		private final Container[] Containers;
+		private final boolean CanInsert;
+		private final boolean CanExtract;
+		public ItemCapabilityMultiContainer(Container[] containers, boolean canInsert, boolean canExtract)
+		{
+			Containers = containers;
+			CanInsert = canInsert;
+			CanExtract = canExtract;
+		}
+		@Override
+		public int getSlots()
+		{
+			int count = 0;
+			for (Container container : Containers)
+				count += container.getContainerSize();
+			return count;
+		}
+		private ItemStack PutStackInSlot(int slot, ItemStack stack, boolean simulate)
+		{
+			if(slot < 0)
+				return stack;
+			for(Container container : Containers)
+			{
+				if(slot < container.getContainerSize())
+				{
+					int maxCount = Maths.Min(container.getMaxStackSize(), stack.getCount());
+					if(!simulate)
+						container.setItem(slot, stack.copyWithCount(maxCount));
+					return stack.copyWithCount(stack.getCount() - maxCount);
+				}
+				else
+					slot -= container.getContainerSize();
+			}
+			return stack;
+		}
+		@Override
+		@Nonnull
+		public ItemStack getStackInSlot(int slot)
+		{
+			if(slot < 0)
+				return ItemStack.EMPTY;
+			for(Container container : Containers)
+			{
+				if(slot < container.getContainerSize())
+					return container.getItem(slot);
+				else
+					slot -= container.getContainerSize();
+			}
+			return ItemStack.EMPTY;
+		}
+		@Override
+		@Nonnull
+		public ItemStack insertItem(int slot, @NotNull ItemStack stack, boolean simulate)
+		{
+			if(!CanInsert)
+				return stack;
+			ItemStack existingStack = getStackInSlot(slot);
+			if(existingStack.isEmpty())
+			{
+				return PutStackInSlot(slot, stack, simulate);
+			}
+			else if(existingStack.sameItem(stack))
+			{
+				return PutStackInSlot(slot, existingStack.copyWithCount(existingStack.getCount() + stack.getCount()), simulate);
+			}
+			return stack;
+		}
+		@Override
+		@Nonnull
+		public ItemStack extractItem(int slot, int amount, boolean simulate)
+		{
+			if(!CanExtract)
+				return ItemStack.EMPTY;
+			ItemStack existingStack = getStackInSlot(slot);
+			if(!existingStack.isEmpty())
+			{
+				int amountToTake = Maths.Min(existingStack.getCount(), amount);
+				ItemStack returnStack = existingStack.copyWithCount(amountToTake);
+				if(!simulate)
+					existingStack.setCount(existingStack.getCount() - amountToTake);
+				return returnStack;
+			}
+			return ItemStack.EMPTY;
+		}
+		@Override
+		public int getSlotLimit(int slot)
+		{
+			if(slot < 0)
+				return 0;
+			for(Container container : Containers)
+			{
+				if(slot < container.getContainerSize())
+					return container.getMaxStackSize();
+				else
+					slot -= container.getContainerSize();
+			}
+			return 0;
+		}
+		@Override
+		public boolean isItemValid(int slot, @NotNull ItemStack stack)
+		{
+			if(slot < 0)
+				return false;
+			for(Container container : Containers)
+			{
+				if(slot < container.getContainerSize())
+					return container.canPlaceItem(slot, stack);
+				else
+					slot -= container.getContainerSize();
+			}
+			return false;
+		}
+	}
+
+	private Container[] GetContainers(EWorkbenchInventoryType type)
+	{
+		return switch (type)
+		{
+			case PART_INPUT -> new Container[]{PartCraftingInputContainer};
+			case PART_OUTPUT -> new Container[]{PartCraftingOutputContainer};
+			case GUN_INPUT -> new Container[]{GunCraftingInputContainer};
+			case GUN_OUTPUT -> new Container[]{GunCraftingOutputContainer};
+			case MATERIAL -> new Container[]{MaterialContainer};
+			case FUEL -> new Container[]{FuelContainer};
+			case POWER -> new Container[]{BatteryContainer};
+			case GUN_MODIFICATION -> new Container[]{GunContainer};
+			case ATTACHMENT -> new Container[]{GunContainer};
+			case PAINT_CAN -> new Container[]{PaintCanContainer};
+			case MAG_UPGRADE -> new Container[]{MagUpgradeContainer};
+			case ALL_TYPES -> new Container[]{
+				PartCraftingInputContainer,
+				PartCraftingOutputContainer,
+				GunCraftingInputContainer,
+				GunCraftingOutputContainer,
+				MaterialContainer,
+				FuelContainer,
+				BatteryContainer,
+				GunContainer,
+				PaintCanContainer,
+				MagUpgradeContainer,
+			};
+		};
+	}
+
+	@Nonnull
+	public ItemCapabilityMultiContainer SupplyItemCapability(Direction worldSpaceDirection)
+	{
+		Direction frontFace = getBlockState().getValue(WorkbenchBlock.DIRECTION);
+		Direction frontRelativeDirection = worldSpaceDirection;
+		if(worldSpaceDirection == frontFace)
+			frontRelativeDirection = Direction.SOUTH;
+		else if(worldSpaceDirection == frontFace.getClockWise())
+			frontRelativeDirection = Direction.WEST;
+		else if(worldSpaceDirection == frontFace.getCounterClockWise())
+			frontRelativeDirection = Direction.EAST;
+		else if(worldSpaceDirection == frontFace.getOpposite())
+			frontRelativeDirection = Direction.NORTH;
+
+		// If there are custom side settings, use them
+		if(Def.sides.length > 0)
+		{
+			WorkbenchSideDefinition sideDef = Def.GetSideDef(frontRelativeDirection);
+			if(sideDef != null)
+			{
+				for(WorkbenchIOSettingDefinition ioSetting : sideDef.ioSettings)
+				{
+					return new ItemCapabilityMultiContainer(GetContainers(ioSetting.type), ioSetting.allowInput, ioSetting.allowExtract);
+				}
+			}
+			return ItemCapabilityMultiContainer.Invalid;
+		}
+
+		// Otherwise, let's go with a few default setups based on which modules are added
+		// Gun or Part crafting input and output
+		if(Def.partCrafting.isActive || Def.gunCrafting.isActive)
+		{
+			switch(frontRelativeDirection)
+			{
+				case UP: 	{	return new ItemCapabilityMultiContainer(new Container[] { MaterialContainer }, true, true); }
+				case DOWN: 	{ 	return new ItemCapabilityMultiContainer(new Container[] { FuelContainer }, true, true); }
+				case NORTH: { 	return new ItemCapabilityMultiContainer(new Container[] { BatteryContainer }, true, true); }
+				case EAST:  {	return new ItemCapabilityMultiContainer(new Container[] { PartCraftingOutputContainer, GunCraftingOutputContainer }, false, true); }
+				case WEST:  { 	return new ItemCapabilityMultiContainer(new Container[] { PartCraftingInputContainer, GunCraftingInputContainer }, true, false); }
+			}
+		}
+		// If we have ONLY item holding, show it on all sides
+		else if(Def.itemHolding.slots.length > 0)
+		{
+			return new ItemCapabilityMultiContainer(new Container[] { MaterialContainer }, true, true);
+		}
+
+		return ItemCapabilityMultiContainer.Invalid;
+	}
+
+	@Override
+	@Nonnull
+	public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> cap, Direction side)
+	{
+		if (cap == ForgeCapabilities.ITEM_HANDLER)
+		{
+			LazyOptional<IItemHandler> lazyOptional = DirectionalItemCapLazyOptionals.get(side.ordinal());
+			if(lazyOptional != null)
+				return lazyOptional.cast();
+		}
+		else if(cap == ForgeCapabilities.ENERGY)
+		{
+			return EnergyStorageLazyOptional.cast();
+		}
+		return super.getCapability(cap, side);
+	}
+
+	@Override
+	public void invalidateCaps()
+	{
+		super.invalidateCaps();
+		for(LazyOptional<IItemHandler> lazy : DirectionalItemCapLazyOptionals)
+			lazy.invalidate();
 	}
 }

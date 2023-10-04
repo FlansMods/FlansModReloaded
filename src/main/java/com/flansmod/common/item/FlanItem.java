@@ -160,6 +160,13 @@ public abstract class FlanItem extends Item
     public void SetPaintjobName(ItemStack stack, String paint)
     {
         stack.getOrCreateTag().putString("paint", paint);
+        stack.getOrCreateTag().putInt("CustomModelData", 0);
+        if (!paint.equals("default") && GetPaintDef().IsValid())
+        {
+            for (int i = 0; i < GetPaintDef().paintjobs.length; i++)
+                if (GetPaintDef().paintjobs[i].textureName.equals(paint))
+                    stack.getOrCreateTag().putInt("CustomModelData", i+1);
+        }
     }
 
     // Only remember parts that we used, not arbitrary item stacks with NBT

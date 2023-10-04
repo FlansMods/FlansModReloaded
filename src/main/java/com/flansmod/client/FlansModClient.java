@@ -13,6 +13,7 @@ import com.flansmod.client.render.decals.DecalRenderer;
 import com.flansmod.client.render.bullets.ShotRenderer;
 import com.flansmod.common.FlansMod;
 import com.flansmod.common.gunshots.ActionManager;
+import com.flansmod.common.types.guns.GunDefinition;
 import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import cpw.mods.modlauncher.api.INameMappingService;
 import net.minecraft.client.Minecraft;
@@ -20,7 +21,9 @@ import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraft.client.renderer.ItemModelShaper;
 import net.minecraft.client.renderer.ShaderInstance;
 import net.minecraft.client.renderer.entity.EntityRenderers;
+import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.client.resources.model.ModelResourceLocation;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.ModelEvent;
 import net.minecraftforge.client.event.RegisterClientReloadListenersEvent;
@@ -62,10 +65,15 @@ public class FlansModClient
 	{
 		ItemModelShaper shaper = Minecraft.getInstance().getItemRenderer().getItemModelShaper();
 
-		for(var entry : FlansMod.ITEMS.getEntries())
+		for (var entry : FlansMod.ITEMS.getEntries())
 		{
 			event.register(new ModelResourceLocation(entry.getId(), "inventory"));
 			shaper.register(entry.get(), new ModelResourceLocation(entry.getId(), "inventory"));
+		}
+
+		for (ResourceLocation gunLoc : FlansMod.GUNS.getIds())
+		{
+			
 		}
 	}
 

@@ -85,7 +85,7 @@ public class WorkbenchMenu extends AbstractContainerMenu
 
 
 	public static final int PART_CRAFTING_NUM_INPUT_SLOTS_X = 4;
-	public static final int PART_CRAFTING_NUM_INPUT_SLOTS_Y = 4;
+	public static final int PART_CRAFTING_NUM_INPUT_SLOTS_Y = 11;
 	public static final int PART_CRAFTING_INPUT_SLOTS_X = 5;
 	public static final int PART_CRAFTING_INPUT_SLOTS_Y = 18;
 	public static final int PART_CRAFTING_NUM_OUTPUT_SLOTS_X = 4;
