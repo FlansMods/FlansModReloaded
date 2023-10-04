@@ -1,6 +1,8 @@
 package com.flansmod.common.types.elements;
 
 import com.flansmod.common.types.JsonField;
+import com.flansmod.common.types.crafting.EMaterialIconType;
+import com.flansmod.common.types.crafting.EMaterialType;
 import com.flansmod.common.types.crafting.elements.TieredIngredientDefinition;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
@@ -23,6 +25,9 @@ public class MaterialSourceDefinition
 	@JsonField(Docs = "For ref, nugget = 1, ingot = 9, block = 81")
 	public int count = 1;
 
+	@JsonField
+	public EMaterialIconType icon = EMaterialIconType.ingot;
+
 	private List<ItemStack> Matches = null;
 	@Nonnull
 	public List<ItemStack> GetMatches()
@@ -39,17 +44,17 @@ public class MaterialSourceDefinition
 				matchTagKeys.add(TagKey.create(Registries.ITEM, new ResourceLocation(tag)));
 
 
-			for(Item item : ForgeRegistries.ITEMS.getValues())
+			for(var kvp : ForgeRegistries.ITEMS.getEntries())
 			{
 				boolean isMatch = false;
-				if(matchItemLocs.contains(item.builtInRegistryHolder().key().registry()))
+				if(matchItemLocs.contains(kvp.getKey().location()))
 					isMatch = true;
 				for(TagKey<Item> tagKey : matchTagKeys)
-					if(item.builtInRegistryHolder().is(tagKey))
+					if(kvp.getValue().builtInRegistryHolder().is(tagKey))
 						isMatch = true;
 
 				if(isMatch)
-					Matches.add(new ItemStack(item));
+					Matches.add(new ItemStack(kvp.getValue()));
 			}
 		}
 		return Matches;
@@ -58,7 +63,7 @@ public class MaterialSourceDefinition
 
 	public int AnalyzeStack(ItemStack stack)
 	{
-		for(ItemStack checkMatch : Matches)
+		for(ItemStack checkMatch : GetMatches())
 		{
 			if(stack.sameItem(checkMatch))
 				return count * stack.getCount();

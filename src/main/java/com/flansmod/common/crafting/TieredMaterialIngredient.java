@@ -15,16 +15,21 @@ import net.minecraftforge.common.crafting.IIngredientSerializer;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
-public class TieredMaterialIngredient extends AbstractIngredient
+public class TieredMaterialIngredient extends StackedIngredient
 {
-	public final MaterialDefinition MaterialType;
-	public final int Count;
+	public MaterialDefinition MaterialType() { return FlansMod.MATERIALS.Get(MaterialLocation); }
 
-	public TieredMaterialIngredient(MaterialDefinition materialType, int count)
+	public final ResourceLocation MaterialLocation;
+	private ItemStack[] MatchingStacks = null;
+
+	public TieredMaterialIngredient(ResourceLocation matLoc, int count)
 	{
-		MaterialType = materialType;
-		Count = count;
+		super(count);
+		MaterialLocation = matLoc;
 	}
 
 	@Override
@@ -34,18 +39,44 @@ public class TieredMaterialIngredient extends AbstractIngredient
 	}
 
 	@Override
-	public boolean test(@Nullable ItemStack target)
+	@Nonnull
+	public ItemStack[] getItems()
+	{
+		if(MatchingStacks == null)
+		{
+			MaterialDefinition material = FlansMod.MATERIALS.Get(MaterialLocation);
+			if (material.IsValid())
+			{
+				List<ItemStack> matches = new ArrayList<>();
+				for (MaterialSourceDefinition source : material.sources)
+				{
+					matches.addAll(source.GetMatches());
+				}
+				MatchingStacks = new ItemStack[matches.size()];
+				matches.toArray(MatchingStacks);
+			}
+			else
+			{
+				MatchingStacks = new ItemStack[0];
+			}
+		}
+
+		return MatchingStacks;
+	}
+
+	@Override
+	public int Count(@Nullable ItemStack target)
 	{
 		if (target == null)
-			return false;
+			return 0;
 
 		int value = 0;
-		for (MaterialSourceDefinition source : MaterialType.sources)
+		for (MaterialSourceDefinition source : MaterialType().sources)
 		{
 			value += source.AnalyzeStack(target);
 		}
 
-		return value >= Count;
+		return value;
 	}
 
 	@Override
@@ -53,7 +84,7 @@ public class TieredMaterialIngredient extends AbstractIngredient
 	public JsonElement toJson()
 	{
 		JsonObject json = new JsonObject();
-		json.addProperty("material", MaterialType.Location.toString());
+		json.addProperty("material", MaterialLocation.toString());
 		json.addProperty("count", Count);
 		return json;
 	}
@@ -71,15 +102,14 @@ public class TieredMaterialIngredient extends AbstractIngredient
 		{
 			String materialName = GsonHelper.getAsString(json, "material", "");
 			ResourceLocation materialLoc = new ResourceLocation(materialName);
-			MaterialDefinition material = FlansMod.MATERIALS.Get(materialLoc);
 			int count = GsonHelper.getAsInt(json, "count", 1);
-			return new TieredMaterialIngredient(material, count);
+			return new TieredMaterialIngredient(materialLoc, count);
 		}
 
 		@Override
 		public void write(FriendlyByteBuf buffer, TieredMaterialIngredient ingredient)
 		{
-			buffer.writeInt(ingredient.MaterialType.hashCode());
+			buffer.writeInt(ingredient.MaterialLocation.hashCode());
 			buffer.writeInt(ingredient.Count);
 		}
 
@@ -91,7 +121,7 @@ public class TieredMaterialIngredient extends AbstractIngredient
 			int count = buffer.readInt();
 
 			return new TieredMaterialIngredient(
-				FlansMod.MATERIALS.ByHash(materialHash),
+				FlansMod.MATERIALS.ByHash(materialHash).Location,
 				count);
 		}
 	}

@@ -5,6 +5,8 @@ import com.flansmod.client.render.FlanItemModelRenderer;
 import com.flansmod.client.render.RenderContext;
 import com.flansmod.common.FlansMod;
 import com.flansmod.common.actions.EActionInput;
+import com.flansmod.common.crafting.PartFabricationRecipe;
+import com.flansmod.common.crafting.TieredMaterialIngredient;
 import com.flansmod.common.crafting.WorkbenchBlockEntity;
 import com.flansmod.common.crafting.WorkbenchMenu;
 import com.flansmod.common.gunshots.GunContext;
@@ -24,6 +26,7 @@ import com.flansmod.util.Maths;
 import com.flansmod.util.MinecraftHelpers;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.*;
+import com.mojang.datafixers.util.Pair;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
@@ -39,6 +42,7 @@ import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.item.crafting.Ingredient;
 import org.joml.Quaternionf;
 
 import java.util.ArrayList;
@@ -72,6 +76,7 @@ public class WorkbenchScreen extends AbstractContainerScreen<WorkbenchMenu>
 	private Tab SelectedTab = Tab.MATERIALS;
 	private final WorkbenchMenu Workbench;
 	private final WorkbenchDefinition Def;
+	private float ShowPotentialMatchTicker = 0.0f;
 
 	private final Tab[] AvailableTabs;
 
@@ -128,8 +133,13 @@ public class WorkbenchScreen extends AbstractContainerScreen<WorkbenchMenu>
 			InitMaterials(xOrigin, yOrigin);
 		if(HasPowerTab())
 			InitPower(xOrigin, yOrigin);
+
 		if(HasPartCraftingTab())
-			InitPartCrafting(xOrigin, yOrigin);
+		{
+			imageWidth = 356; // it will be when we switch to this tab
+			int xOriginForParts = width / 2 - imageWidth / 2;
+			InitPartCrafting(xOriginForParts, yOrigin);
+		}
 		if(HasArmourCraftingTab())
 			InitArmourCrafting(xOrigin, yOrigin);
 
@@ -142,6 +152,7 @@ public class WorkbenchScreen extends AbstractContainerScreen<WorkbenchMenu>
 	@Override
 	protected void containerTick()
 	{
+		ShowPotentialMatchTicker += 1.0f / 20.0f;
 		UpdateGunCrafting(SelectedTab == Tab.GUN_CRAFTING);
 		UpdateGunModifying(SelectedTab == Tab.MODIFICATION);
 		UpdatePower(SelectedTab == Tab.POWER);
@@ -179,12 +190,21 @@ public class WorkbenchScreen extends AbstractContainerScreen<WorkbenchMenu>
 		}
 
 		SelectedTab = tab;
+		imageWidth = tab == Tab.PART_CRAFTING ? 356 : 172;
+		titleLabelX = tab == Tab.PART_CRAFTING ? 100 : 6;
+
+		inventoryLabelX = tab == Tab.PART_CRAFTING ? 98 : 6;
+		inventoryLabelY = 124;
+
+		super.init();
+
 		SetGunCraftingEnabled(tab == Tab.GUN_CRAFTING);
 		SetMaterialsEnabled(tab == Tab.MATERIALS);
 		SetPowerEnabled(tab == Tab.POWER);
 		SetGunModifyingEnabled(tab == Tab.MODIFICATION);
 		SetPartCraftingEnabled(tab == Tab.PART_CRAFTING);
 		SetArmourCraftingEnabled(tab == Tab.ARMOUR_CRAFTING);
+
 
 		switch(tab)
 		{
@@ -199,7 +219,7 @@ public class WorkbenchScreen extends AbstractContainerScreen<WorkbenchMenu>
 	}
 
 	@Override
-	protected void renderBg(PoseStack pose, float f, int x, int y)
+	protected void renderBg(PoseStack pose, float f, int xMouse, int yMouse)
 	{
 		pose.pushPose();
 		{
@@ -213,7 +233,7 @@ public class WorkbenchScreen extends AbstractContainerScreen<WorkbenchMenu>
 				case POWER -> 				{ RenderPowerBG(pose, xOrigin, yOrigin); }
 				case GUN_CRAFTING ->		{ RenderGunCraftingBG(pose, xOrigin, yOrigin); }
 				case MODIFICATION -> 		{ RenderGunModifyingBG(pose, xOrigin, yOrigin); }
-				case PART_CRAFTING ->		{ RenderPartCraftingBG(pose, xOrigin, yOrigin); }
+				case PART_CRAFTING ->		{ RenderPartCraftingBG(pose, xOrigin, yOrigin, xMouse, yMouse); }
 				case ARMOUR_CRAFTING -> 	{ RenderArmourCraftingBG(pose, xOrigin, yOrigin); }
 			}
 		}
@@ -345,7 +365,7 @@ public class WorkbenchScreen extends AbstractContainerScreen<WorkbenchMenu>
 		RenderSystem.setShader(GameRenderer::getPositionTexShader);
 		RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
 		RenderSystem.setShaderTexture(0, WORKBENCH_SHARED);
-		RenderPowerBar(pose, xOrigin + 116, yOrigin + 105);
+		RenderPowerBar(pose, xOrigin + 116 + (SelectedTab == Tab.PART_CRAFTING ? 92 : 0), yOrigin + 122);
 	}
 
 	private void RenderTabButton(PoseStack pose, int xOrigin, int yOrigin, Tab tab, int yHeight, boolean leftSide)
@@ -372,7 +392,7 @@ public class WorkbenchScreen extends AbstractContainerScreen<WorkbenchMenu>
 	{
 		//if Banner == null
 		{
-			font.draw(pose, TAB_TITLES[SelectedTab.ordinal()], 5, 5, 0x505050);
+			font.draw(pose, TAB_TITLES[SelectedTab.ordinal()], SelectedTab == Tab.PART_CRAFTING ? 97 : 5, 5, 0x505050);
 		}
 
 		// Render tabs over BG
@@ -921,26 +941,47 @@ public class WorkbenchScreen extends AbstractContainerScreen<WorkbenchMenu>
 	// ================================================ PART CRAFTING ==================================================
 	// =================================================================================================================
 	private static final ResourceLocation PART_CRAFTING_BG = new ResourceLocation(FlansMod.MODID, "textures/gui/part_fabrication.png");
+	private static final ResourceLocation PART_CRAFTING_BG_LARGE = new ResourceLocation(FlansMod.MODID, "textures/gui/part_fabrication_large.png");
+	private static final int LARGE_TEXTURE_WIDTH = 512;
 
 	private static final int PART_RECIPE_VIEWER_ROWS = 2;
-	private static final int PART_RECIPE_VIEWER_COLUMNS = 4;
+	private static final int PART_RECIPE_VIEWER_COLUMNS = 8;
 
-	private static final int PART_CRAFTING_NUM_SLOTS_X = WorkbenchMenu.PART_CRAFTING_NUM_SLOTS_X;
-	private static final int PART_CRAFTING_NUM_SLOTS_Y = WorkbenchMenu.PART_CRAFTING_NUM_SLOTS_Y;
+	private static final int PART_CRAFTING_NUM_INPUT_SLOTS_X = WorkbenchMenu.PART_CRAFTING_NUM_INPUT_SLOTS_X;
+	private static final int PART_CRAFTING_NUM_INPUT_SLOTS_Y = WorkbenchMenu.PART_CRAFTING_NUM_INPUT_SLOTS_Y;
+	private static final int PART_CRAFTING_NUM_OUTPUT_SLOTS_X = WorkbenchMenu.PART_CRAFTING_NUM_OUTPUT_SLOTS_X;
+	private static final int PART_CRAFTING_NUM_OUTPUT_SLOTS_Y = WorkbenchMenu.PART_CRAFTING_NUM_OUTPUT_SLOTS_Y;
+	private static final int PART_CRAFTING_INPUT_SLOTS_X =  WorkbenchMenu.PART_CRAFTING_INPUT_SLOTS_X;
+	private static final int PART_CRAFTING_INPUT_SLOTS_Y =  WorkbenchMenu.PART_CRAFTING_INPUT_SLOTS_Y;
+	private static final int PART_CRAFTING_OUTPUT_SLOTS_X = WorkbenchMenu.PART_CRAFTING_OUTPUT_SLOTS_X;
+	private static final int PART_CRAFTING_OUTPUT_SLOTS_Y = WorkbenchMenu.PART_CRAFTING_OUTPUT_SLOTS_Y;
 
-	private static final int PART_CRAFTING_INPUT_SLOTS_X = 5;
-	private static final int PART_CRAFTING_INPUT_SLOTS_Y = 18;
-	private static final int PART_CRAFTING_OUTPUT_SLOTS_X = 131;
-	private static final int PART_CRAFTING_OUTPUT_SLOTS_Y = 18;
+	private static final int PART_RECIPE_VIEWER_ORIGIN_X = 103;
+	private static final int PART_RECIPE_VIEWER_ORIGIN_Y = 17;
+	private static final int BLUEPRINT_ORIGIN_X = 98;
+	private static final int BLUEPRINT_ORIGIN_Y = 64;
 
-	private static final int PART_RECIPE_VIEWER_ORIGIN_X = 45;
-	private static final int PART_RECIPE_VIEWER_ORIGIN_Y = 18;
+	private static final int QUEUE_VIEWER_NUM_ENTRIES_Y = 4;
+	private static final int QUEUE_VIEWER_ORIGIN_X = 279;
+	private static final int QUEUE_VIEWER_ORIGIN_Y = 17;
+
 
 	private float partSelectorScrollOffset = 0.0f;
 	private int SelectedPartIndex = -1;
 	private int CachedMaxPartsCraftable = 0;
 	private Button[] PartSelectionButtons;
 	private Button[] PartCraftingButtons;
+	private Button[] PartQueueCancelButtons;
+
+	public static final int CRAFT_BULK_AMOUNT = 8;
+
+	private final List<ResourceKey<Item>> TagFilters = new ArrayList<>();
+	private final List<Integer> TierFilters = new ArrayList<>();
+	private final List<EMaterialType> MaterialFilters = new ArrayList<>();
+	private boolean OnlyCraftableFilter = false;
+	private final List<Pair<Integer, PartFabricationRecipe>> FilteredPartsList = new ArrayList<>();
+
+
 	public boolean HasPartCraftingTab() { return Workbench.Def.partCrafting.isActive; }
 
 	private void InitPartCrafting(int xOrigin, int yOrigin)
@@ -962,23 +1003,73 @@ public class WorkbenchScreen extends AbstractContainerScreen<WorkbenchMenu>
 			}
 		}
 
-		PartCraftingButtons = new Button[4];
-		addRenderableWidget(PartCraftingButtons[0] = Button.builder(Component.literal("+1"),
+		PartCraftingButtons = new Button[3];
+
+		addWidget(PartCraftingButtons[0] = Button.builder(Component.empty(),
 			(t) -> { CraftSelectedPart(1); })
-			.bounds(xOrigin + 7, yOrigin + 92, 18, 20)
+			.bounds(xOrigin + BLUEPRINT_ORIGIN_X + 105, yOrigin + BLUEPRINT_ORIGIN_Y + 25, 17, 17)
 			.build());
-		addRenderableWidget(PartCraftingButtons[1] = Button.builder(Component.literal("+5"),
-				(t) -> { CraftSelectedPart(5); })
-			.bounds(xOrigin + 27, yOrigin + 92, 18, 20)
+		addWidget(PartCraftingButtons[1] = Button.builder(Component.empty(),
+				(t) -> { CraftSelectedPart(CRAFT_BULK_AMOUNT); })
+			.bounds(xOrigin + BLUEPRINT_ORIGIN_X + 105 + 18, yOrigin + BLUEPRINT_ORIGIN_Y + 25, 17, 17)
 			.build());
-		addRenderableWidget(PartCraftingButtons[2] = Button.builder(Component.literal("All"),
+		addWidget(PartCraftingButtons[2] = Button.builder(Component.empty(),
 				(t) -> { CraftSelectedPart(-1); })
-			.bounds(xOrigin + 47, yOrigin + 92, 28, 20)
+			.bounds(xOrigin + BLUEPRINT_ORIGIN_X + 105 + 36, yOrigin + BLUEPRINT_ORIGIN_Y + 25, 17, 17)
 			.build());
-		addRenderableWidget(PartCraftingButtons[3] = Button.builder(Component.literal("X"),
-				(t) -> { CancelPartCrafting(); })
-			.bounds(xOrigin + 77, yOrigin + 92, 18, 20)
+
+		PartQueueCancelButtons = new Button[QUEUE_VIEWER_NUM_ENTRIES_Y];
+		for(int i = 0; i < QUEUE_VIEWER_NUM_ENTRIES_Y; i++)
+		{
+			final int index = i;
+			addWidget(PartQueueCancelButtons[i] = Button.builder(Component.empty(),
+					(t) -> { CancelPartCrafting(index); })
+				.bounds(xOrigin + QUEUE_VIEWER_ORIGIN_X + 56, yOrigin + QUEUE_VIEWER_ORIGIN_Y + 2 + i * 18, 9, 9)
+				.build());
+		}
+
+		// Filter buttons
+		addWidget(Button.builder(Component.empty(),
+				(t) ->
+				{
+					OnlyCraftableFilter = !OnlyCraftableFilter;
+					UpdatePartCraftingFilters();
+				})
+			.bounds(xOrigin + BLUEPRINT_ORIGIN_X + 2, yOrigin + BLUEPRINT_ORIGIN_Y - 9, 6, 6)
 			.build());
+		addWidget(Button.builder(Component.empty(),
+				(t) ->
+				{
+					if(TierFilters.contains(1))
+							TierFilters.remove(Integer.valueOf(1));
+					else TierFilters.add(1);
+					UpdatePartCraftingFilters();
+				})
+			.bounds(xOrigin + BLUEPRINT_ORIGIN_X + 62, yOrigin + BLUEPRINT_ORIGIN_Y - 9, 6, 6)
+			.build());
+		addWidget(Button.builder(Component.empty(),
+				(t) ->
+				{
+					if(TierFilters.contains(2))
+						TierFilters.remove(Integer.valueOf(2));
+					else TierFilters.add(2);
+					UpdatePartCraftingFilters();
+				})
+			.bounds(xOrigin + BLUEPRINT_ORIGIN_X + 82, yOrigin + BLUEPRINT_ORIGIN_Y - 9, 6, 6)
+			.build());
+		addWidget(Button.builder(Component.empty(),
+				(t) ->
+				{
+					if(TierFilters.contains(3))
+						TierFilters.remove(Integer.valueOf(3));
+					else TierFilters.add(3);
+					UpdatePartCraftingFilters();
+				})
+			.bounds(xOrigin + BLUEPRINT_ORIGIN_X + 102, yOrigin + BLUEPRINT_ORIGIN_Y - 9, 6, 6)
+			.build());
+
+
+		UpdateActivePartSelectionButtons();
 	}
 
 	public void SetPartCraftingEnabled(boolean enable)
@@ -990,7 +1081,7 @@ public class WorkbenchScreen extends AbstractContainerScreen<WorkbenchMenu>
 
 			}
 		}
-		UpdateActivePartSelectionButtons();
+		UpdatePartCraftingFilters();
 	}
 
 	private boolean UpdateScrollPartCrafting(int xMouse, int yMouse, double scroll)
@@ -1000,7 +1091,7 @@ public class WorkbenchScreen extends AbstractContainerScreen<WorkbenchMenu>
 
 		if(InBox(xMouse, yMouse, xOrigin + PART_RECIPE_VIEWER_ORIGIN_X, 18 * PART_RECIPE_VIEWER_COLUMNS + 6, yOrigin + PART_RECIPE_VIEWER_ORIGIN_Y, 18 * PART_RECIPE_VIEWER_ROWS))
 		{
-			int numRows = Maths.Max(Workbench.FilteredPartsList.size() / PART_RECIPE_VIEWER_COLUMNS - PART_RECIPE_VIEWER_ROWS + 1, 0);
+			int numRows = Maths.Max(FilteredPartsList.size() / PART_RECIPE_VIEWER_COLUMNS - PART_RECIPE_VIEWER_ROWS + 1, 0);
 			partSelectorScrollOffset -= scroll;
 			partSelectorScrollOffset = Maths.Clamp(partSelectorScrollOffset, 0, numRows);
 			UpdateActivePartSelectionButtons();
@@ -1008,6 +1099,43 @@ public class WorkbenchScreen extends AbstractContainerScreen<WorkbenchMenu>
 		}
 
 		return false;
+	}
+
+	private void UpdatePartCraftingFilters()
+	{
+		FilteredPartsList.clear();
+		List<PartFabricationRecipe> allRecipes = Workbench.BlockEntity.GetAllRecipes();
+
+		for(int i = 0; i < allRecipes.size(); i++)
+		{
+			// Apply filters
+			if(TierFilters.size() > 0)
+			{
+				if(allRecipes.get(i).getResultItem().getItem() instanceof PartItem partItem)
+				{
+					if(!TierFilters.contains(partItem.Def().materialTier))
+						continue;
+				}
+			}
+
+			//if(MaterialFilters.size() > 0)
+			//	if(!MaterialFilters.contains(PartDefinition.GetPartMaterial(stack)))
+			//		continue;
+
+			if(OnlyCraftableFilter)
+			{
+				int numCraftable = Workbench.BlockEntity.GetMaxPartsCraftableFromInput(i);
+				if(numCraftable <= 0)
+					continue;
+			}
+
+			FilteredPartsList.add(Pair.of(i, allRecipes.get(i)));
+		}
+
+		int maxScroll = Maths.Max(FilteredPartsList.size() / PART_RECIPE_VIEWER_COLUMNS - 2, 0);
+		if(partSelectorScrollOffset > maxScroll)
+			partSelectorScrollOffset = maxScroll;
+		UpdateActivePartSelectionButtons();
 	}
 
 	private void UpdateActivePartSelectionButtons()
@@ -1020,30 +1148,39 @@ public class WorkbenchScreen extends AbstractContainerScreen<WorkbenchMenu>
 				{
 					final int firstIndex = Maths.Floor(partSelectorScrollOffset) * PART_RECIPE_VIEWER_COLUMNS;
 					final int relativeIndex = i + PART_RECIPE_VIEWER_COLUMNS * j;
-					PartSelectionButtons[relativeIndex].active = SelectedTab == Tab.PART_CRAFTING && (firstIndex + relativeIndex < Workbench.FilteredPartsList.size());
+					PartSelectionButtons[relativeIndex].active = SelectedTab == Tab.PART_CRAFTING && (firstIndex + relativeIndex < FilteredPartsList.size());
 				}
 			}
 		}
 		if(PartCraftingButtons != null)
 		{
 			for(int i = 0; i < 3; i++)
-				PartCraftingButtons[i].active = SelectedTab == Tab.PART_CRAFTING && SelectedPartIndex != -1;
-			PartCraftingButtons[3].active = SelectedTab == Tab.PART_CRAFTING;
+			{
+				int numButtonRepresents = i == 1 ? 5 : 1;
+				int numCanCraft = Workbench.BlockEntity.GetMaxPartsCraftableFromInput(SelectedPartIndex);
+				PartCraftingButtons[i].active = SelectedTab == Tab.PART_CRAFTING && SelectedPartIndex != -1 && numCanCraft >= numButtonRepresents;
+			}
+		}
+		if(PartQueueCancelButtons != null)
+		{
+			for(int i = 0; i < QUEUE_VIEWER_NUM_ENTRIES_Y; i++)
+			{
+				int queueSize = Workbench.WorkbenchData.get(WorkbenchBlockEntity.DATA_CRAFT_QUEUE_COUNT_0 + i);
+				PartQueueCancelButtons[i].active = SelectedTab == Tab.PART_CRAFTING && queueSize > 0;
+			}
 		}
 	}
 
 	private void SelectPartRecipe(int relativeIndex)
 	{
-		SelectedPartIndex = Maths.Floor(partSelectorScrollOffset) + relativeIndex;
-		if(SelectedPartIndex >= Workbench.FilteredPartsList.size())
-			SelectedPartIndex = -1;
-		UpdateActivePartSelectionButtons();
+		int filteredIndex = Maths.Floor(partSelectorScrollOffset) * PART_RECIPE_VIEWER_COLUMNS + relativeIndex;
+		if(filteredIndex >= FilteredPartsList.size())
+			filteredIndex = -1;
 
+		SelectedPartIndex = FilteredPartsList.get(filteredIndex).getFirst();
 		NetworkedButtonPress(WorkbenchMenu.BUTTON_SELECT_PART_RECIPE_0 + SelectedPartIndex);
-
-
-		CachedMaxPartsCraftable = Workbench.BlockEntity.GetMaxPartsCraftableFromInput();
-
+		CachedMaxPartsCraftable = Workbench.BlockEntity.GetMaxPartsCraftableFromInput(SelectedPartIndex);
+		UpdateActivePartSelectionButtons();
 	}
 
 	private void CraftSelectedPart(int count)
@@ -1054,9 +1191,9 @@ public class WorkbenchScreen extends AbstractContainerScreen<WorkbenchMenu>
 			NetworkedButtonPress(WorkbenchMenu.BUTTON_CRAFT_1 + (count - 1));
 	}
 
-	private void CancelPartCrafting()
+	private void CancelPartCrafting(int queueIndex)
 	{
-		NetworkedButtonPress(WorkbenchMenu.BUTTON_CRAFT_CANCEL);
+		NetworkedButtonPress(WorkbenchMenu.BUTTON_QUEUE_CANCEL_0 + queueIndex);
 	}
 
 	private void UpdatePartCrafting(boolean enabled)
@@ -1066,87 +1203,409 @@ public class WorkbenchScreen extends AbstractContainerScreen<WorkbenchMenu>
 
 	private boolean RenderPartCraftingTooltip(PoseStack pose, int xMouse, int yMouse)
 	{
+		int xOrigin = (width - imageWidth) / 2;
+		int yOrigin = (height - imageHeight) / 2;
+
+		int craftingSelection = SelectedPartIndex;
+		if(craftingSelection != -1)
+		{
+			List<PartFabricationRecipe> recipes = Workbench.BlockEntity.GetAllRecipes();
+			PartFabricationRecipe recipe = recipes.get(craftingSelection);
+			if (recipe != null)
+			{
+				// Render info for this recipe
+				int[] matching = Workbench.BlockEntity.GetQuantityOfEachIngredientForRecipe(craftingSelection);
+				int[] required = Workbench.BlockEntity.GetRequiredOfEachIngredientForRecipe(craftingSelection);
+
+				for (int i = 0; i < recipe.getIngredients().size(); i++)
+				{
+					if (InBox(xMouse, yMouse,
+						xOrigin + BLUEPRINT_ORIGIN_X + 6 + 25 * i, 25,
+						yOrigin + BLUEPRINT_ORIGIN_Y + 18, 23))
+					{
+						int maxProduce = matching[i] / required[i];
+						List<FormattedCharSequence> lines = new ArrayList<>();
+						Ingredient ingredient = recipe.getIngredients().get(i);
+						if (ingredient instanceof TieredMaterialIngredient tiered)
+						{
+							String materialName = "material." + tiered.MaterialType().Location.getNamespace() + "." + tiered.MaterialType().Location.getPath();
+							lines.add(Component.translatable("crafting.match_single", Component.translatable(materialName)).getVisualOrderText());
+
+							String matchingString = tiered.MaterialType().GenerateString(matching[i]);
+							String requiredString = tiered.MaterialType().GenerateString(required[i]);
+
+							String resetColorCode = "\u00A7f";
+							String colorCode = matching[i] < required[i] ? "\u00A74" : resetColorCode;
+
+							lines.add(Component.literal(colorCode + matchingString + resetColorCode + " / " + requiredString  + " (Max: " + maxProduce + ")").getVisualOrderText());
+
+							//lines.add(Component.literal("%s", )
+
+						}
+						else
+						{
+							if(ingredient.getItems().length == 1)
+								lines.add(ingredient.getItems()[0].getHoverName().getVisualOrderText());
+							else
+							{
+								lines.add(Component.translatable("crafting.one_of").getVisualOrderText());
+								for (ItemStack possible : ingredient.getItems())
+								{
+									lines.add(possible.getHoverName().getVisualOrderText());
+								}
+							}
+
+							lines.add(Component.literal(matching[i] + "/" + required[i] + " (Max: " + maxProduce + ")").getVisualOrderText());
+						}
+
+						renderTooltip(pose, lines, xMouse, yMouse);
+					}
+				}
+
+				if (InBox(xMouse, yMouse,
+					xOrigin + BLUEPRINT_ORIGIN_X + 105, 17,
+					yOrigin + BLUEPRINT_ORIGIN_Y + 25, 17))
+				{
+					renderTooltip(pose, Component.translatable("workbench.craft.1"), xMouse, yMouse);
+				}
+				if (InBox(xMouse, yMouse,
+					xOrigin + BLUEPRINT_ORIGIN_X + 105 + 18, 17,
+					yOrigin + BLUEPRINT_ORIGIN_Y + 25, 17))
+				{
+					renderTooltip(pose, Component.translatable("workbench.craft.n", CRAFT_BULK_AMOUNT), xMouse, yMouse);
+				}
+				if (InBox(xMouse, yMouse,
+					xOrigin + BLUEPRINT_ORIGIN_X + 105 + 36, 17,
+					yOrigin + BLUEPRINT_ORIGIN_Y + 25, 17))
+				{
+					int maxCanCraft = Workbench.BlockEntity.GetMaxPartsCraftableFromInput(SelectedPartIndex);
+					renderTooltip(pose, Component.translatable("workbench.craft.all", maxCanCraft), xMouse, yMouse);
+				}
+			}
+		}
+
+		// Render the crafting queue
+		for(int i = 0; i < QUEUE_VIEWER_NUM_ENTRIES_Y; i++)
+		{
+			int queueSelection = Workbench.WorkbenchData.get(WorkbenchBlockEntity.DATA_CRAFT_SELECTION_0 + i);
+			if (queueSelection != -1)
+			{
+				List<PartFabricationRecipe> recipes = Workbench.BlockEntity.GetAllRecipes();
+				PartFabricationRecipe recipe = recipes.get(queueSelection);
+				if (recipe != null)
+				{
+					if (InBox(xMouse, yMouse,
+						xOrigin + QUEUE_VIEWER_ORIGIN_X, 67,
+						yOrigin + QUEUE_VIEWER_ORIGIN_Y + 18 * i, 18))
+					{
+						int craftingCount = Workbench.WorkbenchData.get(WorkbenchBlockEntity.DATA_CRAFT_QUEUE_COUNT_0 + i);
+						if (craftingCount > 0)
+						{
+							int craftingTime = Workbench.WorkbenchData.get(WorkbenchBlockEntity.DATA_CRAFT_TIME);
+							int craftingDuration = Workbench.WorkbenchData.get(WorkbenchBlockEntity.DATA_CRAFT_DURATION);
+
+							renderTooltip(pose, Component.translatable("crafting.parts.num_in_progress.named", craftingCount, recipe.getResultItem().getHoverName()), xMouse, yMouse);
+						}
+					}
+				}
+			}
+		}
+
+		// Recipe viewer tooltips
+		for(int i = 0; i < PART_RECIPE_VIEWER_COLUMNS; i++)
+		{
+			for(int j = 0; j < PART_RECIPE_VIEWER_ROWS; j++)
+			{
+				if(InBox(xMouse, yMouse, xOrigin + PART_RECIPE_VIEWER_ORIGIN_X + i * 18, 18, yOrigin + PART_RECIPE_VIEWER_ORIGIN_Y + 18 * j, 18))
+				{
+					int index = (Maths.Floor(partSelectorScrollOffset) + j) * PART_RECIPE_VIEWER_COLUMNS + i;
+					if(index < FilteredPartsList.size())
+						renderTooltip(pose, FilteredPartsList.get(index).getSecond().getResultItem().getHoverName(), xMouse, yMouse);
+				}
+			}
+		}
+
+		// Filter tooltips
+		if(InBox(xMouse, yMouse, xOrigin + BLUEPRINT_ORIGIN_X + 2, 6, yOrigin + BLUEPRINT_ORIGIN_Y - 9, 6))
+			renderTooltip(pose, Component.translatable("crafting.parts.filter.only_craftable"), xMouse, yMouse);
+		if(InBox(xMouse, yMouse, xOrigin + BLUEPRINT_ORIGIN_X + 62, 6, yOrigin + BLUEPRINT_ORIGIN_Y - 9, 6))
+			renderTooltip(pose, Component.translatable("crafting.parts.filter.match_tier", 1), xMouse, yMouse);
+		if(InBox(xMouse, yMouse, xOrigin + BLUEPRINT_ORIGIN_X + 82, 6, yOrigin + BLUEPRINT_ORIGIN_Y - 9, 6))
+			renderTooltip(pose, Component.translatable("crafting.parts.filter.match_tier", 2), xMouse, yMouse);
+		if(InBox(xMouse, yMouse, xOrigin + BLUEPRINT_ORIGIN_X + 102, 6, yOrigin + BLUEPRINT_ORIGIN_Y - 9, 6))
+			renderTooltip(pose, Component.translatable("crafting.parts.filter.match_tier", 3), xMouse, yMouse);
+
 		return false;
 	}
 
-	private void RenderPartCraftingBG(PoseStack pose, int xOrigin, int yOrigin)
+	private void RenderPartCraftingBG(PoseStack pose, int xOrigin, int yOrigin, int xMouse, int yMouse)
 	{
 		// Render the background image
 		RenderSystem.setShader(GameRenderer::getPositionTexShader);
 		RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
-		RenderSystem.setShaderTexture(0, PART_CRAFTING_BG);
-		blit(pose, xOrigin, yOrigin, getBlitOffset(), 0, 0, imageWidth, imageHeight, TEXTURE_WIDTH, TEXTURE_HEIGHT);
+		RenderSystem.setShaderTexture(0, PART_CRAFTING_BG_LARGE);
+		blit(pose, xOrigin, yOrigin, getBlitOffset(), 0, 0, imageWidth, imageHeight, LARGE_TEXTURE_WIDTH, TEXTURE_HEIGHT);
 
 		// Input and Output Slot Backgrounds
-		for(int j = 0; j < PART_CRAFTING_NUM_SLOTS_Y; j++)
+		for(int j = 0; j < PART_CRAFTING_NUM_INPUT_SLOTS_Y; j++)
 		{
-			int numSlotsOnThisRow = Maths.Min(Workbench.PartCraftingInputContainer.getContainerSize() - j * PART_CRAFTING_NUM_SLOTS_X, PART_CRAFTING_NUM_SLOTS_X);
-			if(numSlotsOnThisRow > 0)
+			int numSlotsOnThisRow = Maths.Min(Workbench.PartCraftingInputContainer.getContainerSize() - j * PART_CRAFTING_NUM_INPUT_SLOTS_X, PART_CRAFTING_NUM_INPUT_SLOTS_X);
+			if (numSlotsOnThisRow > 0)
 			{
-				blit(pose, xOrigin + PART_CRAFTING_INPUT_SLOTS_X, yOrigin + PART_CRAFTING_INPUT_SLOTS_Y + 18 * j, getBlitOffset(), 5, 136, 18 * numSlotsOnThisRow, 18, TEXTURE_WIDTH, TEXTURE_HEIGHT);
+				blit(pose, xOrigin + PART_CRAFTING_INPUT_SLOTS_X, yOrigin + PART_CRAFTING_INPUT_SLOTS_Y + 18 * j, getBlitOffset(), 97, 136, 18 * numSlotsOnThisRow, 18, LARGE_TEXTURE_WIDTH, TEXTURE_HEIGHT);
 			}
-
-			int numOutputSlotsOnThisRow = Maths.Min(Workbench.PartCraftingOutputContainer.getContainerSize() - j * PART_CRAFTING_NUM_SLOTS_X, PART_CRAFTING_NUM_SLOTS_X);
+		}
+		for(int j = 0; j < PART_CRAFTING_NUM_OUTPUT_SLOTS_Y; j++)
+		{
+			int numOutputSlotsOnThisRow = Maths.Min(Workbench.PartCraftingOutputContainer.getContainerSize() - j * PART_CRAFTING_NUM_OUTPUT_SLOTS_X, PART_CRAFTING_NUM_OUTPUT_SLOTS_X);
 			if(numOutputSlotsOnThisRow > 0)
 			{
-				blit(pose, xOrigin + PART_CRAFTING_OUTPUT_SLOTS_X, yOrigin + PART_CRAFTING_OUTPUT_SLOTS_Y + 18 * j, getBlitOffset(), 5, 136, 18 * numOutputSlotsOnThisRow, 18, TEXTURE_WIDTH, TEXTURE_HEIGHT);
+				blit(pose, xOrigin + PART_CRAFTING_OUTPUT_SLOTS_X, yOrigin + PART_CRAFTING_OUTPUT_SLOTS_Y + 18 * j, getBlitOffset(), 97, 136, 18 * numOutputSlotsOnThisRow, 18, LARGE_TEXTURE_WIDTH, TEXTURE_HEIGHT);
 			}
 		}
 
-		int craftingSelection = Workbench.WorkbenchData.get(WorkbenchBlockEntity.DATA_CRAFT_SELECTION);
-		int craftingCount = Workbench.WorkbenchData.get(WorkbenchBlockEntity.DATA_CRAFT_QUEUE_COUNT);
-		int craftingTime = Workbench.WorkbenchData.get(WorkbenchBlockEntity.DATA_CRAFT_TIME);
-		int craftingDuration = Workbench.WorkbenchData.get(WorkbenchBlockEntity.DATA_CRAFT_DURATION);
+		int maxProduce = 0;
+		int craftingSelection = SelectedPartIndex;
 		if(craftingSelection != -1)
 		{
+			List<PartFabricationRecipe> recipes = Workbench.BlockEntity.GetAllRecipes();
+			PartFabricationRecipe recipe = recipes.get(craftingSelection);
+			if(recipe != null)
+			{
+				int[] matching = Workbench.BlockEntity.GetQuantityOfEachIngredientForRecipe(craftingSelection);
+				int[] required = Workbench.BlockEntity.GetRequiredOfEachIngredientForRecipe(craftingSelection);
 
+				// Render info for this recipe
+				for (int i = 0; i < recipe.getIngredients().size(); i++)
+				{
+					Ingredient ingredient = recipe.getIngredients().get(i);
+					maxProduce = matching[i] / required[i];
+
+					// Ingredient outline
+					boolean isLast = i == recipe.getIngredients().size() - 1;
+					blit(pose,
+						xOrigin + BLUEPRINT_ORIGIN_X + 6 + 25*i,
+						yOrigin + BLUEPRINT_ORIGIN_Y + 23,
+						getBlitOffset(),
+						275, 233,
+						isLast ? 18 : 25, 18, // Include the blueprint "+" if not last
+						LARGE_TEXTURE_WIDTH, TEXTURE_HEIGHT);
+					// Count marker
+					blit(pose,
+						xOrigin + BLUEPRINT_ORIGIN_X + 6 + 25*i,
+						yOrigin + BLUEPRINT_ORIGIN_Y + 18,
+						getBlitOffset(),
+						275, 228,
+						24, 4,
+						LARGE_TEXTURE_WIDTH, TEXTURE_HEIGHT);
+					blit(pose,
+						xOrigin + BLUEPRINT_ORIGIN_X + 6 + 25*i,
+						yOrigin + BLUEPRINT_ORIGIN_Y + 18,
+						getBlitOffset(),
+						275, 222,
+						1 + 3 * Maths.Clamp(maxProduce, 0, 5), 4,
+						LARGE_TEXTURE_WIDTH, TEXTURE_HEIGHT);
+					if(maxProduce > 5)
+						blit(pose,
+							xOrigin + BLUEPRINT_ORIGIN_X + 23 + 25*i,
+							yOrigin + BLUEPRINT_ORIGIN_Y + 18,
+							getBlitOffset(),
+							292, 223,
+							3, 3,
+							LARGE_TEXTURE_WIDTH, TEXTURE_HEIGHT);
+					if(maxProduce > 10)
+						blit(pose,
+							xOrigin + BLUEPRINT_ORIGIN_X + 27 + 25*i,
+							yOrigin + BLUEPRINT_ORIGIN_Y + 18,
+							getBlitOffset(),
+							292, 223,
+							3, 3,
+							LARGE_TEXTURE_WIDTH, TEXTURE_HEIGHT);
+				}
+
+
+			}
 		}
 
-		// Recipe selector scroller
 
+		// Render the crafting queue
+		for(int i = 0; i < QUEUE_VIEWER_NUM_ENTRIES_Y; i++)
+		{
+			int queueSelection = Workbench.WorkbenchData.get(WorkbenchBlockEntity.DATA_CRAFT_SELECTION_0 + i);
+			if (queueSelection != -1)
+			{
+				List<PartFabricationRecipe> recipes = Workbench.BlockEntity.GetAllRecipes();
+				PartFabricationRecipe recipe = recipes.get(queueSelection);
+				if (recipe != null)
+				{
+					int craftingCount = Workbench.WorkbenchData.get(WorkbenchBlockEntity.DATA_CRAFT_QUEUE_COUNT_0 + i);
+					if (craftingCount > 0)
+					{
+						// Blit a background into the queue panel
+						blit(pose,
+							xOrigin + QUEUE_VIEWER_ORIGIN_X,
+							yOrigin + QUEUE_VIEWER_ORIGIN_Y + 18 * i,
+							getBlitOffset(),
+							357, 1,
+							67, 18,
+							LARGE_TEXTURE_WIDTH, TEXTURE_HEIGHT);
+						// And fill in the crafting progress bar
+						if(i == 0)
+						{
+							int craftingTime = Workbench.WorkbenchData.get(WorkbenchBlockEntity.DATA_CRAFT_TIME);
+							int craftingDuration = Workbench.WorkbenchData.get(WorkbenchBlockEntity.DATA_CRAFT_DURATION);
+
+							blit(pose,
+								xOrigin + QUEUE_VIEWER_ORIGIN_X + 18,
+								yOrigin + QUEUE_VIEWER_ORIGIN_Y + 13,
+								getBlitOffset(),
+								375, 21,
+								Maths.Ceil(48f * (1.0f - ((float) craftingTime / (float) craftingDuration))), 4,
+								LARGE_TEXTURE_WIDTH, TEXTURE_HEIGHT);
+						}
+
+						// If hovering the cancel button
+						if (InBox(xMouse, yMouse, xOrigin + QUEUE_VIEWER_ORIGIN_X + 56, 9, yOrigin + QUEUE_VIEWER_ORIGIN_Y + 2, 9))
+						{
+							blit(pose,
+								xOrigin + QUEUE_VIEWER_ORIGIN_X + 56,
+								yOrigin + QUEUE_VIEWER_ORIGIN_Y + 2,
+								getBlitOffset(),
+								426, 3,
+								9, 9,
+								LARGE_TEXTURE_WIDTH, TEXTURE_HEIGHT);
+						}
+					}
+				}
+			}
+		}
+
+		// Render recipe craft button overlays
+		if(maxProduce < 1)
+			blit(pose, xOrigin + BLUEPRINT_ORIGIN_X + 105, yOrigin + BLUEPRINT_ORIGIN_Y + 25, getBlitOffset(), 357, 218, 17, 17, LARGE_TEXTURE_WIDTH, TEXTURE_HEIGHT);
+		else if(InBox(xMouse, yMouse, xOrigin + BLUEPRINT_ORIGIN_X + 105, 17, yOrigin + BLUEPRINT_ORIGIN_Y + 25, 17))
+			blit(pose, xOrigin + BLUEPRINT_ORIGIN_X + 105, yOrigin + BLUEPRINT_ORIGIN_Y + 25, getBlitOffset(), 357, 236, 17, 17, LARGE_TEXTURE_WIDTH, TEXTURE_HEIGHT);
+
+		if(maxProduce < 5)
+			blit(pose, xOrigin + BLUEPRINT_ORIGIN_X + 123, yOrigin + BLUEPRINT_ORIGIN_Y + 25, getBlitOffset(), 375, 218, 17, 17, LARGE_TEXTURE_WIDTH, TEXTURE_HEIGHT);
+		else if(InBox(xMouse, yMouse, xOrigin + BLUEPRINT_ORIGIN_X + 123, 17, yOrigin + BLUEPRINT_ORIGIN_Y + 25, 17))
+			blit(pose, xOrigin + BLUEPRINT_ORIGIN_X + 123, yOrigin + BLUEPRINT_ORIGIN_Y + 25, getBlitOffset(), 375, 236, 17, 17, LARGE_TEXTURE_WIDTH, TEXTURE_HEIGHT);
+
+		if(maxProduce < 1)
+			blit(pose, xOrigin + BLUEPRINT_ORIGIN_X + 141, yOrigin + BLUEPRINT_ORIGIN_Y + 25, getBlitOffset(), 393, 218, 17, 17, LARGE_TEXTURE_WIDTH, TEXTURE_HEIGHT);
+		else if(InBox(xMouse, yMouse, xOrigin + BLUEPRINT_ORIGIN_X + 141, 17, yOrigin + BLUEPRINT_ORIGIN_Y + 25, 17))
+			blit(pose, xOrigin + BLUEPRINT_ORIGIN_X + 141, yOrigin + BLUEPRINT_ORIGIN_Y + 25, getBlitOffset(), 393, 236, 17, 17, LARGE_TEXTURE_WIDTH, TEXTURE_HEIGHT);
+
+
+		// Render filter buttons
+		if(OnlyCraftableFilter)
+			blit(pose, xOrigin + BLUEPRINT_ORIGIN_X + 2, yOrigin + BLUEPRINT_ORIGIN_Y - 9, getBlitOffset(), 359, 29, 6, 6, LARGE_TEXTURE_WIDTH, TEXTURE_HEIGHT);
+		if(InBox(xMouse, yMouse, xOrigin + BLUEPRINT_ORIGIN_X + 2, 6, yOrigin + BLUEPRINT_ORIGIN_Y - 9, 6))
+			blit(pose, xOrigin + BLUEPRINT_ORIGIN_X + 2, yOrigin + BLUEPRINT_ORIGIN_Y - 9, getBlitOffset(), 359, 36, 6, 6, LARGE_TEXTURE_WIDTH, TEXTURE_HEIGHT);
+
+		if(TierFilters.contains(1))
+			blit(pose, xOrigin + BLUEPRINT_ORIGIN_X + 62, yOrigin + BLUEPRINT_ORIGIN_Y - 9, getBlitOffset(), 359, 29, 6, 6, LARGE_TEXTURE_WIDTH, TEXTURE_HEIGHT);
+		if(InBox(xMouse, yMouse, xOrigin + BLUEPRINT_ORIGIN_X + 62, 6, yOrigin + BLUEPRINT_ORIGIN_Y - 9, 6))
+			blit(pose, xOrigin + BLUEPRINT_ORIGIN_X + 62, yOrigin + BLUEPRINT_ORIGIN_Y - 9, getBlitOffset(), 359, 36, 6, 6, LARGE_TEXTURE_WIDTH, TEXTURE_HEIGHT);
+		if(TierFilters.contains(2))
+			blit(pose, xOrigin + BLUEPRINT_ORIGIN_X + 82, yOrigin + BLUEPRINT_ORIGIN_Y - 9, getBlitOffset(), 359, 29, 6, 6, LARGE_TEXTURE_WIDTH, TEXTURE_HEIGHT);
+		if(InBox(xMouse, yMouse, xOrigin + BLUEPRINT_ORIGIN_X + 82, 6, yOrigin + BLUEPRINT_ORIGIN_Y - 9, 6))
+			blit(pose, xOrigin + BLUEPRINT_ORIGIN_X + 82, yOrigin + BLUEPRINT_ORIGIN_Y - 9, getBlitOffset(), 359, 36, 6, 6, LARGE_TEXTURE_WIDTH, TEXTURE_HEIGHT);
+		if(TierFilters.contains(3))
+			blit(pose, xOrigin + BLUEPRINT_ORIGIN_X + 102, yOrigin + BLUEPRINT_ORIGIN_Y - 9, getBlitOffset(), 359, 29, 6, 6, LARGE_TEXTURE_WIDTH, TEXTURE_HEIGHT);
+		if(InBox(xMouse, yMouse, xOrigin + BLUEPRINT_ORIGIN_X + 102, 6, yOrigin + BLUEPRINT_ORIGIN_Y - 9, 6))
+			blit(pose, xOrigin + BLUEPRINT_ORIGIN_X + 102, yOrigin + BLUEPRINT_ORIGIN_Y - 9, getBlitOffset(), 359, 36, 6, 6, LARGE_TEXTURE_WIDTH, TEXTURE_HEIGHT);
+
+
+
+		// Recipe selector scroller
 		for(int j = 0; j < PART_RECIPE_VIEWER_ROWS; j++)
 		{
 			int rowIndex = Maths.Floor(partSelectorScrollOffset) + j;
-			int numSlotsOnThisRow = Maths.Min(Workbench.FilteredPartsList.size() - j * PART_RECIPE_VIEWER_COLUMNS, PART_RECIPE_VIEWER_COLUMNS);
+			int numSlotsOnThisRow = Maths.Min(FilteredPartsList.size() - j * PART_RECIPE_VIEWER_COLUMNS, PART_RECIPE_VIEWER_COLUMNS);
 			if(numSlotsOnThisRow > 0)
 			{
-				blit(pose, xOrigin + PART_RECIPE_VIEWER_ORIGIN_X, yOrigin + PART_RECIPE_VIEWER_ORIGIN_Y + 18 * j, getBlitOffset(), 0, 219, 18 * numSlotsOnThisRow, 18, TEXTURE_WIDTH, TEXTURE_HEIGHT);
+				blit(pose, xOrigin + PART_RECIPE_VIEWER_ORIGIN_X, yOrigin + PART_RECIPE_VIEWER_ORIGIN_Y + 18 * j, getBlitOffset(), 97, 217, 18 * numSlotsOnThisRow, 18, LARGE_TEXTURE_WIDTH, TEXTURE_HEIGHT);
+
+				for(int i = 0; i < numSlotsOnThisRow; i++)
+				{
+					Pair<Integer, PartFabricationRecipe> recipe = FilteredPartsList.get(j * PART_RECIPE_VIEWER_COLUMNS + i);
+					int maxCraftable = Workbench.BlockEntity.GetMaxPartsCraftableFromInput(recipe.getFirst());
+					if(maxCraftable <= 0)
+						blit(pose, xOrigin + PART_RECIPE_VIEWER_ORIGIN_X + 18 * i, yOrigin + PART_RECIPE_VIEWER_ORIGIN_Y + 18 * j, getBlitOffset(), 359, 43, 18, 18, LARGE_TEXTURE_WIDTH, TEXTURE_HEIGHT);
+				}
+
+
 			}
 		}
 
-		int numRows = Workbench.FilteredPartsList.size() / PART_RECIPE_VIEWER_COLUMNS - PART_RECIPE_VIEWER_ROWS + 1;
+		int numRows = FilteredPartsList.size() / PART_RECIPE_VIEWER_COLUMNS - PART_RECIPE_VIEWER_ROWS + 1;
 		RenderScrollbar(pose, xOrigin + PART_RECIPE_VIEWER_ORIGIN_X + PART_RECIPE_VIEWER_COLUMNS * 18, yOrigin + PART_RECIPE_VIEWER_ORIGIN_Y, 6, 18 * PART_RECIPE_VIEWER_ROWS, partSelectorScrollOffset, 0, numRows);
 	}
 
 	private void RenderPartCraftingFG(PoseStack pose, int xMouse, int yMouse)
 	{
-		for(int i = 0; i < PART_RECIPE_VIEWER_COLUMNS; i++)
+		font.draw(pose, Component.translatable("workbench.input"), PART_CRAFTING_INPUT_SLOTS_X, PART_CRAFTING_INPUT_SLOTS_Y - 11, 0x404040);
+		font.draw(pose, Component.translatable("workbench.queue"), PART_CRAFTING_OUTPUT_SLOTS_X, 5, 0x404040);
+		font.draw(pose, Component.translatable("workbench.output"), PART_CRAFTING_OUTPUT_SLOTS_X, PART_CRAFTING_OUTPUT_SLOTS_Y - 11, 0x404040);
+
+		// Render info about the selected part
+		if(SelectedPartIndex >= 0 && SelectedPartIndex < Workbench.BlockEntity.GetAllRecipes().size())
 		{
-			for (int j = 0; j < PART_RECIPE_VIEWER_ROWS; j++)
+			ItemStack selectedPart = Workbench.BlockEntity.GetAllRecipes().get(SelectedPartIndex).getResultItem();
+			List<FormattedCharSequence> wordWrap = font.split(selectedPart.getHoverName(), 151);
+			font.draw(pose, wordWrap.get(0), 104, 70, 0xffffff);
+		}
+
+		int craftingSelection = SelectedPartIndex;
+		//int craftingSelection = Workbench.WorkbenchData.get(WorkbenchBlockEntity.DATA_CRAFT_SELECTION);
+		if(craftingSelection != -1)
+		{
+			List<PartFabricationRecipe> recipes = Workbench.BlockEntity.GetAllRecipes();
+			PartFabricationRecipe recipe = recipes.get(craftingSelection);
+			if (recipe != null)
 			{
-				int rowIndex = Maths.Floor(partSelectorScrollOffset) + j;
-				int numSlotsOnThisRow = Maths.Min(Workbench.FilteredPartsList.size() - j * PART_RECIPE_VIEWER_COLUMNS, PART_RECIPE_VIEWER_COLUMNS);
+				// Render info for this recipe
+				for (int i = 0; i < recipe.getIngredients().size(); i++)
+				{
+					Ingredient ingredient = recipe.getIngredients().get(i);
+					ItemStack[] possibleInputs = ingredient.getItems();
+					if (possibleInputs.length > 0)
+					{
+						int pick = Maths.Modulo(Maths.Floor(ShowPotentialMatchTicker), possibleInputs.length);
+						ItemStack possibleInput = ingredient.getItems()[pick];
+						itemRenderer.renderGuiItem(possibleInput,
+							BLUEPRINT_ORIGIN_X + 7 + 25 * i, BLUEPRINT_ORIGIN_Y + 24);
+						//itemRenderer.renderGuiItemDecorations(font, possibleInput,
+						//	BLUEPRINT_ORIGIN_X + 7 + 25 * i, PART_RECIPE_VIEWER_ORIGIN_Y + 24, null);
+					}
+				}
 
 			}
 		}
 
-		// Render info about the selected part
-		if(SelectedPartIndex >= 0 && SelectedPartIndex < Workbench.FilteredPartsList.size())
-		{
-			ItemStack selectedPart = Workbench.FilteredPartsList.get(SelectedPartIndex);
-			List<FormattedCharSequence> wordWrap = font.split(selectedPart.getHoverName(), 60);
-			font.draw(pose, wordWrap.get(0), 46, 56, 0x404040);
-		}
 
-		int craftingSelection = Workbench.WorkbenchData.get(WorkbenchBlockEntity.DATA_CRAFT_SELECTION);
-		int craftingCount = Workbench.WorkbenchData.get(WorkbenchBlockEntity.DATA_CRAFT_QUEUE_COUNT);
-		int craftingTime = Workbench.WorkbenchData.get(WorkbenchBlockEntity.DATA_CRAFT_TIME);
-		int craftingDuration = Workbench.WorkbenchData.get(WorkbenchBlockEntity.DATA_CRAFT_DURATION);
-		if(craftingSelection != -1)
+		// Render the crafing queue
+		for(int i = 0; i < QUEUE_VIEWER_NUM_ENTRIES_Y; i++)
 		{
-			font.draw(pose, Component.translatable("crafting.parts.num_in_progress", CachedMaxPartsCraftable), 97, 99, 0x404040);
+			int queueSelection = Workbench.WorkbenchData.get(WorkbenchBlockEntity.DATA_CRAFT_SELECTION_0 + i);
+			if (queueSelection != -1)
+			{
+				List<PartFabricationRecipe> recipes = Workbench.BlockEntity.GetAllRecipes();
+				PartFabricationRecipe recipe = recipes.get(queueSelection);
+				if (recipe != null)
+				{
+					// Render icons into queue
+					int craftingCount = Workbench.WorkbenchData.get(WorkbenchBlockEntity.DATA_CRAFT_QUEUE_COUNT_0 + i);
+					if (craftingCount > 0)
+					{
+						ItemStack queueStack = recipe.getResultItem().copyWithCount(recipe.getResultItem().getCount() * craftingCount);
+						itemRenderer.renderGuiItem(queueStack, QUEUE_VIEWER_ORIGIN_X + 1, QUEUE_VIEWER_ORIGIN_Y + 1 + 18 * i);
+						itemRenderer.renderGuiItemDecorations(font, queueStack, QUEUE_VIEWER_ORIGIN_X + 1, QUEUE_VIEWER_ORIGIN_Y + 1 + 18 * i);
+					}
+				}
+			}
 		}
-
 
 		// Render part icons into the selector scrollbar
 		int firstRow = Maths.Floor(partSelectorScrollOffset);
@@ -1157,9 +1616,9 @@ public class WorkbenchScreen extends AbstractContainerScreen<WorkbenchMenu>
 			{
 				int index = firstIndexInRow + col;
 
-				if(index < Workbench.FilteredPartsList.size())
+				if(0 <= index && index < FilteredPartsList.size())
 				{
-					ItemStack entry = Workbench.FilteredPartsList.get(index);
+					ItemStack entry = FilteredPartsList.get(index).getSecond().getResultItem();
 					itemRenderer.renderGuiItem(entry, PART_RECIPE_VIEWER_ORIGIN_X + 1 + 18 * col, PART_RECIPE_VIEWER_ORIGIN_Y + 1 + 18 * row);
 					itemRenderer.renderGuiItemDecorations(font, entry, PART_RECIPE_VIEWER_ORIGIN_X + 2 + 20 * col, PART_RECIPE_VIEWER_ORIGIN_Y + 2 + 20 * row, null);
 				}
@@ -1244,7 +1703,6 @@ public class WorkbenchScreen extends AbstractContainerScreen<WorkbenchMenu>
 	private static final int GUN_RECIPE_VIEWER_ROWS = 2;
 	private Button[] GoToPartCraftingButtons;
 	private Button[] AutoFillCraftingButtons;
-	private float ShowPotentialMatchTicker = 0.0f;
 	private static final ResourceLocation GUN_FABRICATION_BG = new ResourceLocation(FlansMod.MODID, "textures/gui/gun_fabrication.png");
 	private static class GunCraftingSlotInfo
 	{
@@ -1386,7 +1844,6 @@ public class WorkbenchScreen extends AbstractContainerScreen<WorkbenchMenu>
 
 	private void UpdateGunCrafting(boolean enabled)
 	{
-		ShowPotentialMatchTicker += 1.0f / 20.0f;
 		UpdateActiveGunSelectionButtons();
 		UpdateActiveRecipeButtons();
 	}

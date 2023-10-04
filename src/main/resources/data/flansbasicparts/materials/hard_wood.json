@@ -1,0 +1,28 @@
+{
+    "sources": [
+        {
+            "matchItems": [],
+            "matchTags": [
+                "minecraft:jungle_planks",
+                "minecraft:dark_oak_planks",
+                "minecraft:mangrove_planks",
+                "minecraft:cherry_planks"
+            ],
+            "count": 1,
+            "icon": "planks"
+        },
+        {
+            "matchItems": [],
+            "matchTags": [
+                "minecraft:jungle_logs",
+                "minecraft:dark_oak_logs",
+                "minecraft:mangrove_logs",
+                "minecraft:cherry_logs"
+            ],
+            "count": 4,
+            "icon": "block"
+        }
+    ],
+    "craftingTier": 2,
+    "materialType": "Wood"
+}

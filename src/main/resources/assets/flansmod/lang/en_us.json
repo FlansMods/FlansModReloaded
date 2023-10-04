@@ -109,7 +109,13 @@
   "workbench.tab_armour_crafting": "Armor Fabrication",
   "workbench.tab_part_crafting": "Part Fabrication",
   "workbench.tab_modification": "Gun Modification",
-  
+  "workbench.input": "Input",
+  "workbench.output": "Output",
+  "workbench.queue": "Queue",
+  "workbench.craft.1": "Craft 1",
+  "workbench.craft.n": "Craft %d",
+  "workbench.craft.all": "Craft All (%d)",
+	
   "material.metal": "Metal",
   "material.composite": "Composite",
   "material.glass": "Glass",
@@ -119,6 +125,8 @@
   "material.misc": "Other Material",
   "material.unknown": "Unknown Material",
   
+  "crafting.parts.filter.only_craftable": "Only Craftable",
+  "crafting.parts.filter.match_tier": "Tier %d",
   "crafting.select_a_recipe": "<- Select a recipe",
   "crafting.with_tag": "Tagged as %s",
   "crafting.match_tiers_between": "Is between Tier %d and %d",
@@ -131,6 +139,7 @@
   "crafting.match_multiple.4": "Is one of %s, %s, %s or %s",
   "crafting.match_multiple.5": "Is one of %s, %s, %s, %s or %s",
   "crafting.match_multiple.6": "Is one of %s, %s, %s, %s, %s or %s",
+  "crafting.one_of": "Is one of...",
   "crafting.exact_stack": "%dx %s",
   "crafting.match_stack": "%dx An item matching the following:",
   "crafting.disallowed_tag": "Does not have tag '%s'",
@@ -138,6 +147,7 @@
   "crafting.auto_fill_ingredients": "Insert best match",  
   "crafting.switch_to_part_crafting": "Craft this part",
   "crafting.auto_add_best_parts": "Auto-Add best parts",
-  "crafting.parts.num_in_progress": "Crafting %d"
+  "crafting.parts.num_in_progress": "Crafting %d",
+  "crafting.parts.num_in_progress.named": "Crafting %d %s"
   
 }

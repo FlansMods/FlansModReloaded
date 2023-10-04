@@ -48,6 +48,55 @@
 			"ascent": 9,
 			"height": 9,
 			"chars": ["\uE786"]
+        },
+		{
+            "type": "bitmap",
+            "file": "flansmod:font/nugget.png",
+			"ascent": 7,
+			"height": 8,
+			"chars": ["\uE790"]
+        },
+		{
+            "type": "bitmap",
+            "file": "flansmod:font/ingot.png",
+			"ascent": 7,
+			"height": 8,
+			"chars": ["\uE791"]
+        },
+		{
+            "type": "bitmap",
+            "file": "flansmod:font/small_sheet.png",
+			"ascent": 7,
+			"height": 8,
+			"chars": ["\uE792"]
+        },
+		{
+            "type": "bitmap",
+            "file": "flansmod:font/sheet.png",
+			"ascent": 7,
+			"height": 8,
+			"chars": ["\uE793"]
+        },
+		{
+            "type": "bitmap",
+            "file": "flansmod:font/block.png",
+			"ascent": 7,
+			"height": 8,
+			"chars": ["\uE794"]
+        },
+		{
+            "type": "bitmap",
+            "file": "flansmod:font/planks.png",
+			"ascent": 7,
+			"height": 8,
+			"chars": ["\uE795"]
+        },
+		{
+            "type": "bitmap",
+            "file": "flansmod:font/thread.png",
+			"ascent": 7,
+			"height": 8,
+			"chars": ["\uE796"]
         }
     ]
 }

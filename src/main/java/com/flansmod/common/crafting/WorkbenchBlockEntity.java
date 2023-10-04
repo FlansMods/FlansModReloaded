@@ -8,6 +8,7 @@ import com.flansmod.common.types.crafting.WorkbenchDefinition;
 import com.flansmod.common.types.crafting.elements.IngredientDefinition;
 import com.flansmod.common.types.crafting.elements.RecipePartDefinition;
 import com.flansmod.common.types.crafting.elements.TieredIngredientDefinition;
+import com.flansmod.common.types.elements.MaterialSourceDefinition;
 import com.flansmod.common.types.elements.PaintableDefinition;
 import com.flansmod.common.types.elements.PaintjobDefinition;
 import com.flansmod.common.types.magazines.MagazineDefinition;
@@ -20,6 +21,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.Clearable;
 import net.minecraft.world.Container;
 import net.minecraft.world.MenuProvider;
+import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
@@ -60,17 +62,24 @@ public class WorkbenchBlockEntity extends BlockEntity implements Container, Menu
 	public final RestrictedContainer FuelContainer;
 	private EnergyStorage EnergyStorage;
 	private static final double INTERACT_RANGE = 5.0d;
+	public static final int NUM_CRAFTING_QUEUE_SLOTS = 4;
 
 	public static final int DATA_LIT_TIME = 0;
 	public static final int DATA_LIT_DURATION = 1;
 	public static final int DATA_FORGE_ENERGY = 2;
 
-	public static final int DATA_CRAFT_QUEUE_COUNT = 3;
-	public static final int DATA_CRAFT_TIME = 4;
-	public static final int DATA_CRAFT_DURATION = 5;
-	public static final int DATA_CRAFT_SELECTION = 6;
 
-	public static final int NUM_DATA_MEMBERS = 7;
+
+	public static final int DATA_CRAFT_TIME = 3;
+	public static final int DATA_CRAFT_DURATION = 4;
+
+	public static final int DATA_CRAFT_QUEUE_COUNT_0 = 5;
+	public static final int DATA_CRAFT_QUEUE_COUNT_MAX = DATA_CRAFT_QUEUE_COUNT_0 + NUM_CRAFTING_QUEUE_SLOTS;
+
+	public static final int DATA_CRAFT_SELECTION_0 = DATA_CRAFT_QUEUE_COUNT_MAX + 1;
+	public static final int DATA_CRAFT_SELECTION_MAX = DATA_CRAFT_SELECTION_0 + NUM_CRAFTING_QUEUE_SLOTS;
+
+	public static final int NUM_DATA_MEMBERS = DATA_CRAFT_SELECTION_MAX + 1;
 
 	public static final int CRAFTING_NO_PART = -1;
 
@@ -79,8 +88,10 @@ public class WorkbenchBlockEntity extends BlockEntity implements Container, Menu
 
 	public int CraftTime = 0;
 	public int CraftDuration = 0;
-	public int CraftQueueCount = 0;
-	public int CraftingPart = CRAFTING_NO_PART;
+
+	public int PlayerSelectedCraftingPart = CRAFTING_NO_PART;
+	public int[] CraftQueueCount = new int[NUM_CRAFTING_QUEUE_SLOTS];
+	public int[] CraftingPart = new int[] { CRAFTING_NO_PART, CRAFTING_NO_PART, CRAFTING_NO_PART, CRAFTING_NO_PART }; // new int[NUM_CRAFTING_QUEUE_SLOTS];
 
 	protected final ContainerData DataAccess = new ContainerData()
 	{
@@ -92,12 +103,23 @@ public class WorkbenchBlockEntity extends BlockEntity implements Container, Menu
 				case DATA_LIT_TIME -> { return LitTime; }
 				case DATA_LIT_DURATION -> { return LitDuration; }
 				case DATA_FORGE_ENERGY -> { return EnergyStorage == null ? 0 : EnergyStorage.getEnergyStored(); }
-				case DATA_CRAFT_QUEUE_COUNT -> { return CraftQueueCount; }
 				case DATA_CRAFT_TIME -> { return CraftTime; }
 				case DATA_CRAFT_DURATION -> { return CraftDuration; }
-				case DATA_CRAFT_SELECTION -> { return CraftingPart; }
-				default -> { return 0; }
+				default ->
+				{
+					if(DATA_CRAFT_SELECTION_0 <= id && id < DATA_CRAFT_SELECTION_MAX)
+					{
+						return CraftingPart[id - DATA_CRAFT_SELECTION_0];
+					}
+					if(DATA_CRAFT_QUEUE_COUNT_0 <= id && id < DATA_CRAFT_QUEUE_COUNT_MAX)
+					{
+						return CraftQueueCount[id - DATA_CRAFT_QUEUE_COUNT_0];
+					}
+					return 0;
+				}
 			}
+
+
 		}
 
 		@Override
@@ -108,10 +130,19 @@ public class WorkbenchBlockEntity extends BlockEntity implements Container, Menu
 				case DATA_LIT_TIME -> LitTime = value;
 				case DATA_LIT_DURATION -> LitDuration = value;
 				case DATA_FORGE_ENERGY -> { if(EnergyStorage != null) EnergyStorage.receiveEnergy(value - EnergyStorage.getEnergyStored(), false); }
-				case DATA_CRAFT_QUEUE_COUNT -> CraftQueueCount = value;
 				case DATA_CRAFT_TIME -> CraftTime = value;
 				case DATA_CRAFT_DURATION -> CraftDuration = value;
-				case DATA_CRAFT_SELECTION -> CraftingPart = value;
+				default ->
+				{
+					if(DATA_CRAFT_SELECTION_0 <= id && id < DATA_CRAFT_SELECTION_MAX)
+					{
+						CraftingPart[id - DATA_CRAFT_SELECTION_0] = value;
+					}
+					if(DATA_CRAFT_QUEUE_COUNT_0 <= id && id < DATA_CRAFT_QUEUE_COUNT_MAX)
+					{
+						CraftQueueCount[id - DATA_CRAFT_QUEUE_COUNT_0] = value;
+					}
+				}
 			}
 		}
 
@@ -409,10 +440,14 @@ public class WorkbenchBlockEntity extends BlockEntity implements Container, Menu
 
 		tags.putInt("lit_time", LitTime);
 		tags.putInt("lit_duration", LitDuration);
-		tags.putInt("craft_queue", CraftQueueCount);
+		for(int i = 0; i < NUM_CRAFTING_QUEUE_SLOTS; i++)
+		{
+			tags.putInt("craft_queue_"+i, CraftQueueCount[i]);
+			tags.putInt("craft_selection_"+i, CraftingPart[i]);
+		}
+
 		tags.putInt("craft_duration", CraftDuration);
 		tags.putInt("craft_time", CraftTime);
-		tags.putInt("craft_selection", CraftingPart);
 	}
 
 	@Override
@@ -434,10 +469,17 @@ public class WorkbenchBlockEntity extends BlockEntity implements Container, Menu
 
 		LitTime = tags.getInt("lit_time");
 		LitDuration = tags.getInt("lit_duration");
-		CraftQueueCount = tags.getInt("craft_queue");
+
 		CraftDuration = tags.getInt("craft_duration");
 		CraftTime = tags.getInt("craft_time");
-		CraftingPart = tags.getInt("craft_selection");
+
+		for(int i = 0; i < NUM_CRAFTING_QUEUE_SLOTS; i++)
+		{
+			CraftQueueCount[i] = tags.getInt("craft_queue_"+i);
+			CraftingPart[i] = tags.getInt("craft_selection_"+i);
+			if(CraftQueueCount[i] == 0)
+				CraftingPart[i] = CRAFTING_NO_PART;
+		}
 	}
 
 	private static final Component DISPLAY_NAME = Component.translatable("workbench.title");
@@ -528,21 +570,36 @@ public class WorkbenchBlockEntity extends BlockEntity implements Container, Menu
 			}
 
 			// Then try find a new craft
-			if(workbench.CraftTime <= 0 && workbench.CraftQueueCount > 0)
+			if(workbench.CraftTime <= 0)
 			{
-				int inputCount = workbench.GetMaxPartsCraftableFromInput();
-				boolean canOutput = workbench.GetOutputSlotToCraftPart() != Inventory.NOT_FOUND_INDEX;
-				boolean canPower = true;
-				if(workbench.Def.partCrafting.FECostPerCraft > 0)
+				// If the thing in slot 0 is done, advance the stack
+				if(workbench.CraftQueueCount[0] <= 0)
 				{
-					canPower = workbench.EnergyStorage.getEnergyStored() >= workbench.Def.partCrafting.FECostPerCraft;
+					for(int i = 0; i < NUM_CRAFTING_QUEUE_SLOTS - 1; i++)
+					{
+						workbench.CraftQueueCount[i] = workbench.CraftQueueCount[i + 1];
+						workbench.CraftingPart[i] = workbench.CraftingPart[i+1];
+					}
+					workbench.CraftQueueCount[NUM_CRAFTING_QUEUE_SLOTS - 1] = 0;
+					workbench.CraftingPart[NUM_CRAFTING_QUEUE_SLOTS - 1] = CRAFTING_NO_PART;
 				}
-				if(inputCount > 0 && canOutput && canPower)
+
+				// Then, if there's something to craft in slot 0, start crafting one
+				if(workbench.CraftQueueCount[0] > 0)
 				{
-					workbench.CraftTime = Maths.Floor(workbench.Def.partCrafting.timePerCraft * 20);
-					workbench.CraftDuration = workbench.CraftTime;
-					workbench.CraftQueueCount--;
-					setChanged(level, pos, state);
+					int inputCount = workbench.GetMaxPartsCraftableFromInput(workbench.CraftingPart[0]);
+					boolean canOutput = workbench.GetOutputSlotToCraftPart() != Inventory.NOT_FOUND_INDEX;
+					boolean canPower = true;
+					if (workbench.Def.partCrafting.FECostPerCraft > 0)
+					{
+						canPower = workbench.EnergyStorage.getEnergyStored() >= workbench.Def.partCrafting.FECostPerCraft;
+					}
+					if (inputCount > 0 && canOutput && canPower)
+					{
+						workbench.CraftTime = Maths.Floor(workbench.Def.partCrafting.timePerCraft * 20);
+						workbench.CraftDuration = workbench.CraftTime;
+						setChanged(level, pos, state);
+					}
 				}
 			}
 		}
@@ -562,68 +619,93 @@ public class WorkbenchBlockEntity extends BlockEntity implements Container, Menu
 		return Def.partCrafting.GetAllRecipes(level);
 	}
 
-
 	public void SelectPartCraftingRecipe( int index)
 	{
-		// Can't change the selected recipe while one is in progress.
-		if(CraftQueueCount > 0)
-			return;
-
-		if(index < GetAllRecipes().size())
-			CraftingPart = index;
+		if(0 <= index && index < GetAllRecipes().size())
+			PlayerSelectedCraftingPart = index;
+		else
+			PlayerSelectedCraftingPart = CRAFTING_NO_PART;
 	}
 
-	public int GetMaxPartsCraftableFromInput()
+	public int GetMaxPartsCraftableFromInput(int recipeIndex)
 	{
-		if(CraftingPart == CRAFTING_NO_PART)
+		if(recipeIndex == CRAFTING_NO_PART)
 			return 0;
 
-		if(CraftingPart >= GetAllRecipes().size())
+		if(recipeIndex >= GetAllRecipes().size())
 			return 0;
 
-		PartFabricationRecipe recipe = GetAllRecipes().get(CraftingPart);
+		PartFabricationRecipe recipe = GetAllRecipes().get(recipeIndex);
 		if(recipe == null)
 			return 0;
 
-		ItemStack[] copyStacks = new ItemStack[PartCraftingInputContainer.getContainerSize()];
-		for(int i = 0; i < PartCraftingInputContainer.getContainerSize(); i++)
+		int lowestMatch = Integer.MAX_VALUE;
+		for (int i = 0; i < recipe.getIngredients().size(); i++)
 		{
-			copyStacks[i] = PartCraftingInputContainer.getItem(i).copy();
+			Ingredient ingredient = recipe.getIngredients().get(i);
+			int required = 0;
+			int matching = CountInputMatching(ingredient);
+			if (ingredient instanceof StackedIngredient stacked)
+				required = stacked.Count;
+			else
+				required = 1;
+
+			int maxProduction = matching / required;
+			if(maxProduction < lowestMatch)
+				lowestMatch = maxProduction;
 		}
 
-		int amountCanCraft = 0;
-		while(amountCanCraft < 99)
+		return Maths.Clamp(lowestMatch, 0, 999);
+	}
+
+
+	public int[] GetQuantityOfEachIngredientForRecipe(int recipeIndex)
+	{
+		if(recipeIndex == CRAFTING_NO_PART || recipeIndex >= GetAllRecipes().size())
+			return new int[0];
+
+		PartFabricationRecipe recipe = GetAllRecipes().get(recipeIndex);
+		if(recipe == null)
+			return new int[0];
+
+		int[] matching = new int[recipe.getIngredients().size()];
+		for (int i = 0; i < recipe.getIngredients().size(); i++)
 		{
-			for (Ingredient ingredient : recipe.InputIngredients)
-			{
-				for (ItemStack copyStack : copyStacks)
-				{
-					if (ingredient.test(copyStack))
-					{
-						// TODO: Non-1 amount?
-						copyStack.setCount(copyStack.getCount() - 1);
-						break;
-					}
-				}
-			}
-
-			// All ingredients were successfully consumed from our copied inventory
-			// Tally up and try another
-			amountCanCraft++;
+			Ingredient ingredient = recipe.getIngredients().get(i);
+			matching[i] = CountInputMatching(ingredient);
 		}
+		return matching;
+	}
 
-		return amountCanCraft;
+	public int[] GetRequiredOfEachIngredientForRecipe(int recipeIndex)
+	{
+		if(recipeIndex == CRAFTING_NO_PART || recipeIndex >= GetAllRecipes().size())
+			return new int[0];
+
+		PartFabricationRecipe recipe = GetAllRecipes().get(recipeIndex);
+		if(recipe == null)
+			return new int[0];
+
+		int[] required = new int[recipe.getIngredients().size()];
+		for (int i = 0; i < recipe.getIngredients().size(); i++)
+		{
+			Ingredient ingredient = recipe.getIngredients().get(i);
+			if(ingredient instanceof StackedIngredient stacked)
+				required[i] = stacked.Count;
+			else required[i] = 1;
+		}
+		return required;
 	}
 
 	public int GetOutputSlotToCraftPart()
 	{
-		if(CraftingPart == CRAFTING_NO_PART)
+		if(CraftingPart[0] == CRAFTING_NO_PART)
 			return Inventory.NOT_FOUND_INDEX;
 
-		if(CraftingPart >= GetAllRecipes().size())
+		if(CraftingPart[0] >= GetAllRecipes().size())
 			return Inventory.NOT_FOUND_INDEX;
 
-		PartFabricationRecipe recipe = GetAllRecipes().get(CraftingPart);
+		PartFabricationRecipe recipe = GetAllRecipes().get(CraftingPart[0]);
 		if(recipe == null)
 			return 0;
 
@@ -649,12 +731,132 @@ public class WorkbenchBlockEntity extends BlockEntity implements Container, Menu
 
 	public void QueueCrafting(int count)
 	{
-		CraftQueueCount += count;
+		for(int i = 0; i < NUM_CRAFTING_QUEUE_SLOTS; i++)
+		{
+			if (CraftingPart[i] == PlayerSelectedCraftingPart || CraftingPart[i] == CRAFTING_NO_PART)
+			{
+				CraftingPart[i] = PlayerSelectedCraftingPart;
+				if (count == -1)
+				{
+					CraftQueueCount[i] = GetMaxPartsCraftableFromInput(PlayerSelectedCraftingPart);
+					return;
+				} else
+				{
+					CraftQueueCount[i] += count;
+					return;
+				}
+			}
+		}
 	}
 
-	public void CancelQueue()
+	public void CancelQueue(int index)
 	{
-		CraftQueueCount = 0;
+		if(0 <= index && index < NUM_CRAFTING_QUEUE_SLOTS)
+		{
+			CraftQueueCount[index] = (index == 0 && CraftDuration > 0) ? 1 : 0;
+			if(index > 0)
+			{
+				for(int i = index; i < NUM_CRAFTING_QUEUE_SLOTS - 1; i++)
+				{
+					CraftQueueCount[i] = CraftQueueCount[i + 1];
+					CraftingPart[i] = CraftingPart[i + 1];
+				}
+				CraftingPart[NUM_CRAFTING_QUEUE_SLOTS - 1] = CRAFTING_NO_PART;
+				CraftQueueCount[NUM_CRAFTING_QUEUE_SLOTS - 1] = 0;
+			}
+		}
+	}
+
+	public int CountInputMatching(Ingredient ingredient)
+	{
+		int count = 0;
+		for(int i = 0; i < PartCraftingInputContainer.getContainerSize(); i++)
+		{
+			ItemStack stack = PartCraftingInputContainer.getItem(i);
+			if(ingredient instanceof StackedIngredient stackedIngredient)
+			{
+				count += stackedIngredient.Count(stack);
+			}
+			else if(ingredient.test(stack))
+				count += stack.getCount();
+
+		}
+		return count;
+	}
+
+	private void ConsumeIngredient(Ingredient ingredient)
+	{
+		// We can do "refunds", pretty complicated
+		if(ingredient instanceof TieredMaterialIngredient tiered)
+		{
+			int count = 0;
+			for(int i = 0; i < PartCraftingInputContainer.getContainerSize(); i++)
+			{
+				int matchCount = tiered.Count(PartCraftingInputContainer.getItem(i));
+				if(matchCount > 0)
+				{
+					count += matchCount;
+					PartCraftingInputContainer.setItem(i, ItemStack.EMPTY);
+				}
+			}
+			int countAfterConsume = count - tiered.Count;
+			List<Pair<MaterialSourceDefinition, Integer>> refundSplit = tiered.MaterialType().ResolveAmount(countAfterConsume);
+			for(Pair<MaterialSourceDefinition, Integer> kvp : refundSplit)
+			{
+				if(kvp.getFirst().GetMatches().size() > 0)
+				{
+					ItemStack leftover = TryAddStackToCraftingInput(kvp.getFirst().GetMatches().get(0).copyWithCount(kvp.getSecond()));
+					if (!leftover.isEmpty() && level != null)
+					{
+						ItemEntity leftoverEntity = new ItemEntity(
+							level,
+							getBlockPos().getCenter().x,
+							getBlockPos().getCenter().y,
+							getBlockPos().getCenter().z,
+							leftover);
+					}
+				}
+				else
+					FlansMod.LOGGER.error("Could not refund " + kvp.getSecond() + "x " + kvp.getFirst());
+
+			}
+		}
+	}
+
+	private ItemStack TryAddStackToCraftingInput(ItemStack stack)
+	{
+		int maxStack = PartCraftingInputContainer.getMaxStackSize();
+		for(int i = 0; i < PartCraftingInputContainer.getContainerSize(); i++)
+		{
+			ItemStack stackInSlot = PartCraftingInputContainer.getItem(i);
+			if(stackInSlot.isEmpty())
+			{
+				if(stack.getCount() > maxStack)
+				{
+					PartCraftingInputContainer.setItem(i, stack.copyWithCount(maxStack));
+					stack.setCount(stack.getCount() - maxStack);
+				}
+				else
+				{
+					PartCraftingInputContainer.setItem(i, stack.copy());
+					stack.setCount(0);
+				}
+			}
+			else if(stackInSlot.sameItem(stack))
+			{
+				int countToAdd = Maths.Min(stack.getCount(), maxStack - stackInSlot.getCount());
+				if(countToAdd > 0)
+				{
+					stackInSlot.setCount(stackInSlot.getCount() + countToAdd);
+					stack.setCount(stack.getCount() - countToAdd);
+				}
+			}
+
+			if(stack.isEmpty())
+				return ItemStack.EMPTY;
+		}
+
+		return stack;
 	}
 
 	public boolean CraftOnePart()
@@ -662,11 +864,17 @@ public class WorkbenchBlockEntity extends BlockEntity implements Container, Menu
 		int outputSlot = GetOutputSlotToCraftPart();
 		if(outputSlot != Inventory.NOT_FOUND_INDEX)
 		{
-			PartFabricationRecipe recipe = GetAllRecipes().get(CraftingPart);
+			PartFabricationRecipe recipe = GetAllRecipes().get(CraftingPart[0]);
+			for(Ingredient ingredient : recipe.getIngredients())
+			{
+				ConsumeIngredient(ingredient);
+			}
+
+			CraftQueueCount[0]--;
 			ItemStack result = recipe.Result;
 			ItemStack existing = PartCraftingOutputContainer.getItem(outputSlot);
 			if(existing.isEmpty())
-				PartCraftingOutputContainer.setItem(outputSlot, result);
+				PartCraftingOutputContainer.setItem(outputSlot, result.copy());
 			else if(existing.sameItem(result))
 				existing.setCount(existing.getCount() + result.getCount());
 			else

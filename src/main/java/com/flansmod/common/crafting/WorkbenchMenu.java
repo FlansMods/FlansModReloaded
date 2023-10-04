@@ -79,38 +79,44 @@ public class WorkbenchMenu extends AbstractContainerMenu
 	private RestrictedSlot BatterySlot;
 	private AttachmentSlot[] AttachmentSlots;
 	private RestrictedSlot[] MaterialSlots;
+	private Slot[] InventorySlots;
 
 
-	public final List<ResourceKey<Item>> TagFilters = new ArrayList<>();
-	public final List<Integer> TierFilters = new ArrayList<>();
-	public final List<EMaterialType> MaterialFilters = new ArrayList<>();
-	public boolean OnlyCraftableFilter = false;
-	public final List<ItemStack> FilteredPartsList = new ArrayList<>();
 
-	public static final int PART_CRAFTING_NUM_SLOTS_X = 2;
-	public static final int PART_CRAFTING_NUM_SLOTS_Y = 4;
+
+	public static final int PART_CRAFTING_NUM_INPUT_SLOTS_X = 4;
+	public static final int PART_CRAFTING_NUM_INPUT_SLOTS_Y = 4;
+	public static final int PART_CRAFTING_INPUT_SLOTS_X = 5;
+	public static final int PART_CRAFTING_INPUT_SLOTS_Y = 18;
+	public static final int PART_CRAFTING_NUM_OUTPUT_SLOTS_X = 4;
+	public static final int PART_CRAFTING_NUM_OUTPUT_SLOTS_Y = 6;
+	public static final int PART_CRAFTING_OUTPUT_SLOTS_X = 279;
+	public static final int PART_CRAFTING_OUTPUT_SLOTS_Y = 115;
+
+
 	public static final int GUN_CRAFTING_NUM_SLOTS_X = 4;
 	public static final int GUN_CRAFTING_NUM_SLOTS_Y = 2;
 
 	public int ScrollIndex = 0;
-	//public static final int BUTTON_CANCEL = 0;
+	public static final int BUTTON_SELECT_GUN_RECIPE_0 				= 0x0;	// 32 gun recipes
+	public static final int BUTTON_SELECT_GUN_RECIPE_MAX 			= 0x1f;
+	public static final int BUTTON_SELECT_SKIN_0 					= 0x20; // 16 skins
+	public static final int BUTTON_SELECT_SKIN_MAX 					= 0x2f;
+	public static final int BUTTON_SELECT_MAGAZINE_0 				= 0x30; // 16 mags
+	public static final int BUTTON_SELECT_MAGAZINE_MAX				= 0x3f;
+	public static final int BUTTON_AUTO_FILL_INGREDIENT_0 			= 0x40; // 16 auto-fill buttons
+	public static final int BUTTON_AUTO_FULL_INGREDIENT_MAX 		= 0x4f;
+	public static final int BUTTON_CRAFT_1 							= 0x51; // Technically there are 16 buttons here
+	public static final int BUTTON_CRAFT_5							= 0x55;
+	public static final int BUTTON_CRAFT_ALL						= 0x5f;
+	public static final int BUTTON_QUEUE_CANCEL_0 					= 0x60; // 16 queue cancels
+	public static final int BUTTON_QUEUE_CANCEL_MAX					= 0x6f;
+	public static final int BUTTON_SELECT_PART_RECIPE_0				= 0x70; // 144 part recipes
+	public static final int BUTTON_SELECT_PART_RECIPE_MAX			= 0xff;
 
-	public static final int BUTTON_SELECT_GUN_RECIPE_0 = 1000;
-	public static final int BUTTON_SELECT_GUN_RECIPE_MAX = 1999;
-	public static final int BUTTON_SELECT_SKIN_0 = 2000;
-	public static final int BUTTON_SELECT_SKIN_MAX = 2999;
-	public static final int BUTTON_SELECT_MAGAZINE_0 = 3000;
-	public static final int BUTTON_SELECT_MAGAZINE_MAX = 3999;
-	public static final int BUTTON_AUTO_FILL_INGREDIENT_0 = 4000;
-	public static final int BUTTON_AUTO_FULL_INGREDIENT_MAX = 4999;
-	public static final int BUTTON_SET_RECIPE_SCROLL_0 = 5000;
-	public static final int BUTTON_SET_RECIPE_SCROLL_MAX = 5999;
-	public static final int BUTTON_CRAFT_CANCEL = 6000;
-	public static final int BUTTON_CRAFT_1 = 6001;
-	public static final int BUTTON_CRAFT_5 = 6005;
-	public static final int BUTTON_CRAFT_ALL = 6999;
-	public static final int BUTTON_SELECT_PART_RECIPE_0 = 7000;
-	public static final int BUTTON_SELECT_PART_RECIPE_MAX = 7999;
+
+	public static final int BUTTON_SET_RECIPE_SCROLL_0				= 0x1000; // Needs to be networked??
+	public static final int BUTTON_SET_RECIPE_SCROLL_MAX 			= 0x10ff;
 
 
 	public WorkbenchMenu(int containerID, Inventory inventory,
@@ -244,9 +250,9 @@ public class WorkbenchMenu extends AbstractContainerMenu
 		{
 			for(int i = 0; i < PartCraftingInputContainer.getContainerSize(); i++)
 			{
-				int x = i % PART_CRAFTING_NUM_SLOTS_X;
-				int y = i / PART_CRAFTING_NUM_SLOTS_X;
-				addSlot(PartCraftingInputSlots[i] = new RestrictedSlot(PartCraftingInputContainer, i, 6 + x * 18, 19 + y * 18));
+				int x = i % PART_CRAFTING_NUM_INPUT_SLOTS_X;
+				int y = i / PART_CRAFTING_NUM_INPUT_SLOTS_X;
+				addSlot(PartCraftingInputSlots[i] = new RestrictedSlot(PartCraftingInputContainer, i, PART_CRAFTING_INPUT_SLOTS_X + 1 + x * 18, PART_CRAFTING_INPUT_SLOTS_Y + 1 + y * 18));
 			}
 		}
 		PartCraftingOutputSlots = new RestrictedSlot[PartCraftingOutputContainer.getContainerSize()];
@@ -254,9 +260,9 @@ public class WorkbenchMenu extends AbstractContainerMenu
 		{
 			for(int i = 0; i < PartCraftingOutputContainer.getContainerSize(); i++)
 			{
-				int x = i % PART_CRAFTING_NUM_SLOTS_X;
-				int y = i / PART_CRAFTING_NUM_SLOTS_X;
-				addSlot(PartCraftingOutputSlots[i] = new RestrictedSlot(PartCraftingOutputContainer, i, 132 + x * 18, 19 + y * 18));
+				int x = i % PART_CRAFTING_NUM_OUTPUT_SLOTS_X;
+				int y = i / PART_CRAFTING_NUM_OUTPUT_SLOTS_X;
+				addSlot(PartCraftingOutputSlots[i] = new RestrictedSlot(PartCraftingOutputContainer, i, PART_CRAFTING_OUTPUT_SLOTS_X + 1 + x * 18, PART_CRAFTING_OUTPUT_SLOTS_Y + 1 + y * 18));
 			}
 		}
 
@@ -271,17 +277,18 @@ public class WorkbenchMenu extends AbstractContainerMenu
 			addSlot(FuelSlot = new RestrictedSlot(FuelContainer, 0, 129, 66));
 		}
 
+		InventorySlots = new Slot[4 * 9];
 		for(int y = 0; y < 3; ++y)
 		{
 			for(int x = 0; x < 9; ++x)
 			{
-				addSlot(new RestrictedSlot(playerInventory, x + y * 9 + 9, 6 + x * 18, 137 + y * 18));
+				addSlot(InventorySlots[x + 9 * y + 9] = new RestrictedSlot(playerInventory, x + y * 9 + 9, 6 + x * 18, 137 + y * 18));
 			}
 		}
 
 		for(int x = 0; x < 9; ++x)
 		{
-			addSlot(new RestrictedSlot(playerInventory, x, 6 + x * 18, 195));
+			addSlot(InventorySlots[x] = new RestrictedSlot(playerInventory, x, 6 + x * 18, 195));
 		}
 
 		if(GunCraftingOutputContainer.getContainerSize() > 0)
@@ -302,9 +309,10 @@ public class WorkbenchMenu extends AbstractContainerMenu
 	@OnlyIn(Dist.CLIENT)
 	public void SwitchToGunModification()
 	{
+		HideSlots();
+		OffsetInventorySlots(0, 0);
 		if(GunSlot != null)
 		{
-			HideSlots();
 			GunSlot.SetActive(true);
 			PaintCanSlot.SetActive(true);
 			MagUpgradeSlot.SetActive(true);
@@ -317,6 +325,7 @@ public class WorkbenchMenu extends AbstractContainerMenu
 	public void SwitchToMaterials()
 	{
 		HideSlots();
+		OffsetInventorySlots(0, 0);
 		for(RestrictedSlot slot : MaterialSlots)
 			slot.SetActive(true);
 	}
@@ -325,6 +334,7 @@ public class WorkbenchMenu extends AbstractContainerMenu
 	public void SwitchToPower()
 	{
 		HideSlots();
+		OffsetInventorySlots(0, 0);
 		if(FuelSlot != null)
 			FuelSlot.SetActive(true);
 		if(BatterySlot != null)
@@ -335,23 +345,24 @@ public class WorkbenchMenu extends AbstractContainerMenu
 	public void SwitchToPartCrafting()
 	{
 		HideSlots();
+		OffsetInventorySlots(92, 0);
 		for (RestrictedSlot slot : PartCraftingInputSlots)
 			slot.SetActive(true);
 		for (RestrictedSlot slot : PartCraftingOutputSlots)
 			slot.SetActive(true);
-
-		RefreshPartCraftingFilters();
 	}
 
 	@OnlyIn(Dist.CLIENT)
 	public void SwitchToArmourCrafting()
 	{
 		HideSlots();
+		OffsetInventorySlots(0, 0);
 	}
 
 	public void SwitchToGunCrafting()
 	{
 		HideSlots();
+		OffsetInventorySlots(0, 0);
 		if(GunCraftingOutputSlot != null)
 			GunCraftingOutputSlot.SetActive(true);
 		// TODO: Check scroller and move them
@@ -416,16 +427,37 @@ public class WorkbenchMenu extends AbstractContainerMenu
 			slot.SetActive(false);
 	}
 
+	@OnlyIn(Dist.CLIENT)
+	public void OffsetInventorySlots(int xOffset, int yOffset)
+	{
+		// x,y are final. Let's hack
+		Slot[] previousSlots = InventorySlots;
+		InventorySlots = new Slot[4 * 9];
+		for(int y = 0; y < 3; ++y)
+		{
+			for(int x = 0; x < 9; ++x)
+			{
+				Slot replacementSlot = new RestrictedSlot(previousSlots[x + 9 * y + 9].container, x + y * 9 + 9, 6 + x * 18 + xOffset, 137 + y * 18 + yOffset);
+				replacementSlot.index = previousSlots[x + 9 * y + 9].index;
+				slots.set(replacementSlot.index, replacementSlot);
+				InventorySlots[x + 9 * y + 9] = replacementSlot;
+			}
+		}
+
+		for(int x = 0; x < 9; ++x)
+		{
+			Slot replacementSlot = new RestrictedSlot(previousSlots[x].container, x, 6 + x * 18 + xOffset, 195 + yOffset);
+			replacementSlot.index = previousSlots[x].index;
+			slots.set(replacementSlot.index, replacementSlot);
+			InventorySlots[x] = replacementSlot;
+		}
+	}
+
 	@Override
 	public boolean clickMenuButton(@Nonnull Player player, int buttonID)
 	{
 		switch(buttonID)
 		{
-			//case BUTTON_CANCEL -> { return true; }
-			case BUTTON_CRAFT_CANCEL -> {
-				CancelPartCrafting();
-				return true;
-			}
 			case BUTTON_CRAFT_ALL -> {
 				CraftParts(-1);
 				return true;
@@ -479,6 +511,13 @@ public class WorkbenchMenu extends AbstractContainerMenu
 				{
 					SelectedPartRecipeIndex = buttonID - BUTTON_SELECT_PART_RECIPE_0;
 					BlockEntity.SelectPartCraftingRecipe(SelectedPartRecipeIndex);
+					SwitchToPartCrafting();
+					return true;
+				}
+				if(BUTTON_QUEUE_CANCEL_0 <= buttonID && buttonID <= BUTTON_QUEUE_CANCEL_MAX)
+				{
+					int cancelIndex = buttonID - BUTTON_QUEUE_CANCEL_0;
+					BlockEntity.CancelQueue(cancelIndex);
 					SwitchToPartCrafting();
 					return true;
 				}
@@ -536,65 +575,46 @@ public class WorkbenchMenu extends AbstractContainerMenu
 			{
 				GunSlot.set(stack);
 				slots.get(slot).set(ItemStack.EMPTY);
+				return ItemStack.EMPTY;
 			}
 			if(PaintCanSlot != null && PaintCanSlot.getItem().isEmpty() && stack.getItem() == FlansMod.RAINBOW_PAINT_CAN_ITEM.get())
 			{
 				PaintCanSlot.set(stack);
 				slots.get(slot).set(ItemStack.EMPTY);
+				return ItemStack.EMPTY;
 			}
 			if(MagUpgradeSlot != null && MagUpgradeSlot.getItem().isEmpty() && stack.getItem() == FlansMod.MAG_UPGRADE_ITEM.get())
 			{
 				MagUpgradeSlot.set(stack);
 				slots.get(slot).set(ItemStack.EMPTY);
+				return ItemStack.EMPTY;
 			}
-			// TODO: Check for matching CraftingInputSlots
-
-
-
+			for(RestrictedSlot partInputSlot : PartCraftingInputSlots)
+			{
+				if(partInputSlot.getItem().isEmpty())
+				{
+					partInputSlot.set(stack);
+					slots.get(slot).set(ItemStack.EMPTY);
+					return ItemStack.EMPTY;
+				}
+			}
 			for(AttachmentSlot attachmentSlot : AttachmentSlots)
 			{
-				if(attachmentSlot.mayPlace(stack))
+				if(attachmentSlot.getItem().isEmpty())
 				{
 					attachmentSlot.set(stack);
 					slots.get(slot).set(ItemStack.EMPTY);
+					return ItemStack.EMPTY;
 				}
 			}
 		}
 
-		return  slots.get(slot).getItem();
-	}
-
-	private void RefreshPartCraftingFilters()
-	{
-		FilteredPartsList.clear();
-		for(ItemStack stack : Def.partCrafting.GetAllOutputs())
-		{
-			// Apply filters
-			if(TierFilters.size() > 0)
-				if(!TierFilters.contains(PartDefinition.GetPartTier(stack)))
-					continue;
-
-			if(MaterialFilters.size() > 0)
-				if(!MaterialFilters.contains(PartDefinition.GetPartMaterial(stack)))
-					continue;
-
-			if(OnlyCraftableFilter)
-			{
-				// TODO: Craftable filter
-			}
-
-			FilteredPartsList.add(stack);
-		}
+		return ItemStack.EMPTY;
 	}
 
 	public void CraftParts(int count)
 	{
 		BlockEntity.QueueCrafting(count);
-	}
-
-	public void CancelPartCrafting()
-	{
-		BlockEntity.CancelQueue();
 	}
 
 	public void AutoFillGunCraftingInputSlot(Player player, int inputSlotIndex)

@@ -108,7 +108,6 @@ public class FlansMod
     public static final RegistryObject<RecipeType<PartFabricationRecipe>> PART_FABRICATION_RECIPE_TYPE = RECIPE_TYPES.register("part_fabrication", () -> RecipeType.simple(new ResourceLocation(MODID, "part_fabrication")));
     public static final RegistryObject<RecipeSerializer<PartFabricationRecipe>> PART_FABRICATION_RECIPE_SERIALIZER = RECIPE_SERIALIZERS.register("part_fabrication", PartFabricationRecipe.Serializer::new);
 
-
     // Definition Repositories
     public static final GunDefinitions GUNS = new GunDefinitions();
     public static final BulletDefinitions BULLETS = new BulletDefinitions();
@@ -308,6 +307,9 @@ public class FlansMod
             CraftingHelper.register(
                 new ResourceLocation(MODID, "tiered_material"),
                 TieredMaterialIngredient.Serializer.INSTANCE);
+            CraftingHelper.register(
+                new ResourceLocation(MODID, "stacked_vanilla"),
+                StackedVanillaIngredient.Serializer.INSTANCE);
         }
     }
     

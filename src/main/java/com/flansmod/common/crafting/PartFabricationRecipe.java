@@ -119,7 +119,7 @@ public class PartFabricationRecipe implements Recipe<WorkbenchBlockEntity>
 			}
 
 
-			ItemStack output = ShapedRecipe.itemStackFromJson(GsonHelper.getAsJsonObject(json, "output"));
+			ItemStack output = ShapedRecipe.itemStackFromJson(GsonHelper.getAsJsonObject(json, "result"));
 			int craftTime = GsonHelper.getAsInt(json, "craft_time", 20);
 			return new PartFabricationRecipe(
 				FlansMod.PART_FABRICATION_RECIPE_TYPE.get(),

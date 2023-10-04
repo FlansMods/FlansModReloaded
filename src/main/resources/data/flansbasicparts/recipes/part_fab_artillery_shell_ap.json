@@ -1,0 +1,21 @@
+{
+  "type": "flansmod:part_fabrication",
+  "category": "material",
+  "ingredients": [
+	{
+		"type": "flansmod:tiered_material",
+		"material": "flansbasicparts:aluminium",
+		"count": 9
+	},
+	{
+		"type": "flansmod:tiered_material",
+		"material": "flansbasicparts:gunpowder",
+		"count": 2
+	}
+  ],
+  "result": {
+    "item": "flansbasicparts:artillery_shell_ap"
+  },
+  "craft_time": 300,
+  "show_notification": true
+}

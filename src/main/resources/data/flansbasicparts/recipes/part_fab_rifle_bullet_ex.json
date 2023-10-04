@@ -1,0 +1,21 @@
+{
+  "type": "flansmod:part_fabrication",
+  "category": "material",
+  "ingredients": [
+	{
+		"type": "flansmod:tiered_material",
+		"material": "flansbasicparts:steel",
+		"count": 6
+	},
+	{
+		"type": "flansmod:tiered_material",
+		"material": "flansbasicparts:gunpowder",
+		"count": 18
+	}
+  ],
+  "result": {
+    "item": "flansbasicparts:rifle_bullet_ex"
+  },
+  "craft_time": 450,
+  "show_notification": true
+}

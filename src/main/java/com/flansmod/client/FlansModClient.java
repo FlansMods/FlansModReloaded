@@ -113,6 +113,8 @@ public class FlansModClient
 
 		// Entity Renderers
 		EntityRenderers.register(FlansMod.ENT_TYPE_BULLET.get(), BulletEntityRenderer::new);
+
+
 	}
 
 	@SubscribeEvent

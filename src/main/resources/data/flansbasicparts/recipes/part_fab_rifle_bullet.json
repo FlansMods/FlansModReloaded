@@ -1,0 +1,21 @@
+{
+  "type": "flansmod:part_fabrication",
+  "category": "material",
+  "ingredients": [
+	{
+		"type": "flansmod:tiered_material",
+		"material": "flansbasicparts:iron",
+		"count": 3
+	},
+	{
+		"type": "flansmod:tiered_material",
+		"material": "flansbasicparts:gunpowder",
+		"count": 2
+	}
+  ],
+  "result": {
+    "item": "flansbasicparts:rifle_bullet"
+  },
+  "craft_time": 200,
+  "show_notification": true
+}

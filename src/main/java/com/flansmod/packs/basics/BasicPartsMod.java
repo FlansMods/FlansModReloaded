@@ -55,6 +55,7 @@ public class BasicPartsMod
 	public static final DeferredRegister<RecipeSerializer<?>> RECIPE_SERIALIZERS = DeferredRegister.create(ForgeRegistries.RECIPE_SERIALIZERS, MODID);
 
 	// Storage helper blocks
+	public static final RegistryObject<Item> GUNPOWDER_SPECK = ITEMS.register("gunpowder_speck", () -> new Item(new Item.Properties()));
 	public static final RegistryObject<Block> GUNPOWDER_BLOCK = BLOCKS.register("gunpowder_block", () -> new Block(BlockBehaviour.Properties.of(Material.STONE)));
 	public static final RegistryObject<Item> GUNPOWDER_BLOCK_ITEM = ITEMS.register("gunpowder_block", () -> new BlockItem(GUNPOWDER_BLOCK.get(), new Item.Properties()));
 
@@ -244,6 +245,8 @@ public class BasicPartsMod
 	public static final RegistryObject<Item> PART_PHANTEX_GRIP = 							FlansMod.Part(ITEMS, MODID, "phantex_grip");
 	public static final RegistryObject<Item> PART_CARBON_FIBER_GRIP = 						FlansMod.Part(ITEMS, MODID, "carbon_fiber_grip");
 
+	public static final RegistryObject<Item> PART_SPARKPLUG =								FlansMod.Part(ITEMS, MODID, "sparkplug");
+
 	// Bullets
 	public static final RegistryObject<Item> BULLET_PISTOL =								FlansMod.Bullet(ITEMS, MODID, "pistol_bullet");
 	public static final RegistryObject<Item> BULLET_PISTOL_AP =								FlansMod.Bullet(ITEMS, MODID, "pistol_bullet_ap");
@@ -269,6 +272,7 @@ public class BasicPartsMod
 	public static final RegistryObject<Item> BULLET_SHOTGUN_SHELL_INCENDIARY =				FlansMod.Bullet(ITEMS, MODID, "shotgun_shell_incendiary");
 	public static final RegistryObject<Item> BULLET_SHOTGUN_SHELL_FLECHETTE =				FlansMod.Bullet(ITEMS, MODID, "shotgun_shell_flechette");
 	public static final RegistryObject<Item> BULLET_SHOTGUN_SHELL_FLECHETTE_POISONED =		FlansMod.Bullet(ITEMS, MODID, "shotgun_shell_flechette_poisoned");
+
 
 
 	public static final RegistryObject<Block> WORKBENCH_BLOCK_PARTS = 						FlansMod.Workbench_Block(BLOCKS, MODID, "part_fabricator");
@@ -352,6 +356,7 @@ public class BasicPartsMod
 			event.accept(KEVLAR_PANEL);
 			event.accept(KEVLAR_BLOCK_ITEM);
 
+			event.accept(GUNPOWDER_SPECK);
 			event.accept(Items.GUNPOWDER);
 			event.accept(GUNPOWDER_BLOCK_ITEM);
 

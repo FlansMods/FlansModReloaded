@@ -3,16 +3,20 @@
   "category": "material",
   "ingredients": [
 	{
-		"type": "minecraft:item",
-		"item": "minecraft:redstone"
+		"type": "flansmod:stacked_vanilla",
+		"items": 
+		[ 
+			"minecraft:repeater" 
+		],
+		"count": 3
 	},
 	{
-		"type": "minecraft:item",
-		"item": "minecraft:repeater"
-	},
-	{
-		"type": "minecraft:item",
-		"item": "minecraft:redstone_torch"
+		"type": "flansmod:stacked_vanilla",
+		"items": 
+		[ 
+			"minecraft:redstone" 
+		],
+		"count": 3
 	}
   ],
   "result": {

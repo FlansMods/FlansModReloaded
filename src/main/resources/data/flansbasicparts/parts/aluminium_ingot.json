@@ -10,7 +10,7 @@
         "maxStackSize": 64,
         "tags": [
             "flansmod:part",
-            "forge:ingot/aluminum"
+            "forge:ingots/aluminum"
         ]
     },
     "modifiers": [],

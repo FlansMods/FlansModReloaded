@@ -8,36 +8,12 @@
 		"count": 216
 	},
 	{
-		"type": "minecraft:item",
-		"item": "flansbasicparts:sparkplug"
-	},
-	{
-		"type": "minecraft:item",
-		"item": "flansbasicparts:sparkplug"
-	},
-	{
-		"type": "minecraft:item",
-		"item": "flansbasicparts:sparkplug"
-	},
-	{
-		"type": "minecraft:item",
-		"item": "flansbasicparts:sparkplug"
-	},
-	{
-		"type": "minecraft:item",
-		"item": "flansbasicparts:sparkplug"
-	},
-	{
-		"type": "minecraft:item",
-		"item": "flansbasicparts:sparkplug"
-	},
-	{
-		"type": "minecraft:item",
-		"item": "flansbasicparts:sparkplug"
-	},
-	{
-		"type": "minecraft:item",
-		"item": "flansbasicparts:sparkplug"
+		"type": "flansmod:stacked_vanilla",
+		"items": 
+		[ 
+			"flansbasicparts:sparkplug" 
+		],
+		"count": 8		
 	}
   ],
   "result": {

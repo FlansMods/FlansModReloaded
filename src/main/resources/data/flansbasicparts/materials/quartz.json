@@ -1,0 +1,22 @@
+{
+    "sources": [
+        {
+            "matchItems": [
+                "minecraft:quartz"
+            ],
+            "matchTags": [],
+            "count": 1,
+            "icon": "nugget"
+        },
+        {
+            "matchItems": [
+                "minecraft:quartz_block"
+            ],
+            "matchTags": [],
+            "count": 4,
+            "icon": "block"
+        }
+    ],
+    "craftingTier": 2,
+    "materialType": "Electronic"
+}

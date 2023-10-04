@@ -1,0 +1,25 @@
+{
+  "type": "flansmod:part_fabrication",
+  "category": "material",
+  "ingredients": [
+	{
+		"type": "flansmod:tiered_material",
+		"material": "flansbasicparts:aluminium",
+		"count": 18
+	},
+	{
+		"type": "flansmod:tiered_material",
+		"material": "flansbasicparts:gunpowder",
+		"count": 9
+	},
+	{
+		"type": "minecraft:item",
+		"item": "minecraft:slime_ball"
+	}
+  ],
+  "result": {
+    "item": "flansbasicparts:projectile_grenade_sticky"
+  },
+  "craft_time": 750,
+  "show_notification": true
+}

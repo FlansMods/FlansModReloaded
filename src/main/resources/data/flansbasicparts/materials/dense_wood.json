@@ -1,0 +1,24 @@
+{
+    "sources": [
+        {
+            "matchItems": [],
+            "matchTags": [
+                "minecraft:crimson_planks",
+                "minecraft:warped_planks"
+            ],
+            "count": 1,
+            "icon": "planks"
+        },
+        {
+            "matchItems": [],
+            "matchTags": [
+                "minecraft:crimson_stems",
+                "minecraft:warped_stems"
+            ],
+            "count": 4,
+            "icon": "block"
+        }
+    ],
+    "craftingTier": 3,
+    "materialType": "Wood"
+}

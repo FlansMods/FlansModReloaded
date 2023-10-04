@@ -1,0 +1,21 @@
+{
+  "type": "flansmod:part_fabrication",
+  "category": "material",
+  "ingredients": [
+	{
+		"type": "flansmod:tiered_material",
+		"material": "flansbasicparts:nethersteel",
+		"count": 9
+	},
+	{
+		"type": "flansmod:tiered_material",
+		"material": "flansbasicparts:gunpowder",
+		"count": 9
+	}
+  ],
+  "result": {
+    "item": "flansbasicparts:artillery_shell_incendiary"
+  },
+  "craft_time": 600,
+  "show_notification": true
+}

@@ -1,0 +1,22 @@
+{
+    "sources": [
+        {
+            "matchItems": [
+                "flansbasicparts:fiberglass"
+            ],
+            "matchTags": [],
+            "count": 9,
+            "icon": "ingot"
+        },
+        {
+            "matchItems": [
+                "flansbasicparts:fiberglass_block"
+            ],
+            "matchTags": [],
+            "count": 81,
+            "icon": "block"
+        }
+    ],
+    "craftingTier": 1,
+    "materialType": "Composite"
+}

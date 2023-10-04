@@ -1,0 +1,25 @@
+{
+  "type": "flansmod:part_fabrication",
+  "category": "material",
+  "ingredients": [
+	{
+		"type": "flansmod:tiered_material",
+		"material": "flansbasicparts:steel",
+		"count": 6
+	},
+	{
+		"type": "flansmod:tiered_material",
+		"material": "flansbasicparts:gunpowder",
+		"count": 18
+	},
+	{
+		"type": "minecraft:item",
+		"item": "minecraft:spiders_eye"
+	}
+  ],
+  "result": {
+    "item": "flansbasicparts:shotgun_shell_flechette_poisoned"
+  },
+  "craft_time": 450,
+  "show_notification": true
+}
