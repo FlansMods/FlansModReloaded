@@ -6,28 +6,7 @@
         ]
     },
     "paints": {
-        "paintjobs": [
-            {
-                "textureName": "phantek_90_aqua",
-                "paintBucketsRequired": 1,
-                "entitlementKey": ""
-            },
-            {
-                "textureName": "phantek_90_gravel",
-                "paintBucketsRequired": 1,
-                "entitlementKey": ""
-            },
-            {
-                "textureName": "phantek_90_obsidian",
-                "paintBucketsRequired": 1,
-                "entitlementKey": ""
-            },
-            {
-                "textureName": "phantek_90_periwinkle",
-                "paintBucketsRequired": 1,
-                "entitlementKey": ""
-            }
-        ]
+        "paintjobs": []
     },
     "primaryReload": {
         "manualReloadAllowed": true,
@@ -45,7 +24,7 @@
             "actions": [
                 {
                     "actionType": "Animation",
-                    "duration": 0.625,
+                    "duration": 0.375,
                     "sounds": [],
                     "itemStack": "",
                     "modifiers": [],
@@ -61,7 +40,7 @@
                     "duration": 0.0,
                     "sounds": [
                         {
-                            "sound": "flansmodernweapons:dp28reload",
+                            "sound": "flansmodernweapons:tt33reload",
                             "length": 1.0,
                             "minPitchMultiplier": 1.0,
                             "maxPitchMultiplier": 1.0,
@@ -95,7 +74,7 @@
             "actions": [
                 {
                     "actionType": "Animation",
-                    "duration": 0.625,
+                    "duration": 0.375,
                     "sounds": [],
                     "itemStack": "",
                     "modifiers": [],
@@ -121,7 +100,7 @@
             "actions": [
                 {
                     "actionType": "Animation",
-                    "duration": 0.625,
+                    "duration": 0.375,
                     "sounds": [],
                     "itemStack": "",
                     "modifiers": [],
@@ -147,7 +126,7 @@
             "actions": [
                 {
                     "actionType": "Animation",
-                    "duration": 0.625,
+                    "duration": 0.375,
                     "sounds": [],
                     "itemStack": "",
                     "modifiers": [],
@@ -217,8 +196,8 @@
         "canActUnderwater": true,
         "canActUnderOtherLiquid": false,
         "canBeOverriden": true,
-        "twoHanded": true,
-        "repeatMode": "FullAuto",
+        "twoHanded": false,
+        "repeatMode": "SemiAuto",
         "repeatDelay": 0.05,
         "repeatCount": 3,
         "spinUpDuration": 1.5,
@@ -234,7 +213,7 @@
                         "Stat": "vertical_recoil",
                         "Filter": "",
                         "Add": 0.0,
-                        "Multiply": 2.0,
+                        "Multiply": 1.0,
                         "SetValue": "",
                         "ApplyToPrimary": true,
                         "ApplyToSecondary": false
@@ -243,7 +222,7 @@
                         "Stat": "spread",
                         "Filter": "",
                         "Add": 0.0,
-                        "Multiply": 3.0,
+                        "Multiply": 8.0,
                         "SetValue": "",
                         "ApplyToPrimary": true,
                         "ApplyToSecondary": false
@@ -267,10 +246,10 @@
                         "ApplyToSecondary": false
                     },
                     {
-                        "Stat": "impact_damage",
+                        "Stat": "damage_to_target",
                         "Filter": "",
                         "Add": 0.0,
-                        "Multiply": 4.0,
+                        "Multiply": 6.0,
                         "SetValue": "",
                         "ApplyToPrimary": true,
                         "ApplyToSecondary": false
@@ -297,7 +276,7 @@
                 "duration": 0.0,
                 "sounds": [
                     {
-                        "sound": "flansmodernweapons:p90shoot",
+                        "sound": "flansmodernweapons:uspshoot",
                         "length": 0.0,
                         "minPitchMultiplier": 0.8333333,
                         "maxPitchMultiplier": 1.25,
@@ -335,8 +314,8 @@
         "canActUnderwater": true,
         "canActUnderOtherLiquid": false,
         "canBeOverriden": true,
-        "twoHanded": true,
-        "repeatMode": "FullAuto",
+        "twoHanded": false,
+        "repeatMode": "SemiAuto",
         "repeatDelay": 0.05,
         "repeatCount": 3,
         "spinUpDuration": 1.5,
@@ -348,7 +327,7 @@
                 "sounds": [],
                 "itemStack": "",
                 "modifiers": [],
-                "fovFactor": 1.25,
+                "fovFactor": 1.2,
                 "scopeOverlay": "",
                 "anim": "",
                 "toolLevel": 1.0,
@@ -397,10 +376,15 @@
         ]
     },
     "primaryMagazines": {
-        "matchByNames": [],
-        "matchByTags": [
-            "flansvendersgame:phantek_90"
+        "matchByNames": [
+            "m9ammo",
+            "makarov_ammo",
+            "m1911ammo",
+            "sig_p226ammo",
+            "usp_ammo",
+            "usp_poison_ammo"
         ],
+        "matchByTags": [],
         "baseCostToSwap": 0
     },
     "secondaryMagazines": {
@@ -428,7 +412,7 @@
     "gripAttachments": {
         "allowlist": [],
         "allowAll": true,
-        "numAttachmentSlots": 0,
+        "numAttachmentSlots": 1,
         "attachToMesh": "body",
         "attachPoint": [
             0.0,
@@ -474,5 +458,5 @@
         "hideDefaultMesh": true
     },
     "modelParts": [],
-    "animationSet": "flansmod:p90"
+    "animationSet": "flansmod:pistol"
 }

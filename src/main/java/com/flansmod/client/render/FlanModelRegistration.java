@@ -1,5 +1,6 @@
 package com.flansmod.client.render;
 
+import com.flansmod.client.render.models.MultiModel;
 import com.flansmod.client.render.models.TurboRig;
 import com.flansmod.common.FlansMod;
 import com.flansmod.common.item.FlanItem;
@@ -53,6 +54,7 @@ public class FlanModelRegistration implements PreparableReloadListener
     public void OnRegisterGeometryLoaders(ModelEvent.RegisterGeometryLoaders event)
     {
         event.register("turborig", TurboRig.LOADER);
+        event.register("multimodel", MultiModel.LOADER);
     }
 
     public void onModelRegistry(ModelEvent.RegisterAdditional event)
@@ -97,6 +99,13 @@ public class FlanModelRegistration implements PreparableReloadListener
                 // }
                 //for(var texLocation : turboBakedModel.GetTextureLocations())
                 //    tm.register(texLocation, new SimpleTexture(texLocation));
+            }
+            else if(bakedModel instanceof MultiModel.Baked multiBakedModel)
+            {
+                if(multiBakedModel.FirstPersonModel instanceof TurboRig.Baked turboBaked)
+                {
+                    kvp.getValue().OnBakeComplete(turboBaked);
+                }
             }
             //FlanItemModel compoundModel = kvp.getValue().createModel(defaultModel, itemID.getNamespace(), itemID.getPath());
             //compoundModel.bakeParts(event);
@@ -147,6 +156,12 @@ public class FlanModelRegistration implements PreparableReloadListener
                 else if (unbaked instanceof TurboRig unbakedTurbo)
                 {
                     ITEMS_TO_REGISTER.get(item).OnUnbakedModelLoaded(unbakedTurbo);
+                }
+                else if(unbaked instanceof MultiModel unbakedMulti)
+                {
+                    UnbakedModel firstPerson = bakery.getModel(unbakedMulti.FirstPersonLocation);
+                    if(firstPerson instanceof TurboRig unbakedTurbo)
+                        ITEMS_TO_REGISTER.get(item).OnUnbakedModelLoaded(unbakedTurbo);
                 }
                 else
                 {

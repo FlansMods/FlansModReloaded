@@ -767,6 +767,13 @@ public class WorkbenchScreen extends AbstractContainerScreen<WorkbenchMenu>
 									if(magCost == 1)
 										lines.add(Component.translatable("magazine.cost.1").getVisualOrderText());
 									else lines.add(Component.translatable("magazine.cost", magCost).getVisualOrderText());
+
+
+									for(ModifierDefinition modifier : matchingMags.get(i).modifiers)
+									{
+										lines.add(modifier.GetModifierString().getVisualOrderText());
+									}
+
 									renderTooltip(pose, lines, xMouse, yMouse);
 									return true;
 								}

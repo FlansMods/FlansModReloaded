@@ -1,26 +1,26 @@
 {
     "tags": [
-        "flansvendersgame:hm_1200"
+        "flansvendersgame:fc_hawk"
     ],
     "modifiers": [
         {
-            "Stat": "reload_speed",
+            "Stat": "impact_damage",
             "Filter": "",
             "Add": 0.0,
-            "Multiply": 0.75,
+            "Multiply": 1.15,
             "SetValue": "",
             "ApplyToPrimary": true,
             "ApplyToSecondary": true
         }
     ],
-    "ammoLoadMode": "OneBulletAtATime",
+    "ammoLoadMode": "FullMag",
     "ammoConsumeMode": "FirstNonEmpty",
-    "upgradeCost": 2,
-    "numRounds": 5,
+    "upgradeCost": 3,
+    "numRounds": 4,
     "allRoundsMustBeIdentical": false,
     "matchBulletNames": [],
     "requiredBulletTags": [
-        "flansmod:shotgun_shell"
+        "flansmod:rifle_bullet"
     ],
     "disallowedBulletTags": []
 }

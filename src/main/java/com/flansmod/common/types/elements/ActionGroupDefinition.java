@@ -3,6 +3,7 @@ package com.flansmod.common.types.elements;
 import com.flansmod.common.types.JsonField;
 import com.flansmod.common.types.guns.EActionType;
 import com.flansmod.common.types.guns.ERepeatMode;
+import com.flansmod.util.Maths;
 
 public class ActionGroupDefinition
 {
@@ -38,6 +39,9 @@ public class ActionGroupDefinition
 			if(actionDef.duration > duration)
 				duration = actionDef.duration;
 		}
-		return duration;
+
+		// Round up ticks so we know the duration covers everything
+		int ticks = Maths.Floor(duration * 20.0f);
+		return ticks / 20.0f;
 	}
 }

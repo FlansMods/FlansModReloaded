@@ -42,6 +42,16 @@ public class MagazineSlotSettingsDefinition
 						MatchingMagazineReferences.add(magazine);
 				});
 
+			MatchingMagazineReferences.sort((a, b) ->
+			{
+				int costComp = Integer.compare(a.upgradeCost, b.upgradeCost);
+				if(costComp == 0)
+				{
+					return Integer.compare(a.numRounds, b.numRounds);
+				}
+				else return costComp;
+			});
+
 		}
 		return MatchingMagazineReferences;
 	}

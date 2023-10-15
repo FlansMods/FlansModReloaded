@@ -247,6 +247,7 @@ public class ActionGroupContext
 	@Nonnull
 	public ItemStack LoadOneBulletIntoSlot(int magIndex, int bulletIndex, ItemStack bulletStack)
 	{
+		boolean isCreative = Gun.GetShooter().IsCreative();
 		if(bulletStack.getItem() instanceof BulletItem bulletItem)
 		{
 			// Extract, set, and compact stacks
@@ -254,7 +255,8 @@ public class ActionGroupContext
 			items[bulletIndex] = bulletStack.getItem();
 			CompactStacks(magIndex, items);
 
-			bulletStack.setCount(bulletStack.getCount() - 1);
+			if(!isCreative)
+				bulletStack.setCount(bulletStack.getCount() - 1);
 		}
 		return bulletStack;
 	}
@@ -432,7 +434,7 @@ public class ActionGroupContext
 					for (String key : bulletTags.getAllKeys())
 					{
 						ItemStack stack = ItemStack.of(bulletTags.getCompound(key));
-						if(stack.isEmpty())
+						if(stack.getItem() == Items.APPLE)
 							return Integer.parseInt(key);
 					}
 				}

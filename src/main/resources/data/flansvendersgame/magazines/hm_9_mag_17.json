@@ -1,16 +1,16 @@
 {
     "tags": [
-        "flansvendersgame:phantek_overkill"
+        "flansvendersgame:hm_9"
     ],
     "modifiers": [],
     "ammoLoadMode": "FullMag",
     "ammoConsumeMode": "FirstNonEmpty",
-    "upgradeCost": 0,
-    "numRounds": 500,
-    "allRoundsMustBeIdentical": true,
+    "upgradeCost": 1,
+    "numRounds": 17,
+    "allRoundsMustBeIdentical": false,
     "matchBulletNames": [],
     "requiredBulletTags": [
-        "flansmod:rifle_bullet"
+        "flansmod:pistol_bullet"
     ],
     "disallowedBulletTags": []
 }

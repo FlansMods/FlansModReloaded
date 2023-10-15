@@ -21,6 +21,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionHand;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -29,6 +30,7 @@ import net.minecraft.world.phys.Vec2;
 import net.minecraftforge.client.event.ComputeFovModifierEvent;
 import net.minecraftforge.client.event.RenderGuiOverlayEvent;
 import net.minecraftforge.client.event.RenderHandEvent;
+import net.minecraftforge.client.event.RenderLivingEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -110,6 +112,12 @@ public class ClientRenderHooks
 			event.setCanceled(true);
 		}
 	}
+
+	//@SubscribeEvent
+	//public void OnRenderLiving(RenderLivingEvent<LivingEntity> event)
+	//{
+
+	//}
 
 	@SubscribeEvent
 	public void OnRenderOverlay(RenderGuiOverlayEvent event)

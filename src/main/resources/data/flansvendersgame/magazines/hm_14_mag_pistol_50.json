@@ -5,7 +5,7 @@
     "modifiers": [],
     "ammoLoadMode": "FullMag",
     "ammoConsumeMode": "FirstNonEmpty",
-    "upgradeCost": 0,
+    "upgradeCost": 3,
     "numRounds": 50,
     "allRoundsMustBeIdentical": false,
     "matchBulletNames": [],
