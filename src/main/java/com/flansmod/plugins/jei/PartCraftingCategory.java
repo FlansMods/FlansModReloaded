@@ -1,5 +1,6 @@
 package com.flansmod.plugins.jei;
 
+/*
 import com.flansmod.common.FlansMod;
 import com.flansmod.common.crafting.PartFabricationRecipe;
 import mezz.jei.api.gui.builder.IRecipeLayoutBuilder;
@@ -41,3 +42,4 @@ public class PartCraftingCategory extends FlansCraftingCategory<PartFabricationR
 
 	}
 }
+*/

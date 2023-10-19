@@ -1,5 +1,6 @@
 package com.flansmod.plugins.jei;
 
+/*
 import com.flansmod.common.FlansMod;
 import mezz.jei.api.IModPlugin;
 import mezz.jei.api.JeiPlugin;
@@ -26,3 +27,4 @@ public class JEIPlugin implements IModPlugin
 	}
 
 }
+*/

@@ -1,5 +1,6 @@
 package com.flansmod.plugins.jei;
 
+/*
 import com.mojang.blaze3d.vertex.PoseStack;
 
 import javax.annotation.Nonnull;
@@ -32,3 +33,4 @@ public class PartFabricationDrawable
 		}
 	}
 }
+*/
