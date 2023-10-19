@@ -6,12 +6,14 @@ import com.flansmod.common.types.elements.VecWithOverride;
 import com.flansmod.util.Maths;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 import net.minecraft.world.phys.Vec3;
 import org.joml.Vector3f;
 
 import java.lang.reflect.*;
 import java.util.HashMap;
 import java.util.Locale;
+import java.util.Optional;
 
 public class DefinitionParser
 {
@@ -93,16 +95,6 @@ public class DefinitionParser
 	private static FieldParseMethod GetParserFor(Field field) { return GetParserFor(field.getType()); }
 	private static FieldParseMethod GetParserFor(Type type)
 	{
-		/*if(type instanceof Class<?> classType)
-		{
-			if(classType.isArray())
-			{
-				Type elementType = classType.componentType();
-				FieldParseMethod elementParser = GetParserFor(elementType);
-				if(elementParser != null)
-					return new ListDeserializer(elementParser);
-			}
-		}*/
 		return Parsers.get(type);
 	}
 
@@ -271,6 +263,64 @@ public class DefinitionParser
 				return new Object[0];
 			}
 			catch(Exception e) { FlansMod.LOGGER.error("Failed to parse JsonNode " + jNode + " into " + ref + " as " + elementType + "[] due to exception: " + e); throw e; }
+		}
+	}
+
+	public static class PolymorphicDeserializer<TClass> implements FieldParseMethod
+	{
+		private final Class<? extends TClass> baseClass;
+		private final HashMap<String, ClassDeserializer<? extends TClass>> implementations;
+		private final Optional<ClassDeserializer<? extends TClass>> defaultDeserializer;
+
+		public PolymorphicDeserializer(Class<? extends TClass> cl, ClassDeserializer<? extends TClass> deser)
+		{
+			baseClass = cl;
+			implementations = new HashMap<>();
+			defaultDeserializer = Optional.of(deser);
+		}
+
+		public PolymorphicDeserializer(Class<? extends TClass> cl)
+		{
+			baseClass = cl;
+			implementations = new HashMap<>();
+			defaultDeserializer = Optional.empty();
+		}
+
+		public void AddImplementation(String typeName, ClassDeserializer<? extends TClass> implementation)
+		{
+			implementations.put(typeName, implementation);
+		}
+
+		@Override
+		public Object Parse(Object ref, JsonElement jNode, JsonField annotation) throws NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException
+		{
+			try
+			{
+				if(jNode instanceof JsonObject jObject)
+				{
+					if(jObject.has("type"))
+					{
+						String type = jObject.get("type").getAsString();
+						if(implementations.containsKey(type))
+						{
+							// Note: Can't use an existing ref, as it may be the wrong type
+							return implementations.get(type).Parse(null, jNode, annotation);
+						}
+						else FlansMod.LOGGER.warn("Could not parse polymorphic object as type '" + type + "' is not known.");
+
+					}
+					else FlansMod.LOGGER.warn("Polymorphic object lacks a type field.");
+
+					if(defaultDeserializer.isPresent())
+					{
+						return defaultDeserializer.get().Parse(null, jNode, annotation);
+					}
+					else FlansMod.LOGGER.warn("Polymorphic object could not resolve type AND had no valid default");
+				}
+				else FlansMod.LOGGER.warn("Polymorphic object expected a Json Object.");
+				return null;
+			}
+			catch(Exception e) { FlansMod.LOGGER.error("Failed to parse JsonNode " + jNode + " as a polymorphism of " + baseClass + " due to exception: " + e); throw e; }
 		}
 	}
 

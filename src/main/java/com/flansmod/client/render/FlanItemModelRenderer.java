@@ -92,10 +92,10 @@ public abstract class FlanItemModelRenderer extends BlockEntityWithoutLevelRende
 
 
     @Override
-    public void renderByItem(ItemStack stack,
-                             ItemTransforms.TransformType transformType,
-                             PoseStack ms,
-                             MultiBufferSource buffers,
+    public void renderByItem(@Nonnull ItemStack stack,
+                             @Nonnull ItemTransforms.TransformType transformType,
+                             @Nonnull PoseStack ms,
+                             @Nonnull MultiBufferSource buffers,
                              int light,
                              int overlay)
     {
@@ -130,15 +130,21 @@ public abstract class FlanItemModelRenderer extends BlockEntityWithoutLevelRende
     protected void RenderPartTexturedSolid(String partName, ResourceLocation withTexture, RenderContext renderContext)
     {
         VertexConsumer vc = renderContext.Buffers.getBuffer(flanItemRenderType(withTexture));
-        TurboModel unbaked = UnbakedRig.GetPart(partName);
-        if(unbaked != null)
+        if(UnbakedRig != null)
         {
-            TurboRenderUtility.Render(unbaked, vc, renderContext.Poses, renderContext.Light, renderContext.Overlay);
+            TurboModel unbaked = UnbakedRig.GetPart(partName);
+            if (unbaked != null)
+            {
+                TurboRenderUtility.Render(unbaked, vc, renderContext.Poses, renderContext.Light, renderContext.Overlay);
+            }
         }
     }
 
     protected void ApplyAnimations(RenderContext renderContext, AnimationDefinition animationSet, ActionStack actionStack, String partName)
     {
+        if(UnbakedRig == null)
+            return;
+
         if(actionStack != null)
         {
             List<AnimationAction> animActions = new ArrayList<>();
@@ -217,10 +223,13 @@ public abstract class FlanItemModelRenderer extends BlockEntityWithoutLevelRende
             }
 
             // Apply the model offset after animating
-            TurboModel model = UnbakedRig.GetPart(partName);
-            if(model != null)
+            if(UnbakedRig != null)
             {
-                renderContext.Poses.translate(model.offset.x, model.offset.y, model.offset.z);
+                TurboModel model = UnbakedRig.GetPart(partName);
+                if (model != null)
+                {
+                    renderContext.Poses.translate(model.offset.x, model.offset.y, model.offset.z);
+                }
             }
         }
     }
