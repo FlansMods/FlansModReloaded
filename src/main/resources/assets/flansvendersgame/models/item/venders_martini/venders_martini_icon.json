@@ -1,0 +1,11 @@
+{
+    "parent": "flansvendersgame:item/venders_customs_viper/venders_customs_viper_default_icon",
+    "overrides": [
+        {
+            "predicate": {
+                "custom_model_data": 1
+            },
+            "model": "flansvendersgame:item/venders_martini/venders_martini_default_icon"
+        }
+    ]
+}

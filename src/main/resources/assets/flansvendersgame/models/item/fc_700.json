@@ -1,10 +1,10 @@
 {
     "loader": "flansmod:multimodel",
     "first_person_model": "flansvendersgame:item/fc_700/fc_700_3d",
-	"third_person_model": "flansvendersgame:item/fc_700/fc_700_3d",
-	"head_model": "flansvendersgame:item/fc_700/fc_700_3d",
-	"ground_model": "flansvendersgame:item/fc_700/fc_700_3d",
-	"fixed_model": "flansvendersgame:item/fc_700/fc_700_3d",
-	
-	"gui_model": "flansvendersgame:item/fc_700/fc_700_icon"
+    "third_person_model": "flansvendersgame:item/fc_700/fc_700_3d",
+    "head_model": "flansvendersgame:item/fc_700/fc_700_3d",
+    "ground_model": "flansvendersgame:item/fc_700/fc_700_3d",
+    "fixed_model": "flansvendersgame:item/fc_700/fc_700_3d",
+    "gui_model": "flansvendersgame:item/fc_700/fc_700_icon",
+    "display": {}
 }

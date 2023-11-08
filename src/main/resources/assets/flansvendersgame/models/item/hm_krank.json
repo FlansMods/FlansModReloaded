@@ -1,0 +1,10 @@
+{
+    "loader": "flansmod:multimodel",
+    "first_person_model": "flansvendersgame:item/hm_krank/hm_krank_3d",
+    "third_person_model": "flansvendersgame:item/hm_krank/hm_krank_3d",
+    "head_model": "flansvendersgame:item/hm_krank/hm_krank_3d",
+    "ground_model": "flansvendersgame:item/hm_krank/hm_krank_3d",
+    "fixed_model": "flansvendersgame:item/hm_krank/hm_krank_3d",
+    "gui_model": "flansvendersgame:item/hm_krank/hm_krank_icon",
+    "display": {}
+}

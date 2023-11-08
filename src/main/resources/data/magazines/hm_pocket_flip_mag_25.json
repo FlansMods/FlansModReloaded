@@ -1,0 +1,26 @@
+{
+    "tags": [
+        "flansvendersgame:hm_pocket"
+    ],
+    "modifiers": [
+        {
+            "Stat": "reload_speed",
+            "Filter": "",
+            "Add": 0.0,
+            "Multiply": 0.66,
+            "SetValue": "",
+            "ApplyToPrimary": true,
+            "ApplyToSecondary": true
+        }
+    ],
+    "ammoLoadMode": "FullMag",
+    "ammoConsumeMode": "FirstNonEmpty",
+    "upgradeCost": 2,
+    "numRounds": 25,
+    "allRoundsMustBeIdentical": false,
+    "matchBulletNames": [],
+    "requiredBulletTags": [
+        "flansmod:pistol_bullet"
+    ],
+    "disallowedBulletTags": []
+}

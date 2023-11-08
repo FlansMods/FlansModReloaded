@@ -20,6 +20,7 @@ import com.flansmod.util.MinecraftHelpers;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 
 public class GunItemRenderer extends FlanItemModelRenderer
 {
@@ -50,35 +51,91 @@ public class GunItemRenderer extends FlanItemModelRenderer
             // Find our skin
             ResourceLocation skin = GetSkin(stack);
 
+            RenderPartIteratively(
+                renderContext,
+                "body",
+                // Texture Func
+                (partName) -> {
+                    return skin;
+                },
+                // Pre-Func
+                (partName, innerRenderContext) -> {
+                    innerRenderContext.Poses.pushPose();
+                    ApplyAnimations(innerRenderContext, animationSet, actionStack, partName);
+
+                    if(partName.equals("grip") || partName.equals("barrel") || partName.equals("stock") || partName.equals("sights"))
+                    {
+                        return RenderAttachmentPoint(gunContext, innerRenderContext, partName, EAttachmentType.Parse(partName));
+                    }
+                    else if(partName.startsWith("ammo_"))
+                    {
+                        ActionGroupContext primaryContext = ActionGroupContext.CreateFrom(gunContext, EActionInput.PRIMARY);
+                        if(primaryContext.IsValid())
+                        {
+                            String indexString = partName.substring("ammo_".length());
+                            int magIndex = 0;
+                            int bulletIndex = 0;
+                            try
+                            {
+                                // If we are specifying further between mags, we need to split again
+                                if (indexString.contains("_"))
+                                {
+                                    String[] parts = indexString.split("_");
+                                    if(parts.length == 2)
+                                    {
+                                        magIndex = Integer.parseInt(parts[0]);
+                                        bulletIndex = Integer.parseInt(parts[1]);
+                                    }
+                                } else
+                                {
+                                    bulletIndex = Integer.parseInt(indexString);
+                                }
+                            }
+                            catch (Exception ignored)
+                            { }
+                            return !primaryContext.GetBulletAtIndex(magIndex, bulletIndex).isEmpty();
+                        }
+                    }
+
+                    return true;
+                },
+                // Post-Func
+                (partName, innerRenderContext) -> {
+                    innerRenderContext.Poses.popPose();
+                });
 
 
-            RenderPart(gunContext, animationSet, actionStack, skin, renderContext, "body");
-
-            // Special case for the body, we keep the animations applied for rendering other parts
-            renderContext.Poses.pushPose();
-            {
-                ApplyAnimations(renderContext, animationSet, actionStack, "body");
-
-
-                RenderPart(gunContext, animationSet, actionStack, skin, renderContext, "revolver");
-                RenderPart(gunContext, animationSet, actionStack, skin, renderContext, "slide");
-                RenderPart(gunContext, animationSet, actionStack, skin, renderContext, "pump");
-                RenderPart(gunContext, animationSet, actionStack, skin, renderContext, "break_action");
-
-                ActionGroupContext primaryContext = ActionGroupContext.CreateFrom(gunContext, EActionInput.PRIMARY);
-                ActionGroupContext secondaryContext = ActionGroupContext.CreateFrom(gunContext, EActionInput.SECONDARY);
-
-                for (int i = 0; i < primaryContext.GetMagazineSize(0); i++)
-                    RenderPart(gunContext, animationSet, actionStack, skin, renderContext, "ammo_" + i);
-
-                RenderPartOrAttachment(gunContext, animationSet, actionStack, skin, renderContext, "grip", EAttachmentType.Grip);
-                RenderPartOrAttachment(gunContext, animationSet, actionStack, skin, renderContext, "barrel", EAttachmentType.Barrel);
-                RenderPartOrAttachment(gunContext, animationSet, actionStack, skin, renderContext, "stock", EAttachmentType.Stock);
-                RenderPartOrAttachment(gunContext, animationSet, actionStack, skin, renderContext, "sights", EAttachmentType.Sights);
-            }
-            renderContext.Poses.popPose();
         }
     }
+
+    private boolean RenderAttachmentPoint(GunContext gunContext, RenderContext renderContext, String partName, EAttachmentType attachmentType)
+    {
+        AttachmentSettingsDefinition attachmentSettings = gunContext.GunDef().GetAttachmentSettings(attachmentType);
+        boolean anyAttachmentsPresent = false;
+        for(int attachmentSlot = 0; attachmentSlot < attachmentSettings.numAttachmentSlots; attachmentSlot++)
+        {
+            ItemStack attachmentStack = gunContext.GetAttachmentStack(attachmentType, attachmentSlot);
+            AttachmentDefinition attachment = gunContext.GetAttachmentDefinition(attachmentType, attachmentSlot);
+
+            // Then render the attachment if we have one
+            if (attachment != AttachmentDefinition.INVALID)
+            {
+                anyAttachmentsPresent = true;
+
+                FlanItemModelRenderer attachmentRenderer = FlansModClient.MODEL_REGISTRATION.GetModelRenderer(attachmentStack);
+                if (attachmentRenderer instanceof AttachmentItemRenderer attachmentItemRenderer)
+                {
+                    renderContext.Poses.pushPose();
+                    attachmentItemRenderer.RenderAsAttachment(renderContext, gunContext, attachmentType, attachmentSlot);
+                    renderContext.Poses.popPose();
+                }
+            }
+        }
+
+        // Render the default mesh if we have no attachment or it is set to render anyway
+        return !anyAttachmentsPresent || !attachmentSettings.hideDefaultMesh;
+    }
+
 
     private void RenderPartOrAttachment(GunContext gunContext, AnimationDefinition animationSet, ActionStack actionStack, ResourceLocation skin, RenderContext renderContext, String partName, EAttachmentType attachmentType)
     {

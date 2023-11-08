@@ -148,20 +148,24 @@ public class FlanModelRegistration implements PreparableReloadListener
                 UnbakedModel unbaked = bakery.getModel(kvp.getKey());
                 if (unbaked instanceof BlockModel blockModel)
                 {
-                    if (blockModel.customData.hasCustomGeometry() && blockModel.customData.getCustomGeometry() instanceof TurboRig unbakedTurbo)
+                    if (blockModel.customData.hasCustomGeometry())
                     {
-                        ITEMS_TO_REGISTER.get(item).OnUnbakedModelLoaded(unbakedTurbo);
+                        if(blockModel.customData.getCustomGeometry() instanceof TurboRig unbakedTurbo)
+                        {
+                            ITEMS_TO_REGISTER.get(item).OnUnbakedModelLoaded(unbakedTurbo);
+                        }
+                        else if(blockModel.customData.getCustomGeometry() instanceof MultiModel unbakedMulti)
+                        {
+                            UnbakedModel firstPerson = bakery.getModel(unbakedMulti.FirstPersonLocation);
+                            if(firstPerson instanceof BlockModel innerBlockModel)
+                            {
+                                if(innerBlockModel.customData.hasCustomGeometry() && innerBlockModel.customData.getCustomGeometry() instanceof TurboRig innerUnbakedTurbo)
+                                {
+                                    ITEMS_TO_REGISTER.get(item).OnUnbakedModelLoaded(innerUnbakedTurbo);
+                                }
+                            }
+                        }
                     }
-                }
-                else if (unbaked instanceof TurboRig unbakedTurbo)
-                {
-                    ITEMS_TO_REGISTER.get(item).OnUnbakedModelLoaded(unbakedTurbo);
-                }
-                else if(unbaked instanceof MultiModel unbakedMulti)
-                {
-                    UnbakedModel firstPerson = bakery.getModel(unbakedMulti.FirstPersonLocation);
-                    if(firstPerson instanceof TurboRig unbakedTurbo)
-                        ITEMS_TO_REGISTER.get(item).OnUnbakedModelLoaded(unbakedTurbo);
                 }
                 else
                 {

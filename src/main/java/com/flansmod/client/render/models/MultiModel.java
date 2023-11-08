@@ -56,7 +56,7 @@ public class MultiModel implements IUnbakedGeometry<MultiModel>, UnbakedModel
 	@Nonnull
 	public Collection<ResourceLocation> getDependencies()
 	{
-		return Set.of(FirstPersonLocation, ThirdPersonLocation, GroundLocation, GUILocation);
+		return Set.of(FirstPersonLocation, ThirdPersonLocation, GroundLocation, GUILocation, FixedLocation, HeadLocation);
 	}
 	@Override
 	public void resolveParents(@Nonnull Function<ResourceLocation, UnbakedModel> modelLookup)

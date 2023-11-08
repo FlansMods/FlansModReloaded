@@ -1,0 +1,23 @@
+{
+    "parent": "flansvendersgame:item/fc_700/fc_700_default_icon",
+    "overrides": [
+        {
+            "predicate": {
+                "custom_model_data": 1
+            },
+            "model": "flansvendersgame:item/fc_49/fc_49_default_icon"
+        },
+        {
+            "predicate": {
+                "custom_model_data": 2
+            },
+            "model": "flansvendersgame:item/fc_49/fc_49_aged_icon"
+        },
+        {
+            "predicate": {
+                "custom_model_data": 3
+            },
+            "model": "flansvendersgame:item/fc_49/fc_49_polymer_icon"
+        }
+    ]
+}

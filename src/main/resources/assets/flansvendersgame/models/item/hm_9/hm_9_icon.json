@@ -1,0 +1,29 @@
+{
+    "parent": "flansvendersgame:item/hm_9/hm_9_default_icon",
+    "overrides": [
+        {
+            "predicate": {
+                "custom_model_data": 1
+            },
+            "model": "flansvendersgame:item/hm_9/hm_9_default_icon"
+        },
+        {
+            "predicate": {
+                "custom_model_data": 2
+            },
+            "model": "flansvendersgame:item/hm_9/hm_9_sand_icon"
+        },
+        {
+            "predicate": {
+                "custom_model_data": 3
+            },
+            "model": "flansvendersgame:item/hm_9/hm_9_venom_icon"
+        },
+        {
+            "predicate": {
+                "custom_model_data": 4
+            },
+            "model": "flansvendersgame:item/hm_9/hm_9_midnight_icon"
+        }
+    ]
+}

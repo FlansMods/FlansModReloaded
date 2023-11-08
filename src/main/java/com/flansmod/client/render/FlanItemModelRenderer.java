@@ -2,6 +2,9 @@ package com.flansmod.client.render;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.BiConsumer;
+import java.util.function.BiFunction;
+import java.util.function.Consumer;
 import java.util.function.Function;
 
 import com.flansmod.client.FlansModClient;
@@ -36,6 +39,7 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.HumanoidArm;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.client.model.data.ModelData;
+import org.codehaus.plexus.util.dag.Vertex;
 import org.joml.*;
 
 import javax.annotation.Nonnull;
@@ -101,13 +105,14 @@ public abstract class FlanItemModelRenderer extends BlockEntityWithoutLevelRende
     {
         RenderSystem.enableDepthTest();
 
-        if(transformType == ItemTransforms.TransformType.GROUND)
-        {
-            BakedRig.ApplyTransform(transformType, ms, false);
-        }
+        //if(transformType == ItemTransforms.TransformType.GROUND)
+        //{
+        //    BakedRig.ApplyTransform(transformType, ms, false);
+        //}
 
 
         ms.pushPose();
+        ms.scale(1f/16f, 1f/16f, 1f/16f);
         RenderItem(null, transformType, stack, ms, buffers, light, overlay);
         ms.popPose();
     }
@@ -126,19 +131,6 @@ public abstract class FlanItemModelRenderer extends BlockEntityWithoutLevelRende
     }
 
     protected abstract void DoRender(Entity heldByEntity, ItemStack stack, RenderContext renderContext);
-
-    protected void RenderPartTexturedSolid(String partName, ResourceLocation withTexture, RenderContext renderContext)
-    {
-        VertexConsumer vc = renderContext.Buffers.getBuffer(flanItemRenderType(withTexture));
-        if(UnbakedRig != null)
-        {
-            TurboModel unbaked = UnbakedRig.GetPart(partName);
-            if (unbaked != null)
-            {
-                TurboRenderUtility.Render(unbaked, vc, renderContext.Poses, renderContext.Light, renderContext.Overlay);
-            }
-        }
-    }
 
     protected void ApplyAnimations(RenderContext renderContext, AnimationDefinition animationSet, ActionStack actionStack, String partName)
     {
@@ -257,11 +249,12 @@ public abstract class FlanItemModelRenderer extends BlockEntityWithoutLevelRende
     {
         if(BakedRig == null)
         {
-            FlansMod.LOGGER.error("Could not render Flan's Item " + stack + " because rig was null");
+            //FlansMod.LOGGER.error("Could not render Flan's Item " + stack + " because rig was null");
             return;
         }
 
-        Render(entity, stack, new RenderContext(buffers, transformType, ms, light, overlay));
+        RenderItem(entity, transformType, stack, ms, buffers, light, overlay);
+        //Render(entity, stack, new RenderContext(buffers, transformType, ms, light, overlay));
     }
 
     protected void RenderItem(Entity entity,
@@ -275,11 +268,20 @@ public abstract class FlanItemModelRenderer extends BlockEntityWithoutLevelRende
 
         // Default minecraft doesn't use the ModelView matrix properly?!
         // We are going to load up our transformations into it
-        PoseStack modelViewStack = RenderSystem.getModelViewStack();
-        modelViewStack.pushPose();
-        {
-            modelViewStack.mulPoseMatrix(requestedPoseStack.last().pose());
+        //PoseStack modelViewStack = RenderSystem.getModelViewStack();
+        //modelViewStack.pushPose();
 
+        requestedPoseStack.pushPose();
+        {
+            //requestedPoseStack.translate(8f, 8f, 4f);
+            //requestedPoseStack.mulPose(new Quaternionf().rotateLocalY(Maths.PiF / 2f));
+            BakedRig.ApplyTransform(transformType, requestedPoseStack, false);
+            //modelViewStack.mulPoseMatrix(requestedPoseStack.last().pose());
+
+
+
+            //requestedPoseStack.scale(1f/16f, 1f/16f, 1f/16f);
+            //requestedPoseStack.translate(0f, 16f, 0f);
             // Bind texture
             FlanItem flanItem = stack.getItem() instanceof FlanItem ? (FlanItem)stack.getItem() : null;
             String skin = "default";
@@ -293,8 +295,10 @@ public abstract class FlanItemModelRenderer extends BlockEntityWithoutLevelRende
             // Render item
             DoRender(entity, stack, new RenderContext(buffers, transformType, requestedPoseStack, light, overlay));
         }
-        modelViewStack.popPose();
-        RenderSystem.applyModelViewMatrix();
+        requestedPoseStack.popPose();
+
+        //modelViewStack.popPose();
+        //RenderSystem.applyModelViewMatrix();
     }
 
     public void OnUnbakedModelLoaded(TurboRig unbaked)
@@ -309,7 +313,11 @@ public abstract class FlanItemModelRenderer extends BlockEntityWithoutLevelRende
 
     protected void RenderFirstPersonArm(PoseStack poseStack)
     {
-
+        //if(partName.equals("rightHand") || partName.equals("leftHand"))
+        //{
+        //    ResourceLocation skinLocation = Minecraft.getInstance().getSkinManager().getInsecureSkinLocation(Minecraft.getInstance().getUser().getGameProfile());
+        //    RenderSystem.setShaderTexture(0, skinLocation);
+        //}
     }
 
     private void ApplyItemArmTransform(PoseStack poseStack, HumanoidArm arm, float equipProgress)
@@ -318,98 +326,47 @@ public abstract class FlanItemModelRenderer extends BlockEntityWithoutLevelRende
         poseStack.translate((float)i * 0.56F, -0.52F + equipProgress * -0.6F, -0.72F);
     }
 
-    protected void RenderPartTransparent(PoseStack ms, ItemStack stack, VertexConsumer vc, String partName, int light, int overlay)
+    protected void RenderPartIteratively(RenderContext renderContext,
+                                         String partName,
+                                         Function<String, ResourceLocation> textureFunc,
+                                         BiFunction<String, RenderContext, Boolean> preRenderFunc,
+                                         BiConsumer<String, RenderContext> postRenderFunc)
     {
-        RenderPart(ms, stack, vc, partName, light, overlay, true);
-    }
-
-    protected void RenderPartSolid(PoseStack ms, ItemStack stack, VertexConsumer vc, String partName, int light, int overlay)
-    {
-        RenderPart(ms, stack, vc, partName, light, overlay, false);
-    }
-
-    protected void RenderPart(PoseStack ms,
-                              ItemStack stack,
-                              VertexConsumer vc,
-                              String partName,
-                              int light,
-                              int overlay,
-                              boolean transparent)
-    {
-        ItemRenderer ir = Minecraft.getInstance().getItemRenderer();
-        ModelData data = ModelData.EMPTY;
-
-        if(partName.equals("rightHand") || partName.equals("leftHand"))
+        renderContext.Poses.pushPose();
         {
-            ResourceLocation skinLocation = Minecraft.getInstance().getSkinManager().getInsecureSkinLocation(Minecraft.getInstance().getUser().getGameProfile());
-            RenderSystem.setShaderTexture(0, skinLocation);
-        }
-        else
-        {
-/*
-            BakedModel model = BakedRig.GetPart(partName);
-            if(model != null)
+            boolean shouldRender = preRenderFunc.apply(partName, renderContext);
+            if(shouldRender)
             {
-                for (BakedQuad quad : model.getQuads(null, null, RandomSource.create()))
+                RenderPartTexturedSolid(partName, textureFunc.apply(partName), renderContext);
+                if(UnbakedRig != null)
                 {
-
-
-                    vc.putBulkData(ms.last(),
-                        quad,
-                        1f,
-                        1f,
-                        1f,
-                        1f,
-                        light,
-                        overlay,
-                        false);
-                }
-            }*/
-
-            // unbaked run?
-            TurboModel unbaked = UnbakedRig.GetPart(partName);
-            if(unbaked != null)
-            {
-                // We should be loading up poses into the modelViewMatrix already
-                RenderSystem.applyModelViewMatrix();
-
-                for (TurboElement element : unbaked.GetElements())
-                {
-                    /*
-                    Tesselator tesselator = Tesselator.getInstance();
-                    BufferBuilder tessBuffer = tesselator.getBuilder();
-                    if (transparent)
-                        tessBuffer.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_COLOR);
-                    else
-                        tessBuffer.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX_COLOR_NORMAL);
-*/
-                    for (Direction direction : Direction.values())
+                    for (var kvp : UnbakedRig.GetAttachmentPoints())
                     {
-                        TurboFace face = element.GetFace(direction);
-                        Vector3f[] positions = element.GetFaceVertices(direction, true);
-                        Vector3f normal = element.GetNormal(direction, true);
-                        Vector3f nPosed = ms.last().normal().transform(normal);
-
-                        for (int i = 0; i < 4; i++)
+                        if (kvp.getValue().AttachTo.equals(partName))
                         {
-                            Vector4f vPosed = ms.last().pose().transform(new Vector4f(positions[i].x, positions[i].y, positions[i].z, 1.0F));
-                            vc.vertex(
-                                vPosed.x,
-                                vPosed.y,
-                                vPosed.z,
-                                1.0f, 1.0f, 1.0f, 1.0f,
-                                face.uvData.getU(i),
-                                face.uvData.getV(i),
-                                0, // overlayCoords
-                                0, // uv2
-                                nPosed.x,
-                                nPosed.y,
-                                nPosed.z);
+                            renderContext.Poses.pushPose();
+                            renderContext.Poses.translate(kvp.getValue().Offset.x, kvp.getValue().Offset.y, kvp.getValue().Offset.z);
+                            RenderPartIteratively(renderContext, kvp.getKey(), textureFunc, preRenderFunc, postRenderFunc);
+                            renderContext.Poses.popPose();
                         }
                     }
                 }
             }
+            postRenderFunc.accept(partName, renderContext);
+        }
+        renderContext.Poses.popPose();
+    }
 
+    protected void RenderPartTexturedSolid(String partName, ResourceLocation withTexture, RenderContext renderContext)
+    {
+        VertexConsumer vc = renderContext.Buffers.getBuffer(flanItemRenderType(withTexture));
+        if(UnbakedRig != null)
+        {
+            TurboModel unbaked = UnbakedRig.GetPart(partName);
+            if (unbaked != null)
+            {
+                TurboRenderUtility.Render(unbaked, vc, renderContext.Poses, renderContext.Light, renderContext.Overlay);
+            }
         }
     }
 }

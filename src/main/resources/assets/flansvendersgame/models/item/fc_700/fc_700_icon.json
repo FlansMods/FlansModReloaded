@@ -1,29 +1,11 @@
 {
-    "parent": "flansvendersgame:item/fc_700/fc_700_icon_default",
+    "parent": "flansvendersgame:item/fc_700/fc_700_default_icon",
     "overrides": [
         {
             "predicate": {
                 "custom_model_data": 1
             },
-            "model": "flansvendersgame:item/fc_700/fc_700_icon_blue_digital"
-        },
-        {
-            "predicate": {
-                "custom_model_data": 2
-            },
-            "model": "flansvendersgame:item/fc_700/fc_700_icon_dark"
-        },
-        {
-            "predicate": {
-                "custom_model_data": 3
-            },
-            "model": "flansvendersgame:item/fc_700/fc_700_icon_markings"
-        },
-        {
-            "predicate": {
-                "custom_model_data": 4
-            },
-            "model": "flansvendersgame:item/fc_700/fc_700_icon_red_digital"
+            "model": "flansvendersgame:item/fc_700/fc_700_default_icon"
         }
     ]
 }

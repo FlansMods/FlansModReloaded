@@ -13,11 +13,6 @@
                 "entitlementKey": ""
             },
             {
-                "textureName": "fc_870_dark",
-                "paintBucketsRequired": 1,
-                "entitlementKey": ""
-            },
-            {
                 "textureName": "fc_870_redwood",
                 "paintBucketsRequired": 1,
                 "entitlementKey": ""
@@ -403,60 +398,30 @@
         "allowlist": [],
         "allowAll": true,
         "numAttachmentSlots": 0,
-        "attachToMesh": "body",
-        "attachPoint": [
-            0.0,
-            0.0,
-            0.0
-        ],
         "hideDefaultMesh": true
     },
     "gripAttachments": {
         "allowlist": [],
         "allowAll": true,
         "numAttachmentSlots": 1,
-        "attachToMesh": "pump",
-        "attachPoint": [
-            0.0,
-            0.0,
-            0.0
-        ],
         "hideDefaultMesh": true
     },
     "stockAttachments": {
         "allowlist": [],
         "allowAll": true,
         "numAttachmentSlots": 0,
-        "attachToMesh": "body",
-        "attachPoint": [
-            0.0,
-            0.0,
-            0.0
-        ],
         "hideDefaultMesh": true
     },
     "scopeAttachments": {
         "allowlist": [],
         "allowAll": true,
         "numAttachmentSlots": 1,
-        "attachToMesh": "body",
-        "attachPoint": [
-            0.0,
-            0.0,
-            0.0
-        ],
         "hideDefaultMesh": true
     },
     "genericAttachments": {
         "allowlist": [],
         "allowAll": true,
         "numAttachmentSlots": 0,
-        "attachToMesh": "body",
-        "attachPoint": [
-            0.0,
-            0.0,
-            0.0
-        ],
         "hideDefaultMesh": true
     },
     "modelParts": [],

@@ -62,6 +62,8 @@ public class TurboRig implements IUnbakedGeometry<TurboRig>, UnbakedModel
 		AttachPoints = attachPoints;
 	}
 
+	public Set<Map.Entry<String, AttachPoint>> GetAttachmentPoints() { return AttachPoints.entrySet(); }
+
 	public AttachPoint GetAttachPoint(String attachmentName) { return AttachPoints.getOrDefault(attachmentName, AttachPoint.Invalid); }
 
 	public Map<String, Float> GetFloatParams() { return FloatParams; }

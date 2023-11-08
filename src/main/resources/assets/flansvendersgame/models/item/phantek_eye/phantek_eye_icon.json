@@ -1,0 +1,41 @@
+{
+    "parent": "flansvendersgame:item/phantek_eye/phantek_eye_default_icon",
+    "overrides": [
+        {
+            "predicate": {
+                "custom_model_data": 1
+            },
+            "model": "flansvendersgame:item/phantek_eye/phantek_eye_default_icon"
+        },
+        {
+            "predicate": {
+                "custom_model_data": 2
+            },
+            "model": "flansvendersgame:item/phantek_eye/phantek_eye_hazard_icon"
+        },
+        {
+            "predicate": {
+                "custom_model_data": 3
+            },
+            "model": "flansvendersgame:item/phantek_eye/phantek_eye_white_icon"
+        },
+        {
+            "predicate": {
+                "custom_model_data": 4
+            },
+            "model": "flansvendersgame:item/phantek_eye/phantek_eye_periwinkle_icon"
+        },
+        {
+            "predicate": {
+                "custom_model_data": 5
+            },
+            "model": "flansvendersgame:item/phantek_eye/phantek_eye_pulse_icon"
+        },
+        {
+            "predicate": {
+                "custom_model_data": 6
+            },
+            "model": "flansvendersgame:item/phantek_eye/phantek_eye_gravel_icon"
+        }
+    ]
+}

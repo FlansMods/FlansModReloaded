@@ -158,8 +158,8 @@ public class VendersGameMod
 			{
 				if(entry.get() instanceof GunItem || entry.get() instanceof AttachmentItem)
 				{
-					event.register(new ModelResourceLocation(MODID, entry.getId().getPath() + "_inventory", "inventory"));
-					shaper.register(entry.get(), new ModelResourceLocation(MODID, entry.getId().getPath() + "_inventory", "inventory"));
+					event.register(new ModelResourceLocation(MODID, entry.getId().getPath() + "", "inventory"));
+					shaper.register(entry.get(), new ModelResourceLocation(MODID, entry.getId().getPath() + "", "inventory"));
 				}
 				else
 				{

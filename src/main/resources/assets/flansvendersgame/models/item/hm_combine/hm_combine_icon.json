@@ -1,0 +1,29 @@
+{
+    "parent": "flansvendersgame:item/hm_1200/hm_1200_default_icon",
+    "overrides": [
+        {
+            "predicate": {
+                "custom_model_data": 1
+            },
+            "model": "flansvendersgame:item/hm_combine/hm_combine_default_icon"
+        },
+        {
+            "predicate": {
+                "custom_model_data": 2
+            },
+            "model": "flansvendersgame:item/hm_combine/hm_combine_black_icon"
+        },
+        {
+            "predicate": {
+                "custom_model_data": 3
+            },
+            "model": "flansvendersgame:item/hm_combine/hm_combine_racing_icon"
+        },
+        {
+            "predicate": {
+                "custom_model_data": 4
+            },
+            "model": "flansvendersgame:item/hm_combine/hm_combine_wood_icon"
+        }
+    ]
+}

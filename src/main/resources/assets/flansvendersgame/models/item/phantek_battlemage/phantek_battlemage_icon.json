@@ -1,0 +1,23 @@
+{
+    "parent": "flansvendersgame:item/phantek_auto_12/phantek_auto_12_default_icon",
+    "overrides": [
+        {
+            "predicate": {
+                "custom_model_data": 1
+            },
+            "model": "flansvendersgame:item/phantek_battlemage/phantek_battlemage_default_icon"
+        },
+        {
+            "predicate": {
+                "custom_model_data": 2
+            },
+            "model": "flansvendersgame:item/phantek_battlemage/phantek_battlemage_meteor_icon"
+        },
+        {
+            "predicate": {
+                "custom_model_data": 3
+            },
+            "model": "flansvendersgame:item/phantek_battlemage/phantek_battlemage_service_icon"
+        }
+    ]
+}

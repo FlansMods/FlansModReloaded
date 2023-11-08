@@ -1,0 +1,16 @@
+{
+    "tags": [
+        "flansvendersgame:phantek_seeker"
+    ],
+    "modifiers": [],
+    "ammoLoadMode": "FullMag",
+    "ammoConsumeMode": "FirstNonEmpty",
+    "upgradeCost": 0,
+    "numRounds": 1,
+    "allRoundsMustBeIdentical": true,
+    "matchBulletNames": [],
+    "requiredBulletTags": [
+        "flansmod:rocket"
+    ],
+    "disallowedBulletTags": []
+}

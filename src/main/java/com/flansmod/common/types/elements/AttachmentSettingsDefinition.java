@@ -14,9 +14,5 @@ public class AttachmentSettingsDefinition
 	public int numAttachmentSlots = 0;
 
 	@JsonField
-	public String attachToMesh = "body";
-	@JsonField
-	public Vec3 attachPoint = Vec3.ZERO;
-	@JsonField
 	public boolean hideDefaultMesh = true;
 }

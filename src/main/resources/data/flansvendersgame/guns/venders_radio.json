@@ -271,60 +271,30 @@
         "allowlist": [],
         "allowAll": true,
         "numAttachmentSlots": 0,
-        "attachToMesh": "body",
-        "attachPoint": [
-            0.0,
-            0.0,
-            0.0
-        ],
         "hideDefaultMesh": true
     },
     "gripAttachments": {
         "allowlist": [],
         "allowAll": false,
         "numAttachmentSlots": 0,
-        "attachToMesh": "body",
-        "attachPoint": [
-            0.0,
-            0.0,
-            0.0
-        ],
         "hideDefaultMesh": true
     },
     "stockAttachments": {
         "allowlist": [],
         "allowAll": false,
         "numAttachmentSlots": 0,
-        "attachToMesh": "body",
-        "attachPoint": [
-            0.0,
-            0.0,
-            0.0
-        ],
         "hideDefaultMesh": true
     },
     "scopeAttachments": {
         "allowlist": [],
         "allowAll": false,
         "numAttachmentSlots": 1,
-        "attachToMesh": "body",
-        "attachPoint": [
-            0.0,
-            0.0,
-            0.0
-        ],
         "hideDefaultMesh": true
     },
     "genericAttachments": {
         "allowlist": [],
         "allowAll": false,
         "numAttachmentSlots": 0,
-        "attachToMesh": "body",
-        "attachPoint": [
-            0.0,
-            0.0,
-            0.0
-        ],
         "hideDefaultMesh": true
     },
     "modelParts": [],

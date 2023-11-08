@@ -1,0 +1,47 @@
+{
+    "parent": "flansvendersgame:item/fc_hawk/fc_hawk_default_icon",
+    "overrides": [
+        {
+            "predicate": {
+                "custom_model_data": 1
+            },
+            "model": "flansvendersgame:item/fc_hawk/fc_hawk_default_icon"
+        },
+        {
+            "predicate": {
+                "custom_model_data": 2
+            },
+            "model": "flansvendersgame:item/fc_hawk/fc_hawk_neon_icon"
+        },
+        {
+            "predicate": {
+                "custom_model_data": 3
+            },
+            "model": "flansvendersgame:item/fc_hawk/fc_hawk_venom_icon"
+        },
+        {
+            "predicate": {
+                "custom_model_data": 4
+            },
+            "model": "flansvendersgame:item/fc_hawk/fc_hawk_coral_snake_icon"
+        },
+        {
+            "predicate": {
+                "custom_model_data": 5
+            },
+            "model": "flansvendersgame:item/fc_hawk/fc_hawk_gold_icon"
+        },
+        {
+            "predicate": {
+                "custom_model_data": 6
+            },
+            "model": "flansvendersgame:item/fc_hawk/fc_hawk_messenger_icon"
+        },
+        {
+            "predicate": {
+                "custom_model_data": 7
+            },
+            "model": "flansvendersgame:item/fc_hawk/fc_hawk_metal_icon"
+        }
+    ]
+}

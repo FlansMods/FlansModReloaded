@@ -8,17 +8,7 @@
     "paints": {
         "paintjobs": [
             {
-                "textureName": "hm_1200_blue",
-                "paintBucketsRequired": 1,
-                "entitlementKey": ""
-            },
-            {
-                "textureName": "hm_1200_periwinkle",
-                "paintBucketsRequired": 1,
-                "entitlementKey": ""
-            },
-            {
-                "textureName": "hm_1200_zebra",
+                "textureName": "hm_1200_wood",
                 "paintBucketsRequired": 1,
                 "entitlementKey": ""
             }
@@ -398,62 +388,32 @@
         "allowlist": [],
         "allowAll": true,
         "numAttachmentSlots": 0,
-        "attachToMesh": "body",
-        "attachPoint": [
-            0.0,
-            0.0,
-            0.0
-        ],
         "hideDefaultMesh": true
     },
     "gripAttachments": {
         "allowlist": [],
         "allowAll": true,
         "numAttachmentSlots": 1,
-        "attachToMesh": "pump",
-        "attachPoint": [
-            0.0,
-            0.0,
-            0.0
-        ],
         "hideDefaultMesh": true
     },
     "stockAttachments": {
         "allowlist": [],
         "allowAll": true,
         "numAttachmentSlots": 0,
-        "attachToMesh": "body",
-        "attachPoint": [
-            0.0,
-            0.0,
-            0.0
-        ],
         "hideDefaultMesh": true
     },
     "scopeAttachments": {
         "allowlist": [],
         "allowAll": true,
         "numAttachmentSlots": 1,
-        "attachToMesh": "body",
-        "attachPoint": [
-            0.0,
-            0.0,
-            0.0
-        ],
         "hideDefaultMesh": true
     },
     "genericAttachments": {
         "allowlist": [],
         "allowAll": true,
         "numAttachmentSlots": 0,
-        "attachToMesh": "body",
-        "attachPoint": [
-            0.0,
-            0.0,
-            0.0
-        ],
         "hideDefaultMesh": true
     },
     "modelParts": [],
-    "animationSet": "flansmod:shotgun_shell_loader"
+    "animationSet": "flansmod:shotgun"
 }

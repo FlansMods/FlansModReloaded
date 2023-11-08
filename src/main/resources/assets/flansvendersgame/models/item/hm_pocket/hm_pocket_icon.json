@@ -1,0 +1,29 @@
+{
+    "parent": "flansvendersgame:item/hm_pocket/hm_pocket_default_icon",
+    "overrides": [
+        {
+            "predicate": {
+                "custom_model_data": 1
+            },
+            "model": "flansvendersgame:item/hm_pocket/hm_pocket_default_icon"
+        },
+        {
+            "predicate": {
+                "custom_model_data": 2
+            },
+            "model": "flansvendersgame:item/hm_pocket/hm_pocket_red_icon"
+        },
+        {
+            "predicate": {
+                "custom_model_data": 3
+            },
+            "model": "flansvendersgame:item/hm_pocket/hm_pocket_yellow_icon"
+        },
+        {
+            "predicate": {
+                "custom_model_data": 4
+            },
+            "model": "minecraft:null"
+        }
+    ]
+}

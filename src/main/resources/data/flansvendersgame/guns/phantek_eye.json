@@ -8,11 +8,6 @@
     "paints": {
         "paintjobs": [
             {
-                "textureName": "phantek_eye_gravel",
-                "paintBucketsRequired": 1,
-                "entitlementKey": ""
-            },
-            {
                 "textureName": "phantek_eye_hazard",
                 "paintBucketsRequired": 1,
                 "entitlementKey": ""
@@ -404,60 +399,30 @@
         "allowlist": [],
         "allowAll": true,
         "numAttachmentSlots": 1,
-        "attachToMesh": "body",
-        "attachPoint": [
-            0.0,
-            0.0,
-            0.0
-        ],
         "hideDefaultMesh": true
     },
     "gripAttachments": {
         "allowlist": [],
         "allowAll": true,
         "numAttachmentSlots": 0,
-        "attachToMesh": "body",
-        "attachPoint": [
-            0.0,
-            0.0,
-            0.0
-        ],
         "hideDefaultMesh": true
     },
     "stockAttachments": {
         "allowlist": [],
         "allowAll": true,
         "numAttachmentSlots": 0,
-        "attachToMesh": "body",
-        "attachPoint": [
-            0.0,
-            0.0,
-            0.0
-        ],
         "hideDefaultMesh": true
     },
     "scopeAttachments": {
         "allowlist": [],
         "allowAll": true,
         "numAttachmentSlots": 1,
-        "attachToMesh": "body",
-        "attachPoint": [
-            0.0,
-            0.0,
-            0.0
-        ],
         "hideDefaultMesh": true
     },
     "genericAttachments": {
         "allowlist": [],
         "allowAll": true,
         "numAttachmentSlots": 0,
-        "attachToMesh": "body",
-        "attachPoint": [
-            0.0,
-            0.0,
-            0.0
-        ],
         "hideDefaultMesh": true
     },
     "modelParts": [],

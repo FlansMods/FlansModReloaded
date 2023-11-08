@@ -1,0 +1,10 @@
+{
+    "loader": "flansmod:multimodel",
+    "first_person_model": "flansvendersgame:item/venders_martini/venders_martini_3d",
+    "third_person_model": "flansvendersgame:item/venders_martini/venders_martini_3d",
+    "head_model": "flansvendersgame:item/venders_martini/venders_martini_3d",
+    "ground_model": "flansvendersgame:item/venders_martini/venders_martini_3d",
+    "fixed_model": "flansvendersgame:item/venders_martini/venders_martini_3d",
+    "gui_model": "flansvendersgame:item/venders_martini/venders_martini_icon",
+    "display": {}
+}

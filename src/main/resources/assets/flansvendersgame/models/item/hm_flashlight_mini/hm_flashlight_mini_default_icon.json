@@ -1,0 +1,42 @@
+{
+    "parent": "item/generated",
+    "textures": {
+        "layer0": "flansvendersgame:item/hm_flashlight"
+    },
+    "display": {
+        "thirdperson_righthand": {
+            "rotation": [
+                270.0,
+                0.0,
+                0.0
+            ],
+            "translation": [
+                0.0,
+                1.0,
+                -3.0
+            ],
+            "scale": [
+                0.55,
+                0.55,
+                0.55
+            ]
+        },
+        "firstperson_righthand": {
+            "rotation": [
+                0.0,
+                225.0,
+                25.0000038
+            ],
+            "translation": [
+                0.0,
+                4.0,
+                2.0
+            ],
+            "scale": [
+                1.7,
+                1.7,
+                1.7
+            ]
+        }
+    }
+}

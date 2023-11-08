@@ -1,0 +1,10 @@
+{
+    "loader": "flansmod:multimodel",
+    "first_person_model": "flansvendersgame:item/fc_56/fc_56_3d",
+    "third_person_model": "flansvendersgame:item/fc_56/fc_56_3d",
+    "head_model": "flansvendersgame:item/fc_56/fc_56_3d",
+    "ground_model": "flansvendersgame:item/fc_56/fc_56_3d",
+    "fixed_model": "flansvendersgame:item/fc_56/fc_56_3d",
+    "gui_model": "flansvendersgame:item/fc_56/fc_56_icon",
+    "display": {}
+}
