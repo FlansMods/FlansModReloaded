@@ -6,6 +6,15 @@
         "pages": [],
         "FECostPerCraft": 0
     },
+    "partCrafting": {
+        "isActive": false,
+        "inputSlots": 8,
+        "outputSlots": 8,
+        "timePerCraft": 1.0,
+        "FECostPerCraft": 0.0,
+        "partsByName": [],
+        "partsByTier": []
+    },
     "gunModifying": {
         "isActive": true,
         "disallowedMods": [],

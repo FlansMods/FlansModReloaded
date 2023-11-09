@@ -605,7 +605,7 @@ public class ActionGroupContext
 		String modified = ModifyString(key, defaultValue.toString());
 		return Enum.valueOf(clazz, modified);
 	}
-	public ERepeatMode RepeatMode() { return (ERepeatMode) ModifyEnum("repeat_mode", GroupDef().repeatMode, ERepeatMode.class); }
+	public ERepeatMode RepeatMode() { return (ERepeatMode) ModifyEnum("repeat_mode", Gun.GunDef().GetRepeatMode(InputType), ERepeatMode.class); }
 	public float RepeatDelaySeconds() { return ModifyFloat("repeat_delay", GroupDef().repeatDelay); }
 	public float RepeatDelayTicks() { return RepeatDelaySeconds() * 20.0f; }
 	public int RepeatCount() { return Maths.Ceil(ModifyFloat("repeat_count", GroupDef().repeatCount)); }

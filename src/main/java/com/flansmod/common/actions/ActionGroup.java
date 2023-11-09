@@ -225,7 +225,7 @@ public class ActionGroup
 		switch(RepeatMode(context))
 		{
 			// These modes are all set to wait until a SetFinished call happens externally
-			case Toggle, FullAuto -> { return Finished; }
+			case Toggle, FullAuto, WaitUntilNextAction -> { return Finished; }
 			// When the minigun has spun down completely, this action finishes
 			case Minigun -> { return !IsCharging && Charge <= 0.0f; }
 			case SemiAuto, BurstFire ->  { return Progress > Duration * TriggerCount; }

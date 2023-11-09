@@ -1,10 +1,12 @@
 package com.flansmod.common.actions;
 
+import com.flansmod.common.FlansMod;
 import com.flansmod.common.gunshots.ActionGroupContext;
 import com.flansmod.common.types.elements.ActionDefinition;
 import com.flansmod.common.types.elements.ActionGroupDefinition;
 import com.flansmod.common.types.guns.EReloadStage;
 import com.flansmod.common.gunshots.GunContext;
+import com.flansmod.common.types.guns.ERepeatMode;
 import net.minecraft.world.level.Level;
 
 import javax.annotation.Nullable;
@@ -61,6 +63,12 @@ public class ActionStack
 
 	public void AddActionGroup(ActionGroupContext context, ActionGroup group)
 	{
+		// Stop any actions that are waiting for a new action to be applied
+		for(ActionGroup existingGroup : ActiveActionGroups)
+			if(existingGroup.InputType == context.InputType)
+				if(existingGroup.RepeatMode(context) == ERepeatMode.WaitUntilNextAction)
+					existingGroup.SetFinished();
+
 		ActiveActionGroups.add(group);
 		if(IsClient)
 			group.OnStartClient(context);
@@ -137,7 +145,10 @@ public class ActionStack
 				switch(reload.CurrentStage)
 				{
 					case Start -> {
-						nextStage = EReloadStage.Eject;
+						if(reload.Def.eject.actions.length > 0)
+							nextStage = EReloadStage.Eject;
+						else
+							nextStage = EReloadStage.LoadOne;
 					}
 					case Eject, LoadOne -> {
 						if(actionContext.CanPerformReloadFromAttachedInventory(0) && !cancelActionRequested)

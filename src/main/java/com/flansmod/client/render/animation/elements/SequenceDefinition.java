@@ -7,18 +7,32 @@ public class SequenceDefinition
 	public SequenceEntryDefinition[] GetSegment(float tickPlusPartial)
 	{
 		SequenceEntryDefinition[] entries = new SequenceEntryDefinition[2];
-		entries[0] = frames[0];
-		entries[1] = frames[frames.length - 1];
-
-		for(int i = 0; i < frames.length; i++)
+		if(tickPlusPartial >= Duration())
 		{
-			// If this is the closest above or below our current time, set it
-			if(frames[i].tick <= tickPlusPartial && frames[i].tick > entries[0].tick)
-				entries[0] = frames[i];
-
-			if(frames[i].tick > tickPlusPartial && frames[i].tick < entries[1].tick)
-				entries[1] = frames[i];
+			entries[0] = frames[frames.length - 2];
+			entries[1] = frames[frames.length - 1];
 		}
+		else if(tickPlusPartial <= 0.0f)
+		{
+			entries[0] = frames[0];
+			entries[1] = frames[1];
+		}
+		else
+		{
+			entries[0] = frames[0];
+			entries[1] = frames[frames.length - 1];
+
+			for (int i = 0; i < frames.length; i++)
+			{
+				// If this is the closest above or below our current time, set it
+				if (frames[i].tick <= tickPlusPartial && frames[i].tick > entries[0].tick)
+					entries[0] = frames[i];
+
+				if (frames[i].tick > tickPlusPartial && frames[i].tick < entries[1].tick)
+					entries[1] = frames[i];
+			}
+		}
+
 
 		return entries;
 	}

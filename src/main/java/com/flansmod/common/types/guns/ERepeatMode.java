@@ -8,4 +8,5 @@ public enum ERepeatMode
 	Minigun,
 
 	Toggle,
+	WaitUntilNextAction,
 }

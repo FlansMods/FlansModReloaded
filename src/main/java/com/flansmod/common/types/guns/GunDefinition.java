@@ -94,6 +94,18 @@ public class GunDefinition extends JsonDefinition
 	}
 
 	@Nonnull
+	public ERepeatMode GetRepeatMode(EActionInput set)
+	{
+		switch(set)
+		{
+			case PRIMARY: return primary.repeatMode;
+			case SECONDARY: return secondary.repeatMode;
+			case RELOAD_PRIMARY, RELOAD_SECONDARY: return ERepeatMode.WaitUntilNextAction;
+			case LOOK_AT: return lookAt.repeatMode;
+			default: return ERepeatMode.SemiAuto;
+		}
+	}
+	@Nonnull
 	public ActionGroupDefinition GetActionGroup(EActionInput set)
 	{
 		switch(set)
