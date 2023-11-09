@@ -30,7 +30,6 @@ public class AnimationAction extends Action
 	public void OnTriggerClient(ActionGroupContext context, int triggerIndex)
 	{
 		AnimFrame = 0;
-		FlansMod.LOGGER.info("animation action " + Def.anim + " played");
 	}
 
 	@Override

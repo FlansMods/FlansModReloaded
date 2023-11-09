@@ -111,16 +111,22 @@ public class StackedVanillaIngredient extends StackedIngredient
 		@Nonnull
 		public StackedVanillaIngredient parse(@Nonnull JsonObject json)
 		{
-			JsonArray itemArray = GsonHelper.getAsJsonArray(json, "items");
-			ResourceLocation[] items = new ResourceLocation[itemArray.size()];
-			for(int i = 0; i < itemArray.size(); i++)
-				items[i] = new ResourceLocation(itemArray.get(i).getAsString());
+			ResourceLocation[] items = new ResourceLocation[0];
+			if(json.has("items"))
+			{
+				JsonArray itemArray = GsonHelper.getAsJsonArray(json, "items");
+				items = new ResourceLocation[itemArray.size()];
+				for (int i = 0; i < itemArray.size(); i++)
+					items[i] = new ResourceLocation(itemArray.get(i).getAsString());
+			}
 
-			JsonArray tagArray = GsonHelper.getAsJsonArray(json, "tags");
-			List<TagKey<Item>> tags = new ArrayList<>(tagArray.size());
-			for(int i = 0; i < tagArray.size(); i++)
-				tags.add(TagKey.create(Registries.ITEM, new ResourceLocation(tagArray.get(i).getAsString())));
-
+			List<TagKey<Item>> tags = new ArrayList<>();
+			if(json.has("tags"))
+			{
+				JsonArray tagArray = GsonHelper.getAsJsonArray(json, "tags");
+				for (int i = 0; i < tagArray.size(); i++)
+					tags.add(TagKey.create(Registries.ITEM, new ResourceLocation(tagArray.get(i).getAsString())));
+			}
 			int count = GsonHelper.getAsInt(json, "count", 1);
 			return new StackedVanillaIngredient(items, tags, count);
 		}
