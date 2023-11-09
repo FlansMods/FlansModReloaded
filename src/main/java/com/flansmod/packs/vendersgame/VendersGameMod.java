@@ -49,6 +49,9 @@ public class VendersGameMod
 	public static final RegistryObject<Item> GUN_FC_870 = 						FlansMod.Gun(ITEMS, MODID, "fc_870");
 	public static final RegistryObject<Item> GUN_FC_HAWK = 						FlansMod.Gun(ITEMS, MODID, "fc_hawk");
 	public static final RegistryObject<Item> GUN_FC_PUNCHER = 					FlansMod.Gun(ITEMS, MODID, "fc_puncher");
+	public static final RegistryObject<Item> GUN_FC_FAR = 						FlansMod.Gun(ITEMS, MODID, "fc_far");
+	public static final RegistryObject<Item> GUN_FC_49 = 						FlansMod.Gun(ITEMS, MODID, "fc_49");
+	public static final RegistryObject<Item> GUN_FC_56 = 						FlansMod.Gun(ITEMS, MODID, "fc_56");
 
 	public static final RegistryObject<Block> WORKBENCH_BLOCK_FC = 				FlansMod.Workbench_Block(BLOCKS, MODID, "fc_workbench");
 	public static final RegistryObject<Item> WORKBENCH_ITEM_FC = 				FlansMod.Workbench_Item(ITEMS, MODID, "fc_workbench", WORKBENCH_BLOCK_FC);
@@ -62,10 +65,11 @@ public class VendersGameMod
 	// HitMarket Budget Weaponry
 	public static final RegistryObject<Item> GUN_HM_9 = 						FlansMod.Gun(ITEMS, MODID, "hm_9");
 	public static final RegistryObject<Item> GUN_HM_14 = 						FlansMod.Gun(ITEMS, MODID, "hm_14");
-	public static final RegistryObject<Item> GUN_HM_16 = 						FlansMod.Gun(ITEMS, MODID, "hm_21");
+	public static final RegistryObject<Item> GUN_HM_16 = 						FlansMod.Gun(ITEMS, MODID, "hm_16");
 	public static final RegistryObject<Item> GUN_HM_1200 = 						FlansMod.Gun(ITEMS, MODID, "hm_1200");
 	public static final RegistryObject<Item> GUN_HM_COMBINE = 					FlansMod.Gun(ITEMS, MODID, "hm_combine");
 	public static final RegistryObject<Item> GUN_HM_POCKET = 					FlansMod.Gun(ITEMS, MODID, "hm_pocket");
+	public static final RegistryObject<Item> GUN_HM_KRANK = 					FlansMod.Gun(ITEMS, MODID, "hm_krank");
 
 	public static final RegistryObject<Block> WORKBENCH_BLOCK_HM = 				FlansMod.Workbench_Block(BLOCKS, MODID, "hm_workbench");
 	public static final RegistryObject<Item> WORKBENCH_ITEM_HM = 				FlansMod.Workbench_Item(ITEMS, MODID, "hm_workbench", WORKBENCH_BLOCK_HM);
@@ -87,6 +91,7 @@ public class VendersGameMod
 	public static final RegistryObject<Item> GUN_PHANTEK_FURY = 				FlansMod.Gun(ITEMS, MODID, "phantek_fury");
 	public static final RegistryObject<Item> GUN_PHANTEK_LOCK = 				FlansMod.Gun(ITEMS, MODID, "phantek_lock");
 	public static final RegistryObject<Item> GUN_PHANTEK_SEEKER = 				FlansMod.Gun(ITEMS, MODID, "phantek_seeker");
+	public static final RegistryObject<Item> GUN_PHANTEK_BATTLEMAGE =			FlansMod.Gun(ITEMS, MODID, "phantek_battlemage");
 
 	public static final RegistryObject<Block> WORKBENCH_BLOCK_PHANTEK = 		FlansMod.Workbench_Block(BLOCKS, MODID, "phantek_workbench");
 	public static final RegistryObject<Item> WORKBENCH_ITEM_PHANTEK = 			FlansMod.Workbench_Item(ITEMS, MODID, "phantek_workbench", WORKBENCH_BLOCK_PHANTEK);
@@ -99,6 +104,7 @@ public class VendersGameMod
 
 	// Vender Customs and Rare Items
 	public static final RegistryObject<Item> GUN_VENDERS_CUSTOMS_VIPER =		FlansMod.Gun(ITEMS, MODID, "venders_customs_viper");
+	public static final RegistryObject<Item> GUN_VENDERS_CUSTOMS_MARTINI =		FlansMod.Gun(ITEMS, MODID, "venders_martini");
 	public static final RegistryObject<Item> ATTACHMENT_DRAGONS_BREATH_INFUSER =FlansMod.Attachment(ITEMS, MODID, "dragons_breath_infuser");
 	public static final RegistryObject<Item> ATTACHMENT_TAKE_YOUR_LIFE_IN_YOUR_HANDS = FlansMod.Attachment(ITEMS, MODID, "take_your_life_in_your_hands");
 	public static final RegistryObject<Item> TOOL_VENDERS_RADIO =				FlansMod.Tool(ITEMS, MODID, "venders_radio");

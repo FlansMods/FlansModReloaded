@@ -32,6 +32,7 @@ import net.minecraft.client.renderer.*;
 import net.minecraft.client.renderer.block.model.ItemTransforms;
 import net.minecraft.client.renderer.entity.ItemRenderer;
 import net.minecraft.client.renderer.texture.MissingTextureAtlasSprite;
+import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.RandomSource;
@@ -265,40 +266,53 @@ public abstract class FlanItemModelRenderer extends BlockEntityWithoutLevelRende
                               int light,
                               int overlay)
     {
-
-        // Default minecraft doesn't use the ModelView matrix properly?!
-        // We are going to load up our transformations into it
-        //PoseStack modelViewStack = RenderSystem.getModelViewStack();
-        //modelViewStack.pushPose();
-
         requestedPoseStack.pushPose();
         {
-            //requestedPoseStack.translate(8f, 8f, 4f);
-            //requestedPoseStack.mulPose(new Quaternionf().rotateLocalY(Maths.PiF / 2f));
-            BakedRig.ApplyTransform(transformType, requestedPoseStack, false);
-            //modelViewStack.mulPoseMatrix(requestedPoseStack.last().pose());
 
 
-
-            //requestedPoseStack.scale(1f/16f, 1f/16f, 1f/16f);
-            //requestedPoseStack.translate(0f, 16f, 0f);
-            // Bind texture
             FlanItem flanItem = stack.getItem() instanceof FlanItem ? (FlanItem)stack.getItem() : null;
             String skin = "default";
             if(flanItem != null)
                 skin = flanItem.GetPaintjobName(stack);
-            ResourceLocation texture = BakedRig.GetTexture(skin);
 
-            // Find the right buffer
-            VertexConsumer vc = buffers.getBuffer(flanItemRenderType(texture));
+            boolean shouldRenderRig = true;
+            if(transformType == ItemTransforms.TransformType.GUI)
+            {
+                BakedModel iconModel = BakedRig.GetIconModel(skin);
+                if(iconModel != null)
+                {
+                    shouldRenderRig = false;
+                    //requestedPoseStack.scale(16f, 16f, 16f);
+                    //requestedPoseStack.mulPose(new Quaternionf().rotateLocalX(1f));
+                    requestedPoseStack.setIdentity();
+                    requestedPoseStack.translate(-0.5f, -0.5f, 0f);
+                    //iconModel.applyTransform(transformType, requestedPoseStack, false);
+                    Minecraft.getInstance().getBlockRenderer().getModelRenderer().renderModel(
+                        requestedPoseStack.last(),
+                        buffers.getBuffer(Sheets.cutoutBlockSheet()),
+                        null,
+                        iconModel,
+                        1f, 1f, 1f,
+                        light,
+                        overlay);
+                }
+            }
 
-            // Render item
-            DoRender(entity, stack, new RenderContext(buffers, transformType, requestedPoseStack, light, overlay));
+            if(shouldRenderRig)
+            {
+                BakedRig.ApplyTransform(transformType, requestedPoseStack, false);
+
+                // Bind texture
+                ResourceLocation texture = BakedRig.GetTexture(skin);
+
+                // Find the right buffer
+                VertexConsumer vc = buffers.getBuffer(flanItemRenderType(texture));
+
+                // Render item
+                DoRender(entity, stack, new RenderContext(buffers, transformType, requestedPoseStack, light, overlay));
+            }
         }
         requestedPoseStack.popPose();
-
-        //modelViewStack.popPose();
-        //RenderSystem.applyModelViewMatrix();
     }
 
     public void OnUnbakedModelLoaded(TurboRig unbaked)

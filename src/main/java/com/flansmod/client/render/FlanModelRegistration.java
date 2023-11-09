@@ -100,9 +100,9 @@ public class FlanModelRegistration implements PreparableReloadListener
                 //for(var texLocation : turboBakedModel.GetTextureLocations())
                 //    tm.register(texLocation, new SimpleTexture(texLocation));
             }
-            else if(bakedModel instanceof MultiModel.Baked multiBakedModel)
+            else if(bakedModel instanceof MultiModel.BakedSkinSwitcher skinSwitcher)
             {
-                if(multiBakedModel.FirstPersonModel instanceof TurboRig.Baked turboBaked)
+                if(skinSwitcher.DefaultModel instanceof TurboRig.Baked turboBaked)
                 {
                     kvp.getValue().OnBakeComplete(turboBaked);
                 }
