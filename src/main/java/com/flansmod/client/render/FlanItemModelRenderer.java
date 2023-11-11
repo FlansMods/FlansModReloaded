@@ -38,6 +38,7 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.HumanoidArm;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.client.model.data.ModelData;
 import org.codehaus.plexus.util.dag.Vertex;
 import org.joml.*;
@@ -256,7 +257,7 @@ public abstract class FlanItemModelRenderer extends BlockEntityWithoutLevelRende
 
         // TODO: Handle dual wielding setup
 
-        Vector3d returnToCenter = new Vector3d(0f, 8f, leftHanded ? 8f : -8f);
+        Vector3d returnToCenter = new Vector3d(0f, 7f, leftHanded ? 8f : -8f);
 
         if(UnbakedRig != null)
         {
@@ -423,5 +424,16 @@ public abstract class FlanItemModelRenderer extends BlockEntityWithoutLevelRende
                 TurboRenderUtility.Render(unbaked, vc, renderContext.Poses, renderContext.Light, renderContext.Overlay);
             }
         }
+    }
+
+    public Vector3f GetAttachPoint(String apName)
+    {
+        if(UnbakedRig != null)
+        {
+            TurboRig.AttachPoint ap = UnbakedRig.GetAttachPoint(apName);
+            if(ap != null)
+                return ap.Offset;
+        }
+        return new Vector3f();
     }
 }

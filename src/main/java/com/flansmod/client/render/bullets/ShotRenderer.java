@@ -1,6 +1,9 @@
 package com.flansmod.client.render.bullets;
 
+import com.flansmod.client.FlansModClient;
+import com.flansmod.client.render.FlanItemModelRenderer;
 import com.flansmod.common.gunshots.GunshotContext;
+import com.flansmod.common.gunshots.ShooterContext;
 import com.flansmod.util.Maths;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.*;
@@ -9,10 +12,12 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.client.event.RenderLevelStageEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.TickEvent;
+import org.joml.Vector3f;
 import org.joml.Vector4f;
 
 import java.util.ArrayList;
@@ -32,10 +37,33 @@ public class ShotRenderer
 
 	public int AddLocalPlayerTrail(Vec3 origin, Vec3 endpoint, GunshotContext context)
 	{
-		// TODO: Work out actual origin from model
-		origin = new Vec3(1d, 0d, 1d);
+		if(Minecraft.getInstance().player != null)
+		{
+			ItemStack gunStack = context.ActionGroup.Gun.GetItemStack();
+			FlanItemModelRenderer gunRenderer = FlansModClient.MODEL_REGISTRATION.GetModelRenderer(gunStack);
+			if(gunRenderer != null)
+			{
+				// TODO: Offset if barrel attachment used
 
-		ShotRenderInstance shot = new ShotRenderInstance(origin, endpoint, 0.05f, 10.0f, 10.0f, null, true);
+				Vector3f barrelAP = gunRenderer.GetAttachPoint("barrel");
+				Vec3 firstPersonRelative = new Vec3(2f - barrelAP.x, barrelAP.y - 6f, 13f + barrelAP.z);
+				firstPersonRelative = firstPersonRelative.scale(1f/16f);
+
+				Vec3 playerPos = Minecraft.getInstance().player.getEyePosition();
+				float playerYaw = Minecraft.getInstance().player.getYHeadRot();
+				float playerPitch = Minecraft.getInstance().player.getXRot();
+
+				Vec3 globalOrigin = firstPersonRelative.xRot(-playerPitch * Maths.DegToRadF);
+				globalOrigin = globalOrigin.yRot(-playerYaw * Maths.DegToRadF);
+				globalOrigin = globalOrigin.add(playerPos);
+
+				ShotRenderInstance shot = new ShotRenderInstance(globalOrigin, endpoint, 0.05f, 10.0f, 10.0f, null, false);
+				shots.add(shot);
+				return shot.GetLifetime();
+			}
+		}
+
+		ShotRenderInstance shot = new ShotRenderInstance(origin, endpoint, 0.05f, 10.0f, 10.0f, null, false);
 		shots.add(shot);
 		return shot.GetLifetime();
 	}
@@ -106,7 +134,7 @@ public class ShotRenderer
 			endPoint = end;
 			width = w;
 			length = l;
-			bulletSpeed = speed;
+			bulletSpeed = speed;// * 0.001d; <- Do this if you want to test trails
 			trailTexture = trail;
 			distanceToTarget = start.distanceTo(end);
 			lifetime = bulletSpeed <= 0.0001d ? 1 : Maths.Floor((distanceToTarget - length) / bulletSpeed);
@@ -134,8 +162,8 @@ public class ShotRenderer
 				float playerYaw = Minecraft.getInstance().player.getYHeadRot();
 				float playerPitch = Minecraft.getInstance().player.getXRot();
 
-				Vec3 globalOrigin = origin.xRot(playerPitch);
-				globalOrigin = globalOrigin.yRot(playerYaw);
+				Vec3 globalOrigin = origin.xRot(-playerPitch * Maths.DegToRadF);
+				globalOrigin = globalOrigin.yRot(-playerYaw * Maths.DegToRadF);
 				return playerPos.add(globalOrigin);
 			}
 			return origin;
@@ -157,7 +185,7 @@ public class ShotRenderer
 
 			Vec3 startPos = GetStartPoint();
 
-			double centerT = (ticksExisted + dt) * bulletSpeed;
+			double centerT = length * 0.5f + (ticksExisted + dt) * bulletSpeed;
 			Vec3 bulletDirection = endPoint.subtract(startPos).normalize();
 			Vec3 centerPos = startPos.add(bulletDirection.scale(centerT));
 			Vec3 cameraToTrailDirection = centerPos.subtract(cameraPos).normalize();

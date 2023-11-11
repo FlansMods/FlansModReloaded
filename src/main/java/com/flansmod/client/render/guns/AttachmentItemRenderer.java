@@ -26,7 +26,19 @@ public class AttachmentItemRenderer extends FlanItemModelRenderer
 		ResourceLocation skin = GetSkin(stack);
 
 		renderContext.Poses.pushPose();
-		RenderPartTexturedSolid("attachment", skin, renderContext);
+		RenderPartIteratively(renderContext,
+			"body",
+			// Texture func
+			(partName) -> { return skin; },
+			// Pre-func
+			(partName, innerRenderContext) -> {
+				return true;
+			},
+			// Post-func
+			(partName, innerRenderContext) -> {
+			}
+		);
+		//RenderPartTexturedSolid("attachment", skin, renderContext);
 		renderContext.Poses.popPose();
 	}
 
