@@ -66,8 +66,18 @@ public class ActionStack
 		// Stop any actions that are waiting for a new action to be applied
 		for(ActionGroup existingGroup : ActiveActionGroups)
 			if(existingGroup.InputType == context.InputType)
-				if(existingGroup.RepeatMode(context) == ERepeatMode.WaitUntilNextAction)
+			{
+				if (existingGroup.RepeatMode(context) == ERepeatMode.WaitUntilNextAction)
 					existingGroup.SetFinished();
+				else if(existingGroup.RepeatMode(context) == ERepeatMode.Toggle)
+				{
+					if(existingGroup.Def == group.Def)
+					{
+						existingGroup.SetFinished();
+						return;
+					}
+				}
+			}
 
 		ActiveActionGroups.add(group);
 		if(IsClient)

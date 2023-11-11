@@ -331,7 +331,7 @@
         "canActUnderOtherLiquid": false,
         "canBeOverriden": true,
         "twoHanded": false,
-        "repeatMode": "SemiAuto",
+        "repeatMode": "Toggle",
         "repeatDelay": 0.05,
         "repeatCount": 3,
         "spinUpDuration": 1.5,

@@ -1,12 +1,13 @@
 package com.flansmod.common.gunshots;
 
 import com.flansmod.common.FlansMod;
-import com.flansmod.common.actions.ActionStack;
-import com.flansmod.common.actions.EActionInput;
+import com.flansmod.common.actions.*;
 import com.flansmod.common.item.*;
 import com.flansmod.common.types.attachments.AttachmentDefinition;
 import com.flansmod.common.types.attachments.EAttachmentType;
 import com.flansmod.common.types.elements.ActionDefinition;
+import com.flansmod.common.types.elements.ActionGroupDefinition;
+import com.flansmod.common.types.elements.ActionGroupOverrideDefinition;
 import com.flansmod.common.types.elements.ModifierDefinition;
 import com.flansmod.common.types.guns.*;
 import com.flansmod.common.types.parts.PartDefinition;
@@ -312,31 +313,51 @@ public abstract class GunContext
 	// ACTIONS
 	// --------------------------------------------------------------------------
 	@Nonnull
-	public ActionDefinition[] GetActionDefinitions(EActionInput inputType)
+	public List<ActionDefinition> GetActionDefinitions(EActionInput inputType)
 	{
 		// First check if any attachments are modifying our actions
+		List<ActionGroupOverrideDefinition> overrides = new ArrayList<>();
 		for(ItemStack attachmentStack : GetAttachmentStacks())
 		{
 			if(attachmentStack.getItem() instanceof AttachmentItem attachmentItem)
 			{
-				if(attachmentItem.Def().ShouldReplaceAction(inputType))
-				{
-					return attachmentItem.Def().GetActions(inputType);
-				}
+				attachmentItem.Def().GetOverrides(inputType, overrides);
 			}
 		}
-		// Then defer to the gun definition
-		return GunDef().GetActions(inputType);
+
+		return Actions.EvaluateActionOverrides(GunDef().GetActionGroup(inputType), inputType, overrides);
 	}
-	public ActionDefinition GetShootActionDefinition(EActionInput inputType)
+	@Nonnull
+	public ActionGroup CreateActionGroup(EActionInput inputType)
 	{
-		EActionInput shootType = inputType.GetActionType();
-		if(shootType != null)
-			for(ActionDefinition def : GetActionDefinitions(shootType))
-				if(def.actionType == EActionType.Shoot)
-					return def;
-		return ActionDefinition.Invalid;
+		// First check if any attachments are modifying our actions
+		List<ActionGroupOverrideDefinition> overrides = new ArrayList<>();
+		for(ItemStack attachmentStack : GetAttachmentStacks())
+		{
+			if(attachmentStack.getItem() instanceof AttachmentItem attachmentItem)
+			{
+				attachmentItem.Def().GetOverrides(inputType, overrides);
+			}
+		}
+		return Actions.CreateActionGroup(GunDef().GetActionGroup(inputType), inputType, overrides);
 	}
+	@Nonnull
+	public ReloadProgress[] CreateReloads(EActionInput inputType)
+	{
+		if(inputType.IsReload())
+		{
+			return new ReloadProgress[] {
+				new ReloadProgress(GunDef().GetReload(inputType), inputType),
+			};
+		}
+		return new ReloadProgress[0];
+	}
+	@Nullable
+	public ActionGroup GetExistingActionGroup(EActionInput inputType)
+	{
+		return GetActionStack().FindMatchingActiveGroup(GunDef().GetActionGroup(inputType));
+	}
+
 
 	// --------------------------------------------------------------------------
 	// PAINTJOBS

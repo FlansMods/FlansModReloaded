@@ -16,12 +16,10 @@ import com.flansmod.client.render.animation.elements.SequenceDefinition;
 import com.flansmod.client.render.animation.elements.SequenceEntryDefinition;
 import com.flansmod.client.render.models.*;
 import com.flansmod.common.FlansMod;
-import com.flansmod.common.actions.Action;
-import com.flansmod.common.actions.ActionGroup;
-import com.flansmod.common.actions.ActionStack;
-import com.flansmod.common.actions.AnimationAction;
+import com.flansmod.common.actions.*;
 import com.flansmod.common.item.FlanItem;
 import com.flansmod.util.Maths;
+import com.flansmod.util.MinecraftHelpers;
 import com.flansmod.util.Transform;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.*;
@@ -36,6 +34,7 @@ import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.RandomSource;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.HumanoidArm;
 import net.minecraft.world.item.ItemStack;
@@ -141,13 +140,14 @@ public abstract class FlanItemModelRenderer extends BlockEntityWithoutLevelRende
         if(actionStack != null)
         {
             List<AnimationAction> animActions = new ArrayList<>();
+            List<AimDownSightAction> adsActions = new ArrayList<>();
             for(ActionGroup group : actionStack.GetActiveActionGroups())
                 for(Action action : group.GetActions())
                 {
                     if (action instanceof AnimationAction animAction)
-                    {
                         animActions.add(animAction);
-                    }
+                    else if(action instanceof AimDownSightAction adsAction)
+                        adsActions.add(adsAction);
                 }
 
             List<Transform> poses = new ArrayList<>();
@@ -208,11 +208,34 @@ public abstract class FlanItemModelRenderer extends BlockEntityWithoutLevelRende
                     }
                 }
             }
+
+            float adsBlend = renderContext.TransformType.firstPerson() ? FlansModClient.ADS_BLEND : 0.0f;
             if(poses.size() > 0)
             {
                 Transform resultPose = Transform.Interpolate(poses);
-                renderContext.Poses.translate(resultPose.position.x, resultPose.position.y, resultPose.position.z);
-                renderContext.Poses.mulPose(resultPose.orientation);
+                if(adsBlend > 0.0f && partName.equals("body"))
+                {
+                    Vector3d eyeLine = GetEyeLine(null, renderContext.TransformType == ItemTransforms.TransformType.FIRST_PERSON_LEFT_HAND); // TODO: Pass in attachments
+                    eyeLine = new Vector3d(0f, eyeLine.y, eyeLine.z);
+                    Vector3d blendedPos = resultPose.position.lerp(eyeLine, adsBlend);
+                    Quaternionf blendedOri = resultPose.orientation.slerp(new Quaternionf(), adsBlend);
+                    renderContext.Poses.translate(blendedPos.x, blendedPos.y, blendedPos.z);
+                    renderContext.Poses.mulPose(blendedOri);
+                }
+                else
+                {
+                    renderContext.Poses.translate(resultPose.position.x, resultPose.position.y, resultPose.position.z);
+                    renderContext.Poses.mulPose(resultPose.orientation);
+                }
+            }
+            else
+            {
+                if(adsBlend > 0.0f && partName.equals("body"))
+                {
+                    Vector3d eyeLine = GetEyeLine(null, renderContext.TransformType == ItemTransforms.TransformType.FIRST_PERSON_LEFT_HAND); // TODO: Pass in attachments
+                    eyeLine = new Vector3d(0f, eyeLine.y, eyeLine.z);
+                    renderContext.Poses.translate(eyeLine.x * adsBlend, eyeLine.y * adsBlend, eyeLine.z * adsBlend);
+                }
             }
 
             // Apply the model offset after animating
@@ -225,6 +248,24 @@ public abstract class FlanItemModelRenderer extends BlockEntityWithoutLevelRende
                 }
             }
         }
+    }
+
+    protected Vector3d GetEyeLine(ItemStack stack, boolean leftHanded)
+    {
+        // TODO: Apply attachments
+
+        // TODO: Handle dual wielding setup
+
+        Vector3d returnToCenter = new Vector3d(0f, 8f, leftHanded ? 8f : -8f);
+
+        if(UnbakedRig != null)
+        {
+            TurboRig.AttachPoint ap = UnbakedRig.GetAttachPoint("eye_line");
+            if(ap != null)
+                return returnToCenter.add(-ap.Offset.x, -ap.Offset.y, -ap.Offset.z);
+        }
+
+        return returnToCenter;
     }
 
     protected ResourceLocation GetSkin(@Nonnull ItemStack stack)

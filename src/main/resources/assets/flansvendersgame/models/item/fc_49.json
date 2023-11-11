@@ -3757,6 +3757,33 @@
                 4.0,
                 0.0
             ]
+        },
+        {
+            "name": "ammo_0",
+            "attachTo": "body",
+            "offset": [
+                0.0,
+                0.0,
+                0.0
+            ]
+        },
+        {
+            "name": "slide",
+            "attachTo": "body",
+            "offset": [
+                0.0,
+                0.0,
+                0.0
+            ]
+        },
+        {
+            "name": "eye_line",
+            "attachTo": "body",
+            "offset": [
+                14.0,
+                3.0,
+                0.0
+            ]
         }
     ],
     "display": {

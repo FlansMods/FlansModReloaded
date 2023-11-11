@@ -4,11 +4,12 @@ import com.flansmod.common.FlansMod;
 import com.flansmod.common.actions.EActionInput;
 import com.flansmod.common.types.JsonDefinition;
 import com.flansmod.common.types.JsonField;
-import com.flansmod.common.types.elements.ActionDefinition;
-import com.flansmod.common.types.elements.ItemDefinition;
-import com.flansmod.common.types.elements.ModifierDefinition;
+import com.flansmod.common.types.elements.*;
 import com.flansmod.common.types.guns.ERepeatMode;
 import net.minecraft.resources.ResourceLocation;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class AttachmentDefinition extends JsonDefinition
 {
@@ -23,29 +24,17 @@ public class AttachmentDefinition extends JsonDefinition
 		super(resLoc);
 	}
 
-	public boolean ShouldReplaceAction(EActionInput inputType)
+	public void GetOverrides(EActionInput inputType, List<ActionGroupOverrideDefinition> matchingOverrides)
 	{
-		switch(inputType)
+		for(ActionGroupOverrideDefinition override : actionOverrides)
 		{
-			case PRIMARY -> { return replacePrimaryAction; }
-			case SECONDARY -> { return replaceSecondaryAction; }
-			default -> { return false; }
-		}
-	}
-
-	public ActionDefinition[] GetActions(EActionInput inputType)
-	{
-		switch(inputType)
-		{
-			case PRIMARY -> { return primaryActions; }
-			case SECONDARY -> { return secondaryActions; }
-			default -> { return new ActionDefinition[0]; }
+			if(override.inputType == inputType)
+				matchingOverrides.add(override);
 		}
 	}
 
 	@JsonField
 	public ItemDefinition itemSettings = new ItemDefinition();
-
 	@JsonField
 	public EAttachmentType attachmentType = EAttachmentType.Generic;
 	@JsonField
@@ -56,19 +45,8 @@ public class AttachmentDefinition extends JsonDefinition
 	@JsonField
 	public String mechaEffectFilter = "";
 
-
-
 	@JsonField
-	public ActionDefinition[] primaryActions = new ActionDefinition[0];
-	@JsonField
-	public ActionDefinition[] secondaryActions = new ActionDefinition[0];
-	@JsonField(Docs = "If true, adding this attachment will swap the primaryActions array. Otherwise, it will be additive")
-	public boolean replacePrimaryAction = false;
-	@JsonField(Docs = "If true, adding this attachment will swap the secondaryActions array. Otherwise, it will be additive")
-	public boolean replaceSecondaryAction = false;
-
-
-
+	public ActionGroupOverrideDefinition[] actionOverrides = new ActionGroupOverrideDefinition[0];
 
 	@JsonField
 	public ERepeatMode modeOverride = ERepeatMode.FullAuto;

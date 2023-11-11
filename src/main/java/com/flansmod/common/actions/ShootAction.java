@@ -428,7 +428,11 @@ public class ShootAction extends Action
 				if(gunshotContext.Bullet.shootStats.hitscan)
 				{
 					// Create a bullet trail render
-					FlansModClient.SHOT_RENDERER.AddTrail(shot.origin, shot.Endpoint());
+					if(context.Shooter().IsLocalPlayerOwner())
+					{
+						FlansModClient.SHOT_RENDERER.AddLocalPlayerTrail(shot.origin, shot.Endpoint(), gunshotContext);
+					}
+					else FlansModClient.SHOT_RENDERER.AddTrail(shot.origin, shot.Endpoint());
 
 					for (HitResult hit : shot.hits)
 					{

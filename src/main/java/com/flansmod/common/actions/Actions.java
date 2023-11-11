@@ -2,11 +2,59 @@ package com.flansmod.common.actions;
 
 import com.flansmod.common.types.elements.ActionDefinition;
 import com.flansmod.common.types.elements.ActionGroupDefinition;
+import com.flansmod.common.types.elements.ActionGroupOverrideDefinition;
 
 import javax.annotation.Nonnull;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 public class Actions
 {
+	public static List<ActionDefinition> EvaluateActionOverrides(@Nonnull ActionGroupDefinition groupDef, EActionInput inputType, List<ActionGroupOverrideDefinition> overrides)
+	{
+		List<ActionDefinition> defs = new ArrayList<>();
+		boolean addBaseActions = true;
+		for(ActionGroupOverrideDefinition overrideDef : overrides)
+		{
+			if(overrideDef.override)
+				addBaseActions = false;
+			defs.addAll(Arrays.asList(overrideDef.actionGroup.actions));
+		}
+		if(addBaseActions)
+		{
+			defs.addAll(Arrays.asList(groupDef.actions));
+		}
+		return defs;
+	}
+
+	public static ActionGroup CreateActionGroup(@Nonnull ActionGroupDefinition groupDef, EActionInput inputType, List<ActionGroupOverrideDefinition> overrides)
+	{
+		ActionGroup group = new ActionGroup(groupDef, inputType);
+		boolean addBaseActions = true;
+		for(ActionGroupOverrideDefinition overrideDef : overrides)
+		{
+			if(overrideDef.override)
+				addBaseActions = false;
+			for(ActionDefinition actionDef : overrideDef.actionGroup.actions)
+			{
+				Action action = CreateAction(group, actionDef);
+				if(action != null)
+					group.AddAction(action);
+			}
+		}
+		if(addBaseActions)
+		{
+			for (ActionDefinition actionDef : groupDef.actions)
+			{
+				Action action = CreateAction(group, actionDef);
+				if (action != null)
+					group.AddAction(action);
+			}
+		}
+		return group;
+	}
+
 	public static ActionGroup CreateActionGroup(@Nonnull ActionGroupDefinition groupDef, EActionInput inputType)
 	{
 		ActionGroup group = new ActionGroup(groupDef, inputType);

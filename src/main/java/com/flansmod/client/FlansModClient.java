@@ -12,10 +12,18 @@ import com.flansmod.client.render.debug.DebugRenderer;
 import com.flansmod.client.render.decals.DecalRenderer;
 import com.flansmod.client.render.bullets.ShotRenderer;
 import com.flansmod.common.FlansMod;
+import com.flansmod.common.actions.Action;
+import com.flansmod.common.actions.ActionGroup;
+import com.flansmod.common.actions.AimDownSightAction;
 import com.flansmod.common.gunshots.ActionManager;
+import com.flansmod.common.gunshots.GunContext;
+import com.flansmod.common.gunshots.ShooterContext;
 import com.flansmod.common.types.guns.GunDefinition;
+import com.flansmod.util.Maths;
+import com.flansmod.util.MinecraftHelpers;
 import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import cpw.mods.modlauncher.api.INameMappingService;
+import net.minecraft.Util;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraft.client.renderer.ItemModelShaper;
@@ -24,11 +32,14 @@ import net.minecraft.client.renderer.entity.EntityRenderers;
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.InteractionHand;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.ModelEvent;
 import net.minecraftforge.client.event.RegisterClientReloadListenersEvent;
 import net.minecraftforge.client.event.RegisterShadersEvent;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.AddReloadListenerEvent;
+import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -38,6 +49,8 @@ import net.minecraftforge.fml.util.ObfuscationReflectionHelper;
 
 import javax.annotation.Nullable;
 import java.lang.reflect.Field;
+import java.util.ArrayList;
+import java.util.List;
 
 
 @Mod.EventBusSubscriber(value = Dist.CLIENT, bus = Mod.EventBusSubscriber.Bus.MOD, modid = FlansMod.MODID)
@@ -53,6 +66,12 @@ public class FlansModClient
 	public static final ActionManager ACTIONS_CLIENT = new ActionManager(true);
 	public static final MagazineTextureAtlas MAGAZINE_ATLAS = new MagazineTextureAtlas();
 	public static final RecoilManager RECOIL = new RecoilManager();
+
+
+	public static long PREV_FRAME_MS = 0L;
+	public static long THIS_FRAME_MS = 0L;
+	public static float ADS_BLEND = 0.0f;
+	public static float FrameDeltaTime() { return (THIS_FRAME_MS - PREV_FRAME_MS) / 1000000000f; }
 
 	@Nullable
 	private static ShaderInstance GUN_CUTOUT;
@@ -122,7 +141,42 @@ public class FlansModClient
 		// Entity Renderers
 		EntityRenderers.register(FlansMod.ENT_TYPE_BULLET.get(), BulletEntityRenderer::new);
 
+		MinecraftForge.EVENT_BUS.addListener(FlansModClient::RenderTick);
+	}
 
+	public static void RenderTick(TickEvent.RenderTickEvent event)
+	{
+		PREV_FRAME_MS = THIS_FRAME_MS;
+		THIS_FRAME_MS = Util.getNanos();
+
+		if(Minecraft.getInstance().player != null)
+		{
+			ShooterContext playerContext = ShooterContext.GetOrCreate(Minecraft.getInstance().player);
+			List<Action> adsActions = new ArrayList<>();
+			for(GunContext gunContext : playerContext.GetAllActiveGunContexts())
+			{
+				if(gunContext.IsValid())
+				{
+					for (ActionGroup actionGroup : gunContext.GetActionStack().GetActiveActionGroups())
+					{
+						for (Action action : actionGroup.GetActions())
+						{
+							if (action instanceof AimDownSightAction adsAction)
+								adsActions.add(adsAction);
+						}
+					}
+				}
+			}
+
+			if(adsActions.size() > 0)
+			{
+				ADS_BLEND = Maths.Lerp(ADS_BLEND, 1.0f, FlansModClient.FrameDeltaTime() * 8f);
+			}
+			else
+			{
+				ADS_BLEND = Maths.Lerp(ADS_BLEND, 0.0f, FlansModClient.FrameDeltaTime() * 10f);
+			}
+		}
 	}
 
 	@SubscribeEvent

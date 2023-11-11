@@ -52,7 +52,7 @@ public class Maths
     public static int Floor(float d) { return (int)Math.floor(d); }
     public static int Round(float d) { return (int)Math.round(d); }
     public static boolean Approx(float a, float b) { return Abs(a-b) < EpsilonF; }
-    public static float Lerp(float a, float b, float t) { return a + (b-a)*t; }
+    public static float Lerp(float a, float b, float t) { return a + (b-a)*Maths.Clamp(t, 0f, 1f); }
     public static float Sign(float f) { return f > 0.0f ? 1.0f : (f < 0.0f ? -1.0f : 0.0f); }
     public static float ExpF(float f) { return (float)Math.exp(f); }
 

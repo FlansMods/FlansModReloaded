@@ -1,0 +1,16 @@
+{
+    "tags": [
+        "flansvendersgame:hm_krank"
+    ],
+    "modifiers": [],
+    "ammoLoadMode": "FullMag",
+    "ammoConsumeMode": "FirstNonEmpty",
+    "upgradeCost": 3,
+    "numRounds": 64,
+    "allRoundsMustBeIdentical": false,
+    "matchBulletNames": [],
+    "requiredBulletTags": [
+        "flansmod:rifle_bullet"
+    ],
+    "disallowedBulletTags": []
+}

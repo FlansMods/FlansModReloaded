@@ -3646,7 +3646,26 @@
             ]
         }
     },
-    "attachPoints": [],
+    "attachPoints": [
+        {
+            "name": "ammo_0",
+            "attachTo": "body",
+            "offset": [
+                0.0,
+                0.0,
+                0.0
+            ]
+        },
+        {
+            "name": "break_action",
+            "attachTo": "body",
+            "offset": [
+                0.0,
+                0.0,
+                0.0
+            ]
+        }
+    ],
     "display": {
         "firstperson_righthand": {
             "rotation": [

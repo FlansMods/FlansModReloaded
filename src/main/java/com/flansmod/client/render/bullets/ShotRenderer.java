@@ -1,5 +1,6 @@
 package com.flansmod.client.render.bullets;
 
+import com.flansmod.common.gunshots.GunshotContext;
 import com.flansmod.util.Maths;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.*;
@@ -29,16 +30,26 @@ public class ShotRenderer
 		MinecraftForge.EVENT_BUS.addListener(this::ClientTick);
 	}
 
+	public int AddLocalPlayerTrail(Vec3 origin, Vec3 endpoint, GunshotContext context)
+	{
+		// TODO: Work out actual origin from model
+		origin = new Vec3(1d, 0d, 1d);
+
+		ShotRenderInstance shot = new ShotRenderInstance(origin, endpoint, 0.05f, 10.0f, 10.0f, null, true);
+		shots.add(shot);
+		return shot.GetLifetime();
+	}
+
 	public int AddTrail(Vec3 origin, Vec3 endpoint)
 	{
-		ShotRenderInstance shot = new ShotRenderInstance(origin, endpoint, 0.05f, 10.0f, 10.0f, null);
+		ShotRenderInstance shot = new ShotRenderInstance(origin, endpoint, 0.05f, 10.0f, 10.0f, null, false);
 		shots.add(shot);
 		return shot.GetLifetime();
 	}
 
 	public int AddTrail(Vec3 origin, Vec3 endpoint, ResourceLocation texture)
 	{
-		ShotRenderInstance shot = new ShotRenderInstance(origin, endpoint, 0.05f, 10.0f, 10.0f, texture);
+		ShotRenderInstance shot = new ShotRenderInstance(origin, endpoint, 0.05f, 10.0f, 10.0f, texture, false);
 		shots.add(shot);
 		return shot.GetLifetime();
 	}
@@ -74,6 +85,8 @@ public class ShotRenderer
 
 	private static class ShotRenderInstance
 	{
+		// If true, the origin provided will be in local camera space
+		private final boolean isFromLocalPlayer;
 		private final Vec3 origin;
 		private final Vec3 endPoint;
 		private final float width;
@@ -87,7 +100,7 @@ public class ShotRenderer
 		private final int lifetime;
 		public int GetLifetime() { return lifetime; }
 
-		public ShotRenderInstance(Vec3 start, Vec3 end, float w, float l, float speed, ResourceLocation trail)
+		public ShotRenderInstance(Vec3 start, Vec3 end, float w, float l, float speed, ResourceLocation trail, boolean local)
 		{
 			origin = start;
 			endPoint = end;
@@ -97,6 +110,7 @@ public class ShotRenderer
 			trailTexture = trail;
 			distanceToTarget = start.distanceTo(end);
 			lifetime = bulletSpeed <= 0.0001d ? 1 : Maths.Floor((distanceToTarget - length) / bulletSpeed);
+			isFromLocalPlayer = local;
 		}
 
 		public boolean Finished()
@@ -112,6 +126,21 @@ public class ShotRenderer
 		private static final Vector4f WHITE_COLOUR = new Vector4f(1.0f, 1.0f, 1.0f, 1.0f);
 		private static final Vector4f DEFAULT_TRAIL_COLOUR = new Vector4f(1.0f, 1.0f, 0.5f, 1.0f);
 
+		private Vec3 GetStartPoint()
+		{
+			if(isFromLocalPlayer && Minecraft.getInstance().player != null)
+			{
+				Vec3 playerPos = Minecraft.getInstance().player.getEyePosition();
+				float playerYaw = Minecraft.getInstance().player.getYHeadRot();
+				float playerPitch = Minecraft.getInstance().player.getXRot();
+
+				Vec3 globalOrigin = origin.xRot(playerPitch);
+				globalOrigin = globalOrigin.yRot(playerYaw);
+				return playerPos.add(globalOrigin);
+			}
+			return origin;
+		}
+
 		public void Render(Tesselator tesselator, PoseStack poseStack, Vec3 cameraPos, float dt)
 		{
 			Vector4f colour = WHITE_COLOUR;
@@ -126,9 +155,11 @@ public class ShotRenderer
 				RenderSystem.disableTexture();
 			}
 
+			Vec3 startPos = GetStartPoint();
+
 			double centerT = (ticksExisted + dt) * bulletSpeed;
-			Vec3 bulletDirection = endPoint.subtract(origin).normalize();
-			Vec3 centerPos = origin.add(bulletDirection.scale(centerT));
+			Vec3 bulletDirection = endPoint.subtract(startPos).normalize();
+			Vec3 centerPos = startPos.add(bulletDirection.scale(centerT));
 			Vec3 cameraToTrailDirection = centerPos.subtract(cameraPos).normalize();
 
 			Vec3 trailYAxis = bulletDirection.cross(cameraToTrailDirection).normalize();

@@ -1,0 +1,16 @@
+{
+    "tags": [
+        "flansvendersgame:fc_49"
+    ],
+    "modifiers": [],
+    "ammoLoadMode": "FullMag",
+    "ammoConsumeMode": "FirstNonEmpty",
+    "upgradeCost": 0,
+    "numRounds": 6,
+    "allRoundsMustBeIdentical": true,
+    "matchBulletNames": [],
+    "requiredBulletTags": [
+        "flansmod:rifle_bullet"
+    ],
+    "disallowedBulletTags": []
+}

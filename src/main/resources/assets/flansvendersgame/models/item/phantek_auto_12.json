@@ -1522,7 +1522,7 @@
     "attachPoints": [
         {
             "name": "sights",
-            "attachTo": "none",
+            "attachTo": "body",
             "offset": [
                 3.5,
                 5.0,
@@ -1531,7 +1531,7 @@
         },
         {
             "name": "stock",
-            "attachTo": "none",
+            "attachTo": "body",
             "offset": [
                 1.0,
                 4.0,
@@ -1540,7 +1540,7 @@
         },
         {
             "name": "barrel",
-            "attachTo": "none",
+            "attachTo": "body",
             "offset": [
                 18.0,
                 3.5,
@@ -1549,7 +1549,7 @@
         },
         {
             "name": "grip",
-            "attachTo": "none",
+            "attachTo": "body",
             "offset": [
                 11.0,
                 3.0,
@@ -1562,6 +1562,15 @@
             "offset": [
                 0.0,
                 0.0,
+                0.0
+            ]
+        },
+        {
+            "name": "eye_line",
+            "attachTo": "body",
+            "offset": [
+                1.0,
+                6.5,
                 0.0
             ]
         }

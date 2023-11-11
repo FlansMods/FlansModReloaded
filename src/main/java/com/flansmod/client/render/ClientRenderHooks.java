@@ -79,7 +79,7 @@ public class ClientRenderHooks
 				{
 					if (action instanceof AimDownSightAction adsAction)
 					{
-						totalFOVModifier += action.Def.fovFactor;
+						totalFOVModifier += adsAction.FOVFactor(gunContext.GetOrCreate(actionGroup.InputType));
 						FOVModifierCount++;
 					}
 				}
@@ -181,7 +181,7 @@ public class ClientRenderHooks
 					{
 						if (scopeAction.ApplyOverlay())
 						{
-							ResourceLocation overlayLocation = scopeAction.GetOverlayLocation();
+							ResourceLocation overlayLocation = scopeAction.GetOverlayLocation(gunContext.GetOrCreate(actionGroup.InputType));
 							if (overlayLocation != null)
 							{
 								RenderSystem.setShader(GameRenderer::getPositionTexShader);

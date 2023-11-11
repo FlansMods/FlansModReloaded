@@ -1282,7 +1282,7 @@
     "attachPoints": [
         {
             "name": "barrel",
-            "attachTo": "none",
+            "attachTo": "body",
             "offset": [
                 8.5,
                 3.0,
@@ -1313,6 +1313,15 @@
             "offset": [
                 0.0,
                 0.0,
+                0.0
+            ]
+        },
+        {
+            "name": "eye_line",
+            "attachTo": "body",
+            "offset": [
+                7.0,
+                5.5,
                 0.0
             ]
         }

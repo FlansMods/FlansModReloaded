@@ -3540,6 +3540,33 @@
                 0.78125,
                 -0.375
             ]
+        },
+        {
+            "name": "sights",
+            "attachTo": "body",
+            "offset": [
+                0.0,
+                0.0,
+                0.0
+            ]
+        },
+        {
+            "name": "ammo_0",
+            "attachTo": "body",
+            "offset": [
+                0.0,
+                0.0,
+                0.0
+            ]
+        },
+        {
+            "name": "eye_line",
+            "attachTo": "body",
+            "offset": [
+                -4.0,
+                4.125,
+                0.0
+            ]
         }
     ],
     "display": {

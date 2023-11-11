@@ -5262,6 +5262,15 @@
                 0.0,
                 0.0
             ]
+        },
+        {
+            "name": "eye_line",
+            "attachTo": "body",
+            "offset": [
+                0.0,
+                4.0,
+                0.0
+            ]
         }
     ],
     "display": {

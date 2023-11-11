@@ -2,10 +2,12 @@ package com.flansmod.common.gunshots;
 
 import com.flansmod.common.FlansMod;
 import com.flansmod.common.actions.*;
+import com.flansmod.common.item.AttachmentItem;
 import com.flansmod.common.item.BulletItem;
 import com.flansmod.common.item.GunItem;
 import com.flansmod.common.types.elements.ActionDefinition;
 import com.flansmod.common.types.elements.ActionGroupDefinition;
+import com.flansmod.common.types.elements.ActionGroupOverrideDefinition;
 import com.flansmod.common.types.elements.ModifierDefinition;
 import com.flansmod.common.types.guns.EActionType;
 import com.flansmod.common.types.magazines.EAmmoConsumeMode;
@@ -26,6 +28,8 @@ import net.minecraft.world.level.Level;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 public class ActionGroupContext
@@ -107,32 +111,14 @@ public class ActionGroupContext
 	// --------------------------------------------------------------------------
 	// ACTIONS AND RELOADS
 	// --------------------------------------------------------------------------
-	public ActionDefinition[] GetActionDefinitions()
-	{
-		return GunDef().GetActions(InputType);
-	}
-
-	public ActionGroup CreateActionGroup()
-	{
-		return Actions.CreateActionGroup(GunDef().GetActionGroup(InputType), InputType);
-	}
-
-	public ReloadProgress[] CreateReloads()
-	{
-		if(InputType.IsReload())
-		{
-			return new ReloadProgress[] {
-				new ReloadProgress(GunDef().GetReload(InputType), InputType),
-			};
-		}
-		return new ReloadProgress[0];
-	}
-
+	@Nonnull
+	public List<ActionDefinition> GetActionDefinitions() { return Gun.GetActionDefinitions(InputType); }
+	@Nonnull
+	public ActionGroup CreateActionGroup() { return Gun.CreateActionGroup(InputType); }
+	@Nonnull
+	public ReloadProgress[] CreateReloads() { return Gun.CreateReloads(InputType); }
 	@Nullable
-	public ActionGroup GetExistingActionGroup()
-	{
-		return Gun.GetActionStack().FindMatchingActiveGroup(GunDef().GetActionGroup(InputType));
-	}
+	public ActionGroup GetExistingActionGroup() { return Gun.GetExistingActionGroup(InputType); }
 
 	// --------------------------------------------------------------------------
 	// MAGAZINES
