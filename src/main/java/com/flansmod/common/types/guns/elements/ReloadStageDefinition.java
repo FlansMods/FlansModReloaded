@@ -1,8 +1,6 @@
-package com.flansmod.common.types.elements;
+package com.flansmod.common.types.guns.elements;
 
 import com.flansmod.common.types.JsonField;
-
-import java.util.ArrayList;
 
 public class ReloadStageDefinition
 {

@@ -1,15 +1,12 @@
 package com.flansmod.client.input;
 
 import com.flansmod.client.FlansModClient;
-import com.flansmod.common.FlansMod;
 import com.flansmod.common.actions.EActionInput;
-import com.flansmod.common.gunshots.ShooterContext;
 import com.flansmod.common.item.GunItem;
-import com.flansmod.common.gunshots.GunContext;
+import com.flansmod.common.types.vehicles.EPlayerInput;
 import com.mojang.blaze3d.platform.InputConstants;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
-import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.client.event.InputEvent;
@@ -97,12 +94,12 @@ public class ClientInputHooks
 			Player player = Minecraft.getInstance().player;
 			while(LOOK_AT_MAPPING.get().consumeClick())
 			{
-				FlansModClient.ACTIONS_CLIENT.ClientKeyPressed(player, EActionInput.LOOK_AT);
+				FlansModClient.ACTIONS_CLIENT.ClientKeyPressed(player, EPlayerInput.SpecialKey1);
 			}
 
 			while(MANUAL_RELOAD_MAPPING.get().consumeClick())
 			{
-				FlansModClient.ACTIONS_CLIENT.ClientKeyPressed(player, EActionInput.RELOAD_PRIMARY);
+				FlansModClient.ACTIONS_CLIENT.ClientKeyPressed(player, EPlayerInput.Reload1);
 			}
 
 			UseHeldLastFrame = UseHeldThisFrame;
@@ -115,18 +112,18 @@ public class ClientInputHooks
 			FramesSinceAttackToggled++;
 
 			if(IsAttackPressed())
-				FlansModClient.ACTIONS_CLIENT.ClientKeyPressed(player, EActionInput.PRIMARY);
+				FlansModClient.ACTIONS_CLIENT.ClientKeyPressed(player, EPlayerInput.Fire1);
 			if(IsAttackHeld())
-				FlansModClient.ACTIONS_CLIENT.ClientKeyHeld(player, EActionInput.PRIMARY);
+				FlansModClient.ACTIONS_CLIENT.ClientKeyHeld(player, EPlayerInput.Fire1);
 			if(IsAttackReleased())
-				FlansModClient.ACTIONS_CLIENT.ClientKeyReleased(player, EActionInput.PRIMARY, FramesSinceAttackToggled);
+				FlansModClient.ACTIONS_CLIENT.ClientKeyReleased(player, EPlayerInput.Fire1, FramesSinceAttackToggled);
 
 			if(IsUsePressed())
-				FlansModClient.ACTIONS_CLIENT.ClientKeyPressed(player, EActionInput.SECONDARY);
+				FlansModClient.ACTIONS_CLIENT.ClientKeyPressed(player, EPlayerInput.Fire2);
 			if(IsUseHeld())
-				FlansModClient.ACTIONS_CLIENT.ClientKeyHeld(player, EActionInput.SECONDARY);
+				FlansModClient.ACTIONS_CLIENT.ClientKeyHeld(player, EPlayerInput.Fire2);
 			if(IsUseReleased())
-				FlansModClient.ACTIONS_CLIENT.ClientKeyReleased(player, EActionInput.SECONDARY, FramesSinceUseToggled);
+				FlansModClient.ACTIONS_CLIENT.ClientKeyReleased(player, EPlayerInput.Fire2, FramesSinceUseToggled);
 
 			if(UseHeldThisFrame != UseHeldLastFrame)
 				FramesSinceUseToggled = 0;

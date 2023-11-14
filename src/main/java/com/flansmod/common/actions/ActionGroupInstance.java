@@ -1,34 +1,37 @@
 package com.flansmod.common.actions;
 
 import com.flansmod.common.FlansMod;
-import com.flansmod.common.gunshots.ActionGroupContext;
-import com.flansmod.common.types.elements.ActionDefinition;
-import com.flansmod.common.types.elements.ActionGroupDefinition;
-import com.flansmod.common.types.guns.ERepeatMode;
+import com.flansmod.common.types.guns.elements.ActionDefinition;
+import com.flansmod.common.types.guns.elements.ActionGroupDefinition;
+import com.flansmod.common.types.guns.elements.ERepeatMode;
 import com.flansmod.util.Maths;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.material.Fluids;
 import net.minecraft.world.phys.Vec3;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Consumer;
+import java.util.function.Supplier;
 
-public class ActionGroup
+public class ActionGroupInstance
 {
 	public static final float TICK_RATE = 1.0f / 20.0f;
 	public static final int NO_NET_SYNC = -1;
 
-	private final List<Action> Actions;
+	private final List<ActionInstance> Actions;
+	@Nonnull
+	public final ActionGroupContext Context;
+	@Nonnull
 	public final ActionGroupDefinition Def;
-	public final EActionInput InputType;
+
 
 	protected boolean Finished = false;
 	protected int Progress = 0;
 	protected int Duration = 0;
-	protected long StartedTick = 0;
+	protected long StartedTick = -1000L;
 	protected int TriggerCount = 0;
 	protected int NetSyncedTriggers = NO_NET_SYNC;
 
@@ -38,6 +41,7 @@ public class ActionGroup
 	// Burst fire mode
 	protected int NumBurstsRemaining = 0;
 
+	public boolean HasStarted() { return StartedTick >= 0; }
 	public long GetStartedTick() { return StartedTick; }
 	public int GetProgressTicks() { return Progress; }
 	public int GetDurationPerTriggerTicks() { return Duration; }
@@ -45,29 +49,29 @@ public class ActionGroup
 	public float GetDurationPerTriggerSeconds() { return Duration * TICK_RATE; }
 	public int GetTriggerCount() { return TriggerCount; }
 
-	public ActionGroup(ActionGroupDefinition groupDef, EActionInput inputType)
+	public ActionGroupInstance(@Nonnull ActionGroupContext context)
 	{
-		InputType = inputType;
-		Def = groupDef;
+		Context = context;
+		Def = context.Def;
 		Duration = Maths.Floor(Def.repeatDelay * 20.0f);
-		for(ActionDefinition actionDefinition : groupDef.actions)
+		for(ActionDefinition actionDefinition : Def.actions)
 			if(actionDefinition.duration * 20.0f > Duration)
 				Duration = Maths.Floor(actionDefinition.duration * 20.0f);
 		Actions = new ArrayList<>();
 	}
 
-	protected void AddAction(Action action)
+	protected void AddAction(ActionInstance action)
 	{
 		Actions.add(action);
 	}
-	public List<Action> GetActions()
+	public List<ActionInstance> GetActions()
 	{
 		return Actions;
 	}
 	@Nullable
 	public ShootAction GetShootAction()
 	{
-		for(Action action : Actions)
+		for(ActionInstance action : Actions)
 			if(action instanceof ShootAction shootAction)
 				return shootAction;
 		return null;
@@ -76,153 +80,157 @@ public class ActionGroup
 	// -----------------------------------------------------------------------------------------------------------------
 	//  CLIENT
 	// -----------------------------------------------------------------------------------------------------------------
-	public void OnStartClient(ActionGroupContext context)
+	public void OnStartClient()
 	{
-		Progress = 0;
-		StartedTick = 0L;
-		Level level = context.Level();
-		if(level != null)
-			StartedTick = level.getLevelData().getGameTime();
-
-		for(Action action : Actions)
-			action.OnStartClient(context);
-
-		DoInitialTrigger(context, (ActionGroupContext ac) ->
+		if(!HasStarted())
 		{
-			OnTriggerClient(ac, TriggerCount);
+			Progress = 0;
+			StartedTick = 0L;
+			Level level = Context.Gun.Level();
+			if (level != null)
+				StartedTick = level.getLevelData().getGameTime();
+
+			for(ActionInstance action : Actions)
+				action.OnStartClient();
+		}
+
+		DoInitialTrigger(() ->
+		{
+			OnTriggerClient(TriggerCount);
 			TriggerCount++;
+			return null;
 		});
 	}
-	public void OnStartClientFromNetwork(ActionGroupContext context, long startedTick)
+	public void OnStartClientFromNetwork(long startedTick)
 	{
 		StartedTick = startedTick;
-		for(Action action : Actions)
-			action.OnStartClient(context);
+		for(ActionInstance action : Actions)
+			action.OnStartClient();
 	}
-	public void OnTickClient(ActionGroupContext context)
+	public void OnTickClient()
 	{
 		Progress++;
 
-		for(Action action : Actions)
-			action.OnTickClient(context);
+		for(ActionInstance action : Actions)
+			action.OnTickClient();
 
-		CheckRetrigger(context, (ActionGroupContext ac) ->
+		CheckRetrigger(() ->
 		{
-			OnTriggerClient(ac, TriggerCount);
+			OnTriggerClient(TriggerCount);
 			TriggerCount++;
+			return null;
 		});
 	}
-	public void OnFinishClient(ActionGroupContext context)
+	public void OnFinishClient()
 	{
-		for(Action action : Actions)
-			action.OnFinishClient(context);
+		for(ActionInstance action : Actions)
+			action.OnFinishClient();
 	}
-	private void OnTriggerClient(ActionGroupContext context, int triggerIndex)
+	private void OnTriggerClient(int triggerIndex)
 	{
-		for(Action action : Actions)
-			action.OnTriggerClient(context, triggerIndex);
+		for(ActionInstance action : Actions)
+			action.OnTriggerClient(triggerIndex);
 	}
 
 	// -----------------------------------------------------------------------------------------------------------------
 	//  SERVER
 	// -----------------------------------------------------------------------------------------------------------------
-	public void OnStartServer(ActionGroupContext context)
+	public void OnStartServer()
 	{
-		Progress = 0;
-		StartedTick = 0L;
-		Level level = context.Level();
-		if(level != null)
-			StartedTick = level.getLevelData().getGameTime();
-
-		for(Action action : Actions)
-			action.OnStartServer(context);
-
-		DoInitialTrigger(context, (ActionGroupContext ac) ->
+		if(!HasStarted())
 		{
-			OnTriggerServer(ac, TriggerCount);
+			Progress = 0;
+			StartedTick = 0L;
+			Level level = Context.Gun.Level;
+			if (level != null)
+				StartedTick = level.getLevelData().getGameTime();
+
+			for (ActionInstance action : Actions)
+				action.OnStartServer();
+		}
+
+		DoInitialTrigger(() ->
+		{
+			OnTriggerServer(TriggerCount);
 			TriggerCount++;
+			return null;
 		});
 	}
-	public void OnStartServerFromNetwork(ActionGroupContext context, long startedTick)
+	public void OnStartServerFromNetwork(long startedTick)
 	{
 		StartedTick = startedTick;
-		for(Action action : Actions)
-			action.OnStartServer(context);
+		for(ActionInstance action : Actions)
+			action.OnStartServer();
 	}
-	public void OnTickServer(ActionGroupContext context)
+	public void OnTickServer()
 	{
 		Progress++;
 
-		for(Action action : Actions)
-			action.OnTickServer(context);
+		for(ActionInstance action : Actions)
+			action.OnTickServer();
 
-		CheckRetrigger(context, (ActionGroupContext ac) ->
+		CheckRetrigger(() ->
 		{
-			OnTriggerServer(ac, TriggerCount);
+			OnTriggerServer(TriggerCount);
 			TriggerCount++;
+			return null;
 		});
 	}
-	public void OnFinishServer(ActionGroupContext context)
+	public void OnFinishServer()
 	{
-		for(Action action : Actions)
-			action.OnFinishServer(context);
+		for(ActionInstance action : Actions)
+			action.OnFinishServer();
 	}
-	private void OnTriggerServer(ActionGroupContext context, int triggerIndex)
+	private void OnTriggerServer(int triggerIndex)
 	{
-		for(Action action : Actions)
-			action.OnTriggerServer(context, triggerIndex);
+		for(ActionInstance action : Actions)
+			action.OnTriggerServer(triggerIndex);
 	}
 
 	// -----------------------------------------------------------------------------------------------------------------
 	//  SHARED
 	// -----------------------------------------------------------------------------------------------------------------
-	public boolean CanStart(ActionGroupContext context)
+	public boolean CanStart()
 	{
 		// Check two handed settings
 		if(Def.twoHanded)
 		{
-			if (!context.Gun().CanPerformTwoHandedAction())
+			if (!Context.Gun.CanPerformTwoHandedAction())
 				return false;
 		}
 		if(!Def.canActUnderwater)
 		{
-			if(context.Shooter().Entity().level.isWaterAt(new BlockPos(context.Shooter().GetShootOrigin().PositionVec3())))
+			if(Context.Gun.GetShooter().Entity().level.isWaterAt(new BlockPos(Context.Gun.GetShooter().GetShootOrigin().PositionVec3())))
 				return false;
 		}
 		if(!Def.canActUnderOtherLiquid)
 		{
-			if(context.Shooter().Entity().level.isFluidAtPosition(new BlockPos(context.Shooter().GetShootOrigin().PositionVec3()), (fluidState) -> { return !fluidState.isEmpty() && !fluidState.isSourceOfType(Fluids.WATER); }))
+			if(Context.Gun.GetShooter().Entity().level.isFluidAtPosition(new BlockPos(Context.Gun.GetShooter().GetShootOrigin().PositionVec3()), (fluidState) -> { return !fluidState.isEmpty() && !fluidState.isSourceOfType(Fluids.WATER); }))
 				return false;
 		}
 
 		// Check child actions
-		for(Action action : Actions)
-			if(!action.CanStart(context))
+		for(ActionInstance action : Actions)
+			if(!action.CanStart())
 				return false;
-
-		if(InputType.IsReload())
-		{
-			if(!context.CanPerformReloadFromAttachedInventory(0))
-				return false;
-		}
 
 		return true;
 	}
 
-	public void SkipTicks(ActionGroupContext context, int ticks)
+	public void SkipTicks(int ticks)
 	{
-		for(Action action : Actions)
-			action.SkipTicks(context, ticks);
+		for(ActionInstance action : Actions)
+			action.SkipTicks(ticks);
 
 		Progress += ticks;
 	}
 
-	public boolean Finished(ActionGroupContext context)
+	public boolean Finished()
 	{
 		if(Finished)
 			return true;
 
-		switch(RepeatMode(context))
+		switch(RepeatMode())
 		{
 			// These modes are all set to wait until a SetFinished call happens externally
 			case Toggle, FullAuto, WaitUntilNextAction -> { return Finished; }
@@ -232,9 +240,9 @@ public class ActionGroup
 		}
 		return false;
 	}
-	public void UpdateInputHeld(ActionGroupContext context, boolean held)
+	public void UpdateInputHeld(boolean held)
 	{
-		switch(RepeatMode(context))
+		switch(RepeatMode())
 		{
 			case FullAuto ->
 			{
@@ -249,28 +257,28 @@ public class ActionGroup
 	}
 	public void SetFinished() { Finished = true; }
 
-	private void DoInitialTrigger(ActionGroupContext context, Consumer<ActionGroupContext> triggerFunc)
+	private void DoInitialTrigger(Supplier<Void> triggerFunc)
 	{
 		// We allow *any* non-zero value for repeats, but we should not allow exactly zero.
-		float repeatDelay = RepeatDelaySeconds(context);
+		float repeatDelay = RepeatDelaySeconds();
 		if(repeatDelay <= 0.0f)
 		{
-			triggerFunc.accept(context);
+			triggerFunc.get();
 		}
 		else
 		{
-			int count = context.ActionStack().TryShootMultiple(repeatDelay);
+			int count = Context.Gun.GetActionStack().TryShootMultiple(repeatDelay);
 			for (int i = 0; i < count; i++)
-				triggerFunc.accept(context);
+				triggerFunc.get();
 
-			NumBurstsRemaining = RepeatMode(context) == ERepeatMode.BurstFire ? RepeatCount(context) - 1 : 0;
+			NumBurstsRemaining = RepeatMode() == ERepeatMode.BurstFire ? RepeatCount() - 1 : 0;
 		}
 	}
 
-	private void CheckRetrigger(ActionGroupContext context, Consumer<ActionGroupContext> triggerFunc)
+	private void CheckRetrigger(Supplier<Void> triggerFunc)
 	{
 		boolean tryRetrigger = false;
-		switch(RepeatMode(context))
+		switch(RepeatMode())
 		{
 			case FullAuto -> {
 				tryRetrigger = true;
@@ -287,28 +295,28 @@ public class ActionGroup
 					Charge += TICK_RATE;
 				else
 					Charge -= TICK_RATE;
-				if(Charge >= SpinUpDuration(context))
+				if(Charge >= SpinUpDuration())
 				{
 					tryRetrigger = true;
-					Charge = SpinUpDuration(context);
+					Charge = SpinUpDuration();
 				}
 			}
 		}
 		if(tryRetrigger)
 		{
 			boolean canRetrigger = true;
-			for(Action action : Actions)
-				if(!action.CanRetrigger(context))
+			for(ActionInstance action : Actions)
+				if(!action.CanRetrigger())
 					canRetrigger = false;
 
 			if(canRetrigger)
 			{
 				// We allow *any* non-zero value for repeats, but we should not allow exactly zero.
-				float repeatDelay = RepeatDelaySeconds(context);
+				float repeatDelay = RepeatDelaySeconds();
 				repeatDelay = repeatDelay <= 0.0f ? TICK_RATE : repeatDelay;
-				int count = context.ActionStack().TryShootMultiple(repeatDelay);
+				int count = Context.Gun.GetActionStack().TryShootMultiple(repeatDelay);
 				for (int i = 0; i < count; i++)
-					triggerFunc.accept(context);
+					triggerFunc.get();
 			}
 			else
 			{
@@ -334,7 +342,7 @@ public class ActionGroup
 	}
 	public boolean NeedsNetSync()
 	{
-		return NetSyncedTriggers != TriggerCount;
+		return NetSyncedTriggers != TriggerCount - 1;
 	}
 	public void OnPerformedNetSync(int triggerMin, int triggerMax)
 	{
@@ -345,43 +353,43 @@ public class ActionGroup
 		NetSyncedTriggers = triggerMax;
 	}
 
-	public boolean PropogateToServer(ActionGroupContext context)
+	public boolean PropogateToServer()
 	{
-		for(Action action : Actions)
-			if(action.PropogateToServer(context))
+		for(ActionInstance action : Actions)
+			if(action.PropogateToServer())
 				return true;
 		return false;
 	}
-	public boolean ShouldFallBackToReload(ActionGroupContext context)
+	public boolean ShouldFallBackToReload()
 	{
-		for(Action action : Actions)
-			if(action.ShouldFallBackToReload(context))
+		for(ActionInstance action : Actions)
+			if(action.ShouldFallBackToReload())
 				return true;
 		return false;
 	}
-	public double GetPropogationRadius(ActionGroupContext context)
+	public double GetPropogationRadius()
 	{
 		double furthest = 0d;
-		for(Action action : Actions)
+		for(ActionInstance action : Actions)
 		{
-			double radius = action.GetPropogationRadius(context);
+			double radius = action.GetPropogationRadius();
 			if(radius > furthest)
 				furthest = radius;
 		}
 		return furthest;
 	}
-	public void AddExtraPositionsForNetSync(ActionGroupContext context, int triggerIndex, List<Vec3> positions)
+	public void AddExtraPositionsForNetSync(int triggerIndex, List<Vec3> positions)
 	{
-		for(Action action : Actions)
-			action.AddExtraPositionsForNetSync(context, triggerIndex, positions);
+		for(ActionInstance action : Actions)
+			action.AddExtraPositionsForNetSync(triggerIndex, positions);
 	}
-	public boolean ShouldAddPlayerPosForNetSync(ActionGroupContext context)
+	public boolean ShouldAddPlayerPosForNetSync()
 	{
-		if(!context.Shooter().IsValid())
+		if(!Context.Gun.GetShooter().IsValid())
 			return false;
-		for(Action action : Actions)
+		for(ActionInstance action : Actions)
 		{
-			if(!action.ShouldNetSyncAroundPlayer(context))
+			if(!action.ShouldNetSyncAroundPlayer())
 				return false;
 		}
 		return true;
@@ -390,9 +398,9 @@ public class ActionGroup
 	// -----------------------------------------------------------------------------------------------------------------
 	//  STATS
 	// -----------------------------------------------------------------------------------------------------------------
-	public ERepeatMode RepeatMode(ActionGroupContext context) { return context.RepeatMode(); }
-	public int RepeatCount(ActionGroupContext context) { return context.RepeatCount(); }
-	public float RepeatDelaySeconds(ActionGroupContext context) { return context.RepeatDelaySeconds(); }
-	public float SpinUpDuration(ActionGroupContext context) { return context.SpinUpDuration(); }
+	public ERepeatMode RepeatMode() { return Context.RepeatMode(); }
+	public int RepeatCount() { return Context.RepeatCount(); }
+	public float RepeatDelaySeconds() { return Context.RepeatDelaySeconds(); }
+	public float SpinUpDuration() { return Context.SpinUpDuration(); }
 
 }

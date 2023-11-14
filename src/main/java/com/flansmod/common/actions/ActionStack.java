@@ -1,14 +1,19 @@
 package com.flansmod.common.actions;
 
 import com.flansmod.common.FlansMod;
-import com.flansmod.common.gunshots.ActionGroupContext;
-import com.flansmod.common.types.elements.ActionDefinition;
-import com.flansmod.common.types.elements.ActionGroupDefinition;
-import com.flansmod.common.types.guns.EReloadStage;
-import com.flansmod.common.gunshots.GunContext;
-import com.flansmod.common.types.guns.ERepeatMode;
+import com.flansmod.common.gunshots.EPressType;
+import com.flansmod.common.network.FlansModPacketHandler;
+import com.flansmod.common.network.bidirectional.ActionUpdateMessage;
+import com.flansmod.common.types.guns.elements.*;
+import com.flansmod.common.types.vehicles.EPlayerInput;
+import com.flansmod.util.Maths;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.Vec3;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
@@ -25,17 +30,12 @@ public class ActionStack
 {
 	public static final ActionStack Invalid = new ActionStack(false) {
 		@Override
-		public void AddActionGroup(ActionGroupContext context, ActionGroup action) {}
-		@Override
-		public void AddReload(ActionGroupContext context, ReloadProgress reload) {}
-		@Override
 		public void OnTick(Level level, GunContext gunContext) {}
 		@Override
 		public boolean IsValid() { return false; }
 	};
 
-	private final List<ActionGroup> ActiveActionGroups = new ArrayList<>();
-	private final List<ReloadProgress> ActiveReloads = new ArrayList<>();
+	private final List<ActionGroupInstance> ActiveActionGroups = new ArrayList<>();
 	private float ShotCooldown = 0.0f;
 	private boolean cancelActionRequested = false;
 	private final boolean IsClient;
@@ -56,76 +56,216 @@ public class ActionStack
 		return shotCount;
 	}
 	public float GetShotCooldown() { return ShotCooldown; }
-	public List<ActionGroup> GetActiveActionGroups() { return ActiveActionGroups; }
-	public boolean IsReloading() { return ActiveReloads.size() > 0; }
+	public List<ActionGroupInstance> GetActiveActionGroups() { return ActiveActionGroups; }
+
 	public void RequestCancel() { cancelActionRequested = true; }
 	public boolean IsValid() { return true; }
 
-	public void AddActionGroup(ActionGroupContext context, ActionGroup group)
+
+	// -------------------------------------------------------------------------------------------------
+	// Action Group Instances
+	// -------------------------------------------------------------------------------------------------
+	public boolean IsActionGroupActive(ActionGroupContext groupContext)
 	{
-		// Stop any actions that are waiting for a new action to be applied
-		for(ActionGroup existingGroup : ActiveActionGroups)
-			if(existingGroup.InputType == context.InputType)
+		for(ActionGroupInstance instance : ActiveActionGroups)
+			if(instance.Def.key.equals(groupContext.Def.key))
+				return true;
+		return false;
+	}
+	@Nonnull
+	private ActionGroupInstance CreateGroupInstance(ActionGroupContext groupContext)
+	{
+		ActionGroupInstance groupInstance = new ActionGroupInstance(groupContext);
+		for(ActionDefinition actionDef : groupContext.Def.actions)
+		{
+			ActionInstance actionInstance = Actions.InstanceAction(groupInstance, actionDef);
+			if(actionInstance != null)
+				groupInstance.AddAction(actionInstance);
+		}
+		ActiveActionGroups.add(groupInstance);
+		return groupInstance;
+	}
+	@Nullable
+	public ActionGroupInstance TryGetGroupInstance(ActionGroupContext groupContext)
+	{
+		for(ActionGroupInstance instance : ActiveActionGroups)
+			if(instance.Def.key.equals(groupContext.Def.key))
+				return instance;
+		return null;
+	}
+	@Nonnull
+	public ActionGroupInstance GetOrCreateGroupInstance(ActionGroupContext groupContext)
+	{
+		ActionGroupInstance instance = TryGetGroupInstance(groupContext);
+		if(instance == null)
+			instance = CreateGroupInstance(groupContext);
+		return instance;
+	}
+	private boolean TryStartGroupInstance(ActionGroupContext groupContext)
+	{
+		ActionGroupInstance groupInstance = TryGetGroupInstance(groupContext);
+		if(groupInstance == null)
+			return false;
+		if (!groupInstance.CanStart())
+			return false;
+
+		boolean shouldStart = true;
+
+		// Check for toggle actions
+		if(groupContext.RepeatMode() == ERepeatMode.Toggle)
+		{
+			if (groupInstance.HasStarted())
 			{
-				if (existingGroup.RepeatMode(context) == ERepeatMode.WaitUntilNextAction)
-					existingGroup.SetFinished();
-				else if(existingGroup.RepeatMode(context) == ERepeatMode.Toggle)
+				groupInstance.SetFinished();
+				shouldStart = false;
+			}
+		}
+
+		// And see if any actions are waiting for the next action before finishing
+		for(ActionGroupInstance existingGroup : ActiveActionGroups)
+			if (existingGroup.RepeatMode() == ERepeatMode.WaitUntilNextAction)
+				existingGroup.SetFinished();
+
+		if(shouldStart)
+		{
+			if (IsClient)
+				groupInstance.OnStartClient();
+			else
+				groupInstance.OnStartServer();
+		}
+		return shouldStart;
+	}
+	private boolean TryUpdateInputHeld(ActionGroupContext groupContext, boolean held)
+	{
+		ActionGroupInstance groupInstance = TryGetGroupInstance(groupContext);
+		if(groupInstance == null)
+			return false;
+
+		groupInstance.UpdateInputHeld(held);
+
+		return true;
+	}
+
+	public void CancelGroupInstance(ActionGroupContext context)
+	{
+		StopActionGroup(context);
+	}
+	private void TickActions()
+	{
+		// Reverse iterate to delete when done
+		for(int i = ActiveActionGroups.size() - 1; i >= 0; i--)
+		{
+			ActionGroupInstance actionGroup = ActiveActionGroups.get(i);
+			if(actionGroup.HasStarted())
+			{
+				if (IsClient)
+					actionGroup.OnTickClient();
+				else
+					actionGroup.OnTickServer();
+			}
+			else
+				FlansMod.LOGGER.error("Action was left in the system without being started");
+
+			if(actionGroup.Finished())
+			{
+				StopActionGroup(actionGroup.Context);
+			}
+		}
+	}
+	private void StopActionGroup(ActionGroupContext groupContext)
+	{
+		ActionGroupInstance groupInstance = TryGetGroupInstance(groupContext);
+		if(groupInstance != null)
+		{
+			if(groupInstance.HasStarted())
+			{
+				OnActionGroupFinished(groupContext);
+				if (IsClient)
+					groupInstance.OnFinishClient();
+				else
+					groupInstance.OnFinishServer();
+			}
+
+			for(int i = ActiveActionGroups.size() - 1; i >= 0; i--)
+				if(ActiveActionGroups.get(i).Def.key.equals(groupContext.Def.key))
+					ActiveActionGroups.remove(i);
+		}
+	}
+
+	// -------------------------------------------------------------------------------------------------
+	// Reload state machines
+	// -------------------------------------------------------------------------------------------------
+	private void OnActionGroupFinished(ActionGroupContext groupContext)
+	{
+		// When an action group finishes, if it was part of a reload, move to the next step
+		ReloadDefinition reload = groupContext.Gun.GetReloadDefinitionContaining(groupContext);
+		if(reload != null)
+		{
+			EReloadStage endedStage = reload.GetStage(groupContext.GroupPath);
+			EReloadStage nextStage = null;
+			if(cancelActionRequested && endedStage != EReloadStage.End)
+			{
+				cancelActionRequested = false;
+				if(!reload.endActionKey.isEmpty())
+					nextStage = EReloadStage.End;
+			}
+			else
+			{
+				switch (endedStage)
 				{
-					if(existingGroup.Def == group.Def)
-					{
-						existingGroup.SetFinished();
-						return;
+					case Start -> {
+						if (!reload.ejectActionKey.isEmpty())
+							nextStage = EReloadStage.Eject;
+						else if (!reload.loadOneActionKey.isEmpty())
+							nextStage = EReloadStage.LoadOne;
+						else if (!reload.endActionKey.isEmpty())
+							nextStage = EReloadStage.End;
+					}
+					case Eject, LoadOne -> {
+						if (groupContext.CanPerformReloadFromAttachedInventory(0)
+							&& !reload.loadOneActionKey.isEmpty())
+						{
+							nextStage = EReloadStage.LoadOne;
+						}
+						else if(!reload.endActionKey.isEmpty())
+						{
+							nextStage = EReloadStage.End;
+						}
 					}
 				}
 			}
 
-		ActiveActionGroups.add(group);
-		if(IsClient)
-			group.OnStartClient(context);
-		else
-			group.OnStartServer(context);
-	}
-
-	@Nullable
-	public ActionGroup FindMatchingActiveGroup(ActionGroupDefinition groupDef)
-	{
-		for(ActionGroup group : ActiveActionGroups)
-			if(group.Def == groupDef)
-				return group;
-		return null;
-	}
-
-	public void AddReload(ActionGroupContext context, ReloadProgress reload)
-	{
-		if(!IsReloading())
-		{
-			ActiveReloads.add(reload);
-			cancelActionRequested = false;
-			EnterReloadState(context, reload, EReloadStage.Start);
-		}
-	}
-
-	private void EnterReloadState(ActionGroupContext actionContext, ReloadProgress reload, EReloadStage stage)
-	{
-		if(actionContext.IsValid())
-		{
-			ActionGroupDefinition reloadActionGroup = reload.Def.GetReloadActionGroup(stage);
-			ActionGroup actionGroup = Actions.CreateActionGroup(reloadActionGroup, reload.ReloadType);
-			AddActionGroup(actionContext, actionGroup);
-			reload.CurrentStage = stage;
-			reload.TicksInCurrentStage = 0;
-
-			switch (stage)
+			if(nextStage != null)
 			{
-				case LoadOne:
-				{
-					actionContext.LoadOne(0, actionContext.Gun.GetAttachedInventory());
-					break;
-				}
+				EnterReloadState(reload, nextStage, groupContext);
 			}
 		}
 	}
 
+	private void EnterReloadState(ReloadDefinition reload, EReloadStage reloadStage, ActionGroupContext triggeringActionGroup)
+	{
+		ActionGroupContext newGroupContext = triggeringActionGroup.Gun
+			.GetActionGroupContextSibling(triggeringActionGroup, reload.GetReloadActionKey(reloadStage));
+		ActionGroupInstance groupInstance = GetOrCreateGroupInstance(newGroupContext);
+		TryStartGroupInstance(newGroupContext);
+		if (reloadStage == EReloadStage.LoadOne)
+		{
+			newGroupContext.LoadOne(0, newGroupContext.Gun.GetAttachedInventory());
+		}
+	}
+
+	public boolean IsReloading()
+	{
+		for(ActionGroupInstance activeGroup : ActiveActionGroups)
+			if(activeGroup.Context.Gun.GetReloadDefinitionContaining(activeGroup.Context) != null
+			&& activeGroup.HasStarted())
+				return true;
+		return false;
+	}
+
+	// -------------------------------------------------------------------------------------------------
+	// Tick
+	// -------------------------------------------------------------------------------------------------
 	public void OnTick(Level level, GunContext gunContext)
 	{
 		if(level == null)
@@ -137,69 +277,206 @@ public class ActionStack
 		if(ShotCooldown < 0.0f)
 			ShotCooldown = 0.0f;
 
-		for(int i = ActiveReloads.size() - 1; i >= 0; i--)
+		TickActions();
+	}
+
+	// -------------------------------------------------------------------------------------------------
+	// CLIENT
+	// -------------------------------------------------------------------------------------------------
+	@OnlyIn(Dist.CLIENT)
+	public boolean Client_TryStartGroupInstance(ActionGroupContext groupContext)
+	{
+		if(!IsClient)
 		{
-			ReloadProgress reload = ActiveReloads.get(i);
-			ActionGroupContext actionContext = ActionGroupContext.CreateFrom(gunContext, reload.ReloadType);
-			reload.TicksInCurrentStage++;
-			if(reload.FinishedCurrentStage())
+			FlansMod.LOGGER.error("Called Client function on server in ActionStack!");
+			return false;
+		}
+		// Start the instance
+		ActionGroupInstance groupInstance = TryGetGroupInstance(groupContext);
+
+		if(IsReloading())
+			return false;
+
+		if(groupInstance != null && TryStartGroupInstance(groupContext))
+		{
+			// Send a message to the server about these actions if required
+			if (groupInstance.PropogateToServer() || groupInstance.NeedsNetSync())
 			{
-				EReloadStage nextStage = null;
-				for(ActionGroup group : actionContext.ActionStack().GetActiveActionGroups())
+				ActionUpdateMessage updateMsg = new ActionUpdateMessage(groupContext, EPressType.Press, groupInstance.GetStartedTick());
+				updateMsg.AddTriggers(groupInstance, groupInstance.GetRequiredNetSyncMin(), groupInstance.GetRequiredNetSyncMax());
+				FlansModPacketHandler.SendToServer(new ActionUpdateMessage.ToServer(updateMsg));
+				groupInstance.OnPerformedNetSync(groupInstance.GetRequiredNetSyncMin(), groupInstance.GetRequiredNetSyncMax());
+			}
+			return true;
+		}
+		return false;
+	}
+	@OnlyIn(Dist.CLIENT)
+	public boolean Client_TryUpdateGroupInstanceHeld(ActionGroupContext groupContext)
+	{
+		return Client_TryUpdateGroupInstance(groupContext, true);
+	}
+	@OnlyIn(Dist.CLIENT)
+	public boolean Client_TryUpdateGroupInstanceNotHeld(ActionGroupContext groupContext)
+	{
+		return Client_TryUpdateGroupInstance(groupContext, false);
+	}
+	@OnlyIn(Dist.CLIENT)
+	public boolean Client_TryUpdateGroupInstance(ActionGroupContext groupContext, boolean held)
+	{
+		if(!IsClient)
+		{
+			FlansMod.LOGGER.error("Called Client function on server in ActionStack!");
+			return false;
+		}
+		// Start the instance
+		ActionGroupInstance groupInstance = TryGetGroupInstance(groupContext);
+		if(groupInstance != null && TryUpdateInputHeld(groupContext, held))
+		{
+			// Send a message to the server about these actions if required
+			if (groupInstance.NeedsNetSync())
+			{
+				ActionUpdateMessage updateMsg = new ActionUpdateMessage(groupContext, held ? EPressType.Hold : EPressType.Release, groupInstance.GetStartedTick());
+				updateMsg.AddTriggers(groupInstance, groupInstance.GetRequiredNetSyncMin(), groupInstance.GetRequiredNetSyncMax());
+				FlansModPacketHandler.SendToServer(new ActionUpdateMessage.ToServer(updateMsg));
+				groupInstance.OnPerformedNetSync(groupInstance.GetRequiredNetSyncMin(), groupInstance.GetRequiredNetSyncMax());
+			}
+			return true;
+		}
+		return false;
+	}
+	// -------------------------------------------------------------------------------------------------
+	// SERVER
+	// -------------------------------------------------------------------------------------------------
+	public boolean Server_TryHandleMessage(ActionUpdateMessage.ToServer msg, ServerPlayer from)
+	{
+		if(IsClient)
+		{
+			FlansMod.LOGGER.error("Called Server function on client in ActionStack!");
+			return false;
+		}
+
+		// Check that this is a valid context
+		ActionGroupContext groupContext = msg.Data.GetActionGroupContext(false);
+		if(!groupContext.IsValid())
+		{
+			FlansMod.LOGGER.warn("OnServerReceivedActionUpdate had invalid action");
+			return false;
+		}
+
+		boolean isValid = true;
+		ActionGroupInstance groupInstance = GetOrCreateGroupInstance(groupContext);
+		if(!groupInstance.HasStarted())
+		{
+			// Start the instance if we need to, though this should really only happen on Press actions
+			if(msg.Data.GetPressType() != EPressType.Press)
+				FlansMod.LOGGER.warn("Received ActionUpdateMessage with wrong press type for action that was not already running");
+			isValid = TryStartGroupInstance(groupContext);
+		}
+
+		for(var kvp : msg.Data.GetTriggers())
+		{
+			int triggerIndex = kvp.getKey();
+			// TODO: Verify that this triggerIndex is valid. Rate limit to the gun fire rate for example
+			int actionIndex = 0;
+			for(ActionInstance action : groupInstance.GetActions())
+			{
+				if(!action.VerifyServer(null))
+					isValid = false;
+
+				ActionInstance.NetData netData = msg.Data.GetNetData(triggerIndex, actionIndex);
+				action.UpdateFromNetData(netData, triggerIndex);
+				action.OnTriggerServer(triggerIndex);
+				actionIndex++;
+			}
+
+			// When we get a release message, we may need to do a bit of catchup in missed triggers
+			if(msg.Data.GetPressType() == EPressType.Release)
+			{
+				// Check the action stack for this action/gun pairing and see if any of them are waiting for mouse release
+				long numTicks = msg.Data.GetLastTriggerTick() - groupInstance.GetStartedTick();
+				int expectedTriggerCount = Maths.Floor(numTicks / groupContext.RepeatDelayTicks()) + 1;
+				int serverTriggerCount = groupInstance.GetTriggerCount();
+
+				if(expectedTriggerCount > serverTriggerCount)
 				{
-					if(group.Def == gunContext.GunDef().GetReload(reload.ReloadType).GetReloadActionGroup(reload.CurrentStage))
+					FlansMod.LOGGER.info("Client expected to trigger " + expectedTriggerCount + " repeat(s), but server only triggered " + serverTriggerCount + " repeat(s)");
+				}
+				else if(expectedTriggerCount < serverTriggerCount)
+				{
+					FlansMod.LOGGER.info("Client expected to trigger " + expectedTriggerCount + " repeat(s), but server triggered " + serverTriggerCount + " many repeat(s)");
+				}
+				groupInstance.UpdateInputHeld(false);
+			}
+		}
+
+		// Send a message to the server about these actions if required
+		if (isValid && groupInstance.PropogateToServer() || groupInstance.NeedsNetSync())
+		{
+			double radius = groupInstance.GetPropogationRadius();
+
+			// Find out which positions we want to map around
+			List<Vec3> positions = new ArrayList<>(2);
+			for(var kvp : msg.Data.GetTriggers())
+			{
+				groupInstance.AddExtraPositionsForNetSync(kvp.getKey(), positions);
+			}
+			if(groupInstance.ShouldAddPlayerPosForNetSync())
+				positions.add(groupContext.Gun.GetShooter().GetShootOrigin().PositionVec3());
+
+			// Then send them some messages about the shot
+			FlansModPacketHandler.SendToAllAroundPoints(
+				new ActionUpdateMessage.ToClient(msg.Data),
+				from.level.dimension(),
+				positions,
+				radius,
+				groupContext.Gun.GetShooter().Owner());
+		}
+
+		return isValid;
+	}
+	public boolean Server_TryStartGroupInstance(ActionGroupContext groupContext)
+	{
+		if(IsClient)
+		{
+			FlansMod.LOGGER.error("Called Server function on client in ActionStack!");
+			return false;
+		}
+		// Start the instance
+		ActionGroupInstance groupInstance = TryGetGroupInstance(groupContext);
+		if(groupInstance != null && TryStartGroupInstance(groupContext))
+		{
+			// Send a message to the nearby clients about these actions if required
+			if (groupInstance.PropogateToServer() || groupInstance.NeedsNetSync())
+			{
+				Level level = groupContext.Gun.Level;
+				if (level != null)
+				{
+					double radius = groupInstance.GetPropogationRadius();
+
+					ActionUpdateMessage updateMsg = new ActionUpdateMessage(groupContext, EPressType.Press, groupInstance.GetStartedTick());
+					updateMsg.AddTriggers(groupInstance, groupInstance.GetRequiredNetSyncMin(), groupInstance.GetRequiredNetSyncMax());
+
+					// Find out which positions we want to map around
+					List<Vec3> positions = new ArrayList<>(2);
+					for (var kvp : updateMsg.GetTriggers())
 					{
-						group.SetFinished();
+						groupInstance.AddExtraPositionsForNetSync(kvp.getKey(), positions);
 					}
-				}
-				switch(reload.CurrentStage)
-				{
-					case Start -> {
-						if(reload.Def.eject.actions.length > 0)
-							nextStage = EReloadStage.Eject;
-						else
-							nextStage = EReloadStage.LoadOne;
-					}
-					case Eject, LoadOne -> {
-						if(actionContext.CanPerformReloadFromAttachedInventory(0) && !cancelActionRequested)
-							nextStage = EReloadStage.LoadOne;
-						else
-						{
-							cancelActionRequested = false;
-							nextStage = EReloadStage.End;
-						}
-					}
-				}
+					if (groupInstance.ShouldAddPlayerPosForNetSync())
+						positions.add(groupContext.Gun.GetShooter().GetShootOrigin().PositionVec3());
 
-				if(nextStage == null)
-				{
-					ActiveReloads.remove(i);
-				}
-				else
-				{
-					EnterReloadState(actionContext, reload, nextStage);
+					// Then send them some messages about the shot
+					FlansModPacketHandler.SendToAllAroundPoints(
+						new ActionUpdateMessage.ToClient(updateMsg),
+						level.dimension(),
+						positions,
+						radius,
+						groupContext.Gun.GetShooter().Owner());
 				}
 			}
+			return true;
 		}
-
-		// Reverse iterate to delete when done
-		for(int i = ActiveActionGroups.size() - 1; i >= 0; i--)
-		{
-			ActionGroup actionGroup = ActiveActionGroups.get(i);
-			ActionGroupContext groupContext = ActionGroupContext.CreateFrom(gunContext, actionGroup.InputType);
-			if(level.isClientSide)
-				actionGroup.OnTickClient(groupContext);
-			else
-				actionGroup.OnTickServer(groupContext);
-
-			if(actionGroup.Finished(groupContext))
-			{
-				if(level.isClientSide)
-					actionGroup.OnFinishClient(groupContext);
-				else
-					actionGroup.OnFinishServer(groupContext);
-				ActiveActionGroups.remove(i);
-			}
-		}
+		return false;
 	}
 }

@@ -1,10 +1,10 @@
 package com.flansmod.common.gunshots;
 
 import com.flansmod.common.FlansMod;
-import com.flansmod.common.actions.EActionInput;
+import com.flansmod.common.actions.ActionGroupContext;
 import com.flansmod.common.types.bullets.BulletDefinition;
 import com.flansmod.common.types.elements.ModifierDefinition;
-import com.flansmod.common.types.guns.ESpreadPattern;
+import com.flansmod.common.types.guns.elements.ESpreadPattern;
 import com.flansmod.util.Maths;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
@@ -19,8 +19,6 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.*;
 import net.minecraftforge.registries.ForgeRegistries;
-
-import java.lang.reflect.Modifier;
 
 
 public class GunshotContext
@@ -68,7 +66,7 @@ public class GunshotContext
 						BlockState stateHit = level.getBlockState(blockHit.getBlockPos());
 						if (Bullet.shootStats.BreaksMaterial(stateHit.getMaterial()))
 						{
-							level.destroyBlock(blockHit.getBlockPos(), true, ActionGroup.Shooter().Entity());
+							level.destroyBlock(blockHit.getBlockPos(), true, ActionGroup.Gun.GetShooter().Entity());
 						}
 					}
 				}
@@ -163,13 +161,13 @@ public class GunshotContext
 
 			// TODO: Shield item damage multipliers
 
-			player.hurt(ActionGroup.Gun().CreateDamageSource(), damage);
+			player.hurt(ActionGroup.Gun.CreateDamageSource(), damage);
 			// We override the immortality cooldown when firing bullets, as it is too slow
 			player.hurtTime = 0;
 			player.hurtDuration = 0;
 		} else if (entity instanceof LivingEntity living)
 		{
-			living.hurt(ActionGroup.Gun().CreateDamageSource(), damage);
+			living.hurt(ActionGroup.Gun.CreateDamageSource(), damage);
 			living.hurtTime = 0;
 			living.hurtDuration = 0;
 		}
@@ -221,13 +219,13 @@ public class GunshotContext
 	}
 	public float ModifyFloat(String key, float baseValue)
 	{
-		ModifierStack stack = new ModifierStack(key, ActionGroup.InputType);
+		ModifierStack stack = new ModifierStack(key, ActionGroup.GroupPath);
 		Apply(stack);
 		return stack.ApplyTo(baseValue);
 	}
 	public String ModifyString(String key, String defaultValue)
 	{
-		ModifierStack stack = new ModifierStack(key, ActionGroup.InputType);
+		ModifierStack stack = new ModifierStack(key, ActionGroup.GroupPath);
 		Apply(stack);
 		return stack.ApplyTo(defaultValue);
 	}

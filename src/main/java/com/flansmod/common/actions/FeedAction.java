@@ -1,13 +1,11 @@
 package com.flansmod.common.actions;
 
 import com.flansmod.common.FlansMod;
-import com.flansmod.common.gunshots.ActionGroupContext;
 import com.flansmod.common.gunshots.Raytracer;
-import com.flansmod.common.types.elements.ActionDefinition;
+import com.flansmod.common.types.guns.elements.ActionDefinition;
 import com.flansmod.common.types.elements.ModifierDefinition;
 import com.flansmod.util.Maths;
 import com.flansmod.util.Transform;
-import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.EntityHitResult;
@@ -18,37 +16,37 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 
-public class FeedAction extends Action
+public class FeedAction extends ActionInstance
 {
-	public FeedAction(@NotNull ActionGroup group, @NotNull ActionDefinition def)
+	public FeedAction(@NotNull ActionGroupInstance group, @NotNull ActionDefinition def)
 	{
 		super(group, def);
 	}
 
 	@Override
-	public void OnTriggerClient(ActionGroupContext context, int triggerIndex)
+	public void OnTriggerClient(int triggerIndex)
 	{
 
 	}
 
 	@Override
-	public void OnTriggerServer(ActionGroupContext context, int triggerIndex)
+	public void OnTriggerServer(int triggerIndex)
 	{
-		Transform ray = context.Shooter().GetShootOrigin();
+		Transform ray = Group.Context.Gun.GetShooter().GetShootOrigin();
 		Vec3 origin = ray.PositionVec3();
 		Vec3 direction = ray.ForwardVec3();
-		float reach = Reach(context);
-		int feedAmount = FeedAmount(context);
-		float feedSaturation = FeedSaturation(context);
-		String healTag = FeedEntityTag(context);
-		Level level = context.Level();
+		float reach = Reach();
+		int feedAmount = FeedAmount();
+		float feedSaturation = FeedSaturation();
+		String healTag = FeedEntityTag();
+		Level level = Group.Context.Gun.Level;
 		if(level != null)
 		{
 			Raytracer raytracer = Raytracer.ForLevel(level);
 			if(raytracer != null)
 			{
 				List<HitResult> hits = new ArrayList<>();
-				raytracer.CastBullet(context.Entity(), origin, direction.normalize().scale(reach), 0.0f, 0.0f, hits);
+				raytracer.CastBullet(Group.Context.Gun.GetShooter().Entity(), origin, direction.normalize().scale(reach), 0.0f, 0.0f, hits);
 				if(hits.size() > 0)
 				{
 					if(hits.get(0).getType() == HitResult.Type.ENTITY)
@@ -67,7 +65,7 @@ public class FeedAction extends Action
 		else FlansMod.LOGGER.warn("FeedAction[" + Def + "]: Could not find level when attempting to heal player");
 	}
 
-	public int FeedAmount(ActionGroupContext context) { return Maths.Ceil(context.ModifyFloat(ModifierDefinition.STAT_FEED_AMOUNT, 1f)); }
-	public float FeedSaturation(ActionGroupContext context) { return context.ModifyFloat(ModifierDefinition.STAT_FEED_SATURATION, 1f); }
-	public String FeedEntityTag(ActionGroupContext context) { return context.ModifyString(ModifierDefinition.STAT_ENTITY_TAG, ""); }
+	public int FeedAmount() { return Maths.Ceil(Group.Context.ModifyFloat(ModifierDefinition.STAT_FEED_AMOUNT, 1f)); }
+	public float FeedSaturation() { return Group.Context.ModifyFloat(ModifierDefinition.STAT_FEED_SATURATION, 1f); }
+	public String FeedEntityTag() { return Group.Context.ModifyString(ModifierDefinition.KEY_ENTITY_TAG, ""); }
 }

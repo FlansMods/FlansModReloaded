@@ -6,10 +6,10 @@ import com.flansmod.client.render.guns.GunItemRenderer;
 import com.flansmod.common.FlansMod;
 import com.flansmod.common.actions.*;
 import com.flansmod.common.gunshots.*;
-import com.flansmod.common.types.elements.ActionDefinition;
+import com.flansmod.common.types.guns.elements.ActionDefinition;
 import com.flansmod.common.types.elements.ModifierDefinition;
-import com.flansmod.common.types.guns.EActionType;
-import com.flansmod.common.types.guns.ERepeatMode;
+import com.flansmod.common.types.guns.elements.EActionType;
+import com.flansmod.common.types.guns.elements.ERepeatMode;
 import com.flansmod.common.types.guns.GunDefinition;
 import com.flansmod.common.types.magazines.MagazineDefinition;
 import com.google.common.collect.ImmutableMultimap;
@@ -44,12 +44,10 @@ import net.minecraftforge.common.TierSortingRegistry;
 import net.minecraftforge.common.ToolAction;
 import net.minecraftforge.common.ToolActions;
 import net.minecraftforge.event.entity.living.LivingEntityUseItemEvent;
-import net.minecraftforge.fml.util.ObfuscationReflectionHelper;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.lang.reflect.Field;
 import java.util.HashMap;
 import java.util.List;
 import java.util.function.Consumer;
@@ -65,21 +63,21 @@ public class GunItem extends FlanItem
 
     public GunContext GetContext(ItemStack stack)
     {
-        return GunContext.GetOrCreate(stack);
+        return GunContext.GetActionGroupContext(stack);
     }
 
     @Override
-    public void appendHoverText(ItemStack stack,
+    public void appendHoverText(@Nonnull ItemStack stack,
                                 @Nullable Level level,
                                 @NotNull List<Component> tooltips,
-                                TooltipFlag flags)
+                                @Nonnull TooltipFlag flags)
     {
         super.appendHoverText(stack, level, tooltips, flags);
 
         GunContext gunContext = GetContext(stack);
         if(gunContext.IsValid())
         {
-            ActionGroupContext actionContext = ActionGroupContext.CreateFrom(gunContext, EActionInput.PRIMARY);
+            ActionGroupContext actionContext = ActionGroupContext.CreateFrom(gunContext, "primary");
             if (actionContext.IsValid())
             {
                 boolean advanced = flags.isAdvanced();
@@ -161,47 +159,47 @@ public class GunItem extends FlanItem
         }
     }
 
-    public CompoundTag GetRootTag(ItemStack stack, EActionInput inputType)
+    public CompoundTag GetRootTag(ItemStack stack, String groupPath)
     {
-        if(!stack.getOrCreateTag().contains(inputType.GetRootTagName()))
-            stack.getOrCreateTag().put(inputType.GetRootTagName(), new CompoundTag());
+        if(!stack.getOrCreateTag().contains(groupPath))
+            stack.getOrCreateTag().put(groupPath, new CompoundTag());
 
-        return stack.getOrCreateTag().getCompound(inputType.GetRootTagName());
+        return stack.getOrCreateTag().getCompound(groupPath);
     }
 
-    public CompoundTag GetMagTag(ItemStack stack, EActionInput inputType, int magIndex)
+    public CompoundTag GetMagTag(ItemStack stack, String groupPath, int magIndex)
     {
-        CompoundTag rootTag = GetRootTag(stack, inputType);
+        CompoundTag rootTag = GetRootTag(stack, groupPath);
         final String magTag = "mag_" + magIndex;
         if (!rootTag.contains(magTag))
             rootTag.put(magTag, new CompoundTag());
         return rootTag.getCompound(magTag);
     }
 
-    public MagazineDefinition GetMagazineType(ItemStack stack, EActionInput inputType, int magIndex)
+    public MagazineDefinition GetMagazineType(ItemStack stack, String groupPath, int magIndex)
     {
         // Get the root tag for our magazine
-        CompoundTag magTags = GetMagTag(stack, inputType, magIndex);
+        CompoundTag magTags = GetMagTag(stack, groupPath, magIndex);
         if(magTags.contains("type"))
         {
             String type = magTags.getString("type");
             ResourceLocation magLoc = new ResourceLocation(type);
             return FlansMod.MAGAZINES.Get(magLoc);
         }
-        List<MagazineDefinition> matches = Def().GetMagazineSettings(inputType).GetMatchingMagazines();
+        List<MagazineDefinition> matches = Def().GetMagazineSettings(groupPath).GetMatchingMagazines();
         if(matches.size() > 0)
         {
-            SetMagazineType(stack, inputType, magIndex, matches.get(0));
+            SetMagazineType(stack, groupPath, magIndex, matches.get(0));
             return matches.get(0);
         }
         FlansMod.LOGGER.warn("ItemStack " + stack + " had no mag type tag, and no default for that gun found.");
-        SetMagazineType(stack, inputType, magIndex, MagazineDefinition.INVALID);
+        SetMagazineType(stack, groupPath, magIndex, MagazineDefinition.INVALID);
         return MagazineDefinition.INVALID;
     }
 
-    public void SetMagazineType(ItemStack stack, EActionInput inputType, int magIndex, MagazineDefinition magDef)
+    public void SetMagazineType(ItemStack stack, String groupPath, int magIndex, MagazineDefinition magDef)
     {
-        CompoundTag magTags = GetMagTag(stack, inputType, magIndex);
+        CompoundTag magTags = GetMagTag(stack, groupPath, magIndex);
         magTags.putString("type", magDef.GetLocationString());
     }
 
@@ -229,17 +227,24 @@ public class GunItem extends FlanItem
 
     // Left-click vanilla actions
     @Override
-    public boolean canAttackBlock(BlockState blockState, Level world, BlockPos blockPos, Player player)
+    public boolean canAttackBlock(@Nonnull BlockState blockState, @Nonnull Level world, @Nonnull BlockPos blockPos, Player player)
     {
         if(player.isCreative())
             return false;
 
-        for (ActionDefinition actionDef : Def().GetActions(EActionInput.PRIMARY))
+        ShooterContext shooterContext = ShooterContext.GetOrCreate(player);
+        if(shooterContext.IsValid())
         {
-            switch (actionDef.actionType)
+            for(GunContext gunContext : shooterContext.GetAllActiveGunContexts())
             {
-                case Axe, Pickaxe, Hoe, Shovel, Melee -> {
-                    return true;
+                for (ActionDefinition actionDef : gunContext.GetPotentialPrimaryActions())
+                {
+                    switch (actionDef.actionType)
+                    {
+                        case Axe, Pickaxe, Hoe, Shovel, Melee -> {
+                            return true;
+                        }
+                    }
                 }
             }
         }
@@ -250,9 +255,10 @@ public class GunItem extends FlanItem
     public boolean isCorrectToolForDrops(ItemStack stack, BlockState blockState)
     {
         List<Tier> tiers = TierSortingRegistry.getSortedTiers();
-        for (ActionDefinition actionDef : Def().GetActions(EActionInput.PRIMARY))
+        GunContext gunContext = GunContext.GetActionGroupContext(stack);
+        for (ActionDefinition actionDef : gunContext.GetPotentialPrimaryActions())
         {
-            int harvestLevel = actionDef.ToolLevel(EActionInput.PRIMARY);
+            int harvestLevel = actionDef.ToolLevel("primary");
             switch (actionDef.actionType)
             {
                 case Melee -> { return blockState.is(Blocks.COBWEB); }
@@ -293,7 +299,7 @@ public class GunItem extends FlanItem
         return false;
     }
     @Override
-    public void inventoryTick(ItemStack stack, Level level, Entity entity, int i, boolean b)
+    public void inventoryTick(@Nonnull ItemStack stack, Level level, @Nonnull Entity entity, int i, boolean b)
     {
         if(level.isClientSide)
         {
@@ -302,7 +308,8 @@ public class GunItem extends FlanItem
                 if (player.getInventory().selected == i)
                 {
                     // If we have a vanilla left-click action, don't do anything
-                    for (ActionDefinition actionDef : Def().GetActions(EActionInput.PRIMARY))
+                    GunContext gunContext = GunContext.GetActionGroupContext(stack);
+                    for (ActionDefinition actionDef : gunContext.GetPotentialPrimaryActions())
                     {
                         switch (actionDef.actionType)
                         {
@@ -322,14 +329,14 @@ public class GunItem extends FlanItem
     @Override
     public Multimap<Attribute, AttributeModifier> getAttributeModifiers(EquipmentSlot slot, ItemStack stack)
     {
-        GunContext context = GunContext.GetOrCreate(stack);
-        if(context.IsValid())
+        GunContext gunContext = GunContext.GetActionGroupContext(stack);
+        if(gunContext.IsValid())
         {
-            ActionGroupContext actionGroupContext = context.GetOrCreate(EActionInput.PRIMARY);
+            ActionGroupContext actionGroupContext = gunContext.GetActionGroupContext("primary");
             if(actionGroupContext.IsValid())
             {
                 ImmutableMultimap.Builder<Attribute, AttributeModifier> builder = ImmutableMultimap.builder();
-                for(ActionDefinition actionDef : Def().GetActions(EActionInput.PRIMARY))
+                for(ActionDefinition actionDef : gunContext.GetPotentialPrimaryActions())
                 {
                     if(actionDef.actionType == EActionType.Melee)
                     {
@@ -345,7 +352,7 @@ public class GunItem extends FlanItem
     }
     // This is a response event to when this has been used in a melee attack, not the code to create a melee attack
     @Override
-    public boolean hurtEnemy(ItemStack stack, LivingEntity wielder, LivingEntity victim)
+    public boolean hurtEnemy(ItemStack stack, @Nonnull LivingEntity wielder, @Nonnull LivingEntity victim)
     {
         stack.hurtAndBreak(2, victim, (entity) -> {
             entity.broadcastBreakEvent(EquipmentSlot.MAINHAND);
@@ -354,7 +361,7 @@ public class GunItem extends FlanItem
     }
     // This is a response event to when this has been used to mine a block, not the code to mine a block
     @Override
-    public boolean mineBlock(ItemStack stack, Level level, BlockState blockState, BlockPos blockPos, LivingEntity wielder)
+    public boolean mineBlock(@Nonnull ItemStack stack, Level level, @Nonnull BlockState blockState, @Nonnull BlockPos blockPos, @Nonnull LivingEntity wielder)
     {
         if (!level.isClientSide && blockState.getDestroySpeed(level, blockPos) != 0.0F)
         {
@@ -367,9 +374,11 @@ public class GunItem extends FlanItem
 
     // Right-click vanilla actions
     @Override
-    public UseAnim getUseAnimation(ItemStack stack)
+    @Nonnull
+    public UseAnim getUseAnimation(@Nonnull ItemStack stack)
     {
-        for (ActionDefinition actionDef : Def().GetActions(EActionInput.SECONDARY))
+        GunContext gunContext = GunContext.GetActionGroupContext(stack);
+        for (ActionDefinition actionDef : gunContext.GetPotentialSecondaryActions())
         {
             switch (actionDef.actionType)
             {
@@ -379,9 +388,10 @@ public class GunItem extends FlanItem
         return UseAnim.NONE;
     }
     @Override
-    public int getUseDuration(ItemStack stack)
+    public int getUseDuration(@Nonnull ItemStack stack)
     {
-        for (ActionDefinition actionDef : Def().GetActions(EActionInput.SECONDARY))
+        GunContext gunContext = GunContext.GetActionGroupContext(stack);
+        for (ActionDefinition actionDef : gunContext.GetPotentialSecondaryActions())
         {
             switch (actionDef.actionType)
             {
@@ -392,16 +402,21 @@ public class GunItem extends FlanItem
     }
     @Nonnull
     @Override
-    public InteractionResultHolder<ItemStack> use(Level world, Player player, InteractionHand hand)
+    public InteractionResultHolder<ItemStack> use(@Nonnull Level world, @Nonnull Player player, @Nonnull InteractionHand hand)
     {
-        for (ActionDefinition actionDef : Def().GetActions(EActionInput.SECONDARY))
+        ShooterContext shooterContext = ShooterContext.GetOrCreate(player);
+        if(shooterContext.IsValid() && shooterContext instanceof ShooterContextPlayer playerContext)
         {
-            switch (actionDef.actionType)
+            GunContext gunContext = playerContext.GetContext(hand);
+            for (ActionDefinition actionDef : gunContext.GetPotentialSecondaryActions())
             {
-                case Shield -> {
-                    ItemStack stackInHand = player.getItemInHand(hand);
-                    player.startUsingItem(hand);
-                    return InteractionResultHolder.consume(stackInHand);
+                switch (actionDef.actionType)
+                {
+                    case Shield -> {
+                        ItemStack stackInHand = player.getItemInHand(hand);
+                        player.startUsingItem(hand);
+                        return InteractionResultHolder.consume(stackInHand);
+                    }
                 }
             }
         }
@@ -413,15 +428,16 @@ public class GunItem extends FlanItem
     public InteractionResult useOn(UseOnContext context)
     {
         ShooterContext shooter = ShooterContext.GetOrCreate(context.getPlayer());
-        GunContext gun = shooter.CreateForGunIndex(context.getHand() == InteractionHand.MAIN_HAND ? context.getPlayer().getInventory().selected : Inventory.SLOT_OFFHAND);
-        if(gun.IsValid())
+        GunContext gunContext = shooter.CreateForGunIndex(context.getHand() == InteractionHand.MAIN_HAND ? context.getPlayer().getInventory().selected : Inventory.SLOT_OFFHAND);
+        if(gunContext.IsValid())
         {
+            ActionStack actionStack = gunContext.GetActionStack();
             // Always secondary, this is a use action
-            ActionGroupContext actionGroupContext = gun.GetOrCreate(EActionInput.SECONDARY);
-            ActionGroup actionGroup = actionGroupContext.CreateActionGroup();
-            if(actionGroup.CanStart(actionGroupContext))
+            ActionGroupContext actionGroupContext = gunContext.GetActionGroupContext("secondary");
+            ActionGroupInstance actionGroup = actionStack.GetOrCreateGroupInstance(actionGroupContext);
+            if(actionGroup.CanStart())
             {
-                for(Action action : actionGroup.GetActions())
+                for(ActionInstance action : actionGroup.GetActions())
                 {
                     switch (action.Def.actionType)
                     {
@@ -432,6 +448,7 @@ public class GunItem extends FlanItem
                     }
                 }
             }
+            actionStack.CancelGroupInstance(actionGroupContext);
         }
         return InteractionResult.CONSUME;
     }
@@ -440,8 +457,8 @@ public class GunItem extends FlanItem
     @Override
     public boolean canPerformAction(ItemStack stack, ToolAction toolAction)
     {
-        GunContext gun = GunContext.GetOrCreate(stack);
-        if(gun.IsValid())
+        GunContext gunContext = GunContext.GetActionGroupContext(stack);
+        if(gunContext.IsValid())
         {
             // If this is a right click action, check secondary
             if(toolAction == ToolActions.AXE_STRIP
@@ -449,7 +466,7 @@ public class GunItem extends FlanItem
             || toolAction == ToolActions.SHOVEL_FLATTEN
             || toolAction == ToolActions.HOE_TILL)
             {
-                for (ActionDefinition actionDef : gun.GetActionDefinitions(EActionInput.SECONDARY))
+                for (ActionDefinition actionDef : gunContext.GetPotentialSecondaryActions())
                 {
                     switch(actionDef.actionType)
                     {
@@ -467,7 +484,7 @@ public class GunItem extends FlanItem
             || toolAction == ToolActions.HOE_DIG
             || toolAction == ToolActions.SHIELD_BLOCK)
             {
-                for (ActionDefinition actionDef : gun.GetActionDefinitions(EActionInput.PRIMARY))
+                for (ActionDefinition actionDef : gunContext.GetPotentialPrimaryActions())
                 {
                     switch(actionDef.actionType)
                     {

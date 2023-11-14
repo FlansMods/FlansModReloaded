@@ -1,8 +1,9 @@
 package com.flansmod.common.gunshots;
 
+import com.flansmod.common.actions.ActionGroupContext;
 import com.flansmod.common.actions.EActionInput;
+import com.flansmod.common.actions.GunContext;
 import com.flansmod.common.types.elements.ModifierDefinition;
-import com.flansmod.common.types.guns.GunDefinition;
 import com.flansmod.util.MinecraftHelpers;
 import com.flansmod.util.Transform;
 import net.minecraft.client.Minecraft;
@@ -36,9 +37,7 @@ public abstract class ShooterContext
 		@Override
 		public GunContext CreateForGunIndex(int gunSlotIndex) { return GunContext.INVALID; }
 		@Override
-		public GunContext CreateForSpecificStack(int gunSlotIndex, ItemStack stack) { return GunContext.GetOrCreate(stack); }
-		@Override
-		public ActionGroupContext[] GetPrioritisedActions(EActionInput action) { return new ActionGroupContext[0]; }
+		public GunContext CreateForSpecificStack(int gunSlotIndex, ItemStack stack) { return GunContext.GetActionGroupContext(stack); }
 		@Override
 		public Entity Entity() { return null; }
 		@Override
@@ -290,7 +289,6 @@ public abstract class ShooterContext
 	public abstract GunContext[] GetAllActiveGunContexts();
 	public abstract GunContext CreateForGunIndex(int gunSlotIndex);
 	public abstract GunContext CreateForSpecificStack(int gunSlotIndex, ItemStack stack);
-	public abstract ActionGroupContext[] GetPrioritisedActions(EActionInput action);
 	public abstract Entity Entity();
 	public abstract Entity Owner();
 	public abstract Container GetAttachedInventory();

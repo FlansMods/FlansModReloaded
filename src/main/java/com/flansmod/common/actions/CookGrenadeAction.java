@@ -1,15 +1,13 @@
 package com.flansmod.common.actions;
 
-import com.flansmod.common.gunshots.ActionGroupContext;
-import com.flansmod.common.gunshots.GunshotContext;
-import com.flansmod.common.types.elements.ActionDefinition;
+import com.flansmod.common.types.guns.elements.ActionDefinition;
 import com.flansmod.common.types.elements.ModifierDefinition;
 import com.flansmod.util.Maths;
 import org.jetbrains.annotations.NotNull;
 
-public class CookGrenadeAction extends Action
+public class CookGrenadeAction extends ActionInstance
 {
-	public CookGrenadeAction(@NotNull ActionGroup group, @NotNull ActionDefinition def)
+	public CookGrenadeAction(@NotNull ActionGroupInstance group, @NotNull ActionDefinition def)
 	{
 		super(group, def);
 	}
@@ -18,22 +16,22 @@ public class CookGrenadeAction extends Action
 	public int TicksRemaining;
 
 	@Override
-	public void SkipTicks(ActionGroupContext context, int ticks)
+	public void SkipTicks(int ticks)
 	{
 		TicksRemaining -= ticks;
 	}
 
 	@Override
-	public void OnStartClient(ActionGroupContext context)
+	public void OnStartClient()
 	{
-		super.OnStartClient(context);
-		TotalTicks = TicksRemaining = Maths.Ceil(Fuse(context) * 20.0f);
+		super.OnStartClient();
+		TotalTicks = TicksRemaining = Maths.Ceil(Fuse() * 20.0f);
 	}
 
 	@Override
-	public void OnTickClient(ActionGroupContext context)
+	public void OnTickClient()
 	{
-		super.OnTickClient(context);
+		super.OnTickClient();
 		TicksRemaining--;
 		if(TicksRemaining <= 0)
 		{
@@ -42,30 +40,27 @@ public class CookGrenadeAction extends Action
 	}
 
 	@Override
-	public void OnFinishClient(ActionGroupContext context)
+	public void OnFinishClient()
 	{
 		// Trigger the other action group on the other input
-		EActionInput actionToStart = context.InputType.GetOpposite();
-		ActionGroupContext otherActionContext = context.Gun.GetOrCreate(actionToStart);
-		ActionGroup otherActionGroup = otherActionContext.CreateActionGroup();
-		if(otherActionGroup.CanStart(otherActionContext))
-		{
-			otherActionGroup.SkipTicks(otherActionContext,TotalTicks - TicksRemaining);
-			context.ActionStack().AddActionGroup(otherActionContext, otherActionGroup);
-		}
+		ActionGroupContext otherActionContext = Group.Context.Gun.GetActionGroupContext(OtherActionName());
+		ActionStack actionStack = Group.Context.Gun.GetActionStack();
+		ActionGroupInstance groupInstance = actionStack.GetOrCreateGroupInstance(otherActionContext);
+		actionStack.Server_TryStartGroupInstance(otherActionContext);
+		groupInstance.SkipTicks(TotalTicks - TicksRemaining);
 	}
 
 	@Override
-	public void OnStartServer(ActionGroupContext context)
+	public void OnStartServer()
 	{
-		super.OnStartServer(context);
-		TotalTicks = TicksRemaining = Maths.Ceil(Fuse(context) * 20.0f);
+		super.OnStartServer();
+		TotalTicks = TicksRemaining = Maths.Ceil(Fuse() * 20.0f);
 	}
 
 	@Override
-	public void OnTickServer(ActionGroupContext context)
+	public void OnTickServer()
 	{
-		super.OnTickServer(context);
+		super.OnTickServer();
 		TicksRemaining--;
 		if(TicksRemaining <= 0)
 		{
@@ -74,30 +69,27 @@ public class CookGrenadeAction extends Action
 	}
 
 	@Override
-	public void OnFinishServer(ActionGroupContext context)
+	public void OnFinishServer()
 	{
-		// Trigger the other action group on the other input
-		EActionInput actionToStart = context.InputType.GetOpposite();
-		ActionGroupContext otherActionContext = context.Gun.GetOrCreate(actionToStart);
-		ActionGroup otherActionGroup = otherActionContext.CreateActionGroup();
-		if(otherActionGroup.CanStart(otherActionContext))
-		{
-			otherActionGroup.SkipTicks(otherActionContext,TotalTicks - TicksRemaining);
-			context.ActionStack().AddActionGroup(otherActionContext, otherActionGroup);
-		}
+		ActionGroupContext otherActionContext = Group.Context.Gun.GetActionGroupContext(OtherActionName());
+		ActionStack actionStack = Group.Context.Gun.GetActionStack();
+		ActionGroupInstance groupInstance = actionStack.GetOrCreateGroupInstance(otherActionContext);
+		actionStack.Server_TryStartGroupInstance(otherActionContext);
+		groupInstance.SkipTicks(TotalTicks - TicksRemaining);
 	}
 
 	@Override
-	public void OnTriggerClient(ActionGroupContext context, int triggerIndex)
+	public void OnTriggerClient(int triggerIndex)
 	{
 
 	}
 
 	@Override
-	public void OnTriggerServer(ActionGroupContext context, int triggerIndex)
+	public void OnTriggerServer(int triggerIndex)
 	{
 
 	}
 
-	public float Fuse(ActionGroupContext context) { return context.ModifyFloat(ModifierDefinition.STAT_DURATION, Def.duration);}
+	public String OtherActionName() { return Group.Context.ModifyString(ModifierDefinition.KEY_ACTION_KEY, "primary"); }
+	public float Fuse() { return Group.Context.ModifyFloat(ModifierDefinition.STAT_DURATION, Def.duration);}
 }

@@ -3,7 +3,6 @@ package com.flansmod.common.types.elements;
 import com.flansmod.common.actions.EActionInput;
 import com.flansmod.common.types.JsonField;
 import com.flansmod.util.Maths;
-import com.mojang.datafixers.kinds.IdF;
 import net.minecraft.network.chat.Component;
 
 public class ModifierDefinition
@@ -42,8 +41,10 @@ public class ModifierDefinition
 	public static final String STAT_HEAL_AMOUNT = "heal_amount";
 	public static final String STAT_FEED_AMOUNT = "feed_amount";
 	public static final String STAT_FEED_SATURATION = "feed_saturation";
-	public static final String STAT_ENTITY_TAG = "entity_tag";
-	public static final String STAT_ENTITY_ID = "entity_id";
+
+	public static final String KEY_ENTITY_TAG = "entity_tag";
+	public static final String KEY_ENTITY_ID = "entity_id";
+	public static final String KEY_ACTION_KEY = "action_key";
 
 	@JsonField
 	public String Stat = "";
@@ -56,19 +57,22 @@ public class ModifierDefinition
 	@JsonField(Docs = "For non-numeric values, such as enums, this is a simple override")
 	public String SetValue = "";
 	@JsonField
-	public boolean ApplyToPrimary = true;
-	@JsonField
-	public boolean ApplyToSecondary = false;
+	public String[] ApplyFilters = new String[0];
 
 
-	public boolean AppliesTo(EActionInput actionSet)
+	public boolean AppliesTo(String groupPath)
 	{
-		return actionSet == EActionInput.PRIMARY ? ApplyToPrimary : ApplyToSecondary;
+		if(ApplyFilters.length == 0)
+			return true;
+		for(String filter : ApplyFilters)
+			if(groupPath.contains(filter))
+				return true;
+		return false;
 	}
-	public boolean AppliesTo(String stat, EActionInput actionSet)
+	public boolean AppliesTo(String stat, String groupPath)
 	{
 		return Stat.equals(stat)
-			&& (actionSet == EActionInput.PRIMARY ? ApplyToPrimary : ApplyToSecondary);
+			&& AppliesTo(groupPath);
 	}
 	public Component GetModifierString()
 	{

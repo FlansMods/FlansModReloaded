@@ -1,15 +1,12 @@
 package com.flansmod.common.actions;
 
-import com.flansmod.common.FlansMod;
-import com.flansmod.common.gunshots.ActionGroupContext;
-import com.flansmod.common.types.elements.ActionDefinition;
-import com.flansmod.common.types.elements.ActionGroupDefinition;
+import com.flansmod.common.types.guns.elements.ActionDefinition;
 
 import javax.annotation.Nonnull;
 
-public class AnimationAction extends Action
+public class AnimationAction extends ActionInstance
 {
-	public AnimationAction(@Nonnull ActionGroup group, @Nonnull ActionDefinition def)
+	public AnimationAction(@Nonnull ActionGroupInstance group, @Nonnull ActionDefinition def)
 	{
 		super(group, def);
 	}
@@ -18,22 +15,22 @@ public class AnimationAction extends Action
 	public boolean WaitForNextAnim = false;
 
 	@Override
-	public boolean PropogateToServer(ActionGroupContext context) { return false; }
+	public boolean PropogateToServer() { return false; }
 
 	@Override
-	public void OnTickClient(ActionGroupContext context)
+	public void OnTickClient()
 	{
 		AnimFrame++;
 	}
 
 	@Override
-	public void OnTriggerClient(ActionGroupContext context, int triggerIndex)
+	public void OnTriggerClient(int triggerIndex)
 	{
 		AnimFrame = 0;
 	}
 
 	@Override
-	public void OnTriggerServer(ActionGroupContext context, int triggerIndex)
+	public void OnTriggerServer(int triggerIndex)
 	{
 
 	}

@@ -1,85 +1,113 @@
-package com.flansmod.common.gunshots;
+package com.flansmod.common.actions;
 
 import com.flansmod.common.FlansMod;
-import com.flansmod.common.actions.*;
-import com.flansmod.common.item.AttachmentItem;
+import com.flansmod.common.gunshots.ModifierStack;
 import com.flansmod.common.item.BulletItem;
 import com.flansmod.common.item.GunItem;
-import com.flansmod.common.types.elements.ActionDefinition;
-import com.flansmod.common.types.elements.ActionGroupDefinition;
-import com.flansmod.common.types.elements.ActionGroupOverrideDefinition;
+import com.flansmod.common.types.attachments.AttachmentDefinition;
+import com.flansmod.common.types.attachments.EAttachmentType;
+import com.flansmod.common.types.guns.elements.*;
 import com.flansmod.common.types.elements.ModifierDefinition;
-import com.flansmod.common.types.guns.EActionType;
 import com.flansmod.common.types.magazines.EAmmoConsumeMode;
-import com.flansmod.common.types.guns.ERepeatMode;
-import com.flansmod.common.types.guns.GunDefinition;
 import com.flansmod.common.types.magazines.EAmmoLoadMode;
 import com.flansmod.common.types.magazines.MagazineDefinition;
 import com.flansmod.util.Maths;
-import net.minecraft.client.player.Input;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.Container;
-import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
-import net.minecraft.world.level.Level;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
+import javax.swing.*;
 
 public class ActionGroupContext
 {
-	public static final ActionGroupContext INVALID = new ActionGroupContext(GunContext.INVALID, EActionInput.PRIMARY);
+	public static final ActionGroupContext INVALID = new ActionGroupContext(GunContext.INVALID, "");
 
+	@Nonnull
 	public final GunContext Gun;
-	public final EActionInput InputType;
+	// --------------------------------------------------------------------------
+	// Action Group Path
+	// 		Should be of one of the following forms
+	//		"shoot"
+	//		"sights/ads"
+	//		"sights/1/ads"
+	//		"reload_primary_start"
+	// --------------------------------------------------------------------------
+	@Nonnull
+	public final String GroupPath;
+	@Nonnull
+	public final ActionGroupDefinition Def;
 
-	// Shooter references
-	public static final UUID InvalidShooterUUID = new UUID(0L, 0L);
-	@Nonnull
-	public ShooterContext Shooter() { return Gun.GetShooter(); }
-	@Nullable
-	public Entity Owner() { return Gun.GetShooter().IsValid() ? Gun.GetShooter().Owner() : null; }
-	@Nullable
-	public Entity Entity() { return Gun.GetShooter().IsValid() ? Gun.GetShooter().Entity() : null; }
-	public UUID OwnerUUID() { return Gun.GetShooter().IsValid() ? Gun.GetShooter().Owner().getUUID() : InvalidShooterUUID; }
-	public UUID EntityUUID() { return Gun.GetShooter().IsValid() ? Gun.GetShooter().Owner().getUUID() : InvalidShooterUUID; }
+	// Helpers
+	public boolean IsAttachment() { return GroupPath.contains("/"); }
+	public boolean IsValid() { return Gun.IsValid() && !GroupPath.isEmpty(); }
 
-	// Gun references
-	@Nonnull
-	public GunContext Gun() { return Gun; }
-	@Nonnull
-	public GunDefinition GunDef() { return Gun.GunDef(); }
-	@Nonnull
-	public ActionGroupDefinition GroupDef() { return Gun.GunDef().GetActionGroup(InputType); }
-	@Nullable
-	public Level Level() { return Gun.Level(); }
-	@Nonnull
-	public ActionStack ActionStack() { return Gun.GetActionStack(); }
-
-	public boolean IsValid() { return Gun().IsValid(); }
-
-	public static ActionGroupContext CreateFrom(GunContext gunContext, EActionInput inputType)
+	public static ActionGroupContext CreateFrom(GunContext gunContext, String groupPath)
 	{
 		if(gunContext.IsValid())
-			return gunContext.GetOrCreate(inputType);
+			return gunContext.GetActionGroupContext(groupPath);
 		return INVALID;
 	}
 
-	public static ActionGroupContext CreateFrom(UUID entityUUID, int inventorySlot, EActionInput inputType, boolean client)
-	{
-		return CreateFrom(GunContext.GetOrCreate(entityUUID, inventorySlot, client), inputType);
-	}
-
-	protected ActionGroupContext(@Nonnull GunContext gun, @Nonnull EActionInput inputType)
+	protected ActionGroupContext(@Nonnull GunContext gun, @Nonnull String groupPath)
 	{
 		Gun = gun;
-		InputType = inputType;
+		GroupPath = groupPath;
+		Def = CacheGroupDef();
+	}
+	public EAttachmentType GetAttachmentType()
+	{
+		if(IsAttachment())
+		{
+			String[] components = GroupPath.split("/");
+			return EAttachmentType.Parse(components[0]);
+		}
+		return null;
+	}
+	public int GetAttachmentIndex()
+	{
+		if(IsAttachment())
+		{
+			String[] components = GroupPath.split("/");
+			if(components.length == 3)
+				return Integer.parseInt(components[1]);
+		}
+		return 0;
+	}
+	public String GetActionKey()
+	{
+		if(IsAttachment())
+		{
+			String[] components = GroupPath.split("/");
+			return components[components.length - 1];
+		}
+		return GroupPath;
+	}
+
+	@Nonnull
+	private ActionGroupDefinition CacheGroupDef()
+	{
+		if(IsAttachment())
+		{
+			String[] components = GroupPath.split("/");
+			EAttachmentType attachmentType = EAttachmentType.Parse(components[0]);
+			int index = 0;
+			String subPath = components[1];
+			if(components.length >= 3)
+			{
+				index = Integer.parseInt(components[1]);
+				subPath = components[2];
+			}
+			AttachmentDefinition attachment = Gun.GetAttachmentDefinition(attachmentType, index);
+			if(attachment.IsValid())
+			{
+				return attachment.GetActionGroup(subPath);
+			}
+		}
+		return Gun.CacheGunDefinition().GetActionGroup(GroupPath);
 	}
 
 	// --------------------------------------------------------------------------
@@ -88,12 +116,16 @@ public class ActionGroupContext
 	@Nonnull
 	protected CompoundTag GetRootTag()
 	{
-		return Gun.GetOrCreateTags(InputType.GetRootTagName());
+		return Gun.GetOrCreateTags(GroupPath);
 	}
+	@Nonnull
+	protected CompoundTag GetTagForActionGroup(String actionGroupPath) { return Gun.GetOrCreateTags(actionGroupPath); }
 	@Nonnull
 	protected CompoundTag GetMagTag(int magIndex)
 	{
-		CompoundTag rootTag = GetRootTag();
+		// The Magazine tags will be named based on which reload we are part of
+		ReloadDefinition reloadDef = Gun.GetReloadDefinitionContaining(this);
+		CompoundTag rootTag = GetTagForActionGroup(reloadDef != null ? reloadDef.key : GroupPath);
 
 		final String magTag = "mag_" + magIndex;
 		if (!rootTag.contains(magTag))
@@ -109,38 +141,17 @@ public class ActionGroupContext
 	// --------------------------------------------------------------------------
 
 	// --------------------------------------------------------------------------
-	// ACTIONS AND RELOADS
-	// --------------------------------------------------------------------------
-	@Nonnull
-	public List<ActionDefinition> GetActionDefinitions() { return Gun.GetActionDefinitions(InputType); }
-	@Nonnull
-	public ActionGroup CreateActionGroup() { return Gun.CreateActionGroup(InputType); }
-	@Nonnull
-	public ReloadProgress[] CreateReloads() { return Gun.CreateReloads(InputType); }
-	@Nullable
-	public ActionGroup GetExistingActionGroup() { return Gun.GetExistingActionGroup(InputType); }
-
-	// --------------------------------------------------------------------------
 	// MAGAZINES
 	// --------------------------------------------------------------------------
 	@Nonnull
 	public MagazineDefinition GetMagazineType(int magIndex)
 	{
-		if(Gun().GetItemStack().getItem() instanceof GunItem gunItem)
+		if(Gun.GetItemStack().getItem() instanceof GunItem gunItem)
 		{
-			return gunItem.GetMagazineType(Gun().GetItemStack(), InputType, magIndex);
+			return gunItem.GetMagazineType(Gun.GetItemStack(), GroupPath, magIndex);
 		}
 		return MagazineDefinition.INVALID;
 	}
-
-	public void SetMagazineType(int magIndex, MagazineDefinition magDef)
-	{
-		if(Gun().GetItemStack().getItem() instanceof GunItem gunItem)
-		{
-			gunItem.SetMagazineType(Gun().GetItemStack(), InputType, magIndex, magDef);
-		}
-	}
-
 	public int GetMagazineSize(int magIndex)
 	{
 		return GetMagazineType(magIndex).numRounds;
@@ -279,7 +290,7 @@ public class ActionGroupContext
 		CompoundTag magTags = GetMagTag(magIndex);
 		Item[] items = new Item[magDef.numRounds];
 		for(int i = 0; i < magDef.numRounds; i++)
-			items[i] = Items.AIR;
+			items[i] = Items.APPLE;
 
 		if (magTags.contains("bullets"))
 		{
@@ -459,7 +470,7 @@ public class ActionGroupContext
 	// --------------------------------------------------------------------------
 	public boolean IsReloadInProgress()
 	{
-		return Gun().GetActionStack().IsReloading();
+		return Gun.GetActionStack().IsReloading();
 	}
 	public boolean CanBeReloaded(int magIndex)
 	{
@@ -475,9 +486,9 @@ public class ActionGroupContext
 		if(!CanBeReloaded(magIndex))
 			return false;
 
-		if(Gun().GetShooter().GetAttachedInventory() != null)
+		if(Gun.GetShooter().GetAttachedInventory() != null)
 		{
-			int matchSlot = FindSlotWithMatchingAmmo(magIndex, Gun().GetShooter().GetAttachedInventory());
+			int matchSlot = FindSlotWithMatchingAmmo(magIndex, Gun.GetShooter().GetAttachedInventory());
 			return matchSlot != Inventory.NOT_FOUND_INDEX;
 		}
 
@@ -552,7 +563,7 @@ public class ActionGroupContext
 	public boolean IsShootAction() { return GetShootActionDefinition().IsValid(); }
 	public ActionDefinition GetShootActionDefinition()
 	{
-		for(ActionDefinition def : GetActionDefinitions())
+		for(ActionDefinition def : Def.actions)
 			if(def.actionType == EActionType.Shoot)
 				return def;
 		return ActionDefinition.Invalid;
@@ -567,22 +578,22 @@ public class ActionGroupContext
 	// --------------------------------------------------------------------------
 	public void Apply(ModifierStack modStack)
 	{
-		Gun().Apply(modStack);
+		Gun.Apply(modStack);
 
 		// No need to maintain a separate cache, this is just reading from the definition
-		for(ActionDefinition def : GetActionDefinitions())
+		for(ActionDefinition def : Def.actions)
 			for(ModifierDefinition mod : def.modifiers)
 				modStack.Apply(mod);
 	}
 	public float ModifyFloat(String key, float baseValue)
 	{
-		ModifierStack stack = new ModifierStack(key, InputType);
+		ModifierStack stack = new ModifierStack(key, GroupPath);
 		Apply(stack);
 		return stack.ApplyTo(baseValue);
 	}
 	public String ModifyString(String key, String defaultValue)
 	{
-		ModifierStack stack = new ModifierStack(key, InputType);
+		ModifierStack stack = new ModifierStack(key, GroupPath);
 		Apply(stack);
 		return stack.ApplyTo(defaultValue);
 	}
@@ -591,13 +602,13 @@ public class ActionGroupContext
 		String modified = ModifyString(key, defaultValue.toString());
 		return Enum.valueOf(clazz, modified);
 	}
-	public ERepeatMode RepeatMode() { return (ERepeatMode) ModifyEnum("repeat_mode", Gun.GunDef().GetRepeatMode(InputType), ERepeatMode.class); }
-	public float RepeatDelaySeconds() { return ModifyFloat("repeat_delay", GroupDef().repeatDelay); }
+	public ERepeatMode RepeatMode() { return (ERepeatMode) ModifyEnum("repeat_mode", Def.repeatMode, ERepeatMode.class); }
+	public float RepeatDelaySeconds() { return ModifyFloat("repeat_delay", Def.repeatDelay); }
 	public float RepeatDelayTicks() { return RepeatDelaySeconds() * 20.0f; }
-	public int RepeatCount() { return Maths.Ceil(ModifyFloat("repeat_count", GroupDef().repeatCount)); }
-	public float SpinUpDuration() { return ModifyFloat("spin_up_duration", GroupDef().spinUpDuration); }
+	public int RepeatCount() { return Maths.Ceil(ModifyFloat("repeat_count", Def.repeatCount)); }
+	public float SpinUpDuration() { return ModifyFloat("spin_up_duration", Def.spinUpDuration); }
 	public int RoundsPerMinute() { return RepeatDelaySeconds() <= 0.00001f ? 0 : Maths.Ceil(60.0f / RepeatDelaySeconds()); }
-	public float Loudness() { return ModifyFloat("loudness", GroupDef().loudness); }
+	public float Loudness() { return ModifyFloat("loudness", Def.loudness); }
 
 	// UTIL
 
@@ -606,15 +617,15 @@ public class ActionGroupContext
 		CompoundTag gunTags = new CompoundTag();
 		Gun.Save(gunTags);
 		tags.put("gun", gunTags);
-		tags.putInt("input", InputType.ordinal());
+		tags.putInt("groupHash", GroupPath.hashCode());
 	}
 
 	public static ActionGroupContext Load(CompoundTag tags, boolean client)
 	{
-		EActionInput inputType = EActionInput.values()[tags.getInt("input")];
+		int groupPathHash = tags.getInt("groupHash");
 		GunContext gunContext = GunContext.Load(tags.getCompound("gun"), client);
 		if(gunContext.IsValid())
-			return gunContext.GetOrCreate(inputType);
+			return gunContext.GetActionGroupContextByHash(groupPathHash);
 
 		// If we don't have a good gun context, there's no point making an action group context
 		return ActionGroupContext.INVALID;

@@ -14,8 +14,7 @@
             "Add": 12.0,
             "Multiply": 1.0,
             "SetValue": "",
-            "ApplyToPrimary": true,
-            "ApplyToSecondary": false
+            "ApplyFilters": []
         },
         {
             "Stat": "flashlight_range",
@@ -23,16 +22,14 @@
             "Add": 10.0,
             "Multiply": 1.0,
             "SetValue": "",
-            "ApplyToPrimary": true,
-            "ApplyToSecondary": false
+            "ApplyFilters": []
         }
     ],
     "mechaEffects": [],
     "mechaEffectFilter": "",
-    "primaryActions": [],
-    "secondaryActions": [],
-    "replacePrimaryAction": false,
-    "replaceSecondaryAction": false,
+    "handlerOverrides": [],
+    "actionOverrides": [],
+    "reloadOverrides": [],
     "modeOverride": "FullAuto",
     "overrideFireMode": false
 }

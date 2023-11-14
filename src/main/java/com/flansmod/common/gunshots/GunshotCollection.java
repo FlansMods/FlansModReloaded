@@ -2,7 +2,6 @@ package com.flansmod.common.gunshots;
 
 import com.flansmod.common.FlansMod;
 import com.flansmod.common.actions.EActionInput;
-import com.flansmod.common.types.bullets.BulletDefinition;
 import com.flansmod.common.types.guns.GunDefinition;
 import com.flansmod.util.MinecraftHelpers;
 import net.minecraft.core.registries.Registries;
@@ -10,7 +9,6 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.phys.Vec3;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
@@ -25,7 +23,8 @@ public class GunshotCollection
 	public int ShooterEntityID;
 	public int SeatID; // If relevant to this entity type, it will specify the seat number
 	public int GunHash;
-	public EActionInput InputType;
+	public int GroupPathHash;
+	public int FiredTick;
 	public List<Gunshot> Shots = new ArrayList<>(2);
 
 	// Accessors
@@ -47,7 +46,8 @@ public class GunshotCollection
 			.WithGun(GunHash)
 			.WithOwner(OwnerDimension, OwnerEntityID)
 			.WithShooter(ShooterDimension, ShooterEntityID)
-			.FromAction(InputType);
+			.FiredOnTick(FiredTick)
+			.FromActionGroup(GroupPathHash);
 
 		for(Gunshot shot : Shots)
 		{
@@ -98,9 +98,21 @@ public class GunshotCollection
 		return this;
 	}
 
-	public GunshotCollection FromAction(EActionInput actionSet)
+	public GunshotCollection FromActionGroup(int groupPathHash)
 	{
-		InputType = actionSet;
+		GroupPathHash = groupPathHash;
+		return this;
+	}
+
+	public GunshotCollection FromActionGroup(String groupPath)
+	{
+		GroupPathHash = groupPath.hashCode();
+		return this;
+	}
+
+	public GunshotCollection FiredOnTick(int tick)
+	{
+		FiredTick = tick;
 		return this;
 	}
 
@@ -154,7 +166,8 @@ public class GunshotCollection
 			buf.writeInt(shotCollection.ShooterEntityID);
 			buf.writeInt(shotCollection.SeatID);
 			buf.writeInt(shotCollection.GunHash);
-			buf.writeBoolean(shotCollection.InputType == EActionInput.PRIMARY);
+			buf.writeInt(shotCollection.GroupPathHash);
+			buf.writeInt(shotCollection.FiredTick);
 			buf.writeResourceKey(shotCollection.ShooterDimension);
 		}
 	}
@@ -173,7 +186,8 @@ public class GunshotCollection
 			shotCollection.ShooterEntityID = buf.readInt();
 			shotCollection.SeatID = buf.readInt();
 			shotCollection.GunHash = buf.readInt();
-			shotCollection.InputType = buf.readBoolean() ? EActionInput.PRIMARY : EActionInput.SECONDARY;
+			shotCollection.GroupPathHash = buf.readInt();
+			shotCollection.FiredTick = buf.readInt();
 			shotCollection.ShooterDimension = buf.readResourceKey(Registries.DIMENSION);
 		}
 	}

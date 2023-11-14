@@ -1,10 +1,8 @@
 package com.flansmod.common.types.vehicles.elements;
 
 import com.flansmod.common.types.JsonField;
-import com.flansmod.common.types.elements.ActionDefinition;
-import com.flansmod.common.types.elements.ShotDefinition;
+import com.flansmod.common.types.guns.elements.ActionDefinition;
 import com.flansmod.common.types.elements.SoundDefinition;
-import com.flansmod.common.types.guns.GunDefinition;
 import net.minecraft.world.phys.Vec3;
 
 public class MountedGunDefinition

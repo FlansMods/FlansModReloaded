@@ -1,9 +1,9 @@
 package com.flansmod.common.network.bidirectional;
 
 import com.flansmod.common.actions.*;
-import com.flansmod.common.gunshots.ActionGroupContext;
+import com.flansmod.common.actions.ActionGroupContext;
 import com.flansmod.common.gunshots.EPressType;
-import com.flansmod.common.gunshots.GunContext;
+import com.flansmod.common.actions.GunContext;
 import com.flansmod.common.gunshots.ShooterContext;
 import com.flansmod.common.network.FlansModMessage;
 import com.flansmod.common.network.elements.ActionGroupNetID;
@@ -39,7 +39,7 @@ public class ActionUpdateMessage extends FlansModMessage
 	public static class ActionTriggerInfo
 	{
 		public int DeltaTick;
-		public List<Action.NetData> NetData = new ArrayList<>();
+		public List<ActionInstance.NetData> NetData = new ArrayList<>();
 	}
 
 	private long StartTick;
@@ -93,7 +93,7 @@ public class ActionUpdateMessage extends FlansModMessage
 		if(!gunContext.IsValid())
 			return ActionGroupContext.INVALID;
 
-		return gunContext.GetOrCreate(Context.InputType);
+		return gunContext.GetActionGroupContextByHash(Context.GroupPathHash);
 	}
 
 	public ActionUpdateMessage()
@@ -105,31 +105,31 @@ public class ActionUpdateMessage extends FlansModMessage
 	{
 		StartTick = startTick;
 		Context = new ActionGroupNetID(
-			actionGroupContext.EntityUUID(),
-			actionGroupContext.InputType,
+			actionGroupContext.Gun.GetShooter().EntityUUID(),
+			actionGroupContext.GroupPath.hashCode(),
 			actionGroupContext.Gun.GetInventorySlotIndex(),
 			actionGroupContext.Gun.hashCode()
 		);
 		PressType = pressType;
 	}
 
-	public Action.NetData GetNetData(int triggerIndex, int actionIndex)
+	public ActionInstance.NetData GetNetData(int triggerIndex, int actionIndex)
 	{
 		ActionTriggerInfo triggerInfo = Triggers.get(triggerIndex);
 		if(triggerInfo != null && actionIndex < triggerInfo.NetData.size())
 		{
 			return triggerInfo.NetData.get(actionIndex);
 		}
-		return Action.NetData.Invalid;
+		return ActionInstance.NetData.Invalid;
 	}
 
-	public void AddTriggers(ActionGroup group, int triggerIndexMin, int triggerIndexMax)
+	public void AddTriggers(ActionGroupInstance group, int triggerIndexMin, int triggerIndexMax)
 	{
 		for(int i = triggerIndexMin; i <= triggerIndexMax; i++)
 		{
 			ActionTriggerInfo accumulatedNetData = new ActionTriggerInfo();
 			accumulatedNetData.DeltaTick = (int)(MinecraftHelpers.GetTick() - group.GetStartedTick());
-			for(Action action : group.GetActions())
+			for(ActionInstance action : group.GetActions())
 			{
 				accumulatedNetData.NetData.add(action.GetNetDataForTrigger(i));
 			}
@@ -153,7 +153,7 @@ public class ActionUpdateMessage extends FlansModMessage
 			buf.writeInt(kvp.getValue().DeltaTick);
 			buf.writeInt(kvp.getValue().NetData.size());
 
-			for(Action.NetData netData : kvp.getValue().NetData)
+			for(ActionInstance.NetData netData : kvp.getValue().NetData)
 			{
 				buf.writeInt(netData.GetID());
 				netData.Encode(buf);
@@ -188,7 +188,7 @@ public class ActionUpdateMessage extends FlansModMessage
 			for (int j = 0; j < count; j++)
 			{
 				int netDataType = buf.readInt();
-				Action.NetData netData = Actions.CreateEmptyNetData(netDataType);
+				ActionInstance.NetData netData = Actions.CreateEmptyNetData(netDataType);
 				netData.Decode(buf);
 				triggerInfo.NetData.add(netData);
 			}

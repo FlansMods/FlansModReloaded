@@ -5,22 +5,17 @@ import com.flansmod.client.render.FlanItemModelRenderer;
 import com.flansmod.client.render.RenderContext;
 import com.flansmod.client.render.animation.*;
 import com.flansmod.client.render.models.TurboRig;
-import com.flansmod.common.actions.Action;
-import com.flansmod.common.actions.ActionGroup;
-import com.flansmod.common.actions.ActionStack;
-import com.flansmod.common.actions.EActionInput;
-import com.flansmod.common.gunshots.ActionGroupContext;
+import com.flansmod.common.actions.*;
+import com.flansmod.common.actions.ActionInstance;
 import com.flansmod.common.gunshots.ShooterContext;
 import com.flansmod.common.types.attachments.AttachmentDefinition;
 import com.flansmod.common.types.attachments.EAttachmentType;
-import com.flansmod.common.types.elements.AttachmentSettingsDefinition;
-import com.flansmod.common.gunshots.GunContext;
+import com.flansmod.common.types.guns.elements.AttachmentSettingsDefinition;
 import com.flansmod.util.MinecraftHelpers;
 
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
 
 public class GunItemRenderer extends FlanItemModelRenderer
 {
@@ -34,19 +29,19 @@ public class GunItemRenderer extends FlanItemModelRenderer
     {
         ShooterContext shooterContext = ShooterContext.GetOrCreate(heldByEntity);
         GunContext gunContext = shooterContext.IsValid() ?
-            GunContext.GetOrCreate(shooterContext, MinecraftHelpers.GetHand(renderContext.TransformType)) :
-            GunContext.GetOrCreate(stack);
+            GunContext.GetActionGroupContext(shooterContext, MinecraftHelpers.GetHand(renderContext.TransformType)) :
+            GunContext.GetActionGroupContext(stack);
         if(gunContext.IsValid())
         {
             // If there is a valid action stack applicable to this gun, scan it for animation actions
             ActionStack actionStack = gunContext.GetActionStack();
-            for(ActionGroup group : actionStack.GetActiveActionGroups())
-                for (Action action : group.GetActions())
+            for(ActionGroupInstance group : actionStack.GetActiveActionGroups())
+                for (ActionInstance action : group.GetActions())
                     if (!action.ShouldRender(gunContext))
                         return;
 
             // Find our animation set
-            AnimationDefinition animationSet = FlansModClient.ANIMATIONS.Get(new ResourceLocation(gunContext.GunDef().animationSet));
+            AnimationDefinition animationSet = FlansModClient.ANIMATIONS.Get(new ResourceLocation(gunContext.CacheGunDefinition().animationSet));
 
             // Find our skin
             ResourceLocation skin = GetSkin(stack);
@@ -69,7 +64,7 @@ public class GunItemRenderer extends FlanItemModelRenderer
                     }
                     else if(partName.startsWith("ammo_"))
                     {
-                        ActionGroupContext primaryContext = ActionGroupContext.CreateFrom(gunContext, EActionInput.PRIMARY);
+                        ActionGroupContext primaryContext = ActionGroupContext.CreateFrom(gunContext, "primary");
                         if(primaryContext.IsValid())
                         {
                             String indexString = partName.substring("ammo_".length());
@@ -110,7 +105,7 @@ public class GunItemRenderer extends FlanItemModelRenderer
 
     private boolean RenderAttachmentPoint(GunContext gunContext, RenderContext renderContext, String partName, EAttachmentType attachmentType)
     {
-        AttachmentSettingsDefinition attachmentSettings = gunContext.GunDef().GetAttachmentSettings(attachmentType);
+        AttachmentSettingsDefinition attachmentSettings = gunContext.CacheGunDefinition().GetAttachmentSettings(attachmentType);
         boolean anyAttachmentsPresent = false;
         for(int attachmentSlot = 0; attachmentSlot < attachmentSettings.numAttachmentSlots; attachmentSlot++)
         {
@@ -139,7 +134,7 @@ public class GunItemRenderer extends FlanItemModelRenderer
 
     private void RenderPartOrAttachment(GunContext gunContext, AnimationDefinition animationSet, ActionStack actionStack, ResourceLocation skin, RenderContext renderContext, String partName, EAttachmentType attachmentType)
     {
-        AttachmentSettingsDefinition attachmentSettings = gunContext.GunDef().GetAttachmentSettings(attachmentType);
+        AttachmentSettingsDefinition attachmentSettings = gunContext.CacheGunDefinition().GetAttachmentSettings(attachmentType);
         boolean anyAttachmentsPresent = false;
         for(int attachmentSlot = 0; attachmentSlot < attachmentSettings.numAttachmentSlots; attachmentSlot++)
         {

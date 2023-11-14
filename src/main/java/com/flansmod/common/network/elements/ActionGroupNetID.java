@@ -8,7 +8,7 @@ import java.util.UUID;
 public class ActionGroupNetID
 {
 	public UUID EntityUUID;
-	public EActionInput InputType;
+	public int GroupPathHash;
 	public int InventorySlotIndex;
 	public int ContextHash;
 
@@ -17,10 +17,10 @@ public class ActionGroupNetID
 
 	}
 
-	public ActionGroupNetID(UUID entityUUID, EActionInput inputType, int inventorySlotIndex, int contextHash)
+	public ActionGroupNetID(UUID entityUUID, int groupPathHash, int inventorySlotIndex, int contextHash)
 	{
 		EntityUUID = entityUUID;
-		InputType = inputType;
+		GroupPathHash = groupPathHash;
 		InventorySlotIndex = inventorySlotIndex;
 		ContextHash = contextHash;
 	}
@@ -28,7 +28,7 @@ public class ActionGroupNetID
 	public void Encode(FriendlyByteBuf buf)
 	{
 		buf.writeShort(InventorySlotIndex);
-		buf.writeShort(InputType.ordinal());
+		buf.writeInt(GroupPathHash);
 		buf.writeUUID(EntityUUID);
 		buf.writeInt(ContextHash);
 	}
@@ -36,7 +36,7 @@ public class ActionGroupNetID
 	public void Decode(FriendlyByteBuf buf)
 	{
 		InventorySlotIndex = buf.readShort();
-		InputType = EActionInput.values()[buf.readShort()];
+		GroupPathHash = buf.readInt();
 		EntityUUID = buf.readUUID();
 		ContextHash = buf.readInt();
 	}

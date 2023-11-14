@@ -1025,12 +1025,12 @@ public class WorkbenchBlockEntity extends BlockEntity implements WorldlyContaine
 
 		if (gunContainer.getItem(0).getItem() instanceof GunItem gunItem)
 		{
-			List<MagazineDefinition> mags = gunItem.Def().primaryMagazines.GetMatchingMagazines();
+			List<MagazineDefinition> mags = gunItem.Def().GetMagazineSettings("primary").GetMatchingMagazines();
 			if (0 <= magIndex && magIndex < mags.size())
 			{
-				return gunItem.Def().primaryMagazines.baseCostToSwap + mags.get(magIndex).upgradeCost;
+				return gunItem.Def().GetMagazineSettings("primary").baseCostToSwap + mags.get(magIndex).upgradeCost;
 			}
-			return gunItem.Def().primaryMagazines.baseCostToSwap;
+			return gunItem.Def().GetMagazineSettings("primary").baseCostToSwap;
 		}
 		return 0;
 	}
@@ -1048,7 +1048,7 @@ public class WorkbenchBlockEntity extends BlockEntity implements WorldlyContaine
 			ItemStack gunStack = gunContainer.getItem(0);
 
 			// Check if the item has mag options and our selection makes sense
-			List<MagazineDefinition> mags = gunItem.Def().primaryMagazines.GetMatchingMagazines();
+			List<MagazineDefinition> mags = gunItem.Def().GetMagazineSettings("primary").GetMatchingMagazines();
 			if(magIndex >= mags.size())
 				return false;
 
@@ -1061,7 +1061,7 @@ public class WorkbenchBlockEntity extends BlockEntity implements WorldlyContaine
 				return true;
 
 			// Now we just need to check the cost
-			int magCost = mag.upgradeCost + gunItem.Def().primaryMagazines.baseCostToSwap;
+			int magCost = mag.upgradeCost + gunItem.Def().GetMagazineSettings("primary").baseCostToSwap;
 			if (magUpgradeContainer.getItem(0).getCount() < magCost)
 				return false;
 
@@ -1078,12 +1078,12 @@ public class WorkbenchBlockEntity extends BlockEntity implements WorldlyContaine
 			if (gunContainer.getContainerSize() > 0 && !gunContainer.getItem(0).isEmpty() && gunContainer.getItem(0).getItem() instanceof GunItem gunItem)
 			{
 				ItemStack gunStack = gunContainer.getItem(0);
-				List<MagazineDefinition> mags = gunItem.Def().primaryMagazines.GetMatchingMagazines();
+				List<MagazineDefinition> mags = gunItem.Def().GetMagazineSettings("primary").GetMatchingMagazines();
 				if (0 <= magIndex && magIndex < mags.size())
 				{
-					int magCost = mags.get(magIndex).upgradeCost + gunItem.Def().primaryMagazines.baseCostToSwap;
+					int magCost = mags.get(magIndex).upgradeCost + gunItem.Def().GetMagazineSettings("primary").baseCostToSwap;
 					magUpgradeContainer.getItem(0).setCount(magUpgradeContainer.getItem(0).getCount() - magCost);
-					gunItem.SetMagazineType(gunStack, EActionInput.PRIMARY, 0, mags.get(magIndex));
+					gunItem.SetMagazineType(gunStack, "primary", 0, mags.get(magIndex));
 				}
 				else
 				{
@@ -1215,18 +1215,18 @@ public class WorkbenchBlockEntity extends BlockEntity implements WorldlyContaine
 	{
 		return switch (type)
 		{
-			case PART_INPUT -> new Container[]{PartCraftingInputContainer};
-			case PART_OUTPUT -> new Container[]{PartCraftingOutputContainer};
-			case GUN_INPUT -> new Container[]{GunCraftingInputContainer};
-			case GUN_OUTPUT -> new Container[]{GunCraftingOutputContainer};
-			case MATERIAL -> new Container[]{MaterialContainer};
-			case FUEL -> new Container[]{FuelContainer};
-			case POWER -> new Container[]{BatteryContainer};
-			case GUN_MODIFICATION -> new Container[]{GunContainer};
-			case ATTACHMENT -> new Container[]{GunContainer};
-			case PAINT_CAN -> new Container[]{PaintCanContainer};
-			case MAG_UPGRADE -> new Container[]{MagUpgradeContainer};
-			case ALL_TYPES -> new Container[]{
+			case PartInput -> new Container[]{PartCraftingInputContainer};
+			case PartOutput -> new Container[]{PartCraftingOutputContainer};
+			case GunInput -> new Container[]{GunCraftingInputContainer};
+			case GunOutput -> new Container[]{GunCraftingOutputContainer};
+			case Material -> new Container[]{MaterialContainer};
+			case Fuel -> new Container[]{FuelContainer};
+			case Power -> new Container[]{BatteryContainer};
+			case GunModification -> new Container[]{GunContainer};
+			case Attachment -> new Container[]{GunContainer};
+			case PaintCan -> new Container[]{PaintCanContainer};
+			case MagUpgrade -> new Container[]{MagUpgradeContainer};
+			case AllTypes -> new Container[]{
 				PartCraftingInputContainer,
 				PartCraftingOutputContainer,
 				GunCraftingInputContainer,

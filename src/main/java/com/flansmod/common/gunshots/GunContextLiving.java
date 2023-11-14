@@ -1,19 +1,15 @@
 package com.flansmod.common.gunshots;
 
+import com.flansmod.common.actions.ActionManager;
 import com.flansmod.common.actions.ActionStack;
+import com.flansmod.common.actions.GunContext;
 import net.minecraft.world.Container;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.damagesource.IndirectEntityDamageSource;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.player.Inventory;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 
 import javax.annotation.Nonnull;
-import java.util.Objects;
 
 public class GunContextLiving extends GunContext
 {
@@ -22,14 +18,14 @@ public class GunContextLiving extends GunContext
 
 	public GunContextLiving(ShooterContextLiving shooterContext, InteractionHand hand)
 	{
-		super(hand == InteractionHand.MAIN_HAND ? shooterContext.Shooter.getMainHandItem() : shooterContext.Shooter.getOffhandItem());
+		super(hand == InteractionHand.MAIN_HAND ? shooterContext.Shooter.getMainHandItem() : shooterContext.Shooter.getOffhandItem(), shooterContext.Level());
 		ShooterContext = shooterContext;
 		Hand = hand;
 	}
 
 	public GunContextLiving(ShooterContextLiving shooterContext, InteractionHand hand, ItemStack withItemOverride)
 	{
-		super(withItemOverride);
+		super(withItemOverride, shooterContext.Level());
 		ShooterContext = shooterContext;
 		Hand = hand;
 	}

@@ -2,13 +2,16 @@ package com.flansmod.common.types.attachments;
 
 import com.flansmod.common.FlansMod;
 import com.flansmod.common.actions.EActionInput;
+import com.flansmod.common.actions.GunInputContext;
 import com.flansmod.common.types.JsonDefinition;
 import com.flansmod.common.types.JsonField;
 import com.flansmod.common.types.elements.*;
-import com.flansmod.common.types.guns.ERepeatMode;
+import com.flansmod.common.types.guns.elements.ActionGroupDefinition;
+import com.flansmod.common.types.guns.elements.ERepeatMode;
+import com.flansmod.common.types.guns.elements.HandlerDefinition;
+import com.flansmod.common.types.guns.elements.ReloadDefinition;
 import net.minecraft.resources.ResourceLocation;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class AttachmentDefinition extends JsonDefinition
@@ -24,13 +27,28 @@ public class AttachmentDefinition extends JsonDefinition
 		super(resLoc);
 	}
 
-	public void GetOverrides(EActionInput inputType, List<ActionGroupOverrideDefinition> matchingOverrides)
+	//public void GetOverrides(EActionInput inputType, List<ActionGroupOverrideDefinition> matchingOverrides)
+	//{
+	//	for(ActionGroupOverrideDefinition override : actionOverrides)
+	//	{
+	//		if(override.inputType == inputType)
+	//			matchingOverrides.add(override);
+	//	}
+	//}
+	public ActionGroupDefinition GetActionGroup(String key)
 	{
-		for(ActionGroupOverrideDefinition override : actionOverrides)
-		{
-			if(override.inputType == inputType)
-				matchingOverrides.add(override);
-		}
+		for(ActionGroupDefinition group : actionOverrides)
+			if(group.key.equals(key))
+				return group;
+		return ActionGroupDefinition.INVALID;
+	}
+
+	public HandlerDefinition GetInputHandler(GunInputContext inputContext)
+	{
+		for(HandlerDefinition handler : handlerOverrides)
+			if(handler.inputType == inputContext.InputType)
+				return handler;
+		return HandlerDefinition.INVALID;
 	}
 
 	@JsonField
@@ -46,7 +64,11 @@ public class AttachmentDefinition extends JsonDefinition
 	public String mechaEffectFilter = "";
 
 	@JsonField
-	public ActionGroupOverrideDefinition[] actionOverrides = new ActionGroupOverrideDefinition[0];
+	public HandlerDefinition[] handlerOverrides = new HandlerDefinition[0];
+	@JsonField
+	public ActionGroupDefinition[] actionOverrides = new ActionGroupDefinition[0];
+	@JsonField
+	public ReloadDefinition[] reloadOverrides = new ReloadDefinition[0];
 
 	@JsonField
 	public ERepeatMode modeOverride = ERepeatMode.FullAuto;

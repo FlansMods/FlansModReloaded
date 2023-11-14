@@ -579,7 +579,17 @@
             ]
         }
     },
-    "attachPoints": [],
+    "attachPoints": [
+        {
+            "name": "eye_line",
+            "attachTo": "body",
+            "offset": [
+                3.0,
+                1.125,
+                0.0
+            ]
+        }
+    ],
     "display": {
         "firstperson_righthand": {
             "rotation": [

@@ -1,8 +1,7 @@
 package com.flansmod.common.gunshots;
 
-import com.flansmod.common.item.FlanItem;
+import com.flansmod.common.actions.GunContext;
 import net.minecraft.world.Container;
-import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 

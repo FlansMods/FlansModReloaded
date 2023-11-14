@@ -1,6 +1,8 @@
 package com.flansmod.common.gunshots;
 
+import com.flansmod.common.actions.ActionGroupContext;
 import com.flansmod.common.actions.EActionInput;
+import com.flansmod.common.actions.GunContext;
 import com.flansmod.common.item.FlanItem;
 import com.flansmod.util.Transform;
 import net.minecraft.world.Container;
@@ -34,9 +36,9 @@ public class ShooterContextLiving extends ShooterContext
 	public GunContext CreateForGunIndex(int gunSlotIndex) { return new GunContextLiving(this, gunSlotIndex == 0 ? InteractionHand.MAIN_HAND : InteractionHand.OFF_HAND); }
 	@Override
 	public GunContext CreateForSpecificStack(int gunSlotIndex, ItemStack stack) { return new GunContextLiving(this, gunSlotIndex == 0 ? InteractionHand.MAIN_HAND : InteractionHand.OFF_HAND, stack); }
-	public GunContext GetContext(InteractionHand hand) { return GunContext.GetOrCreate(this, hand); }
-	public GunContext GetMainHandContext() { return GunContext.GetOrCreate(this, InteractionHand.MAIN_HAND); }
-	public GunContext GetOffHandContext() { return GunContext.GetOrCreate(this, InteractionHand.OFF_HAND); }
+	public GunContext GetContext(InteractionHand hand) { return GunContext.GetActionGroupContext(this, hand); }
+	public GunContext GetMainHandContext() { return GunContext.GetActionGroupContext(this, InteractionHand.MAIN_HAND); }
+	public GunContext GetOffHandContext() { return GunContext.GetActionGroupContext(this, InteractionHand.OFF_HAND); }
 
 	public boolean CanPerformTwoHandedAction()
 	{
@@ -57,63 +59,6 @@ public class ShooterContextLiving extends ShooterContext
 	public boolean IsValid() { return true; }
 	@Override
 	public boolean IsCreative() { return false; }
-	@Override
-	public ActionGroupContext[] GetPrioritisedActions(EActionInput action)
-	{
-		GunContext mainHand = GetMainHandContext();
-		GunContext offHand = GetOffHandContext();
-		int numValid = (mainHand.IsValid() ? 1 : 0) + (offHand.IsValid() ? 1 : 0);
-
-		switch(numValid)
-		{
-			case 0: return new ActionGroupContext[0];
-			case 1:
-			{
-				return new ActionGroupContext[]{
-					mainHand.IsValid()
-						? ActionGroupContext.CreateFrom(mainHand, action)
-						: ActionGroupContext.CreateFrom(offHand, action)
-				};
-			}
-			case 2:
-			{
-				switch (action)
-				{
-					case SECONDARY -> {
-						return new ActionGroupContext[]{
-							ActionGroupContext.CreateFrom(offHand, EActionInput.PRIMARY),
-							ActionGroupContext.CreateFrom(mainHand, EActionInput.PRIMARY)
-						};
-					}
-					case PRIMARY -> {
-						return new ActionGroupContext[]{
-							ActionGroupContext.CreateFrom(mainHand, EActionInput.PRIMARY),
-							ActionGroupContext.CreateFrom(offHand, EActionInput.PRIMARY)
-						};
-					}
-					case RELOAD_PRIMARY -> {
-						return new ActionGroupContext[]{
-							ActionGroupContext.CreateFrom(mainHand, EActionInput.RELOAD_PRIMARY),
-							ActionGroupContext.CreateFrom(offHand, EActionInput.RELOAD_PRIMARY)
-						};
-					}
-					case RELOAD_SECONDARY -> {
-						return new ActionGroupContext[]{
-							ActionGroupContext.CreateFrom(offHand, EActionInput.RELOAD_PRIMARY),
-							ActionGroupContext.CreateFrom(mainHand, EActionInput.RELOAD_PRIMARY)
-						};
-					}
-					default -> {
-						return new ActionGroupContext[]{
-							ActionGroupContext.CreateFrom(mainHand, action),
-							ActionGroupContext.CreateFrom(offHand, action)
-						};
-					}
-				}
-			}
-			default: return new ActionGroupContext[0];
-		}
-	}
 	@Override
 	public Container GetAttachedInventory() { return null; }
 	@Override

@@ -3,7 +3,7 @@ package com.flansmod.common.types.grenades;
 import com.flansmod.common.FlansMod;
 import com.flansmod.common.types.JsonDefinition;
 import com.flansmod.common.types.JsonField;
-import com.flansmod.common.types.elements.ActionDefinition;
+import com.flansmod.common.types.guns.elements.ActionDefinition;
 import com.flansmod.common.types.elements.ImpactDefinition;
 import com.flansmod.common.types.elements.ItemDefinition;
 import net.minecraft.resources.ResourceLocation;

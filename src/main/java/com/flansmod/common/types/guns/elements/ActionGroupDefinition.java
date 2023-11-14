@@ -1,12 +1,13 @@
-package com.flansmod.common.types.elements;
+package com.flansmod.common.types.guns.elements;
 
 import com.flansmod.common.types.JsonField;
-import com.flansmod.common.types.guns.EActionType;
-import com.flansmod.common.types.guns.ERepeatMode;
 import com.flansmod.util.Maths;
 
 public class ActionGroupDefinition
 {
+	@JsonField
+	public String key = "default";
+
 	@JsonField
 	public boolean canActUnderwater = true;
 	@JsonField
@@ -30,6 +31,7 @@ public class ActionGroupDefinition
 	public ActionDefinition[] actions = new ActionDefinition[0];
 
 	public static final ActionGroupDefinition INVALID = new ActionGroupDefinition();
+	public boolean IsValid() {return !key.isEmpty() && actions.length > 0; }
 
 	public float GetMaxDurationSeconds()
 	{

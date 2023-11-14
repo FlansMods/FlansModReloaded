@@ -12,27 +12,19 @@ import com.flansmod.client.render.debug.DebugRenderer;
 import com.flansmod.client.render.decals.DecalRenderer;
 import com.flansmod.client.render.bullets.ShotRenderer;
 import com.flansmod.common.FlansMod;
-import com.flansmod.common.actions.Action;
-import com.flansmod.common.actions.ActionGroup;
-import com.flansmod.common.actions.AimDownSightAction;
-import com.flansmod.common.gunshots.ActionManager;
-import com.flansmod.common.gunshots.GunContext;
+import com.flansmod.common.actions.*;
+import com.flansmod.common.actions.ActionInstance;
 import com.flansmod.common.gunshots.ShooterContext;
-import com.flansmod.common.types.guns.GunDefinition;
 import com.flansmod.util.Maths;
-import com.flansmod.util.MinecraftHelpers;
 import com.mojang.blaze3d.vertex.DefaultVertexFormat;
-import cpw.mods.modlauncher.api.INameMappingService;
 import net.minecraft.Util;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraft.client.renderer.ItemModelShaper;
 import net.minecraft.client.renderer.ShaderInstance;
 import net.minecraft.client.renderer.entity.EntityRenderers;
-import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.InteractionHand;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.ModelEvent;
 import net.minecraftforge.client.event.RegisterClientReloadListenersEvent;
@@ -44,7 +36,6 @@ import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
-import net.minecraftforge.fml.loading.FMLLoader;
 import net.minecraftforge.fml.util.ObfuscationReflectionHelper;
 
 import javax.annotation.Nullable;
@@ -152,14 +143,14 @@ public class FlansModClient
 		if(Minecraft.getInstance().player != null)
 		{
 			ShooterContext playerContext = ShooterContext.GetOrCreate(Minecraft.getInstance().player);
-			List<Action> adsActions = new ArrayList<>();
+			List<ActionInstance> adsActions = new ArrayList<>();
 			for(GunContext gunContext : playerContext.GetAllActiveGunContexts())
 			{
 				if(gunContext.IsValid())
 				{
-					for (ActionGroup actionGroup : gunContext.GetActionStack().GetActiveActionGroups())
+					for (ActionGroupInstance actionGroup : gunContext.GetActionStack().GetActiveActionGroups())
 					{
-						for (Action action : actionGroup.GetActions())
+						for (ActionInstance action : actionGroup.GetActions())
 						{
 							if (action instanceof AimDownSightAction adsAction)
 								adsActions.add(adsAction);

@@ -1,4 +1,4 @@
-package com.flansmod.common.types.elements;
+package com.flansmod.common.types.guns.elements;
 
 import com.flansmod.common.FlansMod;
 import com.flansmod.common.types.JsonDefinition;
@@ -10,6 +10,8 @@ import java.util.List;
 
 public class MagazineSlotSettingsDefinition
 {
+	public static final MagazineSlotSettingsDefinition INVALID = new MagazineSlotSettingsDefinition();
+
 	private List<MagazineDefinition> MatchingMagazineReferences = null;
 	public List<MagazineDefinition> GetMatchingMagazines()
 	{
@@ -55,6 +57,9 @@ public class MagazineSlotSettingsDefinition
 		}
 		return MatchingMagazineReferences;
 	}
+
+	@JsonField
+	public String key = "primary";
 
 	@JsonField
 	public String[] matchByNames = new String[0];

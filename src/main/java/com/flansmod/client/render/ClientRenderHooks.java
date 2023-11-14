@@ -3,8 +3,8 @@ package com.flansmod.client.render;
 import com.flansmod.client.FlansModClient;
 import com.flansmod.common.FlansMod;
 import com.flansmod.common.actions.*;
-import com.flansmod.common.gunshots.ActionGroupContext;
-import com.flansmod.common.gunshots.GunContext;
+import com.flansmod.common.actions.ActionGroupContext;
+import com.flansmod.common.actions.GunContext;
 import com.flansmod.common.gunshots.ShooterContext;
 import com.flansmod.common.types.magazines.MagazineDefinition;
 import com.flansmod.util.Maths;
@@ -21,7 +21,6 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -30,7 +29,6 @@ import net.minecraft.world.phys.Vec2;
 import net.minecraftforge.client.event.ComputeFovModifierEvent;
 import net.minecraftforge.client.event.RenderGuiOverlayEvent;
 import net.minecraftforge.client.event.RenderHandEvent;
-import net.minecraftforge.client.event.RenderLivingEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -73,13 +71,13 @@ public class ClientRenderHooks
 			if(!gunContext.IsValid())
 				continue;
 
-			for (ActionGroup actionGroup : gunContext.GetActionStack().GetActiveActionGroups())
+			for (ActionGroupInstance actionGroup : gunContext.GetActionStack().GetActiveActionGroups())
 			{
-				for(Action action : actionGroup.GetActions())
+				for(ActionInstance action : actionGroup.GetActions())
 				{
 					if (action instanceof AimDownSightAction adsAction)
 					{
-						totalFOVModifier += adsAction.FOVFactor(gunContext.GetOrCreate(actionGroup.InputType));
+						totalFOVModifier += adsAction.FOVFactor();
 						FOVModifierCount++;
 					}
 				}
@@ -173,15 +171,15 @@ public class ClientRenderHooks
 			if(!gunContext.IsValid())
 				continue;
 
-			for(ActionGroup actionGroup : gunContext.GetActionStack().GetActiveActionGroups())
+			for(ActionGroupInstance actionGroup : gunContext.GetActionStack().GetActiveActionGroups())
 			{
-				for (Action action : actionGroup.GetActions())
+				for (ActionInstance action : actionGroup.GetActions())
 				{
 					if (action instanceof ScopeAction scopeAction)
 					{
 						if (scopeAction.ApplyOverlay())
 						{
-							ResourceLocation overlayLocation = scopeAction.GetOverlayLocation(gunContext.GetOrCreate(actionGroup.InputType));
+							ResourceLocation overlayLocation = scopeAction.GetOverlayLocation();
 							if (overlayLocation != null)
 							{
 								RenderSystem.setShader(GameRenderer::getPositionTexShader);
@@ -297,7 +295,7 @@ public class ClientRenderHooks
 
 			int x = anchorX + 113;
 
-			ActionGroupContext mainHandPrimaryContext = ActionGroupContext.CreateFrom(mainContext, EActionInput.PRIMARY);
+			ActionGroupContext mainHandPrimaryContext = ActionGroupContext.CreateFrom(mainContext, "primary");
 			if(mainHandPrimaryContext.IsShootAction())
 			{
 				MagazineDefinition magDef = mainHandPrimaryContext.GetMagazineType(0);
@@ -358,7 +356,7 @@ public class ClientRenderHooks
 			Minecraft.getInstance().getItemRenderer().renderGuiItem(offContext.GetItemStack(), anchorX - 95 - 16, anchorY - 40);
 
 			int x = anchorX - 113 - 16;
-			ActionGroupContext offHandPrimaryContext = ActionGroupContext.CreateFrom(offContext, EActionInput.PRIMARY);
+			ActionGroupContext offHandPrimaryContext = ActionGroupContext.CreateFrom(offContext, "primary");
 			if(offHandPrimaryContext.IsShootAction())
 			{
 				MagazineDefinition magDef = offHandPrimaryContext.GetMagazineType(0);

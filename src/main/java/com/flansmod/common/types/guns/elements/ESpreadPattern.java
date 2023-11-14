@@ -1,4 +1,4 @@
-package com.flansmod.common.types.guns;
+package com.flansmod.common.types.guns.elements;
 
 public enum ESpreadPattern
 {

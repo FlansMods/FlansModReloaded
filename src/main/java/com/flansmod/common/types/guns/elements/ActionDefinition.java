@@ -1,10 +1,10 @@
-package com.flansmod.common.types.elements;
+package com.flansmod.common.types.guns.elements;
 
 import com.flansmod.common.actions.EActionInput;
 import com.flansmod.common.gunshots.ModifierStack;
 import com.flansmod.common.types.JsonField;
-import com.flansmod.common.types.guns.EActionType;
-import com.flansmod.common.types.guns.ERepeatMode;
+import com.flansmod.common.types.elements.ModifierDefinition;
+import com.flansmod.common.types.elements.SoundDefinition;
 import com.flansmod.util.Maths;
 
 public class ActionDefinition
@@ -45,15 +45,15 @@ public class ActionDefinition
 	@JsonField
 	public float reach = 1.0f;
 
-	public float ModifyFloat(String key, EActionInput inputType, float baseValue)
+	public float ModifyFloat(String key, String groupPath, float baseValue)
 	{
-		ModifierStack stack = new ModifierStack(key, inputType);
+		ModifierStack stack = new ModifierStack(key, groupPath);
 		for(ModifierDefinition mod : modifiers)
 			stack.Apply(mod);
 		return stack.ApplyTo(baseValue);
 	}
-	public int ToolLevel(EActionInput inputType)
+	public int ToolLevel(String groupPath)
 	{
-		return Maths.Ceil(ModifyFloat(ModifierDefinition.STAT_TOOL_HARVEST_LEVEL, inputType, toolLevel));
+		return Maths.Ceil(ModifyFloat(ModifierDefinition.STAT_TOOL_HARVEST_LEVEL, groupPath, toolLevel));
 	}
 }

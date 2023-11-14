@@ -9,7 +9,7 @@ import com.flansmod.common.crafting.PartFabricationRecipe;
 import com.flansmod.common.crafting.TieredMaterialIngredient;
 import com.flansmod.common.crafting.WorkbenchBlockEntity;
 import com.flansmod.common.crafting.WorkbenchMenu;
-import com.flansmod.common.gunshots.GunContext;
+import com.flansmod.common.actions.GunContext;
 import com.flansmod.common.gunshots.ModifierStack;
 import com.flansmod.common.item.FlanItem;
 import com.flansmod.common.item.GunItem;
@@ -17,7 +17,7 @@ import com.flansmod.common.item.PartItem;
 import com.flansmod.common.types.crafting.EMaterialType;
 import com.flansmod.common.types.crafting.WorkbenchDefinition;
 import com.flansmod.common.types.crafting.elements.*;
-import com.flansmod.common.types.elements.MagazineSlotSettingsDefinition;
+import com.flansmod.common.types.guns.elements.MagazineSlotSettingsDefinition;
 import com.flansmod.common.types.elements.ModifierDefinition;
 import com.flansmod.common.types.elements.PaintableDefinition;
 import com.flansmod.common.types.guns.GunDefinition;
@@ -604,7 +604,7 @@ public class WorkbenchScreen extends AbstractContainerScreen<WorkbenchMenu>
 			{
 				if(flanItem.Def() instanceof GunDefinition gunDefinition)
 				{
-					numMagButtons = gunDefinition.primaryMagazines.GetMatchingMagazines().size();
+					numMagButtons = gunDefinition.GetMagazineSettings("primary").GetMatchingMagazines().size();
 				}
 			}
 
@@ -737,7 +737,8 @@ public class WorkbenchScreen extends AbstractContainerScreen<WorkbenchMenu>
 
 				if (flanItem.Def() instanceof GunDefinition gunDef)
 				{
-					MagazineSlotSettingsDefinition magSettings = gunDef.GetMagazineSettings(EActionInput.PRIMARY);
+					// TODO: Multiple mag settings
+					MagazineSlotSettingsDefinition magSettings = gunDef.GetMagazineSettings("primary");
 					List<MagazineDefinition> matchingMags = magSettings.GetMatchingMagazines();
 					for (int j = 0; j < MAGAZINE_ROWS; j++)
 					{
@@ -867,9 +868,9 @@ public class WorkbenchScreen extends AbstractContainerScreen<WorkbenchMenu>
 				// Magazine selector
 				if(flanItem instanceof GunItem gunItem)
 				{
-					MagazineSlotSettingsDefinition magSettings = gunItem.Def().GetMagazineSettings(EActionInput.PRIMARY);
+					MagazineSlotSettingsDefinition magSettings = gunItem.Def().GetMagazineSettings("primary");
 					List<MagazineDefinition> matchingMags = magSettings.GetMatchingMagazines();
-					MagazineDefinition currentMagType = gunItem.GetMagazineType(gunStack, EActionInput.PRIMARY, 0);
+					MagazineDefinition currentMagType = gunItem.GetMagazineType(gunStack, "primary", 0);
 					for(int i = 0; i < matchingMags.size(); i++)
 					{
 						int xIndex = i % SKINS_PER_ROW;
@@ -920,7 +921,7 @@ public class WorkbenchScreen extends AbstractContainerScreen<WorkbenchMenu>
 
 				if(flanItem.Def() instanceof GunDefinition gunDef)
 				{
-					MagazineSlotSettingsDefinition magSettings = gunDef.GetMagazineSettings(EActionInput.PRIMARY);
+					MagazineSlotSettingsDefinition magSettings = gunDef.GetMagazineSettings("primary");
 					List<MagazineDefinition> matchingMags = magSettings.GetMatchingMagazines();
 					for(int i = 0; i < matchingMags.size(); i++)
 					{
@@ -2086,7 +2087,7 @@ public class WorkbenchScreen extends AbstractContainerScreen<WorkbenchMenu>
 			if(recipe != null && recipe.outputs.length > 0)
 			{
 				ItemStack stack = recipe.outputs[0].CreateStack();
-				GunContext context = GunContext.GetOrCreate(stack);
+				GunContext context = GunContext.GetActionGroupContext(stack);
 				if(context.IsValid())
 				{
 					int statBoxX = xOrigin + GUN_STATS_X_ORIGIN;
@@ -2115,7 +2116,7 @@ public class WorkbenchScreen extends AbstractContainerScreen<WorkbenchMenu>
 	{
 		if (InBox(xMouse, yMouse, boxX, 30, boxY, 9))
 		{
-			ModifierStack modStack = new ModifierStack(stat, EActionInput.PRIMARY);
+			ModifierStack modStack = new ModifierStack(stat, "primary");
 			context.Apply(modStack);
 			renderTooltip(pose, Component.translatable("tooltip.format." + stat + ".advanced", modStack.ApplyTo(baseValue)), xMouse, yMouse);
 			return true;

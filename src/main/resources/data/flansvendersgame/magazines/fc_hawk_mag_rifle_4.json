@@ -9,8 +9,7 @@
             "Add": 0.0,
             "Multiply": 1.15,
             "SetValue": "",
-            "ApplyToPrimary": true,
-            "ApplyToSecondary": true
+            "ApplyFilters": []
         }
     ],
     "ammoLoadMode": "FullMag",

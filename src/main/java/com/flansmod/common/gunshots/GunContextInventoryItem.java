@@ -1,11 +1,11 @@
 package com.flansmod.common.gunshots;
 
 import com.flansmod.common.actions.ActionStack;
+import com.flansmod.common.actions.GunContext;
 import net.minecraft.world.Container;
 import net.minecraft.world.damagesource.DamageSource;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
 
 import javax.annotation.Nonnull;
 import java.util.Objects;
@@ -14,9 +14,9 @@ public class GunContextInventoryItem extends GunContext
 {
 	private final Container Inv;
 	private final int Slot;
-	public GunContextInventoryItem(Container inv, int slot)
+	public GunContextInventoryItem(Container inv, int slot, net.minecraft.world.level.Level level)
 	{
-		super(inv.getItem(slot));
+		super(inv.getItem(slot), level);
 		Inv = inv;
 		Slot = slot;
 	}

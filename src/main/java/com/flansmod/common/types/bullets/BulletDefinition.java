@@ -1,12 +1,11 @@
 package com.flansmod.common.types.bullets;
 
 import com.flansmod.common.FlansMod;
-import com.flansmod.common.actions.Action;
 import com.flansmod.common.types.JsonDefinition;
 import com.flansmod.common.types.JsonField;
-import com.flansmod.common.types.elements.ActionDefinition;
+import com.flansmod.common.types.guns.elements.ActionDefinition;
 import com.flansmod.common.types.elements.ItemDefinition;
-import com.flansmod.common.types.elements.ShotDefinition;
+import com.flansmod.common.types.guns.elements.ShotDefinition;
 import net.minecraft.resources.ResourceLocation;
 
 public class BulletDefinition extends JsonDefinition

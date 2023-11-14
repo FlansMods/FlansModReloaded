@@ -1,4 +1,4 @@
-package com.flansmod.common.types.elements;
+package com.flansmod.common.types.guns.elements;
 
 import com.flansmod.common.types.JsonField;
 import net.minecraft.world.phys.Vec3;

@@ -579,7 +579,17 @@
             ]
         }
     },
-    "attachPoints": [],
+    "attachPoints": [
+        {
+            "name": "bullet_origin",
+            "attachTo": "body",
+            "offset": [
+                3.25,
+                0.0,
+                0.0
+            ]
+        }
+    ],
     "display": {
         "firstperson_righthand": {
             "rotation": [

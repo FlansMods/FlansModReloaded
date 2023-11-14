@@ -14,8 +14,7 @@
             "Add": 0.0,
             "Multiply": 1.1,
             "SetValue": "",
-            "ApplyToPrimary": true,
-            "ApplyToSecondary": false
+            "ApplyFilters": []
         },
         {
             "Stat": "reloadTime",
@@ -23,16 +22,14 @@
             "Add": 0.0,
             "Multiply": 0.7,
             "SetValue": "",
-            "ApplyToPrimary": true,
-            "ApplyToSecondary": false
+            "ApplyFilters": []
         }
     ],
     "mechaEffects": [],
     "mechaEffectFilter": "",
-    "primaryActions": [],
-    "secondaryActions": [],
-    "replacePrimaryAction": false,
-    "replaceSecondaryAction": false,
+    "handlerOverrides": [],
+    "actionOverrides": [],
+    "reloadOverrides": [],
     "modeOverride": "FullAuto",
     "overrideFireMode": false
 }

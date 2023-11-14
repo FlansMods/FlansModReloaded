@@ -1,6 +1,8 @@
 package com.flansmod.common.gunshots;
 
+import com.flansmod.common.actions.ActionGroupContext;
 import com.flansmod.common.actions.EActionInput;
+import com.flansmod.common.actions.GunContext;
 import com.flansmod.util.Transform;
 import net.minecraft.world.Container;
 import net.minecraft.world.entity.Entity;
@@ -34,9 +36,7 @@ public class ShooterContextUnresolvedEntity extends ShooterContext
 	@Override
 	public GunContext CreateForGunIndex(int gunSlotIndex) { return GunContext.INVALID; }
 	@Override
-	public GunContext CreateForSpecificStack(int gunSlotIndex, ItemStack stack) { return GunContext.GetOrCreate(stack); }
-	@Override
-	public ActionGroupContext[] GetPrioritisedActions(EActionInput action) { return new ActionGroupContext[0]; }
+	public GunContext CreateForSpecificStack(int gunSlotIndex, ItemStack stack) { return GunContext.GetActionGroupContext(stack); }
 	@Override
 	public Entity Entity()
 	{

@@ -1,9 +1,6 @@
 package com.flansmod.common.actions;
 
-import com.flansmod.common.gunshots.ActionGroupContext;
-import com.flansmod.common.types.elements.ActionDefinition;
-import com.flansmod.common.gunshots.GunContext;
-import com.flansmod.common.types.elements.ActionGroupDefinition;
+import com.flansmod.common.types.guns.elements.ActionDefinition;
 import com.flansmod.common.types.elements.ModifierDefinition;
 import net.minecraft.resources.ResourceLocation;
 
@@ -11,7 +8,7 @@ import javax.annotation.Nonnull;
 
 public class ScopeAction extends AimDownSightAction
 {
-	public ScopeAction(@Nonnull ActionGroup group, @Nonnull ActionDefinition def)
+	public ScopeAction(@Nonnull ActionGroupInstance group, @Nonnull ActionDefinition def)
 	{
 		super(group, def);
 	}
@@ -21,11 +18,11 @@ public class ScopeAction extends AimDownSightAction
 		return true;
 	}
 
-	public ResourceLocation GetOverlayLocation(ActionGroupContext context)
+	public ResourceLocation GetOverlayLocation()
 	{
-		return new ResourceLocation("flansmod", "textures/scopes/" + ZoomOverlay(context) + ".png");
+		return new ResourceLocation("flansmod", "textures/scopes/" + ZoomOverlay() + ".png");
 	}
-	public String ZoomOverlay(ActionGroupContext context) { return context.ModifyString(ModifierDefinition.STAT_ZOOM_SCOPE_OVERLAY, Def.scopeOverlay); }
+	public String ZoomOverlay() { return Group.Context.ModifyString(ModifierDefinition.STAT_ZOOM_SCOPE_OVERLAY, Def.scopeOverlay); }
 
 	@Override
 	public boolean ShouldRender(GunContext context)

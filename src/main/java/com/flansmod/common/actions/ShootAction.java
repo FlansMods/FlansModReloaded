@@ -6,8 +6,8 @@ import com.flansmod.common.FlansMod;
 import com.flansmod.common.gunshots.*;
 import com.flansmod.common.item.BulletItem;
 import com.flansmod.common.projectiles.BulletEntity;
-import com.flansmod.common.types.elements.ActionDefinition;
-import com.flansmod.common.types.guns.*;
+import com.flansmod.common.types.guns.elements.ActionDefinition;
+import com.flansmod.common.types.guns.elements.ESpreadPattern;
 import com.flansmod.util.Maths;
 import com.flansmod.util.Transform;
 import net.minecraft.client.Minecraft;
@@ -38,11 +38,11 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-public class ShootAction extends Action
+public class ShootAction extends ActionInstance
 {
 	private final HashMap<Integer, GunshotCollection> Results;
 
-	public static class ShootNetData extends Action.NetData
+	public static class ShootNetData extends ActionInstance.NetData
 	{
 		public static final int ID = 1;
 		public static final ShootNetData Invalid = new ShootNetData();
@@ -78,7 +78,7 @@ public class ShootAction extends Action
 		}
 	}
 
-	public ShootAction(@Nonnull ActionGroup group, @Nonnull ActionDefinition def)
+	public ShootAction(@Nonnull ActionGroupInstance group, @Nonnull ActionDefinition def)
 	{
 		super(group, def);
 		Results = new HashMap<>();
@@ -86,7 +86,7 @@ public class ShootAction extends Action
 
 	@Nonnull
 	@Override
-	public Action.NetData GetNetDataForTrigger(int triggerIndex)
+	public ActionInstance.NetData GetNetDataForTrigger(int triggerIndex)
 	{
 		if (Results.containsKey(triggerIndex))
 			return new ShootNetData(Results.get(triggerIndex));
@@ -94,7 +94,7 @@ public class ShootAction extends Action
 	}
 
 	@Override
-	public void UpdateFromNetData(Action.NetData netData, int triggerIndex)
+	public void UpdateFromNetData(ActionInstance.NetData netData, int triggerIndex)
 	{
 		if(netData instanceof ShootNetData shootNetData)
 		{
@@ -103,49 +103,47 @@ public class ShootAction extends Action
 	}
 
 	@Override
-	public boolean PropogateToServer(ActionGroupContext context) { return true; }
+	public boolean PropogateToServer() { return true; }
 	@Override
-	public boolean ShouldFallBackToReload(ActionGroupContext context)
+	public boolean ShouldFallBackToReload()
 	{
-		if(!context.CanShoot(0))
+		if(!Group.Context.CanShoot(0))
 		{
-			if(context.CanPerformReloadFromAttachedInventory(0))
+			if(Group.Context.CanPerformReloadFromAttachedInventory(0))
 				return true;
 		}
 
 		return false;
 	}
 	@Override
-	public boolean CanStart(ActionGroupContext context)
+	public boolean CanStart()
 	{
-		if(!context.Gun().IsValid())
+		if(!Group.Context.Gun.IsValid())
 			return false;
-		if(!context.Shooter().IsValid())
+		if(!Group.Context.Gun.GetShooter().IsValid())
 			return false;
-		if(!context.GunDef().IsValid())
+		if(Group.Context.Gun.GetActionStack().IsReloading())
 			return false;
-		if(context.ActionStack().IsReloading())
+		if(Group.Context.Gun.GetActionStack().GetShotCooldown() > 0.0f)
 			return false;
-		if(context.ActionStack().GetShotCooldown() > 0.0f)
-			return false;
-		if(!context.CanShoot(0))
+		if(!Group.Context.CanShoot(0))
 			return false;
 
-		return super.CanStart(context);
+		return super.CanStart();
 	}
 
 	@Override
-	public boolean CanRetrigger(ActionGroupContext context)
+	public boolean CanRetrigger()
 	{
-		if(!context.CanShoot(0))
+		if(!Group.Context.CanShoot(0))
 			return false;
-		if(!context.Gun().IsItemStackStillInPlace())
+		if(!Group.Context.Gun.IsItemStackStillInPlace())
 			return false;
 
 		return true;
 	}
 
-	public boolean VerifyServer(ActionGroupContext context, GunshotCollection shots, int triggerIndex)
+	public boolean VerifyServer(GunshotCollection shots, int triggerIndex)
 	{
 		Results.put(triggerIndex, shots);
 
@@ -185,12 +183,12 @@ public class ShootAction extends Action
 	private static final double RAYCAST_LENGTH = 500.0d;
 
 	@Override
-	public double GetPropogationRadius(ActionGroupContext context)
+	public double GetPropogationRadius()
 	{
-		return context.Loudness();
+		return Group.Context.Loudness();
 	}
 	@Override
-	public void AddExtraPositionsForNetSync(ActionGroupContext context, int triggerIndex, List<Vec3> positions)
+	public void AddExtraPositionsForNetSync(int triggerIndex, List<Vec3> positions)
 	{
 		if(Results.containsKey(triggerIndex))
 		{
@@ -201,7 +199,7 @@ public class ShootAction extends Action
 			}
 		}
 	}
-	public void Calculate(ActionGroupContext context, int repeatIndex)
+	public void Calculate(int repeatIndex)
 	{
 		GunshotCollection shots = null;
 		if(Results.containsKey(repeatIndex))
@@ -209,10 +207,11 @@ public class ShootAction extends Action
 		else
 		{
 			Results.put(repeatIndex, shots = new GunshotCollection()
-				.FromAction(context.InputType)
-				.WithOwner(context.Owner())
-				.WithShooter(context.Entity())
-				.WithGun(context.GunDef()));
+				.FromActionGroup(Group.Context.GroupPath)
+				.WithOwner(Group.Context.Gun.GetShooter().Owner())
+				.WithShooter(Group.Context.Gun.GetShooter().Entity())
+				.WithGun(Group.Context.Gun.Def)
+				.FiredOnTick(Group.GetProgressTicks()));
 		}
 
 		// If we are firing something faster than 1200rpm, that is more than 1 per tick
@@ -223,7 +222,7 @@ public class ShootAction extends Action
 		List<ItemStack> shotsFired = new ArrayList<>();
 		for(int i = 0; i < requestedShotsFired; i++)
 		{
-			ItemStack bulletCheck = context.ConsumeOneBullet(0);
+			ItemStack bulletCheck = Group.Context.ConsumeOneBullet(0);
 			if(!bulletCheck.isEmpty())
 				shotsFired.add(bulletCheck);
 		}
@@ -232,14 +231,14 @@ public class ShootAction extends Action
 		{
 			if(shotsFired.get(j).getItem() instanceof BulletItem bulletItem)
 			{
-				GunshotContext shotContext = GunshotContext.CreateFrom(context, bulletItem.Def());
+				GunshotContext shotContext = GunshotContext.CreateFrom(Group.Context, bulletItem.Def());
 				// Multiplier from https://github.com/FlansMods/FlansMod/blob/71ba7ed065d906d48f34ca471bbd0172b5192f6b/src/main/java/com/flansmod/common/guns/ShotHandler.java#L93
 				float bulletSpread = 0.0025f * shotContext.Spread();
 				for (int i = 0; i < shotContext.BulletCount(); i++)
 				{
 					Transform randomizedDirection = RandomizeVectorDirection(
-						context.Shooter().Entity().level.random,
-						context.Shooter().GetShootOrigin(),
+						Group.Context.Gun.GetShooter().Entity().level.random,
+						Group.Context.Gun.GetShooter().GetShootOrigin(),
 						bulletSpread,
 						shotContext.SpreadPattern());
 
@@ -250,8 +249,8 @@ public class ShootAction extends Action
 						// Hitscan: Use the raytracer on client, find our hits and let the server know what they were
 						// Server will verify these results
 						List<HitResult> hits = new ArrayList<HitResult>(8);
-						Raytracer.ForLevel(context.Shooter().Entity().level).CastBullet(
-							context.Shooter().Entity(),
+						Raytracer.ForLevel(Group.Context.Gun.GetShooter().Entity().level).CastBullet(
+							Group.Context.Gun.GetShooter().Entity(),
 							randomizedDirection.PositionVec3(),
 							randomizedDirection.ForwardVec3().scale(RAYCAST_LENGTH),
 							penetrationPower,
@@ -347,22 +346,22 @@ public class ShootAction extends Action
 	}
 
 	@Override
-	public void OnTriggerServer(ActionGroupContext context, int triggerIndex)
+	public void OnTriggerServer(int triggerIndex)
 	{
-		if(!context.Shooter().IsValid())
+		if(!Group.Context.Gun.GetShooter().IsValid())
 		{
 			Group.SetFinished();
 			return;
 		}
 
-		Level level = context.Shooter().Entity().level;
+		Level level = Group.Context.Gun.Level;
 		// Process shots that were added for this re-trigger in particular
 		GunshotCollection shotCollection = Results.get(triggerIndex);
 		if(shotCollection != null)
 		{
 			for(Gunshot shot : shotCollection.Shots)
 			{
-				GunshotContext gunshotContext = GunshotContext.CreateFrom(context, shot.bulletDef);
+				GunshotContext gunshotContext = GunshotContext.CreateFrom(Group.Context, shot.bulletDef);
 				if(gunshotContext.IsValid())
 				{
 					if(gunshotContext.Bullet.shootStats.hitscan)
@@ -380,9 +379,9 @@ public class ShootAction extends Action
 			}
 		}
 
-		float loudness = context.Loudness();
+		float loudness = Group.Context.Loudness();
 		if(loudness >= 4.0f)
-			level.gameEvent(context.Shooter().Entity(), GameEvent.EXPLODE, context.Shooter().GetShootOrigin().BlockPos());
+			level.gameEvent(Group.Context.Gun.GetShooter().Entity(), GameEvent.EXPLODE, Group.Context.Gun.GetShooter().GetShootOrigin().BlockPos());
 
 	}
 
@@ -402,11 +401,11 @@ public class ShootAction extends Action
 	}
 
 	@Override
-	public void OnTriggerClient(ActionGroupContext context, int triggerIndex)
+	public void OnTriggerClient(int triggerIndex)
 	{
-		if(context.Shooter().IsLocalPlayerOwner())
+		if(Group.Context.Gun.GetShooter().IsLocalPlayerOwner())
 		{
-			Calculate(context, triggerIndex);
+			Calculate(triggerIndex);
 		}
 
 		float verticalRecoil = 0.0f;
@@ -420,7 +419,7 @@ public class ShootAction extends Action
 			for(Gunshot shot : shots.Shots)
 			{
 				// Create client effects only for bullets that were added in this most recent re-trigger
-				GunshotContext gunshotContext = GunshotContext.CreateFrom(context, shot.bulletDef);
+				GunshotContext gunshotContext = GunshotContext.CreateFrom(Group.Context, shot.bulletDef);
 
 				verticalRecoil = Maths.Max(verticalRecoil, gunshotContext.VerticalRecoil());
 				horizontalRecoil = Maths.Max(horizontalRecoil, gunshotContext.HorizontalRecoil());
@@ -428,7 +427,7 @@ public class ShootAction extends Action
 				if(gunshotContext.Bullet.shootStats.hitscan)
 				{
 					// Create a bullet trail render
-					if(context.Shooter().IsLocalPlayerOwner())
+					if(Group.Context.Gun.GetShooter().IsLocalPlayerOwner())
 					{
 						FlansModClient.SHOT_RENDERER.AddLocalPlayerTrail(shot.origin, shot.Endpoint(), gunshotContext);
 					}
@@ -462,7 +461,7 @@ public class ShootAction extends Action
 				}
 			}
 
-			if(context.Shooter().IsLocalPlayerOwner())
+			if(Group.Context.Gun.GetShooter().IsLocalPlayerOwner())
 			{
 				// If this was my shot, and it hit, hit marker me
 				if(hitEntity)
@@ -470,7 +469,7 @@ public class ShootAction extends Action
 					FlansModClient.CLIENT_OVERLAY_HOOKS.ApplyHitMarker(hitMLG ? 100.0f : 10.0f, hitMLG);
 				}
 
-				if (context.Shooter().Entity() instanceof Player player)
+				if (Group.Context.Gun.GetShooter().Entity() instanceof Player player)
 				{
 					FlansModClient.RECOIL.AddRecoil(
 						horizontalRecoil * (float)player.getRandom().nextGaussian(),
@@ -482,23 +481,23 @@ public class ShootAction extends Action
 	}
 
 	@Override
-	public void OnTickClient(ActionGroupContext context)
+	public void OnTickClient()
 	{
-		super.OnTickClient(context);
+		super.OnTickClient();
 		int tickAfter = GetProgressTicks();
 		int tickBefore = tickAfter - 1;
 
 		boolean playedASoundThisTick = false;
 
 		ParticleEngine particleEngine = Minecraft.getInstance().particleEngine;
-		ActionDefinition shootActionDef = context.GetShootActionDefinition();
+		ActionDefinition shootActionDef = Group.Context.GetShootActionDefinition();
 
 		for(GunshotCollection shotCollection : Results.values())
 		{
 			for (Gunshot shot : shotCollection.Shots)
 			{
-				double t0 = shot.fromShotIndex * context.RepeatDelayTicks();
-				GunshotContext gunshotContext = GunshotContext.CreateFrom(context, shot.bulletDef);
+				double t0 = shotCollection.FiredTick;// shot.fromShotIndex * Group.Context.RepeatDelayTicks();
+				GunshotContext gunshotContext = GunshotContext.CreateFrom(Group.Context, shot.bulletDef);
 				for (HitResult hit : shot.hits)
 				{
 					// Check if this hit should be processed on this frame
@@ -580,18 +579,18 @@ public class ShootAction extends Action
 		}
 	}
 
-	public Vec3 GetPlayerMuzzlePosition(ActionGroupContext context, int nTicksAgo)
+	public Vec3 GetPlayerMuzzlePosition(int nTicksAgo)
 	{
-		if(context.Shooter().Entity() instanceof Player player)
+		if(Group.Context.Gun.GetShooter().Entity() instanceof Player player)
 		{
 			PlayerSnapshot snapshot = Raytracer.ForLevel(player.level).GetSnapshot(player, nTicksAgo);
 			snapshot.GetMuzzlePosition();
 		}
-		else if(context.Shooter().Entity() instanceof LivingEntity living)
+		else if(Group.Context.Gun.GetShooter().Entity() instanceof LivingEntity living)
 		{
 			return living.getEyePosition();
 		}
-		return context.Shooter().Entity().getEyePosition();
+		return Group.Context.Gun.GetShooter().Entity().getEyePosition();
 
 		/*
 		ItemStack itemstack = hand == EnumHand.OFF_HAND ? player.getHeldItemOffhand() : player.getHeldItemMainhand();

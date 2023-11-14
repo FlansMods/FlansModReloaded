@@ -2,18 +2,18 @@ package com.flansmod.common.types.crafting;
 
 public enum EWorkbenchInventoryType
 {
-	ALL_TYPES,
+	AllTypes,
 
-	PART_INPUT,
-	PART_OUTPUT,
-	GUN_INPUT,
-	GUN_OUTPUT,
-	MATERIAL,
-	POWER,
-	FUEL,
-	GUN_MODIFICATION,
-	ATTACHMENT,
-	PAINT_CAN,
-	MAG_UPGRADE
+	PartInput,
+	PartOutput,
+	GunInput,
+	GunOutput,
+	Material,
+	Power,
+	Fuel,
+	GunModification,
+	Attachment,
+	PaintCan,
+	MagUpgrade
 
 }

@@ -1,13 +1,12 @@
 package com.flansmod.common.projectiles;
 
 import com.flansmod.common.FlansMod;
-import com.flansmod.common.actions.ActionGroup;
+import com.flansmod.common.actions.ActionGroupInstance;
 import com.flansmod.common.actions.ActionStack;
 import com.flansmod.common.gunshots.Gunshot;
 import com.flansmod.common.gunshots.GunshotContext;
 import com.flansmod.common.types.bullets.BulletDefinition;
 import com.flansmod.util.Maths;
-import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
@@ -17,11 +16,9 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MoverType;
-import net.minecraft.world.entity.projectile.FishingHook;
 import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.world.entity.projectile.ProjectileUtil;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
@@ -69,8 +66,8 @@ public class BulletEntity extends Projectile
 		if(Def.shootStats.fuseTime > 0.0f)
 		{
 			FuseRemaining = Maths.Floor(Def.shootStats.fuseTime * 20f);
-			ActionGroup group = context.ActionGroup.GetExistingActionGroup();
-			if(group != null && group.GetProgressTicks() > 0)
+			ActionGroupInstance group = context.ActionGroup.Gun.GetOrCreateActionGroup(context.ActionGroup);
+			if(group.GetProgressTicks() > 0)
 			{
 				FuseRemaining -= group.GetProgressTicks();
 			}

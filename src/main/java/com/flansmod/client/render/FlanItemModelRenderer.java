@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
-import java.util.function.Consumer;
 import java.util.function.Function;
 
 import com.flansmod.client.FlansModClient;
@@ -15,11 +14,9 @@ import com.flansmod.client.render.animation.elements.PoseDefinition;
 import com.flansmod.client.render.animation.elements.SequenceDefinition;
 import com.flansmod.client.render.animation.elements.SequenceEntryDefinition;
 import com.flansmod.client.render.models.*;
-import com.flansmod.common.FlansMod;
 import com.flansmod.common.actions.*;
 import com.flansmod.common.item.FlanItem;
 import com.flansmod.util.Maths;
-import com.flansmod.util.MinecraftHelpers;
 import com.flansmod.util.Transform;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.*;
@@ -28,19 +25,13 @@ import net.minecraft.Util;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.*;
 import net.minecraft.client.renderer.block.model.ItemTransforms;
-import net.minecraft.client.renderer.entity.ItemRenderer;
 import net.minecraft.client.renderer.texture.MissingTextureAtlasSprite;
 import net.minecraft.client.resources.model.BakedModel;
-import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.RandomSource;
-import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.HumanoidArm;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.client.model.data.ModelData;
-import org.codehaus.plexus.util.dag.Vertex;
 import org.joml.*;
 
 import javax.annotation.Nonnull;
@@ -142,8 +133,8 @@ public abstract class FlanItemModelRenderer extends BlockEntityWithoutLevelRende
         {
             List<AnimationAction> animActions = new ArrayList<>();
             List<AimDownSightAction> adsActions = new ArrayList<>();
-            for(ActionGroup group : actionStack.GetActiveActionGroups())
-                for(Action action : group.GetActions())
+            for(ActionGroupInstance group : actionStack.GetActiveActionGroups())
+                for(ActionInstance action : group.GetActions())
                 {
                     if (action instanceof AnimationAction animAction)
                         animActions.add(animAction);

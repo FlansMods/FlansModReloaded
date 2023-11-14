@@ -1,7 +1,7 @@
 package com.flansmod.common.actions;
 
 import com.flansmod.common.gunshots.*;
-import com.flansmod.common.types.elements.ActionDefinition;
+import com.flansmod.common.types.guns.elements.ActionDefinition;
 import com.flansmod.common.types.elements.ModifierDefinition;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.phys.Vec3;
@@ -9,11 +9,11 @@ import net.minecraft.world.phys.Vec3;
 import javax.annotation.Nonnull;
 import java.util.List;
 
-public abstract class Action
+public abstract class ActionInstance
 {
 	public static final float TICK_RATE = 1.0f / 20.0f;
 	@Nonnull
-	public final ActionGroup Group;
+	public final ActionGroupInstance Group;
 	@Nonnull
 	public final ActionDefinition Def;
 
@@ -50,32 +50,32 @@ public abstract class Action
 
 	public int GetNumBurstsRemaining() { return Group.NumBurstsRemaining; }
 
-	public Action(@Nonnull ActionGroup group, @Nonnull ActionDefinition def)
+	public ActionInstance(@Nonnull ActionGroupInstance group, @Nonnull ActionDefinition def)
 	{
 		Group = group;
 		Def = def;
 	}
 
 	public boolean ShouldRender(GunContext context) { return true; }
-	public boolean PropogateToServer(ActionGroupContext context) { return true; }
-	public boolean ShouldFallBackToReload(ActionGroupContext context) { return false; }
-	public boolean CanStart(ActionGroupContext context) { return true; }
-	public boolean CanRetrigger(ActionGroupContext context) { return true; }
-	public abstract void OnTriggerClient(ActionGroupContext context, int triggerIndex);
-	public abstract void OnTriggerServer(ActionGroupContext context, int triggerIndex);
-	public void OnStartServer(ActionGroupContext context) {}
-	public void OnTickServer(ActionGroupContext context) {}
-	public void OnFinishServer(ActionGroupContext context) {}
-	public void OnStartClient(ActionGroupContext context) {}
-	public void OnTickClient(ActionGroupContext context) {}
-	public void OnFinishClient(ActionGroupContext context) {}
-	public void SkipTicks(ActionGroupContext context, int ticks) {}
+	public boolean PropogateToServer() { return true; }
+	public boolean ShouldFallBackToReload() { return false; }
+	public boolean CanStart() { return true; }
+	public boolean CanRetrigger() { return true; }
+	public abstract void OnTriggerClient(int triggerIndex);
+	public abstract void OnTriggerServer(int triggerIndex);
+	public void OnStartServer() {}
+	public void OnTickServer() {}
+	public void OnFinishServer() {}
+	public void OnStartClient() {}
+	public void OnTickClient() {}
+	public void OnFinishClient() {}
+	public void SkipTicks(int ticks) {}
 
 	// NetData and sync
 	// Careful when changing this. The action group will only propogate to players within range of the furthest action in the group
-	public double GetPropogationRadius(ActionGroupContext context) { return 200.0d; }
-	public void AddExtraPositionsForNetSync(ActionGroupContext context, int triggerIndex, List<Vec3> positions) {}
-	public boolean ShouldNetSyncAroundPlayer(ActionGroupContext context) { return true; }
+	public double GetPropogationRadius() { return 200.0d; }
+	public void AddExtraPositionsForNetSync(int triggerIndex, List<Vec3> positions) {}
+	public boolean ShouldNetSyncAroundPlayer() { return true; }
 	@Nonnull
 	public NetData GetNetDataForTrigger(int triggerIndex)
 	{
@@ -83,11 +83,11 @@ public abstract class Action
 	}
 	public void UpdateFromNetData(NetData netData, int triggerIndex) {}
 
-	public boolean VerifyServer(ActionGroupContext context, GunshotCollection shots) { return true; }
+	public boolean VerifyServer(GunshotCollection shots) { return true; }
 
 	// These ones are specific to this action
-	public float Duration(ActionGroupContext context) { return context.ModifyFloat(ModifierDefinition.STAT_DURATION, Def.duration); }
-	public float ToolLevel(ActionGroupContext context) { return context.ModifyFloat(ModifierDefinition.STAT_TOOL_HARVEST_LEVEL, Def.toolLevel); }
-	public float HarvestSpeed(ActionGroupContext context) { return context.ModifyFloat(ModifierDefinition.STAT_TOOL_HARVEST_SPEED, Def.harvestSpeed); }
-	public float Reach(ActionGroupContext context) { return context.ModifyFloat(ModifierDefinition.STAT_TOOL_REACH, Def.reach); }
+	public float Duration() { return Group.Context.ModifyFloat(ModifierDefinition.STAT_DURATION, Def.duration); }
+	public float ToolLevel() { return Group.Context.ModifyFloat(ModifierDefinition.STAT_TOOL_HARVEST_LEVEL, Def.toolLevel); }
+	public float HarvestSpeed() { return Group.Context.ModifyFloat(ModifierDefinition.STAT_TOOL_HARVEST_SPEED, Def.harvestSpeed); }
+	public float Reach() { return Group.Context.ModifyFloat(ModifierDefinition.STAT_TOOL_REACH, Def.reach); }
 }

@@ -14,8 +14,7 @@
             "Add": 0.0,
             "Multiply": 0.8,
             "SetValue": "",
-            "ApplyToPrimary": true,
-            "ApplyToSecondary": false
+            "ApplyFilters": []
         },
         {
             "Stat": "recoil",
@@ -23,16 +22,14 @@
             "Add": 0.0,
             "Multiply": 0.5,
             "SetValue": "",
-            "ApplyToPrimary": true,
-            "ApplyToSecondary": false
+            "ApplyFilters": []
         }
     ],
     "mechaEffects": [],
     "mechaEffectFilter": "",
-    "primaryActions": [],
-    "secondaryActions": [],
-    "replacePrimaryAction": false,
-    "replaceSecondaryAction": false,
+    "handlerOverrides": [],
+    "actionOverrides": [],
+    "reloadOverrides": [],
     "modeOverride": "FullAuto",
     "overrideFireMode": false
 }

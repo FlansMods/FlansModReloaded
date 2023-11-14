@@ -1,15 +1,12 @@
-package com.flansmod.common.types.elements;
+package com.flansmod.common.types.guns.elements;
 
-import com.flansmod.common.FlansMod;
-import com.flansmod.common.types.JsonDefinition;
 import com.flansmod.common.types.JsonField;
-import com.flansmod.common.types.guns.ESpreadPattern;
+import com.flansmod.common.types.elements.ImpactDefinition;
+import com.flansmod.common.types.guns.elements.ESpreadPattern;
 import com.flansmod.util.MinecraftHelpers;
 import net.minecraft.world.level.material.Material;
 
 import javax.annotation.Nonnull;
-import java.util.ArrayList;
-import java.util.List;
 
 public class ShotDefinition
 {

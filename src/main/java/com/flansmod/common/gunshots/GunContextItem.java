@@ -1,9 +1,9 @@
 package com.flansmod.common.gunshots;
 
 import com.flansmod.common.actions.ActionStack;
+import com.flansmod.common.actions.GunContext;
 import net.minecraft.world.Container;
 import net.minecraft.world.damagesource.DamageSource;
-import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 
@@ -14,7 +14,7 @@ public class GunContextItem extends GunContext
 {
 	public GunContextItem(ItemStack stack)
 	{
-		super(stack);
+		super(stack, null);
 	}
 	// We don't even know where this ItemStack lives, no-op
 	@Override

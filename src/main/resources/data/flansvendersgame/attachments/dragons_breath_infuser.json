@@ -14,16 +14,14 @@
             "Add": 2.0,
             "Multiply": 0.0,
             "SetValue": "",
-            "ApplyToPrimary": true,
-            "ApplyToSecondary": false
+            "ApplyFilters": []
         }
     ],
     "mechaEffects": [],
     "mechaEffectFilter": "",
-    "primaryActions": [],
-    "secondaryActions": [],
-    "replacePrimaryAction": false,
-    "replaceSecondaryAction": false,
+    "handlerOverrides": [],
+    "actionOverrides": [],
+    "reloadOverrides": [],
     "modeOverride": "FullAuto",
     "overrideFireMode": false
 }

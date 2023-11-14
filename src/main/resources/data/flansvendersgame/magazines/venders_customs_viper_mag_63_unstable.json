@@ -9,8 +9,7 @@
             "Add": 0.0,
             "Multiply": 3.0,
             "SetValue": "",
-            "ApplyToPrimary": true,
-            "ApplyToSecondary": true
+            "ApplyFilters": []
         }
     ],
     "ammoLoadMode": "OneBulletAtATime",

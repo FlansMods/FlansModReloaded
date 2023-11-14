@@ -252,33 +252,6 @@
     },
     "attachPoints": [
         {
-            "name": "sights",
-            "attachTo": "body",
-            "offset": [
-                5.0,
-                5.5,
-                0.0
-            ]
-        },
-        {
-            "name": "stock",
-            "attachTo": "body",
-            "offset": [
-                1.0,
-                4.5,
-                0.0
-            ]
-        },
-        {
-            "name": "barrel",
-            "attachTo": "body",
-            "offset": [
-                18.0,
-                4.5,
-                0.0
-            ]
-        },
-        {
             "name": "grip",
             "attachTo": "pump",
             "offset": [
@@ -288,19 +261,10 @@
             ]
         },
         {
-            "name": "pump",
+            "name": "bullet_origin",
             "attachTo": "body",
             "offset": [
-                0.0,
-                0.0,
-                0.0
-            ]
-        },
-        {
-            "name": "ammo_0",
-            "attachTo": "body",
-            "offset": [
-                0.0,
+                4.0,
                 0.0,
                 0.0
             ]
