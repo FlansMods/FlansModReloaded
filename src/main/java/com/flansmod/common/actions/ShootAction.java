@@ -116,18 +116,18 @@ public class ShootAction extends ActionInstance
 		return false;
 	}
 	@Override
-	public boolean CanStart()
+	public EActionResult CanStart()
 	{
 		if(!Group.Context.Gun.IsValid())
-			return false;
+			return EActionResult.TryNextAction;
 		if(!Group.Context.Gun.GetShooter().IsValid())
-			return false;
+			return EActionResult.TryNextAction;
 		if(Group.Context.Gun.GetActionStack().IsReloading())
-			return false;
+			return EActionResult.TryNextAction;
 		if(Group.Context.Gun.GetActionStack().GetShotCooldown() > 0.0f)
-			return false;
+			return EActionResult.Wait; // We don't want to trigger a reload, just wait
 		if(!Group.Context.CanShoot(0))
-			return false;
+			return EActionResult.TryNextAction;
 
 		return super.CanStart();
 	}

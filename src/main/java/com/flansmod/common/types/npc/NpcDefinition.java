@@ -3,7 +3,9 @@ package com.flansmod.common.types.npc;
 import com.flansmod.common.FlansMod;
 import com.flansmod.common.types.JsonDefinition;
 import com.flansmod.common.types.JsonField;
+import com.flansmod.common.types.elements.EDamageSourceType;
 import com.flansmod.common.types.elements.ItemStackDefinition;
+import com.flansmod.common.types.elements.SoundDefinition;
 import com.flansmod.common.types.npc.elements.ENpcActionType;
 import com.flansmod.common.types.npc.elements.MerchantOfferDefinition;
 import com.flansmod.common.types.npc.elements.VoiceLineDefinition;
@@ -45,14 +47,13 @@ public class NpcDefinition extends JsonDefinition
 	@JsonField
 	public ENpcActionType[] validActions = new ENpcActionType[0];
 	@JsonField
+	public boolean isRightHanded = true;
+	@JsonField
 	public float cooldownSecondsFriendly = 120;
 	@JsonField
 	public float cooldownSecondsHostile = 300;
-
-	public int CooldownTicks(boolean friendly) {
-		return friendly ? Maths.Ceil(cooldownSecondsFriendly * 20.0f)
-						: Maths.Ceil(cooldownSecondsHostile * 20.0f);
-	}
+	@JsonField
+	public EDamageSourceType[] invulnerabilities = new EDamageSourceType[0];
 
 	// Merchant settings
 	@JsonField(Docs = "If set to 0, this NPC will not be considered a merchant")
@@ -60,7 +61,24 @@ public class NpcDefinition extends JsonDefinition
 	@JsonField
 	public int[] xpPerMerchantLevel = new int[0];
 	@JsonField
+	public int minOffersToGive = 1;
+	@JsonField
+	public int maxOffersToGive = 5;
+	@JsonField
 	public MerchantOfferDefinition[] offers = new MerchantOfferDefinition[0];
+
+	public boolean IsInvulnerableTo(EDamageSourceType sourceType)
+	{
+		for(EDamageSourceType invuln : invulnerabilities)
+			if(sourceType == invuln)
+				return true;
+		return false;
+	}
+
+	public int CooldownTicks(boolean friendly) {
+		return friendly ? Maths.Ceil(cooldownSecondsFriendly * 20.0f)
+			: Maths.Ceil(cooldownSecondsHostile * 20.0f);
+	}
 
 	public boolean Can(ENpcActionType actionType)
 	{

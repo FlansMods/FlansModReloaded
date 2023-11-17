@@ -1,0 +1,34 @@
+{
+    "itemSettings": {
+        "maxStackSize": 1,
+        "tags": [
+            "flansmod:sights"
+        ]
+    },
+    "attachmentType": "Sights",
+    "modifiers": [
+        {
+            "Stat": "spread",
+            "Filter": "",
+            "Add": 0.0,
+            "Multiply": 0.5,
+            "SetValue": "",
+            "ApplyFilters": []
+        },
+        {
+            "Stat": "recoil",
+            "Filter": "",
+            "Add": 0.0,
+            "Multiply": 0.8,
+            "SetValue": "",
+            "ApplyFilters": []
+        }
+    ],
+    "mechaEffects": [],
+    "mechaEffectFilter": "",
+    "handlerOverrides": [],
+    "actionOverrides": [],
+    "reloadOverrides": [],
+    "modeOverride": "FullAuto",
+    "overrideFireMode": false
+}

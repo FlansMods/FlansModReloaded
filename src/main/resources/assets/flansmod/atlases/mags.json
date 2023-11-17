@@ -2,8 +2,8 @@
     "sources": [
         {
             "type": "directory",
-            "source": "magazine",
-            "prefix": "magazine/"
+            "source": "mags",
+            "prefix": "mags/"
         }
     ]
 }

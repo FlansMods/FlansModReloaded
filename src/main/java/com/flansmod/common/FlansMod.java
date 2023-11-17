@@ -5,6 +5,7 @@ import com.flansmod.common.crafting.*;
 import com.flansmod.common.entity.NpcRelationshipCapabilityAttacher;
 import com.flansmod.common.actions.ActionManager;
 import com.flansmod.common.gunshots.Raytracer;
+import com.flansmod.common.gunshots.ShooterContext;
 import com.flansmod.common.item.*;
 import com.flansmod.common.projectiles.BulletEntity;
 import com.flansmod.common.types.attachments.AttachmentDefinitions;
@@ -197,6 +198,7 @@ public class FlansMod
     private void loadLevel(LevelEvent.Load event)
     {
         new Raytracer(event.getLevel()).hook();
+        ShooterContext.OnLevelLoaded();
     }
 
     @OnlyIn(Dist.CLIENT)

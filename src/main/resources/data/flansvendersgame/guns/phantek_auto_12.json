@@ -16,6 +16,11 @@
                 "textureName": "phantek_auto_12_undergrowth",
                 "paintBucketsRequired": 1,
                 "entitlementKey": ""
+            },
+            {
+                "textureName": "phantek_auto_12_sleek",
+                "paintBucketsRequired": 1,
+                "entitlementKey": ""
             }
         ]
     },
@@ -75,6 +80,27 @@
             "nodes": [
                 {
                     "actionGroupToTrigger": "look",
+                    "modalCheck": "",
+                    "deferToAttachment": false,
+                    "attachmentType": "Generic",
+                    "attachmentIndex": 0,
+                    "andContinueEvaluating": false
+                }
+            ]
+        },
+        {
+            "inputType": "Reload1",
+            "nodes": [
+                {
+                    "actionGroupToTrigger": "reload_primary_start",
+                    "modalCheck": "",
+                    "deferToAttachment": true,
+                    "attachmentType": "Barrel",
+                    "attachmentIndex": 0,
+                    "andContinueEvaluating": false
+                },
+                {
+                    "actionGroupToTrigger": "reload_primary_start",
                     "modalCheck": "",
                     "deferToAttachment": false,
                     "attachmentType": "Generic",
@@ -164,7 +190,7 @@
                     "duration": 0.0,
                     "sounds": [
                         {
-                            "sound": "flansmodernweapons:r870shoot",
+                            "sound": "flansmod:gunshot_kapow",
                             "length": 0.0,
                             "minPitchMultiplier": 0.8333333,
                             "maxPitchMultiplier": 1.25,
@@ -451,5 +477,5 @@
         "hideDefaultMesh": true
     },
     "modelParts": [],
-    "animationSet": "flansmod:ar_load_from_bottom"
+    "animationSet": "flansmod:rifle_magazine_fed_linear"
 }

@@ -936,8 +936,8 @@
             "name": "sights",
             "attachTo": "body",
             "offset": [
-                1.5,
-                5.0,
+                0.0,
+                0.0,
                 0.0
             ]
         },
@@ -945,8 +945,8 @@
             "name": "barrel",
             "attachTo": "body",
             "offset": [
-                18.0,
-                4.0,
+                0.0,
+                0.0,
                 0.0
             ]
         },
@@ -954,8 +954,8 @@
             "name": "stock",
             "attachTo": "body",
             "offset": [
-                -1.0,
-                1.0,
+                0.0,
+                0.0,
                 0.0
             ]
         },
@@ -963,17 +963,22 @@
             "name": "ammo_0",
             "attachTo": "body",
             "offset": [
-                0.0,
-                0.0,
+                -3.0,
+                3.5,
                 0.0
+            ],
+            "euler": [
+                0.0,
+                0.0,
+                -90.0
             ]
         },
         {
             "name": "eye_line",
             "attachTo": "body",
             "offset": [
-                -10.0,
-                6.0,
+                0.0,
+                0.0,
                 0.0
             ]
         }

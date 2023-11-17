@@ -1,0 +1,152 @@
+{
+  "vender_greeting_friendly": {
+    "category": "player",
+    "sounds": [
+      {
+        "name": "flansvendersgame:npc/vender_hello_01",
+        "type": "file"
+      }
+    ]
+  },
+  "vender_greeting_neutral": {
+    "category": "player",
+    "sounds": [
+      {
+        "name": "flansvendersgame:npc/vender_hello_01",
+        "type": "file"
+      }
+    ]
+  },
+  "vender_greeting_hostile": {
+    "category": "player",
+    "sounds": [
+      {
+        "name": "flansvendersgame:npc/vender_hello_01",
+        "type": "file"
+      }
+    ]
+  },
+  "vender_chat_friendly": {
+    "category": "player",
+    "sounds": [
+      {
+        "name": "flansvendersgame:npc/vender_happy_01",
+        "type": "file"
+      },
+      {
+        "name": "flansvendersgame:npc/vender_happy_02",
+        "type": "file"
+      },
+      {
+        "name": "flansvendersgame:npc/vender_happy_03",
+        "type": "file"
+      },
+      {
+        "name": "flansvendersgame:npc/vender_happy_04",
+        "type": "file"
+      }
+    ]
+  },
+  "vender_chat_neutral": {
+    "category": "player",
+    "sounds": [
+      {
+        "name": "flansvendersgame:npc/vender_chat_neutral_01",
+        "type": "file"
+      },
+      {
+        "name": "flansvendersgame:npc/vender_chat_neutral_02",
+        "type": "file"
+      },
+      {
+        "name": "flansvendersgame:npc/vender_chat_neutral_03",
+        "type": "file"
+      },
+      {
+        "name": "flansvendersgame:npc/vender_chat_neutral_04",
+        "type": "file"
+      },
+      {
+        "name": "flansvendersgame:npc/vender_chat_neutral_05",
+        "type": "file"
+      }
+    ]
+  },
+  "vender_chat_hostile": {
+    "category": "player",
+    "sounds": [
+      {
+        "name": "flansvendersgame:npc/vender_unhappy_01",
+        "type": "file"
+      },
+      {
+        "name": "flansvendersgame:npc/vender_unhappy_02",
+        "type": "file"
+      },
+      {
+        "name": "flansvendersgame:npc/vender_unhappy_03",
+        "type": "file"
+      }
+    ]
+  },
+  "vender_sell_to_player": {
+    "category": "player",
+    "sounds": [
+      {
+        "name": "flansvendersgame:npc/vender_happy_01",
+        "type": "file"
+      }
+    ]
+  },
+  "vender_buy_from_player": {
+    "category": "player",
+    "sounds": [
+      {
+        "name": "flansvendersgame:npc/vender_happy_03",
+        "type": "file"
+      }
+    ]
+  },
+  "vender_hurt": {
+    "category": "player",
+    "sounds": [
+      {
+        "name": "flansvendersgame:npc/vender_hurt_01",
+        "type": "file"
+      },
+      {
+        "name": "flansvendersgame:npc/vender_hurt_02",
+        "type": "file"
+      },
+      {
+        "name": "flansvendersgame:npc/vender_hurt_03",
+        "type": "file"
+      },
+      {
+        "name": "flansvendersgame:npc/vender_hurt_04",
+        "type": "file"
+      }
+    ]
+  },
+  "vender_die": {
+    "category": "player",
+    "sounds": [
+      {
+        "name": "flansvendersgame:npc/vender_death_01",
+        "type": "file"
+      },
+      {
+        "name": "flansvendersgame:npc/vender_death_02",
+        "type": "file"
+      },
+      {
+        "name": "flansvendersgame:npc/vender_death_03",
+        "type": "file"
+      },
+      {
+        "name": "flansvendersgame:npc/vender_death_04",
+        "type": "file"
+      }
+    ]
+  }
+}

@@ -9,7 +9,7 @@ public class ImpactDefinition
 	public String decal = "";
 
 	@JsonField
-	public float damageToTarget = 8.0f;
+	public float damageToTarget = 1.0f;
 	@JsonField
 	public float multiplierVsPlayers = 1.0f;
 	@JsonField

@@ -1284,8 +1284,8 @@
             "name": "barrel",
             "attachTo": "body",
             "offset": [
-                8.5,
-                3.0,
+                0.0,
+                0.0,
                 0.0
             ]
         },
@@ -1293,8 +1293,8 @@
             "name": "sights",
             "attachTo": "slide",
             "offset": [
-                3.0,
-                4.0,
+                0.0,
+                0.0,
                 0.0
             ]
         },
@@ -1311,7 +1311,7 @@
             "name": "slide",
             "attachTo": "body",
             "offset": [
-                0.0,
+                -0.196025848,
                 0.0,
                 0.0
             ]
@@ -1320,8 +1320,8 @@
             "name": "eye_line",
             "attachTo": "body",
             "offset": [
-                7.0,
-                5.5,
+                0.0,
+                0.0,
                 0.0
             ]
         }

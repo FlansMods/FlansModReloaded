@@ -289,9 +289,9 @@ public class ClientRenderHooks
 		GunContext offContext = gunContexts[1];
 		if(gunContexts[0].IsValid())
 		{
-			RenderUntexturedQuad(anchorX + 94, anchorY - 41, 300, 18, 0x80808080);
+			RenderUntexturedQuad(anchorX + 94, anchorY - 20, 300, 18, 0x80808080);
 
-			Minecraft.getInstance().getItemRenderer().renderGuiItem(mainContext.GetItemStack(), anchorX + 95, anchorY - 40);
+			Minecraft.getInstance().getItemRenderer().renderGuiItem(mainContext.GetItemStack(), anchorX + 95, anchorY - 19);
 
 			int x = anchorX + 113;
 
@@ -320,7 +320,7 @@ public class ClientRenderHooks
 							{
 								if(!bulletStacks[stackIndex].isEmpty() && bulletStacks[stackIndex].getItem() != Items.APPLE)
 								{
-									int y = anchorY - 41 + (i % 4 == 3 ? 2 : (i % 4 == 2 ? 0 : (i % 4 == 1 ? 1 : 3)));
+									int y = anchorY - 20 + (i % 4 == 3 ? 2 : (i % 4 == 2 ? 0 : (i % 4 == 1 ? 1 : 3)));
 									Minecraft.getInstance().getItemRenderer().renderGuiItem(bulletStacks[stackIndex], x, y);
 									x += 5;
 								}
@@ -335,7 +335,7 @@ public class ClientRenderHooks
 					{
 						if (bulletStack.isEmpty() || bulletStack.getItem() == Items.APPLE)
 							continue;
-						int y = anchorY - 41;
+						int y = anchorY - 20;
 						Minecraft.getInstance().getItemRenderer().renderGuiItem(bulletStack, x, y);
 						Minecraft.getInstance().getItemRenderer().renderGuiItemDecorations(Minecraft.getInstance().font, bulletStack, x, y);
 						x += 16;
@@ -343,7 +343,7 @@ public class ClientRenderHooks
 				}
 			}
 
-			RenderString(poseStack, anchorX + 96, anchorY - 50, mainContext.GetItemStack().getHoverName(), 0xffffff);
+			RenderString(poseStack, anchorX + 96, anchorY - 29, mainContext.GetItemStack().getHoverName(), 0xffffff);
 
 			// TODO: If alternate ammo?
 		}
@@ -351,11 +351,11 @@ public class ClientRenderHooks
 		if(gunContexts[1].IsValid())
 		{
 			RenderSystem.enableBlend();
-			RenderUntexturedQuad(anchorX - 94 - 300, anchorY - 41, 300, 18, 0x80808080);
+			RenderUntexturedQuad(anchorX - 94 - 308, anchorY - 20, 300, 18, 0x80808080);
 
-			Minecraft.getInstance().getItemRenderer().renderGuiItem(offContext.GetItemStack(), anchorX - 95 - 16, anchorY - 40);
+			//Minecraft.getInstance().getItemRenderer().renderGuiItem(offContext.GetItemStack(), anchorX - 95 - 16, anchorY - 19);
 
-			int x = anchorX - 113 - 16;
+			int x = anchorX - 113 - 22;
 			ActionGroupContext offHandPrimaryContext = ActionGroupContext.CreateFrom(offContext, "primary");
 			if(offHandPrimaryContext.IsShootAction())
 			{
@@ -381,7 +381,7 @@ public class ClientRenderHooks
 							{
 								if(!bulletStacks[stackIndex].isEmpty() && bulletStacks[stackIndex].getItem() != Items.APPLE)
 								{
-									int y = anchorY - 41 + (i % 4 == 3 ? 2 : (i % 4 == 2 ? 0 : (i % 4 == 1 ? 1 : 3)));
+									int y = anchorY - 20 + (i % 4 == 3 ? 2 : (i % 4 == 2 ? 0 : (i % 4 == 1 ? 1 : 3)));
 									Minecraft.getInstance().getItemRenderer().renderGuiItem(bulletStacks[stackIndex], x, y);
 									x -= 5;
 								}
@@ -396,7 +396,7 @@ public class ClientRenderHooks
 					{
 						if (bulletStack.isEmpty() || bulletStack.getItem() == Items.APPLE)
 							continue;
-						int y = anchorY - 41;
+						int y = anchorY - 20;
 						Minecraft.getInstance().getItemRenderer().renderGuiItem(bulletStack, x, y);
 						Minecraft.getInstance().getItemRenderer().renderGuiItemDecorations(Minecraft.getInstance().font, bulletStack, x, y);
 						x -= 16;
@@ -405,8 +405,8 @@ public class ClientRenderHooks
 			}
 
 			RenderString(poseStack,
-				anchorX - 96 - Minecraft.getInstance().font.width(offContext.GetItemStack().getHoverName()),
-				anchorY - 50,
+				anchorX - 98 - Minecraft.getInstance().font.width(offContext.GetItemStack().getHoverName()),
+				anchorY - 31,
 				offContext.GetItemStack().getHoverName(),
 				0xffffff);
 		}

@@ -82,6 +82,27 @@
                     "andContinueEvaluating": false
                 }
             ]
+        },
+        {
+            "inputType": "Reload1",
+            "nodes": [
+                {
+                    "actionGroupToTrigger": "reload_primary_start",
+                    "modalCheck": "",
+                    "deferToAttachment": true,
+                    "attachmentType": "Barrel",
+                    "attachmentIndex": 0,
+                    "andContinueEvaluating": false
+                },
+                {
+                    "actionGroupToTrigger": "reload_primary_start",
+                    "modalCheck": "",
+                    "deferToAttachment": false,
+                    "attachmentType": "Generic",
+                    "attachmentIndex": 0,
+                    "andContinueEvaluating": false
+                }
+            ]
         }
     ],
     "actionGroups": [
@@ -164,10 +185,10 @@
                     "duration": 0.0,
                     "sounds": [
                         {
-                            "sound": "flansmodernweapons:rpgshoot",
+                            "sound": "flansmod:gunshot_ptoo",
                             "length": 0.0,
-                            "minPitchMultiplier": 0.8333333,
-                            "maxPitchMultiplier": 1.25,
+                            "minPitchMultiplier": 0.5,
+                            "maxPitchMultiplier": 0.6,
                             "minVolume": 1.0,
                             "maxVolume": 1.0,
                             "maxRange": 100.0,
@@ -374,10 +395,10 @@
     "magazines": [
         {
             "key": "primary",
-            "matchByNames": [
-                "flansvendersgame:phantek_seeker_mag"
+            "matchByNames": [],
+            "matchByTags": [
+                "flansvendersgame:phantek_seeker"
             ],
-            "matchByTags": [],
             "baseCostToSwap": 0
         }
     ],

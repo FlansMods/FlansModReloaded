@@ -25,20 +25,20 @@ public class SummonNpcAction extends SpawnEntityAction
 	}
 
 	@Override
-	public boolean CanStart()
+	public EActionResult CanStart()
 	{
 		ResourceLocation npcID = EntityType();
 		NpcDefinition npcDef = FlansMod.NPCS.Get(npcID);
 		if(!npcDef.IsValid())
-			return false;
+			return EActionResult.TryNextAction;
 
 		EntityType<?> entityType = ForgeRegistries.ENTITY_TYPES.getValue(npcID);
 		if(entityType == null)
-			return false;
+			return EActionResult.TryNextAction;
 
 		Level level = Group.Context.Gun.Level;
 		if(level == null)
-			return false;
+			return EActionResult.TryNextAction;
 
 		// Check for the specific conditions for summoning a Flan's Mod NPC
 		if(Group.Context.Gun.GetShooter() instanceof ShooterContextPlayer playerContext)
@@ -46,7 +46,7 @@ public class SummonNpcAction extends SpawnEntityAction
 			LazyOptional<INpcRelationshipsCapability> relationshipCap = playerContext.Player.getCapability(NpcRelationshipsCapability.INSTANCE);
 			if(relationshipCap.isPresent() && relationshipCap.resolve().isPresent())
 				if(relationshipCap.resolve().get().GetCooldownTicks(npcID) > 0)
-					return false;
+					return EActionResult.TryNextAction;
 		}
 
 		// Check for other matching NPCs in the nearby loaded chunks
@@ -58,10 +58,10 @@ public class SummonNpcAction extends SpawnEntityAction
 				pos.x + checkRange, pos.y + checkRange, pos.z + checkRange)))
 		{
 			if(nearbyShopkeeper.GetDef().Location.equals(npcID))
-				return false;
+				return EActionResult.TryNextAction;
 		}
 
-		return true;
+		return EActionResult.CanProcess;
 	}
 
 	public ResourceLocation EntityType()

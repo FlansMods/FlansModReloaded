@@ -93,58 +93,6 @@
             ]
         },
         {
-            "name": "ammo_ejected",
-            "poses": [
-                {
-                    "applyTo": "ammo_0",
-                    "position": [
-                        "4",
-                        "0",
-                        "0"
-                    ],
-                    "rotation": [
-                        "0",
-                        "0",
-                        "0"
-                    ],
-                    "scale": [
-                        1.0,
-                        1.0,
-                        1.0
-                    ]
-                }
-            ],
-            "parents": [
-                "ready_to_reload"
-            ]
-        },
-        {
-            "name": "ammo_ejected_physics",
-            "poses": [
-                {
-                    "applyTo": "ammo_0",
-                    "position": [
-                        "-25",
-                        "-20",
-                        "0"
-                    ],
-                    "rotation": [
-                        "0",
-                        "0",
-                        "-60"
-                    ],
-                    "scale": [
-                        1.0,
-                        1.0,
-                        1.0
-                    ]
-                }
-            ],
-            "parents": [
-                "ready_to_reload"
-            ]
-        },
-        {
             "name": "ammo_grab_from_left",
             "poses": [
                 {
@@ -157,7 +105,7 @@
                     "rotation": [
                         "0",
                         "0",
-                        "0"
+                        "90"
                     ],
                     "scale": [
                         1.0,
@@ -385,6 +333,32 @@
                 }
             ],
             "parents": []
+        },
+        {
+            "name": "ammo_at_end",
+            "poses": [
+                {
+                    "applyTo": "ammo_0",
+                    "position": [
+                        "20",
+                        "0",
+                        "0"
+                    ],
+                    "rotation": [
+                        "0",
+                        "0",
+                        "0"
+                    ],
+                    "scale": [
+                        1.0,
+                        1.0,
+                        1.0
+                    ]
+                }
+            ],
+            "parents": [
+                "ready_to_reload"
+            ]
         }
     ],
     "sequences": [
@@ -432,7 +406,7 @@
         },
         {
             "name": "reload_load_one",
-            "ticks": 12,
+            "ticks": 17,
             "frames": [
                 {
                     "tick": 0,
@@ -444,10 +418,10 @@
                     "tick": 10,
                     "entry": "smooth",
                     "exit": "linear",
-                    "frame": "ammo_ejected"
+                    "frame": "ammo_at_end"
                 },
                 {
-                    "tick": 12,
+                    "tick": 17,
                     "entry": "linear",
                     "exit": "linear",
                     "frame": "ready_to_reload"

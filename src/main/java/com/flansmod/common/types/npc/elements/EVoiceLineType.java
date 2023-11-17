@@ -10,4 +10,5 @@ public enum EVoiceLineType
 	SoldToPlayer,
 	BoughtFromPlayer,
 	Hurt,
+	Die
 }

@@ -367,8 +367,8 @@
             "name": "sights",
             "attachTo": "body",
             "offset": [
-                5.0,
-                5.5,
+                0.0,
+                0.0,
                 0.0
             ]
         },
@@ -376,8 +376,8 @@
             "name": "stock",
             "attachTo": "body",
             "offset": [
-                1.0,
-                4.5,
+                0.0,
+                0.0,
                 0.0
             ]
         },
@@ -385,8 +385,8 @@
             "name": "barrel",
             "attachTo": "body",
             "offset": [
-                18.0,
-                4.5,
+                0.0,
+                0.0,
                 0.0
             ]
         },
@@ -394,8 +394,8 @@
             "name": "grip",
             "attachTo": "pump",
             "offset": [
-                9.0,
-                2.75,
+                0.0,
+                0.0,
                 0.0
             ]
         },

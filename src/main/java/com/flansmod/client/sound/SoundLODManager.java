@@ -1,5 +1,6 @@
 package com.flansmod.client.sound;
 
+import com.flansmod.common.FlansMod;
 import com.flansmod.common.types.elements.SoundDefinition;
 import com.flansmod.common.types.elements.SoundLODDefinition;
 import net.minecraft.client.Minecraft;
@@ -50,6 +51,8 @@ public class SoundLODManager
 					soundDef.PickRandomVolume(Minecraft.getInstance().level.random),
 					soundDef.PickRandomPitch(Minecraft.getInstance().level.random),
 					true);
+
+				FlansMod.LOGGER.info("Played " + soundToPlay + " at " + onEntity.position());
 			}
 		}
 	}

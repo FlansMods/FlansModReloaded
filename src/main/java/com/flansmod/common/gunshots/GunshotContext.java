@@ -48,7 +48,7 @@ public class GunshotContext
 		Bullet = bullet;
 	}
 
-	public boolean IsValid() { return true; }
+	public boolean IsValid() { return ActionGroup.IsValid() && Bullet.IsValid(); }
 
 	public void ProcessImpact(Level level, Gunshot shotData)
 	{
@@ -170,6 +170,7 @@ public class GunshotContext
 			living.hurt(ActionGroup.Gun.CreateDamageSource(), damage);
 			living.hurtTime = 0;
 			living.hurtDuration = 0;
+			living.invulnerableTime = 0;
 		}
 
 		// Also apply this code to all living entities

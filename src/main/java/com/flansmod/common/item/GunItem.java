@@ -88,23 +88,20 @@ public class GunItem extends FlanItem
 
                 // To calculate base "gun stats" without taking the bullet into consideration, assume a bullet with default stats
                 GunshotContext gunshotContext = GunshotContext.CreateFrom(actionContext);
-                if(gunshotContext.IsValid())
+                if(expanded)
                 {
-                    if(expanded)
-                    {
-                        tooltips.add(Component.translatable("tooltip.format."+ ModifierDefinition.STAT_IMPACT_DAMAGE + ".advanced", gunshotContext.ImpactDamage()));
-                        tooltips.add(Component.translatable("tooltip.format."+ ModifierDefinition.STAT_SHOT_VERTICAL_RECOIL + ".advanced", gunshotContext.VerticalRecoil()));
-                        tooltips.add(Component.translatable("tooltip.format."+ ModifierDefinition.STAT_SHOT_SPREAD + ".advanced", gunshotContext.Spread()));
-                    }
-                    else
-                    {
-                        tooltips.add(Component.translatable(
-                            "tooltip.format.primarystatline",
-                            gunshotContext.ImpactDamage(),
-                            gunshotContext.VerticalRecoil(),
-                            fireRateString,
-                            gunshotContext.Spread()));
-                    }
+                    tooltips.add(Component.translatable("tooltip.format."+ ModifierDefinition.STAT_IMPACT_DAMAGE + ".advanced", gunshotContext.ImpactDamage()));
+                    tooltips.add(Component.translatable("tooltip.format."+ ModifierDefinition.STAT_SHOT_VERTICAL_RECOIL + ".advanced", gunshotContext.VerticalRecoil()));
+                    tooltips.add(Component.translatable("tooltip.format."+ ModifierDefinition.STAT_SHOT_SPREAD + ".advanced", gunshotContext.Spread()));
+                }
+                else
+                {
+                    tooltips.add(Component.translatable(
+                        "tooltip.format.primarystatline",
+                        gunshotContext.ImpactDamage(),
+                        gunshotContext.VerticalRecoil(),
+                        fireRateString,
+                        gunshotContext.Spread()));
                 }
 
                 if(!gunshotContext.IsValid() || expanded)
@@ -435,7 +432,8 @@ public class GunItem extends FlanItem
             // Always secondary, this is a use action
             ActionGroupContext actionGroupContext = gunContext.GetActionGroupContext("secondary");
             ActionGroupInstance actionGroup = actionStack.GetOrCreateGroupInstance(actionGroupContext);
-            if(actionGroup.CanStart())
+            EActionResult startResult = actionGroup.CanStart();
+            if(startResult == EActionResult.CanProcess)
             {
                 for(ActionInstance action : actionGroup.GetActions())
                 {

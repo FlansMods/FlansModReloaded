@@ -190,31 +190,35 @@ public class ActionGroupInstance
 	// -----------------------------------------------------------------------------------------------------------------
 	//  SHARED
 	// -----------------------------------------------------------------------------------------------------------------
-	public boolean CanStart()
+	public EActionResult CanStart()
 	{
 		// Check two handed settings
 		if(Def.twoHanded)
 		{
 			if (!Context.Gun.CanPerformTwoHandedAction())
-				return false;
+				return EActionResult.TryNextAction;
 		}
 		if(!Def.canActUnderwater)
 		{
 			if(Context.Gun.GetShooter().Entity().level.isWaterAt(new BlockPos(Context.Gun.GetShooter().GetShootOrigin().PositionVec3())))
-				return false;
+				return EActionResult.TryNextAction;
 		}
 		if(!Def.canActUnderOtherLiquid)
 		{
 			if(Context.Gun.GetShooter().Entity().level.isFluidAtPosition(new BlockPos(Context.Gun.GetShooter().GetShootOrigin().PositionVec3()), (fluidState) -> { return !fluidState.isEmpty() && !fluidState.isSourceOfType(Fluids.WATER); }))
-				return false;
+				return EActionResult.TryNextAction;
 		}
 
 		// Check child actions
+		EActionResult result = EActionResult.CanProcess;
 		for(ActionInstance action : Actions)
-			if(!action.CanStart())
-				return false;
+		{
+			EActionResult actionResult = action.CanStart();
+			if(actionResult.ordinal() > result.ordinal())
+				result = actionResult;
+		}
 
-		return true;
+		return result;
 	}
 
 	public void SkipTicks(int ticks)

@@ -30,14 +30,14 @@
                 {
                     "applyTo": "body",
                     "position": [
-                        "-3",
+                        "-2",
                         "1",
                         "0"
                     ],
                     "rotation": [
                         "0",
                         "0",
-                        "10"
+                        "5"
                     ],
                     "scale": [
                         1.0,
@@ -48,7 +48,7 @@
                 {
                     "applyTo": "slide",
                     "position": [
-                        "-2",
+                        "-1",
                         "0",
                         "0"
                     ],
@@ -440,7 +440,7 @@
     "sequences": [
         {
             "name": "shoot",
-            "ticks": 8,
+            "ticks": 5,
             "frames": [
                 {
                     "tick": 0,
@@ -455,7 +455,7 @@
                     "frame": "shot_fired"
                 },
                 {
-                    "tick": 8,
+                    "tick": 5,
                     "entry": "linear",
                     "exit": "instant",
                     "frame": "idle"
@@ -506,7 +506,7 @@
         },
         {
             "name": "reload_end",
-            "ticks": 0,
+            "ticks": 6,
             "frames": [
                 {
                     "tick": 0,
@@ -515,7 +515,7 @@
                     "frame": "ready_to_reload"
                 },
                 {
-                    "tick": 0,
+                    "tick": 6,
                     "entry": "linear",
                     "exit": "linear",
                     "frame": "idle"

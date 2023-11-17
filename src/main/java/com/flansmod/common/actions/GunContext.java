@@ -266,13 +266,6 @@ public abstract class GunContext
 			ModifierCache.clear();
 			RecalculateAttachmentModifierCache();
 			RecalculateModifierCache();
-			// And base modifiers
-			for(ActionDefinition action : Def.GetActionGroup("primary").actions)
-				if(action.IsValid() && action.actionType == EActionType.Shoot)
-					ModifierCache.addAll(Arrays.asList(action.modifiers));
-			for(ActionDefinition action : Def.GetActionGroup("secondary").actions)
-				if(action.IsValid() && action.actionType == EActionType.Shoot)
-					ModifierCache.addAll(Arrays.asList(action.modifiers));
 			ModifierHash = updatedModifierHash;
 		}
 		return ModifierCache;

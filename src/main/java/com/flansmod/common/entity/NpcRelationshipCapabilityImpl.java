@@ -10,11 +10,12 @@ public class NpcRelationshipCapabilityImpl implements INpcRelationshipsCapabilit
 {
 	private final HashMap<ResourceLocation, ENpcRelationship> Relationships = new HashMap<>();
 	private final HashMap<ResourceLocation, Integer> Cooldowns = new HashMap<>();
+	private final HashMap<ResourceLocation, Integer> Levels = new HashMap<>();
 
 	@Override
 	public ENpcRelationship GetRelationship(ResourceLocation npcID)
 	{
-		return Relationships.get(npcID);
+		return Relationships.getOrDefault(npcID, ENpcRelationship.NotMet);
 	}
 	@Override
 	public void SetRelationship(ResourceLocation npcID, ENpcRelationship relationship)
@@ -22,9 +23,13 @@ public class NpcRelationshipCapabilityImpl implements INpcRelationshipsCapabilit
 		Relationships.put(npcID, relationship);
 	}
 	@Override
-	public int GetCooldownTicks(ResourceLocation npcID) { return Cooldowns.get(npcID); }
+	public int GetCooldownTicks(ResourceLocation npcID) { return Cooldowns.getOrDefault(npcID, 0); }
 	@Override
 	public void SetCooldownTicks(ResourceLocation npcID, int ticks) { Cooldowns.put(npcID, ticks); }
+	@Override
+	public int GetLevel(ResourceLocation npcID) { return Levels.getOrDefault(npcID, 0); }
+	@Override
+	public void SetLevel(ResourceLocation npcID, int level) { Levels.put(npcID, level); }
 	@Override
 	public void TickAllCooldowns(int ticks)
 	{

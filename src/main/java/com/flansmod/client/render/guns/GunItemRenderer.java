@@ -11,6 +11,8 @@ import com.flansmod.common.gunshots.ShooterContext;
 import com.flansmod.common.types.attachments.AttachmentDefinition;
 import com.flansmod.common.types.attachments.EAttachmentType;
 import com.flansmod.common.types.guns.elements.AttachmentSettingsDefinition;
+import com.flansmod.common.types.magazines.EAmmoLoadMode;
+import com.flansmod.common.types.magazines.MagazineDefinition;
 import com.flansmod.util.MinecraftHelpers;
 
 import net.minecraft.resources.ResourceLocation;
@@ -88,7 +90,13 @@ public class GunItemRenderer extends FlanItemModelRenderer
                             }
                             catch (Exception ignored)
                             { }
-                            return !primaryContext.GetBulletAtIndex(magIndex, bulletIndex).isEmpty();
+
+
+                            MagazineDefinition magDef = primaryContext.GetMagazineType(magIndex);
+                            if(magDef.ammoLoadMode == EAmmoLoadMode.OneBulletAtATime_Revolver)
+                                return !primaryContext.GetBulletAtIndex(magIndex, bulletIndex).isEmpty();
+
+                            return true;
                         }
                     }
 

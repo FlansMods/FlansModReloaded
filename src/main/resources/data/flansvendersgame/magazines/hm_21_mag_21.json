@@ -1,12 +1,12 @@
 {
     "tags": [
-        "flansvendersgame:vendermartini"
+        "flansvendersgame:hm_21"
     ],
     "modifiers": [],
-    "ammoLoadMode": "OneBulletAtATime",
+    "ammoLoadMode": "FullMag",
     "ammoConsumeMode": "FirstNonEmpty",
     "upgradeCost": 0,
-    "numRounds": 1,
+    "numRounds": 21,
     "allRoundsMustBeIdentical": false,
     "matchBulletNames": [],
     "requiredBulletTags": [

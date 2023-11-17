@@ -5,7 +5,6 @@ import com.flansmod.common.gunshots.EPressType;
 import com.flansmod.common.network.FlansModPacketHandler;
 import com.flansmod.common.network.bidirectional.ActionUpdateMessage;
 import com.flansmod.common.types.guns.elements.*;
-import com.flansmod.common.types.vehicles.EPlayerInput;
 import com.flansmod.util.Maths;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.level.Level;
@@ -101,49 +100,46 @@ public class ActionStack
 			instance = CreateGroupInstance(groupContext);
 		return instance;
 	}
-	private boolean TryStartGroupInstance(ActionGroupContext groupContext)
+	private EActionResult TryStartGroupInstance(ActionGroupContext groupContext)
 	{
 		ActionGroupInstance groupInstance = TryGetGroupInstance(groupContext);
 		if(groupInstance == null)
-			return false;
-		if (!groupInstance.CanStart())
-			return false;
+			return EActionResult.TryNextAction;
 
-		boolean shouldStart = true;
-
-		// Check for toggle actions
-		if(groupContext.RepeatMode() == ERepeatMode.Toggle)
+		EActionResult result = groupInstance.CanStart();
+		if(result == EActionResult.CanProcess)
 		{
-			if (groupInstance.HasStarted())
+			// Check for toggle actions
+			if(groupContext.RepeatMode() == ERepeatMode.Toggle)
 			{
-				groupInstance.SetFinished();
-				shouldStart = false;
+				if (groupInstance.HasStarted())
+				{
+					groupInstance.SetFinished();
+					return result;
+				}
 			}
-		}
 
-		// And see if any actions are waiting for the next action before finishing
-		for(ActionGroupInstance existingGroup : ActiveActionGroups)
-			if (existingGroup.RepeatMode() == ERepeatMode.WaitUntilNextAction)
-				existingGroup.SetFinished();
+			// And see if any actions are waiting for the next action before finishing
+			for(ActionGroupInstance existingGroup : ActiveActionGroups)
+				if (existingGroup.RepeatMode() == ERepeatMode.WaitUntilNextAction)
+					existingGroup.SetFinished();
 
-		if(shouldStart)
-		{
 			if (IsClient)
 				groupInstance.OnStartClient();
 			else
 				groupInstance.OnStartServer();
 		}
-		return shouldStart;
+		return result;
 	}
-	private boolean TryUpdateInputHeld(ActionGroupContext groupContext, boolean held)
+	private EActionResult TryUpdateInputHeld(ActionGroupContext groupContext, boolean held)
 	{
 		ActionGroupInstance groupInstance = TryGetGroupInstance(groupContext);
 		if(groupInstance == null)
-			return false;
+			return EActionResult.TryNextAction;
 
 		groupInstance.UpdateInputHeld(held);
 
-		return true;
+		return EActionResult.CanProcess;
 	}
 
 	public void CancelGroupInstance(ActionGroupContext context)
@@ -177,18 +173,24 @@ public class ActionStack
 		ActionGroupInstance groupInstance = TryGetGroupInstance(groupContext);
 		if(groupInstance != null)
 		{
+			boolean stillFinished = true;
 			if(groupInstance.HasStarted())
 			{
 				OnActionGroupFinished(groupContext);
+				stillFinished = groupInstance.Finished();
+			}
+
+			if(stillFinished)
+			{
 				if (IsClient)
 					groupInstance.OnFinishClient();
 				else
 					groupInstance.OnFinishServer();
-			}
 
-			for(int i = ActiveActionGroups.size() - 1; i >= 0; i--)
-				if(ActiveActionGroups.get(i).Def.key.equals(groupContext.Def.key))
-					ActiveActionGroups.remove(i);
+				for (int i = ActiveActionGroups.size() - 1; i >= 0; i--)
+					if (ActiveActionGroups.get(i).Def.key.equals(groupContext.Def.key))
+						ActiveActionGroups.remove(i);
+			}
 		}
 	}
 
@@ -248,7 +250,7 @@ public class ActionStack
 			.GetActionGroupContextSibling(triggeringActionGroup, reload.GetReloadActionKey(reloadStage));
 		ActionGroupInstance groupInstance = GetOrCreateGroupInstance(newGroupContext);
 		TryStartGroupInstance(newGroupContext);
-		if (reloadStage == EReloadStage.LoadOne)
+		if (reloadStage == EReloadStage.LoadOne)// && !IsClient)
 		{
 			newGroupContext.LoadOne(0, newGroupContext.Gun.GetAttachedInventory());
 		}
@@ -284,76 +286,76 @@ public class ActionStack
 	// CLIENT
 	// -------------------------------------------------------------------------------------------------
 	@OnlyIn(Dist.CLIENT)
-	public boolean Client_TryStartGroupInstance(ActionGroupContext groupContext)
+	public EActionResult Client_TryStartGroupInstance(ActionGroupContext groupContext)
 	{
 		if(!IsClient)
 		{
 			FlansMod.LOGGER.error("Called Client function on server in ActionStack!");
-			return false;
+			return EActionResult.TryNextAction;
 		}
 		// Start the instance
 		ActionGroupInstance groupInstance = TryGetGroupInstance(groupContext);
 
 		if(IsReloading())
-			return false;
+			return EActionResult.Wait;
 
-		if(groupInstance != null && TryStartGroupInstance(groupContext))
+		if(groupInstance == null)
+			return EActionResult.TryNextAction;
+
+		EActionResult result = TryStartGroupInstance(groupContext);
+		// Send a message to the server about these actions if required
+		if (result == EActionResult.CanProcess && (groupInstance.PropogateToServer() || groupInstance.NeedsNetSync()))
 		{
-			// Send a message to the server about these actions if required
-			if (groupInstance.PropogateToServer() || groupInstance.NeedsNetSync())
-			{
-				ActionUpdateMessage updateMsg = new ActionUpdateMessage(groupContext, EPressType.Press, groupInstance.GetStartedTick());
-				updateMsg.AddTriggers(groupInstance, groupInstance.GetRequiredNetSyncMin(), groupInstance.GetRequiredNetSyncMax());
-				FlansModPacketHandler.SendToServer(new ActionUpdateMessage.ToServer(updateMsg));
-				groupInstance.OnPerformedNetSync(groupInstance.GetRequiredNetSyncMin(), groupInstance.GetRequiredNetSyncMax());
-			}
-			return true;
+			ActionUpdateMessage updateMsg = new ActionUpdateMessage(groupContext, EPressType.Press, groupInstance.GetStartedTick());
+			updateMsg.AddTriggers(groupInstance, groupInstance.GetRequiredNetSyncMin(), groupInstance.GetRequiredNetSyncMax());
+			FlansModPacketHandler.SendToServer(new ActionUpdateMessage.ToServer(updateMsg));
+			groupInstance.OnPerformedNetSync(groupInstance.GetRequiredNetSyncMin(), groupInstance.GetRequiredNetSyncMax());
 		}
-		return false;
+		return result;
 	}
 	@OnlyIn(Dist.CLIENT)
-	public boolean Client_TryUpdateGroupInstanceHeld(ActionGroupContext groupContext)
+	public EActionResult Client_TryUpdateGroupInstanceHeld(ActionGroupContext groupContext)
 	{
 		return Client_TryUpdateGroupInstance(groupContext, true);
 	}
 	@OnlyIn(Dist.CLIENT)
-	public boolean Client_TryUpdateGroupInstanceNotHeld(ActionGroupContext groupContext)
+	public EActionResult Client_TryUpdateGroupInstanceNotHeld(ActionGroupContext groupContext)
 	{
 		return Client_TryUpdateGroupInstance(groupContext, false);
 	}
 	@OnlyIn(Dist.CLIENT)
-	public boolean Client_TryUpdateGroupInstance(ActionGroupContext groupContext, boolean held)
+	public EActionResult Client_TryUpdateGroupInstance(ActionGroupContext groupContext, boolean held)
 	{
 		if(!IsClient)
 		{
 			FlansMod.LOGGER.error("Called Client function on server in ActionStack!");
-			return false;
+			return EActionResult.TryNextAction;
 		}
 		// Start the instance
 		ActionGroupInstance groupInstance = TryGetGroupInstance(groupContext);
-		if(groupInstance != null && TryUpdateInputHeld(groupContext, held))
+		if(groupInstance == null )
+			return EActionResult.TryNextAction;
+
+		EActionResult result = TryUpdateInputHeld(groupContext, held);
+		// Send a message to the server about these actions if required
+		if (result == EActionResult.CanProcess && groupInstance.NeedsNetSync())
 		{
-			// Send a message to the server about these actions if required
-			if (groupInstance.NeedsNetSync())
-			{
-				ActionUpdateMessage updateMsg = new ActionUpdateMessage(groupContext, held ? EPressType.Hold : EPressType.Release, groupInstance.GetStartedTick());
-				updateMsg.AddTriggers(groupInstance, groupInstance.GetRequiredNetSyncMin(), groupInstance.GetRequiredNetSyncMax());
-				FlansModPacketHandler.SendToServer(new ActionUpdateMessage.ToServer(updateMsg));
-				groupInstance.OnPerformedNetSync(groupInstance.GetRequiredNetSyncMin(), groupInstance.GetRequiredNetSyncMax());
-			}
-			return true;
+			ActionUpdateMessage updateMsg = new ActionUpdateMessage(groupContext, held ? EPressType.Hold : EPressType.Release, groupInstance.GetStartedTick());
+			updateMsg.AddTriggers(groupInstance, groupInstance.GetRequiredNetSyncMin(), groupInstance.GetRequiredNetSyncMax());
+			FlansModPacketHandler.SendToServer(new ActionUpdateMessage.ToServer(updateMsg));
+			groupInstance.OnPerformedNetSync(groupInstance.GetRequiredNetSyncMin(), groupInstance.GetRequiredNetSyncMax());
 		}
-		return false;
+		return result;
 	}
 	// -------------------------------------------------------------------------------------------------
 	// SERVER
 	// -------------------------------------------------------------------------------------------------
-	public boolean Server_TryHandleMessage(ActionUpdateMessage.ToServer msg, ServerPlayer from)
+	public EActionResult Server_TryHandleMessage(ActionUpdateMessage.ToServer msg, ServerPlayer from)
 	{
 		if(IsClient)
 		{
 			FlansMod.LOGGER.error("Called Server function on client in ActionStack!");
-			return false;
+			return EActionResult.TryNextAction;
 		}
 
 		// Check that this is a valid context
@@ -361,17 +363,17 @@ public class ActionStack
 		if(!groupContext.IsValid())
 		{
 			FlansMod.LOGGER.warn("OnServerReceivedActionUpdate had invalid action");
-			return false;
+			return EActionResult.TryNextAction;
 		}
 
-		boolean isValid = true;
+		EActionResult startResult = EActionResult.CanProcess;
 		ActionGroupInstance groupInstance = GetOrCreateGroupInstance(groupContext);
 		if(!groupInstance.HasStarted())
 		{
 			// Start the instance if we need to, though this should really only happen on Press actions
 			if(msg.Data.GetPressType() != EPressType.Press)
 				FlansMod.LOGGER.warn("Received ActionUpdateMessage with wrong press type for action that was not already running");
-			isValid = TryStartGroupInstance(groupContext);
+			startResult = TryStartGroupInstance(groupContext);
 		}
 
 		for(var kvp : msg.Data.GetTriggers())
@@ -382,7 +384,7 @@ public class ActionStack
 			for(ActionInstance action : groupInstance.GetActions())
 			{
 				if(!action.VerifyServer(null))
-					isValid = false;
+					startResult = EActionResult.Wait;
 
 				ActionInstance.NetData netData = msg.Data.GetNetData(triggerIndex, actionIndex);
 				action.UpdateFromNetData(netData, triggerIndex);
@@ -411,7 +413,7 @@ public class ActionStack
 		}
 
 		// Send a message to the server about these actions if required
-		if (isValid && groupInstance.PropogateToServer() || groupInstance.NeedsNetSync())
+		if (startResult == EActionResult.CanProcess && (groupInstance.PropogateToServer() || groupInstance.NeedsNetSync()))
 		{
 			double radius = groupInstance.GetPropogationRadius();
 
@@ -433,50 +435,50 @@ public class ActionStack
 				groupContext.Gun.GetShooter().Owner());
 		}
 
-		return isValid;
+		return startResult;
 	}
-	public boolean Server_TryStartGroupInstance(ActionGroupContext groupContext)
+	public EActionResult Server_TryStartGroupInstance(ActionGroupContext groupContext)
 	{
 		if(IsClient)
 		{
 			FlansMod.LOGGER.error("Called Server function on client in ActionStack!");
-			return false;
+			return EActionResult.TryNextAction;
 		}
 		// Start the instance
 		ActionGroupInstance groupInstance = TryGetGroupInstance(groupContext);
-		if(groupInstance != null && TryStartGroupInstance(groupContext))
+		if(groupInstance == null)
+			return EActionResult.TryNextAction;
+
+		EActionResult result = TryStartGroupInstance(groupContext);
+		// Send a message to the nearby clients about these actions if required
+		if (result == EActionResult.CanProcess && (groupInstance.PropogateToServer() || groupInstance.NeedsNetSync()))
 		{
-			// Send a message to the nearby clients about these actions if required
-			if (groupInstance.PropogateToServer() || groupInstance.NeedsNetSync())
+			Level level = groupContext.Gun.Level;
+			if (level != null)
 			{
-				Level level = groupContext.Gun.Level;
-				if (level != null)
+				double radius = groupInstance.GetPropogationRadius();
+
+				ActionUpdateMessage updateMsg = new ActionUpdateMessage(groupContext, EPressType.Press, groupInstance.GetStartedTick());
+				updateMsg.AddTriggers(groupInstance, groupInstance.GetRequiredNetSyncMin(), groupInstance.GetRequiredNetSyncMax());
+
+				// Find out which positions we want to map around
+				List<Vec3> positions = new ArrayList<>(2);
+				for (var kvp : updateMsg.GetTriggers())
 				{
-					double radius = groupInstance.GetPropogationRadius();
-
-					ActionUpdateMessage updateMsg = new ActionUpdateMessage(groupContext, EPressType.Press, groupInstance.GetStartedTick());
-					updateMsg.AddTriggers(groupInstance, groupInstance.GetRequiredNetSyncMin(), groupInstance.GetRequiredNetSyncMax());
-
-					// Find out which positions we want to map around
-					List<Vec3> positions = new ArrayList<>(2);
-					for (var kvp : updateMsg.GetTriggers())
-					{
-						groupInstance.AddExtraPositionsForNetSync(kvp.getKey(), positions);
-					}
-					if (groupInstance.ShouldAddPlayerPosForNetSync())
-						positions.add(groupContext.Gun.GetShooter().GetShootOrigin().PositionVec3());
-
-					// Then send them some messages about the shot
-					FlansModPacketHandler.SendToAllAroundPoints(
-						new ActionUpdateMessage.ToClient(updateMsg),
-						level.dimension(),
-						positions,
-						radius,
-						groupContext.Gun.GetShooter().Owner());
+					groupInstance.AddExtraPositionsForNetSync(kvp.getKey(), positions);
 				}
+				if (groupInstance.ShouldAddPlayerPosForNetSync())
+					positions.add(groupContext.Gun.GetShooter().GetShootOrigin().PositionVec3());
+
+				// Then send them some messages about the shot
+				FlansModPacketHandler.SendToAllAroundPoints(
+					new ActionUpdateMessage.ToClient(updateMsg),
+					level.dimension(),
+					positions,
+					radius,
+					groupContext.Gun.GetShooter().Owner());
 			}
-			return true;
 		}
-		return false;
+		return result;
 	}
 }

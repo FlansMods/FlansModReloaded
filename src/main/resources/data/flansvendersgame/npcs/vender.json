@@ -4,7 +4,7 @@
             "type": "Hello",
             "unlocalisedstring": "npc.vender.hello.neutral.1",
             "audioClip": {
-                "sound": "flansvendersgame:sounds/vender/hello_neutral",
+                "sound": "flansvendersgame:vender_greeting_neutral",
                 "length": 2.0,
                 "minPitchMultiplier": 1.0,
                 "maxPitchMultiplier": 1.0,
@@ -18,7 +18,7 @@
             "type": "Hello",
             "unlocalisedstring": "npc.vender.hello.neutral.2",
             "audioClip": {
-                "sound": "flansvendersgame:sounds/vender/hello_neutral",
+                "sound": "flansvendersgame:vender_greeting_neutral",
                 "length": 2.0,
                 "minPitchMultiplier": 1.0,
                 "maxPitchMultiplier": 1.0,
@@ -32,7 +32,7 @@
             "type": "HelloUnhappy",
             "unlocalisedstring": "npc.vender.hello.angry",
             "audioClip": {
-                "sound": "flansvendersgame:sounds/vender/hello_angry",
+                "sound": "flansvendersgame:vender_greeting_hostile",
                 "length": 2.0,
                 "minPitchMultiplier": 1.0,
                 "maxPitchMultiplier": 1.0,
@@ -46,7 +46,7 @@
             "type": "HelloHappy",
             "unlocalisedstring": "npc.vender.hello.happy",
             "audioClip": {
-                "sound": "flansvendersgame:sounds/vender/hello_happy",
+                "sound": "flansvendersgame:vender_greeting_friendly",
                 "length": 2.0,
                 "minPitchMultiplier": 1.0,
                 "maxPitchMultiplier": 1.0,
@@ -60,7 +60,7 @@
             "type": "Chat",
             "unlocalisedstring": "npc.vender.chat.1",
             "audioClip": {
-                "sound": "flansvendersgame:sounds/vender/chat",
+                "sound": "flansvendersgame:vender_chat_neutral",
                 "length": 2.0,
                 "minPitchMultiplier": 1.0,
                 "maxPitchMultiplier": 1.0,
@@ -74,7 +74,7 @@
             "type": "Chat",
             "unlocalisedstring": "npc.vender.chat.2",
             "audioClip": {
-                "sound": "flansvendersgame:sounds/vender/chat",
+                "sound": "flansvendersgame:vender_chat_neutral",
                 "length": 2.0,
                 "minPitchMultiplier": 1.0,
                 "maxPitchMultiplier": 1.0,
@@ -88,7 +88,7 @@
             "type": "BoughtFromPlayer",
             "unlocalisedstring": "npc.vender.buy_from_player.1",
             "audioClip": {
-                "sound": "flansvendersgame:sounds/vender/buy_from_player",
+                "sound": "flansvendersgame:vender_buy_from_player",
                 "length": 2.0,
                 "minPitchMultiplier": 1.0,
                 "maxPitchMultiplier": 1.0,
@@ -102,7 +102,7 @@
             "type": "BoughtFromPlayer",
             "unlocalisedstring": "npc.vender.buy_from_player.2",
             "audioClip": {
-                "sound": "flansvendersgame:sounds/vender/buy_from_player",
+                "sound": "flansvendersgame:vender_buy_from_player",
                 "length": 2.0,
                 "minPitchMultiplier": 1.0,
                 "maxPitchMultiplier": 1.0,
@@ -116,7 +116,7 @@
             "type": "SoldToPlayer",
             "unlocalisedstring": "npc.vender.sell_to_player.1",
             "audioClip": {
-                "sound": "flansvendersgame:sounds/vender/sell_to_player",
+                "sound": "flansvendersgame:vender_sell_to_player",
                 "length": 2.0,
                 "minPitchMultiplier": 1.0,
                 "maxPitchMultiplier": 1.0,
@@ -130,7 +130,7 @@
             "type": "SoldToPlayer",
             "unlocalisedstring": "npc.vender.sell_to_player.2",
             "audioClip": {
-                "sound": "flansvendersgame:sounds/vender/sell_to_player",
+                "sound": "flansvendersgame:vender_sell_to_player",
                 "length": 2.0,
                 "minPitchMultiplier": 1.0,
                 "maxPitchMultiplier": 1.0,
@@ -144,7 +144,7 @@
             "type": "Goodbye",
             "unlocalisedstring": "npc.vender.goodbye.1",
             "audioClip": {
-                "sound": "flansvendersgame:sounds/vender/goodbye",
+                "sound": "flansvendersgame:vender_goodbye",
                 "length": 2.0,
                 "minPitchMultiplier": 1.0,
                 "maxPitchMultiplier": 1.0,
@@ -158,7 +158,7 @@
             "type": "Goodbye",
             "unlocalisedstring": "npc.vender.goodbye.2",
             "audioClip": {
-                "sound": "flansvendersgame:sounds/vender/goodbye",
+                "sound": "flansvendersgame:vender_goodbye",
                 "length": 2.0,
                 "minPitchMultiplier": 1.0,
                 "maxPitchMultiplier": 1.0,
@@ -172,7 +172,7 @@
             "type": "Hurt",
             "unlocalisedstring": "npc.vender.hurt.1",
             "audioClip": {
-                "sound": "flansvendersgame:sounds/vender/hurt",
+                "sound": "flansvendersgame:vender_hurt",
                 "length": 2.0,
                 "minPitchMultiplier": 1.0,
                 "maxPitchMultiplier": 1.0,
@@ -186,7 +186,7 @@
             "type": "Hurt",
             "unlocalisedstring": "npc.vender.hurt.2",
             "audioClip": {
-                "sound": "flansvendersgame:sounds/vender/hurt",
+                "sound": "flansvendersgame:vender_hurt",
                 "length": 2.0,
                 "minPitchMultiplier": 1.0,
                 "maxPitchMultiplier": 1.0,
@@ -233,9 +233,20 @@
         "damage": 0,
         "tags": "{}"
     },
-    "validActions": [],
+    "validActions": [
+        "Neutral_Idle",
+        "Neutral_Wander",
+        "Neutral_LookAtPlayer",
+        "Neutral_LookAtMobs",
+        "Neutral_LookAtAnimals",
+        "Friendly_ShowItemForSale",
+        "Friendly_ChatToPlayer",
+        "Hostile_TeleportAway"
+    ],
+    "isRightHanded": true,
     "cooldownSecondsFriendly": 120.0,
     "cooldownSecondsHostile": 300.0,
+    "invulnerabilities": [],
     "maxMerchantLevel": 5,
     "xpPerMerchantLevel": [
         15,
@@ -244,25 +255,370 @@
         300,
         700
     ],
+    "minOffersToGive": 1,
+    "maxOffersToGive": 5,
     "offers": [
         {
             "weighting": 1.0,
             "merchantLevel": 1,
             "inputs": [
                 {
-                    "count": 16,
-                    "compareItemName": true,
-                    "itemName": "minecraft:emerald",
-                    "compareDamage": false,
-                    "minAllowedDamage": 0,
-                    "maxAllowedDamage": 0,
-                    "compareItemTags": false,
-                    "requiredTags": [],
-                    "materialTags": [],
-                    "disallowedTags": [],
-                    "compareNBT": false,
-                    "requiredNBT": [],
-                    "disallowedNBT": []
+                    "item": "minecraft:emerald",
+                    "count": 31,
+                    "damage": 0,
+                    "tags": "{}"
+                }
+            ],
+            "output": {
+                "item": "flansvendersgame:hm_9",
+                "count": 1,
+                "damage": 0,
+                "tags": ""
+            },
+            "maxUses": 1,
+            "merchantXP": 10,
+            "priceMultiplier": 1.0,
+            "demand": 0
+        },
+        {
+            "weighting": 1.0,
+            "merchantLevel": 1,
+            "inputs": [
+                {
+                    "item": "minecraft:emerald",
+                    "count": 44,
+                    "damage": 0,
+                    "tags": "{}"
+                }
+            ],
+            "output": {
+                "item": "flansvendersgame:hm_1200",
+                "count": 1,
+                "damage": 0,
+                "tags": ""
+            },
+            "maxUses": 1,
+            "merchantXP": 10,
+            "priceMultiplier": 1.0,
+            "demand": 0
+        },
+        {
+            "weighting": 1.0,
+            "merchantLevel": 1,
+            "inputs": [
+                {
+                    "item": "minecraft:emerald",
+                    "count": 43,
+                    "damage": 0,
+                    "tags": "{}"
+                }
+            ],
+            "output": {
+                "item": "flansvendersgame:hm_14",
+                "count": 1,
+                "damage": 0,
+                "tags": ""
+            },
+            "maxUses": 1,
+            "merchantXP": 10,
+            "priceMultiplier": 1.0,
+            "demand": 0
+        },
+        {
+            "weighting": 1.0,
+            "merchantLevel": 1,
+            "inputs": [
+                {
+                    "item": "minecraft:emerald",
+                    "count": 35,
+                    "damage": 0,
+                    "tags": "{}"
+                }
+            ],
+            "output": {
+                "item": "flansvendersgame:hm_16",
+                "count": 1,
+                "damage": 0,
+                "tags": ""
+            },
+            "maxUses": 1,
+            "merchantXP": 10,
+            "priceMultiplier": 1.0,
+            "demand": 0
+        },
+        {
+            "weighting": 1.0,
+            "merchantLevel": 1,
+            "inputs": [
+                {
+                    "item": "minecraft:emerald",
+                    "count": 42,
+                    "damage": 0,
+                    "tags": "{}"
+                }
+            ],
+            "output": {
+                "item": "flansvendersgame:hm_combine",
+                "count": 1,
+                "damage": 0,
+                "tags": ""
+            },
+            "maxUses": 1,
+            "merchantXP": 10,
+            "priceMultiplier": 1.0,
+            "demand": 0
+        },
+        {
+            "weighting": 1.0,
+            "merchantLevel": 1,
+            "inputs": [
+                {
+                    "item": "minecraft:emerald",
+                    "count": 63,
+                    "damage": 0,
+                    "tags": "{}"
+                }
+            ],
+            "output": {
+                "item": "flansvendersgame:hm_krank",
+                "count": 1,
+                "damage": 0,
+                "tags": ""
+            },
+            "maxUses": 1,
+            "merchantXP": 10,
+            "priceMultiplier": 1.0,
+            "demand": 0
+        },
+        {
+            "weighting": 1.0,
+            "merchantLevel": 1,
+            "inputs": [
+                {
+                    "item": "minecraft:emerald",
+                    "count": 36,
+                    "damage": 0,
+                    "tags": "{}"
+                }
+            ],
+            "output": {
+                "item": "flansvendersgame:hm_pocket",
+                "count": 1,
+                "damage": 0,
+                "tags": ""
+            },
+            "maxUses": 1,
+            "merchantXP": 10,
+            "priceMultiplier": 1.0,
+            "demand": 0
+        },
+        {
+            "weighting": 0.75,
+            "merchantLevel": 2,
+            "inputs": [
+                {
+                    "item": "minecraft:diamond",
+                    "count": 25,
+                    "damage": 0,
+                    "tags": "{}"
+                }
+            ],
+            "output": {
+                "item": "flansvendersgame:phantek_90",
+                "count": 1,
+                "damage": 0,
+                "tags": ""
+            },
+            "maxUses": 1,
+            "merchantXP": 25,
+            "priceMultiplier": 1.0,
+            "demand": 0
+        },
+        {
+            "weighting": 0.75,
+            "merchantLevel": 2,
+            "inputs": [
+                {
+                    "item": "minecraft:diamond",
+                    "count": 32,
+                    "damage": 0,
+                    "tags": "{}"
+                }
+            ],
+            "output": {
+                "item": "flansvendersgame:phantek_auto_12",
+                "count": 1,
+                "damage": 0,
+                "tags": ""
+            },
+            "maxUses": 1,
+            "merchantXP": 25,
+            "priceMultiplier": 1.0,
+            "demand": 0
+        },
+        {
+            "weighting": 0.75,
+            "merchantLevel": 2,
+            "inputs": [
+                {
+                    "item": "minecraft:diamond",
+                    "count": 33,
+                    "damage": 0,
+                    "tags": "{}"
+                }
+            ],
+            "output": {
+                "item": "flansvendersgame:phantek_battlemage",
+                "count": 1,
+                "damage": 0,
+                "tags": ""
+            },
+            "maxUses": 1,
+            "merchantXP": 25,
+            "priceMultiplier": 1.0,
+            "demand": 0
+        },
+        {
+            "weighting": 0.75,
+            "merchantLevel": 2,
+            "inputs": [
+                {
+                    "item": "minecraft:diamond",
+                    "count": 52,
+                    "damage": 0,
+                    "tags": "{}"
+                }
+            ],
+            "output": {
+                "item": "flansvendersgame:phantek_eye",
+                "count": 1,
+                "damage": 0,
+                "tags": ""
+            },
+            "maxUses": 1,
+            "merchantXP": 25,
+            "priceMultiplier": 1.0,
+            "demand": 0
+        },
+        {
+            "weighting": 0.75,
+            "merchantLevel": 2,
+            "inputs": [
+                {
+                    "item": "minecraft:diamond",
+                    "count": 41,
+                    "damage": 0,
+                    "tags": "{}"
+                }
+            ],
+            "output": {
+                "item": "flansvendersgame:phantek_fury",
+                "count": 1,
+                "damage": 0,
+                "tags": ""
+            },
+            "maxUses": 1,
+            "merchantXP": 25,
+            "priceMultiplier": 1.0,
+            "demand": 0
+        },
+        {
+            "weighting": 0.75,
+            "merchantLevel": 2,
+            "inputs": [
+                {
+                    "item": "minecraft:diamond",
+                    "count": 17,
+                    "damage": 0,
+                    "tags": "{}"
+                }
+            ],
+            "output": {
+                "item": "flansvendersgame:phantek_lock",
+                "count": 1,
+                "damage": 0,
+                "tags": ""
+            },
+            "maxUses": 1,
+            "merchantXP": 25,
+            "priceMultiplier": 1.0,
+            "demand": 0
+        },
+        {
+            "weighting": 0.75,
+            "merchantLevel": 2,
+            "inputs": [
+                {
+                    "item": "minecraft:diamond",
+                    "count": 46,
+                    "damage": 0,
+                    "tags": "{}"
+                }
+            ],
+            "output": {
+                "item": "flansvendersgame:phantek_seeker",
+                "count": 1,
+                "damage": 0,
+                "tags": ""
+            },
+            "maxUses": 1,
+            "merchantXP": 25,
+            "priceMultiplier": 1.0,
+            "demand": 0
+        },
+        {
+            "weighting": 0.6,
+            "merchantLevel": 3,
+            "inputs": [
+                {
+                    "item": "minecraft:nautilus_shell",
+                    "count": 13,
+                    "damage": 0,
+                    "tags": "{}"
+                }
+            ],
+            "output": {
+                "item": "flansvendersgame:fc_49",
+                "count": 1,
+                "damage": 0,
+                "tags": ""
+            },
+            "maxUses": 1,
+            "merchantXP": 50,
+            "priceMultiplier": 1.0,
+            "demand": 0
+        },
+        {
+            "weighting": 0.6,
+            "merchantLevel": 3,
+            "inputs": [
+                {
+                    "item": "minecraft:nautilus_shell",
+                    "count": 17,
+                    "damage": 0,
+                    "tags": "{}"
+                }
+            ],
+            "output": {
+                "item": "flansvendersgame:fc_56",
+                "count": 1,
+                "damage": 0,
+                "tags": ""
+            },
+            "maxUses": 1,
+            "merchantXP": 50,
+            "priceMultiplier": 1.0,
+            "demand": 0
+        },
+        {
+            "weighting": 0.6,
+            "merchantLevel": 3,
+            "inputs": [
+                {
+                    "item": "minecraft:nautilus_shell",
+                    "count": 21,
+                    "damage": 0,
+                    "tags": "{}"
                 }
             ],
             "output": {
@@ -271,7 +627,230 @@
                 "damage": 0,
                 "tags": ""
             },
-            "merchantXP": 0.0
+            "maxUses": 1,
+            "merchantXP": 50,
+            "priceMultiplier": 1.0,
+            "demand": 0
+        },
+        {
+            "weighting": 0.6,
+            "merchantLevel": 3,
+            "inputs": [
+                {
+                    "item": "minecraft:nautilus_shell",
+                    "count": 13,
+                    "damage": 0,
+                    "tags": "{}"
+                }
+            ],
+            "output": {
+                "item": "flansvendersgame:fc_870",
+                "count": 1,
+                "damage": 0,
+                "tags": ""
+            },
+            "maxUses": 1,
+            "merchantXP": 50,
+            "priceMultiplier": 1.0,
+            "demand": 0
+        },
+        {
+            "weighting": 0.6,
+            "merchantLevel": 3,
+            "inputs": [
+                {
+                    "item": "minecraft:nautilus_shell",
+                    "count": 15,
+                    "damage": 0,
+                    "tags": "{}"
+                }
+            ],
+            "output": {
+                "item": "flansvendersgame:fc_hawk",
+                "count": 1,
+                "damage": 0,
+                "tags": ""
+            },
+            "maxUses": 1,
+            "merchantXP": 50,
+            "priceMultiplier": 1.0,
+            "demand": 0
+        },
+        {
+            "weighting": 0.6,
+            "merchantLevel": 3,
+            "inputs": [
+                {
+                    "item": "minecraft:nautilus_shell",
+                    "count": 31,
+                    "damage": 0,
+                    "tags": "{}"
+                }
+            ],
+            "output": {
+                "item": "flansvendersgame:fc_puncher",
+                "count": 1,
+                "damage": 0,
+                "tags": ""
+            },
+            "maxUses": 1,
+            "merchantXP": 50,
+            "priceMultiplier": 1.0,
+            "demand": 0
+        },
+        {
+            "weighting": 4.0,
+            "merchantLevel": 1,
+            "inputs": [
+                {
+                    "item": "minecraft:emerald",
+                    "count": 2,
+                    "damage": 0,
+                    "tags": "{}"
+                }
+            ],
+            "output": {
+                "item": "flansbasicparts:pistol_bullet",
+                "count": 64,
+                "damage": 0,
+                "tags": ""
+            },
+            "maxUses": 8,
+            "merchantXP": 2,
+            "priceMultiplier": 1.0,
+            "demand": 0
+        },
+        {
+            "weighting": 3.0,
+            "merchantLevel": 1,
+            "inputs": [
+                {
+                    "item": "minecraft:emerald",
+                    "count": 5,
+                    "damage": 0,
+                    "tags": "{}"
+                }
+            ],
+            "output": {
+                "item": "flansbasicparts:rifle_bullet",
+                "count": 64,
+                "damage": 0,
+                "tags": ""
+            },
+            "maxUses": 8,
+            "merchantXP": 2,
+            "priceMultiplier": 1.0,
+            "demand": 0
+        },
+        {
+            "weighting": 2.0,
+            "merchantLevel": 1,
+            "inputs": [
+                {
+                    "item": "minecraft:emerald",
+                    "count": 2,
+                    "damage": 0,
+                    "tags": "{}"
+                }
+            ],
+            "output": {
+                "item": "flansbasicparts:shotgun_shell_buckshot",
+                "count": 16,
+                "damage": 0,
+                "tags": ""
+            },
+            "maxUses": 16,
+            "merchantXP": 2,
+            "priceMultiplier": 1.0,
+            "demand": 0
+        },
+        {
+            "weighting": 2.0,
+            "merchantLevel": 1,
+            "inputs": [
+                {
+                    "item": "minecraft:emerald",
+                    "count": 2,
+                    "damage": 0,
+                    "tags": "{}"
+                }
+            ],
+            "output": {
+                "item": "flansbasicparts:shotgun_shell_birdshot",
+                "count": 16,
+                "damage": 0,
+                "tags": ""
+            },
+            "maxUses": 16,
+            "merchantXP": 2,
+            "priceMultiplier": 1.0,
+            "demand": 0
+        },
+        {
+            "weighting": 0.5,
+            "merchantLevel": 2,
+            "inputs": [
+                {
+                    "item": "minecraft:emerald",
+                    "count": 15,
+                    "damage": 0,
+                    "tags": "{}"
+                }
+            ],
+            "output": {
+                "item": "flansbasicparts:projectile_grenade_impact",
+                "count": 3,
+                "damage": 0,
+                "tags": ""
+            },
+            "maxUses": 8,
+            "merchantXP": 15,
+            "priceMultiplier": 1.0,
+            "demand": 0
+        },
+        {
+            "weighting": 0.25,
+            "merchantLevel": 3,
+            "inputs": [
+                {
+                    "item": "minecraft:emerald",
+                    "count": 8,
+                    "damage": 0,
+                    "tags": "{}"
+                }
+            ],
+            "output": {
+                "item": "flansbasicparts:artillery_shell",
+                "count": 1,
+                "damage": 0,
+                "tags": ""
+            },
+            "maxUses": 4,
+            "merchantXP": 2,
+            "priceMultiplier": 1.0,
+            "demand": 0
+        },
+        {
+            "weighting": 0.1,
+            "merchantLevel": 1,
+            "inputs": [
+                {
+                    "item": "minecraft:totem_of_undying",
+                    "count": 1,
+                    "damage": 0,
+                    "tags": "{}"
+                }
+            ],
+            "output": {
+                "item": "flansvendersgame:venders_customs_viper",
+                "count": 1,
+                "damage": 0,
+                "tags": "{}"
+            },
+            "maxUses": 1,
+            "merchantXP": 200,
+            "priceMultiplier": 1.0,
+            "demand": 0
         }
     ]
 }

@@ -59,7 +59,7 @@ public abstract class ActionInstance
 	public boolean ShouldRender(GunContext context) { return true; }
 	public boolean PropogateToServer() { return true; }
 	public boolean ShouldFallBackToReload() { return false; }
-	public boolean CanStart() { return true; }
+	public EActionResult CanStart() { return EActionResult.CanProcess; }
 	public boolean CanRetrigger() { return true; }
 	public abstract void OnTriggerClient(int triggerIndex);
 	public abstract void OnTriggerServer(int triggerIndex);

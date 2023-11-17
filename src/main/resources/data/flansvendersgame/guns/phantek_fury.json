@@ -6,7 +6,38 @@
         ]
     },
     "paints": {
-        "paintjobs": []
+        "paintjobs": [
+            {
+                "textureName": "phantek_fury_aqua",
+                "paintBucketsRequired": 1,
+                "entitlementKey": ""
+            },
+            {
+                "textureName": "phantek_fury_hazard",
+                "paintBucketsRequired": 1,
+                "entitlementKey": ""
+            },
+            {
+                "textureName": "phantek_fury_platypus",
+                "paintBucketsRequired": 1,
+                "entitlementKey": ""
+            },
+            {
+                "textureName": "phantek_fury_redline",
+                "paintBucketsRequired": 1,
+                "entitlementKey": ""
+            },
+            {
+                "textureName": "phantek_fury_service",
+                "paintBucketsRequired": 1,
+                "entitlementKey": ""
+            },
+            {
+                "textureName": "phantek_fury_white",
+                "paintBucketsRequired": 1,
+                "entitlementKey": ""
+            }
+        ]
     },
     "inputHandlers": [
         {
@@ -64,6 +95,27 @@
             "nodes": [
                 {
                     "actionGroupToTrigger": "look",
+                    "modalCheck": "",
+                    "deferToAttachment": false,
+                    "attachmentType": "Generic",
+                    "attachmentIndex": 0,
+                    "andContinueEvaluating": false
+                }
+            ]
+        },
+        {
+            "inputType": "Reload1",
+            "nodes": [
+                {
+                    "actionGroupToTrigger": "reload_primary_start",
+                    "modalCheck": "",
+                    "deferToAttachment": true,
+                    "attachmentType": "Barrel",
+                    "attachmentIndex": 0,
+                    "andContinueEvaluating": false
+                },
+                {
+                    "actionGroupToTrigger": "reload_primary_start",
                     "modalCheck": "",
                     "deferToAttachment": false,
                     "attachmentType": "Generic",
@@ -153,10 +205,10 @@
                     "duration": 0.0,
                     "sounds": [
                         {
-                            "sound": "flansmodernweapons:m249shoot",
+                            "sound": "flansmod:gunshot_ptoo",
                             "length": 0.0,
-                            "minPitchMultiplier": 0.8333333,
-                            "maxPitchMultiplier": 1.25,
+                            "minPitchMultiplier": 0.5,
+                            "maxPitchMultiplier": 0.8,
                             "minVolume": 1.0,
                             "maxVolume": 1.0,
                             "maxRange": 100.0,
@@ -440,5 +492,5 @@
         "hideDefaultMesh": true
     },
     "modelParts": [],
-    "animationSet": "flansmod:ar_load_from_bottom"
+    "animationSet": "flansmod:rifle_priming_handle_magazine_fed"
 }

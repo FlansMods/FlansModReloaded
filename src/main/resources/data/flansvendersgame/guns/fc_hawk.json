@@ -100,6 +100,27 @@
                     "andContinueEvaluating": false
                 }
             ]
+        },
+        {
+            "inputType": "Reload1",
+            "nodes": [
+                {
+                    "actionGroupToTrigger": "reload_primary_start",
+                    "modalCheck": "",
+                    "deferToAttachment": true,
+                    "attachmentType": "Barrel",
+                    "attachmentIndex": 0,
+                    "andContinueEvaluating": false
+                },
+                {
+                    "actionGroupToTrigger": "reload_primary_start",
+                    "modalCheck": "",
+                    "deferToAttachment": false,
+                    "attachmentType": "Generic",
+                    "attachmentIndex": 0,
+                    "andContinueEvaluating": false
+                }
+            ]
         }
     ],
     "actionGroups": [
@@ -182,7 +203,7 @@
                     "duration": 0.0,
                     "sounds": [
                         {
-                            "sound": "flansmodernweapons:m9shoot",
+                            "sound": "flansmod:gunshot_kapow",
                             "length": 0.0,
                             "minPitchMultiplier": 0.8333333,
                             "maxPitchMultiplier": 1.25,
@@ -469,5 +490,5 @@
         "hideDefaultMesh": false
     },
     "modelParts": [],
-    "animationSet": "flansmod:pistol"
+    "animationSet": "flansmod:pistol_slide_magazine_fed"
 }

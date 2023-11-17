@@ -72,6 +72,12 @@ public abstract class ShooterContext
 			return Server_ContextCache;
 	}
 
+	public static void OnLevelLoaded()
+	{
+		Client_ContextCache.clear();
+		Server_ContextCache.clear();
+	}
+
 	@Nonnull
 	public static ShooterContext GetOrCreate(Entity entity)
 	{

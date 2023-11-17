@@ -1,0 +1,148 @@
+{
+    "loader": "flansmod:turborig",
+    "textures": {
+        "particle": "minecraft:block/iron_block"
+    },
+    "icons": {},
+    "animations": {},
+    "parts": {},
+    "attachPoints": [],
+    "display": {
+        "firstperson_righthand": {
+            "rotation": [
+                0.0,
+                90.0,
+                0.0
+            ],
+            "translation": [
+                8.0,
+                -7.0,
+                -13.0
+            ],
+            "scale": [
+                1.0,
+                1.0,
+                1.0
+            ]
+        },
+        "firstperson_lefthand": {
+            "rotation": [
+                0.0,
+                90.0,
+                0.0
+            ],
+            "translation": [
+                -8.0,
+                -7.0,
+                -13.0
+            ],
+            "scale": [
+                1.0,
+                1.0,
+                1.0
+            ]
+        },
+        "thirdperson_righthand": {
+            "rotation": [
+                0.0,
+                90.0,
+                0.0
+            ],
+            "translation": [
+                8.0,
+                8.0,
+                6.0
+            ],
+            "scale": [
+                1.0,
+                1.0,
+                1.0
+            ]
+        },
+        "thirdperson_lefthand": {
+            "rotation": [
+                0.0,
+                90.0,
+                0.0
+            ],
+            "translation": [
+                8.0,
+                8.0,
+                6.0
+            ],
+            "scale": [
+                1.0,
+                1.0,
+                1.0
+            ]
+        },
+        "gui": {
+            "rotation": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "translation": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "scale": [
+                1.0,
+                1.0,
+                1.0
+            ]
+        },
+        "head": {
+            "rotation": [
+                270.0,
+                0.0,
+                0.0
+            ],
+            "translation": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "scale": [
+                1.0,
+                1.0,
+                1.0
+            ]
+        },
+        "ground": {
+            "rotation": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "translation": [
+                0.0,
+                0.15,
+                0.0
+            ],
+            "scale": [
+                0.0625,
+                0.0625,
+                0.0625
+            ]
+        },
+        "fixed": {
+            "rotation": [
+                0.0,
+                0.0,
+                45.0000038
+            ],
+            "translation": [
+                6.0,
+                6.0,
+                6.0
+            ],
+            "scale": [
+                1.0,
+                1.0,
+                1.0
+            ]
+        }
+    }
+}

@@ -21,6 +21,11 @@
                 "textureName": "phantek_lock_venom",
                 "paintBucketsRequired": 1,
                 "entitlementKey": ""
+            },
+            {
+                "textureName": "phantek_lock_deepslate",
+                "paintBucketsRequired": 1,
+                "entitlementKey": ""
             }
         ]
     },
@@ -80,6 +85,27 @@
             "nodes": [
                 {
                     "actionGroupToTrigger": "look",
+                    "modalCheck": "",
+                    "deferToAttachment": false,
+                    "attachmentType": "Generic",
+                    "attachmentIndex": 0,
+                    "andContinueEvaluating": false
+                }
+            ]
+        },
+        {
+            "inputType": "Reload1",
+            "nodes": [
+                {
+                    "actionGroupToTrigger": "reload_primary_start",
+                    "modalCheck": "",
+                    "deferToAttachment": true,
+                    "attachmentType": "Barrel",
+                    "attachmentIndex": 0,
+                    "andContinueEvaluating": false
+                },
+                {
+                    "actionGroupToTrigger": "reload_primary_start",
                     "modalCheck": "",
                     "deferToAttachment": false,
                     "attachmentType": "Generic",
@@ -169,10 +195,10 @@
                     "duration": 0.0,
                     "sounds": [
                         {
-                            "sound": "flansmodernweapons:glock_shoot",
+                            "sound": "flansmod:gunshot_ptoo",
                             "length": 0.0,
-                            "minPitchMultiplier": 0.8333333,
-                            "maxPitchMultiplier": 1.25,
+                            "minPitchMultiplier": 0.7,
+                            "maxPitchMultiplier": 0.9,
                             "minVolume": 1.0,
                             "maxVolume": 1.0,
                             "maxRange": 100.0,
@@ -456,5 +482,5 @@
         "hideDefaultMesh": true
     },
     "modelParts": [],
-    "animationSet": "flansmod:pistol"
+    "animationSet": "flansmod:pistol_slide_magazine_fed"
 }

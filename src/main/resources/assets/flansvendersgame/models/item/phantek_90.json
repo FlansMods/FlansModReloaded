@@ -1172,8 +1172,8 @@
             "name": "sights",
             "attachTo": "body",
             "offset": [
-                7.5,
-                5.0,
+                0.0,
+                0.0,
                 0.0
             ]
         },
@@ -1181,8 +1181,8 @@
             "name": "barrel",
             "attachTo": "body",
             "offset": [
-                10.0,
-                2.0,
+                0.0,
+                0.0,
                 0.0
             ]
         },
@@ -1199,8 +1199,8 @@
             "name": "eye_line",
             "attachTo": "body",
             "offset": [
-                9.0,
-                6.25,
+                0.0,
+                0.0,
                 0.0
             ]
         }

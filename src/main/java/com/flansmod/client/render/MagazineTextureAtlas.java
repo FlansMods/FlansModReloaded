@@ -20,9 +20,9 @@ import java.util.concurrent.Executor;
 
 public class MagazineTextureAtlas implements PreparableReloadListener
 {
-	private static final ResourceLocation ATLAS_LOCATION = new ResourceLocation(FlansMod.MODID, "atlases/magazines");
-	private static final ResourceLocation ATLAS_INFO_LOCATION = new ResourceLocation(FlansMod.MODID, "magazines");
-	private static final FileToIdConverter MAGAZINE_LISTER = FileToIdConverter.json("magazines");
+	private static final ResourceLocation ATLAS_LOCATION = new ResourceLocation(FlansMod.MODID, "atlases/mags");
+	private static final ResourceLocation ATLAS_INFO_LOCATION = new ResourceLocation(FlansMod.MODID, "mags");
+	private static final FileToIdConverter MAGAZINE_LISTER = FileToIdConverter.json("mags");
 	private final TextureAtlas Atlas;
 	private final HashMap<ResourceLocation, TextureAtlasSprite> Sprites;
 
@@ -39,11 +39,17 @@ public class MagazineTextureAtlas implements PreparableReloadListener
 
 	public TextureAtlasSprite GetIcon(ResourceLocation magLoc)
 	{
-		if(magLoc.getPath().contains("magazine"))
+		if(magLoc.getPath().contains("mags/"))
+		{
 			return Atlas.getSprite(magLoc);
+		}
+		if(magLoc.getPath().contains("magazine/"))
+		{
+			return Atlas.getSprite(magLoc.withPath(magLoc.getPath().replace("magazine", "mags")));
+		}
 		else
 		{
-			return Atlas.getSprite(magLoc.withPrefix("magazine/"));
+			return Atlas.getSprite(magLoc.withPrefix("mags/"));
 		}
 	}
 

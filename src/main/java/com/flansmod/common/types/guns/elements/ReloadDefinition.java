@@ -24,17 +24,17 @@ public class ReloadDefinition
 
 	public boolean Contains(String actionGroupPath)
 	{
-		return actionGroupPath.contains(startActionKey)
-			|| actionGroupPath.contains(ejectActionKey)
-			|| actionGroupPath.contains(loadOneActionKey)
-			|| actionGroupPath.contains(endActionKey);
+		return (startActionKey.length() > 0 && actionGroupPath.contains(startActionKey))
+			|| (ejectActionKey.length() > 0 && actionGroupPath.contains(ejectActionKey))
+			|| (loadOneActionKey.length() > 0 && actionGroupPath.contains(loadOneActionKey))
+			|| (endActionKey.length() > 0 && actionGroupPath.contains(endActionKey));
 	}
 	public EReloadStage GetStage(String actionGroupPath)
 	{
-		if(actionGroupPath.contains(startActionKey)) return EReloadStage.Start;
-		if(actionGroupPath.contains(ejectActionKey)) return EReloadStage.Eject;
-		if(actionGroupPath.contains(loadOneActionKey)) return EReloadStage.LoadOne;
-		if(actionGroupPath.contains(endActionKey)) return EReloadStage.End;
+		if(startActionKey.length() > 0 && actionGroupPath.contains(startActionKey)) return EReloadStage.Start;
+		if(ejectActionKey.length() > 0 && actionGroupPath.contains(ejectActionKey)) return EReloadStage.Eject;
+		if(loadOneActionKey.length() > 0 && actionGroupPath.contains(loadOneActionKey)) return EReloadStage.LoadOne;
+		if(endActionKey.length() > 0 && actionGroupPath.contains(endActionKey)) return EReloadStage.End;
 		return null;
 	}
 	@Nonnull

@@ -93,27 +93,37 @@ public class ActionManager
 		MinecraftForge.EVENT_BUS.addListener(this::ClientTick);
 	}
 
-	private void IteratePossibleActionGroups(GunInputContext inputContext, Function<ActionGroupContext, Boolean> func)
+	private void IteratePossibleActionGroups(GunInputContext inputContext, Function<ActionGroupContext, EActionResult> func)
 	{
 		ActionStack actionStack = inputContext.Gun.GetActionStack();
 		List<Pair<ActionGroupContext, Boolean>> actionGroups = inputContext.Gun.EvaluateInputHandler(inputContext);
 		for (var kvp : actionGroups)
 		{
 			ActionGroupInstance groupInstance = actionStack.GetOrCreateGroupInstance(kvp.getFirst());
-			boolean funcSuccess = func.apply(kvp.getFirst());
-			if(funcSuccess)
+			EActionResult funcResult = func.apply(kvp.getFirst());
+			boolean keepEvaluating = true;
+			switch(funcResult)
 			{
-				if(!kvp.getSecond()) // andContinueEvaluating
-					break;
+				case CanProcess -> // We processed the function, all good
+				{
+					keepEvaluating = kvp.getSecond();
+				}
+				case TryNextAction ->
+				{
+					actionStack.CancelGroupInstance(kvp.getFirst());
+				}
+				case Wait -> // This function is telling us to stop, do not continue
+				{
+					actionStack.CancelGroupInstance(kvp.getFirst());
+					keepEvaluating = false;
+				}
 			}
-			else if(!groupInstance.HasStarted())
-			{
-				actionStack.CancelGroupInstance(kvp.getFirst());
-			}
+			if(!keepEvaluating)
+				return;
 		}
 	}
 
-	private void IterateActiveActionGroups(GunInputContext inputContext, Function<ActionGroupContext, Boolean> func)
+	private void IterateActiveActionGroups(GunInputContext inputContext, Function<ActionGroupContext, EActionResult> func)
 	{
 		ActionStack actionStack = inputContext.Gun.GetActionStack();
 		List<Pair<ActionGroupContext, Boolean>> actionGroups = inputContext.Gun.EvaluateInputHandler(inputContext);

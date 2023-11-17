@@ -21,6 +21,11 @@
                 "textureName": "fc_870_vroom_vroom",
                 "paintBucketsRequired": 1,
                 "entitlementKey": ""
+            },
+            {
+                "textureName": "fc_870_dark",
+                "paintBucketsRequired": 1,
+                "entitlementKey": ""
             }
         ]
     },
@@ -80,6 +85,27 @@
             "nodes": [
                 {
                     "actionGroupToTrigger": "look",
+                    "modalCheck": "",
+                    "deferToAttachment": false,
+                    "attachmentType": "Generic",
+                    "attachmentIndex": 0,
+                    "andContinueEvaluating": false
+                }
+            ]
+        },
+        {
+            "inputType": "Reload1",
+            "nodes": [
+                {
+                    "actionGroupToTrigger": "reload_primary_start",
+                    "modalCheck": "",
+                    "deferToAttachment": true,
+                    "attachmentType": "Barrel",
+                    "attachmentIndex": 0,
+                    "andContinueEvaluating": false
+                },
+                {
+                    "actionGroupToTrigger": "reload_primary_start",
                     "modalCheck": "",
                     "deferToAttachment": false,
                     "attachmentType": "Generic",
@@ -169,7 +195,7 @@
                     "duration": 0.0,
                     "sounds": [
                         {
-                            "sound": "flansmodernweapons:r870shoot",
+                            "sound": "flansmod:gunshot_clang",
                             "length": 0.0,
                             "minPitchMultiplier": 0.8333333,
                             "maxPitchMultiplier": 1.25,
@@ -300,7 +326,7 @@
                     "duration": 0.0,
                     "sounds": [
                         {
-                            "sound": "flansmodernweapons:w1200reload",
+                            "sound": "flansmod:break_action_open_clack",
                             "length": 1.0,
                             "minPitchMultiplier": 1.0,
                             "maxPitchMultiplier": 1.0,
@@ -345,6 +371,30 @@
                     "toolLevel": 1.0,
                     "harvestSpeed": 1.0,
                     "reach": 1.0
+                },
+                {
+                    "actionType": "PlaySound",
+                    "duration": 0.6372,
+                    "sounds": [
+                        {
+                            "sound": "flansmod:shell_insert_shloop_double",
+                            "length": 0.0,
+                            "minPitchMultiplier": 1.0,
+                            "maxPitchMultiplier": 1.0,
+                            "minVolume": 1.0,
+                            "maxVolume": 1.0,
+                            "maxRange": 100.0,
+                            "LODs": []
+                        }
+                    ],
+                    "itemStack": "",
+                    "modifiers": [],
+                    "fovFactor": 1.25,
+                    "scopeOverlay": "",
+                    "anim": "reload_load_one",
+                    "toolLevel": 1.0,
+                    "harvestSpeed": 1.0,
+                    "reach": 1.0
                 }
             ]
         },
@@ -364,6 +414,30 @@
                     "actionType": "Animation",
                     "duration": 0.8379001,
                     "sounds": [],
+                    "itemStack": "",
+                    "modifiers": [],
+                    "fovFactor": 1.25,
+                    "scopeOverlay": "",
+                    "anim": "reload_end",
+                    "toolLevel": 1.0,
+                    "harvestSpeed": 1.0,
+                    "reach": 1.0
+                },
+                {
+                    "actionType": "PlaySound",
+                    "duration": 0.8379001,
+                    "sounds": [
+                        {
+                            "sound": "flansmod:break_action_close_clack",
+                            "length": 0.0,
+                            "minPitchMultiplier": 1.0,
+                            "maxPitchMultiplier": 1.0,
+                            "minVolume": 1.0,
+                            "maxVolume": 1.0,
+                            "maxRange": 100.0,
+                            "LODs": []
+                        }
+                    ],
                     "itemStack": "",
                     "modifiers": [],
                     "fovFactor": 1.25,
@@ -429,5 +503,5 @@
         "hideDefaultMesh": true
     },
     "modelParts": [],
-    "animationSet": "flansmod:shotgun_shell_loader"
+    "animationSet": "flansmod:shotgun_pump_individually_fed"
 }

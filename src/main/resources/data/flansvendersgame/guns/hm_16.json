@@ -82,6 +82,27 @@
                     "andContinueEvaluating": false
                 }
             ]
+        },
+        {
+            "inputType": "Reload1",
+            "nodes": [
+                {
+                    "actionGroupToTrigger": "reload_primary_start",
+                    "modalCheck": "",
+                    "deferToAttachment": true,
+                    "attachmentType": "Barrel",
+                    "attachmentIndex": 0,
+                    "andContinueEvaluating": false
+                },
+                {
+                    "actionGroupToTrigger": "reload_primary_start",
+                    "modalCheck": "",
+                    "deferToAttachment": false,
+                    "attachmentType": "Generic",
+                    "attachmentIndex": 0,
+                    "andContinueEvaluating": false
+                }
+            ]
         }
     ],
     "actionGroups": [
@@ -164,7 +185,7 @@
                     "duration": 0.0,
                     "sounds": [
                         {
-                            "sound": "flansmodernweapons:m14shoot",
+                            "sound": "flansmod:gunshot_clang",
                             "length": 0.0,
                             "minPitchMultiplier": 0.8333333,
                             "maxPitchMultiplier": 1.25,
@@ -295,7 +316,7 @@
                     "duration": 0.0,
                     "sounds": [
                         {
-                            "sound": "flansmodernweapons:mwmp44reload",
+                            "sound": "flansmod:item_raise_hup",
                             "length": 1.0,
                             "minPitchMultiplier": 1.0,
                             "maxPitchMultiplier": 1.0,
@@ -340,6 +361,30 @@
                     "toolLevel": 1.0,
                     "harvestSpeed": 1.0,
                     "reach": 1.0
+                },
+                {
+                    "actionType": "PlaySound",
+                    "duration": 0.5,
+                    "sounds": [
+                        {
+                            "sound": "flansmod:magazine_unload_chunky",
+                            "length": 1.0,
+                            "minPitchMultiplier": 1.0,
+                            "maxPitchMultiplier": 1.0,
+                            "minVolume": 1.0,
+                            "maxVolume": 1.0,
+                            "maxRange": 100.0,
+                            "LODs": []
+                        }
+                    ],
+                    "itemStack": "",
+                    "modifiers": [],
+                    "fovFactor": 1.25,
+                    "scopeOverlay": "",
+                    "anim": "",
+                    "toolLevel": 1.0,
+                    "harvestSpeed": 1.0,
+                    "reach": 1.0
                 }
             ]
         },
@@ -367,6 +412,30 @@
                     "toolLevel": 1.0,
                     "harvestSpeed": 1.0,
                     "reach": 1.0
+                },
+                {
+                    "actionType": "PlaySound",
+                    "duration": 0.5,
+                    "sounds": [
+                        {
+                            "sound": "flansmod:magazine_load_chunky",
+                            "length": 1.0,
+                            "minPitchMultiplier": 1.0,
+                            "maxPitchMultiplier": 1.0,
+                            "minVolume": 1.0,
+                            "maxVolume": 1.0,
+                            "maxRange": 100.0,
+                            "LODs": []
+                        }
+                    ],
+                    "itemStack": "",
+                    "modifiers": [],
+                    "fovFactor": 1.25,
+                    "scopeOverlay": "",
+                    "anim": "",
+                    "toolLevel": 1.0,
+                    "harvestSpeed": 1.0,
+                    "reach": 1.0
                 }
             ]
         },
@@ -391,6 +460,30 @@
                     "fovFactor": 1.25,
                     "scopeOverlay": "",
                     "anim": "reload_end",
+                    "toolLevel": 1.0,
+                    "harvestSpeed": 1.0,
+                    "reach": 1.0
+                },
+                {
+                    "actionType": "PlaySound",
+                    "duration": 0.5,
+                    "sounds": [
+                        {
+                            "sound": "flansmod:item_lower_hup",
+                            "length": 1.0,
+                            "minPitchMultiplier": 1.0,
+                            "maxPitchMultiplier": 1.0,
+                            "minVolume": 1.0,
+                            "maxVolume": 1.0,
+                            "maxRange": 100.0,
+                            "LODs": []
+                        }
+                    ],
+                    "itemStack": "",
+                    "modifiers": [],
+                    "fovFactor": 1.25,
+                    "scopeOverlay": "",
+                    "anim": "",
                     "toolLevel": 1.0,
                     "harvestSpeed": 1.0,
                     "reach": 1.0
@@ -451,5 +544,5 @@
         "hideDefaultMesh": true
     },
     "modelParts": [],
-    "animationSet": "flansmod:ar_load_from_bottom"
+    "animationSet": "flansmod:rifle_priming_handle_magazine_fed"
 }

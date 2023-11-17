@@ -1144,8 +1144,8 @@
             "name": "eye_line",
             "attachTo": "body",
             "offset": [
-                2.0,
-                2.0,
+                0.0,
+                0.0,
                 0.0
             ]
         }
