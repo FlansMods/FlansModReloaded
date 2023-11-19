@@ -45,7 +45,7 @@
             "inputType": "Fire2",
             "nodes": [
                 {
-                    "actionGroupToTrigger": "",
+                    "actionGroupToTrigger": "ads",
                     "modalCheck": "",
                     "deferToAttachment": true,
                     "attachmentType": "Sights",
@@ -53,7 +53,7 @@
                     "andContinueEvaluating": false
                 },
                 {
-                    "actionGroupToTrigger": "",
+                    "actionGroupToTrigger": "primary",
                     "modalCheck": "",
                     "deferToAttachment": true,
                     "attachmentType": "Grip",

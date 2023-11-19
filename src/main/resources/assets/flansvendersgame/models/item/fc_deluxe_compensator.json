@@ -264,7 +264,7 @@
             "name": "bullet_origin",
             "attachTo": "body",
             "offset": [
-                0.0,
+                4.0,
                 0.0,
                 0.0
             ]

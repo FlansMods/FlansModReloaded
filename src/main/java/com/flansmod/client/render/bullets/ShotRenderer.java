@@ -2,9 +2,11 @@ package com.flansmod.client.render.bullets;
 
 import com.flansmod.client.FlansModClient;
 import com.flansmod.client.render.FlanItemModelRenderer;
+import com.flansmod.common.gunshots.GunContextPlayer;
 import com.flansmod.common.gunshots.GunshotContext;
 import com.flansmod.common.gunshots.ShooterContext;
 import com.flansmod.util.Maths;
+import com.flansmod.util.MinecraftHelpers;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.*;
 import net.minecraft.client.Camera;
@@ -12,6 +14,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.HumanoidArm;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.client.event.RenderLevelStageEvent;
@@ -48,6 +51,13 @@ public class ShotRenderer
 				Vector3f barrelAP = gunRenderer.GetAttachPoint("barrel");
 				Vec3 firstPersonRelative = new Vec3(2f - barrelAP.x, barrelAP.y - 6f, 13f + barrelAP.z);
 				firstPersonRelative = firstPersonRelative.scale(1f/16f);
+				if(context.ActionGroup.Gun instanceof GunContextPlayer playerGunContext)
+				{
+					if(MinecraftHelpers.GetArm(playerGunContext.GetHand()) == HumanoidArm.LEFT)
+					{
+						firstPersonRelative = new Vec3(-firstPersonRelative.x, firstPersonRelative.y, firstPersonRelative.z);
+					}
+				}
 
 				Vec3 playerPos = Minecraft.getInstance().player.getEyePosition();
 				float playerYaw = Minecraft.getInstance().player.getYHeadRot();

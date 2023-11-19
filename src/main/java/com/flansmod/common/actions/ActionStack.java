@@ -107,6 +107,13 @@ public class ActionStack
 			return EActionResult.TryNextAction;
 
 		EActionResult result = groupInstance.CanStart();
+		ReloadDefinition reload = groupContext.Gun.GetReloadDefinitionContaining(groupContext);
+		if(reload != null)
+		{
+			EReloadStage stage = reload.GetStage(groupContext.GroupPath);
+			if(stage == EReloadStage.Start && !groupContext.CanPerformReloadFromAttachedInventory(0))
+				result = EActionResult.TryNextAction;
+		}
 		if(result == EActionResult.CanProcess)
 		{
 			// Check for toggle actions

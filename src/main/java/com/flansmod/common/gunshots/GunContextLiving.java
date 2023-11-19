@@ -57,14 +57,34 @@ public class GunContextLiving extends GunContext
 	public boolean CanPerformTwoHandedAction() { return ShooterContext.CanPerformTwoHandedAction(); }
 	@Override
 	public int GetInventorySlotIndex() { return Hand == InteractionHand.MAIN_HAND ? 0 : 1; }
-	@Override
-	public String toString()
-	{
-		return "GunContext:" + GetItemStack().toString() + " held by " + ShooterContext.Shooter.toString();
-	}
+	public InteractionHand GetHand() { return Hand; }
+
 	// There are no modifiers to apply right now
 	@Override
 	public int HashModifierSources() { return 0; }
 	@Override
 	public void RecalculateModifierCache() {}
+
+	@Override
+	public int hashCode()
+	{
+		return HashGunOrigins(Stack) ^ Hand.hashCode() ^ ShooterContext.hashCode();
+	}
+	@Override
+	public boolean equals(Object other)
+	{
+		if(other == this) return true;
+		if(other instanceof GunContextLiving otherContext)
+		{
+			return HashGunOrigins(Stack) == HashGunOrigins(otherContext.Stack)
+				&& Hand == otherContext.Hand
+				&& ShooterContext.equals(otherContext.ShooterContext);
+		}
+		return false;
+	}
+	@Override
+	public String toString()
+	{
+		return "GunContextLiving:" + GetItemStack().toString() + " held by " + ShooterContext.Shooter.toString();
+	}
 }

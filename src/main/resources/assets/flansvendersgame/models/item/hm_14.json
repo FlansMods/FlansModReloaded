@@ -3763,7 +3763,43 @@
             "attachTo": "body",
             "offset": [
                 0.0,
-                0.0,
+                4.5,
+                0.0
+            ]
+        },
+        {
+            "name": "grip",
+            "attachTo": "body",
+            "offset": [
+                12.0,
+                1.0,
+                0.0
+            ]
+        },
+        {
+            "name": "sights",
+            "attachTo": "body",
+            "offset": [
+                2.0,
+                4.0,
+                0.0
+            ]
+        },
+        {
+            "name": "shoot_origin",
+            "attachTo": "body",
+            "offset": [
+                28.0,
+                2.75,
+                0.0
+            ]
+        },
+        {
+            "name": "barrel",
+            "attachTo": "body",
+            "offset": [
+                28.0,
+                2.75,
                 0.0
             ]
         }
@@ -3806,13 +3842,13 @@
         "thirdperson_righthand": {
             "rotation": [
                 0.0,
-                90.0,
+                0.0,
                 0.0
             ],
             "translation": [
-                8.0,
-                8.0,
-                4.0
+                -1.0,
+                0.0,
+                0.0
             ],
             "scale": [
                 0.576,
@@ -3823,13 +3859,13 @@
         "thirdperson_lefthand": {
             "rotation": [
                 0.0,
-                90.0,
+                0.0,
                 0.0
             ],
             "translation": [
-                8.0,
-                8.0,
-                4.0
+                -1.0,
+                0.0,
+                0.0
             ],
             "scale": [
                 0.576,

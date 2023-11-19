@@ -16,11 +16,9 @@ public class Transform
     {
         return new Transform(Maths.IdentityPosD(), Maths.IdentityQuat());
     }
-
-    public static Transform RotationFromEuler(Vector3f euler)
-    {
-        return new Transform(Maths.IdentityPosD(), new Quaternionf().rotateXYZ(euler.x, euler.y, euler.z));
-    }
+    public static Transform RotationFromEuler(Vector3f euler) { return new Transform(Maths.IdentityPosD(), new Quaternionf().rotateXYZ(euler.x, euler.y, euler.z)); }
+    public static Transform FromPosAndEuler(Vector3f pos, Vector3f euler) { return new Transform(pos, new Quaternionf().rotateXYZ(euler.x, euler.y, euler.z)); }
+    public static Transform FromPosAndEuler(Vector3d pos, Vector3f euler) { return new Transform(pos, new Quaternionf().rotateXYZ(euler.x, euler.y, euler.z));}
 
     public Transform(Vec3 pos)
     {
@@ -50,6 +48,14 @@ public class Transform
     {
         position = new Vector3d(pos);
         orientation = new Quaternionf(ori);
+    }
+
+    public Transform RightMultiply(Transform rightSide)
+    {
+        return new Transform(
+            rightSide.TransformPosition(new Vector3d(position)),
+            rightSide.orientation.mul(orientation, new Quaternionf())
+        );
     }
 
     public static Transform Interpolate(Transform a, Transform b, double t)

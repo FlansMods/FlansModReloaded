@@ -160,7 +160,7 @@ public abstract class GunContext
 
 	protected final List<ModifierDefinition> ModifierCache;
 	private int ModifierHash;
-	protected ItemStack Stack;
+	public ItemStack Stack;
 	@Nonnull
 	public final GunDefinition Def;
 	@Nullable

@@ -3462,8 +3462,17 @@
             "name": "eye_line",
             "attachTo": "body",
             "offset": [
-                0.0,
-                0.0,
+                -4.0,
+                10.0,
+                0.0
+            ]
+        },
+        {
+            "name": "shoot_origin",
+            "attachTo": "body",
+            "offset": [
+                27.5,
+                7.75,
                 0.0
             ]
         }
@@ -3506,13 +3515,13 @@
         "thirdperson_righthand": {
             "rotation": [
                 0.0,
-                90.0,
+                0.0,
                 0.0
             ],
             "translation": [
-                8.0,
-                8.0,
-                6.0
+                0.0,
+                -2.0,
+                0.0
             ],
             "scale": [
                 0.576,
@@ -3523,13 +3532,13 @@
         "thirdperson_lefthand": {
             "rotation": [
                 0.0,
-                90.0,
+                0.0,
                 0.0
             ],
             "translation": [
-                8.0,
-                8.0,
-                6.0
+                0.0,
+                -2.0,
+                0.0
             ],
             "scale": [
                 0.576,

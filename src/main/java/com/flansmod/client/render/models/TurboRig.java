@@ -2,6 +2,7 @@ package com.flansmod.client.render.models;
 
 import com.flansmod.common.FlansMod;
 import com.flansmod.common.item.AttachmentItem;
+import com.flansmod.common.types.attachments.EAttachmentType;
 import com.flansmod.util.Maths;
 import com.google.common.collect.Maps;
 import com.google.gson.*;
@@ -41,12 +42,14 @@ public class TurboRig implements IUnbakedGeometry<TurboRig>, UnbakedModel
 	{
 		public final String AttachTo;
 		public final Vector3f Offset;
-		public AttachPoint(String attachTo, Vector3f offset)
+		public final Vector3f Euler;
+		public AttachPoint(String attachTo, Vector3f offset, Vector3f euler)
 		{
 			AttachTo = attachTo;
 			Offset = offset;
+			Euler = euler;
 		}
-		public static final AttachPoint Invalid = new AttachPoint("", new Vector3f());
+		public static final AttachPoint Invalid = new AttachPoint("", new Vector3f(), new Vector3f());
 	}
 
 
@@ -75,6 +78,15 @@ public class TurboRig implements IUnbakedGeometry<TurboRig>, UnbakedModel
 	public Set<Map.Entry<String, AttachPoint>> GetAttachmentPoints() { return AttachPoints.entrySet(); }
 
 	public AttachPoint GetAttachPoint(String attachmentName) { return AttachPoints.getOrDefault(attachmentName, AttachPoint.Invalid); }
+
+	public AttachPoint GetAttachPoint(EAttachmentType attachmentType, int index)
+	{
+		if(index == 0 && AttachPoints.containsKey(attachmentType.name().toLowerCase()))
+			return AttachPoints.get(attachmentType.name().toLowerCase());
+		if(AttachPoints.containsKey(attachmentType.name().toLowerCase() + "_" + index))
+			return AttachPoints.get(attachmentType.name().toLowerCase() + "_" + index);
+		return AttachPoint.Invalid;
+	}
 
 	public Map<String, Float> GetFloatParams() { return FloatParams; }
 
@@ -150,26 +162,33 @@ public class TurboRig implements IUnbakedGeometry<TurboRig>, UnbakedModel
 			return null;
 		}
 
-		public void ApplyTransform(ItemTransforms.TransformType transformType, PoseStack ms, boolean b)
+		public void ApplyTransform(ItemTransforms.TransformType transformType, PoseStack ms, boolean bFlip)
 		{
-			//if(transformType == ItemTransforms.TransformType.GROUND)
-			//{
-				//Vector3f copyOfTranslation = new Vector3f(Transforms.getTransform(transformType).translation);
-				//Vector3f eulers = new Vector3f(90f, 0f, 0f);
-
-				//Maths.QuaternionFromEuler(eulers).transform(copyOfTranslation);
-
-				//new ItemTransform(eulers,
-				//	copyOfTranslation, //.mul(-1f).add(0f, 0.5f, 0.5f),
-				//	new Vector3f(1f / 16f, 1f / 16f, 1f / 16f)).apply(b, ms);
-
-				//new ItemTransform(new Vector3f(-90f, 0f, 0f),
-				//	new Vector3f(0f, 0f, 3f),
-				//	new Vector3f(1f/16f, 1f/16f, 1f/16f)).apply(b, ms);
-			//}
-			//else
 			ItemTransform transform = Transforms.getTransform(transformType);
-			transform.apply(b, ms);
+			switch(transformType)
+			{
+				case FIRST_PERSON_RIGHT_HAND, FIRST_PERSON_LEFT_HAND ->
+				{
+					transform = new ItemTransform(transform.rotation, transform.translation.mul(16f, new Vector3f()), transform.scale);
+					transform.apply(bFlip, ms);
+				}
+				case THIRD_PERSON_RIGHT_HAND, THIRD_PERSON_LEFT_HAND ->
+				{
+					ms.translate(0.5f, 0.5f, 0.5f);
+					ms.mulPose((new Quaternionf().rotateY(Maths.TauF / 4f)));
+					transform.apply(bFlip, ms);
+					ms.scale(1f/16f, 1f/16f, 1f/16f);
+				}
+				case FIXED ->
+				{
+					transform.apply(bFlip, ms);
+					ms.scale(1f/16f, 1f/16f, 1f/16f);
+				}
+				default ->
+				{
+					transform.apply(bFlip, ms);
+				}
+			}
 		}
 
 		public TurboModel.Baked GetPart(String part)
@@ -202,7 +221,7 @@ public class TurboRig implements IUnbakedGeometry<TurboRig>, UnbakedModel
 		@Override
 		public ItemTransforms getTransforms()
 		{
-			return Transforms;
+			return ItemTransforms.NO_TRANSFORMS;
 		}
 	}
 
@@ -300,7 +319,8 @@ public class TurboRig implements IUnbakedGeometry<TurboRig>, UnbakedModel
 					String name = jAPObject.get("name").getAsString();
 					String attachTo = jAPObject.get("attachTo").getAsString();
 					Vector3f offset = getVector3f(jAPObject.get("offset"));
-					attachPoints.put(name, new AttachPoint(attachTo, offset));
+					Vector3f euler = getVector3f(jAPObject.get("euler"));
+					attachPoints.put(name, new AttachPoint(attachTo, offset, euler));
 				}
 			}
 
@@ -322,11 +342,6 @@ public class TurboRig implements IUnbakedGeometry<TurboRig>, UnbakedModel
 			{
 				JsonObject jDisplayObject = GsonHelper.getAsJsonObject(jObject, "display");
 				itemTransforms = context.deserialize(jDisplayObject, ItemTransforms.class);
-
-				for(ItemTransforms.TransformType transformType : ItemTransforms.TransformType.values())
-				{
-					itemTransforms.getTransform(transformType).translation.mul(16f);
-				}
 			}
 
 			Map<String, ResourceLocation> iconMap = new HashMap<>();
@@ -344,11 +359,15 @@ public class TurboRig implements IUnbakedGeometry<TurboRig>, UnbakedModel
 
 		private Vector3f getVector3f(JsonElement jObject)
 		{
-			JsonArray jArray = jObject.getAsJsonArray();
-			return new Vector3f(
-				jArray.get(0).getAsFloat(),
-				jArray.get(1).getAsFloat(),
-				jArray.get(2).getAsFloat());
+			if(jObject != null)
+			{
+				JsonArray jArray = jObject.getAsJsonArray();
+				return new Vector3f(
+					jArray.get(0).getAsFloat(),
+					jArray.get(1).getAsFloat(),
+					jArray.get(2).getAsFloat());
+			}
+			return new Vector3f();
 		}
 	}
 }

@@ -13,10 +13,15 @@ import com.flansmod.client.render.animation.elements.KeyframeDefinition;
 import com.flansmod.client.render.animation.elements.PoseDefinition;
 import com.flansmod.client.render.animation.elements.SequenceDefinition;
 import com.flansmod.client.render.animation.elements.SequenceEntryDefinition;
+import com.flansmod.client.render.guns.AttachmentItemRenderer;
 import com.flansmod.client.render.models.*;
 import com.flansmod.common.actions.*;
+import com.flansmod.common.gunshots.GunContextPlayer;
+import com.flansmod.common.gunshots.ShooterContext;
 import com.flansmod.common.item.FlanItem;
+import com.flansmod.common.types.attachments.EAttachmentType;
 import com.flansmod.util.Maths;
+import com.flansmod.util.MinecraftHelpers;
 import com.flansmod.util.Transform;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.*;
@@ -29,6 +34,7 @@ import net.minecraft.client.renderer.texture.MissingTextureAtlasSprite;
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.RandomSource;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.HumanoidArm;
 import net.minecraft.world.item.ItemStack;
@@ -104,7 +110,7 @@ public abstract class FlanItemModelRenderer extends BlockEntityWithoutLevelRende
 
 
         ms.pushPose();
-        ms.scale(1f/16f, 1f/16f, 1f/16f);
+        //
         RenderItem(null, transformType, stack, ms, buffers, light, overlay);
         ms.popPose();
     }
@@ -207,10 +213,9 @@ public abstract class FlanItemModelRenderer extends BlockEntityWithoutLevelRende
                 Transform resultPose = Transform.Interpolate(poses);
                 if(adsBlend > 0.0f && partName.equals("body"))
                 {
-                    Vector3d eyeLine = GetEyeLine(null, renderContext.TransformType == ItemTransforms.TransformType.FIRST_PERSON_LEFT_HAND); // TODO: Pass in attachments
-                    eyeLine = new Vector3d(0f, eyeLine.y, eyeLine.z);
-                    Vector3d blendedPos = resultPose.position.lerp(eyeLine, adsBlend);
-                    Quaternionf blendedOri = resultPose.orientation.slerp(new Quaternionf(), adsBlend);
+                    Transform eyeLine = GetEyeLine(renderContext.TransformType);
+                    Vector3d blendedPos = resultPose.position.lerp(eyeLine.position, adsBlend);
+                    Quaternionf blendedOri = resultPose.orientation.slerp(eyeLine.orientation, adsBlend);
                     renderContext.Poses.translate(blendedPos.x, blendedPos.y, blendedPos.z);
                     renderContext.Poses.mulPose(blendedOri);
                 }
@@ -224,9 +229,9 @@ public abstract class FlanItemModelRenderer extends BlockEntityWithoutLevelRende
             {
                 if(adsBlend > 0.0f && partName.equals("body"))
                 {
-                    Vector3d eyeLine = GetEyeLine(null, renderContext.TransformType == ItemTransforms.TransformType.FIRST_PERSON_LEFT_HAND); // TODO: Pass in attachments
-                    eyeLine = new Vector3d(0f, eyeLine.y, eyeLine.z);
-                    renderContext.Poses.translate(eyeLine.x * adsBlend, eyeLine.y * adsBlend, eyeLine.z * adsBlend);
+                    Transform eyeLine = GetEyeLine(renderContext.TransformType);
+                    renderContext.Poses.translate(eyeLine.position.x * adsBlend, eyeLine.position.y * adsBlend, eyeLine.position.z * adsBlend);
+                    renderContext.Poses.mulPose(eyeLine.orientation.slerp(new Quaternionf(), adsBlend, new Quaternionf()));
                 }
             }
 
@@ -242,22 +247,100 @@ public abstract class FlanItemModelRenderer extends BlockEntityWithoutLevelRende
         }
     }
 
-    protected Vector3d GetEyeLine(ItemStack stack, boolean leftHanded)
+    protected Transform GetEyeLine(ItemTransforms.TransformType transformType)
     {
-        // TODO: Apply attachments
+        if(UnbakedRig == null)
+            return Transform.Identity();
 
-        // TODO: Handle dual wielding setup
-
-        Vector3d returnToCenter = new Vector3d(0f, 7f, leftHanded ? 8f : -8f);
-
-        if(UnbakedRig != null)
+        List<Transform> otherEyeLines = new ArrayList<>();
+        List<Transform> myEyeLines = new ArrayList<>();
+        ShooterContext shooterContext = ShooterContext.GetOrCreate(Minecraft.getInstance().player);
+        if(shooterContext.IsValid())
         {
-            TurboRig.AttachPoint ap = UnbakedRig.GetAttachPoint("eye_line");
-            if(ap != null)
-                return returnToCenter.add(-ap.Offset.x, -ap.Offset.y, -ap.Offset.z);
+            for(GunContext gunContext : shooterContext.GetAllActiveGunContexts())
+            {
+                if(gunContext.IsValid() && gunContext instanceof GunContextPlayer gunContextPlayer)
+                {
+                    boolean isThisHand = MinecraftHelpers.GetHand(transformType) == gunContextPlayer.GetHand();
+                    for(ActionGroupInstance groupInstance : gunContext.GetActionStack().GetActiveActionGroups())
+                    {
+                        boolean hasADS = false;
+                        for(ActionInstance actionInstance : groupInstance.GetActions())
+                        {
+                            if(actionInstance instanceof AimDownSightAction adsAction)
+                            {
+                                hasADS = true;
+                            }
+                        }
+
+                        if(hasADS)
+                        {
+                            if(groupInstance.Context.IsAttachment())
+                            {
+                                EAttachmentType attachmentType = groupInstance.Context.GetAttachmentType();
+                                int attachmentIndex = groupInstance.Context.GetAttachmentIndex();
+
+                                TurboRig.AttachPoint attachmentRoot = UnbakedRig.GetAttachPoint(attachmentType, attachmentIndex);
+                                Transform attachmentRootTransform = Transform.FromPosAndEuler(attachmentRoot.Offset, attachmentRoot.Euler);
+
+
+
+                                ItemStack attachmentStack = gunContext.GetAttachmentStack(attachmentType, attachmentIndex);
+                                FlanItemModelRenderer attachmentRenderer = FlansModClient.MODEL_REGISTRATION.GetModelRenderer(attachmentStack);
+
+
+                                if (attachmentRenderer instanceof AttachmentItemRenderer attachmentItemRenderer)
+                                {
+                                    if(attachmentRenderer.UnbakedRig != null)
+                                    {
+                                        TurboRig.AttachPoint ap = attachmentRenderer.UnbakedRig.GetAttachPoint("eye_line");
+                                        if(ap != null)
+                                        {
+                                            Transform eyeLineTransform = Transform.FromPosAndEuler(ap.Offset, ap.Euler);
+                                            if (isThisHand)
+                                                myEyeLines.add(attachmentRootTransform.RightMultiply(eyeLineTransform));
+                                            else
+                                                otherEyeLines.add(attachmentRootTransform.RightMultiply(eyeLineTransform));
+                                        }
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                TurboRig.AttachPoint ap = UnbakedRig.GetAttachPoint("eye_line");
+                                if(ap != null)
+                                {
+                                    Transform eyeLineTransform = Transform.FromPosAndEuler(ap.Offset, ap.Euler);
+                                    if (isThisHand)
+                                        myEyeLines.add(eyeLineTransform);
+                                    else
+                                        otherEyeLines.add(eyeLineTransform);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
         }
 
-        return returnToCenter;
+        if(myEyeLines.size() > 0)
+        {
+            boolean leftHanded = transformType == ItemTransforms.TransformType.FIRST_PERSON_LEFT_HAND;
+            Vector3d returnToCenter = new Vector3d(0f, 7f, leftHanded ? 8f : -8f);
+
+            Vector3d targetDelta = returnToCenter.sub(myEyeLines.get(0).position);
+            Quaternionf targetRotation = myEyeLines.get(0).orientation;
+
+            if(otherEyeLines.size() > 0)
+            {
+                // Both guns are ADS, go halfway
+                targetDelta.mul(0.5f);
+            }
+
+            return new Transform(targetDelta, targetRotation);
+        }
+
+        return Transform.Identity();
     }
 
     protected ResourceLocation GetSkin(@Nonnull ItemStack stack)

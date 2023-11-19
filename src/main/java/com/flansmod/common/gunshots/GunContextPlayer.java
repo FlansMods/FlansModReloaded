@@ -51,4 +51,28 @@ public class GunContextPlayer extends GunContextLiving
 	}
 	@Override
 	public int GetInventorySlotIndex() { return InventorySlot; }
+
+	@Override
+	public int hashCode()
+	{
+		return HashGunOrigins(Stack) ^ Hand.hashCode() ^ Integer.hashCode(InventorySlot) ^ ShooterContext.hashCode();
+	}
+	@Override
+	public boolean equals(Object other)
+	{
+		if(other == this) return true;
+		if(other instanceof GunContextLiving otherContext)
+		{
+			return HashGunOrigins(Stack) == HashGunOrigins(otherContext.Stack)
+				&& Hand == otherContext.Hand
+				&& InventorySlot == otherContext.GetInventorySlotIndex()
+				&& ShooterContext.equals(otherContext.ShooterContext);
+		}
+		return false;
+	}
+	@Override
+	public String toString()
+	{
+		return "GunContextPlayer:" + GetItemStack().toString() + " held by " + Player;
+	}
 }

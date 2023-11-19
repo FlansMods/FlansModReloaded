@@ -304,4 +304,26 @@ public abstract class ShooterContext
 	public abstract int HashModifierSources();
 	public abstract void RecalculateModifierCache();
 
+
+	@Override
+	public int hashCode()
+	{
+		return EntityUUID().hashCode() ^ OwnerUUID().hashCode();
+	}
+	@Override
+	public boolean equals(Object other)
+	{
+		if(other == this) return true;
+		if(other instanceof ShooterContext otherContext)
+		{
+			return EntityUUID().equals(otherContext.EntityUUID())
+				&& OwnerUUID().equals(otherContext.OwnerUUID());
+		}
+		return false;
+	}
+	@Override
+	public String toString()
+	{
+		return "ShooterContext (Shooter:" + EntityUUID() + ", Owner:" + OwnerUUID() + ")";
+	}
 }
