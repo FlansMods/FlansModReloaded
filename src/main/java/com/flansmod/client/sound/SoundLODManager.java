@@ -23,6 +23,10 @@ public class SoundLODManager
 {
 	public static void PlaySound(SoundDefinition soundDef, Entity onEntity)
 	{
+		PlaySound(soundDef, onEntity, 1f, 1f);
+	}
+	public static void PlaySound(SoundDefinition soundDef, Entity onEntity, float volumeMulti, float pitchMulti)
+	{
 		Entity camera = Minecraft.getInstance().cameraEntity;
 		if(camera != null)
 		{
@@ -48,8 +52,8 @@ public class SoundLODManager
 					onEntity.position().z,
 					SoundEvent.createFixedRangeEvent(soundToPlay, soundDef.maxRange),
 					SoundSource.HOSTILE,
-					soundDef.PickRandomVolume(Minecraft.getInstance().level.random),
-					soundDef.PickRandomPitch(Minecraft.getInstance().level.random),
+					volumeMulti * soundDef.PickRandomVolume(Minecraft.getInstance().level.random),
+					pitchMulti * soundDef.PickRandomPitch(Minecraft.getInstance().level.random),
 					true);
 
 				FlansMod.LOGGER.info("Played " + soundToPlay + " at " + onEntity.position());

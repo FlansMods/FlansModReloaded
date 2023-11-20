@@ -17,7 +17,15 @@
             "ApplyFilters": []
         },
         {
-            "Stat": "recoil",
+            "Stat": "vertical_recoil",
+            "Filter": "",
+            "Add": 0.0,
+            "Multiply": 0.8,
+            "SetValue": "",
+            "ApplyFilters": []
+        },
+        {
+            "Stat": "horizontal_recoil",
             "Filter": "",
             "Add": 0.0,
             "Multiply": 0.8,

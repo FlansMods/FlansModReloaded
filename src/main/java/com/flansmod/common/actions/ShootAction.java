@@ -380,7 +380,7 @@ public class ShootAction extends ActionInstance
 		}
 
 		float loudness = Group.Context.Loudness();
-		if(loudness >= 4.0f)
+		if(loudness >= 30.0f)
 			level.gameEvent(Group.Context.Gun.GetShooter().Entity(), GameEvent.EXPLODE, Group.Context.Gun.GetShooter().GetShootOrigin().BlockPos());
 
 	}

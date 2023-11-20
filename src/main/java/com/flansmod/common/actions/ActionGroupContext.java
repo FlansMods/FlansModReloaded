@@ -602,13 +602,15 @@ public class ActionGroupContext
 		String modified = ModifyString(key, defaultValue.toString());
 		return Enum.valueOf(clazz, modified);
 	}
-	public ERepeatMode RepeatMode() { return (ERepeatMode) ModifyEnum("repeat_mode", Def.repeatMode, ERepeatMode.class); }
-	public float RepeatDelaySeconds() { return ModifyFloat("repeat_delay", Def.repeatDelay); }
+	public ERepeatMode RepeatMode() { return (ERepeatMode) ModifyEnum(ModifierDefinition.STAT_GROUP_REPEAT_MODE, Def.repeatMode, ERepeatMode.class); }
+	public float RepeatDelaySeconds() { return ModifyFloat(ModifierDefinition.STAT_GROUP_REPEAT_DELAY, Def.repeatDelay); }
 	public float RepeatDelayTicks() { return RepeatDelaySeconds() * 20.0f; }
-	public int RepeatCount() { return Maths.Ceil(ModifyFloat("repeat_count", Def.repeatCount)); }
-	public float SpinUpDuration() { return ModifyFloat("spin_up_duration", Def.spinUpDuration); }
+	public int RepeatCount() { return Maths.Ceil(ModifyFloat(ModifierDefinition.STAT_GROUP_REPEAT_COUNT, Def.repeatCount)); }
+	public float SpinUpDuration() { return ModifyFloat(ModifierDefinition.STAT_GROUP_SPIN_UP_DURATION, Def.spinUpDuration); }
 	public int RoundsPerMinute() { return RepeatDelaySeconds() <= 0.00001f ? 0 : Maths.Ceil(60.0f / RepeatDelaySeconds()); }
-	public float Loudness() { return ModifyFloat("loudness", Def.loudness); }
+	public float Loudness() { return ModifyFloat(ModifierDefinition.STAT_GROUP_LOUDNESS, Def.loudness); }
+	public float Volume() { return ModifyFloat(ModifierDefinition.STAT_GROUP_LOUDNESS, 1.0f); }
+	public float Pitch() { return ModifyFloat(ModifierDefinition.STAT_SOUND_PITCH, 1.0f); }
 
 	// UTIL
 

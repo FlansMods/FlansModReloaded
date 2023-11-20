@@ -7,6 +7,13 @@ import net.minecraft.network.chat.Component;
 
 public class ModifierDefinition
 {
+	public static final String STAT_GROUP_REPEAT_MODE = "repeat_mode";
+	public static final String STAT_GROUP_REPEAT_DELAY = "repeat_delay";
+	public static final String STAT_GROUP_REPEAT_COUNT = "repeat_count";
+	public static final String STAT_GROUP_SPIN_UP_DURATION = "spin_up_duration";
+	public static final String STAT_GROUP_LOUDNESS = "loudness";
+
+
 	public static final String STAT_SHOT_SPREAD = "spread";
 	public static final String STAT_SHOT_VERTICAL_RECOIL = "vertical_recoil";
 	public static final String STAT_SHOT_HORIZONTAL_RECOIL = "horizontal_recoil";
@@ -41,6 +48,9 @@ public class ModifierDefinition
 	public static final String STAT_HEAL_AMOUNT = "heal_amount";
 	public static final String STAT_FEED_AMOUNT = "feed_amount";
 	public static final String STAT_FEED_SATURATION = "feed_saturation";
+	public static final String STAT_SOUND_PITCH = "pitch";
+	public static final String STAT_LIGHT_STRENGTH = "flashlight_strength";
+	public static final String STAT_LIGHT_RANGE = "flashlight_range";
 
 	public static final String KEY_ENTITY_TAG = "entity_tag";
 	public static final String KEY_ENTITY_ID = "entity_id";

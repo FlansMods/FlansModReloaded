@@ -4,12 +4,14 @@
     ],
     "modifiers": [
         {
-            "Stat": "reload_speed",
+            "Stat": "duration",
             "Filter": "",
             "Add": 0.0,
             "Multiply": 0.75,
             "SetValue": "",
-            "ApplyFilters": []
+            "ApplyFilters": [
+                "reload_primary"
+            ]
         }
     ],
     "ammoLoadMode": "FullMag",

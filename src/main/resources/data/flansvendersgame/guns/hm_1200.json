@@ -34,7 +34,7 @@
             "inputType": "Fire1",
             "nodes": [
                 {
-                    "actionGroupToTrigger": "primary",
+                    "actionGroupToTrigger": "primary_fire",
                     "modalCheck": "",
                     "deferToAttachment": false,
                     "attachmentType": "Generic",
@@ -117,7 +117,7 @@
     ],
     "actionGroups": [
         {
-            "key": "primary",
+            "key": "primary_fire",
             "canActUnderwater": true,
             "canActUnderOtherLiquid": false,
             "canBeOverriden": true,
@@ -486,7 +486,7 @@
     ],
     "reloads": [
         {
-            "key": "primary",
+            "key": "primary_fire",
             "manualReloadAllowed": true,
             "autoReloadWhenEmpty": true,
             "startActionKey": "reload_primary_start",

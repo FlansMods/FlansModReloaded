@@ -34,7 +34,7 @@
             "inputType": "Fire1",
             "nodes": [
                 {
-                    "actionGroupToTrigger": "primary",
+                    "actionGroupToTrigger": "primary_fire",
                     "modalCheck": "",
                     "deferToAttachment": false,
                     "attachmentType": "Generic",
@@ -117,7 +117,7 @@
     ],
     "actionGroups": [
         {
-            "key": "primary",
+            "key": "primary_fire",
             "canActUnderwater": true,
             "canActUnderOtherLiquid": false,
             "canBeOverriden": true,
@@ -326,7 +326,7 @@
                     "duration": 0.0,
                     "sounds": [
                         {
-                            "sound": "flansmodernweapons:grenade_launcher_reload",
+                            "sound": "flansmod:break_action_open_clack",
                             "length": 1.0,
                             "minPitchMultiplier": 1.0,
                             "maxPitchMultiplier": 1.0,
@@ -398,6 +398,30 @@
                     "toolLevel": 1.0,
                     "harvestSpeed": 1.0,
                     "reach": 1.0
+                },
+                {
+                    "actionType": "PlaySound",
+                    "duration": 0.0,
+                    "sounds": [
+                        {
+                            "sound": "flansmod:shell_insert_shloop_double",
+                            "length": 1.0,
+                            "minPitchMultiplier": 1.0,
+                            "maxPitchMultiplier": 1.0,
+                            "minVolume": 1.0,
+                            "maxVolume": 1.0,
+                            "maxRange": 100.0,
+                            "LODs": []
+                        }
+                    ],
+                    "itemStack": "",
+                    "modifiers": [],
+                    "fovFactor": 1.25,
+                    "scopeOverlay": "",
+                    "anim": "",
+                    "toolLevel": 1.0,
+                    "harvestSpeed": 1.0,
+                    "reach": 1.0
                 }
             ]
         },
@@ -425,6 +449,30 @@
                     "toolLevel": 1.0,
                     "harvestSpeed": 1.0,
                     "reach": 1.0
+                },
+                {
+                    "actionType": "PlaySound",
+                    "duration": 0.0,
+                    "sounds": [
+                        {
+                            "sound": "flansmod:break_action_close_clack",
+                            "length": 1.0,
+                            "minPitchMultiplier": 1.0,
+                            "maxPitchMultiplier": 1.0,
+                            "minVolume": 1.0,
+                            "maxVolume": 1.0,
+                            "maxRange": 100.0,
+                            "LODs": []
+                        }
+                    ],
+                    "itemStack": "",
+                    "modifiers": [],
+                    "fovFactor": 1.25,
+                    "scopeOverlay": "",
+                    "anim": "",
+                    "toolLevel": 1.0,
+                    "harvestSpeed": 1.0,
+                    "reach": 1.0
                 }
             ]
         }
@@ -441,7 +489,7 @@
     ],
     "reloads": [
         {
-            "key": "primary",
+            "key": "primary_fire",
             "manualReloadAllowed": true,
             "autoReloadWhenEmpty": true,
             "startActionKey": "reload_primary_start",

@@ -147,6 +147,22 @@ public class ClientRenderHooks
 					{
 						event.setCanceled(true);
 					}
+					for(GunContext gunContext : gunContexts)
+					{
+						if(!gunContext.IsValid())
+							continue;
+
+						for(ActionGroupInstance actionGroup : gunContext.GetActionStack().GetActiveActionGroups())
+						{
+							for (ActionInstance action : actionGroup.GetActions())
+							{
+								if (action instanceof AimDownSightAction adsAction)
+								{
+									event.setCanceled(true);
+								}
+							}
+						}
+					}
 					break;
 				}
 				case "hotbar":
@@ -295,7 +311,7 @@ public class ClientRenderHooks
 
 			int x = anchorX + 113;
 
-			ActionGroupContext mainHandPrimaryContext = ActionGroupContext.CreateFrom(mainContext, "primary");
+			ActionGroupContext mainHandPrimaryContext = ActionGroupContext.CreateFrom(mainContext, "primary_fire");
 			if(mainHandPrimaryContext.IsShootAction())
 			{
 				MagazineDefinition magDef = mainHandPrimaryContext.GetMagazineType(0);
@@ -356,7 +372,7 @@ public class ClientRenderHooks
 			//Minecraft.getInstance().getItemRenderer().renderGuiItem(offContext.GetItemStack(), anchorX - 95 - 16, anchorY - 19);
 
 			int x = anchorX - 113 - 22;
-			ActionGroupContext offHandPrimaryContext = ActionGroupContext.CreateFrom(offContext, "primary");
+			ActionGroupContext offHandPrimaryContext = ActionGroupContext.CreateFrom(offContext, "primary_fire");
 			if(offHandPrimaryContext.IsShootAction())
 			{
 				MagazineDefinition magDef = offHandPrimaryContext.GetMagazineType(0);

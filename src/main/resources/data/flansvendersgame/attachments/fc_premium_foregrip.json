@@ -9,7 +9,7 @@
     "attachmentType": "Grip",
     "modifiers": [
         {
-            "Stat": "recoil",
+            "Stat": "vertical_recoil",
             "Filter": "",
             "Add": 0.0,
             "Multiply": 1.1,
@@ -17,12 +17,22 @@
             "ApplyFilters": []
         },
         {
-            "Stat": "reloadTime",
+            "Stat": "horizontal_recoil",
+            "Filter": "",
+            "Add": 0.0,
+            "Multiply": 1.1,
+            "SetValue": "",
+            "ApplyFilters": []
+        },
+        {
+            "Stat": "duration",
             "Filter": "",
             "Add": 0.0,
             "Multiply": 0.7,
             "SetValue": "",
-            "ApplyFilters": []
+            "ApplyFilters": [
+                "primary_reload"
+            ]
         }
     ],
     "mechaEffects": [],

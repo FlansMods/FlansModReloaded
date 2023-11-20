@@ -24,7 +24,7 @@
             "inputType": "Fire1",
             "nodes": [
                 {
-                    "actionGroupToTrigger": "primary",
+                    "actionGroupToTrigger": "primary_fire",
                     "modalCheck": "",
                     "deferToAttachment": false,
                     "attachmentType": "Generic",
@@ -107,7 +107,7 @@
     ],
     "actionGroups": [
         {
-            "key": "primary",
+            "key": "primary_fire",
             "canActUnderwater": true,
             "canActUnderOtherLiquid": false,
             "canBeOverriden": true,
@@ -297,30 +297,6 @@
                     "toolLevel": 1.0,
                     "harvestSpeed": 1.0,
                     "reach": 1.0
-                },
-                {
-                    "actionType": "PlaySound",
-                    "duration": 0.0,
-                    "sounds": [
-                        {
-                            "sound": "flansvendersgame:reload1",
-                            "length": 1.0,
-                            "minPitchMultiplier": 1.0,
-                            "maxPitchMultiplier": 1.0,
-                            "minVolume": 1.0,
-                            "maxVolume": 1.0,
-                            "maxRange": 100.0,
-                            "LODs": []
-                        }
-                    ],
-                    "itemStack": "",
-                    "modifiers": [],
-                    "fovFactor": 1.25,
-                    "scopeOverlay": "",
-                    "anim": "",
-                    "toolLevel": 1.0,
-                    "harvestSpeed": 1.0,
-                    "reach": 1.0
                 }
             ]
         },
@@ -348,6 +324,30 @@
                     "toolLevel": 1.0,
                     "harvestSpeed": 1.0,
                     "reach": 1.0
+                },
+                {
+                    "actionType": "PlaySound",
+                    "duration": 0.375,
+                    "sounds": [
+                        {
+                            "sound": "flansmod:magazine_unload_chunky",
+                            "length": 1.0,
+                            "minPitchMultiplier": 1.0,
+                            "maxPitchMultiplier": 1.0,
+                            "minVolume": 1.0,
+                            "maxVolume": 1.0,
+                            "maxRange": 100.0,
+                            "LODs": []
+                        }
+                    ],
+                    "itemStack": "",
+                    "modifiers": [],
+                    "fovFactor": 1.25,
+                    "scopeOverlay": "",
+                    "anim": "",
+                    "toolLevel": 1.0,
+                    "harvestSpeed": 1.0,
+                    "reach": 1.0
                 }
             ]
         },
@@ -372,6 +372,30 @@
                     "fovFactor": 1.25,
                     "scopeOverlay": "",
                     "anim": "reload_load_one",
+                    "toolLevel": 1.0,
+                    "harvestSpeed": 1.0,
+                    "reach": 1.0
+                },
+                {
+                    "actionType": "PlaySound",
+                    "duration": 0.375,
+                    "sounds": [
+                        {
+                            "sound": "flansmod:magazine_load_chunky",
+                            "length": 1.0,
+                            "minPitchMultiplier": 1.0,
+                            "maxPitchMultiplier": 1.0,
+                            "minVolume": 1.0,
+                            "maxVolume": 1.0,
+                            "maxRange": 100.0,
+                            "LODs": []
+                        }
+                    ],
+                    "itemStack": "",
+                    "modifiers": [],
+                    "fovFactor": 1.25,
+                    "scopeOverlay": "",
+                    "anim": "",
                     "toolLevel": 1.0,
                     "harvestSpeed": 1.0,
                     "reach": 1.0
@@ -418,7 +442,7 @@
     ],
     "reloads": [
         {
-            "key": "primary",
+            "key": "primary_fire",
             "manualReloadAllowed": true,
             "autoReloadWhenEmpty": true,
             "startActionKey": "reload_primary_start",

@@ -17,7 +17,7 @@
             "ApplyFilters": []
         },
         {
-            "Stat": "damage",
+            "Stat": "impact_damage",
             "Filter": "",
             "Add": 0.0,
             "Multiply": 1.5,
