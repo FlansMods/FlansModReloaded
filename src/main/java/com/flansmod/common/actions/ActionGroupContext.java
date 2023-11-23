@@ -20,7 +20,6 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 
 import javax.annotation.Nonnull;
-import javax.swing.*;
 
 public class ActionGroupContext
 {
@@ -611,6 +610,12 @@ public class ActionGroupContext
 	public float Loudness() { return ModifyFloat(ModifierDefinition.STAT_GROUP_LOUDNESS, Def.loudness); }
 	public float Volume() { return ModifyFloat(ModifierDefinition.STAT_GROUP_LOUDNESS, 1.0f); }
 	public float Pitch() { return ModifyFloat(ModifierDefinition.STAT_SOUND_PITCH, 1.0f); }
+
+	@Override
+	public String toString()
+	{
+		return Gun + ":" + GroupPath;
+	}
 
 	// UTIL
 

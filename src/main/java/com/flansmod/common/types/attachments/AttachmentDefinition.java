@@ -1,7 +1,6 @@
 package com.flansmod.common.types.attachments;
 
 import com.flansmod.common.FlansMod;
-import com.flansmod.common.actions.EActionInput;
 import com.flansmod.common.actions.GunInputContext;
 import com.flansmod.common.types.JsonDefinition;
 import com.flansmod.common.types.JsonField;
@@ -11,8 +10,6 @@ import com.flansmod.common.types.guns.elements.ERepeatMode;
 import com.flansmod.common.types.guns.elements.HandlerDefinition;
 import com.flansmod.common.types.guns.elements.ReloadDefinition;
 import net.minecraft.resources.ResourceLocation;
-
-import java.util.List;
 
 public class AttachmentDefinition extends JsonDefinition
 {

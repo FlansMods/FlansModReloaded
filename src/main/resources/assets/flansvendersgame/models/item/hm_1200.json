@@ -7,10 +7,7 @@
     },
     "icons": {
         "default": "flansvendersgame:item/hm_1200",
-        "hm_1200_blue": "flansvendersgame:item/hm_1200_blue",
-        "hm_1200_periwinkle": "flansvendersgame:item/hm_1200_periwinkle",
-        "hm_1200_wood": "flansvendersgame:item/hm_1200_wood",
-        "hm_1200_zebra": "flansvendersgame:item/hm_1200_zebra"
+        "hm_1200_wood": "flansvendersgame:item/hm_1200_wood"
     },
     "animations": {},
     "parts": {

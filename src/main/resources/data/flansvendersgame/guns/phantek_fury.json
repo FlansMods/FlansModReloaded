@@ -8,32 +8,12 @@
     "paints": {
         "paintjobs": [
             {
-                "textureName": "phantek_fury_aqua",
-                "paintBucketsRequired": 1,
-                "entitlementKey": ""
-            },
-            {
-                "textureName": "phantek_fury_hazard",
-                "paintBucketsRequired": 1,
-                "entitlementKey": ""
-            },
-            {
-                "textureName": "phantek_fury_platypus",
-                "paintBucketsRequired": 1,
-                "entitlementKey": ""
-            },
-            {
-                "textureName": "phantek_fury_redline",
-                "paintBucketsRequired": 1,
-                "entitlementKey": ""
-            },
-            {
                 "textureName": "phantek_fury_service",
                 "paintBucketsRequired": 1,
                 "entitlementKey": ""
             },
             {
-                "textureName": "phantek_fury_white",
+                "textureName": "phantek_fury_redline",
                 "paintBucketsRequired": 1,
                 "entitlementKey": ""
             }
@@ -205,7 +185,7 @@
                     "duration": 0.0,
                     "sounds": [
                         {
-                            "sound": "flansmod:gunshot_ptoo",
+                            "sound": "flansmod:gunshot_toast",
                             "length": 0.0,
                             "minPitchMultiplier": 0.5,
                             "maxPitchMultiplier": 0.8,

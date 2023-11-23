@@ -1,7 +1,5 @@
 package com.flansmod.common.gunshots;
 
-import com.flansmod.common.actions.ActionGroupContext;
-import com.flansmod.common.actions.EActionInput;
 import com.flansmod.common.actions.GunContext;
 import com.flansmod.common.item.FlanItem;
 import com.flansmod.util.Transform;
@@ -36,9 +34,9 @@ public class ShooterContextLiving extends ShooterContext
 	public GunContext CreateForGunIndex(int gunSlotIndex) { return new GunContextLiving(this, gunSlotIndex == 0 ? InteractionHand.MAIN_HAND : InteractionHand.OFF_HAND); }
 	@Override
 	public GunContext CreateForSpecificStack(int gunSlotIndex, ItemStack stack) { return new GunContextLiving(this, gunSlotIndex == 0 ? InteractionHand.MAIN_HAND : InteractionHand.OFF_HAND, stack); }
-	public GunContext GetContext(InteractionHand hand) { return GunContext.GetActionGroupContext(this, hand); }
-	public GunContext GetMainHandContext() { return GunContext.GetActionGroupContext(this, InteractionHand.MAIN_HAND); }
-	public GunContext GetOffHandContext() { return GunContext.GetActionGroupContext(this, InteractionHand.OFF_HAND); }
+	public GunContext GetContext(InteractionHand hand) { return GunContext.GetGunContext(this, hand); }
+	public GunContext GetMainHandContext() { return GunContext.GetGunContext(this, InteractionHand.MAIN_HAND); }
+	public GunContext GetOffHandContext() { return GunContext.GetGunContext(this, InteractionHand.OFF_HAND); }
 
 	public boolean CanPerformTwoHandedAction()
 	{

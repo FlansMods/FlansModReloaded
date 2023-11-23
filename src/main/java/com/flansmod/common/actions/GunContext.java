@@ -8,6 +8,7 @@ import com.flansmod.common.types.attachments.EAttachmentType;
 import com.flansmod.common.types.guns.elements.*;
 import com.flansmod.common.types.elements.ModifierDefinition;
 import com.flansmod.common.types.guns.*;
+import com.flansmod.common.types.magazines.MagazineDefinition;
 import com.flansmod.common.types.parts.PartDefinition;
 import com.flansmod.common.types.vehicles.EPlayerInput;
 import com.mojang.datafixers.util.Pair;
@@ -21,7 +22,6 @@ import net.minecraft.world.level.Level;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import javax.swing.*;
 import java.util.*;
 
 public abstract class GunContext
@@ -56,7 +56,7 @@ public abstract class GunContext
 	// GUN CONTEXT CACHE (Caches are contained within ShooterContext)
 	// ---------------------------------------------------------------------------------------------------
 	@Nonnull
-	public static GunContext GetActionGroupContext(ItemStack stack)
+	public static GunContext GetGunContext(ItemStack stack)
 	{
 		// No caching, because we don't know where this stack is
 		if(stack.getItem() instanceof GunItem gun)
@@ -65,7 +65,7 @@ public abstract class GunContext
 	}
 
 	@Nonnull
-	public static GunContext GetActionGroupContext(Inventory inventory, int slot)
+	public static GunContext GetGunContext(Inventory inventory, int slot)
 	{
 		// No caching, because we don't know where this inventory is
 		if(inventory.getContainerSize() > slot && inventory.getItem(slot).getItem() instanceof GunItem gun)
@@ -74,7 +74,7 @@ public abstract class GunContext
 	}
 
 	@Nonnull
-	public static GunContext GetActionGroupContext(UUID shooterUUID, int slotIndex, boolean client)
+	public static GunContext GetGunContext(UUID shooterUUID, int slotIndex, boolean client)
 	{
 		ShooterContext shooterContext = ShooterContext.GetOrCreate(shooterUUID, client);
 		if(shooterContext.IsValid())
@@ -84,7 +84,7 @@ public abstract class GunContext
 	}
 
 	@Nonnull
-	public static GunContext GetActionGroupContext(ShooterContext shooter, int inventorySlotIndex)
+	public static GunContext GetGunContext(ShooterContext shooter, int inventorySlotIndex)
 	{
 		if(shooter.IsValid())
 			return shooter.GetOrCreate(inventorySlotIndex);
@@ -93,7 +93,7 @@ public abstract class GunContext
 	}
 
 	@Nonnull
-	public static GunContext GetActionGroupContext(ShooterContext shooter, InteractionHand hand)
+	public static GunContext GetGunContext(ShooterContext shooter, InteractionHand hand)
 	{
 		if(shooter.IsValid())
 			if(shooter instanceof ShooterContextPlayer playerContext)
@@ -243,6 +243,12 @@ public abstract class GunContext
 			for(PartDefinition part : flanItem.GetCraftingInputs(stack))
 			{
 				hash ^= (part.hashCode() << 16) | (part.hashCode() >> 16);
+			}
+			hash ^= flanItem.GetPaintjobName(stack).hashCode();
+			if(flanItem instanceof GunItem gunItem)
+			{
+				MagazineDefinition mag = gunItem.GetMagazineType(stack, Actions.DefaultPrimaryActionKey, 0);
+				hash ^= (mag.hashCode() << 16) | (mag.hashCode() >> 16);
 			}
 		}
 		return hash;
@@ -589,7 +595,7 @@ public abstract class GunContext
 			return shooter.CreateOldGunContext(slot, contextHash, stack);
 
 		// Last option, we don't know who made this, but we can give an isolated context to allow _some_ functionality
-		return GunContext.GetActionGroupContext(stack);
+		return GunContext.GetGunContext(stack);
 	}
 
 	@Override

@@ -3091,8 +3091,35 @@
             "name": "eye_line",
             "attachTo": "body",
             "offset": [
-                0.0,
-                0.0,
+                -7.0,
+                5.0,
+                0.0
+            ]
+        },
+        {
+            "name": "shoot_origin",
+            "attachTo": "body",
+            "offset": [
+                27.5,
+                2.5,
+                0.0
+            ]
+        },
+        {
+            "name": "barrel",
+            "attachTo": "body",
+            "offset": [
+                27.5,
+                2.5,
+                0.0
+            ]
+        },
+        {
+            "name": "sights",
+            "attachTo": "body",
+            "offset": [
+                10.0,
+                4.0,
                 0.0
             ]
         }

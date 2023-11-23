@@ -1,7 +1,6 @@
 package com.flansmod.client.input;
 
 import com.flansmod.client.FlansModClient;
-import com.flansmod.common.actions.EActionInput;
 import com.flansmod.common.item.GunItem;
 import com.flansmod.common.types.vehicles.EPlayerInput;
 import com.mojang.blaze3d.platform.InputConstants;

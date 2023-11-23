@@ -1,7 +1,7 @@
 package com.flansmod.common.crafting;
 
 import com.flansmod.common.FlansMod;
-import com.flansmod.common.actions.EActionInput;
+import com.flansmod.common.actions.Actions;
 import com.flansmod.common.item.FlanItem;
 import com.flansmod.common.item.GunItem;
 import com.flansmod.common.types.crafting.EWorkbenchInventoryType;
@@ -1025,12 +1025,12 @@ public class WorkbenchBlockEntity extends BlockEntity implements WorldlyContaine
 
 		if (gunContainer.getItem(0).getItem() instanceof GunItem gunItem)
 		{
-			List<MagazineDefinition> mags = gunItem.Def().GetMagazineSettings("primary").GetMatchingMagazines();
+			List<MagazineDefinition> mags = gunItem.Def().GetMagazineSettings(Actions.DefaultPrimaryActionKey).GetMatchingMagazines();
 			if (0 <= magIndex && magIndex < mags.size())
 			{
-				return gunItem.Def().GetMagazineSettings("primary").baseCostToSwap + mags.get(magIndex).upgradeCost;
+				return gunItem.Def().GetMagazineSettings(Actions.DefaultPrimaryActionKey).baseCostToSwap + mags.get(magIndex).upgradeCost;
 			}
-			return gunItem.Def().GetMagazineSettings("primary").baseCostToSwap;
+			return gunItem.Def().GetMagazineSettings(Actions.DefaultPrimaryActionKey).baseCostToSwap;
 		}
 		return 0;
 	}
@@ -1048,7 +1048,7 @@ public class WorkbenchBlockEntity extends BlockEntity implements WorldlyContaine
 			ItemStack gunStack = gunContainer.getItem(0);
 
 			// Check if the item has mag options and our selection makes sense
-			List<MagazineDefinition> mags = gunItem.Def().GetMagazineSettings("primary").GetMatchingMagazines();
+			List<MagazineDefinition> mags = gunItem.Def().GetMagazineSettings(Actions.DefaultPrimaryActionKey).GetMatchingMagazines();
 			if(magIndex >= mags.size())
 				return false;
 
@@ -1061,7 +1061,7 @@ public class WorkbenchBlockEntity extends BlockEntity implements WorldlyContaine
 				return true;
 
 			// Now we just need to check the cost
-			int magCost = mag.upgradeCost + gunItem.Def().GetMagazineSettings("primary").baseCostToSwap;
+			int magCost = mag.upgradeCost + gunItem.Def().GetMagazineSettings(Actions.DefaultPrimaryActionKey).baseCostToSwap;
 			if (magUpgradeContainer.getItem(0).getCount() < magCost)
 				return false;
 
@@ -1078,12 +1078,12 @@ public class WorkbenchBlockEntity extends BlockEntity implements WorldlyContaine
 			if (gunContainer.getContainerSize() > 0 && !gunContainer.getItem(0).isEmpty() && gunContainer.getItem(0).getItem() instanceof GunItem gunItem)
 			{
 				ItemStack gunStack = gunContainer.getItem(0);
-				List<MagazineDefinition> mags = gunItem.Def().GetMagazineSettings("primary").GetMatchingMagazines();
+				List<MagazineDefinition> mags = gunItem.Def().GetMagazineSettings(Actions.DefaultPrimaryActionKey).GetMatchingMagazines();
 				if (0 <= magIndex && magIndex < mags.size())
 				{
-					int magCost = mags.get(magIndex).upgradeCost + gunItem.Def().GetMagazineSettings("primary").baseCostToSwap;
+					int magCost = mags.get(magIndex).upgradeCost + gunItem.Def().GetMagazineSettings(Actions.DefaultPrimaryActionKey).baseCostToSwap;
 					magUpgradeContainer.getItem(0).setCount(magUpgradeContainer.getItem(0).getCount() - magCost);
-					gunItem.SetMagazineType(gunStack, "primary", 0, mags.get(magIndex));
+					gunItem.SetMagazineType(gunStack, Actions.DefaultPrimaryActionKey, 0, mags.get(magIndex));
 				}
 				else
 				{

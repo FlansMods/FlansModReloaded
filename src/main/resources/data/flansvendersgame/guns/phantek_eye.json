@@ -253,7 +253,7 @@
                     "itemStack": "",
                     "modifiers": [],
                     "fovFactor": 6.0,
-                    "scopeOverlay": "mwbarrett",
+                    "scopeOverlay": "flansvendersgame:phantek_eye_default_scope",
                     "anim": "",
                     "toolLevel": 1.0,
                     "harvestSpeed": 1.0,

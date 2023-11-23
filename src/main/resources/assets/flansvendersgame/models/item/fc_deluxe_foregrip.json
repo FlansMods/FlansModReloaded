@@ -362,62 +362,7 @@
             ]
         }
     },
-    "attachPoints": [
-        {
-            "name": "sights",
-            "attachTo": "body",
-            "offset": [
-                0.0,
-                0.0,
-                0.0
-            ]
-        },
-        {
-            "name": "stock",
-            "attachTo": "body",
-            "offset": [
-                0.0,
-                0.0,
-                0.0
-            ]
-        },
-        {
-            "name": "barrel",
-            "attachTo": "body",
-            "offset": [
-                0.0,
-                0.0,
-                0.0
-            ]
-        },
-        {
-            "name": "grip",
-            "attachTo": "pump",
-            "offset": [
-                0.0,
-                0.0,
-                0.0
-            ]
-        },
-        {
-            "name": "pump",
-            "attachTo": "body",
-            "offset": [
-                0.0,
-                0.0,
-                0.0
-            ]
-        },
-        {
-            "name": "ammo_0",
-            "attachTo": "body",
-            "offset": [
-                0.0,
-                0.0,
-                0.0
-            ]
-        }
-    ],
+    "attachPoints": [],
     "display": {
         "firstperson_righthand": {
             "rotation": [

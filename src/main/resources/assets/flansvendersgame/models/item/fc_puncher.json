@@ -1182,8 +1182,8 @@
             "name": "barrel",
             "attachTo": "body",
             "offset": [
-                0.0,
-                0.0,
+                12.0,
+                4.0,
                 0.0
             ]
         },
@@ -1191,8 +1191,8 @@
             "name": "sights",
             "attachTo": "break_action",
             "offset": [
-                0.0,
-                0.0,
+                -1.0,
+                2.0,
                 0.0
             ]
         },
@@ -1219,7 +1219,25 @@
             "attachTo": "body",
             "offset": [
                 0.0,
-                0.0,
+                6.0,
+                0.0
+            ]
+        },
+        {
+            "name": "shoot_origin",
+            "attachTo": "body",
+            "offset": [
+                12.0,
+                4.0,
+                0.0
+            ]
+        },
+        {
+            "name": "grip",
+            "attachTo": "body",
+            "offset": [
+                5.0,
+                2.0,
                 0.0
             ]
         }

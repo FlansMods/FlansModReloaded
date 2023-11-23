@@ -325,8 +325,9 @@ public abstract class FlanItemModelRenderer extends BlockEntityWithoutLevelRende
 
         if(myEyeLines.size() > 0)
         {
+            Vector3f srcOffset = UnbakedRig.GetTransforms(transformType).translation;
             boolean leftHanded = transformType == ItemTransforms.TransformType.FIRST_PERSON_LEFT_HAND;
-            Vector3d returnToCenter = new Vector3d(0f, 7f, leftHanded ? 8f : -8f);
+            Vector3d returnToCenter = new Vector3d(0f, -srcOffset.y*16f, leftHanded ? 8f : -8f);
 
             Vector3d targetDelta = returnToCenter.sub(myEyeLines.get(0).position);
             Quaternionf targetRotation = myEyeLines.get(0).orientation;

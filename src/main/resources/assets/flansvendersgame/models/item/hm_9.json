@@ -901,6 +901,15 @@
                 4.0,
                 0.0
             ]
+        },
+        {
+            "name": "shoot_origin",
+            "attachTo": "body",
+            "offset": [
+                0.0,
+                0.0,
+                0.0
+            ]
         }
     ],
     "display": {

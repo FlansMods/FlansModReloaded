@@ -195,9 +195,9 @@
                     "duration": 0.0,
                     "sounds": [
                         {
-                            "sound": "flansmod:gunshot_clang",
+                            "sound": "flansmod:gunshot_kapow",
                             "length": 0.0,
-                            "minPitchMultiplier": 0.8333333,
+                            "minPitchMultiplier": 1.0,
                             "maxPitchMultiplier": 1.25,
                             "minVolume": 1.0,
                             "maxVolume": 1.0,

@@ -77,9 +77,9 @@
                         "0"
                     ],
                     "rotation": [
-                        "5",
+                        "30",
                         "0",
-                        "-10"
+                        "10"
                     ],
                     "scale": [
                         1.0,
@@ -435,6 +435,50 @@
             "parents": [
                 "ready_to_cock"
             ]
+        },
+        {
+            "name": "ammo_inserted",
+            "poses": [
+                {
+                    "applyTo": "ammo_0",
+                    "position": [
+                        "-10",
+                        "1",
+                        "0"
+                    ],
+                    "rotation": [
+                        "0",
+                        "0",
+                        "0"
+                    ],
+                    "scale": [
+                        1.0,
+                        1.0,
+                        1.0
+                    ]
+                },
+                {
+                    "applyTo": "body",
+                    "position": [
+                        "0",
+                        "0",
+                        "0"
+                    ],
+                    "rotation": [
+                        "30",
+                        "0",
+                        "10"
+                    ],
+                    "scale": [
+                        1.0,
+                        1.0,
+                        1.0
+                    ]
+                }
+            ],
+            "parents": [
+                "ready_to_reload"
+            ]
         }
     ],
     "sequences": [
@@ -487,14 +531,14 @@
                 {
                     "tick": 0,
                     "entry": "linear",
-                    "exit": "smooth",
+                    "exit": "linear",
                     "frame": "ammo_grab_from_left"
                 },
                 {
                     "tick": 6,
-                    "entry": "smooth",
-                    "exit": "smooth",
-                    "frame": "ammo_ejected"
+                    "entry": "linear",
+                    "exit": "linear",
+                    "frame": "ammo_inserted"
                 },
                 {
                     "tick": 12,

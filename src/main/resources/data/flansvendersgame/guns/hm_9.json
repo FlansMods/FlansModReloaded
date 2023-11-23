@@ -190,7 +190,7 @@
                     "duration": 0.0,
                     "sounds": [
                         {
-                            "sound": "flansmod:gunshot_jolt",
+                            "sound": "flansmod:gunshot_snap",
                             "length": 0.0,
                             "minPitchMultiplier": 0.8333333,
                             "maxPitchMultiplier": 1.25,

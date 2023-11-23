@@ -46,11 +46,9 @@ public class ActionUpdateMessage extends FlansModMessage
 	private final ActionGroupNetID Context;
 	private EPressType PressType;
 	private final HashMap<Integer, ActionTriggerInfo> Triggers = new HashMap<>();
-	private final List<EActionInput> Reloads = new ArrayList<>();
 
 	public EPressType GetPressType() { return PressType; }
 	public Set<Map.Entry<Integer, ActionTriggerInfo>> GetTriggers() { return Triggers.entrySet(); }
-	public Iterable<EActionInput> GetReloads() { return Reloads; }
 	public long GetStartTick() { return StartTick; }
 	public int GetFirstTriggerIndex() {
 		int firstIndex = Integer.MAX_VALUE;
@@ -159,12 +157,6 @@ public class ActionUpdateMessage extends FlansModMessage
 				netData.Encode(buf);
 			}
 		}
-
-		buf.writeInt(Reloads.size());
-		for(EActionInput reload : Reloads)
-		{
-			buf.writeByte(reload.ordinal());
-		}
 	}
 
 	@Override
@@ -194,13 +186,6 @@ public class ActionUpdateMessage extends FlansModMessage
 			}
 
 			Triggers.put(triggerIndex, triggerInfo);
-		}
-
-		int numReloads = buf.readInt();
-		for (int i = 0; i < numReloads; i++)
-		{
-			// Reload Definition
-			Reloads.add(EActionInput.values()[buf.readByte()]);
 		}
 	}
 }

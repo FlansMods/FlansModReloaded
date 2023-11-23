@@ -3719,6 +3719,15 @@
                 2.0,
                 0.0
             ]
+        },
+        {
+            "name": "sights",
+            "attachTo": "body",
+            "offset": [
+                1.5,
+                4.5,
+                0.0
+            ]
         }
     ],
     "display": {

@@ -1,6 +1,5 @@
 package com.flansmod.common.gunshots;
 
-import com.flansmod.common.actions.EActionInput;
 import com.flansmod.common.types.elements.ModifierDefinition;
 
 public class ModifierStack

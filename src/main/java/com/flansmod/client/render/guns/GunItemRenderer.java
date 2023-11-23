@@ -31,8 +31,8 @@ public class GunItemRenderer extends FlanItemModelRenderer
     {
         ShooterContext shooterContext = ShooterContext.GetOrCreate(heldByEntity);
         GunContext gunContext = shooterContext.IsValid() ?
-            GunContext.GetActionGroupContext(shooterContext, MinecraftHelpers.GetHand(renderContext.TransformType)) :
-            GunContext.GetActionGroupContext(stack);
+            GunContext.GetGunContext(shooterContext, MinecraftHelpers.GetHand(renderContext.TransformType)) :
+            GunContext.GetGunContext(stack);
         if(gunContext.IsValid())
         {
             // If there is a valid action stack applicable to this gun, scan it for animation actions
@@ -66,7 +66,7 @@ public class GunItemRenderer extends FlanItemModelRenderer
                     }
                     else if(partName.startsWith("ammo_"))
                     {
-                        ActionGroupContext primaryContext = ActionGroupContext.CreateFrom(gunContext, "primary");
+                        ActionGroupContext primaryContext = ActionGroupContext.CreateFrom(gunContext, Actions.DefaultPrimaryActionKey);
                         if(primaryContext.IsValid())
                         {
                             String indexString = partName.substring("ammo_".length());

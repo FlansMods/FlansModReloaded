@@ -11,6 +11,7 @@ import com.flansmod.common.types.elements.ModifierDefinition;
 import com.flansmod.common.types.guns.elements.EActionType;
 import com.flansmod.common.types.guns.elements.ERepeatMode;
 import com.flansmod.common.types.guns.GunDefinition;
+import com.flansmod.common.types.guns.elements.ReloadDefinition;
 import com.flansmod.common.types.magazines.MagazineDefinition;
 import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.Multimap;
@@ -63,7 +64,7 @@ public class GunItem extends FlanItem
 
     public GunContext GetContext(ItemStack stack)
     {
-        return GunContext.GetActionGroupContext(stack);
+        return GunContext.GetGunContext(stack);
     }
 
     @Override
@@ -77,7 +78,7 @@ public class GunItem extends FlanItem
         GunContext gunContext = GetContext(stack);
         if(gunContext.IsValid())
         {
-            ActionGroupContext actionContext = ActionGroupContext.CreateFrom(gunContext, "primary");
+            ActionGroupContext actionContext = ActionGroupContext.CreateFrom(gunContext, Actions.DefaultPrimaryActionKey);
             if (actionContext.IsValid())
             {
                 boolean advanced = flags.isAdvanced();
@@ -158,10 +159,21 @@ public class GunItem extends FlanItem
 
     public CompoundTag GetRootTag(ItemStack stack, String groupPath)
     {
-        if(!stack.getOrCreateTag().contains(groupPath))
-            stack.getOrCreateTag().put(groupPath, new CompoundTag());
+        String rootTagName = groupPath;
+        GunContext gunContext = GunContext.GetGunContext(stack);
+        if(gunContext.IsValid())
+        {
+            ActionGroupContext actionGroupContext = gunContext.GetActionGroupContext(groupPath);
+            ReloadDefinition reloadDef = gunContext.GetReloadDefinitionContaining(actionGroupContext);
+            if(reloadDef != null)
+            {
+                rootTagName = reloadDef.key;
+            }
+        }
+        if(!stack.getOrCreateTag().contains(rootTagName))
+            stack.getOrCreateTag().put(rootTagName, new CompoundTag());
 
-        return stack.getOrCreateTag().getCompound(groupPath);
+        return stack.getOrCreateTag().getCompound(rootTagName);
     }
 
     public CompoundTag GetMagTag(ItemStack stack, String groupPath, int magIndex)
@@ -252,10 +264,10 @@ public class GunItem extends FlanItem
     public boolean isCorrectToolForDrops(ItemStack stack, BlockState blockState)
     {
         List<Tier> tiers = TierSortingRegistry.getSortedTiers();
-        GunContext gunContext = GunContext.GetActionGroupContext(stack);
+        GunContext gunContext = GunContext.GetGunContext(stack);
         for (ActionDefinition actionDef : gunContext.GetPotentialPrimaryActions())
         {
-            int harvestLevel = actionDef.ToolLevel("primary");
+            int harvestLevel = actionDef.ToolLevel(Actions.DefaultPrimaryActionKey);
             switch (actionDef.actionType)
             {
                 case Melee -> { return blockState.is(Blocks.COBWEB); }
@@ -305,7 +317,7 @@ public class GunItem extends FlanItem
                 if (player.getInventory().selected == i)
                 {
                     // If we have a vanilla left-click action, don't do anything
-                    GunContext gunContext = GunContext.GetActionGroupContext(stack);
+                    GunContext gunContext = GunContext.GetGunContext(stack);
                     for (ActionDefinition actionDef : gunContext.GetPotentialPrimaryActions())
                     {
                         switch (actionDef.actionType)
@@ -326,10 +338,10 @@ public class GunItem extends FlanItem
     @Override
     public Multimap<Attribute, AttributeModifier> getAttributeModifiers(EquipmentSlot slot, ItemStack stack)
     {
-        GunContext gunContext = GunContext.GetActionGroupContext(stack);
+        GunContext gunContext = GunContext.GetGunContext(stack);
         if(gunContext.IsValid())
         {
-            ActionGroupContext actionGroupContext = gunContext.GetActionGroupContext("primary");
+            ActionGroupContext actionGroupContext = gunContext.GetActionGroupContext(Actions.DefaultPrimaryActionKey);
             if(actionGroupContext.IsValid())
             {
                 ImmutableMultimap.Builder<Attribute, AttributeModifier> builder = ImmutableMultimap.builder();
@@ -374,7 +386,7 @@ public class GunItem extends FlanItem
     @Nonnull
     public UseAnim getUseAnimation(@Nonnull ItemStack stack)
     {
-        GunContext gunContext = GunContext.GetActionGroupContext(stack);
+        GunContext gunContext = GunContext.GetGunContext(stack);
         for (ActionDefinition actionDef : gunContext.GetPotentialSecondaryActions())
         {
             switch (actionDef.actionType)
@@ -387,7 +399,7 @@ public class GunItem extends FlanItem
     @Override
     public int getUseDuration(@Nonnull ItemStack stack)
     {
-        GunContext gunContext = GunContext.GetActionGroupContext(stack);
+        GunContext gunContext = GunContext.GetGunContext(stack);
         for (ActionDefinition actionDef : gunContext.GetPotentialSecondaryActions())
         {
             switch (actionDef.actionType)
@@ -455,7 +467,7 @@ public class GunItem extends FlanItem
     @Override
     public boolean canPerformAction(ItemStack stack, ToolAction toolAction)
     {
-        GunContext gunContext = GunContext.GetActionGroupContext(stack);
+        GunContext gunContext = GunContext.GetGunContext(stack);
         if(gunContext.IsValid())
         {
             // If this is a right click action, check secondary

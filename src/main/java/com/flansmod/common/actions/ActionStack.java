@@ -167,7 +167,10 @@ public class ActionStack
 					actionGroup.OnTickServer();
 			}
 			else
-				FlansMod.LOGGER.error("Action was left in the system without being started");
+			{
+				FlansMod.LOGGER.error("Action " + ActiveActionGroups.get(i).Def.key + " was left in the system without being started");
+				StopActionGroup(actionGroup.Context);
+			}
 
 			if(actionGroup.Finished())
 			{
@@ -359,7 +362,7 @@ public class ActionStack
 	// -------------------------------------------------------------------------------------------------
 	public EActionResult Server_TryHandleMessage(ActionUpdateMessage.ToServer msg, ServerPlayer from)
 	{
-		if(IsClient)
+		if (IsClient)
 		{
 			FlansMod.LOGGER.error("Called Server function on client in ActionStack!");
 			return EActionResult.TryNextAction;
@@ -367,7 +370,7 @@ public class ActionStack
 
 		// Check that this is a valid context
 		ActionGroupContext groupContext = msg.Data.GetActionGroupContext(false);
-		if(!groupContext.IsValid())
+		if (!groupContext.IsValid())
 		{
 			FlansMod.LOGGER.warn("OnServerReceivedActionUpdate had invalid action");
 			return EActionResult.TryNextAction;
@@ -375,22 +378,22 @@ public class ActionStack
 
 		EActionResult startResult = EActionResult.CanProcess;
 		ActionGroupInstance groupInstance = GetOrCreateGroupInstance(groupContext);
-		if(!groupInstance.HasStarted())
+		if (!groupInstance.HasStarted())
 		{
 			// Start the instance if we need to, though this should really only happen on Press actions
-			if(msg.Data.GetPressType() != EPressType.Press)
+			if (msg.Data.GetPressType() != EPressType.Press)
 				FlansMod.LOGGER.warn("Received ActionUpdateMessage with wrong press type for action that was not already running");
 			startResult = TryStartGroupInstance(groupContext);
 		}
 
-		for(var kvp : msg.Data.GetTriggers())
+		for (var kvp : msg.Data.GetTriggers())
 		{
 			int triggerIndex = kvp.getKey();
 			// TODO: Verify that this triggerIndex is valid. Rate limit to the gun fire rate for example
 			int actionIndex = 0;
-			for(ActionInstance action : groupInstance.GetActions())
+			for (ActionInstance action : groupInstance.GetActions())
 			{
-				if(!action.VerifyServer(null))
+				if (!action.VerifyServer(null))
 					startResult = EActionResult.Wait;
 
 				ActionInstance.NetData netData = msg.Data.GetNetData(triggerIndex, actionIndex);
@@ -400,18 +403,17 @@ public class ActionStack
 			}
 
 			// When we get a release message, we may need to do a bit of catchup in missed triggers
-			if(msg.Data.GetPressType() == EPressType.Release)
+			if (msg.Data.GetPressType() == EPressType.Release)
 			{
 				// Check the action stack for this action/gun pairing and see if any of them are waiting for mouse release
 				long numTicks = msg.Data.GetLastTriggerTick() - groupInstance.GetStartedTick();
 				int expectedTriggerCount = Maths.Floor(numTicks / groupContext.RepeatDelayTicks()) + 1;
 				int serverTriggerCount = groupInstance.GetTriggerCount();
 
-				if(expectedTriggerCount > serverTriggerCount)
+				if (expectedTriggerCount > serverTriggerCount)
 				{
 					FlansMod.LOGGER.info("Client expected to trigger " + expectedTriggerCount + " repeat(s), but server only triggered " + serverTriggerCount + " repeat(s)");
-				}
-				else if(expectedTriggerCount < serverTriggerCount)
+				} else if (expectedTriggerCount < serverTriggerCount)
 				{
 					FlansMod.LOGGER.info("Client expected to trigger " + expectedTriggerCount + " repeat(s), but server triggered " + serverTriggerCount + " many repeat(s)");
 				}
@@ -420,26 +422,34 @@ public class ActionStack
 		}
 
 		// Send a message to the server about these actions if required
-		if (startResult == EActionResult.CanProcess && (groupInstance.PropogateToServer() || groupInstance.NeedsNetSync()))
+		if (startResult == EActionResult.CanProcess)
 		{
-			double radius = groupInstance.GetPropogationRadius();
-
-			// Find out which positions we want to map around
-			List<Vec3> positions = new ArrayList<>(2);
-			for(var kvp : msg.Data.GetTriggers())
+			if (groupInstance.PropogateToServer() || groupInstance.NeedsNetSync())
 			{
-				groupInstance.AddExtraPositionsForNetSync(kvp.getKey(), positions);
-			}
-			if(groupInstance.ShouldAddPlayerPosForNetSync())
-				positions.add(groupContext.Gun.GetShooter().GetShootOrigin().PositionVec3());
+				double radius = groupInstance.GetPropogationRadius();
 
-			// Then send them some messages about the shot
-			FlansModPacketHandler.SendToAllAroundPoints(
-				new ActionUpdateMessage.ToClient(msg.Data),
-				from.level.dimension(),
-				positions,
-				radius,
-				groupContext.Gun.GetShooter().Owner());
+				// Find out which positions we want to map around
+				List<Vec3> positions = new ArrayList<>(2);
+				for (var kvp : msg.Data.GetTriggers())
+				{
+					groupInstance.AddExtraPositionsForNetSync(kvp.getKey(), positions);
+				}
+				if (groupInstance.ShouldAddPlayerPosForNetSync())
+					positions.add(groupContext.Gun.GetShooter().GetShootOrigin().PositionVec3());
+
+				// Then send them some messages about the shot
+				FlansModPacketHandler.SendToAllAroundPoints(
+					new ActionUpdateMessage.ToClient(msg.Data),
+					from.level.dimension(),
+					positions,
+					radius,
+					groupContext.Gun.GetShooter().Owner());
+			}
+		}
+		else
+		{
+			FlansMod.LOGGER.warn("Server believes we cannot start " + groupContext + " that client sent us");
+			CancelGroupInstance(groupContext);
 		}
 
 		return startResult;

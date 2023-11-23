@@ -174,7 +174,7 @@
                     "duration": 0.0,
                     "sounds": [
                         {
-                            "sound": "flansmod:gunshot_ptoo",
+                            "sound": "flansmod:gunshot_slam",
                             "length": 0.0,
                             "minPitchMultiplier": 0.8333333,
                             "maxPitchMultiplier": 1.25,
@@ -435,15 +435,10 @@
     "magazines": [
         {
             "key": "primary",
-            "matchByNames": [
-                "m9ammo",
-                "makarov_ammo",
-                "m1911ammo",
-                "sig_p226ammo",
-                "usp_ammo",
-                "usp_poison_ammo"
+            "matchByNames": [],
+            "matchByTags": [
+                "flansvendersgame:venders_customs_viper"
             ],
-            "matchByTags": [],
             "baseCostToSwap": 0
         }
     ],
@@ -474,7 +469,7 @@
     "stockAttachments": {
         "allowlist": [],
         "allowAll": true,
-        "numAttachmentSlots": 0,
+        "numAttachmentSlots": 1,
         "hideDefaultMesh": true
     },
     "scopeAttachments": {

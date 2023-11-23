@@ -252,15 +252,6 @@
     },
     "attachPoints": [
         {
-            "name": "grip",
-            "attachTo": "pump",
-            "offset": [
-                9.0,
-                2.75,
-                0.0
-            ]
-        },
-        {
             "name": "bullet_origin",
             "attachTo": "body",
             "offset": [

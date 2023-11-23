@@ -245,7 +245,7 @@
     },
     "attachPoints": [
         {
-            "name": "bullet_origin",
+            "name": "shoot_origin",
             "attachTo": "body",
             "offset": [
                 6.0,

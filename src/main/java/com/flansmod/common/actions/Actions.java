@@ -6,6 +6,8 @@ import javax.annotation.Nonnull;
 
 public class Actions
 {
+	public static final String DefaultPrimaryActionKey = "primary_fire";
+
 	public static ActionInstance InstanceAction(@Nonnull ActionGroupInstance group, @Nonnull ActionDefinition def)
 	{
 		switch(def.actionType)

@@ -1,7 +1,5 @@
 package com.flansmod.common.gunshots;
 
-import com.flansmod.common.actions.ActionGroupContext;
-import com.flansmod.common.actions.EActionInput;
 import com.flansmod.common.actions.GunContext;
 import com.flansmod.common.types.elements.ModifierDefinition;
 import com.flansmod.util.MinecraftHelpers;
@@ -37,7 +35,7 @@ public abstract class ShooterContext
 		@Override
 		public GunContext CreateForGunIndex(int gunSlotIndex) { return GunContext.INVALID; }
 		@Override
-		public GunContext CreateForSpecificStack(int gunSlotIndex, ItemStack stack) { return GunContext.GetActionGroupContext(stack); }
+		public GunContext CreateForSpecificStack(int gunSlotIndex, ItemStack stack) { return GunContext.GetGunContext(stack); }
 		@Override
 		public Entity Entity() { return null; }
 		@Override

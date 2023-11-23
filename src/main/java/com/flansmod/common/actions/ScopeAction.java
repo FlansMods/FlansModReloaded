@@ -20,7 +20,18 @@ public class ScopeAction extends AimDownSightAction
 
 	public ResourceLocation GetOverlayLocation()
 	{
-		return new ResourceLocation("flansmod", "textures/scopes/" + ZoomOverlay() + ".png");
+		String loc = ZoomOverlay();
+		if(loc.contains(":"))
+		{
+			String namespace = loc.substring(0, loc.indexOf(":"));
+			String id = loc.substring(loc.indexOf(":") + 1);
+			if(id.contains("textures/gui/"))
+				return new ResourceLocation(namespace, id + ".png");
+			else if(id.contains("gui/"))
+				return new ResourceLocation(namespace, "textures/" + id + ".png");
+			return new ResourceLocation(namespace, "textures/gui/" + id + ".png");
+		}
+		return new ResourceLocation("flansmod", "textures/gui/" + loc + ".png");
 	}
 	public String ZoomOverlay() { return Group.Context.ModifyString(ModifierDefinition.STAT_ZOOM_SCOPE_OVERLAY, Def.scopeOverlay); }
 

@@ -11,21 +11,6 @@
                 "textureName": "hm_1200_wood",
                 "paintBucketsRequired": 1,
                 "entitlementKey": ""
-            },
-            {
-                "textureName": "hm_1200_blue",
-                "paintBucketsRequired": 1,
-                "entitlementKey": ""
-            },
-            {
-                "textureName": "hm_1200_periwinkle",
-                "paintBucketsRequired": 1,
-                "entitlementKey": ""
-            },
-            {
-                "textureName": "hm_1200_zebra",
-                "paintBucketsRequired": 1,
-                "entitlementKey": ""
             }
         ]
     },

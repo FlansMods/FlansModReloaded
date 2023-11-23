@@ -1,6 +1,5 @@
 package com.flansmod.common.types.elements;
 
-import com.flansmod.common.actions.EActionInput;
 import com.flansmod.common.types.JsonField;
 import com.flansmod.util.Maths;
 import net.minecraft.network.chat.Component;

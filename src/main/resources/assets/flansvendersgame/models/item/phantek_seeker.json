@@ -74,7 +74,7 @@
                     "rotationOrigin": [
                         0.0,
                         0.0,
-                        2.0
+                        0.0
                     ],
                     "faces": {
                         "north": {
@@ -186,7 +186,7 @@
                     "rotationOrigin": [
                         0.0,
                         0.0,
-                        2.0
+                        0.0
                     ],
                     "faces": {
                         "north": {
@@ -298,7 +298,7 @@
                     "rotationOrigin": [
                         0.0,
                         0.0,
-                        2.0
+                        0.0
                     ],
                     "faces": {
                         "north": {
@@ -410,7 +410,7 @@
                     "rotationOrigin": [
                         0.0,
                         0.0,
-                        2.0
+                        0.0
                     ],
                     "faces": {
                         "north": {
@@ -522,7 +522,7 @@
                     "rotationOrigin": [
                         0.0,
                         0.0,
-                        2.0
+                        0.0
                     ],
                     "faces": {
                         "north": {
@@ -643,7 +643,7 @@
                     "rotationOrigin": [
                         0.0,
                         3.5,
-                        2.0
+                        0.0
                     ],
                     "faces": {
                         "north": {
@@ -755,7 +755,7 @@
                     "rotationOrigin": [
                         0.0,
                         3.5,
-                        2.0
+                        0.0
                     ],
                     "faces": {
                         "north": {
@@ -867,7 +867,7 @@
                     "rotationOrigin": [
                         0.0,
                         3.5,
-                        2.0
+                        0.0
                     ],
                     "faces": {
                         "north": {
@@ -936,7 +936,12 @@
             "name": "sights",
             "attachTo": "body",
             "offset": [
-                0.0,
+                6.0,
+                3.5,
+                1.0
+            ],
+            "euler": [
+                90.0,
                 0.0,
                 0.0
             ]
@@ -945,8 +950,8 @@
             "name": "barrel",
             "attachTo": "body",
             "offset": [
-                0.0,
-                0.0,
+                12.0,
+                3.5,
                 0.0
             ]
         },
@@ -978,7 +983,16 @@
             "attachTo": "body",
             "offset": [
                 0.0,
-                0.0,
+                3.5,
+                2.5
+            ]
+        },
+        {
+            "name": "shoot_origin",
+            "attachTo": "body",
+            "offset": [
+                12.0,
+                3.5,
                 0.0
             ]
         }

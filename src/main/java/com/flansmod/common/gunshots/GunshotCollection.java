@@ -1,7 +1,6 @@
 package com.flansmod.common.gunshots;
 
 import com.flansmod.common.FlansMod;
-import com.flansmod.common.actions.EActionInput;
 import com.flansmod.common.types.guns.GunDefinition;
 import com.flansmod.util.MinecraftHelpers;
 import net.minecraft.core.registries.Registries;

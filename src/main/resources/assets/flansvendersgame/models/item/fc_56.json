@@ -4348,7 +4348,7 @@
             "attachTo": "body",
             "offset": [
                 0.0,
-                0.0,
+                4.0,
                 0.0
             ]
         },
@@ -4356,8 +4356,8 @@
             "name": "barrel",
             "attachTo": "body",
             "offset": [
-                0.0,
-                0.0,
+                30.875,
+                3.0,
                 0.0
             ]
         },
@@ -4384,7 +4384,16 @@
             "attachTo": "body",
             "offset": [
                 0.0,
-                0.0,
+                5.0,
+                0.0
+            ]
+        },
+        {
+            "name": "shoot_origin",
+            "attachTo": "body",
+            "offset": [
+                30.875,
+                3.0,
                 0.0
             ]
         }

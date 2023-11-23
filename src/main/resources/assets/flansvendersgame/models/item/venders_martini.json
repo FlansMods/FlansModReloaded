@@ -3664,6 +3664,51 @@
                 0.0,
                 0.0
             ]
+        },
+        {
+            "name": "barrel",
+            "attachTo": "body",
+            "offset": [
+                36.0,
+                5.0,
+                0.0
+            ]
+        },
+        {
+            "name": "shoot_origin",
+            "attachTo": "body",
+            "offset": [
+                36.0,
+                5.0,
+                0.0
+            ]
+        },
+        {
+            "name": "sights",
+            "attachTo": "body",
+            "offset": [
+                11.5,
+                6.0,
+                0.0
+            ]
+        },
+        {
+            "name": "grip",
+            "attachTo": "body",
+            "offset": [
+                19.0,
+                3.0,
+                0.0
+            ]
+        },
+        {
+            "name": "eye_line",
+            "attachTo": "body",
+            "offset": [
+                0.0,
+                6.5,
+                0.0
+            ]
         }
     ],
     "display": {

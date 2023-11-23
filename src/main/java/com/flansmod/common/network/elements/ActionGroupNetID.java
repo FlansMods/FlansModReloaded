@@ -1,6 +1,5 @@
 package com.flansmod.common.network.elements;
 
-import com.flansmod.common.actions.EActionInput;
 import net.minecraft.network.FriendlyByteBuf;
 
 import java.util.UUID;

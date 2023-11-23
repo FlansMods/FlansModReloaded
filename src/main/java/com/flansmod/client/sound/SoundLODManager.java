@@ -56,7 +56,7 @@ public class SoundLODManager
 					pitchMulti * soundDef.PickRandomPitch(Minecraft.getInstance().level.random),
 					true);
 
-				FlansMod.LOGGER.info("Played " + soundToPlay + " at " + onEntity.position());
+				//FlansMod.LOGGER.info("Played " + soundToPlay + " at " + onEntity.position());
 			}
 		}
 	}

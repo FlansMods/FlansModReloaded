@@ -3753,8 +3753,8 @@
             "name": "barrel",
             "attachTo": "body",
             "offset": [
-                0.0,
-                0.0,
+                31.75,
+                3.0,
                 0.0
             ]
         },
@@ -3781,7 +3781,25 @@
             "attachTo": "body",
             "offset": [
                 0.0,
-                0.0,
+                5.0,
+                0.0
+            ]
+        },
+        {
+            "name": "shoot_origin",
+            "attachTo": "body",
+            "offset": [
+                31.75,
+                3.0,
+                0.0
+            ]
+        },
+        {
+            "name": "grip",
+            "attachTo": "body",
+            "offset": [
+                12.0,
+                0.5,
                 0.0
             ]
         }
@@ -3799,9 +3817,9 @@
                 -13.0
             ],
             "scale": [
-                0.576,
-                0.576,
-                0.576
+                1.0,
+                1.0,
+                1.0
             ]
         },
         "firstperson_lefthand": {
@@ -3816,9 +3834,9 @@
                 -13.0
             ],
             "scale": [
-                0.576,
-                0.576,
-                0.576
+                1.0,
+                1.0,
+                1.0
             ]
         },
         "thirdperson_righthand": {

@@ -311,7 +311,7 @@ public class ClientRenderHooks
 
 			int x = anchorX + 113;
 
-			ActionGroupContext mainHandPrimaryContext = ActionGroupContext.CreateFrom(mainContext, "primary_fire");
+			ActionGroupContext mainHandPrimaryContext = ActionGroupContext.CreateFrom(mainContext, Actions.DefaultPrimaryActionKey);
 			if(mainHandPrimaryContext.IsShootAction())
 			{
 				MagazineDefinition magDef = mainHandPrimaryContext.GetMagazineType(0);
@@ -372,7 +372,7 @@ public class ClientRenderHooks
 			//Minecraft.getInstance().getItemRenderer().renderGuiItem(offContext.GetItemStack(), anchorX - 95 - 16, anchorY - 19);
 
 			int x = anchorX - 113 - 22;
-			ActionGroupContext offHandPrimaryContext = ActionGroupContext.CreateFrom(offContext, "primary_fire");
+			ActionGroupContext offHandPrimaryContext = ActionGroupContext.CreateFrom(offContext, Actions.DefaultPrimaryActionKey);
 			if(offHandPrimaryContext.IsShootAction())
 			{
 				MagazineDefinition magDef = offHandPrimaryContext.GetMagazineType(0);
