@@ -21,7 +21,7 @@ public class GunContextItem extends GunContext
 	public void OnItemStackChanged(ItemStack stack) { }
 	// Kinda want to return a "Maybe" here
 	@Override
-	public boolean IsItemStackStillInPlace() { return false; }
+	public boolean UpdateFromItemStack() { return false; }
 	@Override
 	public DamageSource CreateDamageSource() { return DamageSource.GENERIC; }
 	@Override

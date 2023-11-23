@@ -40,7 +40,14 @@ public class GunContextLiving extends GunContext
 		}
 	}
 	@Override
-	public boolean IsItemStackStillInPlace() { return !StackUpdateWouldInvalidate(Hand == InteractionHand.MAIN_HAND ? ShooterContext.Shooter.getMainHandItem() : ShooterContext.Shooter.getOffhandItem()); }
+	public boolean UpdateFromItemStack()
+	{
+		ItemStack currentStack = Hand == InteractionHand.MAIN_HAND ? ShooterContext.Shooter.getMainHandItem() : ShooterContext.Shooter.getOffhandItem();
+		boolean invalidate = StackUpdateWouldInvalidate(currentStack);
+		if(!invalidate)
+			Stack = currentStack.copy();
+		return invalidate;
+	}
 	@Override
 	public Container GetAttachedInventory() { return ShooterContext.GetAttachedInventory(); }
 	@Override

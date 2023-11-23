@@ -360,7 +360,7 @@ public class ActionGroupInstance
 	public boolean PropogateToServer()
 	{
 		for(ActionInstance action : Actions)
-			if(action.PropogateToServer())
+			if(action.PropogateToServer() || Context.Gun.GetReloadDefinitionContaining(Context) != null)
 				return true;
 		return false;
 	}

@@ -217,8 +217,12 @@ public abstract class ShooterContext
 		if(gunsInSlot.size() != 0)
 		{
 			GunContext mostRecentGun = gunsInSlot.get(gunsInSlot.size() - 1);
-			if (mostRecentGun.IsValid() && mostRecentGun.IsItemStackStillInPlace())
-				return mostRecentGun;
+			if (mostRecentGun.IsValid())
+			{
+				boolean invalidated = mostRecentGun.UpdateFromItemStack();
+				if(!invalidated)
+					return mostRecentGun;
+			}
 		}
 
 		// If there wasn't a good most recent gun, we should check to see if the slot has a new gun in it

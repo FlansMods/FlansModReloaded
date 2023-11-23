@@ -43,7 +43,14 @@ public class GunContextPlayer extends GunContextLiving
 		}
 	}
 	@Override
-	public boolean IsItemStackStillInPlace() { return !StackUpdateWouldInvalidate(Player.getInventory().getItem(InventorySlot)); }
+	public boolean UpdateFromItemStack()
+	{
+		ItemStack currentStack = Player.getInventory().getItem(InventorySlot);
+		boolean invalidate = StackUpdateWouldInvalidate(currentStack);
+		if(!invalidate)
+			Stack = currentStack.copy();
+		return invalidate;
+	}
 	@Override
 	public Inventory GetAttachedInventory()
 	{
@@ -73,6 +80,6 @@ public class GunContextPlayer extends GunContextLiving
 	@Override
 	public String toString()
 	{
-		return "GunContextPlayer:" + GetItemStack().toString() + " held by " + Player;
+		return "GunContextPlayer:" + GetItemStack().toString() + " held by " + Player + " in slot " + InventorySlot;
 	}
 }

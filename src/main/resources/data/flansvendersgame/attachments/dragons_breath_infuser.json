@@ -6,7 +6,7 @@
             "flansmod:generic"
         ]
     },
-    "attachmentType": "Generic",
+    "attachmentType": "Barrel",
     "modifiers": [
         {
             "Stat": "set_fire_to_target",

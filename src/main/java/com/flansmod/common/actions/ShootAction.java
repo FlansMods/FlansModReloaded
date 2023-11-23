@@ -6,6 +6,7 @@ import com.flansmod.common.FlansMod;
 import com.flansmod.common.gunshots.*;
 import com.flansmod.common.item.BulletItem;
 import com.flansmod.common.projectiles.BulletEntity;
+import com.flansmod.common.types.bullets.BulletDefinition;
 import com.flansmod.common.types.guns.elements.ActionDefinition;
 import com.flansmod.common.types.guns.elements.ESpreadPattern;
 import com.flansmod.util.Maths;
@@ -137,7 +138,7 @@ public class ShootAction extends ActionInstance
 	{
 		if(!Group.Context.CanShoot(0))
 			return false;
-		if(!Group.Context.Gun.IsItemStackStillInPlace())
+		if(!Group.Context.Gun.UpdateFromItemStack())
 			return false;
 
 		return true;
@@ -359,11 +360,19 @@ public class ShootAction extends ActionInstance
 		GunshotCollection shotCollection = Results.get(triggerIndex);
 		if(shotCollection != null)
 		{
+			ItemStack bulletFound = Group.Context.ConsumeOneBullet(0);
+			if(bulletFound.isEmpty())
+				FlansMod.LOGGER.warn("Server did not find a bullet to consume for this shot");
+			BulletDefinition bulletDefFound = bulletFound.getItem() instanceof BulletItem bulletItem ? bulletItem.Def() : BulletDefinition.INVALID;
+
 			for(Gunshot shot : shotCollection.Shots)
 			{
 				GunshotContext gunshotContext = GunshotContext.CreateFrom(Group.Context, shot.bulletDef);
 				if(gunshotContext.IsValid())
 				{
+					if(gunshotContext.Bullet != bulletDefFound)
+						FlansMod.LOGGER.warn("Server found a different bullet to the one this shot is claimed to come from");
+
 					if(gunshotContext.Bullet.shootStats.hitscan)
 					{
 						// Hitscan weapons we resolve the hits instantly

@@ -113,29 +113,39 @@ public class ActionGroupContext
 	// ItemStack Operations
 	// --------------------------------------------------------------------------
 	@Nonnull
-	protected CompoundTag GetRootTag()
-	{
-		return Gun.GetOrCreateTags(GroupPath);
-	}
-	@Nonnull
-	protected CompoundTag GetTagForActionGroup(String actionGroupPath) { return Gun.GetOrCreateTags(actionGroupPath); }
-	@Nonnull
-	protected CompoundTag GetMagTag(int magIndex)
+	protected String GetRootTagKey()
 	{
 		// The Magazine tags will be named based on which reload we are part of
 		ReloadDefinition reloadDef = Gun.GetReloadDefinitionContaining(this);
-		CompoundTag rootTag = GetTagForActionGroup(reloadDef != null ? reloadDef.key : GroupPath);
+		return reloadDef != null ? reloadDef.key : GroupPath;
+	}
+	@Nonnull
+	protected CompoundTag GetRootTag()
+	{
+		return Gun.GetTags(GetRootTagKey());
+	}
+	protected void SetRootTag(CompoundTag tags)
+	{
+		Gun.SetTags(GetRootTagKey(), tags);
+	}
+	@Nonnull
+	protected CompoundTag GetMagTag(int magIndex)
+	{
+		CompoundTag rootTag = GetRootTag();
 
 		final String magTag = "mag_" + magIndex;
-		if (!rootTag.contains(magTag))
-			rootTag.put(magTag, new CompoundTag());
-		return rootTag.getCompound(magTag);
+		if (rootTag.contains(magTag))
+			return rootTag.getCompound(magTag);
+		return new CompoundTag();
 	}
-	public int GetTagOrDefault(String key, int def)
+	protected void SetMagTag(int magIndex, CompoundTag tags)
 	{
-		if(GetRootTag().contains(key))
-			return GetRootTag().getInt(key);
-		return def;
+		CompoundTag rootTags = GetRootTag();
+		CompoundTag updatedTags = rootTags.copy();
+
+		updatedTags.put("mag_" + magIndex, tags);
+
+		SetRootTag(updatedTags);
 	}
 	// --------------------------------------------------------------------------
 
@@ -339,7 +349,9 @@ public class ActionGroupContext
 			currentlyParsing = compareAgainst;
 		}
 
-		GetMagTag(magIndex).put("bullets", bulletsTag);
+		CompoundTag updatedMagTags = GetMagTag(magIndex).copy();
+		updatedMagTags.put("bullets", bulletsTag);
+		SetMagTag(magIndex, updatedMagTags);
 	}
 
 	@Nonnull
@@ -447,12 +459,12 @@ public class ActionGroupContext
 
 	public int GetCurrentChamber()
 	{
-		return GetTagOrDefault("chamber", 0);
+		return 0; //GetTagOrDefault("chamber", 0);
 	}
 
 	public void SetCurrentChamber(int chamber)
 	{
-		GetRootTag().putInt("chamber", chamber);
+		//GetRootTag().putInt("chamber", chamber);
 	}
 
 	public void AdvanceChamber()

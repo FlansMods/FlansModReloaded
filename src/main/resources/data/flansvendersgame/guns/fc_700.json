@@ -531,5 +531,5 @@
         "hideDefaultMesh": true
     },
     "modelParts": [],
-    "animationSet": "flansmod:bolt_action_rifle"
+    "animationSet": "flansmod:bolt_action_magazine_fed"
 }

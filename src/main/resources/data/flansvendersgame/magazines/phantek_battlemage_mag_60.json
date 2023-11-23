@@ -1,0 +1,16 @@
+{
+    "tags": [
+        "flansvendersgame:phantek_battlemage"
+    ],
+    "modifiers": [],
+    "ammoLoadMode": "FullMag",
+    "ammoConsumeMode": "FirstNonEmpty",
+    "upgradeCost": 1,
+    "numRounds": 60,
+    "allRoundsMustBeIdentical": false,
+    "matchBulletNames": [],
+    "requiredBulletTags": [
+        "flansmod:rifle_bullet"
+    ],
+    "disallowedBulletTags": []
+}

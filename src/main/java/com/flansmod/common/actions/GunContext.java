@@ -31,7 +31,7 @@ public abstract class GunContext
 		@Override
 		public void OnItemStackChanged(ItemStack stack) {}
 		@Override
-		public boolean IsItemStackStillInPlace() { return false; }
+		public boolean UpdateFromItemStack() { return false; }
 		@Override
 		public DamageSource CreateDamageSource() { return null; }
 		@Override
@@ -170,7 +170,7 @@ public abstract class GunContext
 	// Abstractions
 	// --------------------------------------------------------------------------
 	public abstract void OnItemStackChanged(ItemStack stack);
-	public abstract boolean IsItemStackStillInPlace();
+	public abstract boolean UpdateFromItemStack();
 	public abstract DamageSource CreateDamageSource();
 	@Nonnull
 	public abstract ShooterContext GetShooter();
@@ -202,6 +202,8 @@ public abstract class GunContext
 	}
 	public boolean IsValid()
 	{
+		if(UpdateFromItemStack())
+			return false;
 		if(Stack.isEmpty())
 			return false;
 		if(Stack.getItem() instanceof FlanItem flanItem)
@@ -288,23 +290,18 @@ public abstract class GunContext
 	// ItemStack Operations
 	// --------------------------------------------------------------------------
 	@Nonnull
-	protected CompoundTag GetOrCreateTags(String key)
+	protected CompoundTag GetTags(String key)
 	{
 		CompoundTag root = GetItemStack().getOrCreateTag();
-		if(!root.contains(key))
-		{
-			root.put(key, new CompoundTag());
-		}
-		return root.getCompound(key);
+		if(root.contains(key))
+			return root.getCompound(key);
+		return new CompoundTag();
 	}
-	@Nullable
-	private CompoundTag TryGetTags(String key)
+	protected void SetTags(String key, CompoundTag tags)
 	{
-		if(!GetItemStack().hasTag())
-			return null;
-		if(!GetItemStack().getOrCreateTag().contains(key))
-			return null;
-		return GetItemStack().getOrCreateTag().getCompound(key);
+		ItemStack updatedStack = Stack.copy();
+		updatedStack.getOrCreateTag().put(key, tags);
+		SetItemStack(updatedStack);
 	}
 	// --------------------------------------------------------------------------
 	// CRAFTING HISTORY

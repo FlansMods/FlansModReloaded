@@ -435,9 +435,9 @@
             "key": "primary",
             "matchByNames": [],
             "matchByTags": [
-                "flansvendersgame:phantek_90"
+                "flansvendersgame:phantek_battlemage"
             ],
-            "baseCostToSwap": 0
+            "baseCostToSwap": 1
         }
     ],
     "reloads": [

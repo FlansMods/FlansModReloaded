@@ -73,7 +73,7 @@ public class GunItem extends FlanItem
                                 @NotNull List<Component> tooltips,
                                 @Nonnull TooltipFlag flags)
     {
-        super.appendHoverText(stack, level, tooltips, flags);
+
 
         GunContext gunContext = GetContext(stack);
         if(gunContext.IsValid())
@@ -125,14 +125,12 @@ public class GunItem extends FlanItem
                     ItemStack bulletStack = actionContext.GetBulletAtIndex(0, 0);
                     if(!bulletStack.isEmpty())
                     {
-                        if (bulletStack.isDamageableItem())
-                            tooltips.add(Component.translatable("tooltip.format.single_bullet_stack_with_durability", bulletStack.getHoverName(), bulletStack.getMaxDamage() - bulletStack.getDamageValue(), bulletStack.getMaxDamage()));
-                        else
-                            tooltips.add(Component.translatable("tooltip.format.single_bullet_stack", bulletStack.getHoverName()));
+                         tooltips.add(Component.translatable("tooltip.format.single_bullet_stack", bulletStack.getHoverName()));
                     }
                 }
                 else
                 {
+
                     HashMap<Item, ItemStack> bulletCounts = new HashMap<>();
                     for (int i = 0; i < primaryBullets; i++)
                     {
@@ -155,6 +153,8 @@ public class GunItem extends FlanItem
                 }
             }
         }
+
+        super.appendHoverText(stack, level, tooltips, flags);
     }
 
     public CompoundTag GetRootTag(ItemStack stack, String groupPath)

@@ -30,7 +30,13 @@ public class GunContextInventoryItem extends GunContext
 		}
 	}
 	@Override
-	public boolean IsItemStackStillInPlace() { return !StackUpdateWouldInvalidate(Inv.getItem(Slot)); }
+	public boolean UpdateFromItemStack()
+	{
+		boolean invalidate = StackUpdateWouldInvalidate(Inv.getItem(Slot));
+		if(!invalidate)
+			Stack = Inv.getItem(Slot).copy();
+		return invalidate;
+	}
 	@Override
 	public DamageSource CreateDamageSource() { return DamageSource.GENERIC; }
 	@Override
