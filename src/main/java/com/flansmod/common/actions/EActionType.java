@@ -1,4 +1,4 @@
-package com.flansmod.common.types.guns.elements;
+package com.flansmod.common.actions;
 
 public enum EActionType
 {
@@ -35,4 +35,5 @@ public enum EActionType
 	Shear,				// Vanilla, untested
 	Flatten,			// Vanilla, untested
 
+	AttachEffect,		// TODO:
 }

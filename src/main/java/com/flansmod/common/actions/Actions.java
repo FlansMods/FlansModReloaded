@@ -30,6 +30,7 @@ public class Actions
 				// These are handled with vanilla logic
 				return null;
 			}
+			case AttachEffect 		-> { return new AttachEffectAction(group, def); }
 			default					-> { return null; }
 		}
 		// TODO: Add a registration event for other mods

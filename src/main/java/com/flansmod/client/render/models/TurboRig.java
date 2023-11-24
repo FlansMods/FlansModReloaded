@@ -27,6 +27,7 @@ import org.jetbrains.annotations.Nullable;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
 
+import javax.annotation.Nonnull;
 import javax.json.Json;
 import java.lang.reflect.Type;
 import java.util.*;
@@ -94,12 +95,13 @@ public class TurboRig implements IUnbakedGeometry<TurboRig>, UnbakedModel
 
 	public ItemTransform GetTransforms(ItemTransforms.TransformType transformType) { return Transforms.getTransform(transformType); }
 	@Override
+	@Nonnull
 	public Collection<ResourceLocation> getDependencies() { return Collections.emptyList(); }
 	@Override
-	public void resolveParents(Function<ResourceLocation, UnbakedModel> modelLookup) {}
+	public void resolveParents(@Nonnull Function<ResourceLocation, UnbakedModel> modelLookup) {}
 	@Nullable
 	@Override
-	public BakedModel bake(ModelBaker p_250133_, Function<Material, TextureAtlasSprite> p_119535_, ModelState p_119536_, ResourceLocation p_119537_)
+	public BakedModel bake(@Nonnull ModelBaker p_250133_, @Nonnull Function<Material, TextureAtlasSprite> p_119535_, @Nonnull ModelState p_119536_, @Nonnull ResourceLocation p_119537_)
 	{
 		return new BakedModelProxy();
 	}
@@ -202,6 +204,7 @@ public class TurboRig implements IUnbakedGeometry<TurboRig>, UnbakedModel
 		}
 
 		@Override
+		@Nonnull
 		public List<BakedQuad> getQuads(@org.jetbrains.annotations.Nullable BlockState p_235039_, @org.jetbrains.annotations.Nullable Direction p_235040_, RandomSource p_235041_)
 		{
 			return Collections.emptyList();
@@ -215,10 +218,13 @@ public class TurboRig implements IUnbakedGeometry<TurboRig>, UnbakedModel
 		@Override
 		public boolean isCustomRenderer() { return true; }
 		@Override
+		@Nonnull
 		public TextureAtlasSprite getParticleIcon() { return UnitTextureAtlasSprite.INSTANCE; }
 		@Override
+		@Nonnull
 		public ItemOverrides getOverrides() { return ItemOverrides.EMPTY; }
 		@Override
+		@Nonnull
 		public ItemTransforms getTransforms()
 		{
 			return ItemTransforms.NO_TRANSFORMS;

@@ -60,6 +60,7 @@ public class SpawnEntityAction extends ActionInstance
 							Entity entity = entityType.create(level);
 							if(entity != null)
 							{
+								entity.setPos(blockHit.getLocation());
 								level.addFreshEntity(entity);
 							}
 						}

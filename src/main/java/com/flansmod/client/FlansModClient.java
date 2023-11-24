@@ -121,7 +121,7 @@ public class FlansModClient
 		IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
 		ACTIONS_CLIENT.HookClient(modEventBus);
 		new DebugModelPoser().Init();
-		MODEL_REGISTRATION.hook(modEventBus);
+		MODEL_REGISTRATION.Hook(modEventBus);
 		modEventBus.register(ANIMATIONS);
 		MAGAZINE_ATLAS.Init();
 		InitReflection();

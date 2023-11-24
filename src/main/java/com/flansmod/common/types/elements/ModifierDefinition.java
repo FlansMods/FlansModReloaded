@@ -54,6 +54,7 @@ public class ModifierDefinition
 	public static final String KEY_ENTITY_TAG = "entity_tag";
 	public static final String KEY_ENTITY_ID = "entity_id";
 	public static final String KEY_ACTION_KEY = "action_key";
+	public static final String KEY_MODEL_ID = "model_id";
 
 	@JsonField
 	public String Stat = "";

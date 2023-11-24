@@ -2527,7 +2527,7 @@ public class WorkbenchScreen extends AbstractContainerScreen<WorkbenchMenu>
 				pose.scale(-32f, 32f, 32f);
 				pose.mulPose(new Quaternionf().rotateLocalX(Maths.PiF));
 				pose.mulPose(new Quaternionf().rotateLocalY(Maths.PiF));
-				gunRenderer.Render(null, gunStack, new RenderContext(
+				gunRenderer.RenderDirect(null, gunStack, new RenderContext(
 					buffers,
 					ItemTransforms.TransformType.GROUND,
 					pose,

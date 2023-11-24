@@ -14,7 +14,7 @@ public class FlanClientItemExtensions implements IClientItemExtensions
 
     public static FlanClientItemExtensions create(Item item, FlanItemModelRenderer renderer)
     {
-        FlanModelRegistration.preRegisterRenderer(item, renderer);
+        FlanModelRegistration.PreRegisterRenderer(item, renderer);
         return new FlanClientItemExtensions(renderer);
     }
 

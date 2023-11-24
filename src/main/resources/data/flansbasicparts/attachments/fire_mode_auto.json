@@ -10,10 +10,9 @@
     "modifiers": [],
     "mechaEffects": [],
     "mechaEffectFilter": "",
-    "primaryActions": [],
-    "secondaryActions": [],
-    "replacePrimaryAction": false,
-    "replaceSecondaryAction": false,
+    "handlerOverrides": [],
+    "actionOverrides": [],
+    "reloadOverrides": [],
     "modeOverride": "FullAuto",
-    "overrideFireMode": false
+    "overrideFireMode": true
 }

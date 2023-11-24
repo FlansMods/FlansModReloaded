@@ -4,20 +4,32 @@ import com.flansmod.common.FlansMod;
 import com.flansmod.common.entity.INpcRelationshipsCapability;
 import com.flansmod.common.entity.NpcRelationshipsCapability;
 import com.flansmod.common.entity.ShopkeeperEntity;
+import com.flansmod.common.gunshots.Raytracer;
 import com.flansmod.common.gunshots.ShooterContextPlayer;
 import com.flansmod.common.types.guns.elements.ActionDefinition;
 import com.flansmod.common.types.elements.ModifierDefinition;
 import com.flansmod.common.types.npc.NpcDefinition;
+import com.flansmod.util.Transform;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.HitResult;
+import net.minecraft.world.phys.Vec3;
+import net.minecraft.world.phys.shapes.CollisionContext;
+import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.NotNull;
 import org.joml.Vector3d;
 
-public class SummonNpcAction extends SpawnEntityAction
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+
+public class SummonNpcAction extends ActionInstance
 {
 	public SummonNpcAction(@NotNull ActionGroupInstance group, @NotNull ActionDefinition def)
 	{
@@ -68,4 +80,43 @@ public class SummonNpcAction extends SpawnEntityAction
 	{
 		return new ResourceLocation(Group.Context.ModifyString(ModifierDefinition.KEY_ENTITY_ID, ""));
 	}
+
+	@Override
+	public void OnTriggerClient(int triggerIndex)
+	{
+
+	}
+
+	@Override
+	public void OnTriggerServer(int triggerIndex)
+	{
+		String entityID = EntityID();
+		EntityType<?> entityType = ForgeRegistries.ENTITY_TYPES.getValue(new ResourceLocation(entityID));
+		if(entityType != null)
+		{
+			Level level = Group.Context.Gun.Level;
+			if(level != null)
+			{
+				Entity entity = entityType.create(level);
+				if(entity != null)
+				{
+					Vec3 srcPos = Group.Context.Gun.GetShooter().GetShootOrigin().PositionVec3();
+					entity.setPos(srcPos);
+					Optional<Vec3> freePos = level.findFreePosition(
+						entity,
+						Shapes.create(entity.getBoundingBox()),
+						srcPos,
+						1d,
+						1d,
+						1d);
+					entity.setPos(freePos.orElse(srcPos));
+					level.addFreshEntity(entity);
+				}
+
+			}
+			else FlansMod.LOGGER.warn("SpawnEntityAction[" + Def + "]: Could not find level");
+		}
+	}
+
+	public String EntityID() { return Group.Context.ModifyString(ModifierDefinition.KEY_ENTITY_ID, ""); }
 }

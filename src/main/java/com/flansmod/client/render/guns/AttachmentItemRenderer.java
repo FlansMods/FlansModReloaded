@@ -38,7 +38,7 @@ public class AttachmentItemRenderer extends FlanItemModelRenderer
 	public void RenderAsAttachment(RenderContext gunRendererContext, GunContext context, EAttachmentType attachmentType, int attachmentSlot)
 	{
 		// The main difference here is that we do not apply transforms. They should have been applied for us already
-		Render(context.GetShooter().Entity(),
+		RenderDirect(context.GetShooter().Entity(),
 			context.GetAttachmentStack(attachmentType, attachmentSlot),
 			new RenderContext(
 				gunRendererContext.Buffers,

@@ -1,10 +1,18 @@
 package com.flansmod.common.item;
 
+import com.flansmod.client.render.FlanClientItemExtensions;
+import com.flansmod.client.render.bullets.BulletItemRenderer;
+import com.flansmod.client.render.guns.GunItemRenderer;
 import com.flansmod.common.FlansMod;
 import com.flansmod.common.types.bullets.BulletDefinition;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.client.extensions.common.IClientItemExtensions;
 import net.minecraftforge.common.extensions.IForgeItem;
+
+import java.util.function.Consumer;
 
 public class BulletItem extends FlanItem implements IForgeItem
 {
@@ -45,4 +53,11 @@ public class BulletItem extends FlanItem implements IForgeItem
 
 	// Random parameter overrides
 	public boolean isEnchantable(ItemStack i) { return false; }
+
+	@Override
+	@OnlyIn(Dist.CLIENT)
+	public void initializeClient(Consumer<IClientItemExtensions> consumer)
+	{
+		consumer.accept(FlanClientItemExtensions.create(this, new BulletItemRenderer()));
+	}
 }

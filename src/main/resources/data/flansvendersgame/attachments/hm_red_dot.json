@@ -42,6 +42,7 @@
                 {
                     "actionGroupToTrigger": "ads",
                     "modalCheck": "",
+                    "canTriggerWhileReloading": false,
                     "deferToAttachment": false,
                     "attachmentType": "Barrel",
                     "attachmentIndex": 0,

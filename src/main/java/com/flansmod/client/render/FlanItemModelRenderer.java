@@ -34,7 +34,6 @@ import net.minecraft.client.renderer.texture.MissingTextureAtlasSprite;
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.RandomSource;
-import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.HumanoidArm;
 import net.minecraft.world.item.ItemStack;
@@ -44,8 +43,6 @@ import javax.annotation.Nonnull;
 
 public abstract class FlanItemModelRenderer extends BlockEntityWithoutLevelRenderer
 {
-    private final RandomSource random = RandomSource.create();
-
     protected static final RenderStateShard.ShaderStateShard GUN_CUTOUT_SHADER = new RenderStateShard.ShaderStateShard(FlansModClient::GetGunCutoutShader);
     private static class RenderTypeFlanItem extends RenderType {
         protected static final Function<ResourceLocation, RenderType> GUN_CUTOUT = Util.memoize((p_173204_) -> {
@@ -91,7 +88,7 @@ public abstract class FlanItemModelRenderer extends BlockEntityWithoutLevelRende
         ShouldRenderWhenHeld = shouldRenderWhenHeld;
     }
 
-
+    protected abstract void DoRender(Entity heldByEntity, ItemStack stack, RenderContext renderContext);
 
     @Override
     public void renderByItem(@Nonnull ItemStack stack,
@@ -102,20 +99,28 @@ public abstract class FlanItemModelRenderer extends BlockEntityWithoutLevelRende
                              int overlay)
     {
         RenderSystem.enableDepthTest();
-
-        //if(transformType == ItemTransforms.TransformType.GROUND)
-        //{
-        //    BakedRig.ApplyTransform(transformType, ms, false);
-        //}
-
-
         ms.pushPose();
-        //
         RenderItem(null, transformType, stack, ms, buffers, light, overlay);
         ms.popPose();
     }
 
-    public void Render(Entity heldByEntity, ItemStack stack, RenderContext renderContext)
+    public void RenderFirstPerson(Entity entity,
+                                  ItemStack stack,
+                                  HumanoidArm arm,
+                                  ItemTransforms.TransformType transformType,
+                                  PoseStack ms,
+                                  MultiBufferSource buffers,
+                                  int light,
+                                  int overlay,
+                                  float equipProgress)
+    {
+        if(BakedRig == null)
+            return;
+
+        RenderItem(entity, transformType, stack, ms, buffers, light, overlay);
+    }
+
+    public void RenderDirect(Entity heldByEntity, ItemStack stack, RenderContext renderContext)
     {
         renderContext.Poses.pushPose();
         {
@@ -128,7 +133,57 @@ public abstract class FlanItemModelRenderer extends BlockEntityWithoutLevelRende
         renderContext.Poses.popPose();
     }
 
-    protected abstract void DoRender(Entity heldByEntity, ItemStack stack, RenderContext renderContext);
+    protected void RenderItem(Entity entity,
+                              ItemTransforms.TransformType transformType,
+                              ItemStack stack,
+                              PoseStack requestedPoseStack,
+                              MultiBufferSource buffers,
+                              int light,
+                              int overlay)
+    {
+        requestedPoseStack.pushPose();
+        {
+            FlanItem flanItem = stack.getItem() instanceof FlanItem ? (FlanItem)stack.getItem() : null;
+            String skin = "default";
+            if(flanItem != null)
+                skin = flanItem.GetPaintjobName(stack);
+
+            boolean shouldRenderRig = true;
+            if(transformType == ItemTransforms.TransformType.GUI)
+            {
+                BakedModel iconModel = BakedRig.GetIconModel(skin);
+                if(iconModel != null)
+                {
+                    shouldRenderRig = false;
+                    requestedPoseStack.setIdentity();
+                    requestedPoseStack.translate(-0.5f, -0.5f, 0f);
+                    Minecraft.getInstance().getBlockRenderer().getModelRenderer().renderModel(
+                        requestedPoseStack.last(),
+                        buffers.getBuffer(Sheets.cutoutBlockSheet()),
+                        null,
+                        iconModel,
+                        1f, 1f, 1f,
+                        light,
+                        overlay);
+                }
+            }
+
+            if(shouldRenderRig)
+            {
+                BakedRig.ApplyTransform(transformType, requestedPoseStack, false);
+
+                // Bind texture
+                ResourceLocation texture = BakedRig.GetTexture(skin);
+
+                // Find the right buffer
+                VertexConsumer vc = buffers.getBuffer(flanItemRenderType(texture));
+
+                // Render item
+                DoRender(entity, stack, new RenderContext(buffers, transformType, requestedPoseStack, light, overlay));
+            }
+        }
+        requestedPoseStack.popPose();
+    }
 
     protected void ApplyAnimations(RenderContext renderContext, AnimationDefinition animationSet, ActionStack actionStack, String partName)
     {
@@ -138,14 +193,11 @@ public abstract class FlanItemModelRenderer extends BlockEntityWithoutLevelRende
         if(actionStack != null)
         {
             List<AnimationAction> animActions = new ArrayList<>();
-            List<AimDownSightAction> adsActions = new ArrayList<>();
             for(ActionGroupInstance group : actionStack.GetActiveActionGroups())
                 for(ActionInstance action : group.GetActions())
                 {
                     if (action instanceof AnimationAction animAction)
                         animActions.add(animAction);
-                    else if(action instanceof AimDownSightAction adsAction)
-                        adsActions.add(adsAction);
                 }
 
             List<Transform> poses = new ArrayList<>();
@@ -247,6 +299,12 @@ public abstract class FlanItemModelRenderer extends BlockEntityWithoutLevelRende
         }
     }
 
+    private void ApplyItemArmTransform(PoseStack poseStack, HumanoidArm arm, float equipProgress)
+    {
+        int i = arm == HumanoidArm.RIGHT ? 1 : -1;
+        poseStack.translate((float)i * 0.56F, -0.52F + equipProgress * -0.6F, -0.72F);
+    }
+
     protected Transform GetEyeLine(ItemTransforms.TransformType transformType)
     {
         if(UnbakedRig == null)
@@ -282,13 +340,8 @@ public abstract class FlanItemModelRenderer extends BlockEntityWithoutLevelRende
 
                                 TurboRig.AttachPoint attachmentRoot = UnbakedRig.GetAttachPoint(attachmentType, attachmentIndex);
                                 Transform attachmentRootTransform = Transform.FromPosAndEuler(attachmentRoot.Offset, attachmentRoot.Euler);
-
-
-
                                 ItemStack attachmentStack = gunContext.GetAttachmentStack(attachmentType, attachmentIndex);
                                 FlanItemModelRenderer attachmentRenderer = FlansModClient.MODEL_REGISTRATION.GetModelRenderer(attachmentStack);
-
-
                                 if (attachmentRenderer instanceof AttachmentItemRenderer attachmentItemRenderer)
                                 {
                                     if(attachmentRenderer.UnbakedRig != null)
@@ -354,84 +407,6 @@ public abstract class FlanItemModelRenderer extends BlockEntityWithoutLevelRende
         return BakedRig.GetTexture(skin);
     }
 
-
-    public void RenderFirstPerson(Entity entity,
-                                  ItemStack stack,
-                                  HumanoidArm arm,
-                                  ItemTransforms.TransformType transformType,
-                                  PoseStack ms,
-                                  MultiBufferSource buffers,
-                                  int light,
-                                  int overlay,
-                                  float equipProgress)
-    {
-        if(BakedRig == null)
-        {
-            //FlansMod.LOGGER.error("Could not render Flan's Item " + stack + " because rig was null");
-            return;
-        }
-
-        RenderItem(entity, transformType, stack, ms, buffers, light, overlay);
-        //Render(entity, stack, new RenderContext(buffers, transformType, ms, light, overlay));
-    }
-
-    protected void RenderItem(Entity entity,
-                              ItemTransforms.TransformType transformType,
-                              ItemStack stack,
-                              PoseStack requestedPoseStack,
-                              MultiBufferSource buffers,
-                              int light,
-                              int overlay)
-    {
-        requestedPoseStack.pushPose();
-        {
-
-
-            FlanItem flanItem = stack.getItem() instanceof FlanItem ? (FlanItem)stack.getItem() : null;
-            String skin = "default";
-            if(flanItem != null)
-                skin = flanItem.GetPaintjobName(stack);
-
-            boolean shouldRenderRig = true;
-            if(transformType == ItemTransforms.TransformType.GUI)
-            {
-                BakedModel iconModel = BakedRig.GetIconModel(skin);
-                if(iconModel != null)
-                {
-                    shouldRenderRig = false;
-                    //requestedPoseStack.scale(16f, 16f, 16f);
-                    //requestedPoseStack.mulPose(new Quaternionf().rotateLocalX(1f));
-                    requestedPoseStack.setIdentity();
-                    requestedPoseStack.translate(-0.5f, -0.5f, 0f);
-                    //iconModel.applyTransform(transformType, requestedPoseStack, false);
-                    Minecraft.getInstance().getBlockRenderer().getModelRenderer().renderModel(
-                        requestedPoseStack.last(),
-                        buffers.getBuffer(Sheets.cutoutBlockSheet()),
-                        null,
-                        iconModel,
-                        1f, 1f, 1f,
-                        light,
-                        overlay);
-                }
-            }
-
-            if(shouldRenderRig)
-            {
-                BakedRig.ApplyTransform(transformType, requestedPoseStack, false);
-
-                // Bind texture
-                ResourceLocation texture = BakedRig.GetTexture(skin);
-
-                // Find the right buffer
-                VertexConsumer vc = buffers.getBuffer(flanItemRenderType(texture));
-
-                // Render item
-                DoRender(entity, stack, new RenderContext(buffers, transformType, requestedPoseStack, light, overlay));
-            }
-        }
-        requestedPoseStack.popPose();
-    }
-
     public void OnUnbakedModelLoaded(TurboRig unbaked)
     {
         UnbakedRig = unbaked;
@@ -449,12 +424,6 @@ public abstract class FlanItemModelRenderer extends BlockEntityWithoutLevelRende
         //    ResourceLocation skinLocation = Minecraft.getInstance().getSkinManager().getInsecureSkinLocation(Minecraft.getInstance().getUser().getGameProfile());
         //    RenderSystem.setShaderTexture(0, skinLocation);
         //}
-    }
-
-    private void ApplyItemArmTransform(PoseStack poseStack, HumanoidArm arm, float equipProgress)
-    {
-        int i = arm == HumanoidArm.RIGHT ? 1 : -1;
-        poseStack.translate((float)i * 0.56F, -0.52F + equipProgress * -0.6F, -0.72F);
     }
 
     protected void RenderPartIteratively(RenderContext renderContext,

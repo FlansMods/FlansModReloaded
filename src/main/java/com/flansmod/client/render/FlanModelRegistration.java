@@ -1,10 +1,8 @@
 package com.flansmod.client.render;
 
-import com.flansmod.client.render.models.MultiModel;
 import com.flansmod.client.render.models.TurboRig;
 import com.flansmod.common.FlansMod;
 import com.flansmod.common.item.FlanItem;
-import com.flansmod.common.types.JsonDefinition;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.block.model.BlockModel;
 import net.minecraft.client.renderer.texture.TextureManager;
@@ -23,6 +21,7 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.registries.ForgeRegistries;
 
+import javax.annotation.Nonnull;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
@@ -32,7 +31,7 @@ public class FlanModelRegistration implements PreparableReloadListener
     private static final HashMap<Item, FlanItemModelRenderer> ITEMS_TO_REGISTER = new HashMap<>();
     private static final HashMap<ModelResourceLocation, BakedModel> ENTITY_MODELS_TO_REGISTER = new HashMap<>();
 
-    public static void preRegisterRenderer(Item item, FlanItemModelRenderer renderer)
+    public static void PreRegisterRenderer(Item item, FlanItemModelRenderer renderer)
     {
         ITEMS_TO_REGISTER.put(item, renderer);
     }
@@ -43,10 +42,10 @@ public class FlanModelRegistration implements PreparableReloadListener
         ENTITY_MODELS_TO_REGISTER.put(modelLoc, null);
     }
 
-    public void hook(IEventBus modEventBus)
+    public void Hook(IEventBus modEventBus)
     {
-        modEventBus.addListener(this::onModelRegistry);
-        modEventBus.addListener(this::onModelBake);
+        modEventBus.addListener(this::OnModelRegistry);
+        modEventBus.addListener(this::OnModelBake);
         modEventBus.addListener(this::OnBakingComplete);
         MinecraftForge.EVENT_BUS.register(this);
     }
@@ -54,23 +53,15 @@ public class FlanModelRegistration implements PreparableReloadListener
     public void OnRegisterGeometryLoaders(ModelEvent.RegisterGeometryLoaders event)
     {
         event.register("turborig", TurboRig.LOADER);
-        event.register("multimodel", MultiModel.LOADER);
     }
 
-    public void onModelRegistry(ModelEvent.RegisterAdditional event)
+    public void OnModelRegistry(ModelEvent.RegisterAdditional event)
     {
         for(var kvp : ITEMS_TO_REGISTER.entrySet())
         {
             ResourceLocation itemID = ForgeRegistries.ITEMS.getKey(kvp.getKey());
-            event.register(new ModelResourceLocation(itemID, "inventory"));
-
-            //UnbakedModel unbaked = Minecraft.getInstance().getModelManager().getModelBakery().getModel(itemID);
-            //FlanItemModel model = kvp.getValue().createModel(null, itemID.getNamespace(), itemID.getPath());
-            //if(model != null)
-            //{
-             //   for(var location : model.getModelLocations())
-              //      event.register(new ModelResourceLocation(location, "inventory"));
-            //}
+            if(itemID != null)
+                event.register(new ModelResourceLocation(itemID, "inventory"));
         }
 
         for(ModelResourceLocation modelLoc : ENTITY_MODELS_TO_REGISTER.keySet())
@@ -79,7 +70,7 @@ public class FlanModelRegistration implements PreparableReloadListener
         }
     }
 
-    public void onModelBake(ModelEvent.ModifyBakingResult event)
+    public void OnModelBake(ModelEvent.ModifyBakingResult event)
     {
         Map<ResourceLocation, BakedModel> modelRegistry = event.getModels();
         TextureManager tm = Minecraft.getInstance().textureManager;
@@ -87,34 +78,15 @@ public class FlanModelRegistration implements PreparableReloadListener
         for (var kvp : ITEMS_TO_REGISTER.entrySet())
         {
             ResourceLocation itemID = ForgeRegistries.ITEMS.getKey(kvp.getKey());
-            ModelResourceLocation modelID = new ModelResourceLocation(itemID, "inventory");
-
-            BakedModel bakedModel = modelRegistry.get(modelID);
-            //UnbakedModel unbaked = event.getModelBakery().getModel(modelID);
-            if (bakedModel instanceof TurboRig.Baked turboBakedModel)
+            if(itemID != null)
             {
-                // if(unbaked instanceof TurboRig turboUnbakedModel)
-                //  {
-                kvp.getValue().OnBakeComplete(turboBakedModel);
-                // }
-                //for(var texLocation : turboBakedModel.GetTextureLocations())
-                //    tm.register(texLocation, new SimpleTexture(texLocation));
-            }
-            else if(bakedModel instanceof MultiModel.BakedSkinSwitcher skinSwitcher)
-            {
-                if(skinSwitcher.DefaultModel instanceof TurboRig.Baked turboBaked)
+                ModelResourceLocation modelID = new ModelResourceLocation(itemID, "inventory");
+                BakedModel bakedModel = modelRegistry.get(modelID);
+                if (bakedModel instanceof TurboRig.Baked turboBakedModel)
                 {
-                    kvp.getValue().OnBakeComplete(turboBaked);
+                    kvp.getValue().OnBakeComplete(turboBakedModel);
                 }
             }
-            //FlanItemModel compoundModel = kvp.getValue().createModel(defaultModel, itemID.getNamespace(), itemID.getPath());
-            //compoundModel.bakeParts(event);
-
-            //for(var texLocation : compoundModel.GetTextureLocations())
-            //    tm.register(texLocation, new SimpleTexture(texLocation));
-
-
-            //modelRegistry.put(modelID, compoundModel);
         }
 
         List<ModelResourceLocation> locations = new ArrayList<>(ENTITY_MODELS_TO_REGISTER.keySet());
@@ -154,22 +126,11 @@ public class FlanModelRegistration implements PreparableReloadListener
                         {
                             ITEMS_TO_REGISTER.get(item).OnUnbakedModelLoaded(unbakedTurbo);
                         }
-                        else if(blockModel.customData.getCustomGeometry() instanceof MultiModel unbakedMulti)
-                        {
-                            UnbakedModel firstPerson = bakery.getModel(unbakedMulti.FirstPersonLocation);
-                            if(firstPerson instanceof BlockModel innerBlockModel)
-                            {
-                                if(innerBlockModel.customData.hasCustomGeometry() && innerBlockModel.customData.getCustomGeometry() instanceof TurboRig innerUnbakedTurbo)
-                                {
-                                    ITEMS_TO_REGISTER.get(item).OnUnbakedModelLoaded(innerUnbakedTurbo);
-                                }
-                            }
-                        }
                     }
                 }
                 else
                 {
-                    FlansMod.LOGGER.info("Removed item " + item.toString() + " from the custom renderers");
+                    FlansMod.LOGGER.info("Removed item " + item + " from the custom renderers");
                     ITEMS_TO_REGISTER.remove(item);
                 }
             }
@@ -180,7 +141,6 @@ public class FlanModelRegistration implements PreparableReloadListener
     {
         if(stack.getItem() instanceof FlanItem flanItem)
         {
-            ResourceLocation key = ForgeRegistries.ITEMS.getKey(flanItem);
             if(ITEMS_TO_REGISTER.containsKey(flanItem))
             {
                 return ITEMS_TO_REGISTER.get(flanItem);
@@ -190,14 +150,14 @@ public class FlanModelRegistration implements PreparableReloadListener
     }
 
     @Override
-    public CompletableFuture<Void> reload(PreparationBarrier preparationBarrier,
-                                          ResourceManager resourceManager,
-                                          ProfilerFiller filler1,
-                                          ProfilerFiller filler2,
-                                          Executor executor1,
-                                          Executor executor2)
+    @Nonnull
+    public CompletableFuture<Void> reload(@Nonnull PreparationBarrier preparationBarrier,
+                                          @Nonnull ResourceManager resourceManager,
+                                          @Nonnull ProfilerFiller filler1,
+                                          @Nonnull ProfilerFiller filler2,
+                                          @Nonnull Executor executor1,
+                                          @Nonnull Executor executor2)
     {
-
-        return null;
+        return CompletableFuture.allOf();
     }
 }

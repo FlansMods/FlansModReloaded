@@ -4,9 +4,9 @@
         "layer0": "flansbasicparts:item/quartz_engine"
     },
     "display": {
-        "thirdperson": {
+        "thirdperson_righthand": {
             "rotation": [
-                -90.0,
+                270.0,
                 0.0,
                 0.0
             ],
@@ -21,11 +21,11 @@
                 0.55
             ]
         },
-        "firstperson": {
+        "firstperson_righthand": {
             "rotation": [
                 0.0,
-                -135.0,
-                25.0
+                225.0,
+                25.0000038
             ],
             "translation": [
                 0.0,

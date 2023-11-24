@@ -1,4 +1,7 @@
 {
+  "item.flansbasicparts.fire_mode_auto": "Full-Auto Firing Mode",
+  "item.flansbasicparts.fire_mode_burst": "3-Shot Burst Fire Mode",
+  "item.flansbasicparts.fire_mode_single": "Single-Fire Fire Mode",
   "item.flansbasicparts.artillery_shell": "Artillery Shell",
   "item.flansbasicparts.artillery_shell_ap": "Bunker Buster Artillery Shell",
   "item.flansbasicparts.artillery_shell_ex": "High-Explosive Artillery Shell",
@@ -22,6 +25,9 @@
   "item.flansbasicparts.shotgun_shell_flechette": "Flechette Shell",
   "item.flansbasicparts.shotgun_shell_flechette_poisoned": "Poisoned Flechette Shell",
   "item.flansbasicparts.shotgun_shell_incendiary": "Incendiary Shell",
+  "magazine.flansbasicparts.bolt_action_internal_mag_4": "Internal 4 Round Magazine",
+  "magazine.flansbasicparts.bolt_action_internal_mag_5": "Internal 5 Round Magazine",
+  "magazine.flansbasicparts.bolt_action_internal_mag_7": "Internal 7 Round Magazine",
   "material.flansbasicparts.aluminium": "Aluminium",
   "material.flansbasicparts.carbon_fiber": "Carbon Fiber",
   "material.flansbasicparts.dense_wood": "Dense Wood",

@@ -1,5 +1,6 @@
 package com.flansmod.common.types.guns.elements;
 
+import com.flansmod.common.actions.EActionType;
 import com.flansmod.common.gunshots.ModifierStack;
 import com.flansmod.common.types.JsonField;
 import com.flansmod.common.types.elements.ModifierDefinition;

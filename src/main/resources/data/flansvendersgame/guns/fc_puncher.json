@@ -36,6 +36,7 @@
                 {
                     "actionGroupToTrigger": "primary_fire",
                     "modalCheck": "",
+                    "canTriggerWhileReloading": false,
                     "deferToAttachment": false,
                     "attachmentType": "Generic",
                     "attachmentIndex": 0,
@@ -44,6 +45,7 @@
                 {
                     "actionGroupToTrigger": "reload_primary_start",
                     "modalCheck": "",
+                    "canTriggerWhileReloading": false,
                     "deferToAttachment": false,
                     "attachmentType": "Generic",
                     "attachmentIndex": 0,
@@ -57,6 +59,7 @@
                 {
                     "actionGroupToTrigger": "",
                     "modalCheck": "",
+                    "canTriggerWhileReloading": false,
                     "deferToAttachment": true,
                     "attachmentType": "Sights",
                     "attachmentIndex": 0,
@@ -65,6 +68,7 @@
                 {
                     "actionGroupToTrigger": "",
                     "modalCheck": "",
+                    "canTriggerWhileReloading": false,
                     "deferToAttachment": true,
                     "attachmentType": "Grip",
                     "attachmentIndex": 0,
@@ -73,6 +77,7 @@
                 {
                     "actionGroupToTrigger": "ads",
                     "modalCheck": "",
+                    "canTriggerWhileReloading": true,
                     "deferToAttachment": false,
                     "attachmentType": "Generic",
                     "attachmentIndex": 0,
@@ -86,6 +91,7 @@
                 {
                     "actionGroupToTrigger": "look",
                     "modalCheck": "",
+                    "canTriggerWhileReloading": false,
                     "deferToAttachment": false,
                     "attachmentType": "Generic",
                     "attachmentIndex": 0,
@@ -99,6 +105,7 @@
                 {
                     "actionGroupToTrigger": "reload_primary_start",
                     "modalCheck": "",
+                    "canTriggerWhileReloading": false,
                     "deferToAttachment": true,
                     "attachmentType": "Barrel",
                     "attachmentIndex": 0,
@@ -107,6 +114,7 @@
                 {
                     "actionGroupToTrigger": "reload_primary_start",
                     "modalCheck": "",
+                    "canTriggerWhileReloading": false,
                     "deferToAttachment": false,
                     "attachmentType": "Generic",
                     "attachmentIndex": 0,
@@ -195,12 +203,12 @@
                     "duration": 0.0,
                     "sounds": [
                         {
-                            "sound": "flansmod:gunshot_clang",
+                            "sound": "flansmod:gunshot_feathers",
                             "length": 0.0,
-                            "minPitchMultiplier": 0.8333333,
-                            "maxPitchMultiplier": 1.25,
-                            "minVolume": 1.0,
-                            "maxVolume": 1.0,
+                            "minPitchMultiplier": 1.3,
+                            "maxPitchMultiplier": 1.6,
+                            "minVolume": 1.25,
+                            "maxVolume": 1.5,
                             "maxRange": 100.0,
                             "LODs": []
                         }

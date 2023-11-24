@@ -306,9 +306,6 @@ public class ActionStack
 		// Start the instance
 		ActionGroupInstance groupInstance = TryGetGroupInstance(groupContext);
 
-		if(IsReloading())
-			return EActionResult.Wait;
-
 		if(groupInstance == null)
 			return EActionResult.TryNextAction;
 

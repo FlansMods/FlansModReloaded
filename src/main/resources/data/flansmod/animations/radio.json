@@ -1,0 +1,137 @@
+{
+    "keyframes": [
+        {
+            "name": "idle",
+            "poses": [],
+            "parents": []
+        },
+        {
+            "name": "holding_up",
+            "poses": [
+                {
+                    "applyTo": "body",
+                    "position": [
+                        "3",
+                        "4",
+                        "8"
+                    ],
+                    "rotation": [
+                        "0",
+                        "60",
+                        "0"
+                    ],
+                    "scale": [
+                        1.0,
+                        1.0,
+                        1.0
+                    ]
+                }
+            ],
+            "parents": [
+                "idle"
+            ]
+        },
+        {
+            "name": "bobbing_about",
+            "poses": [
+                {
+                    "applyTo": "body",
+                    "position": [
+                        "3",
+                        "5",
+                        "8"
+                    ],
+                    "rotation": [
+                        "0",
+                        "60",
+                        "15"
+                    ],
+                    "scale": [
+                        1.0,
+                        1.0,
+                        1.0
+                    ]
+                }
+            ],
+            "parents": [
+                "holding_up"
+            ]
+        },
+        {
+            "name": "bobbing_about_alt",
+            "poses": [
+                {
+                    "applyTo": "body",
+                    "position": [
+                        "3",
+                        "5",
+                        "8"
+                    ],
+                    "rotation": [
+                        "0",
+                        "60",
+                        "-15"
+                    ],
+                    "scale": [
+                        1.0,
+                        1.0,
+                        1.0
+                    ]
+                }
+            ],
+            "parents": [
+                "holding_up"
+            ]
+        }
+    ],
+    "sequences": [
+        {
+            "name": "speaking",
+            "ticks": 24,
+            "frames": [
+                {
+                    "tick": 0,
+                    "entry": "linear",
+                    "exit": "linear",
+                    "frame": "idle"
+                },
+                {
+                    "tick": 8,
+                    "entry": "linear",
+                    "exit": "smooth",
+                    "frame": "holding_up"
+                },
+                {
+                    "tick": 10,
+                    "entry": "smooth",
+                    "exit": "smooth",
+                    "frame": "bobbing_about"
+                },
+                {
+                    "tick": 12,
+                    "entry": "smooth",
+                    "exit": "smooth",
+                    "frame": "holding_up"
+                },
+                {
+                    "tick": 14,
+                    "entry": "smooth",
+                    "exit": "smooth",
+                    "frame": "bobbing_about_alt"
+                },
+                {
+                    "tick": 16,
+                    "entry": "smooth",
+                    "exit": "linear",
+                    "frame": "holding_up"
+                },
+                {
+                    "tick": 24,
+                    "entry": "linear",
+                    "exit": "linear",
+                    "frame": "idle"
+                }
+            ]
+        }
+    ]
+}

@@ -387,6 +387,11 @@ public abstract class GunContext
 		{
 			// TODO: if(!node.modalCheck.isEmpty())
 
+			if(!node.canTriggerWhileReloading)
+			{
+				if(inputContext.Gun.GetActionStack().IsReloading())
+					continue;
+			}
 			if(node.deferToAttachment)
 			{
 				AttachmentDefinition attachmentDef = GetAttachmentDefinition(node.attachmentType, node.attachmentIndex);

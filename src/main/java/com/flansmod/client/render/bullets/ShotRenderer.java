@@ -59,6 +59,11 @@ public class ShotRenderer
 					}
 				}
 
+				if(FlansModClient.ADS_BLEND > 0.0f)
+				{
+					firstPersonRelative = firstPersonRelative.lerp(new Vec3(0d, 0d, 3d), FlansModClient.ADS_BLEND);
+				}
+
 				Vec3 playerPos = Minecraft.getInstance().player.getEyePosition();
 				float playerYaw = Minecraft.getInstance().player.getYHeadRot();
 				float playerPitch = Minecraft.getInstance().player.getXRot();

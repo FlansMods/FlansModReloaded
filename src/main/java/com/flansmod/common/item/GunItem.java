@@ -8,7 +8,7 @@ import com.flansmod.common.actions.*;
 import com.flansmod.common.gunshots.*;
 import com.flansmod.common.types.guns.elements.ActionDefinition;
 import com.flansmod.common.types.elements.ModifierDefinition;
-import com.flansmod.common.types.guns.elements.EActionType;
+import com.flansmod.common.actions.EActionType;
 import com.flansmod.common.types.guns.elements.ERepeatMode;
 import com.flansmod.common.types.guns.GunDefinition;
 import com.flansmod.common.types.guns.elements.ReloadDefinition;
@@ -198,11 +198,11 @@ public class GunItem extends FlanItem
         List<MagazineDefinition> matches = Def().GetMagazineSettings(groupPath).GetMatchingMagazines();
         if(matches.size() > 0)
         {
-            SetMagazineType(stack, groupPath, magIndex, matches.get(0));
+            //SetMagazineType(stack, groupPath, magIndex, matches.get(0));
             return matches.get(0);
         }
-        FlansMod.LOGGER.warn("ItemStack " + stack + " had no mag type tag, and no default for that gun found.");
-        SetMagazineType(stack, groupPath, magIndex, MagazineDefinition.INVALID);
+        //FlansMod.LOGGER.warn("ItemStack " + stack + " had no mag type tag, and no default for that gun found.");
+        //SetMagazineType(stack, groupPath, magIndex, MagazineDefinition.INVALID);
         return MagazineDefinition.INVALID;
     }
 

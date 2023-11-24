@@ -600,10 +600,10 @@ public class WorkbenchMenu extends AbstractContainerMenu
 			}
 			for(AttachmentSlot attachmentSlot : AttachmentSlots)
 			{
-				if(attachmentSlot.getItem().isEmpty())
+				if(attachmentSlot.getItem().isEmpty() && attachmentSlot.mayPlace(stack))
 				{
-					attachmentSlot.set(stack);
-					slots.get(slot).set(ItemStack.EMPTY);
+					attachmentSlot.set(stack.copyWithCount(1));
+					slots.get(slot).set(stack.copyWithCount(stack.getCount() - 1));
 					return ItemStack.EMPTY;
 				}
 			}

@@ -26,6 +26,7 @@
                 {
                     "actionGroupToTrigger": "primary_fire",
                     "modalCheck": "",
+                    "canTriggerWhileReloading": false,
                     "deferToAttachment": false,
                     "attachmentType": "Generic",
                     "attachmentIndex": 0,
@@ -34,6 +35,7 @@
                 {
                     "actionGroupToTrigger": "reload_primary_start",
                     "modalCheck": "",
+                    "canTriggerWhileReloading": false,
                     "deferToAttachment": false,
                     "attachmentType": "Generic",
                     "attachmentIndex": 0,
@@ -47,6 +49,7 @@
                 {
                     "actionGroupToTrigger": "ads",
                     "modalCheck": "",
+                    "canTriggerWhileReloading": true,
                     "deferToAttachment": true,
                     "attachmentType": "Sights",
                     "attachmentIndex": 0,
@@ -55,6 +58,7 @@
                 {
                     "actionGroupToTrigger": "primary_fire",
                     "modalCheck": "",
+                    "canTriggerWhileReloading": false,
                     "deferToAttachment": true,
                     "attachmentType": "Grip",
                     "attachmentIndex": 0,
@@ -63,6 +67,7 @@
                 {
                     "actionGroupToTrigger": "ads",
                     "modalCheck": "",
+                    "canTriggerWhileReloading": true,
                     "deferToAttachment": false,
                     "attachmentType": "Generic",
                     "attachmentIndex": 0,
@@ -76,6 +81,7 @@
                 {
                     "actionGroupToTrigger": "look",
                     "modalCheck": "",
+                    "canTriggerWhileReloading": false,
                     "deferToAttachment": false,
                     "attachmentType": "Generic",
                     "attachmentIndex": 0,
@@ -89,6 +95,7 @@
                 {
                     "actionGroupToTrigger": "reload_primary_start",
                     "modalCheck": "",
+                    "canTriggerWhileReloading": false,
                     "deferToAttachment": true,
                     "attachmentType": "Barrel",
                     "attachmentIndex": 0,
@@ -97,6 +104,7 @@
                 {
                     "actionGroupToTrigger": "reload_primary_start",
                     "modalCheck": "",
+                    "canTriggerWhileReloading": false,
                     "deferToAttachment": false,
                     "attachmentType": "Generic",
                     "attachmentIndex": 0,
