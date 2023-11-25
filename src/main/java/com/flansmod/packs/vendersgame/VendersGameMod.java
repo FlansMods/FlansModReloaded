@@ -8,18 +8,28 @@ import com.flansmod.common.types.guns.GunDefinition;
 import com.flansmod.packs.vendersgame.client.VenderModel;
 import com.flansmod.packs.vendersgame.client.VenderRenderer;
 import com.flansmod.packs.vendersgame.common.VenderEntity;
+import com.google.common.base.Suppliers;
 import com.mojang.logging.LogUtils;
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
+import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.ItemModelShaper;
 import net.minecraft.client.resources.model.ModelResourceLocation;
+import net.minecraft.util.ExtraCodecs;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobCategory;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.minecraft.world.level.storage.loot.LootContext;
+import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.EntityRenderersEvent;
 import net.minecraftforge.client.event.ModelEvent;
+import net.minecraftforge.common.loot.IGlobalLootModifier;
+import net.minecraftforge.common.loot.LootModifier;
 import net.minecraftforge.event.CreativeModeTabEvent;
 import net.minecraftforge.event.entity.EntityAttributeCreationEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
@@ -30,6 +40,10 @@ import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
 import org.slf4j.Logger;
+
+import javax.annotation.Nonnull;
+import java.util.function.Supplier;
+import java.util.stream.Collectors;
 
 @SuppressWarnings("unused")
 @Mod(VendersGameMod.MODID)
@@ -43,6 +57,7 @@ public class VendersGameMod
 	public static final DeferredRegister<Block> BLOCKS = DeferredRegister.create(ForgeRegistries.BLOCKS, MODID);
 	public static final DeferredRegister<BlockEntityType<?>> TILE_ENTITIES = DeferredRegister.create(ForgeRegistries.BLOCK_ENTITY_TYPES, MODID);
 	public static final DeferredRegister<EntityType<?>> ENTITY_TYPES = DeferredRegister.create(ForgeRegistries.ENTITY_TYPES, MODID);
+	public static final DeferredRegister<Codec<? extends IGlobalLootModifier>> LOOT_MODIFIERS = DeferredRegister.create(ForgeRegistries.Keys.GLOBAL_LOOT_MODIFIER_SERIALIZERS, MODID);
 
 	// Flint & Cobblesons Premium Guns
 	public static final RegistryObject<Item> GUN_FC_700 = 						FlansMod.Gun(ITEMS, MODID, "fc_700");
@@ -113,6 +128,9 @@ public class VendersGameMod
 	public static final RegistryObject<Item> ATTACHMENT_TAKE_YOUR_LIFE_IN_YOUR_HANDS = FlansMod.Attachment(ITEMS, MODID, "take_your_life_in_your_hands");
 	public static final RegistryObject<Item> TOOL_VENDERS_RADIO =				FlansMod.Tool(ITEMS, MODID, "venders_radio");
 
+	// Chest Loot
+	public static final RegistryObject<Codec<ChestLootModifier>> DUNGEON_LOOT = LOOT_MODIFIERS.register("chest_loot", ChestLootModifier.CODEC);
+
 	// Vender NPC
 	public static final RegistryObject<EntityType<VenderEntity>> ENTITY_TYPE_VENDER = ENTITY_TYPES.register(
 		"vender",
@@ -130,6 +148,7 @@ public class VendersGameMod
 		BLOCKS.register(modEventBus);
 		TILE_ENTITIES.register(modEventBus);
 		ENTITY_TYPES.register(modEventBus);
+		LOOT_MODIFIERS.register(modEventBus);
 		modEventBus.register(this);
 	}
 
@@ -182,6 +201,36 @@ public class VendersGameMod
 		public static void EntityRenderEvent(EntityRenderersEvent.RegisterRenderers event)
 		{
 			event.registerEntityRenderer(ENTITY_TYPE_VENDER.get(), VenderRenderer::new);
+		}
+	}
+
+	private static class ChestLootModifier extends LootModifier
+	{
+		public static final Supplier<Codec<ChestLootModifier>> CODEC = Suppliers.memoize(() -> RecordCodecBuilder.create(inst -> codecStart(inst)
+			.and(ExtraCodecs.POSITIVE_FLOAT.optionalFieldOf("radio_chance", 0.25f).forGetter(m -> m.radioChance))
+			.apply(inst, ChestLootModifier::new)
+		));
+
+		private final float radioChance;
+
+		public ChestLootModifier(final LootItemCondition[] conditionsIn, final float radioChance) {
+			super(conditionsIn);
+			this.radioChance = radioChance;
+		}
+
+		@Override
+		@Nonnull
+		protected ObjectArrayList<ItemStack> doApply(ObjectArrayList<ItemStack> generatedLoot, LootContext context)
+		{
+			if(context.getRandom().nextFloat() < radioChance)
+				generatedLoot.add(new ItemStack(TOOL_VENDERS_RADIO.get()));
+
+			return generatedLoot;
+		}
+
+		@Override
+		public Codec<? extends IGlobalLootModifier> codec() {
+			return CODEC.get();
 		}
 	}
 }
