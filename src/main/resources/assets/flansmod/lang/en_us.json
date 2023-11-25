@@ -145,5 +145,7 @@
   "crafting.switch_to_part_crafting": "Craft this part",
   "crafting.auto_add_best_parts": "Auto-Add best parts",
   "crafting.parts.num_in_progress": "Crafting %d",
-  "crafting.parts.num_in_progress.named": "Crafting %d %s"
+  "crafting.parts.num_in_progress.named": "Crafting %d %s",
+  "action.summon_npc.on_cooldown": "You called too recently, try again in %d seconds",
+  "action.summon_npc.already_spawned": "They are already in the area, take a look around"
 }

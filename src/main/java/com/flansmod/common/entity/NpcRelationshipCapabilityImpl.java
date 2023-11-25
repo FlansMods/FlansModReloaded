@@ -35,7 +35,7 @@ public class NpcRelationshipCapabilityImpl implements INpcRelationshipsCapabilit
 	{
 		for(ResourceLocation npcID : Relationships.keySet())
 			if(Cooldowns.containsKey(npcID))
-				Cooldowns.put(npcID, Maths.Min(Cooldowns.get(npcID) - ticks, 0));
+				Cooldowns.put(npcID, Maths.Max(Cooldowns.get(npcID) - ticks, 0));
 	}
 
 	@Override

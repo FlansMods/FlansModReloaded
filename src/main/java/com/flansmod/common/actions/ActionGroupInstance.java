@@ -135,7 +135,7 @@ public class ActionGroupInstance
 	// -----------------------------------------------------------------------------------------------------------------
 	//  SERVER
 	// -----------------------------------------------------------------------------------------------------------------
-	public void OnStartServer()
+	public void OnStartServer(boolean doInitialTrigger)
 	{
 		if(!HasStarted())
 		{
@@ -149,12 +149,15 @@ public class ActionGroupInstance
 				action.OnStartServer();
 		}
 
-		DoInitialTrigger(() ->
+		if(doInitialTrigger)
 		{
-			OnTriggerServer(TriggerCount);
-			TriggerCount++;
-			return null;
-		});
+			DoInitialTrigger(() ->
+			{
+				OnTriggerServer(TriggerCount);
+				TriggerCount++;
+				return null;
+			});
+		}
 	}
 	public void OnStartServerFromNetwork(long startedTick)
 	{

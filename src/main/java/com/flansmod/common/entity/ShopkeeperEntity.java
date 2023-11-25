@@ -149,7 +149,18 @@ public abstract class ShopkeeperEntity extends PathfinderMob implements Npc, Mer
 	@Override
 	public void notifyTrade(@Nonnull MerchantOffer offer)
 	{
-		//rewardTradeXp(offer);
+		int inputCount = offer.getCostA().getCount() + offer.getCostB().getCount();
+		int resultCount = offer.getResult().getCount();
+
+		// Is it a buy or a sell? Well they are kinda the same, so best guess is lots of items for one item is a buy
+		if (inputCount >= resultCount)
+		{
+			TryPlayVoiceLine(EVoiceLineType.SoldToPlayer);
+		}
+		else
+		{
+			TryPlayVoiceLine(EVoiceLineType.BoughtFromPlayer);
+		}
 	}
 	@Override
 	public void notifyTradeUpdated(@Nonnull ItemStack stack)
@@ -289,6 +300,25 @@ public abstract class ShopkeeperEntity extends PathfinderMob implements Npc, Mer
 		super.die(source);
 	}
 	@Override
+	public boolean hurt(@Nonnull DamageSource source, float amount)
+	{
+		Entity entity = source.getEntity();
+		TryPlayVoiceLine(EVoiceLineType.Hurt);
+		if (entity instanceof Player playerHurtMe)
+		{
+			if(GetDef().Can(ENpcActionType.Hostile_TeleportAway) || GetDef().Can(ENpcActionType.Hostile_Retaliate))
+			{
+				SetRelationshipTo(playerHurtMe, ENpcRelationship.Hostile);
+			}
+		}
+		if(GetDef().Can(ENpcActionType.Hostile_TeleportAway))
+		{
+			TeleportAway();
+		}
+
+		return super.hurt(source, amount);
+	}
+	@Override
 	public boolean isInvulnerableTo(@Nonnull DamageSource source)
 	{
 		NpcDefinition npcDef = GetDef();
@@ -298,6 +328,15 @@ public abstract class ShopkeeperEntity extends PathfinderMob implements Npc, Mer
 			return npcDef.IsInvulnerableTo(sourceType);
 		}
 		return false;
+	}
+	public void TeleportAway()
+	{
+		TryPlayVoiceLine(EVoiceLineType.Goodbye);
+		for(Player player : level.getEntitiesOfClass(Player.class, getBoundingBox().inflate(50d)))
+		{
+			OnLeavePlayer(player);
+		}
+		remove(RemovalReason.CHANGED_DIMENSION);
 	}
 
 
@@ -343,10 +382,17 @@ public abstract class ShopkeeperEntity extends PathfinderMob implements Npc, Mer
 	public void OnLeavePlayer(Player player)
 	{
 		ENpcRelationship relationship = GetRelationshipTo(player);
-		if(relationship == ENpcRelationship.Hostile)
-			SetCooldownForPlayer(player, GetDef().CooldownTicks(false));
-		else
-			SetCooldownForPlayer(player, GetDef().CooldownTicks(true));
+		switch(relationship)
+		{
+			case Hostile -> {
+				SetCooldownForPlayer(player, GetDef().CooldownTicks(false));
+				SetRelationshipTo(player, ENpcRelationship.PreviouslyMetHostile);
+			}
+			case Friendly, NotMet -> {
+				SetCooldownForPlayer(player, GetDef().CooldownTicks(true));
+				SetRelationshipTo(player, ENpcRelationship.PreviouslyMetFriendly);
+			}
+		}
 	}
 
 	public int GetLevelForPlayer(Player player)

@@ -10,7 +10,7 @@
     },
     "inputHandlers": [
         {
-            "inputType": "Fire1",
+            "inputType": "Fire2",
             "nodes": [
                 {
                     "actionGroupToTrigger": "primary_fire",

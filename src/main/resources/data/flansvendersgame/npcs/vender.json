@@ -246,7 +246,19 @@
     "isRightHanded": true,
     "cooldownSecondsFriendly": 120.0,
     "cooldownSecondsHostile": 300.0,
-    "invulnerabilities": [],
+    "invulnerabilities": [
+        "Misc",
+        "Melee",
+        "Ranged",
+        "Magic",
+        "Bullet",
+        "Fire",
+        "Explosion",
+        "Poison",
+        "Wither",
+        "Fall",
+        "Harming"
+    ],
     "maxMerchantLevel": 5,
     "xpPerMerchantLevel": [
         15,

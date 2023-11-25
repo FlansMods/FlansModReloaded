@@ -2,12 +2,15 @@ package com.flansmod.common.actions;
 
 import com.flansmod.client.FlansModClient;
 import com.flansmod.common.FlansMod;
+import com.flansmod.common.entity.INpcRelationshipsCapability;
+import com.flansmod.common.entity.NpcRelationshipsCapability;
 import com.flansmod.common.gunshots.EPressType;
 import com.flansmod.common.gunshots.ShooterContext;
 import com.flansmod.common.network.FlansModPacketHandler;
 import com.flansmod.common.network.bidirectional.ActionUpdateMessage;
 import com.flansmod.common.types.vehicles.EPlayerInput;
 import com.flansmod.util.Maths;
+import com.flansmod.util.MinecraftHelpers;
 import com.mojang.datafixers.util.Pair;
 import net.minecraft.client.Minecraft;
 import net.minecraft.server.level.ServerPlayer;
@@ -17,6 +20,7 @@ import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -323,6 +327,18 @@ public class ActionManager
 				{
 					ActionStack stack = kvp.getValue();
 					stack.OnTick(gunContext.Level(), gunContext);
+				}
+			}
+		}
+
+		for(var level : MinecraftHelpers.GetLoadedLevels())
+		{
+			for(var player : level.players())
+			{
+				LazyOptional<INpcRelationshipsCapability> relationshipCap = player.getCapability(NpcRelationshipsCapability.INSTANCE);
+				if(relationshipCap.isPresent() && relationshipCap.resolve().isPresent())
+				{
+					relationshipCap.resolve().get().TickAllCooldowns(1);
 				}
 			}
 		}

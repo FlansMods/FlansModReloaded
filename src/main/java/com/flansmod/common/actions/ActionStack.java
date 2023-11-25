@@ -100,7 +100,7 @@ public class ActionStack
 			instance = CreateGroupInstance(groupContext);
 		return instance;
 	}
-	private EActionResult TryStartGroupInstance(ActionGroupContext groupContext)
+	private EActionResult TryStartGroupInstance(ActionGroupContext groupContext, boolean doInitialTrigger)
 	{
 		ActionGroupInstance groupInstance = TryGetGroupInstance(groupContext);
 		if(groupInstance == null)
@@ -134,7 +134,7 @@ public class ActionStack
 			if (IsClient)
 				groupInstance.OnStartClient();
 			else
-				groupInstance.OnStartServer();
+				groupInstance.OnStartServer(doInitialTrigger);
 		}
 		return result;
 	}
@@ -259,7 +259,7 @@ public class ActionStack
 		ActionGroupContext newGroupContext = triggeringActionGroup.Gun
 			.GetActionGroupContextSibling(triggeringActionGroup, reload.GetReloadActionKey(reloadStage));
 		ActionGroupInstance groupInstance = GetOrCreateGroupInstance(newGroupContext);
-		TryStartGroupInstance(newGroupContext);
+		TryStartGroupInstance(newGroupContext, true);
 		if (reloadStage == EReloadStage.LoadOne)// && !IsClient)
 		{
 			newGroupContext.LoadOne(0, newGroupContext.Gun.GetAttachedInventory());
@@ -309,7 +309,7 @@ public class ActionStack
 		if(groupInstance == null)
 			return EActionResult.TryNextAction;
 
-		EActionResult result = TryStartGroupInstance(groupContext);
+		EActionResult result = TryStartGroupInstance(groupContext, true);
 		// Send a message to the server about these actions if required
 		if (result == EActionResult.CanProcess && (groupInstance.PropogateToServer() || groupInstance.NeedsNetSync()))
 		{
@@ -380,47 +380,46 @@ public class ActionStack
 			// Start the instance if we need to, though this should really only happen on Press actions
 			if (msg.Data.GetPressType() != EPressType.Press)
 				FlansMod.LOGGER.warn("Received ActionUpdateMessage with wrong press type for action that was not already running");
-			startResult = TryStartGroupInstance(groupContext);
+			startResult = TryStartGroupInstance(groupContext, false);
 		}
-
-		for (var kvp : msg.Data.GetTriggers())
-		{
-			int triggerIndex = kvp.getKey();
-			// TODO: Verify that this triggerIndex is valid. Rate limit to the gun fire rate for example
-			int actionIndex = 0;
-			for (ActionInstance action : groupInstance.GetActions())
-			{
-				if (!action.VerifyServer(null))
-					startResult = EActionResult.Wait;
-
-				ActionInstance.NetData netData = msg.Data.GetNetData(triggerIndex, actionIndex);
-				action.UpdateFromNetData(netData, triggerIndex);
-				action.OnTriggerServer(triggerIndex);
-				actionIndex++;
-			}
-
-			// When we get a release message, we may need to do a bit of catchup in missed triggers
-			if (msg.Data.GetPressType() == EPressType.Release)
-			{
-				// Check the action stack for this action/gun pairing and see if any of them are waiting for mouse release
-				long numTicks = msg.Data.GetLastTriggerTick() - groupInstance.GetStartedTick();
-				int expectedTriggerCount = Maths.Floor(numTicks / groupContext.RepeatDelayTicks()) + 1;
-				int serverTriggerCount = groupInstance.GetTriggerCount();
-
-				if (expectedTriggerCount > serverTriggerCount)
-				{
-					FlansMod.LOGGER.info("Client expected to trigger " + expectedTriggerCount + " repeat(s), but server only triggered " + serverTriggerCount + " repeat(s)");
-				} else if (expectedTriggerCount < serverTriggerCount)
-				{
-					FlansMod.LOGGER.info("Client expected to trigger " + expectedTriggerCount + " repeat(s), but server triggered " + serverTriggerCount + " many repeat(s)");
-				}
-				groupInstance.UpdateInputHeld(false);
-			}
-		}
-
 		// Send a message to the server about these actions if required
 		if (startResult == EActionResult.CanProcess)
 		{
+			for (var kvp : msg.Data.GetTriggers())
+			{
+				int triggerIndex = kvp.getKey();
+				// TODO: Verify that this triggerIndex is valid. Rate limit to the gun fire rate for example
+				int actionIndex = 0;
+				for (ActionInstance action : groupInstance.GetActions())
+				{
+					if (!action.VerifyServer(null))
+						startResult = EActionResult.Wait;
+
+					ActionInstance.NetData netData = msg.Data.GetNetData(triggerIndex, actionIndex);
+					action.UpdateFromNetData(netData, triggerIndex);
+					action.OnTriggerServer(triggerIndex);
+					actionIndex++;
+				}
+
+				// When we get a release message, we may need to do a bit of catchup in missed triggers
+				if (msg.Data.GetPressType() == EPressType.Release)
+				{
+					// Check the action stack for this action/gun pairing and see if any of them are waiting for mouse release
+					long numTicks = msg.Data.GetLastTriggerTick() - groupInstance.GetStartedTick();
+					int expectedTriggerCount = Maths.Floor(numTicks / groupContext.RepeatDelayTicks()) + 1;
+					int serverTriggerCount = groupInstance.GetTriggerCount();
+
+					if (expectedTriggerCount > serverTriggerCount)
+					{
+						FlansMod.LOGGER.info("Client expected to trigger " + expectedTriggerCount + " repeat(s), but server only triggered " + serverTriggerCount + " repeat(s)");
+					} else if (expectedTriggerCount < serverTriggerCount)
+					{
+						FlansMod.LOGGER.info("Client expected to trigger " + expectedTriggerCount + " repeat(s), but server triggered " + serverTriggerCount + " many repeat(s)");
+					}
+					groupInstance.UpdateInputHeld(false);
+				}
+			}
+
 			if (groupInstance.PropogateToServer() || groupInstance.NeedsNetSync())
 			{
 				double radius = groupInstance.GetPropogationRadius();
@@ -463,7 +462,7 @@ public class ActionStack
 		if(groupInstance == null)
 			return EActionResult.TryNextAction;
 
-		EActionResult result = TryStartGroupInstance(groupContext);
+		EActionResult result = TryStartGroupInstance(groupContext, true);
 		// Send a message to the nearby clients about these actions if required
 		if (result == EActionResult.CanProcess && (groupInstance.PropogateToServer() || groupInstance.NeedsNetSync()))
 		{

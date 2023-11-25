@@ -10,6 +10,7 @@ import com.flansmod.common.types.guns.elements.ActionDefinition;
 import com.flansmod.common.types.elements.ModifierDefinition;
 import com.flansmod.common.types.npc.NpcDefinition;
 import com.flansmod.util.Transform;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
@@ -57,8 +58,14 @@ public class SummonNpcAction extends ActionInstance
 		{
 			LazyOptional<INpcRelationshipsCapability> relationshipCap = playerContext.Player.getCapability(NpcRelationshipsCapability.INSTANCE);
 			if(relationshipCap.isPresent() && relationshipCap.resolve().isPresent())
-				if(relationshipCap.resolve().get().GetCooldownTicks(npcID) > 0)
+			{
+				int cooldownTicks = relationshipCap.resolve().get().GetCooldownTicks(npcID);
+				if (cooldownTicks > 0)
+				{
+					playerContext.Player.sendSystemMessage(Component.translatable("action.summon_npc.on_cooldown", cooldownTicks / 20));
 					return EActionResult.TryNextAction;
+				}
+			}
 		}
 
 		// Check for other matching NPCs in the nearby loaded chunks
@@ -70,7 +77,11 @@ public class SummonNpcAction extends ActionInstance
 				pos.x + checkRange, pos.y + checkRange, pos.z + checkRange)))
 		{
 			if(nearbyShopkeeper.GetDef().Location.equals(npcID))
+			{
+				if(Group.Context.Gun.GetShooter() instanceof ShooterContextPlayer playerContext)
+					playerContext.Player.sendSystemMessage(Component.translatable("action.summon_npc.already_spawned"));
 				return EActionResult.TryNextAction;
+			}
 		}
 
 		return EActionResult.CanProcess;
@@ -91,7 +102,8 @@ public class SummonNpcAction extends ActionInstance
 	public void OnTriggerServer(int triggerIndex)
 	{
 		String entityID = EntityID();
-		EntityType<?> entityType = ForgeRegistries.ENTITY_TYPES.getValue(new ResourceLocation(entityID));
+		ResourceLocation npcID = new ResourceLocation(entityID);
+		EntityType<?> entityType = ForgeRegistries.ENTITY_TYPES.getValue(npcID);
 		if(entityType != null)
 		{
 			Level level = Group.Context.Gun.Level;
@@ -111,6 +123,17 @@ public class SummonNpcAction extends ActionInstance
 						1d);
 					entity.setPos(freePos.orElse(srcPos));
 					level.addFreshEntity(entity);
+
+					// Set our spawn cooldown
+					if(Group.Context.Gun.GetShooter() instanceof ShooterContextPlayer playerContext
+						&& entity instanceof ShopkeeperEntity shopkeeper)
+					{
+						LazyOptional<INpcRelationshipsCapability> relationshipCap = playerContext.Player.getCapability(NpcRelationshipsCapability.INSTANCE);
+						if(relationshipCap.isPresent() && relationshipCap.resolve().isPresent())
+						{
+							relationshipCap.resolve().get().SetCooldownTicks(npcID, shopkeeper.GetDef().CooldownTicks(true));
+						}
+					}
 				}
 
 			}
