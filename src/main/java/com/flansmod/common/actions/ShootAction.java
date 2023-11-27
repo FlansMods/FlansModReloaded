@@ -138,8 +138,6 @@ public class ShootAction extends ActionInstance
 	{
 		if(!Group.Context.CanShoot(0))
 			return false;
-		if(!Group.Context.Gun.UpdateFromItemStack())
-			return false;
 
 		return true;
 	}

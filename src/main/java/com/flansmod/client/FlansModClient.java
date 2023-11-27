@@ -15,6 +15,8 @@ import com.flansmod.common.FlansMod;
 import com.flansmod.common.actions.*;
 import com.flansmod.common.actions.ActionInstance;
 import com.flansmod.common.gunshots.ShooterContext;
+import com.flansmod.packs.basics.BasicPartsMod;
+import com.flansmod.packs.basics.client.DistillationTowerScreen;
 import com.flansmod.util.Maths;
 import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import net.minecraft.Util;
@@ -26,6 +28,7 @@ import net.minecraft.client.renderer.entity.EntityRenderers;
 import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.event.ModelEvent;
 import net.minecraftforge.client.event.RegisterClientReloadListenersEvent;
 import net.minecraftforge.client.event.RegisterShadersEvent;
@@ -35,6 +38,7 @@ import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.fml.util.ObfuscationReflectionHelper;
 
@@ -43,7 +47,7 @@ import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 
-
+@OnlyIn(Dist.CLIENT)
 @Mod.EventBusSubscriber(value = Dist.CLIENT, bus = Mod.EventBusSubscriber.Bus.MOD, modid = FlansMod.MODID)
 public class FlansModClient
 {
@@ -54,7 +58,7 @@ public class FlansModClient
 	public static final FlanModelRegistration MODEL_REGISTRATION = new FlanModelRegistration();
 	public static final AnimationDefinitions ANIMATIONS = new AnimationDefinitions();
 	public static final DecalRenderer DECAL_RENDERER = new DecalRenderer();
-	public static final ActionManager ACTIONS_CLIENT = new ActionManager(true);
+	public static final ClientActionManager ACTIONS_CLIENT = new ClientActionManager();
 	public static final MagazineTextureAtlas MAGAZINE_ATLAS = new MagazineTextureAtlas();
 	public static final RecoilManager RECOIL = new RecoilManager();
 
@@ -66,6 +70,26 @@ public class FlansModClient
 
 	@Nullable
 	private static ShaderInstance GUN_CUTOUT;
+
+	@SubscribeEvent
+	public static void ClientInit(final FMLClientSetupEvent event)
+	{
+		IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
+		ACTIONS_CLIENT.HookClient(modEventBus);
+		new DebugModelPoser().Init();
+		MODEL_REGISTRATION.Hook(modEventBus);
+		modEventBus.register(ANIMATIONS);
+		MAGAZINE_ATLAS.Init();
+		InitReflection();
+
+		// Screens
+		MenuScreens.register(FlansMod.WORKBENCH_MENU.get(), WorkbenchScreen::new);
+
+		// Entity Renderers
+		EntityRenderers.register(FlansMod.ENT_TYPE_BULLET.get(), BulletEntityRenderer::new);
+
+		MinecraftForge.EVENT_BUS.addListener(FlansModClient::RenderTick);
+	}
 
 	@SubscribeEvent
 	public static void OnRegisterGeometryLoaders(ModelEvent.RegisterGeometryLoaders event) { MODEL_REGISTRATION.OnRegisterGeometryLoaders(event); }
@@ -114,25 +138,6 @@ public class FlansModClient
 		{
 
 		}
-	}
-
-	public static void Init()
-	{
-		IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
-		ACTIONS_CLIENT.HookClient(modEventBus);
-		new DebugModelPoser().Init();
-		MODEL_REGISTRATION.Hook(modEventBus);
-		modEventBus.register(ANIMATIONS);
-		MAGAZINE_ATLAS.Init();
-		InitReflection();
-
-		// Screens
-		MenuScreens.register(FlansMod.WORKBENCH_MENU.get(), WorkbenchScreen::new);
-
-		// Entity Renderers
-		EntityRenderers.register(FlansMod.ENT_TYPE_BULLET.get(), BulletEntityRenderer::new);
-
-		MinecraftForge.EVENT_BUS.addListener(FlansModClient::RenderTick);
 	}
 
 	public static void RenderTick(TickEvent.RenderTickEvent event)

@@ -6,6 +6,7 @@ import com.flansmod.common.network.FlansModPacketHandler;
 import com.flansmod.common.network.bidirectional.ActionUpdateMessage;
 import com.flansmod.common.types.guns.elements.*;
 import com.flansmod.util.Maths;
+import com.flansmod.util.MinecraftHelpers;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
@@ -200,6 +201,12 @@ public class ActionStack
 				for (int i = ActiveActionGroups.size() - 1; i >= 0; i--)
 					if (ActiveActionGroups.get(i).Def.key.equals(groupContext.Def.key))
 						ActiveActionGroups.remove(i);
+
+				DebugLog("StopActionGroup called on " + groupContext.GroupPath);
+			}
+			else
+			{
+				DebugLog("StopActionGroup retriggered itself, not removing " + groupContext.GroupPath);
 			}
 		}
 	}
@@ -256,6 +263,7 @@ public class ActionStack
 
 	private void EnterReloadState(ReloadDefinition reload, EReloadStage reloadStage, ActionGroupContext triggeringActionGroup)
 	{
+		DebugLog("EnterReloadState - " + reloadStage + " in " + reload.key);
 		ActionGroupContext newGroupContext = triggeringActionGroup.Gun
 			.GetActionGroupContextSibling(triggeringActionGroup, reload.GetReloadActionKey(reloadStage));
 		ActionGroupInstance groupInstance = GetOrCreateGroupInstance(newGroupContext);
@@ -290,6 +298,13 @@ public class ActionStack
 			ShotCooldown = 0.0f;
 
 		TickActions();
+	}
+
+	protected void DebugLog(String string)
+	{
+		FlansMod.LOGGER.info("[" + MinecraftHelpers.GetTick() +
+			(IsClient ? "|Client]" : "|Server]")
+			+ string);
 	}
 
 	// -------------------------------------------------------------------------------------------------

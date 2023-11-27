@@ -1,6 +1,7 @@
 package com.flansmod.common;
 
 import com.flansmod.client.FlansModClient;
+import com.flansmod.common.actions.ServerActionManager;
 import com.flansmod.common.crafting.*;
 import com.flansmod.common.entity.NpcRelationshipCapabilityAttacher;
 import com.flansmod.common.actions.ActionManager;
@@ -116,7 +117,7 @@ public class FlansMod
     public static final NpcDefinitions NPCS = new NpcDefinitions();
 
     // Server handlers
-    public static final ActionManager ACTIONS_SERVER = new ActionManager(false);
+    public static final ServerActionManager ACTIONS_SERVER = new ServerActionManager();
 
     public static RegistryObject<Item> Gun(DeferredRegister<Item> itemRegister, String modID, String name)
     {
@@ -171,9 +172,7 @@ public class FlansMod
     public FlansMod()
     {
         IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
-
         modEventBus.addListener(this::CommonInit);
-        modEventBus.addListener(this::ClientInit);
         MinecraftForge.EVENT_BUS.addListener(this::loadLevel);
         MinecraftForge.EVENT_BUS.addListener(this::onReloadResources);
         ACTIONS_SERVER.HookServer(modEventBus);
@@ -199,12 +198,6 @@ public class FlansMod
     {
         new Raytracer(event.getLevel()).hook();
         ShooterContext.OnLevelLoaded();
-    }
-
-    @OnlyIn(Dist.CLIENT)
-    private void ClientInit(final FMLClientSetupEvent event)
-    {
-        FlansModClient.Init();
     }
 
     public static final Component CREATIVE_TAB_NAME_GUNS = Component.translatable("item_group." + MODID + ".creative_tab_guns");

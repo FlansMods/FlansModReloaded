@@ -15,6 +15,7 @@ import com.flansmod.client.render.animation.elements.SequenceDefinition;
 import com.flansmod.client.render.animation.elements.SequenceEntryDefinition;
 import com.flansmod.client.render.guns.AttachmentItemRenderer;
 import com.flansmod.client.render.models.*;
+import com.flansmod.common.FlansMod;
 import com.flansmod.common.actions.*;
 import com.flansmod.common.gunshots.GunContextPlayer;
 import com.flansmod.common.gunshots.ShooterContext;
@@ -203,9 +204,13 @@ public abstract class FlanItemModelRenderer extends BlockEntityWithoutLevelRende
             List<Transform> poses = new ArrayList<>();
             for (AnimationAction animAction : animActions)
             {
+
                 SequenceDefinition sequence = animationSet.GetSequence(animAction.Def.anim);
                 if (sequence == null)
+                {
+                    FlansMod.LOGGER.warn("Could not find animation sequence " + animAction.Def.anim + " in anim set " + animationSet.Location);
                     continue;
+                }
 
                 // Make sure we scale the sequence (which can be played at any speed) with the target duration of this specific animation action
                 float progress = animAction.AnimFrame + Minecraft.getInstance().getPartialTick();

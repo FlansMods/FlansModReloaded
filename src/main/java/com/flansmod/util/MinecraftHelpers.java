@@ -4,20 +4,14 @@ import com.flansmod.common.FlansMod;
 import com.flansmod.common.types.elements.ItemStackDefinition;
 import com.mojang.brigadier.StringReader;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.renderer.block.model.ItemTransforms;
-import net.minecraft.commands.arguments.item.ItemParser;
 import net.minecraft.nbt.*;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.damagesource.DamageSource;
-import net.minecraft.world.damagesource.IndirectEntityDamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.HumanoidArm;
-import net.minecraft.world.entity.projectile.AbstractArrow;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.material.Material;
@@ -27,12 +21,10 @@ import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.loading.FMLEnvironment;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.server.ServerLifecycleHooks;
-import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 
@@ -49,9 +41,12 @@ public class MinecraftHelpers
 		}
 
 		// Failing that, there is a chance this is our current loaded client level
-		Level clientLevel = DistExecutor.safeCallWhenOn(Dist.CLIENT, () -> MinecraftHelpers::Client_GetCurrentLevel);
-		if(clientLevel.dimension().equals(dimension))
-			return clientLevel;
+		if(IsClient())
+		{
+			Level clientLevel = DistExecutor.safeCallWhenOn(Dist.CLIENT, () -> MinecraftHelpers::Client_GetCurrentLevel);
+			if (clientLevel.dimension().equals(dimension))
+				return clientLevel;
+		}
 
 		return null;
 	}
@@ -66,10 +61,14 @@ public class MinecraftHelpers
 		}
 
 		// If not on a server, return the one loaded level
-		Level clientLevel = DistExecutor.safeCallWhenOn(Dist.CLIENT, () -> MinecraftHelpers::Client_GetCurrentLevel);
-		List<Level> list = new ArrayList<>(1);
-		list.add(clientLevel);
-		return list;
+		if(IsClient())
+		{
+			Level clientLevel = DistExecutor.safeCallWhenOn(Dist.CLIENT, () -> MinecraftHelpers::Client_GetCurrentLevel);
+			List<Level> list = new ArrayList<>(1);
+			list.add(clientLevel);
+			return list;
+		}
+		return new ArrayList<>();
 	}
 
 	public static boolean TagEqual(Tag tag, String stringValue)
