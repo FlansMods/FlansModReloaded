@@ -1,0 +1,27 @@
+{
+    "tags": [
+        "flansvendersgame:phantek_fury"
+    ],
+    "modifiers": [
+        {
+            "Stat": "duration",
+            "Filter": "",
+            "Add": 0.0,
+            "Multiply": 0.75,
+            "SetValue": "",
+            "ApplyFilters": [
+                "reload_primary"
+            ]
+        }
+    ],
+    "ammoLoadMode": "FullMag",
+    "ammoConsumeMode": "FirstNonEmpty",
+    "upgradeCost": 0,
+    "numRounds": 75,
+    "allRoundsMustBeIdentical": true,
+    "matchBulletNames": [],
+    "requiredBulletTags": [
+        "flansmod:rifle_bullet"
+    ],
+    "disallowedBulletTags": []
+}

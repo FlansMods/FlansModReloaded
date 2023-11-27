@@ -1,5 +1,6 @@
 package com.flansmod.common.gunshots;
 
+import com.flansmod.common.FlansMod;
 import com.flansmod.common.actions.GunContext;
 import com.flansmod.common.types.elements.ModifierDefinition;
 import com.flansmod.util.MinecraftHelpers;
@@ -186,7 +187,13 @@ public abstract class ShooterContext
 			gunsInSlot.add(context);
 			// If the current slot has a good context, check it is the one we are asking for before returning it
 			if(context.hashCode() == contextHash)
+			{
 				return context;
+			}
+			else
+			{
+				FlansMod.LOGGER.error("Context mismatch for Shooter " + this + " in slot " + slotIndex + ". Got hash " + context.hashCode() + ", but we needed " + contextHash);
+			}
 		}
 
 		// We want a specific context, not just the latest, so return invalid

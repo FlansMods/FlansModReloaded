@@ -1,0 +1,86 @@
+{
+    "itemSettings": {
+        "maxStackSize": 1,
+        "tags": [
+            "flansmod:bullet",
+            "flansmod:sights"
+        ]
+    },
+    "attachmentType": "Sights",
+    "modifiers": [
+        {
+            "Stat": "spread",
+            "Filter": "",
+            "Add": 0.0,
+            "Multiply": 0.7,
+            "SetValue": "",
+            "ApplyFilters": []
+        },
+        {
+            "Stat": "vertical_recoil",
+            "Filter": "",
+            "Add": 0.0,
+            "Multiply": 0.8,
+            "SetValue": "",
+            "ApplyFilters": []
+        },
+        {
+            "Stat": "horizontal_recoil",
+            "Filter": "",
+            "Add": 0.0,
+            "Multiply": 0.8,
+            "SetValue": "",
+            "ApplyFilters": []
+        }
+    ],
+    "mechaEffects": [],
+    "mechaEffectFilter": "",
+    "handlerOverrides": [
+        {
+            "inputType": "Fire2",
+            "nodes": [
+                {
+                    "actionGroupToTrigger": "ads",
+                    "modalCheck": "",
+                    "canTriggerWhileReloading": false,
+                    "deferToAttachment": false,
+                    "attachmentType": "Barrel",
+                    "attachmentIndex": 0,
+                    "andContinueEvaluating": false
+                }
+            ]
+        }
+    ],
+    "actionOverrides": [
+        {
+            "key": "ads",
+            "canActUnderwater": true,
+            "canActUnderOtherLiquid": true,
+            "canBeOverriden": false,
+            "twoHanded": false,
+            "repeatMode": "Toggle",
+            "repeatDelay": 1.0,
+            "repeatCount": 0,
+            "spinUpDuration": 0.0,
+            "loudness": 0.0,
+            "actions": [
+                {
+                    "actionType": "AimDownSights",
+                    "duration": 0.0,
+                    "sounds": [],
+                    "itemStack": "",
+                    "modifiers": [],
+                    "fovFactor": 1.0,
+                    "scopeOverlay": "",
+                    "anim": "",
+                    "toolLevel": 0.0,
+                    "harvestSpeed": 0.0,
+                    "reach": 0.0
+                }
+            ]
+        }
+    ],
+    "reloadOverrides": [],
+    "modeOverride": "FullAuto",
+    "overrideFireMode": false
+}

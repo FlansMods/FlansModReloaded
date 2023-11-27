@@ -1,0 +1,48 @@
+{
+    "titlestring": "gun_modification_table",
+    "bannerTextureLocation": "",
+    "gunCrafting": {
+        "isActive": false,
+        "pages": [],
+        "FECostPerCraft": 0
+    },
+    "partCrafting": {
+        "isActive": false,
+        "inputSlots": 8,
+        "outputSlots": 8,
+        "timePerCraft": 1.0,
+        "FECostPerCraft": 0.0,
+        "partsByName": [],
+        "partsByTier": []
+    },
+    "gunModifying": {
+        "isActive": true,
+        "disallowedMods": [],
+        "allowedMods": [],
+        "FECostPerModify": 0
+    },
+    "energy": {
+        "maxFE": 0,
+        "acceptFEPerTick": 0,
+        "disperseFEPerTick": 0,
+        "numBatterySlots": 0,
+        "batterySlotStackSize": 1,
+        "liquidFuelStorage": 0,
+        "liquidFuelFilter": "",
+        "liquidFEPerMillibucket": 0,
+        "numSolidFuelSlots": 0,
+        "solidFuelFilter": "",
+        "solidFEPerFuelTime": 0
+    },
+    "armourCrafting": {
+        "isActive": false,
+        "pages": [],
+        "FECostPerCraft": 0
+    },
+    "itemHolding": {
+        "slots": [],
+        "allow": "",
+        "maxStackSize": 64
+    },
+    "sides": []
+}

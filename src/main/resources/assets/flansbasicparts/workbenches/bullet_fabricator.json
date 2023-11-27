@@ -1,0 +1,72 @@
+{
+    "titlestring": "Bullet Fabricator",
+    "bannerTextureLocation": "",
+    "gunCrafting": {
+        "isActive": false,
+        "pages": [],
+        "FECostPerCraft": 0
+    },
+    "partCrafting": {
+        "isActive": true,
+        "inputSlots": 16,
+        "outputSlots": 8,
+        "timePerCraft": 1.0,
+        "FECostPerCraft": 0.0,
+        "partsByName": [
+            "flansbasicparts:rifle_bullet",
+            "flansbasicparts:rifle_bullet_ap",
+            "flansbasicparts:rifle_bullet_ex",
+            "flansbasicparts:rifle_bullet_incendiary",
+            "flansbasicparts:pistol_bullet",
+            "flansbasicparts:pistol_bullet_ap",
+            "flansbasicparts:pistol_bullet_ex",
+            "flansbasicparts:pistol_bullet_incendiary",
+            "flansbasicparts:artillery_shell",
+            "flansbasicparts:artillery_shell_ap",
+            "flansbasicparts:artillery_shell_ex",
+            "flansbasicparts:artillery_shell_incendiary",
+            "flansbasicparts:shotgun_shell_ap",
+            "flansbasicparts:shotgun_shell_birdshot",
+            "flansbasicparts:shotgun_shell_buckshot",
+            "flansbasicparts:shotgun_shell_ex",
+            "flansbasicparts:shotgun_shell_flechette",
+            "flansbasicparts:shotgun_shell_flechette_poisoned",
+            "flansbasicparts:shotgun_shell_incendiary",
+            "flansbasicparts:projectile_grenade_ex",
+            "flansbasicparts:projectile_grenade_impact",
+            "flansbasicparts:projectile_grenade_incendiary",
+            "flansbasicparts:projectile_grenade_sticky"
+        ],
+        "partsByTier": []
+    },
+    "gunModifying": {
+        "isActive": false,
+        "disallowedMods": [],
+        "allowedMods": [],
+        "FECostPerModify": 0
+    },
+    "energy": {
+        "maxFE": 0,
+        "acceptFEPerTick": 0,
+        "disperseFEPerTick": 0,
+        "numBatterySlots": 0,
+        "batterySlotStackSize": 1,
+        "liquidFuelStorage": 0,
+        "liquidFuelFilter": "",
+        "liquidFEPerMillibucket": 0,
+        "numSolidFuelSlots": 0,
+        "solidFuelFilter": "",
+        "solidFEPerFuelTime": 0
+    },
+    "armourCrafting": {
+        "isActive": false,
+        "pages": [],
+        "FECostPerCraft": 0
+    },
+    "itemHolding": {
+        "slots": [],
+        "allow": "",
+        "maxStackSize": 64
+    },
+    "sides": []
+}

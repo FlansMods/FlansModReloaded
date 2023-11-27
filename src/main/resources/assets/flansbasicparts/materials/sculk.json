@@ -1,0 +1,14 @@
+{
+    "sources": [
+        {
+            "matchItems": [
+                "minecraft:echo_shard"
+            ],
+            "matchTags": [],
+            "count": 1,
+            "icon": "ingot"
+        }
+    ],
+    "craftingTier": 3,
+    "materialType": "Electronic"
+}

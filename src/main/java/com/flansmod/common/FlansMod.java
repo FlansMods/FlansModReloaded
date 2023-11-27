@@ -21,6 +21,7 @@ import com.flansmod.common.types.parts.PartDefinitions;
 import com.mojang.logging.LogUtils;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.packs.resources.PreparableReloadListener;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobCategory;
 import net.minecraft.world.inventory.MenuType;
@@ -56,6 +57,7 @@ import org.slf4j.Logger;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Consumer;
 
 @SuppressWarnings("unused")
 @Mod(FlansMod.MODID)
@@ -305,22 +307,21 @@ public class FlansMod
     
     private void onReloadResources(AddReloadListenerEvent event)
     {
-        event.addListener(GUNS);
-        event.addListener(BULLETS);
-        event.addListener(ATTACHMENTS);
-        event.addListener(PARTS);
-        event.addListener(WORKBENCHES);
-        event.addListener(MATERIALS);
-        event.addListener(MAGAZINES);
-        event.addListener(NPCS);
-
-        if(FMLEnvironment.dist == Dist.CLIENT)
-            RegisterClientReloadListeners(event);
+        if(FMLEnvironment.dist == Dist.DEDICATED_SERVER)
+        {
+            RegisterCommonReloadListeners(event::addListener);
+        }
     }
 
-    @OnlyIn(Dist.CLIENT)
-    private void RegisterClientReloadListeners(AddReloadListenerEvent event)
+    public static void RegisterCommonReloadListeners(Consumer<PreparableReloadListener> registerFunc)
     {
-        FlansModClient.RegisterClientDataReloadListeners(event);
+        registerFunc.accept(GUNS);
+        registerFunc.accept(BULLETS);
+        registerFunc.accept(ATTACHMENTS);
+        registerFunc.accept(PARTS);
+        registerFunc.accept(WORKBENCHES);
+        registerFunc.accept(MATERIALS);
+        registerFunc.accept(MAGAZINES);
+        registerFunc.accept(NPCS);
     }
 }

@@ -1,0 +1,52 @@
+{
+    "itemSettings": {
+        "maxStackSize": 64,
+        "tags": [
+            "flansmod:bullet",
+            "flansmod:pistol_bullet"
+        ]
+    },
+    "roundsPerItem": 1,
+    "shootStats": {
+        "verticalRecoil": 1.0,
+        "horizontalRecoil": 0.0,
+        "spread": 1.0,
+        "spreadPattern": "FilledCircle",
+        "speed": 0.0,
+        "bulletCount": 1,
+        "spinSpeed": 360.0,
+        "breaksMaterials": [],
+        "penetrationPower": 0.0,
+        "impact": {
+            "decal": "flansmod:effects/bullet_decal",
+            "damageToTarget": 0.5,
+            "multiplierVsPlayers": 1.0,
+            "multiplierVsVehicles": 1.0,
+            "knockback": 0.0,
+            "potionEffectOnTarget": "",
+            "splashDamage": 0.0,
+            "splashDamageRadius": 0.0,
+            "splashDamageFalloff": 1.0,
+            "potionEffectOnSplash": "",
+            "setFireToTarget": 1.5,
+            "fireSpreadRadius": 1.0,
+            "fireSpreadAmount": 0.5,
+            "explosionRadius": 0.0,
+            "hitSounds": [],
+            "onImpactActions": []
+        },
+        "hitscan": true,
+        "fuseTime": 0.0,
+        "gravityFactor": 1.0,
+        "sticky": false,
+        "turnRate": 0.5,
+        "dragInAir": 0.01,
+        "trailParticles": "",
+        "secondsBetweenTrailParticles": 0.25,
+        "dragInWater": 0.2,
+        "waterParticles": ""
+    },
+    "onShootActions": [],
+    "onClipEmptyActions": [],
+    "onReloadActions": []
+}

@@ -1,0 +1,22 @@
+{
+    "sources": [
+        {
+            "matchItems": [
+                "flansbasicparts:polyester_thread"
+            ],
+            "matchTags": [],
+            "count": 1,
+            "icon": "thread"
+        },
+        {
+            "matchItems": [
+                "flansbasicparts:polyester_block"
+            ],
+            "matchTags": [],
+            "count": 9,
+            "icon": "block"
+        }
+    ],
+    "craftingTier": 2,
+    "materialType": "Fabric"
+}

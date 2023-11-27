@@ -1,0 +1,54 @@
+{
+    "itemSettings": {
+        "maxStackSize": 64,
+        "tags": [
+            "flansmod:bullet",
+            "flansmod:launchable_grenade"
+        ]
+    },
+    "roundsPerItem": 1,
+    "shootStats": {
+        "verticalRecoil": 1.0,
+        "horizontalRecoil": 0.0,
+        "spread": 1.0,
+        "spreadPattern": "FilledCircle",
+        "speed": 3.0,
+        "bulletCount": 1,
+        "spinSpeed": 360.0,
+        "breaksMaterials": [
+            "minecraft:glass"
+        ],
+        "penetrationPower": 50.0,
+        "impact": {
+            "decal": "",
+            "damageToTarget": 1.0,
+            "multiplierVsPlayers": 1.0,
+            "multiplierVsVehicles": 100.0,
+            "knockback": 0.0,
+            "potionEffectOnTarget": "",
+            "splashDamage": 0.0,
+            "splashDamageRadius": 0.0,
+            "splashDamageFalloff": 1.0,
+            "potionEffectOnSplash": "",
+            "setFireToTarget": 0.0,
+            "fireSpreadRadius": 0.0,
+            "fireSpreadAmount": 0.0,
+            "explosionRadius": 2.5,
+            "hitSounds": [],
+            "onImpactActions": []
+        },
+        "hitscan": false,
+        "fuseTime": 5.0,
+        "gravityFactor": 1.0,
+        "sticky": true,
+        "turnRate": 0.5,
+        "dragInAir": 0.01,
+        "trailParticles": "",
+        "secondsBetweenTrailParticles": 0.25,
+        "dragInWater": 0.2,
+        "waterParticles": ""
+    },
+    "onShootActions": [],
+    "onClipEmptyActions": [],
+    "onReloadActions": []
+}

@@ -1,0 +1,45 @@
+{
+    "itemSettings": {
+        "maxStackSize": 1,
+        "tags": [
+            "flansmod:bullet",
+            "flansmod:grip"
+        ]
+    },
+    "attachmentType": "Grip",
+    "modifiers": [
+        {
+            "Stat": "vertical_recoil",
+            "Filter": "",
+            "Add": 0.0,
+            "Multiply": 1.1,
+            "SetValue": "",
+            "ApplyFilters": []
+        },
+        {
+            "Stat": "horizontal_recoil",
+            "Filter": "",
+            "Add": 0.0,
+            "Multiply": 1.1,
+            "SetValue": "",
+            "ApplyFilters": []
+        },
+        {
+            "Stat": "duration",
+            "Filter": "",
+            "Add": 0.0,
+            "Multiply": 0.7,
+            "SetValue": "",
+            "ApplyFilters": [
+                "primary_reload"
+            ]
+        }
+    ],
+    "mechaEffects": [],
+    "mechaEffectFilter": "",
+    "handlerOverrides": [],
+    "actionOverrides": [],
+    "reloadOverrides": [],
+    "modeOverride": "FullAuto",
+    "overrideFireMode": false
+}

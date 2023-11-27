@@ -1,0 +1,16 @@
+{
+    "tags": [
+        "flansvendersgame:fc_870"
+    ],
+    "modifiers": [],
+    "ammoLoadMode": "OneBulletAtATime",
+    "ammoConsumeMode": "FirstNonEmpty",
+    "upgradeCost": 2,
+    "numRounds": 9,
+    "allRoundsMustBeIdentical": false,
+    "matchBulletNames": [],
+    "requiredBulletTags": [
+        "flansmod:shotgun_shell"
+    ],
+    "disallowedBulletTags": []
+}

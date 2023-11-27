@@ -1,0 +1,30 @@
+{
+    "canPlaceInMachiningTable": false,
+    "canPlaceInModificationTable": false,
+    "compatiblityTags": [
+        "mecha",
+        "groundVehicle",
+        "plane"
+    ],
+    "itemSettings": {
+        "maxStackSize": 64,
+        "tags": [
+            "flansmod:part",
+            "forge:plates/aluminum"
+        ]
+    },
+    "modifiers": [],
+    "engine": {
+        "maxAcceleration": 1.0,
+        "maxDeceleration": 1.0,
+        "maxSpeed": 1.0,
+        "fuelType": "Smeltable",
+        "fuelConsumptionRate": 1.0,
+        "solidFuelSlots": 1,
+        "liquidFuelCapacity": 0,
+        "batterySlots": 0,
+        "FECapacity": 0
+    },
+    "materialTier": 2,
+    "materialType": "Metal"
+}

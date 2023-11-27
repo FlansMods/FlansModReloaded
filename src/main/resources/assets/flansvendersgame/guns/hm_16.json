@@ -1,0 +1,556 @@
+{
+    "itemSettings": {
+        "maxStackSize": 1,
+        "tags": [
+            "flansmod:gun"
+        ]
+    },
+    "paints": {
+        "paintjobs": [
+            {
+                "textureName": "hm_16_olive",
+                "paintBucketsRequired": 1,
+                "entitlementKey": ""
+            },
+            {
+                "textureName": "hm_16_wood",
+                "paintBucketsRequired": 1,
+                "entitlementKey": ""
+            }
+        ]
+    },
+    "inputHandlers": [
+        {
+            "inputType": "Fire1",
+            "nodes": [
+                {
+                    "actionGroupToTrigger": "primary_fire",
+                    "modalCheck": "",
+                    "canTriggerWhileReloading": false,
+                    "deferToAttachment": false,
+                    "attachmentType": "Generic",
+                    "attachmentIndex": 0,
+                    "andContinueEvaluating": false
+                },
+                {
+                    "actionGroupToTrigger": "reload_primary_start",
+                    "modalCheck": "",
+                    "canTriggerWhileReloading": false,
+                    "deferToAttachment": false,
+                    "attachmentType": "Generic",
+                    "attachmentIndex": 0,
+                    "andContinueEvaluating": false
+                }
+            ]
+        },
+        {
+            "inputType": "Fire2",
+            "nodes": [
+                {
+                    "actionGroupToTrigger": "",
+                    "modalCheck": "",
+                    "canTriggerWhileReloading": false,
+                    "deferToAttachment": true,
+                    "attachmentType": "Sights",
+                    "attachmentIndex": 0,
+                    "andContinueEvaluating": false
+                },
+                {
+                    "actionGroupToTrigger": "",
+                    "modalCheck": "",
+                    "canTriggerWhileReloading": false,
+                    "deferToAttachment": true,
+                    "attachmentType": "Grip",
+                    "attachmentIndex": 0,
+                    "andContinueEvaluating": false
+                },
+                {
+                    "actionGroupToTrigger": "ads",
+                    "modalCheck": "",
+                    "canTriggerWhileReloading": true,
+                    "deferToAttachment": false,
+                    "attachmentType": "Generic",
+                    "attachmentIndex": 0,
+                    "andContinueEvaluating": false
+                }
+            ]
+        },
+        {
+            "inputType": "SpecialKey1",
+            "nodes": [
+                {
+                    "actionGroupToTrigger": "look",
+                    "modalCheck": "",
+                    "canTriggerWhileReloading": false,
+                    "deferToAttachment": false,
+                    "attachmentType": "Generic",
+                    "attachmentIndex": 0,
+                    "andContinueEvaluating": false
+                }
+            ]
+        },
+        {
+            "inputType": "Reload1",
+            "nodes": [
+                {
+                    "actionGroupToTrigger": "reload_primary_start",
+                    "modalCheck": "",
+                    "canTriggerWhileReloading": false,
+                    "deferToAttachment": true,
+                    "attachmentType": "Barrel",
+                    "attachmentIndex": 0,
+                    "andContinueEvaluating": false
+                },
+                {
+                    "actionGroupToTrigger": "reload_primary_start",
+                    "modalCheck": "",
+                    "canTriggerWhileReloading": false,
+                    "deferToAttachment": false,
+                    "attachmentType": "Generic",
+                    "attachmentIndex": 0,
+                    "andContinueEvaluating": false
+                }
+            ]
+        }
+    ],
+    "actionGroups": [
+        {
+            "key": "primary_fire",
+            "canActUnderwater": true,
+            "canActUnderOtherLiquid": false,
+            "canBeOverriden": true,
+            "twoHanded": true,
+            "repeatMode": "FullAuto",
+            "repeatDelay": 0.1,
+            "repeatCount": 3,
+            "spinUpDuration": 1.5,
+            "loudness": 150.0,
+            "actions": [
+                {
+                    "actionType": "Shoot",
+                    "duration": 0.1,
+                    "sounds": [],
+                    "itemStack": "",
+                    "modifiers": [
+                        {
+                            "Stat": "vertical_recoil",
+                            "Filter": "",
+                            "Add": 0.0,
+                            "Multiply": 2.0,
+                            "SetValue": "",
+                            "ApplyFilters": []
+                        },
+                        {
+                            "Stat": "spread",
+                            "Filter": "",
+                            "Add": 0.0,
+                            "Multiply": 15.0,
+                            "SetValue": "",
+                            "ApplyFilters": []
+                        },
+                        {
+                            "Stat": "speed",
+                            "Filter": "",
+                            "Add": 0.0,
+                            "Multiply": 0.0,
+                            "SetValue": "",
+                            "ApplyFilters": []
+                        },
+                        {
+                            "Stat": "bullet_count",
+                            "Filter": "",
+                            "Add": 0.0,
+                            "Multiply": 1.0,
+                            "SetValue": "",
+                            "ApplyFilters": []
+                        },
+                        {
+                            "Stat": "impact_damage",
+                            "Filter": "",
+                            "Add": 0.0,
+                            "Multiply": 4.0,
+                            "SetValue": "",
+                            "ApplyFilters": []
+                        },
+                        {
+                            "Stat": "knockback",
+                            "Filter": "",
+                            "Add": 0.0,
+                            "Multiply": 0.0,
+                            "SetValue": "",
+                            "ApplyFilters": []
+                        }
+                    ],
+                    "fovFactor": 1.0,
+                    "scopeOverlay": "",
+                    "anim": "",
+                    "toolLevel": 1.0,
+                    "harvestSpeed": 1.0,
+                    "reach": 5.0
+                },
+                {
+                    "actionType": "PlaySound",
+                    "duration": 0.0,
+                    "sounds": [
+                        {
+                            "sound": "flansmod:gunshot_forceful",
+                            "length": 0.0,
+                            "minPitchMultiplier": 0.8333333,
+                            "maxPitchMultiplier": 1.25,
+                            "minVolume": 1.0,
+                            "maxVolume": 1.0,
+                            "maxRange": 100.0,
+                            "LODs": []
+                        }
+                    ],
+                    "itemStack": "",
+                    "modifiers": [],
+                    "fovFactor": 1.25,
+                    "scopeOverlay": "",
+                    "anim": "",
+                    "toolLevel": 1.0,
+                    "harvestSpeed": 1.0,
+                    "reach": 1.0
+                },
+                {
+                    "actionType": "Animation",
+                    "duration": 0.1,
+                    "sounds": [],
+                    "itemStack": "",
+                    "modifiers": [],
+                    "fovFactor": 1.25,
+                    "scopeOverlay": "",
+                    "anim": "shoot",
+                    "toolLevel": 1.0,
+                    "harvestSpeed": 1.0,
+                    "reach": 1.0
+                }
+            ]
+        },
+        {
+            "key": "ads",
+            "canActUnderwater": true,
+            "canActUnderOtherLiquid": false,
+            "canBeOverriden": true,
+            "twoHanded": true,
+            "repeatMode": "Toggle",
+            "repeatDelay": 0.1,
+            "repeatCount": 3,
+            "spinUpDuration": 1.5,
+            "loudness": 150.0,
+            "actions": [
+                {
+                    "actionType": "AimDownSights",
+                    "duration": 0.0,
+                    "sounds": [],
+                    "itemStack": "",
+                    "modifiers": [],
+                    "fovFactor": 1.25,
+                    "scopeOverlay": "",
+                    "anim": "",
+                    "toolLevel": 1.0,
+                    "harvestSpeed": 1.0,
+                    "reach": 1.0
+                },
+                {
+                    "actionType": "Animation",
+                    "duration": 0.0,
+                    "sounds": [],
+                    "itemStack": "",
+                    "modifiers": [],
+                    "fovFactor": 1.25,
+                    "scopeOverlay": "",
+                    "anim": "aim_down_sights",
+                    "toolLevel": 1.0,
+                    "harvestSpeed": 1.0,
+                    "reach": 1.0
+                }
+            ]
+        },
+        {
+            "key": "look",
+            "canActUnderwater": true,
+            "canActUnderOtherLiquid": false,
+            "canBeOverriden": false,
+            "twoHanded": false,
+            "repeatMode": "SemiAuto",
+            "repeatDelay": 0.0,
+            "repeatCount": 0,
+            "spinUpDuration": 1.0,
+            "loudness": 150.0,
+            "actions": [
+                {
+                    "actionType": "Animation",
+                    "duration": 2.5,
+                    "sounds": [],
+                    "itemStack": "",
+                    "modifiers": [],
+                    "fovFactor": 1.25,
+                    "scopeOverlay": "",
+                    "anim": "look_at",
+                    "toolLevel": 1.0,
+                    "harvestSpeed": 1.0,
+                    "reach": 1.0
+                }
+            ]
+        },
+        {
+            "key": "reload_primary_start",
+            "canActUnderwater": true,
+            "canActUnderOtherLiquid": false,
+            "canBeOverriden": false,
+            "twoHanded": false,
+            "repeatMode": "SemiAuto",
+            "repeatDelay": 0.0,
+            "repeatCount": 0,
+            "spinUpDuration": 1.0,
+            "loudness": 150.0,
+            "actions": [
+                {
+                    "actionType": "Animation",
+                    "duration": 0.5,
+                    "sounds": [],
+                    "itemStack": "",
+                    "modifiers": [],
+                    "fovFactor": 1.25,
+                    "scopeOverlay": "",
+                    "anim": "reload_start",
+                    "toolLevel": 1.0,
+                    "harvestSpeed": 1.0,
+                    "reach": 1.0
+                },
+                {
+                    "actionType": "PlaySound",
+                    "duration": 0.0,
+                    "sounds": [
+                        {
+                            "sound": "flansmod:item_raise_hup",
+                            "length": 1.0,
+                            "minPitchMultiplier": 1.0,
+                            "maxPitchMultiplier": 1.0,
+                            "minVolume": 1.0,
+                            "maxVolume": 1.0,
+                            "maxRange": 100.0,
+                            "LODs": []
+                        }
+                    ],
+                    "itemStack": "",
+                    "modifiers": [],
+                    "fovFactor": 1.25,
+                    "scopeOverlay": "",
+                    "anim": "",
+                    "toolLevel": 1.0,
+                    "harvestSpeed": 1.0,
+                    "reach": 1.0
+                }
+            ]
+        },
+        {
+            "key": "reload_primary_eject",
+            "canActUnderwater": true,
+            "canActUnderOtherLiquid": false,
+            "canBeOverriden": false,
+            "twoHanded": false,
+            "repeatMode": "SemiAuto",
+            "repeatDelay": 0.0,
+            "repeatCount": 0,
+            "spinUpDuration": 1.0,
+            "loudness": 150.0,
+            "actions": [
+                {
+                    "actionType": "Animation",
+                    "duration": 0.5,
+                    "sounds": [],
+                    "itemStack": "",
+                    "modifiers": [],
+                    "fovFactor": 1.25,
+                    "scopeOverlay": "",
+                    "anim": "reload_eject",
+                    "toolLevel": 1.0,
+                    "harvestSpeed": 1.0,
+                    "reach": 1.0
+                },
+                {
+                    "actionType": "PlaySound",
+                    "duration": 0.5,
+                    "sounds": [
+                        {
+                            "sound": "flansmod:magazine_unload_chunky",
+                            "length": 1.0,
+                            "minPitchMultiplier": 1.0,
+                            "maxPitchMultiplier": 1.0,
+                            "minVolume": 1.0,
+                            "maxVolume": 1.0,
+                            "maxRange": 100.0,
+                            "LODs": []
+                        }
+                    ],
+                    "itemStack": "",
+                    "modifiers": [],
+                    "fovFactor": 1.25,
+                    "scopeOverlay": "",
+                    "anim": "",
+                    "toolLevel": 1.0,
+                    "harvestSpeed": 1.0,
+                    "reach": 1.0
+                }
+            ]
+        },
+        {
+            "key": "reload_primary_load_one",
+            "canActUnderwater": true,
+            "canActUnderOtherLiquid": false,
+            "canBeOverriden": false,
+            "twoHanded": false,
+            "repeatMode": "SemiAuto",
+            "repeatDelay": 0.0,
+            "repeatCount": 0,
+            "spinUpDuration": 1.0,
+            "loudness": 150.0,
+            "actions": [
+                {
+                    "actionType": "Animation",
+                    "duration": 0.5,
+                    "sounds": [],
+                    "itemStack": "",
+                    "modifiers": [],
+                    "fovFactor": 1.25,
+                    "scopeOverlay": "",
+                    "anim": "reload_load_one",
+                    "toolLevel": 1.0,
+                    "harvestSpeed": 1.0,
+                    "reach": 1.0
+                },
+                {
+                    "actionType": "PlaySound",
+                    "duration": 0.5,
+                    "sounds": [
+                        {
+                            "sound": "flansmod:magazine_load_chunky",
+                            "length": 1.0,
+                            "minPitchMultiplier": 1.0,
+                            "maxPitchMultiplier": 1.0,
+                            "minVolume": 1.0,
+                            "maxVolume": 1.0,
+                            "maxRange": 100.0,
+                            "LODs": []
+                        }
+                    ],
+                    "itemStack": "",
+                    "modifiers": [],
+                    "fovFactor": 1.25,
+                    "scopeOverlay": "",
+                    "anim": "",
+                    "toolLevel": 1.0,
+                    "harvestSpeed": 1.0,
+                    "reach": 1.0
+                }
+            ]
+        },
+        {
+            "key": "reload_primary_end",
+            "canActUnderwater": true,
+            "canActUnderOtherLiquid": false,
+            "canBeOverriden": false,
+            "twoHanded": false,
+            "repeatMode": "SemiAuto",
+            "repeatDelay": 0.0,
+            "repeatCount": 0,
+            "spinUpDuration": 1.0,
+            "loudness": 150.0,
+            "actions": [
+                {
+                    "actionType": "Animation",
+                    "duration": 0.5,
+                    "sounds": [],
+                    "itemStack": "",
+                    "modifiers": [],
+                    "fovFactor": 1.25,
+                    "scopeOverlay": "",
+                    "anim": "reload_end",
+                    "toolLevel": 1.0,
+                    "harvestSpeed": 1.0,
+                    "reach": 1.0
+                },
+                {
+                    "actionType": "PlaySound",
+                    "duration": 0.5,
+                    "sounds": [
+                        {
+                            "sound": "flansmod:item_lower_hup",
+                            "length": 1.0,
+                            "minPitchMultiplier": 1.0,
+                            "maxPitchMultiplier": 1.0,
+                            "minVolume": 1.0,
+                            "maxVolume": 1.0,
+                            "maxRange": 100.0,
+                            "LODs": []
+                        }
+                    ],
+                    "itemStack": "",
+                    "modifiers": [],
+                    "fovFactor": 1.25,
+                    "scopeOverlay": "",
+                    "anim": "",
+                    "toolLevel": 1.0,
+                    "harvestSpeed": 1.0,
+                    "reach": 1.0
+                }
+            ]
+        }
+    ],
+    "magazines": [
+        {
+            "key": "primary",
+            "matchByNames": [],
+            "matchByTags": [
+                "flansvendersgame:hm_16"
+            ],
+            "baseCostToSwap": 0
+        }
+    ],
+    "reloads": [
+        {
+            "key": "primary_fire",
+            "manualReloadAllowed": true,
+            "autoReloadWhenEmpty": true,
+            "startActionKey": "reload_primary_start",
+            "ejectActionKey": "reload_primary_eject",
+            "loadOneActionKey": "reload_primary_load_one",
+            "endActionKey": "reload_primary_end"
+        }
+    ],
+    "loopingSounds": [],
+    "barrelAttachments": {
+        "allowlist": [],
+        "allowAll": true,
+        "numAttachmentSlots": 1,
+        "hideDefaultMesh": true
+    },
+    "gripAttachments": {
+        "allowlist": [],
+        "allowAll": true,
+        "numAttachmentSlots": 1,
+        "hideDefaultMesh": true
+    },
+    "stockAttachments": {
+        "allowlist": [],
+        "allowAll": true,
+        "numAttachmentSlots": 0,
+        "hideDefaultMesh": true
+    },
+    "scopeAttachments": {
+        "allowlist": [],
+        "allowAll": true,
+        "numAttachmentSlots": 1,
+        "hideDefaultMesh": true
+    },
+    "genericAttachments": {
+        "allowlist": [],
+        "allowAll": true,
+        "numAttachmentSlots": 0,
+        "hideDefaultMesh": true
+    },
+    "modelParts": [],
+    "animationSet": "flansmod:rifle_priming_handle_magazine_fed"
+}

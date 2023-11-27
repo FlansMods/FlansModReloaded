@@ -72,7 +72,7 @@ public class ShooterContextLiving extends ShooterContext
 	@Override
 	public int hashCode()
 	{
-		return Objects.hash(Shooter.getId(), Shooter.level.dimension());
+		return Objects.hash(Shooter.getId(), Shooter.level.dimension().toString());
 	}
 	@Override
 	public boolean equals(Object other)

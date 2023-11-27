@@ -1,0 +1,27 @@
+{
+    "tags": [
+        "flansvendersgame:hm_1200"
+    ],
+    "modifiers": [
+        {
+            "Stat": "duration",
+            "Filter": "",
+            "Add": 0.0,
+            "Multiply": 0.75,
+            "SetValue": "",
+            "ApplyFilters": [
+                "reload_primary"
+            ]
+        }
+    ],
+    "ammoLoadMode": "OneBulletAtATime",
+    "ammoConsumeMode": "FirstNonEmpty",
+    "upgradeCost": 2,
+    "numRounds": 5,
+    "allRoundsMustBeIdentical": false,
+    "matchBulletNames": [],
+    "requiredBulletTags": [
+        "flansmod:shotgun_shell"
+    ],
+    "disallowedBulletTags": []
+}

@@ -71,7 +71,7 @@ public class GunContextPlayer extends GunContextLiving
 	@Override
 	public int hashCode()
 	{
-		return HashGunOrigins(Stack) ^ Hand.hashCode() ^ Integer.hashCode(InventorySlot) ^ ShooterContext.hashCode();
+		return HashGunOrigins(Stack) ^ (Hand.ordinal() << 7) ^ (InventorySlot << 13) ^ ShooterContext.hashCode();
 	}
 	@Override
 	public boolean equals(Object other)

@@ -1,0 +1,43 @@
+{
+    "itemSettings": {
+        "maxStackSize": 1,
+        "tags": [
+            "flansmod:bullet",
+            "flansmod:barrel"
+        ]
+    },
+    "attachmentType": "Barrel",
+    "modifiers": [
+        {
+            "Stat": "loudness",
+            "Filter": "",
+            "Add": 0.0,
+            "Multiply": 0.25,
+            "SetValue": "",
+            "ApplyFilters": []
+        },
+        {
+            "Stat": "pitch",
+            "Filter": "",
+            "Add": 0.0,
+            "Multiply": 4.0,
+            "SetValue": "",
+            "ApplyFilters": []
+        },
+        {
+            "Stat": "impact_damage",
+            "Filter": "",
+            "Add": 0.0,
+            "Multiply": 0.8,
+            "SetValue": "",
+            "ApplyFilters": []
+        }
+    ],
+    "mechaEffects": [],
+    "mechaEffectFilter": "",
+    "handlerOverrides": [],
+    "actionOverrides": [],
+    "reloadOverrides": [],
+    "modeOverride": "FullAuto",
+    "overrideFireMode": false
+}

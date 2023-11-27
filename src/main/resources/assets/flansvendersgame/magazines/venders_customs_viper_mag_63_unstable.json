@@ -1,0 +1,33 @@
+{
+    "tags": [
+        "flansvendersgame:venders_customs_viper"
+    ],
+    "modifiers": [
+        {
+            "Stat": "vertical_recoil",
+            "Filter": "",
+            "Add": 0.0,
+            "Multiply": 3.0,
+            "SetValue": "",
+            "ApplyFilters": []
+        },
+        {
+            "Stat": "horizontal_recoil",
+            "Filter": "",
+            "Add": 0.0,
+            "Multiply": 3.0,
+            "SetValue": "",
+            "ApplyFilters": []
+        }
+    ],
+    "ammoLoadMode": "FullMag",
+    "ammoConsumeMode": "FirstNonEmpty",
+    "upgradeCost": 1,
+    "numRounds": 63,
+    "allRoundsMustBeIdentical": false,
+    "matchBulletNames": [],
+    "requiredBulletTags": [
+        "flansmod:pistol_bullet"
+    ],
+    "disallowedBulletTags": []
+}

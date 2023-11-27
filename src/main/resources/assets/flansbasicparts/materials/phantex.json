@@ -1,0 +1,22 @@
+{
+    "sources": [
+        {
+            "matchItems": [
+                "flansbasicparts:phantex_sheet"
+            ],
+            "matchTags": [],
+            "count": 9,
+            "icon": "sheet"
+        },
+        {
+            "matchItems": [
+                "flansbasicparts:phantex_block"
+            ],
+            "matchTags": [],
+            "count": 81,
+            "icon": "block"
+        }
+    ],
+    "craftingTier": 2,
+    "materialType": "Composite"
+}

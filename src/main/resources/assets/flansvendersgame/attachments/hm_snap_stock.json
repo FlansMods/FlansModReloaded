@@ -1,0 +1,34 @@
+{
+    "itemSettings": {
+        "maxStackSize": 1,
+        "tags": [
+            "flansmod:stock"
+        ]
+    },
+    "attachmentType": "Stock",
+    "modifiers": [
+        {
+            "Stat": "vertical_recoil",
+            "Filter": "",
+            "Add": 0.0,
+            "Multiply": 0.75,
+            "SetValue": "",
+            "ApplyFilters": []
+        },
+        {
+            "Stat": "horizontal_recoil",
+            "Filter": "",
+            "Add": 0.0,
+            "Multiply": 0.75,
+            "SetValue": "",
+            "ApplyFilters": []
+        }
+    ],
+    "mechaEffects": [],
+    "mechaEffectFilter": "",
+    "handlerOverrides": [],
+    "actionOverrides": [],
+    "reloadOverrides": [],
+    "modeOverride": "FullAuto",
+    "overrideFireMode": false
+}

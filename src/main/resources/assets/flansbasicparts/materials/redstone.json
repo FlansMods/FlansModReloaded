@@ -1,0 +1,22 @@
+{
+    "sources": [
+        {
+            "matchItems": [
+                "minecraft:redstone"
+            ],
+            "matchTags": [],
+            "count": 1,
+            "icon": "nugget"
+        },
+        {
+            "matchItems": [
+                "minecraft:redstone_block"
+            ],
+            "matchTags": [],
+            "count": 9,
+            "icon": "block"
+        }
+    ],
+    "craftingTier": 1,
+    "materialType": "Electronic"
+}

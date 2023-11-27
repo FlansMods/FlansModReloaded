@@ -1,0 +1,27 @@
+{
+    "tags": [
+        "flansvendersgame:hm_14"
+    ],
+    "modifiers": [
+        {
+            "Stat": "duration",
+            "Filter": "",
+            "Add": 0.0,
+            "Multiply": 0.75,
+            "SetValue": "",
+            "ApplyFilters": [
+                "reload_primary"
+            ]
+        }
+    ],
+    "ammoLoadMode": "FullMag",
+    "ammoConsumeMode": "FirstNonEmpty",
+    "upgradeCost": 2,
+    "numRounds": 15,
+    "allRoundsMustBeIdentical": false,
+    "matchBulletNames": [],
+    "requiredBulletTags": [
+        "flansmod:rifle_bullet"
+    ],
+    "disallowedBulletTags": []
+}

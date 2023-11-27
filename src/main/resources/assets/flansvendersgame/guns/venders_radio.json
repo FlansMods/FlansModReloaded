@@ -1,0 +1,122 @@
+{
+    "itemSettings": {
+        "maxStackSize": 1,
+        "tags": [
+            "flansmod:gun"
+        ]
+    },
+    "paints": {
+        "paintjobs": []
+    },
+    "inputHandlers": [
+        {
+            "inputType": "Fire2",
+            "nodes": [
+                {
+                    "actionGroupToTrigger": "primary_fire",
+                    "modalCheck": "",
+                    "canTriggerWhileReloading": false,
+                    "deferToAttachment": false,
+                    "attachmentType": "Generic",
+                    "attachmentIndex": 0,
+                    "andContinueEvaluating": false
+                }
+            ]
+        }
+    ],
+    "actionGroups": [
+        {
+            "key": "primary_fire",
+            "canActUnderwater": true,
+            "canActUnderOtherLiquid": false,
+            "canBeOverriden": true,
+            "twoHanded": false,
+            "repeatMode": "SemiAuto",
+            "repeatDelay": 0.05,
+            "repeatCount": 3,
+            "spinUpDuration": 1.5,
+            "loudness": 150.0,
+            "actions": [
+                {
+                    "actionType": "SummonNpc",
+                    "duration": 2.0,
+                    "sounds": [],
+                    "itemStack": "",
+                    "modifiers": [
+                        {
+                            "Stat": "entity_id",
+                            "Filter": "",
+                            "Add": 0.0,
+                            "Multiply": 25.0,
+                            "SetValue": "flansvendersgame:vender",
+                            "ApplyFilters": []
+                        }
+                    ],
+                    "fovFactor": 1.0,
+                    "scopeOverlay": "",
+                    "anim": "",
+                    "toolLevel": 1.0,
+                    "harvestSpeed": 1.0,
+                    "reach": 5.0
+                },
+                {
+                    "actionType": "Animation",
+                    "duration": 2.0,
+                    "sounds": [],
+                    "itemStack": "",
+                    "modifiers": [
+                        {
+                            "Stat": "entity_id",
+                            "Filter": "",
+                            "Add": 0.0,
+                            "Multiply": 25.0,
+                            "SetValue": "flansvendersgame:vender",
+                            "ApplyFilters": []
+                        }
+                    ],
+                    "fovFactor": 1.0,
+                    "scopeOverlay": "",
+                    "anim": "speaking",
+                    "toolLevel": 1.0,
+                    "harvestSpeed": 1.0,
+                    "reach": 5.0
+                }
+            ]
+        }
+    ],
+    "magazines": [],
+    "reloads": [],
+    "loopingSounds": [],
+    "barrelAttachments": {
+        "allowlist": [],
+        "allowAll": true,
+        "numAttachmentSlots": 0,
+        "hideDefaultMesh": true
+    },
+    "gripAttachments": {
+        "allowlist": [],
+        "allowAll": false,
+        "numAttachmentSlots": 0,
+        "hideDefaultMesh": true
+    },
+    "stockAttachments": {
+        "allowlist": [],
+        "allowAll": false,
+        "numAttachmentSlots": 0,
+        "hideDefaultMesh": true
+    },
+    "scopeAttachments": {
+        "allowlist": [],
+        "allowAll": false,
+        "numAttachmentSlots": 1,
+        "hideDefaultMesh": true
+    },
+    "genericAttachments": {
+        "allowlist": [],
+        "allowAll": false,
+        "numAttachmentSlots": 0,
+        "hideDefaultMesh": true
+    },
+    "modelParts": [],
+    "animationSet": "flansmod:radio"
+}

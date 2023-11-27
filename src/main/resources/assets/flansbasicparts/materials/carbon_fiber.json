@@ -1,0 +1,22 @@
+{
+    "sources": [
+        {
+            "matchItems": [
+                "flansbasicparts:carbon_fiber_sheet"
+            ],
+            "matchTags": [],
+            "count": 9,
+            "icon": "sheet"
+        },
+        {
+            "matchItems": [
+                "flansbasicparts:carbon_fiber_block"
+            ],
+            "matchTags": [],
+            "count": 81,
+            "icon": "block"
+        }
+    ],
+    "craftingTier": 3,
+    "materialType": "Composite"
+}

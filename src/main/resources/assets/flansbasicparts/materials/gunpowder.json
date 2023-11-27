@@ -1,0 +1,30 @@
+{
+    "sources": [
+        {
+            "matchItems": [
+                "flansbasicparts:gunpowder_speck"
+            ],
+            "matchTags": [],
+            "count": 1,
+            "icon": "nugget"
+        },
+        {
+            "matchItems": [
+                "minecraft:gunpowder"
+            ],
+            "matchTags": [],
+            "count": 9,
+            "icon": "ingot"
+        },
+        {
+            "matchItems": [
+                "flansbasicparts:gunpowder_block"
+            ],
+            "matchTags": [],
+            "count": 81,
+            "icon": "block"
+        }
+    ],
+    "craftingTier": 0,
+    "materialType": "Misc"
+}

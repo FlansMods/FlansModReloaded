@@ -302,9 +302,9 @@ public class ActionStack
 
 	protected void DebugLog(String string)
 	{
-		FlansMod.LOGGER.info("[" + MinecraftHelpers.GetTick() +
-			(IsClient ? "|Client]" : "|Server]")
-			+ string);
+		//FlansMod.LOGGER.info("[" + MinecraftHelpers.GetTick() +
+		//	(IsClient ? "|Client]" : "|Server]")
+		//	+ string);
 	}
 
 	// -------------------------------------------------------------------------------------------------

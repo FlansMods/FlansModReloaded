@@ -179,13 +179,10 @@ public class FlansModClient
 	public static void RegisterClientReloadListeners(RegisterClientReloadListenersEvent event)
 	{
 		event.registerReloadListener(MAGAZINE_ATLAS);
-	}
+		event.registerReloadListener(ANIMATIONS);
 
-	public static void RegisterClientDataReloadListeners(AddReloadListenerEvent event)
-	{
-		event.addListener(ANIMATIONS);
+		FlansMod.RegisterCommonReloadListeners(event::registerReloadListener);
 	}
-
 
 	// ---------------------------
 	// REFLECTION

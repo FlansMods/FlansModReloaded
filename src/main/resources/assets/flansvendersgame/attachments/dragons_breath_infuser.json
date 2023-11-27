@@ -1,0 +1,27 @@
+{
+    "itemSettings": {
+        "maxStackSize": 1,
+        "tags": [
+            "flansmod:bullet",
+            "flansmod:generic"
+        ]
+    },
+    "attachmentType": "Barrel",
+    "modifiers": [
+        {
+            "Stat": "set_fire_to_target",
+            "Filter": "",
+            "Add": 2.0,
+            "Multiply": 0.0,
+            "SetValue": "",
+            "ApplyFilters": []
+        }
+    ],
+    "mechaEffects": [],
+    "mechaEffectFilter": "",
+    "handlerOverrides": [],
+    "actionOverrides": [],
+    "reloadOverrides": [],
+    "modeOverride": "FullAuto",
+    "overrideFireMode": false
+}

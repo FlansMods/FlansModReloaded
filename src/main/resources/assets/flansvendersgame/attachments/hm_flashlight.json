@@ -1,0 +1,35 @@
+{
+    "itemSettings": {
+        "maxStackSize": 1,
+        "tags": [
+            "flansmod:bullet",
+            "flansmod:grip"
+        ]
+    },
+    "attachmentType": "Grip",
+    "modifiers": [
+        {
+            "Stat": "flashlight_strength",
+            "Filter": "",
+            "Add": 12.0,
+            "Multiply": 1.0,
+            "SetValue": "",
+            "ApplyFilters": []
+        },
+        {
+            "Stat": "flashlight_range",
+            "Filter": "",
+            "Add": 10.0,
+            "Multiply": 1.0,
+            "SetValue": "",
+            "ApplyFilters": []
+        }
+    ],
+    "mechaEffects": [],
+    "mechaEffectFilter": "",
+    "handlerOverrides": [],
+    "actionOverrides": [],
+    "reloadOverrides": [],
+    "modeOverride": "FullAuto",
+    "overrideFireMode": false
+}
