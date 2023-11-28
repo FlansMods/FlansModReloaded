@@ -1,0 +1,245 @@
+plugins {
+    id 'eclipse'
+    id 'maven-publish'
+    id 'net.minecraftforge.gradle' version '5.1.+'
+    id 'com.github.johnrengelman.shadow' version '7.1.2'
+    id 'java'
+}
+
+version = flansmod_version_major + "." + flansmod_version_minor + "." + flansmod_version_patch
+group = "com.flansmod"
+archivesBaseName = "flans-mod"
+
+// Mojang ships Java 17 to end users in 1.18+, so your mod should target Java 17.
+java.toolchain.languageVersion = JavaLanguageVersion.of(17)
+
+println "Java: ${System.getProperty 'java.version'}, JVM: ${System.getProperty 'java.vm.version'} (${System.getProperty 'java.vendor'}), Arch: ${System.getProperty 'os.arch'}"
+minecraft 
+{
+    mappings channel: 'official', version: '1.19.3'
+
+    runs {
+        client {
+            workingDirectory project.file('run')
+            property 'forge.logging.markers', 'REGISTRIES'
+            property 'forge.logging.console.level', 'debug'
+			property 'forge.enabledGameTestNamespaces', 'flans-mod'
+            mods {
+                flansmod {
+                    source sourceSets.main
+                }
+				flansbasicparts {
+					source sourceSets.main
+				}
+				flansvendersgame {
+					source sourceSets.main
+				}
+            }
+        }
+
+        server {
+            workingDirectory project.file('run')
+            property 'forge.logging.markers', 'REGISTRIES'
+            property 'forge.logging.console.level', 'debug'
+            property 'forge.enabledGameTestNamespaces', 'flans-mod'
+            mods {
+                flansmod {
+                    source sourceSets.main
+                }
+				flansbasicparts {
+					source sourceSets.main
+				}
+				flansvendersgame {
+					source sourceSets.main
+				}
+            }
+        }
+
+        data {
+            workingDirectory project.file('run')
+            property 'forge.logging.markers', 'REGISTRIES'
+            property 'forge.logging.console.level', 'debug'
+            args '--mod', 'flans-mod', '--all', '--output', file('src/generated/resources/'), '--existing', file('src/main/resources/')
+            mods {
+                flansmod {
+                    source sourceSets.main
+                }
+				flansbasicparts {
+					source sourceSets.main
+				}
+				flansvendersgame {
+					source sourceSets.main
+				}
+            }
+        }
+    }
+}
+
+sourceSets.main.resources { srcDir 'src/generated/resources' }
+
+repositories {
+    maven {
+        // location of the maven that hosts JEI files before January 2023
+        name = "Progwml6's maven"
+        url = "https://dvs1.progwml6.com/files/maven/"
+    }
+    maven {
+        // location of the maven that hosts JEI files since January 2023
+        name = "Jared's maven"
+        url = "https://maven.blamejared.com/"
+    }
+    maven {
+        // location of a maven mirror for JEI files, as a fallback
+        name = "ModMaven"
+        url = "https://modmaven.dev"
+    }
+    mavenCentral()
+}
+
+dependencies {
+    minecraft 'net.minecraftforge:forge:1.19.3-44.1.0'
+    // compile against the JEI API but do not include it at runtime
+    //compileOnly(fg.deobf("mezz.jei:jei-${mc_version}-common-api:${jei_version}"))
+    //compileOnly(fg.deobf("mezz.jei:jei-${mc_version}-forge-api:${jei_version}"))
+    // at runtime, use the full JEI jar for Forge
+    //runtimeOnly(fg.deobf("mezz.jei:jei-${mc_version}-forge:${jei_version}"))
+}
+
+// Example for how to get properties into the manifest for reading at runtime.
+jar {
+    manifest {
+        attributes([
+                "Specification-Title"     : "flansmod",
+                "Specification-Vendor"    : "Flan's Games",
+                "Specification-Version"   : "0.1",
+                "Implementation-Title"    : project.name,
+                "Implementation-Version"  : project.jar.archiveVersion,
+                "Implementation-Vendor"   : "Flan's Games",
+                "Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ")
+        ])
+    }
+}
+
+// Example configuration to allow publishing using the maven-publish plugin
+// This is the preferred method to reobfuscate your jar file
+jar.finalizedBy('reobfJar')
+// However if you are in a multi-project build, dev time needs unobfed jar files, so you can delay the obfuscation until publishing by doing
+// publish.dependsOn('reobfJar')
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            artifact jar
+        }
+    }
+    repositories {
+        maven {
+            url "file://${project.projectDir}/mcmodsrepo"
+        }
+    }
+}
+
+tasks.withType(JavaCompile).configureEach {
+    options.encoding = 'UTF-8' // Use the UTF-8 charset for Java compilation
+}
+
+
+
+// ------------------------------------------
+// Flan's Mod Custom Tasks Follow
+// ------------------------------------------
+// Shadow JAR, not sure what this is for
+//shadowJar {
+//    configurations = [project.configurations.shadow]
+//}
+//
+//reobf {
+//    shadowJar {
+//        // mappingType = "SEARGE"
+//    }
+//}
+//
+//tasks.reobfShadowJar.mustRunAfter shadowJar
+//
+//task clearOutput(type: Delete)
+//{
+//    delete 'build/output/'
+//}
+//
+//task basicParts(type: Jar)
+//{
+//    archivesBaseName = "flans-mod-basic-parts"
+//	//from(zipTree("build/libs/flans-mod-${version}-all.jar"))
+//    from(zipTree(reobfShadowJar.outputs.files.singleFile))
+//    {
+//		include 'assets/flansbasicparts/'
+//		include 'data/flansbasicparts/'
+//		include 'com/flansmod/packs/basics/'
+//	}
+//}
+//task vendersGame(type: Jar)
+//{
+//    archivesBaseName = "flans-mod-venders-game"
+//	from(zipTree("build/libs/flans-mod-${version}-all.jar"))
+//    {
+//		include 'assets/flansvendersgame/'
+//		include 'data/flansvendersgame/'
+//		include 'com/flansmod/packs/vendersgame/'
+//	}
+//}
+//
+//task compilePacks()
+//{
+//	//dependsOn basicParts
+//	dependsOn vendersGame
+//}
+//
+//task outputModJar(type: Jar)
+//{
+//    //archivesBaseName = "flans-mod-core"
+//	from(zipTree("build/libs/flans-mod-${version}-all.jar")) {
+//		exclude '**/com/flansmod/packs/'
+//		exclude '**/data/'
+//		include '**/data/flansmod/'
+//		include '**/data/forge'
+//		exclude '**/assets/'
+//		include '**/assets/flansmod/'
+//		include '**/assets/forge'
+//	}
+//    into "build/output/mods"
+//}
+//
+//task outputPackJars(type: Copy) {
+//	from('build/libs/') {
+//		include "**/*.jar"
+//        exclude "**/flans-mod*.jar"
+//	}
+//	into 'build/output/mods/'
+//}
+//
+//// The build process
+//build {
+//    dependsOn reobfShadowJar
+//    dependsOn clearOutput
+//    dependsOn compilePacks
+//    //dependsOn outputModJar
+//    dependsOn outputPackJars
+//}
+
+task jarVendersGame(type: Jar)
+{
+    dependsOn build
+    from(zipTree(build.outputs.files.singleFile))
+    {
+        include 'assets/flansvendersgame/'
+        include 'data/flansvendersgame/'
+        include 'com/flansmod/packs/vendersgame/'
+    }
+    archivesBaseName = "flans-mod-venders-game"
+}
+
+// The build process
+build {
+    dependsOn jarVendersGame
+}
+
