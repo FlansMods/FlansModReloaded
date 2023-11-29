@@ -77,7 +77,7 @@ public class VendersGameMod
 	public static final RegistryObject<Item> ATTACHMENT_FC_DELUXE_FOREGRIP =	FlansMod.Attachment(ITEMS, MODID, "fc_deluxe_foregrip");
 	public static final RegistryObject<Item> ATTACHMENT_FC_PREMIUM_FOREGRIP = 	FlansMod.Attachment(ITEMS, MODID, "fc_premium_foregrip");
 	public static final RegistryObject<Item> ATTACHMENT_FC_DIAMOND_SIGHTS = 	FlansMod.Attachment(ITEMS, MODID, "fc_diamond_sights");
-	public static final RegistryObject<Item> ATTACHMENT_FC_AGED_OAK_STOCK = 	FlansMod.Attachment(ITEMS, MODID, "fc_aged_oak_stock");
+	//public static final RegistryObject<Item> ATTACHMENT_FC_AGED_OAK_STOCK = 	FlansMod.Attachment(ITEMS, MODID, "fc_aged_oak_stock");
 
 	// HitMarket Budget Weaponry
 	public static final RegistryObject<Item> GUN_HM_9 = 						FlansMod.Gun(ITEMS, MODID, "hm_9");
@@ -93,14 +93,14 @@ public class VendersGameMod
 	public static final RegistryObject<BlockEntityType<WorkbenchBlockEntity>> WORKBENCH_TILE_ENTITY_HM =
 																				FlansMod.Workbench_TileEntityType(TILE_ENTITIES, MODID, "hm_workbench");
 
-	public static final RegistryObject<Item> ATTACHMENT_HM_FLASHLIGHT = 		FlansMod.Attachment(ITEMS, MODID, "hm_flashlight");
-	public static final RegistryObject<Item> ATTACHMENT_HM_FLASHLIGHT_MINI =	FlansMod.Attachment(ITEMS, MODID, "hm_flashlight_mini");
+	//public static final RegistryObject<Item> ATTACHMENT_HM_FLASHLIGHT = 		FlansMod.Attachment(ITEMS, MODID, "hm_flashlight");
+	//public static final RegistryObject<Item> ATTACHMENT_HM_FLASHLIGHT_MINI =	FlansMod.Attachment(ITEMS, MODID, "hm_flashlight_mini");
 	public static final RegistryObject<Item> ATTACHMENT_HM_PINPOINT_SIGHT = 	FlansMod.Attachment(ITEMS, MODID, "hm_pinpoint_sight");
 	public static final RegistryObject<Item> ATTACHMENT_HM_POCKET_SILENCER = 	FlansMod.Attachment(ITEMS, MODID, "hm_pocket_silencer");
 	public static final RegistryObject<Item> ATTACHMENT_HM_PRECISION_BARREL = 	FlansMod.Attachment(ITEMS, MODID, "hm_precision_barrel");
 	public static final RegistryObject<Item> ATTACHMENT_HM_RED_DOT =		 	FlansMod.Attachment(ITEMS, MODID, "hm_red_dot");
 	public static final RegistryObject<Item> ATTACHMENT_HM_STEADY_FOREGRIP = 	FlansMod.Attachment(ITEMS, MODID, "hm_steady_foregrip");
-	public static final RegistryObject<Item> ATTACHMENT_HM_SNAP_STOCK = 		FlansMod.Attachment(ITEMS, MODID, "hm_snap_stock");
+	//public static final RegistryObject<Item> ATTACHMENT_HM_SNAP_STOCK = 		FlansMod.Attachment(ITEMS, MODID, "hm_snap_stock");
 
 	// PhanTek Advanced Guns
 	public static final RegistryObject<Item> GUN_PHANTEK_90 = 					FlansMod.Gun(ITEMS, MODID, "phantek_90");
@@ -108,7 +108,7 @@ public class VendersGameMod
 	public static final RegistryObject<Item> GUN_PHANTEK_EYE = 					FlansMod.Gun(ITEMS, MODID, "phantek_eye");
 	public static final RegistryObject<Item> GUN_PHANTEK_FURY = 				FlansMod.Gun(ITEMS, MODID, "phantek_fury");
 	public static final RegistryObject<Item> GUN_PHANTEK_LOCK = 				FlansMod.Gun(ITEMS, MODID, "phantek_lock");
-	public static final RegistryObject<Item> GUN_PHANTEK_SEEKER = 				FlansMod.Gun(ITEMS, MODID, "phantek_seeker");
+	//public static final RegistryObject<Item> GUN_PHANTEK_SEEKER = 				FlansMod.Gun(ITEMS, MODID, "phantek_seeker");
 	public static final RegistryObject<Item> GUN_PHANTEK_BATTLEMAGE =			FlansMod.Gun(ITEMS, MODID, "phantek_battlemage");
 
 	public static final RegistryObject<Block> WORKBENCH_BLOCK_PHANTEK = 		FlansMod.Workbench_Block(BLOCKS, MODID, "phantek_workbench");
@@ -125,7 +125,7 @@ public class VendersGameMod
 	public static final RegistryObject<Item> GUN_VENDERS_CUSTOMS_VIPER =		FlansMod.Gun(ITEMS, MODID, "venders_customs_viper");
 	public static final RegistryObject<Item> GUN_VENDERS_CUSTOMS_MARTINI =		FlansMod.Gun(ITEMS, MODID, "venders_martini");
 	public static final RegistryObject<Item> ATTACHMENT_DRAGONS_BREATH_INFUSER =FlansMod.Attachment(ITEMS, MODID, "dragons_breath_infuser");
-	public static final RegistryObject<Item> ATTACHMENT_TAKE_YOUR_LIFE_IN_YOUR_HANDS = FlansMod.Attachment(ITEMS, MODID, "take_your_life_in_your_hands");
+	//public static final RegistryObject<Item> ATTACHMENT_TAKE_YOUR_LIFE_IN_YOUR_HANDS = FlansMod.Attachment(ITEMS, MODID, "take_your_life_in_your_hands");
 	public static final RegistryObject<Item> TOOL_VENDERS_RADIO =				FlansMod.Tool(ITEMS, MODID, "venders_radio");
 
 	// Chest Loot

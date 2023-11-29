@@ -565,7 +565,6 @@ public abstract class GunContext
 	}
 	private void RecalculateAttachmentModifierCache()
 	{
-		ModifierCache.clear();
 		for(ItemStack stack : GetAttachmentStacks())
 			if(stack.getItem() instanceof AttachmentItem attachmentItem)
 				ModifierCache.addAll(Arrays.asList(attachmentItem.Def().modifiers));

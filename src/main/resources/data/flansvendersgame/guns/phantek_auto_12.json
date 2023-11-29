@@ -173,7 +173,7 @@
                             "Stat": "impact_damage",
                             "Filter": "",
                             "Add": 0.0,
-                            "Multiply": 1.0,
+                            "Multiply": 10.0,
                             "SetValue": "",
                             "ApplyFilters": []
                         },
