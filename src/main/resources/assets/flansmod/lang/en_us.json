@@ -1,7 +1,7 @@
 {
-  "item.flansmod.gun_modification_table": "Gun Modification Table",
-  "item.flansmod.portable_coal_generator": "Portable Coal Generator",
-  "item.flansmod.portable_diesel_generator": "Portable Diesel Generator",
+  "block.flansmod.gun_modification_table": "Gun Modification Table",
+  "block.flansmod.portable_coal_generator": "Portable Coal Generator",
+  "block.flansmod.portable_diesel_generator": "Portable Diesel Generator",
   "tooltip.format.attached": "§2+%s",
   "tooltip.format.impact_damage": "%.0f",
   "tooltip.format.impact_damage.advanced": " Impact Damage %.0f",
@@ -147,5 +147,9 @@
   "crafting.parts.num_in_progress": "Crafting %d",
   "crafting.parts.num_in_progress.named": "Crafting %d %s",
   "action.summon_npc.on_cooldown": "You called too recently, try again in %d seconds",
-  "action.summon_npc.already_spawned": "They are already in the area, take a look around"
+  "action.summon_npc.already_spawned": "They are already in the area, take a look around",
+  "item_group.flansmod.creative_tab_modifiers": "Flan's Mod Attachments",
+  "item_group.flansmod.creative_tab_parts": "Flan's Mod Parts",
+  "item_group.flansmod.creative_tab_guns": "Flan's Mod Guns",
+  "item_group.flansmod.creative_tab_bullets": "Flan's Mod Bullets"
 }
