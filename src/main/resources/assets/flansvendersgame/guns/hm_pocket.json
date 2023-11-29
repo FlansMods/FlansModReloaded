@@ -351,10 +351,10 @@
                     "duration": 0.375,
                     "sounds": [
                         {
-                            "sound": "flansmod:magazine_unload_chunky",
+                            "sound": "flansmod:magazine_unload_sprung",
                             "length": 1.0,
-                            "minPitchMultiplier": 1.0,
-                            "maxPitchMultiplier": 1.0,
+                            "minPitchMultiplier": 0.9,
+                            "maxPitchMultiplier": 0.9,
                             "minVolume": 1.0,
                             "maxVolume": 1.0,
                             "maxRange": 100.0,
@@ -402,10 +402,10 @@
                     "duration": 0.375,
                     "sounds": [
                         {
-                            "sound": "flansmod:magazine_load_chunky",
+                            "sound": "flansmod:magazine_load_sprung",
                             "length": 1.0,
-                            "minPitchMultiplier": 1.0,
-                            "maxPitchMultiplier": 1.0,
+                            "minPitchMultiplier": 0.9,
+                            "maxPitchMultiplier": 0.9,
                             "minVolume": 1.0,
                             "maxVolume": 1.0,
                             "maxRange": 100.0,

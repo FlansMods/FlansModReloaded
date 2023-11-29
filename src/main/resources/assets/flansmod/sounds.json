@@ -322,5 +322,77 @@
         "type": "file"
       }
     ]
+  },
+  "magazine_load_smooth": {
+    "category": "player",
+    "sounds": [
+      {
+        "name": "flansmod:guns/magazine_load_smooth",
+        "type": "file"
+      }
+    ]
+  },
+  "magazine_unload_smooth": {
+    "category": "player",
+    "sounds": [
+      {
+        "name": "flansmod:guns/magazine_unload_smooth",
+        "type": "file"
+      }
+    ]
+  },
+  "magazine_load_sprung": {
+    "category": "player",
+    "sounds": [
+      {
+        "name": "flansmod:guns/magazine_load_sprung",
+        "type": "file"
+      }
+    ]
+  },
+  "magazine_unload_sprung": {
+    "category": "player",
+    "sounds": [
+      {
+        "name": "flansmod:guns/magazine_unload_sprung",
+        "type": "file"
+      }
+    ]
+  },
+  "magazine_load_snake": {
+    "category": "player",
+    "sounds": [
+      {
+        "name": "flansmod:guns/magazine_load_snake",
+        "type": "file"
+      }
+    ]
+  },
+  "magazine_unload_snake": {
+    "category": "player",
+    "sounds": [
+      {
+        "name": "flansmod:guns/magazine_unload_snake",
+        "type": "file"
+      }
+    ]
+  },
+  "magazine_load_latch": {
+    "category": "player",
+    "sounds": [
+      {
+        "name": "flansmod:guns/magazine_load_latch",
+        "type": "file"
+      }
+    ]
+  },
+  "magazine_unload_latch": {
+    "category": "player",
+    "sounds": [
+      {
+        "name": "flansmod:guns/magazine_unload_latch",
+        "type": "file"
+      }
+    ]
   }
 }
