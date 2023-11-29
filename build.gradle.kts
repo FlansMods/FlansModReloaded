@@ -1,13 +1,8 @@
-import com.google.gson.JsonObject
 import com.matthewprenger.cursegradle.CurseExtension
 import com.matthewprenger.cursegradle.CurseProject
 import com.matthewprenger.cursegradle.CurseRelation
 import net.minecraftforge.gradle.userdev.UserDevExtension
 import org.apache.commons.lang3.StringUtils
-import org.apache.http.client.methods.HttpPost
-import org.apache.http.entity.ContentType
-import org.apache.http.entity.StringEntity
-import org.apache.http.impl.client.HttpClientBuilder
 import org.eclipse.jgit.api.Git
 import org.eclipse.jgit.lib.Constants
 import org.eclipse.jgit.lib.ObjectId
@@ -57,6 +52,14 @@ val config: Properties = file("gradle.properties").inputStream().let {
 }
 
 val modBaseName = "flansmod"
+val modCurseForgeID = config["flansmod.curseforge"] as String
+val basicsCurseForgeID = config["basicparts.curseforge"] as String
+val vendersCurseForgeID = config["vendersgame.curseforge"] as String
+
+
+
+
+
 val mcVersion = config["minecraft.version"] as String
 val mcFullVersion = "$mcVersion-${config["forge.version"]}"
 val majorVersion = config["flansmod.version.major"] as String
@@ -78,13 +81,8 @@ configure<BasePluginConvention> {
     archivesBaseName = "flansmod-all"
 }
 
-//fun minecraft(configure: UserBaseExtension.() -> Unit) = project.configure(configure)
-
-
 configure<UserDevExtension> {
     mappings("official",  "1.19.3")
-
-
 }
 
 repositories {
@@ -112,11 +110,13 @@ tasks.withType<Jar> {
 
     baseName = "flansmod-all"
 
+    version = mcVersion
+
     // replace stuff in mcmod.info, nothing else
     filesMatching("/mcmod.info") {
         expand(mapOf(
                 "version" to project.version,
-                "mcversion" to "1.12.2"
+                "mcversion" to mcVersion
         ))
     }
 }
@@ -133,12 +133,15 @@ tasks.create("copyResourceToClasses", Copy::class) {
 val jar: Jar by tasks
 jar.apply {
     manifest {
-        attributes(mapOf("FMLAT" to "gregtech_at.cfg",
-                "FMLCorePlugin" to "gregtech.common.asm.GTCELoadingPlugin",
+        attributes(mapOf("FMLAT" to "flansmod_at.cfg",
+                //"FMLCorePlugin" to "flansmod.common.asm.FlansModLoadingPlugin",
                 "FMLCorePluginContainsFMLMod" to "true"))
     }
 }
 
+val reobfTask = jar.finalizedBy("reobfJar")
+
+// ---------------------- BUILD AND REPACK TASKS ---------------------------
 val sourceTask: Jar = tasks.create("source", Jar::class.java) {
     from(sourceSets["main"].allSource)
     classifier = "sources"
@@ -146,99 +149,84 @@ val sourceTask: Jar = tasks.create("source", Jar::class.java) {
 
 val devTask: Jar = tasks.create("dev", Jar::class.java) {
     from(sourceSets["main"].output)
-    classifier = "dev"
 }
 
-// --------------------------- CORE MOD -----------------------------
-val modSourceTask: Jar = tasks.create("modSource", Jar::class.java) {
-    dependsOn(sourceTask)
-    from(zipTree(sourceTask.outputs.files.singleFile))
-    {
-        include("assets/flansmod/")
-        include("assets/forge/")
-        include("data/flansmod/")
-        include("data/forge/")
-        include("com/flansmod/common/")
-        include("com/flansmod/client/")
-        include("com/flansmod/util/")
+fun modTask(taskName: String, srcTask: Task, classfier: String): Jar {
+    return tasks.create(taskName, Jar::class.java) {
+        dependsOn(srcTask)
+        from(zipTree(srcTask.outputs.files.singleFile))
+        {
+            include("assets/flansmod/")
+            include("assets/forge/")
+            include("data/flansmod/")
+            include("data/forge/")
+            include("com/flansmod/common/")
+            include("com/flansmod/client/")
+            include("com/flansmod/util/")
+            include("META-INF/flansmod.toml")
+            include("flansmod.mcmeta")
+            include("flansmod.png")
+        }
+        rename { name ->
+            if (name == "flansmod.toml")
+                "mods.toml"
+            else if(name == "flansmod.mcmeta")
+                "pack.mcmeta"
+            else name
+        }
+        classifier = classfier
+        version = "$mcVersion-$modVersion"
+        getArchiveBaseName().set("flansmod")
+        destinationDirectory.set(file("$projectDir/build/output"))
+        group = "flansmod build"
     }
-    classifier = "sources"
-    getArchiveBaseName().set("flansmod")
-    destinationDirectory.set(file("$projectDir/build/output"))
-}
-val modDevTask: Jar = tasks.create("modDev", Jar::class.java) {
-    dependsOn(devTask)
-    from(zipTree(devTask.outputs.files.singleFile))
-    {
-        include("assets/flansmod/")
-        include("assets/forge/")
-        include("data/flansmod/")
-        include("data/forge/")
-        include("com/flansmod/common/")
-        include("com/flansmod/client/")
-        include("com/flansmod/util/")
-    }
-    classifier = "dev"
-    getArchiveBaseName().set("flansmod")
-    destinationDirectory.set(file("$projectDir/build/output"))
 }
 
-// ----------------------------- BASIC PARTS ------------------------------
-val basicsSourceTask: Jar = tasks.create("basicsSource", Jar::class.java) {
-    dependsOn(sourceTask)
-    from(zipTree(sourceTask.outputs.files.singleFile))
-    {
-        include("assets/flansbasicparts/")
-        include("data/flansbasicparts/")
-        include("com/flansmod/packs/basics/")
+fun repackTask(taskName: String, modID: String, modNamespace: String, srcTask: Task, classfier: String): Jar {
+
+    //val outputTask: Task
+    //if(srcTask.finalizedBy is Jar)
+    //    outputTask = srcTask.finalizedBy as Jar
+    //else
+    //    outputTask = srcTask
+//
+    return tasks.create(taskName, Jar::class.java) {
+        dependsOn(srcTask)
+        from(zipTree(srcTask.outputs.files.singleFile))
+        {
+            include("assets/$modID/")
+            include("data/$modID/")
+            include("com/flansmod/packs/$modNamespace/")
+            include("META-INF/$modID.toml")
+            include("$modID.mcmeta")
+            include("$modID.png")
+        }
+        rename { name ->
+            if (name == "$modID.toml")
+                "mods.toml"
+            else if (name == "$modID.mcmeta")
+                "pack.mcmeta"
+            else name
+        }
+        classifier = classfier
+        version = "$mcVersion-$modVersion"
+        getArchiveBaseName().set(modID)
+        destinationDirectory.set(file("$projectDir/build/output"))
+        group = "flansmod build"
     }
-    classifier = "sources"
-    getArchiveBaseName().set("flansbasicparts")
-    destinationDirectory.set(file("$projectDir/build/output"))
-}
-val basicsDevTask: Jar = tasks.create("basicsDev", Jar::class.java) {
-    dependsOn(devTask)
-    from(zipTree(devTask.outputs.files.singleFile))
-    {
-        include("assets/flansbasicparts/")
-        include("data/flansbasicparts/")
-        include("com/flansmod/packs/basics/")
-    }
-    classifier = "dev"
-    getArchiveBaseName().set("flansbasicparts")
-    destinationDirectory.set(file("$projectDir/build/output"))
 }
 
-// ----------------------------- VENDER'S GAME ------------------------------
-val vendersSourceTask: Jar = tasks.create("vendersSource", Jar::class.java) {
-    dependsOn(sourceTask)
-    from(zipTree(sourceTask.outputs.files.singleFile))
-    {
-        include("assets/flansvendersgame/")
-        include("data/flansvendersgame/")
-        include("com/flansmod/packs/vendersgame/")
-    }
-    classifier = "sources"
-    getArchiveBaseName().set("flansvendersgame")
-    destinationDirectory.set(file("$projectDir/build/output"))
-}
-val vendersDevTask: Jar = tasks.create("vendersDev", Jar::class.java) {
-    dependsOn(devTask)
-    from(zipTree(devTask.outputs.files.singleFile))
-    {
-        include("assets/flansvendersgame/")
-        include("data/flansvendersgame/")
-        include("com/flansmod/packs/vendersgame/")
-    }
-    classifier = "dev"
-    getArchiveBaseName().set("flansvendersgame")
-    destinationDirectory.set(file("$projectDir/build/output"))
-}
+val modSourceTask: Jar = modTask("BuildSourceFlansMod", sourceTask, "sources")
+val modDevTask: Jar = modTask("BuildJarFlansMod", reobfTask, "")
 
+val basicsSourceTask: Jar = repackTask("BuildSourceBasicParts", "flansbasicparts", "basics", sourceTask, "sources")
+val basicsDevTask: Jar = repackTask("BuildJarBasicParts", "flansbasicparts", "basics", reobfTask, "")
 
+val vendersSourceTask: Jar = repackTask("BuildSourceVendersGame", "flansvendersgame", "vendersgame", sourceTask, "sources")
+val vendersDevTask: Jar = repackTask("BuildJarVendersGame", "flansvendersgame", "vendersgame", reobfTask, "")
 
 artifacts {
-    add("archives", jar)
+    add("archives", reobfTask)
     add("archives", sourceTask)
 
     archives(modSourceTask.outputs.files.singleFile) { builtBy(modSourceTask) }
@@ -249,6 +237,7 @@ artifacts {
     archives(basicsDevTask.outputs.files.singleFile) { builtBy(basicsDevTask) }
 }
 
+// -------------------------------- GIT HUB -----------------------------------
 tasks.create("generateChangelog") {
     doLast {
         val file = file("CHANGELOG.md")
@@ -262,9 +251,6 @@ tasks.create("generateChangelog") {
         file.writeText(fileContents.toString(), Charsets.UTF_8)
     }
 }
-
-//val curseforgeProject = configureCurseforgeTask()
-//curseforgeProject?.uploadTask?.outputs?.upToDateWhen { false }
 
 fun resolveVersionChangelog(): String {
     val changeLogLines = file("CHANGELOG.md").readLines(Charsets.UTF_8)
@@ -342,16 +328,164 @@ fun getActualChangeList(): String {
 fun getBuildNumber(): String {
     val gitLog = git.log()
     val headCommitId = git.repository.resolve(Constants.HEAD)
-    val startCommitId = ObjectId.fromString("a09d3c3091d061c251ddfed6e6242f0ff9c37d8d")
+    val startCommitId = ObjectId.fromString("a09d3c3091d061c251ddfed6e6242f0ff9c37d8d") // FlansMod119 first commit hash
     gitLog.addRange(startCommitId, headCommitId)
     return gitLog.call().toList().size.toString()
+}
+
+
+// -------------------------------- CURSE FORGE -----------------------------------
+fun CurseExtension.project(config: CurseProject.() -> Unit) = CurseProject().also {
+    it.config()
+    curseProjects.add(it)
+}
+// has to be called after addArtifact ¯\_(ツ)_/¯
+fun CurseProject.relations(config: CurseRelation.() -> Unit) = CurseRelation().also {
+
+    it.config()
+
+    additionalArtifacts.forEach { artifact ->
+        artifact.curseRelations = it
+    }
+
+    mainArtifact.curseRelations = it
+}
+
+fun configureCurseforgeTask(): CurseProject? {
+    if (System.getenv("CURSE_API_KEY") != null) {
+        val extension = curseforge
+        extension.apiKey = System.getenv("CURSE_API_KEY")
+        extension.curseGradleOptions.forgeGradleIntegration = false
+        return extension.project {
+            apiKey = System.getenv("CURSE_API_KEY")
+            id = modCurseForgeID
+            addGameVersion(mcVersion)
+            changelog = file("CHANGELOG.md")
+            changelogType = "markdown"
+            releaseType = "alpha"
+
+            mainArtifact(modDevTask)
+            addArtifact(modSourceTask)
+
+            relations {
+                optionalDependency("jei")
+            }
+        }
+    } else {
+        println("Skipping curseforge task as there is no api key in the environment")
+        return null
+    }
+}
+
+fun initCurseForgeExtension(): CurseExtension? {
+    return if (System.getenv("CURSE_API_KEY") != null) {
+        val extension = curseforge
+        extension.apiKey = System.getenv("CURSE_API_KEY")
+        extension.curseGradleOptions.forgeGradleIntegration = false
+        extension
+    } else {
+        println("Skipping curseforge task as there is no api key in the environment")
+        null
+    }
+}
+
+fun createCurseForgeUploadTask(curseForgeID: String, main: Jar, src: Jar): CurseProject? {
+    val curseExtension = initCurseForgeExtension()
+    if(curseExtension != null)
+    {
+        val curseForgeProject = curseExtension.project {
+            apiKey = System.getenv("CURSE_API_KEY")
+            id = curseForgeID
+            addGameVersion(mcVersion)
+            changelog = file("CHANGELOG.md")
+            changelogType = "markdown"
+            releaseType = "alpha"
+
+            mainArtifact(main)
+            addArtifact(src)
+
+            relations {
+                optionalDependency("jei")
+            }
+        }
+
+        curseForgeProject.uploadTask?.outputs?.upToDateWhen { false }
+        return curseForgeProject
+    }
+    else return null
+}
+
+
+
+//if (curseforgeProject != null) {
+   // notificationTask.dependsOn("curseforge")
+//}
+
+val modUploadTask            = createCurseForgeUploadTask(modCurseForgeID, modDevTask, modSourceTask)
+val basicPartsUploadTask     = createCurseForgeUploadTask(basicsCurseForgeID, basicsDevTask, basicsSourceTask)
+val vendersUploadTask        = createCurseForgeUploadTask(vendersCurseForgeID, vendersDevTask, vendersSourceTask)
+
+afterEvaluate {
+    if(modUploadTask?.uploadTask != null)
+        tasks.create("PublishFlansMod") {
+            dependsOn(modUploadTask.uploadTask)
+            group = "flansmod publish"
+        }
+    if(basicPartsUploadTask?.uploadTask != null)
+        tasks.create("PublishBasicParts") {
+            dependsOn(basicPartsUploadTask.uploadTask)
+            group = "flansmod publish"
+        }
+    if(vendersUploadTask?.uploadTask != null)
+        tasks.create("PublishVendersGame") {
+            dependsOn(vendersUploadTask.uploadTask)
+            group = "flansmod publish"
+        }
+
+    tasks.create("PublishAllPacks") {
+        dependsOn(tasks.getByName("PublishBasicParts"))
+        dependsOn(tasks.getByName("PublishVendersGame"))
+        group = "flansmod publish"
+    }
+    tasks.create("PublishFlansModAndAllPacks") {
+        dependsOn(tasks.getByName("PublishFlansMod"))
+        dependsOn(tasks.getByName("PublishAllPacks"))
+        group = "flansmod publish"
+    }
+
+    tasks.create("BuildAllPackJars") {
+        dependsOn(vendersDevTask)
+        dependsOn(basicsDevTask)
+        group = "flansmod build"
+    }
+    tasks.create("BuildAllPackSources") {
+        dependsOn(vendersSourceTask)
+        dependsOn(basicsSourceTask)
+        group = "flansmod build"
+    }
+    tasks.create("BuildAllJars") {
+        dependsOn(modDevTask)
+        dependsOn(tasks.getByName("BuildAllPackJars"))
+        group = "flansmod build"
+    }
+    tasks.create("BuildAllSources") {
+        dependsOn(modSourceTask)
+        dependsOn(tasks.getByName("BuildAllPackSources"))
+        group = "flansmod build"
+    }
+    tasks.create("BuildAll") {
+        dependsOn(tasks.getByName("BuildAllJars"))
+        dependsOn(tasks.getByName("BuildAllSources"))
+        group = "flansmod build"
+    }
+
 }
 
 publishing {
     publications {
         create("FlansModPublication", MavenPublication::class.java) {
             groupId = project.group as String
-            artifactId = the<BasePluginConvention>().archivesBaseName
+            artifactId = "flansmod"
             version = project.version as String
 
             artifact(jar)

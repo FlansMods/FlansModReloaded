@@ -1,0 +1,43 @@
+modLoader="javafml"
+loaderVersion="[44,)"
+license="MIT"
+issueTrackerURL="https://github.com/FlansMods/FlansModReloaded/labels/vendersgame"
+# A list of mods - how many allowed here is determined by the individual mod loader
+[[mods]] #mandatory
+    modId="flansvendersgame"
+    version="${file.jarVersion}"
+    displayName="Vender's Game - A Flan's Mod Content Pack"
+    logoFile="flansvendersgame.png"
+    credits="jamioflan, PrototypeTheta"
+    authors="jamioflan, PrototypeTheta"
+    description='''
+    Vender has been scouring all corners of all dimensions for the ultimate weapon selection for you and your friends.
+    These are some of the brands they have procured for you:
+
+    HitMarket provides quality armament at low low prices. If you need a quick fix for your creeper problems on a budget, HM has the piece for you.
+    PhanTek is the market leader in weapon innovations, with high tech attachments using their proprietary PhanTex polymer. (A division of PhanTek Polymers PLC.)
+    Flint & Cobbleson deals only in classic arms, with luxurious wood finishes and a special attention to detail.
+
+    Vender can be called in to service your military supply needs with their Interdimensional Rapid Response Relay. They will teleport directly to your location with a fine selection of guns and bullets to suit your needs. These Relays can be found in various loot chests throughout the Overworld and Nether.
+
+    [If you have Basic Parts Pack (or another parts pack) installed]
+    Each manufacturer provides their own workbench so you can produce their branded armaments from home. (Parts not included. The manufacturers take no responsiblity for accidents arising from using these workbenches, including but not limited to; burning, exploding, radiation damage, melting, exploding or loss of limbs)
+    '''
+[[dependencies.flansvendersgame]]
+    modId="flansmod"
+    mandatory=true
+    versionRange="[{file.jarVersion},)"
+    ordering="NONE"
+    side="BOTH"
+[[dependencies.flansvendersgame]]
+    modId="forge"
+    mandatory=true
+    versionRange="[44,)"
+    ordering="NONE"
+    side="BOTH"
+[[dependencies.flansvendersgame]]
+    modId="minecraft"
+    mandatory=true
+    versionRange="[1.19.3,1.20)"
+    ordering="NONE"
+    side="BOTH"

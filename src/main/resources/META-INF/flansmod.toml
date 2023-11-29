@@ -1,0 +1,39 @@
+modLoader="javafml"
+loaderVersion="[44,)"
+license="MIT"
+issueTrackerURL="https://github.com/FlansMods/FlansModReloaded/issues"
+# A list of mods - how many allowed here is determined by the individual mod loader
+[[mods]]
+    modId="flansmod"
+    # ${file.jarVersion} will substitute the value of the Implementation-Version as read from the mod's JAR file metadata
+    # see the associated build.gradle script for how to populate this completely automatically during a build
+    version="${file.jarVersion}"
+    displayName="Flan's Mod"
+    # A URL to query for updates for this mod. See the JSON update specification https://docs.minecraftforge.net/en/latest/misc/updatechecker/
+    #updateJSONURL="https://change.me.example.invalid/updates.json" #optional
+    # A URL for the "homepage" for this mod, displayed in the mod UI
+    #displayURL="https://change.me.to.your.mods.homepage.example.invalid/" #optional
+    logoFile="flansmod.png"
+    credits="jamioflan"
+    authors="jamioflan"
+    displayTest="MATCH_VERSION"
+    # The description text for the mod (multi line!)
+    description='''
+    The ultimate toolbox for creating guns in Minecraft.
+
+    Make sure you install some content packs as well, Flan's Mod has no default content.
+    You can also create your own packs. Check out the Flan's Mod Discord for more info.
+    '''
+
+[[dependencies.flansmod]]
+    modId="forge"
+    mandatory=true
+    versionRange="[44,)"
+    ordering="NONE"
+    side="BOTH"
+[[dependencies.flansmod]]
+    modId="minecraft"
+    mandatory=true
+    versionRange="[1.19.3,1.20)"
+    ordering="NONE"
+    side="BOTH"
