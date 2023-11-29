@@ -3567,15 +3567,6 @@
                 2.75,
                 0.0
             ]
-        },
-        {
-            "name": "barrel",
-            "attachTo": "body",
-            "offset": [
-                0.0,
-                0.0,
-                0.0
-            ]
         }
     ],
     "display": {
