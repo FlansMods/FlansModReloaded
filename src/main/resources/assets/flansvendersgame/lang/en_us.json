@@ -158,7 +158,7 @@
   "magazine.flansvendersgame.venders_customs_viper_mag_6_stable": "6 Round Shock-Absorbent Grip Magazine",
   "magazine.flansvendersgame.venders_customs_viper_mag_7": "7 Round Magazine",
   "magazine.flansvendersgame.venders_martini_internal_mag_1": "Single shot breech",
-  "item.flansvendersgame.vender": "Vender",
+  "entity.flansvendersgame.vender": "Vender",
   "npc.vender.hello.neutral.1": "Greetings, friend!",
   "npc.vender.hello.neutral.2": "Vender sees new friend. Friend trades with Vender. Does not attack Vender.",
   "npc.vender.hello.happy": "Friend returns. So good to see friend.",

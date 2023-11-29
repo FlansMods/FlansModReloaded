@@ -306,7 +306,6 @@ public class WorkbenchMenu extends AbstractContainerMenu
 		else SwitchToPower();
 	}
 
-	@OnlyIn(Dist.CLIENT)
 	public void SwitchToGunModification()
 	{
 		HideSlots();
@@ -321,7 +320,6 @@ public class WorkbenchMenu extends AbstractContainerMenu
 		}
 	}
 
-	@OnlyIn(Dist.CLIENT)
 	public void SwitchToMaterials()
 	{
 		HideSlots();
@@ -330,7 +328,6 @@ public class WorkbenchMenu extends AbstractContainerMenu
 			slot.SetActive(true);
 	}
 
-	@OnlyIn(Dist.CLIENT)
 	public void SwitchToPower()
 	{
 		HideSlots();
@@ -341,7 +338,6 @@ public class WorkbenchMenu extends AbstractContainerMenu
 			BatterySlot.SetActive(true);
 	}
 
-	@OnlyIn(Dist.CLIENT)
 	public void SwitchToPartCrafting()
 	{
 		HideSlots();
@@ -352,7 +348,6 @@ public class WorkbenchMenu extends AbstractContainerMenu
 			slot.SetActive(true);
 	}
 
-	@OnlyIn(Dist.CLIENT)
 	public void SwitchToArmourCrafting()
 	{
 		HideSlots();
@@ -400,7 +395,6 @@ public class WorkbenchMenu extends AbstractContainerMenu
 		}
 	}
 
-	@OnlyIn(Dist.CLIENT)
 	public void HideSlots()
 	{
 		if(GunSlot != null)
@@ -427,7 +421,6 @@ public class WorkbenchMenu extends AbstractContainerMenu
 			slot.SetActive(false);
 	}
 
-	@OnlyIn(Dist.CLIENT)
 	public void OffsetInventorySlots(int xOffset, int yOffset)
 	{
 		// x,y are final. Let's hack

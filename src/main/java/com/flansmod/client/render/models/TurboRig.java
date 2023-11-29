@@ -186,6 +186,11 @@ public class TurboRig implements IUnbakedGeometry<TurboRig>, UnbakedModel
 					transform.apply(bFlip, ms);
 					ms.scale(1f/16f, 1f/16f, 1f/16f);
 				}
+				case GROUND ->
+				{
+					ms.translate(0.5f, 0.5f, 0.5f);
+					transform.apply(bFlip, ms);
+				}
 				default ->
 				{
 					transform.apply(bFlip, ms);

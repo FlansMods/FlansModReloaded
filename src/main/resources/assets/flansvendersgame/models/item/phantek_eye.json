@@ -6,7 +6,6 @@
         "phantek_eye_hazard": "flansvendersgame:skins/phantek_eye_hazard",
         "phantek_eye_periwinkle": "flansvendersgame:skins/phantek_eye_periwinkle",
         "phantek_eye_pulse": "flansvendersgame:skins/phantek_eye_pulse",
-        "phantek_eye_white_line": "flansvendersgame:skins/phantek_eye_white_line",
         "particle": "minecraft:block/iron_block"
     },
     "icons": {
@@ -14,8 +13,7 @@
         "phantek_eye_gravel": "flansvendersgame:item/phantek_eye_gravel",
         "phantek_eye_hazard": "flansvendersgame:item/phantek_eye_hazard",
         "phantek_eye_periwinkle": "flansvendersgame:item/phantek_eye_periwinkle",
-        "phantek_eye_pulse": "flansvendersgame:item/phantek_eye_pulse",
-        "phantek_eye_white": "flansvendersgame:item/phantek_eye_white"
+        "phantek_eye_pulse": "flansvendersgame:item/phantek_eye_pulse"
     },
     "animations": {
         "gun_slide_distance": 0.5
@@ -2546,7 +2544,7 @@
             "attachTo": "body",
             "offset": [
                 0.0,
-                5.5,
+                5.0,
                 0.0
             ]
         },
