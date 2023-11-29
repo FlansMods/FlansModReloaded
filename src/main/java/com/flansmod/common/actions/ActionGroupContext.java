@@ -213,6 +213,27 @@ public class ActionGroupContext
 		}
 		return ItemStack.EMPTY;
 	}
+	public int GetNumBulletsInMag(int magIndex)
+	{
+		int count = 0;
+		CompoundTag magTags = GetMagTag(magIndex);
+		if (magTags.contains("bullets"))
+		{
+			CompoundTag bulletTags = magTags.getCompound("bullets");
+			for(String key : bulletTags.getAllKeys())
+			{
+				int startIndex = Integer.parseInt(key);
+				ItemStack stack = ItemStack.of(bulletTags.getCompound(key));
+
+				// Apple represents empty spaces because Minecraft hides 5xAir as 0xAir
+				if(stack.getItem() == Items.APPLE)
+					continue;
+
+				count += stack.getCount();
+			}
+		}
+		return count;
+	}
 	@Nonnull
 	protected ItemStack ConsumeBulletAtIndex(int magIndex, int bulletIndex)
 	{

@@ -1,10 +1,12 @@
 package com.flansmod.common.actions;
 
+import com.flansmod.client.FlansModClient;
 import com.flansmod.common.FlansMod;
 import com.flansmod.common.gunshots.EPressType;
 import com.flansmod.common.network.FlansModPacketHandler;
 import com.flansmod.common.network.bidirectional.ActionUpdateMessage;
 import com.flansmod.common.types.guns.elements.*;
+import com.flansmod.common.types.magazines.EAmmoLoadMode;
 import com.flansmod.util.Maths;
 import com.flansmod.util.MinecraftHelpers;
 import net.minecraft.server.level.ServerPlayer;
@@ -15,6 +17,7 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import javax.swing.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -136,6 +139,8 @@ public class ActionStack
 				groupInstance.OnStartClient();
 			else
 				groupInstance.OnStartServer(doInitialTrigger);
+
+			OnActionGroupStarted(groupContext);
 		}
 		return result;
 	}
@@ -214,6 +219,20 @@ public class ActionStack
 	// -------------------------------------------------------------------------------------------------
 	// Reload state machines
 	// -------------------------------------------------------------------------------------------------
+	private void OnActionGroupStarted(ActionGroupContext groupContext)
+	{
+		// When an action group starts, if it was part of a reload, move to the next step
+		ReloadDefinition reload = groupContext.Gun.GetReloadDefinitionContaining(groupContext);
+		if(reload != null)
+		{
+			EReloadStage stage = reload.GetStage(groupContext.GroupPath);
+			if(stage == EReloadStage.Start)
+			{
+				OnStartReload(groupContext, 0);
+			}
+		}
+	}
+
 	private void OnActionGroupFinished(ActionGroupContext groupContext)
 	{
 		// When an action group finishes, if it was part of a reload, move to the next step
@@ -241,7 +260,7 @@ public class ActionStack
 							nextStage = EReloadStage.End;
 					}
 					case Eject, LoadOne -> {
-						if (groupContext.CanPerformReloadFromAttachedInventory(0)
+						if (CanReloadOne(groupContext, 0)
 							&& !reload.loadOneActionKey.isEmpty())
 						{
 							nextStage = EReloadStage.LoadOne;
@@ -268,7 +287,7 @@ public class ActionStack
 			.GetActionGroupContextSibling(triggeringActionGroup, reload.GetReloadActionKey(reloadStage));
 		ActionGroupInstance groupInstance = GetOrCreateGroupInstance(newGroupContext);
 		TryStartGroupInstance(newGroupContext, true);
-		if (reloadStage == EReloadStage.LoadOne)// && !IsClient)
+		if (reloadStage == EReloadStage.LoadOne && !IsClient)
 		{
 			newGroupContext.LoadOne(0, newGroupContext.Gun.GetAttachedInventory());
 		}
@@ -281,6 +300,41 @@ public class ActionStack
 			&& activeGroup.HasStarted())
 				return true;
 		return false;
+	}
+
+	public void OnStartReload(ActionGroupContext groupContext, int magIndex)
+	{
+		if(IsClient && groupContext.Gun.GetShooter().IsLocalPlayerOwner())
+			Client_LocalPlayerStartReload(groupContext, magIndex);
+	}
+
+	private void Client_LocalPlayerStartReload(ActionGroupContext groupContext, int magIndex)
+	{
+		if(groupContext.CanPerformReloadFromAttachedInventory(magIndex))
+		{
+			int bulletsInMag = groupContext.GetNumBulletsInMag(magIndex);
+			int magSize = groupContext.GetMagazineSize(magIndex);
+
+			if(groupContext.GetMagazineType(magIndex).ammoLoadMode == EAmmoLoadMode.FullMag)
+				FlansModClient.LocalPlayerStartReload(1);
+			else
+				FlansModClient.LocalPlayerStartReload(magSize - bulletsInMag);
+		}
+	}
+
+	public boolean CanReloadOne(ActionGroupContext groupContext, int magIndex)
+	{
+		if(IsClient && groupContext.Gun.GetShooter().IsLocalPlayerOwner())
+		{
+			return Client_LocalPlayerCanReloadOne(groupContext);
+		}
+		return groupContext.CanPerformReloadFromAttachedInventory(0);
+	}
+
+	@OnlyIn(Dist.CLIENT)
+	private boolean Client_LocalPlayerCanReloadOne(ActionGroupContext groupContext)
+	{
+		return FlansModClient.ConsumeLoadOne();
 	}
 
 	// -------------------------------------------------------------------------------------------------

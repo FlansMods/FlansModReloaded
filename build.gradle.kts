@@ -104,6 +104,40 @@ dependencies {
 // processResources
 val Project.minecraft: UserDevExtension
     get() = extensions.getByName<UserDevExtension>("minecraft")
+
+minecraft.runs.create("client") {
+    workingDirectory = "run"
+    properties["forge.logging.markers"] = "REGISTRIES"
+    properties["forge.logging.console.level"] = "debug"
+    properties["forge.enabledGameTestNamespaces"] = "flansmod"
+    mods.create("flansmod") {
+        sources.add(sourceSets.main.get())
+    }
+    mods.create("flansbasicparts") {
+        sources.add(sourceSets.main.get())
+    }
+    mods.create("flansvendersgame") {
+        sources.add(sourceSets.main.get())
+    }
+}
+
+minecraft.runs.create("server") {
+    workingDirectory = "run"
+    properties["forge.logging.markers"] = "REGISTRIES"
+    properties["forge.logging.console.level"] = "debug"
+    properties["forge.enabledGameTestNamespaces"] = "flansmod"
+    mods.create("flansmod") {
+        sources.add(sourceSets.main.get())
+    }
+    mods.create("flansbasicparts") {
+        sources.add(sourceSets.main.get())
+    }
+    mods.create("flansvendersgame") {
+        sources.add(sourceSets.main.get())
+    }
+}
+
+
 tasks.withType<Jar> {
     // this will ensure that this task is redone when the versions change.
     inputs.property("version", project.version)
@@ -158,6 +192,7 @@ fun modTask(taskName: String, srcTask: Task, classfier: String): Jar {
         {
             include("assets/flansmod/")
             include("assets/forge/")
+            include("assets/minecraft")
             include("data/flansmod/")
             include("data/forge/")
             include("com/flansmod/common/")

@@ -66,6 +66,8 @@ public class FlansModClient
 	public static long PREV_FRAME_MS = 0L;
 	public static long THIS_FRAME_MS = 0L;
 	public static float ADS_BLEND = 0.0f;
+	// I don't like this, but server keeps sending us an updated ItemStack and we're like "guess I don't need to play an anim"
+	public static int NUM_LOAD_ANIMS_TO_PLAY = 0;
 	public static float FrameDeltaTime() { return (THIS_FRAME_MS - PREV_FRAME_MS) / 1000000000f; }
 
 	@Nullable
@@ -123,6 +125,21 @@ public class FlansModClient
 		{
 			FlansMod.LOGGER.error("Failed to SetMissTime due to " + e);
 		}
+	}
+
+	public static void LocalPlayerStartReload(int count)
+	{
+		NUM_LOAD_ANIMS_TO_PLAY = count;
+	}
+
+	public static boolean ConsumeLoadOne()
+	{
+		if(NUM_LOAD_ANIMS_TO_PLAY > 0)
+		{
+			NUM_LOAD_ANIMS_TO_PLAY--;
+			return true;
+		}
+		return false;
 	}
 
 	@SubscribeEvent

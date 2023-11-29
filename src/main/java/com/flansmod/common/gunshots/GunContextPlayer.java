@@ -47,13 +47,6 @@ public class GunContextPlayer extends GunContextLiving
 	{
 		ItemStack currentStack = Player.getInventory().getItem(InventorySlot);
 		boolean invalidate = StackUpdateWouldInvalidate(currentStack);
-		if(GetShooter().IsLocalPlayerOwner())
-		{
-			// If we accept server updates while reloading,
-			// we are going to skip all our animations because the gun is "already reloaded"
-			return false;
-		}
-		else
 		{
 			if (!invalidate)
 				Stack = currentStack.copy();

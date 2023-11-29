@@ -1,9 +1,0 @@
-{
-    "loader": "flansmod:multimodel",
-    "first_person_model": "minecraft:null",
-    "third_person_model": "minecraft:null",
-    "head_model": "minecraft:null",
-    "ground_model": "minecraft:null",
-    "fixed_model": "minecraft:null",
-    "gui_model": "minecraft:null"
-}
