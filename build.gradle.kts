@@ -477,15 +477,17 @@ afterEvaluate {
             group = "flansmod publish"
         }
 
-    tasks.create("PublishAllPacks") {
-        dependsOn(tasks.getByName("PublishBasicParts"))
-        dependsOn(tasks.getByName("PublishVendersGame"))
-        group = "flansmod publish"
-    }
-    tasks.create("PublishFlansModAndAllPacks") {
-        dependsOn(tasks.getByName("PublishFlansMod"))
-        dependsOn(tasks.getByName("PublishAllPacks"))
-        group = "flansmod publish"
+    if(tasks.findByPath("PublishBasicParts") != null) {
+        tasks.create("PublishAllPacks") {
+            dependsOn(tasks.getByName("PublishBasicParts"))
+            dependsOn(tasks.getByName("PublishVendersGame"))
+            group = "flansmod publish"
+        }
+        tasks.create("PublishFlansModAndAllPacks") {
+            dependsOn(tasks.getByName("PublishFlansMod"))
+            dependsOn(tasks.getByName("PublishAllPacks"))
+            group = "flansmod publish"
+        }
     }
 
     tasks.create("BuildAllPackJars") {
