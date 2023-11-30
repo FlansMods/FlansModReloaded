@@ -41,6 +41,7 @@ import net.minecraft.world.item.ItemStack;
 import org.joml.*;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 public abstract class FlanItemModelRenderer extends BlockEntityWithoutLevelRenderer
 {
@@ -89,10 +90,10 @@ public abstract class FlanItemModelRenderer extends BlockEntityWithoutLevelRende
         ShouldRenderWhenHeld = shouldRenderWhenHeld;
     }
 
-    protected abstract void DoRender(Entity heldByEntity, ItemStack stack, RenderContext renderContext);
+    protected abstract void DoRender(@Nullable Entity heldByEntity, @Nullable ItemStack stack, @Nonnull RenderContext renderContext);
 
     @Override
-    public void renderByItem(@Nonnull ItemStack stack,
+    public void renderByItem(@Nullable ItemStack stack,
                              @Nonnull ItemTransforms.TransformType transformType,
                              @Nonnull PoseStack ms,
                              @Nonnull MultiBufferSource buffers,
@@ -121,7 +122,7 @@ public abstract class FlanItemModelRenderer extends BlockEntityWithoutLevelRende
         RenderItem(entity, transformType, stack, ms, buffers, light, overlay);
     }
 
-    public void RenderDirect(Entity heldByEntity, ItemStack stack, RenderContext renderContext)
+    public void RenderDirect(@Nullable Entity heldByEntity, @Nullable ItemStack stack, @Nonnull RenderContext renderContext)
     {
         renderContext.Poses.pushPose();
         {
@@ -134,17 +135,17 @@ public abstract class FlanItemModelRenderer extends BlockEntityWithoutLevelRende
         renderContext.Poses.popPose();
     }
 
-    protected void RenderItem(Entity entity,
-                              ItemTransforms.TransformType transformType,
-                              ItemStack stack,
-                              PoseStack requestedPoseStack,
-                              MultiBufferSource buffers,
+    protected void RenderItem(@Nullable Entity entity,
+                              @Nonnull ItemTransforms.TransformType transformType,
+                              @Nullable ItemStack stack,
+                              @Nonnull PoseStack requestedPoseStack,
+                              @Nonnull MultiBufferSource buffers,
                               int light,
                               int overlay)
     {
         requestedPoseStack.pushPose();
         {
-            FlanItem flanItem = stack.getItem() instanceof FlanItem ? (FlanItem)stack.getItem() : null;
+            FlanItem flanItem = stack != null ? (stack.getItem() instanceof FlanItem ? (FlanItem)stack.getItem() : null) : null;
             String skin = "default";
             if(flanItem != null)
                 skin = flanItem.GetPaintjobName(stack);
@@ -414,10 +415,10 @@ public abstract class FlanItemModelRenderer extends BlockEntityWithoutLevelRende
         return Transform.Identity();
     }
 
-    protected ResourceLocation GetSkin(@Nonnull ItemStack stack)
+    public ResourceLocation GetSkin(@Nullable ItemStack stack)
     {
         String skin = "default";
-        if(stack.getItem() instanceof FlanItem flanItem)
+        if(stack != null && stack.getItem() instanceof FlanItem flanItem)
         {
             skin = flanItem.GetPaintjobName(stack);
         }

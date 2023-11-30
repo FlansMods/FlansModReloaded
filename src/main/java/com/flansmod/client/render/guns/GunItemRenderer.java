@@ -19,6 +19,9 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.item.ItemStack;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 public class GunItemRenderer extends FlanItemModelRenderer
 {
     public GunItemRenderer()
@@ -27,8 +30,11 @@ public class GunItemRenderer extends FlanItemModelRenderer
     }
 
     @Override
-    protected void DoRender(Entity heldByEntity, ItemStack stack, RenderContext renderContext)
+    protected void DoRender(@Nullable Entity heldByEntity, @Nullable ItemStack stack, @Nonnull RenderContext renderContext)
     {
+        if(stack == null)
+            return;
+
         ShooterContext shooterContext = ShooterContext.GetOrCreate(heldByEntity);
         GunContext gunContext = shooterContext.IsValid() ?
             GunContext.GetGunContext(shooterContext, MinecraftHelpers.GetHand(renderContext.TransformType)) :

@@ -51,6 +51,8 @@ public class BulletEntityRenderer extends EntityRenderer<BulletEntity>
 			FlanItemModelRenderer bulletRenderer = FlansModClient.MODEL_REGISTRATION.GetModelRenderer(new ItemStack(item));
 			if(bulletRenderer != null)
 			{
+				pose.pushPose();
+				pose.translate(-0.5f, -0.5f, -0.5f);
 				bulletRenderer.RenderDirect(
 					bullet,
 					new ItemStack(item),
@@ -60,6 +62,7 @@ public class BulletEntityRenderer extends EntityRenderer<BulletEntity>
 						pose,
 						light,
 						0));
+				pose.popPose();
 			}
 			else FlansMod.LOGGER.warn("Could not find bullet renderer for " + item);
 		}

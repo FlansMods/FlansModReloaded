@@ -396,7 +396,7 @@ public class ShootAction extends ActionInstance
 	{
 		BulletEntity bullet = new BulletEntity(FlansMod.ENT_TYPE_BULLET.get(), level);
 		bullet.InitContext(gunshotContext);
-		bullet.SetVelocity(shot.trajectory.scale(1d/20d));
+		bullet.SetVelocity(shot.trajectory.scale(gunshotContext.Speed() / 20d));
 		bullet.setPos(shot.origin);
 		bullet.lookAt(EntityAnchorArgument.Anchor.FEET, shot.trajectory);
 		level.addFreshEntity(bullet);
