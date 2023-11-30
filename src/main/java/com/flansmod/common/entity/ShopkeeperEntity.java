@@ -1,24 +1,20 @@
 package com.flansmod.common.entity;
 
-import com.flansmod.client.sound.SoundLODManager;
 import com.flansmod.common.types.elements.EDamageSourceType;
 import com.flansmod.common.types.npc.NpcDefinition;
 import com.flansmod.common.types.npc.elements.ENpcActionType;
 import com.flansmod.common.types.npc.elements.EVoiceLineType;
 import com.flansmod.common.types.npc.elements.MerchantOfferDefinition;
 import com.flansmod.common.types.npc.elements.VoiceLineDefinition;
-import com.mojang.datafixers.optics.Wander;
-import com.mojang.realmsclient.client.Request;
-import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.NonNullList;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtUtils;
+import net.minecraft.network.chat.Component;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
-import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.stats.Stats;
@@ -28,11 +24,10 @@ import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.ai.goal.*;
 import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
-import net.minecraft.world.entity.ai.memory.MemoryModuleType;
+import net.minecraft.world.entity.ai.targeting.TargetingConditions;
 import net.minecraft.world.entity.npc.*;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
 import net.minecraft.world.item.trading.Merchant;
 import net.minecraft.world.item.trading.MerchantOffer;
 import net.minecraft.world.item.trading.MerchantOffers;
@@ -42,7 +37,6 @@ import net.minecraftforge.common.util.LazyOptional;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 public abstract class ShopkeeperEntity extends PathfinderMob implements Npc, Merchant
@@ -52,6 +46,7 @@ public abstract class ShopkeeperEntity extends PathfinderMob implements Npc, Mer
 	public abstract NpcDefinition GetDef();
 	@Nullable
 	private Player TradingWithPlayer;
+	public List<Player> PlayersInRange = new ArrayList<>();
 	@Nullable
 	private MerchantOffers Offers;
 	@Nullable
@@ -263,9 +258,13 @@ public abstract class ShopkeeperEntity extends PathfinderMob implements Npc, Mer
 	}
 	private void PlayVoiceLine(VoiceLineDefinition voiceLine)
 	{
-		voiceLine.audioClip.PlayUnLODdedOnEntity(this);
-		//VoiceLineSystem.Add(voiceLine.unlocalisedString);
+		voiceLine.audioClip.PlayUnLODed(level, position());
+		for(Player player : level.getNearbyPlayers(TargetingConditions.forNonCombat(), this, getBoundingBox().inflate(50d)))
+		{
+			player.sendSystemMessage(Component.translatable(voiceLine.unlocalisedString));
+		}
 	}
+
 	@Override
 	@Nonnull
 	public SoundEvent getNotifyTradeSound()
@@ -275,7 +274,7 @@ public abstract class ShopkeeperEntity extends PathfinderMob implements Npc, Mer
 	@Override
 	public void playAmbientSound()
 	{
-		TryPlayVoiceLine(EVoiceLineType.Chat);
+		//TryPlayVoiceLine(EVoiceLineType.Chat);
 	}
 	@Override
 	protected void playHurtSound(@Nonnull DamageSource source)
@@ -306,10 +305,7 @@ public abstract class ShopkeeperEntity extends PathfinderMob implements Npc, Mer
 		TryPlayVoiceLine(EVoiceLineType.Hurt);
 		if (entity instanceof Player playerHurtMe)
 		{
-			if(GetDef().Can(ENpcActionType.Hostile_TeleportAway) || GetDef().Can(ENpcActionType.Hostile_Retaliate))
-			{
-				SetRelationshipTo(playerHurtMe, ENpcRelationship.Hostile);
-			}
+			SetRelationshipTo(playerHurtMe, ENpcRelationship.Hostile);
 		}
 		if(GetDef().Can(ENpcActionType.Hostile_TeleportAway))
 		{
@@ -439,28 +435,28 @@ public abstract class ShopkeeperEntity extends PathfinderMob implements Npc, Mer
 
 		// Hello and goodbye actions
 
-		goalSelector.addGoal(0, new Talk(this, EVoiceLineType.Goodbye));
-		goalSelector.addGoal(0, new Talk(this, EVoiceLineType.Hello));
-		goalSelector.addGoal(0, new Talk(this, EVoiceLineType.HelloHappy));
-		goalSelector.addGoal(0, new Talk(this, EVoiceLineType.HelloUnhappy));
+		goalSelector.addGoal(0, new Goodbye(this, EVoiceLineType.Goodbye));
+		goalSelector.addGoal(1, new Hello(this, EVoiceLineType.Hello));
+		goalSelector.addGoal(1, new Hello(this, EVoiceLineType.HelloHappy));
+		goalSelector.addGoal(1, new Hello(this, EVoiceLineType.HelloUnhappy));
 
 		// Hostile response actions
 		if(def.Can(ENpcActionType.Hostile_TeleportAway))
-			goalSelector.addGoal(1, new TeleportAway(this));
+			goalSelector.addGoal(2, new TeleportAway(this));
 
 		if(def.Can(ENpcActionType.Hostile_Retaliate))
-			goalSelector.addGoal(2, new MeleeAttackGoal(this, 1.0d, false));
+			goalSelector.addGoal(3, new MeleeAttackGoal(this, 1.0d, false));
 		if(def.Can(ENpcActionType.Neutral_Wander))
 			goalSelector.addGoal(7, new RandomStrollGoal(this, 1.0d));
-		if(def.Can(ENpcActionType.Neutral_LookAtPlayer))
-			goalSelector.addGoal(8, new LookAtPlayerGoal(this, Player.class, 12.0f));
 
 		goalSelector.addGoal(8, new RandomLookAroundGoal(this));
+		if(def.Can(ENpcActionType.Neutral_LookAtPlayer))
+			goalSelector.addGoal(9, new LookAtPlayerGoal(this, Player.class, 12.0f));
 
 //if(def.Can(ENpcActionType.Neutral_LookAtAnimals))
 
 		if(def.Can(ENpcActionType.Neutral_Idle))
-			goalSelector.addGoal(9, new Talk(this, EVoiceLineType.Chat));
+			goalSelector.addGoal(10, new Talk(this, EVoiceLineType.Chat));
 
 		targetSelector.addGoal(1, new HurtByTargetGoal(this));
 	}
@@ -491,81 +487,144 @@ public abstract class ShopkeeperEntity extends PathfinderMob implements Npc, Mer
 		}
 	}
 
+	protected static final double CHAT_RADIUS = 10d;
+
+	private static class Hello extends Goal
+	{
+		private final EVoiceLineType VoiceLineType;
+		private final ShopkeeperEntity Shopkeeper;
+		private Player TalkToTarget;
+		public Hello(ShopkeeperEntity shopkeeper, EVoiceLineType type)
+		{
+			Shopkeeper = shopkeeper;
+			VoiceLineType = type;
+		}
+		@Override
+		public boolean canUse()
+		{
+			for(Player player : Shopkeeper.level.getNearbyPlayers(TargetingConditions.forNonCombat(), Shopkeeper, Shopkeeper.getBoundingBox().inflate(CHAT_RADIUS)))
+			{
+				if(!Shopkeeper.PlayersInRange.contains(player))
+				{
+					ENpcRelationship relationship = Shopkeeper.GetRelationshipTo(player);
+
+					TalkToTarget = player;
+					switch(relationship)
+					{
+						case NotMet -> { return VoiceLineType == EVoiceLineType.Hello; }
+						case Friendly -> { return VoiceLineType == EVoiceLineType.HelloHappy; }
+						case Hostile -> { return VoiceLineType == EVoiceLineType.HelloUnhappy; }
+					}
+				}
+			}
+			return false;
+		}
+		@Override
+		public void start()
+		{
+			Shopkeeper.getLookControl().setLookAt(TalkToTarget);
+			Shopkeeper.TryPlayVoiceLine(VoiceLineType);
+			Shopkeeper.SetRelationshipTo(TalkToTarget, ENpcRelationship.Friendly);
+		}
+	}
+
+	private static class Goodbye extends Goal
+	{
+		private final EVoiceLineType VoiceLineType;
+		private final ShopkeeperEntity Shopkeeper;
+		private Player TalkToTarget;
+		public Goodbye(ShopkeeperEntity shopkeeper, EVoiceLineType type)
+		{
+			Shopkeeper = shopkeeper;
+			VoiceLineType = type;
+		}
+		@Override
+		public boolean canUse()
+		{
+			for(Player previous : Shopkeeper.PlayersInRange)
+			{
+				if(previous.isDeadOrDying() || previous.isRemoved() || previous.distanceToSqr(Shopkeeper) > CHAT_RADIUS * CHAT_RADIUS)
+				{
+					if(Shopkeeper.GetRelationshipTo(previous) == ENpcRelationship.Friendly)
+					{
+						TalkToTarget = previous;
+						return true;
+					}
+				}
+			}
+			return false;
+		}
+		@Override
+		public void start()
+		{
+			Shopkeeper.getLookControl().setLookAt(TalkToTarget);
+			ENpcRelationship relationship = Shopkeeper.GetRelationshipTo(TalkToTarget);
+			switch(relationship)
+			{
+				case Friendly -> Shopkeeper.SetRelationshipTo(TalkToTarget, ENpcRelationship.PreviouslyMetFriendly);
+				case NotMet -> Shopkeeper.SetRelationshipTo(TalkToTarget, ENpcRelationship.NotMet);
+				case Hostile -> Shopkeeper.SetRelationshipTo(TalkToTarget, ENpcRelationship.PreviouslyMetHostile);
+			}
+			if(relationship == ENpcRelationship.Friendly)
+			{
+				Shopkeeper.TryPlayVoiceLine(VoiceLineType);
+			}
+			Shopkeeper.PlayersInRange.remove(TalkToTarget);
+		}
+	}
+
 	private static class Talk extends Goal
 	{
 		private final EVoiceLineType VoiceLineType;
-		private final List<VoiceLineDefinition> MatchingVoiceLines;
-		@Nullable
-		private LivingEntity Target;
-		public final ShopkeeperEntity Shopkeeper;
+		private final ShopkeeperEntity Shopkeeper;
+		private Player TalkToTarget;
+		private int Cooldown = 0;
 
 		public Talk(ShopkeeperEntity shopkeeper, EVoiceLineType type)
 		{
 			Shopkeeper = shopkeeper;
 			VoiceLineType = type;
-			MatchingVoiceLines = new ArrayList<>();
-			for(VoiceLineDefinition voiceLine : Shopkeeper.GetDef().voiceLines)
-				if(voiceLine.type == VoiceLineType)
-					MatchingVoiceLines.add(voiceLine);
 		}
 
 		@Override
 		public boolean canUse()
 		{
-			Target = Shopkeeper.getTarget();
-			if(Target instanceof Player player)
+			TalkToTarget = Shopkeeper.level.getNearestPlayer(Shopkeeper, CHAT_RADIUS);
+			if (TalkToTarget != null)
 			{
-				ENpcRelationship relationship = Shopkeeper.GetRelationshipTo(player);
+				ENpcRelationship relationship = Shopkeeper.GetRelationshipTo(TalkToTarget);
 				switch (VoiceLineType)
 				{
-					case Hello -> { return relationship == ENpcRelationship.NotMet; }
-					case HelloHappy -> { return relationship == ENpcRelationship.PreviouslyMetFriendly; }
-					case HelloUnhappy -> { return relationship == ENpcRelationship.PreviouslyMetHostile; }
-					case Chat, SoldToPlayer, BoughtFromPlayer, Goodbye -> { return relationship == ENpcRelationship.Friendly; }
-					case Hurt -> { return relationship == ENpcRelationship.Hostile; }
+					case Chat, SoldToPlayer, BoughtFromPlayer -> {
+						return relationship == ENpcRelationship.Friendly;
+					}
 				}
 			}
 			return false;
 		}
 
 		@Override
+		public boolean isInterruptable() {
+			return true;
+		}
+		@Override
+		public boolean canContinueToUse() {
+			return Cooldown > 0;
+		}
+		@Override
 		public void start()
 		{
-			Target = Shopkeeper.getTarget();
-			if(Target instanceof Player player)
-			{
-				switch (VoiceLineType)
-				{
-					case Hello, HelloHappy, HelloUnhappy -> {
-						Shopkeeper.SetRelationshipTo(player, ENpcRelationship.Friendly);
-					}
-				}
-			}
-
-			if(MatchingVoiceLines.size() == 1)
-			{
-				PlayVoiceLine(MatchingVoiceLines.get(0));
-			}
-			else if(MatchingVoiceLines.size() > 1)
-			{
-				PlayVoiceLine(MatchingVoiceLines.get(Shopkeeper.random.nextInt(MatchingVoiceLines.size())));
-			}
-		}
-
-		private void PlayVoiceLine(VoiceLineDefinition voiceLine)
-		{
-			// Play SFX
-			voiceLine.audioClip.PlayUnLODdedOnEntity(Shopkeeper);
-
-			// Add text to chat / popup
-			// TODO:
+			Cooldown = 200; // 10s delay
+			Shopkeeper.TryPlayVoiceLine(VoiceLineType);
 		}
 
 		@Override
 		public void tick()
 		{
-			if(Target != null)
-				Shopkeeper.getLookControl().setLookAt(Target);
+			if(TalkToTarget != null)
+				Shopkeeper.getLookControl().setLookAt(TalkToTarget);
+
+			Cooldown--;
 		}
 	}
 }

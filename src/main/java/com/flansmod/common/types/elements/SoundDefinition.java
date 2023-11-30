@@ -3,8 +3,11 @@ package com.flansmod.common.types.elements;
 import com.flansmod.common.types.JsonField;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvent;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
@@ -44,12 +47,23 @@ public class SoundDefinition
 		return minPitchMultiplier + random.nextFloat() * (maxPitchMultiplier - minPitchMultiplier);
 	}
 
-	public void PlayUnLODdedOnEntity(Entity entity)
+	public void PlayUnLODedOnEntity(Entity entity)
 	{
 		entity.playSound(
 			SoundEvent.createFixedRangeEvent(new ResourceLocation(sound), maxRange),
 			PickRandomVolume(entity.level.random),
 			PickRandomPitch(entity.level.random)
 		);
+	}
+
+	public void PlayUnLODed(Level level, Vec3 pos)
+	{
+		level.playSound(
+			null,
+			pos.x, pos.y, pos.z,
+			SoundEvent.createFixedRangeEvent(new ResourceLocation(sound), maxRange),
+			SoundSource.PLAYERS,
+			PickRandomVolume(level.random),
+			PickRandomPitch(level.random));
 	}
 }
