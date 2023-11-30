@@ -65,7 +65,7 @@ public class ServerActionManager extends ActionManager
 			}
 		}
 
-		for(var level : MinecraftHelpers.GetLoadedLevels())
+		for(var level : MinecraftHelpers.Server_GetLoadedLevels())
 		{
 			for(var player : level.players())
 			{

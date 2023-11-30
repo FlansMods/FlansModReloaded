@@ -51,22 +51,13 @@ public class MinecraftHelpers
 		return null;
 	}
 	@Nonnull
-	public static Iterable<? extends Level> GetLoadedLevels()
+	public static Iterable<? extends Level> Server_GetLoadedLevels()
 	{
 		// Try getting from the running server
 		MinecraftServer server = GetServer();
-		if(server != null && server.isRunning())
+		if (server != null && server.isRunning())
 		{
 			return server.getAllLevels();
-		}
-
-		// If not on a server, return the one loaded level
-		if(IsClient())
-		{
-			Level clientLevel = DistExecutor.safeCallWhenOn(Dist.CLIENT, () -> MinecraftHelpers::Client_GetCurrentLevel);
-			List<Level> list = new ArrayList<>(1);
-			list.add(clientLevel);
-			return list;
 		}
 		return new ArrayList<>();
 	}
