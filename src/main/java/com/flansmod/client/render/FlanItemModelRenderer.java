@@ -345,22 +345,32 @@ public abstract class FlanItemModelRenderer extends BlockEntityWithoutLevelRende
                                 EAttachmentType attachmentType = groupInstance.Context.GetAttachmentType();
                                 int attachmentIndex = groupInstance.Context.GetAttachmentIndex();
 
-                                TurboRig.AttachPoint attachmentRoot = UnbakedRig.GetAttachPoint(attachmentType, attachmentIndex);
-                                Transform attachmentRootTransform = Transform.FromPosAndEuler(attachmentRoot.Offset, attachmentRoot.Euler);
+                                TurboRig.AttachPoint ap = UnbakedRig.GetAttachPoint(attachmentType, attachmentIndex);
+                                Transform apTransform = Transform.FromPosAndEuler(ap.Offset, ap.Euler);
+                                while(!ap.AttachTo.equals("body"))
+                                {
+                                    TurboRig.AttachPoint parentAP = UnbakedRig.GetAttachPoint(ap.AttachTo);
+                                    if(parentAP == null)
+                                        break;
+
+                                    apTransform = apTransform.RightMultiply(Transform.FromPosAndEuler(ap.Offset, ap.Euler));
+                                    ap = parentAP;
+                                }
+
                                 ItemStack attachmentStack = gunContext.GetAttachmentStack(attachmentType, attachmentIndex);
                                 FlanItemModelRenderer attachmentRenderer = FlansModClient.MODEL_REGISTRATION.GetModelRenderer(attachmentStack);
                                 if (attachmentRenderer instanceof AttachmentItemRenderer attachmentItemRenderer)
                                 {
                                     if(attachmentRenderer.UnbakedRig != null)
                                     {
-                                        TurboRig.AttachPoint ap = attachmentRenderer.UnbakedRig.GetAttachPoint("eye_line");
-                                        if(ap != null)
+                                        TurboRig.AttachPoint eyeLineAPOnAttachment = attachmentRenderer.UnbakedRig.GetAttachPoint("eye_line");
+                                        if(eyeLineAPOnAttachment != null)
                                         {
-                                            Transform eyeLineTransform = Transform.FromPosAndEuler(ap.Offset, ap.Euler);
+                                            Transform eyeLineTransform = Transform.FromPosAndEuler(eyeLineAPOnAttachment.Offset, eyeLineAPOnAttachment.Euler);
                                             if (isThisHand)
-                                                myEyeLines.add(attachmentRootTransform.RightMultiply(eyeLineTransform));
+                                                myEyeLines.add(apTransform.RightMultiply(eyeLineTransform));
                                             else
-                                                otherEyeLines.add(attachmentRootTransform.RightMultiply(eyeLineTransform));
+                                                otherEyeLines.add(apTransform.RightMultiply(eyeLineTransform));
                                         }
                                     }
                                 }
