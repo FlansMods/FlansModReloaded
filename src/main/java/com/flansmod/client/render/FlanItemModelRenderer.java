@@ -287,8 +287,10 @@ public abstract class FlanItemModelRenderer extends BlockEntityWithoutLevelRende
                 if(adsBlend > 0.0f && partName.equals("body"))
                 {
                     Transform eyeLine = GetEyeLine(renderContext.TransformType);
-                    renderContext.Poses.translate(eyeLine.position.x * adsBlend, eyeLine.position.y * adsBlend, eyeLine.position.z * adsBlend);
-                    renderContext.Poses.mulPose(eyeLine.orientation.slerp(new Quaternionf(), adsBlend, new Quaternionf()));
+                    Vector3d blendedPos = new Vector3d().lerp(eyeLine.position, adsBlend);
+                    Quaternionf blendedOri = new Quaternionf().slerp(eyeLine.orientation, adsBlend);
+                    renderContext.Poses.translate(blendedPos.x, blendedPos.y, blendedPos.z);
+                    renderContext.Poses.mulPose(blendedOri);
                 }
             }
 

@@ -1,5 +1,5 @@
 {
-    "titlestring": "portable_coal_generator",
+    "titleString": "workbench",
     "bannerTextureLocation": "",
     "gunCrafting": {
         "isActive": false,

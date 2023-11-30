@@ -1,0 +1,9 @@
+{
+  "replace": "false",
+  "values": [
+    "flansbasicparts:projectile_grenade_ex",
+    "flansbasicparts:projectile_grenade_impact",
+    "flansbasicparts:projectile_grenade_incendiary",
+    "flansbasicparts:projectile_grenade_sticky"
+  ]
+}

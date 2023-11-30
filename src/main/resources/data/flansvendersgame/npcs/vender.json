@@ -2,7 +2,7 @@
     "voiceLines": [
         {
             "type": "Hello",
-            "unlocalisedString": "npc.vender.hello.neutral.1",
+            "unlocalisedString": "npc.unknown.chat",
             "audioClip": {
                 "sound": "flansvendersgame:vender_greeting_neutral",
                 "length": 2.0,
@@ -16,7 +16,7 @@
         },
         {
             "type": "Hello",
-            "unlocalisedString": "npc.vender.hello.neutral.2",
+            "unlocalisedString": "npc.unknown.chat",
             "audioClip": {
                 "sound": "flansvendersgame:vender_greeting_neutral",
                 "length": 2.0,
@@ -30,7 +30,7 @@
         },
         {
             "type": "HelloUnhappy",
-            "unlocalisedString": "npc.vender.hello.angry",
+            "unlocalisedString": "npc.unknown.chat",
             "audioClip": {
                 "sound": "flansvendersgame:vender_greeting_hostile",
                 "length": 2.0,
@@ -44,7 +44,7 @@
         },
         {
             "type": "HelloHappy",
-            "unlocalisedString": "npc.vender.hello.happy",
+            "unlocalisedString": "npc.unknown.chat",
             "audioClip": {
                 "sound": "flansvendersgame:vender_greeting_friendly",
                 "length": 2.0,
@@ -58,7 +58,7 @@
         },
         {
             "type": "Chat",
-            "unlocalisedString": "npc.vender.chat.1",
+            "unlocalisedString": "npc.unknown.chat",
             "audioClip": {
                 "sound": "flansvendersgame:vender_chat_neutral",
                 "length": 2.0,
@@ -72,7 +72,7 @@
         },
         {
             "type": "Chat",
-            "unlocalisedString": "npc.vender.chat.2",
+            "unlocalisedString": "npc.unknown.chat",
             "audioClip": {
                 "sound": "flansvendersgame:vender_chat_neutral",
                 "length": 2.0,
@@ -86,7 +86,7 @@
         },
         {
             "type": "BoughtFromPlayer",
-            "unlocalisedString": "npc.vender.buy_from_player.1",
+            "unlocalisedString": "npc.unknown.chat",
             "audioClip": {
                 "sound": "flansvendersgame:vender_buy_from_player",
                 "length": 2.0,
@@ -100,7 +100,7 @@
         },
         {
             "type": "BoughtFromPlayer",
-            "unlocalisedString": "npc.vender.buy_from_player.2",
+            "unlocalisedString": "npc.unknown.chat",
             "audioClip": {
                 "sound": "flansvendersgame:vender_buy_from_player",
                 "length": 2.0,
@@ -114,7 +114,7 @@
         },
         {
             "type": "SoldToPlayer",
-            "unlocalisedString": "npc.vender.sell_to_player.1",
+            "unlocalisedString": "npc.unknown.chat",
             "audioClip": {
                 "sound": "flansvendersgame:vender_sell_to_player",
                 "length": 2.0,
@@ -128,7 +128,7 @@
         },
         {
             "type": "SoldToPlayer",
-            "unlocalisedString": "npc.vender.sell_to_player.2",
+            "unlocalisedString": "npc.unknown.chat",
             "audioClip": {
                 "sound": "flansvendersgame:vender_sell_to_player",
                 "length": 2.0,
@@ -142,7 +142,7 @@
         },
         {
             "type": "Goodbye",
-            "unlocalisedString": "npc.vender.goodbye.1",
+            "unlocalisedString": "npc.unknown.chat",
             "audioClip": {
                 "sound": "flansvendersgame:vender_goodbye",
                 "length": 2.0,
@@ -156,7 +156,7 @@
         },
         {
             "type": "Goodbye",
-            "unlocalisedString": "npc.vender.goodbye.2",
+            "unlocalisedString": "npc.unknown.chat",
             "audioClip": {
                 "sound": "flansvendersgame:vender_goodbye",
                 "length": 2.0,
@@ -170,7 +170,7 @@
         },
         {
             "type": "Hurt",
-            "unlocalisedString": "npc.vender.hurt.1",
+            "unlocalisedString": "npc.unknown.chat",
             "audioClip": {
                 "sound": "flansvendersgame:vender_hurt",
                 "length": 2.0,
@@ -184,7 +184,7 @@
         },
         {
             "type": "Hurt",
-            "unlocalisedString": "npc.vender.hurt.2",
+            "unlocalisedString": "npc.unknown.chat",
             "audioClip": {
                 "sound": "flansvendersgame:vender_hurt",
                 "length": 2.0,

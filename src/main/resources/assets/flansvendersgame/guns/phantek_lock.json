@@ -244,7 +244,7 @@
             "canBeOverriden": true,
             "twoHanded": false,
             "repeatMode": "Toggle",
-            "repeatDelay": 0.1,
+            "repeatDelay": 0.05,
             "repeatCount": 3,
             "spinUpDuration": 1.5,
             "loudness": 150.0,
@@ -484,32 +484,47 @@
     ],
     "loopingSounds": [],
     "barrelAttachments": {
-        "allowlist": [],
-        "allowAll": true,
+        "matchNames": [],
+        "matchTags": [
+            "flansmod:attach_to_pistol",
+            "flansmod:attach_to_any"
+        ],
         "numAttachmentSlots": 1,
         "hideDefaultMesh": true
     },
     "gripAttachments": {
-        "allowlist": [],
-        "allowAll": true,
+        "matchNames": [],
+        "matchTags": [
+            "flansmod:attach_to_pistol",
+            "flansmod:attach_to_any"
+        ],
         "numAttachmentSlots": 0,
         "hideDefaultMesh": true
     },
     "stockAttachments": {
-        "allowlist": [],
-        "allowAll": true,
+        "matchNames": [],
+        "matchTags": [
+            "flansmod:attach_to_pistol",
+            "flansmod:attach_to_any"
+        ],
         "numAttachmentSlots": 0,
         "hideDefaultMesh": true
     },
     "scopeAttachments": {
-        "allowlist": [],
-        "allowAll": true,
+        "matchNames": [],
+        "matchTags": [
+            "flansmod:attach_to_pistol",
+            "flansmod:attach_to_any"
+        ],
         "numAttachmentSlots": 1,
         "hideDefaultMesh": true
     },
     "genericAttachments": {
-        "allowlist": [],
-        "allowAll": true,
+        "matchNames": [],
+        "matchTags": [
+            "flansmod:attach_to_pistol",
+            "flansmod:attach_to_any"
+        ],
         "numAttachmentSlots": 0,
         "hideDefaultMesh": true
     },

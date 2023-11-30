@@ -8,9 +8,12 @@ import com.flansmod.common.types.elements.ModifierDefinition;
 import com.flansmod.common.types.elements.PaintableDefinition;
 import com.flansmod.common.types.guns.GunDefinition;
 import com.flansmod.common.types.parts.PartDefinition;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
@@ -75,6 +78,29 @@ public abstract class FlanItem extends Item
         if(attachSettings != null)
             return attachSettings.numAttachmentSlots > slot;
 
+        return false;
+    }
+
+    public boolean CanAcceptAttachment(ItemStack attachmentStack, EAttachmentType slotType, int slotIndex)
+    {
+        if(Def() instanceof GunDefinition gunDef)
+        {
+            AttachmentSettingsDefinition attachSettings = gunDef.GetAttachmentSettings(slotType);
+            if(slotIndex < attachSettings.numAttachmentSlots)
+            {
+                if(attachSettings.matchNames.length == 0 && attachSettings.matchTags.length == 0)
+                    return true;
+
+                if(attachSettings.matchNames.length > 0)
+                    for(String matchName : attachSettings.matchNames)
+                        if(attachmentStack.getItem().builtInRegistryHolder().is(new ResourceLocation(matchName)))
+                            return true;
+                if(attachSettings.matchTags.length > 0)
+                    for(String matchTag : attachSettings.matchTags)
+                        if(attachmentStack.getItem().builtInRegistryHolder().containsTag(TagKey.create(Registries.ITEM, new ResourceLocation(matchTag))))
+                            return true;
+            }
+        }
         return false;
     }
 

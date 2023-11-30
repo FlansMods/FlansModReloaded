@@ -190,25 +190,32 @@ fun modTask(taskName: String, srcTask: Task, classfier: String): Jar {
         dependsOn(srcTask)
         from(zipTree(srcTask.outputs.files.singleFile))
         {
-            include("assets/flansmod/")
-            include("assets/forge/")
-            include("assets/minecraft")
-            include("data/flansmod/")
-            include("data/forge/")
-            include("com/flansmod/common/")
-            include("com/flansmod/client/")
-            include("com/flansmod/util/")
-            include("META-INF/flansmod.toml")
-            include("flansmod.mcmeta")
-            include("flansmod.png")
+            include("**/assets/flansmod/")
+            include("**/assets/forge/")
+            include("**/assets/minecraft")
+            include("**/data/flansmod/")
+            include("**/data/forge/")
+            include("**/com/flansmod/common/")
+            include("**/com/flansmod/client/")
+            include("**/com/flansmod/util/")
+            include("**/META-INF/flansmod.toml")
+            include("**/flansmod.mcmeta")
+            include("**/flansmod.png")
+            include("**/data/**/tags/**/*_flansmod.json")
         }
         rename { name ->
             if (name == "flansmod.toml")
                 "mods.toml"
             else if(name == "flansmod.mcmeta")
                 "pack.mcmeta"
+            else if(name.endsWith("_flansmod.json"))
+            {
+                val newName = name.substring(0, name.lastIndexOf('_'))
+                "$newName.json"
+            }
             else name
         }
+        includeEmptyDirs = false
         classifier = classfier
         version = "$mcVersion-$modVersion"
         getArchiveBaseName().set("flansmod")
@@ -218,31 +225,32 @@ fun modTask(taskName: String, srcTask: Task, classfier: String): Jar {
 }
 
 fun repackTask(taskName: String, modID: String, modNamespace: String, srcTask: Task, classfier: String): Jar {
-
-    //val outputTask: Task
-    //if(srcTask.finalizedBy is Jar)
-    //    outputTask = srcTask.finalizedBy as Jar
-    //else
-    //    outputTask = srcTask
-//
     return tasks.create(taskName, Jar::class.java) {
         dependsOn(srcTask)
         from(zipTree(srcTask.outputs.files.singleFile))
         {
-            include("assets/$modID/")
-            include("data/$modID/")
-            include("com/flansmod/packs/$modNamespace/")
-            include("META-INF/$modID.toml")
-            include("$modID.mcmeta")
-            include("$modID.png")
+
+            include("**/assets/$modID/")
+            include("**/data/$modID/")
+            include("**/com/flansmod/packs/$modNamespace/")
+            include("**/META-INF/$modID.toml")
+            include("**/$modID.mcmeta")
+            include("**/$modID.png")
+            include("**/data/**/tags/**/*_$modID.json")
         }
         rename { name ->
             if (name == "$modID.toml")
                 "mods.toml"
             else if (name == "$modID.mcmeta")
                 "pack.mcmeta"
+            else if(name.endsWith("_$modID.json"))
+            {
+                val newName = name.substring(0, name.lastIndexOf('_'))
+                "$newName.json"
+            }
             else name
         }
+        includeEmptyDirs = false
         classifier = classfier
         version = "$mcVersion-$modVersion"
         getArchiveBaseName().set(modID)

@@ -1,5 +1,5 @@
 {
-    "titlestring": "Part Fabricator",
+    "titleString": "workbench",
     "bannerTextureLocation": "",
     "gunCrafting": {
         "isActive": false,

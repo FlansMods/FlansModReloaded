@@ -2,7 +2,11 @@
     "itemSettings": {
         "maxStackSize": 1,
         "tags": [
-            "flansmod:stock"
+            "flansmod:attach_to_pistol",
+            "flansmod:attach_to_rifle",
+            "flansmod:attach_to_shotgun",
+            "flansmod:attach_to_grenade_launcher",
+            "flansmod:stock_attach"
         ]
     },
     "attachmentType": "Stock",

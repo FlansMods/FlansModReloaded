@@ -2,7 +2,8 @@
     "itemSettings": {
         "maxStackSize": 1,
         "tags": [
-            "flansmod:sights"
+            "flansmod:attach_to_any",
+            "flansmod:sights_attach"
         ]
     },
     "attachmentType": "Sights",
@@ -58,7 +59,7 @@
             "canBeOverriden": false,
             "twoHanded": false,
             "repeatMode": "Toggle",
-            "repeatDelay": 1.0,
+            "repeatDelay": 0.05,
             "repeatCount": 0,
             "spinUpDuration": 0.0,
             "loudness": 0.0,

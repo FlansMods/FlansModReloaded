@@ -73,8 +73,10 @@ public class AttachmentSlot extends RestrictedSlot
 			return false;
 		if(stack.isEmpty())
 			return true;
-		return stack.getItem() instanceof AttachmentItem attachmentItem
-				&& attachmentItem.Def().attachmentType == AttachmentType;
+		if(ParentSlot.isActive())
+			if(ParentSlot.getItem().getItem() instanceof FlanItem flanItem)
+				return flanItem.CanAcceptAttachment(stack, AttachmentType, AttachmentIndex);
+		return false;
 	}
 	@Override
 	public void initialize(ItemStack stack)

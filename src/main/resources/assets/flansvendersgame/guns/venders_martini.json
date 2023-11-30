@@ -463,32 +463,47 @@
     ],
     "loopingSounds": [],
     "barrelAttachments": {
-        "allowlist": [],
-        "allowAll": true,
+        "matchNames": [],
+        "matchTags": [
+            "flansmod:attach_to_rifle",
+            "flansmod:attach_to_any"
+        ],
         "numAttachmentSlots": 0,
         "hideDefaultMesh": true
     },
     "gripAttachments": {
-        "allowlist": [],
-        "allowAll": true,
+        "matchNames": [],
+        "matchTags": [
+            "flansmod:attach_to_rifle",
+            "flansmod:attach_to_any"
+        ],
         "numAttachmentSlots": 0,
         "hideDefaultMesh": true
     },
     "stockAttachments": {
-        "allowlist": [],
-        "allowAll": true,
+        "matchNames": [],
+        "matchTags": [
+            "flansmod:attach_to_rifle",
+            "flansmod:attach_to_any"
+        ],
         "numAttachmentSlots": 0,
         "hideDefaultMesh": true
     },
     "scopeAttachments": {
-        "allowlist": [],
-        "allowAll": true,
+        "matchNames": [],
+        "matchTags": [
+            "flansmod:attach_to_rifle",
+            "flansmod:attach_to_any"
+        ],
         "numAttachmentSlots": 0,
         "hideDefaultMesh": true
     },
     "genericAttachments": {
-        "allowlist": [],
-        "allowAll": true,
+        "matchNames": [],
+        "matchTags": [
+            "flansmod:attach_to_rifle",
+            "flansmod:attach_to_any"
+        ],
         "numAttachmentSlots": 0,
         "hideDefaultMesh": true
     },

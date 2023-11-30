@@ -1,5 +1,5 @@
 {
-    "titlestring": "gun_modification_table",
+    "titleString": "workbench",
     "bannerTextureLocation": "",
     "gunCrafting": {
         "isActive": false,

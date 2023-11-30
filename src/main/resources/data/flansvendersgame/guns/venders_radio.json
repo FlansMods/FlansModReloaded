@@ -88,32 +88,32 @@
     "reloads": [],
     "loopingSounds": [],
     "barrelAttachments": {
-        "allowlist": [],
-        "allowAll": true,
+        "matchNames": [],
+        "matchTags": [],
         "numAttachmentSlots": 0,
         "hideDefaultMesh": true
     },
     "gripAttachments": {
-        "allowlist": [],
-        "allowAll": false,
+        "matchNames": [],
+        "matchTags": [],
         "numAttachmentSlots": 0,
         "hideDefaultMesh": true
     },
     "stockAttachments": {
-        "allowlist": [],
-        "allowAll": false,
+        "matchNames": [],
+        "matchTags": [],
         "numAttachmentSlots": 0,
         "hideDefaultMesh": true
     },
     "scopeAttachments": {
-        "allowlist": [],
-        "allowAll": false,
+        "matchNames": [],
+        "matchTags": [],
         "numAttachmentSlots": 1,
         "hideDefaultMesh": true
     },
     "genericAttachments": {
-        "allowlist": [],
-        "allowAll": false,
+        "matchNames": [],
+        "matchTags": [],
         "numAttachmentSlots": 0,
         "hideDefaultMesh": true
     },

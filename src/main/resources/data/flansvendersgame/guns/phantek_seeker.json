@@ -1,9 +1,7 @@
 {
     "itemSettings": {
         "maxStackSize": 1,
-        "tags": [
-            "flansmod:gun"
-        ]
+        "tags": []
     },
     "paints": {
         "paintjobs": [
@@ -423,32 +421,47 @@
     ],
     "loopingSounds": [],
     "barrelAttachments": {
-        "allowlist": [],
-        "allowAll": true,
+        "matchNames": [],
+        "matchTags": [
+            "flansmod:attach_to_rocket_launcher",
+            "flansmod:attach_to_any"
+        ],
         "numAttachmentSlots": 0,
         "hideDefaultMesh": true
     },
     "gripAttachments": {
-        "allowlist": [],
-        "allowAll": true,
+        "matchNames": [],
+        "matchTags": [
+            "flansmod:attach_to_rocket_launcher",
+            "flansmod:attach_to_any"
+        ],
         "numAttachmentSlots": 0,
         "hideDefaultMesh": true
     },
     "stockAttachments": {
-        "allowlist": [],
-        "allowAll": true,
+        "matchNames": [],
+        "matchTags": [
+            "flansmod:attach_to_rocket_launcher",
+            "flansmod:attach_to_any"
+        ],
         "numAttachmentSlots": 0,
         "hideDefaultMesh": true
     },
     "scopeAttachments": {
-        "allowlist": [],
-        "allowAll": true,
+        "matchNames": [],
+        "matchTags": [
+            "flansmod:attach_to_rocket_launcher",
+            "flansmod:attach_to_any"
+        ],
         "numAttachmentSlots": 1,
         "hideDefaultMesh": true
     },
     "genericAttachments": {
-        "allowlist": [],
-        "allowAll": true,
+        "matchNames": [],
+        "matchTags": [
+            "flansmod:attach_to_rocket_launcher",
+            "flansmod:attach_to_any"
+        ],
         "numAttachmentSlots": 0,
         "hideDefaultMesh": true
     },

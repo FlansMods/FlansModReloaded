@@ -2,8 +2,8 @@
     "itemSettings": {
         "maxStackSize": 1,
         "tags": [
-            "flansmod:bullet",
-            "flansmod:barrel"
+            "flansmod:attach_to_pistol",
+            "flansmod:barrel_attach"
         ]
     },
     "attachmentType": "Barrel",

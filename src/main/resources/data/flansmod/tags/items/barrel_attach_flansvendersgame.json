@@ -1,0 +1,11 @@
+{
+  "replace": "false",
+  "values": [
+    "flansvendersgame:dragons_breath_infuser",
+    "flansvendersgame:fc_deluxe_compensator",
+    "flansvendersgame:hm_pocket_silencer",
+    "flansvendersgame:hm_precision_barrel",
+    "flansvendersgame:phantek_shotgun_silencer",
+    "flansvendersgame:phantek_silencer"
+  ]
+}

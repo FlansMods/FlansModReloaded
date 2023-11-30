@@ -1,5 +1,5 @@
 {
-    "titlestring": "Flint & Cobbleson's Handcrafting Station",
+    "titleString": "workbench",
     "bannerTextureLocation": "",
     "gunCrafting": {
         "isActive": true,

@@ -1,0 +1,28 @@
+{
+  "replace": "false",
+  "values": [
+    "flansvendersgame:fc_49",
+    "flansvendersgame:fc_56",
+    "flansvendersgame:fc_700",
+    "flansvendersgame:fc_870",
+    "flansvendersgame:fc_far",
+    "flansvendersgame:fc_puncher",
+    "flansvendersgame:hm_1200",
+    "flansvendersgame:hm_14",
+    "flansvendersgame:hm_16",
+    "flansvendersgame:hm_21",
+    "flansvendersgame:hm_9",
+    "flansvendersgame:hm_combine",
+    "flansvendersgame:hm_krank",
+    "flansvendersgame:hm_pocket",
+    "flansvendersgame:phantek_90",
+    "flansvendersgame:phantek_auto_12",
+    "flansvendersgame:phantek_battlemage",
+    "flansvendersgame:phantek_eye",
+    "flansvendersgame:phantek_fury",
+    "flansvendersgame:phantek_lock",
+    "flansvendersgame:venders_customs_viper",
+    "flansvendersgame:venders_martini",
+    "flansvendersgame:venders_radio"
+  ]
+}

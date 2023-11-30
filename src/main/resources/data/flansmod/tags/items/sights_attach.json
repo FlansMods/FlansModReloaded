@@ -1,0 +1,9 @@
+{
+  "replace": "false",
+  "values": [
+    "flansvendersgame:fc_diamond_sights",
+    "flansvendersgame:hm_pinpoint_sight",
+    "flansvendersgame:hm_red_dot",
+    "flansvendersgame:phantek_4x_optic"
+  ]
+}
