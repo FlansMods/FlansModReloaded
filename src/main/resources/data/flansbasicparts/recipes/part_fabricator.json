@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "building",
+  "key": {
+    "C": {
+      "item": "minecraft:chest"
+    },
+	"A": {
+      "item": "minecraft:anvil"
+    },
+	"I": {
+      "item": "minecraft:iron_ingot"
+    }
+  },
+  "pattern": [
+    "III",
+    "III",
+    "CAC"
+  ],
+  "result": {
+    "item": "flansbasicparts:part_fabricator"
+  },
+  "show_notification": true
+}

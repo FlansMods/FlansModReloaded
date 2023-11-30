@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "building",
+  "ingredients": [
+    {
+      "tag": "minecraft:sand"
+    },
+	{
+	  "item": "minecraft:clay"
+	}
+  ],
+  "result": {
+    "item": "flansbasicparts:clay_and_sand_mixture",
+	"count": 2
+  },
+  "show_notification": true
+}

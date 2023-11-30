@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "building",
+  "key": {
+    "A": {
+      "item": "minecraft:anvil"
+    },
+	"I": {
+		"tag": "minecraft:logs"
+	},
+	"R": {
+		"item": "minecraft:diamond"
+	}
+  },
+  "pattern": [
+    "RRR",
+    "III",
+    "IAI"
+  ],
+  "result": {
+    "item": "flansvendersgame:fc_workbench"
+  },
+  "show_notification": true
+}

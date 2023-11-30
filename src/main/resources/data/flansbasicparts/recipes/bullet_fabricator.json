@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "building",
+  "key": {
+    "G": {
+      "item": "minecraft:grindstone"
+    },
+	"A": {
+      "item": "minecraft:anvil"
+    },
+	"I": {
+      "item": "minecraft:iron_ingot"
+    }
+  },
+  "pattern": [
+    "III",
+    "III",
+    "GAG"
+  ],
+  "result": {
+    "item": "flansbasicparts:bullet_fabricator"
+  },
+  "show_notification": true
+}
