@@ -1,6 +1,7 @@
 package com.flansmod.client.render;
 
 import com.flansmod.common.FlansMod;
+import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.Util;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.texture.SpriteLoader;
@@ -34,7 +35,11 @@ public class MagazineTextureAtlas implements PreparableReloadListener
 
 	public void Init()
 	{
-		Minecraft.getInstance().getTextureManager().register(ATLAS_LOCATION, Atlas);
+		if(!RenderSystem.isOnRenderThread())
+		{
+			RenderSystem.recordRenderCall(() -> { Minecraft.getInstance().getTextureManager().register(ATLAS_LOCATION, Atlas); });
+		}
+		else Minecraft.getInstance().getTextureManager().register(ATLAS_LOCATION, Atlas);
 	}
 
 	public TextureAtlasSprite GetIcon(ResourceLocation magLoc)
