@@ -116,7 +116,9 @@ public class ActionStack
 		{
 			EReloadStage stage = reload.GetStage(groupContext.GroupPath);
 			if(stage == EReloadStage.Start && !groupContext.CanPerformReloadFromAttachedInventory(0))
+			{
 				result = EActionResult.TryNextAction;
+			}
 		}
 		if(result == EActionResult.CanProcess)
 		{

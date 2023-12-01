@@ -87,38 +87,48 @@ public abstract class ShooterContext
 
 		UUID uuid = entity.getUUID();
 		if(cache.containsKey(uuid))
-			return cache.get(uuid);
-		else
 		{
-			ShooterContext context;
-			if(entity instanceof Player player)
-				context = new ShooterContextPlayer(player);
-			else if(entity instanceof LivingEntity living)
-				context = new ShooterContextLiving(living);
+			ShooterContext context = cache.get(uuid);
+			if(context.Entity() == entity)
+				return context;
 			else
-				context = INVALID;
-
-			cache.put(uuid, context);
-			return context;
+				cache.remove(uuid);
 		}
+
+		ShooterContext context;
+		if(entity instanceof Player player)
+			context = new ShooterContextPlayer(player);
+		else if(entity instanceof LivingEntity living)
+			context = new ShooterContextLiving(living);
+		else
+			context = INVALID;
+
+		cache.put(uuid, context);
+		return context;
 	}
 
 	@Nonnull
 	public static ShooterContext GetOrCreate(UUID ownerUUID, UUID shooterUUID, boolean client)
 	{
 		var cache = ContextCache(client);
-		if(cache.containsKey(shooterUUID))
-			return cache.get(shooterUUID);
+		ShooterContext context;
+		if (cache.containsKey(shooterUUID))
+		{
+			context = cache.get(shooterUUID);
+			if(context.Entity() != null && context.Entity().isRemoved())
+				cache.remove(shooterUUID);
+			else
+				return context;
+		}
+
+
+		if(client)
+		{
+			return Client_GetOrCreate(shooterUUID, ownerUUID);
+		}
 		else
 		{
-			if(client)
-			{
-				return Client_GetOrCreate(shooterUUID, ownerUUID);
-			}
-			else
-			{
-				return Server_GetOrCreate(shooterUUID, ownerUUID);
-			}
+			return Server_GetOrCreate(shooterUUID, ownerUUID);
 		}
 	}
 
