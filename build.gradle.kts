@@ -445,7 +445,7 @@ fun createCurseForgeUploadTask(curseForgeID: String, main: Jar, src: Jar): Curse
             releaseType = "alpha"
 
             mainArtifact(main)
-            addArtifact(src)
+            //addArtifact(src) // Don't add sources, it is confusing people
 
             relations {
                 optionalDependency("jei")
