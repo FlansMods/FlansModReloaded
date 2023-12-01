@@ -609,44 +609,6 @@
                                 ],
                                 "rawIngredients": [],
                                 "additionalIngredients": []
-                            },
-                            {
-                                "part": "stock",
-                                "tieredIngredients": [
-                                    {
-                                        "tag": "flansmod:stock",
-                                        "allowedTiers": [
-                                            1,
-                                            2,
-                                            3
-                                        ],
-                                        "allowedMaterials": [
-                                            "Composite",
-                                            "Metal"
-                                        ]
-                                    }
-                                ],
-                                "rawIngredients": [],
-                                "additionalIngredients": []
-                            },
-                            {
-                                "part": "grip",
-                                "tieredIngredients": [
-                                    {
-                                        "tag": "flansmod:grip",
-                                        "allowedTiers": [
-                                            1,
-                                            2,
-                                            3
-                                        ],
-                                        "allowedMaterials": [
-                                            "Composite",
-                                            "Metal"
-                                        ]
-                                    }
-                                ],
-                                "rawIngredients": [],
-                                "additionalIngredients": []
                             }
                         ]
                     },
