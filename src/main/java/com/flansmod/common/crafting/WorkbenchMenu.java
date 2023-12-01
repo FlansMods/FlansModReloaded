@@ -4,27 +4,22 @@ import com.flansmod.common.FlansMod;
 import com.flansmod.common.item.FlanItem;
 import com.flansmod.common.item.GunItem;
 import com.flansmod.common.types.attachments.EAttachmentType;
-import com.flansmod.common.types.crafting.EMaterialType;
 import com.flansmod.common.types.crafting.WorkbenchDefinition;
 import com.flansmod.common.types.crafting.elements.*;
-import com.flansmod.common.types.parts.PartDefinition;
 import com.mojang.datafixers.util.Either;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.Container;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.ContainerData;
 import net.minecraft.world.inventory.Slot;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -368,7 +363,7 @@ public class WorkbenchMenu extends AbstractContainerMenu
 				active = true;
 			if(SelectedGunRecipeIndex >= 0)
 			{
-				GunCraftingEntryDefinition selectedEntry = GetEntry(SelectedGunRecipeIndex);
+				GunCraftingEntryDefinition selectedEntry = GetGunCraftingEntry(SelectedGunRecipeIndex);
 				if(selectedEntry != null)
 				{
 					int slotCount = 0;
@@ -616,7 +611,7 @@ public class WorkbenchMenu extends AbstractContainerMenu
 			&& 0 <= inputSlotIndex && inputSlotIndex < GunCraftingInputSlots.length
 			&& GunCraftingInputSlots[inputSlotIndex].getItem().isEmpty())
 		{
-			GunCraftingEntryDefinition selectedEntry = GetEntry(SelectedGunRecipeIndex);
+			GunCraftingEntryDefinition selectedEntry = GetGunCraftingEntry(SelectedGunRecipeIndex);
 			Either<TieredIngredientDefinition, IngredientDefinition> ingredient = selectedEntry.GetIngredient(inputSlotIndex);
 			if(ingredient != null)
 			{
@@ -677,7 +672,7 @@ public class WorkbenchMenu extends AbstractContainerMenu
 			&& GunCraftingInputContainer.getContainerSize() > 0
 			&& SelectedGunRecipeIndex >= 0)
 		{
-			GunCraftingEntryDefinition selectedEntry = GetEntry(SelectedGunRecipeIndex);
+			GunCraftingEntryDefinition selectedEntry = GetGunCraftingEntry(SelectedGunRecipeIndex);
 			if(selectedEntry != null)
 			{
 				int inputSlotIndex = 0;
@@ -709,7 +704,7 @@ public class WorkbenchMenu extends AbstractContainerMenu
 	{
 		if(GunCraftingOutputContainer.getContainerSize() > 0 && GunCraftingInputContainer.getContainerSize() > 0 && SelectedGunRecipeIndex >= 0)
 		{
-			GunCraftingEntryDefinition selectedEntry = GetEntry(SelectedGunRecipeIndex);
+			GunCraftingEntryDefinition selectedEntry = GetGunCraftingEntry(SelectedGunRecipeIndex);
 			if(selectedEntry != null)
 			{
 				int inputSlotIndex = 0;
@@ -757,7 +752,14 @@ public class WorkbenchMenu extends AbstractContainerMenu
 		}
 	}
 
-	private GunCraftingEntryDefinition GetEntry(int recipeIndex)
+	@Nullable
+	public GunCraftingEntryDefinition GetSelectedGunCraftingEntry()
+	{
+		return SelectedGunRecipeIndex >= 0 ? GetGunCraftingEntry(SelectedGunRecipeIndex) : null;
+	}
+
+	@Nullable
+	public GunCraftingEntryDefinition GetGunCraftingEntry(int recipeIndex)
 	{
 		int index = 0;
 		for(GunCraftingPageDefinition page : Def.gunCrafting.pages)
