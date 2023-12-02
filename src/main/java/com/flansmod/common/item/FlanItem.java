@@ -54,7 +54,7 @@ public abstract class FlanItem extends Item
         {
             tooltips.add(Component.translatable(
                 "tooltip.crafted_from",
-                Component.translatable(craftedFrom.GetLocationString() + ".name")
+                Component.translatable("item." + craftedFrom.GetLocation().getNamespace() + "." + craftedFrom.GetLocation().getPath())
             ));
             for(ModifierDefinition modDef : craftedFrom.modifiers)
             {

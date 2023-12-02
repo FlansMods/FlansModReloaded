@@ -57,7 +57,7 @@
   "tooltip.tier_colour.7": "§a",
   "tooltip.format.primarystatline": "%.0f %.0f %s %.0f",
   "tooltip.format.secondarystatline": "Alt.:%.0f %.0f %s %.0f",
-  "tooltip.crafted_from": "[%s]",
+  "tooltip.crafted_from": "§6> %s",
   "tooltip.crafted_from.modifier_format": "> %s",
   "modifier.increase_stat": "+%s %s",
   "modifier.decrease_stat": "-%s %s",

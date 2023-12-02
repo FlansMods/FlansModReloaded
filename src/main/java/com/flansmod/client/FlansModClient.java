@@ -59,12 +59,13 @@ public class FlansModClient
 	public static final RecoilManager RECOIL = new RecoilManager();
 
 
-	public static long PREV_FRAME_MS = 0L;
-	public static long THIS_FRAME_MS = 0L;
+	public static long PREV_FRAME_NS = 0L;
+	public static long THIS_FRAME_NS = 0L;
 	public static float ADS_BLEND = 0.0f;
 	// I don't like this, but server keeps sending us an updated ItemStack and we're like "guess I don't need to play an anim"
 	public static int NUM_LOAD_ANIMS_TO_PLAY = 0;
-	public static float FrameDeltaTime() { return (THIS_FRAME_MS - PREV_FRAME_MS) / 1000000000f; }
+	public static float FrameDeltaSeconds() { return (THIS_FRAME_NS - PREV_FRAME_NS) / 1000000000f; }
+	public static float FrameAbsoluteSeconds() { return THIS_FRAME_NS / 1000000000f; }
 
 	@Nullable
 	private static ShaderInstance GUN_CUTOUT;
@@ -154,8 +155,8 @@ public class FlansModClient
 
 	public static void RenderTick(TickEvent.RenderTickEvent event)
 	{
-		PREV_FRAME_MS = THIS_FRAME_MS;
-		THIS_FRAME_MS = Util.getNanos();
+		PREV_FRAME_NS = THIS_FRAME_NS;
+		THIS_FRAME_NS = Util.getNanos();
 
 		if(Minecraft.getInstance().player != null)
 		{
@@ -178,11 +179,11 @@ public class FlansModClient
 
 			if(adsActions.size() > 0)
 			{
-				ADS_BLEND = Maths.Lerp(ADS_BLEND, 1.0f, FlansModClient.FrameDeltaTime() * 8f);
+				ADS_BLEND = Maths.Lerp(ADS_BLEND, 1.0f, FlansModClient.FrameDeltaSeconds() * 8f);
 			}
 			else
 			{
-				ADS_BLEND = Maths.Lerp(ADS_BLEND, 0.0f, FlansModClient.FrameDeltaTime() * 10f);
+				ADS_BLEND = Maths.Lerp(ADS_BLEND, 0.0f, FlansModClient.FrameDeltaSeconds() * 10f);
 			}
 		}
 	}

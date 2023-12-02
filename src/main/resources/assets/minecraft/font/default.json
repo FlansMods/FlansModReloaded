@@ -51,6 +51,20 @@
         },
 		{
             "type": "bitmap",
+            "file": "flansmod:font/vertical_recoil.png",
+			"ascent": 9,
+			"height": 9,
+			"chars": ["\uE787"]
+        },
+		{
+            "type": "bitmap",
+            "file": "flansmod:font/horizontal_recoil.png",
+			"ascent": 9,
+			"height": 9,
+			"chars": ["\uE788"]
+        },
+		{
+            "type": "bitmap",
             "file": "flansmod:font/nugget.png",
 			"ascent": 7,
 			"height": 8,

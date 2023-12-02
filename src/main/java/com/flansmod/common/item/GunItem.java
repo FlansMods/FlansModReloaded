@@ -105,7 +105,7 @@ public class GunItem extends FlanItem
                         gunshotContext.Spread()));
                 }
 
-                if(!gunshotContext.IsValid() || expanded)
+                if(expanded)
                 {
                     switch(actionContext.RepeatMode())
                     {
@@ -118,7 +118,10 @@ public class GunItem extends FlanItem
                 }
 
                 MagazineDefinition magDef = actionContext.GetMagazineType(0);
-                tooltips.add(Component.translatable("magazine." + magDef.Location.getNamespace() + "." + magDef.Location.getPath()));
+                if(magDef.IsValid())
+                {
+                    tooltips.add(Component.translatable("magazine." + magDef.Location.getNamespace() + "." + magDef.Location.getPath()));
+                }
                 int primaryBullets = actionContext.GetMagazineSize(0);
                 if(primaryBullets == 1)
                 {

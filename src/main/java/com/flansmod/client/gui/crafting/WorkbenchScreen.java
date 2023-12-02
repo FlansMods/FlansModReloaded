@@ -24,6 +24,7 @@ import com.flansmod.common.types.guns.GunDefinition;
 import com.flansmod.common.types.magazines.MagazineDefinition;
 import com.flansmod.util.Maths;
 import com.flansmod.util.MinecraftHelpers;
+import com.mojang.blaze3d.platform.Lighting;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.*;
 import com.mojang.datafixers.util.Pair;
@@ -45,6 +46,7 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.Ingredient;
 import org.joml.Quaternionf;
 
+import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -167,6 +169,7 @@ public class WorkbenchScreen extends AbstractContainerScreen<WorkbenchMenu>
 		switch(SelectedTab)
 		{
 			case GUN_CRAFTING -> { return UpdateScrollGunCrafting(Maths.Floor(x), Maths.Floor(y), scroll); }
+			case MODIFICATION -> { return UpdateScrollGunModifying(Maths.Floor(x), Maths.Floor(y), scroll); }
 			case PART_CRAFTING -> { return UpdateScrollPartCrafting(Maths.Floor(x), Maths.Floor(y), scroll); }
 		}
 		return true;
@@ -243,7 +246,7 @@ public class WorkbenchScreen extends AbstractContainerScreen<WorkbenchMenu>
 	}
 
 	@Override
-	public void render(PoseStack pose, int xMouse, int yMouse, float f)
+	public void render(@Nonnull PoseStack pose, int xMouse, int yMouse, float f)
 	{
 		super.render(pose, xMouse, yMouse, f);
 
@@ -256,17 +259,17 @@ public class WorkbenchScreen extends AbstractContainerScreen<WorkbenchMenu>
 			return;
 		switch(SelectedTab)
 		{
-			case MATERIALS -> { if(RenderMaterialsTooltip(pose, xMouse, yMouse)) return; }
-			case POWER -> { if(RenderPowerTooltip(pose, xMouse, yMouse)) return; }
-			case GUN_CRAFTING -> { if(RenderGunCraftingTooltip(pose, xMouse, yMouse)) return; }
-			case MODIFICATION -> { if(RenderGunModifyingTooltip(pose, xMouse, yMouse)) return; }
-			case PART_CRAFTING -> { if(RenderPartCraftingTooltip(pose, xMouse, yMouse)) return; }
-			case ARMOUR_CRAFTING -> { if(RenderArmourCraftingTooltip(pose, xMouse, yMouse)) return; }
+			case MATERIALS -> { RenderMaterialsTooltip(pose, xMouse, yMouse); }
+			case POWER -> { RenderPowerTooltip(pose, xMouse, yMouse); }
+			case GUN_CRAFTING -> { RenderGunCraftingTooltip(pose, xMouse, yMouse); }
+			case MODIFICATION -> { RenderGunModifyingTooltip(pose, xMouse, yMouse); }
+			case PART_CRAFTING -> { RenderPartCraftingTooltip(pose, xMouse, yMouse); }
+			case ARMOUR_CRAFTING -> { RenderArmourCraftingTooltip(pose, xMouse, yMouse); }
 		}
 	}
 
 	@Override
-	protected void renderLabels(PoseStack pose, int x, int y)
+	protected void renderLabels(@Nonnull PoseStack pose, int x, int y)
 	{
 		super.renderLabels(pose, x, y);
 
@@ -435,9 +438,8 @@ public class WorkbenchScreen extends AbstractContainerScreen<WorkbenchMenu>
 
 	}
 
-	private boolean RenderMaterialsTooltip(PoseStack pose, int xMouse, int yMouse)
+	private void RenderMaterialsTooltip(PoseStack pose, int xMouse, int yMouse)
 	{
-		return false;
 	}
 
 	private void RenderMaterialsBG(PoseStack pose, int xOrigin, int yOrigin)
@@ -490,9 +492,8 @@ public class WorkbenchScreen extends AbstractContainerScreen<WorkbenchMenu>
 
 	}
 
-	private boolean RenderPowerTooltip(PoseStack pose, int xMouse, int yMouse)
+	private void RenderPowerTooltip(PoseStack pose, int xMouse, int yMouse)
 	{
-		return false;
 	}
 
 	private void RenderPowerBG(PoseStack pose, int xOrigin, int yOrigin)
@@ -563,6 +564,8 @@ public class WorkbenchScreen extends AbstractContainerScreen<WorkbenchMenu>
 	private static final int MAGAZINE_ROWS = 2;
 	private final Button[] MagazineButtons = new Button[MAGAZINES_PER_ROW * MAGAZINE_ROWS];
 
+	private float GunAngle = 2.0f;
+	private float GunAngularVelocity = 5.0f;
 
 	private boolean HasGunModifying()
 	{
@@ -576,6 +579,10 @@ public class WorkbenchScreen extends AbstractContainerScreen<WorkbenchMenu>
 
 	private void UpdateGunModifying(boolean enabled)
 	{
+		//GunAngularVelocity += FlansModClient.FrameDeltaSeconds() * 0.5f;
+		GunAngularVelocity *= Maths.ExpF(-FlansModClient.FrameDeltaSeconds() * 0.25f);
+		GunAngle += FlansModClient.FrameDeltaSeconds() * GunAngularVelocity;
+
 		if(HasGunModifying())
 		{
 			int numSkinButtons = 0;
@@ -662,7 +669,7 @@ public class WorkbenchScreen extends AbstractContainerScreen<WorkbenchMenu>
 		}
 	}
 
-	private boolean RenderGunModifyingTooltip(PoseStack pose, int xMouse, int yMouse)
+	private void RenderGunModifyingTooltip(PoseStack pose, int xMouse, int yMouse)
 	{
 		int xOrigin = (width - imageWidth) / 2;
 		int yOrigin = (height - imageHeight) / 2;
@@ -670,17 +677,17 @@ public class WorkbenchScreen extends AbstractContainerScreen<WorkbenchMenu>
 		if(InBox(xMouse, yMouse, xOrigin + PAINT_BUCKET_SLOT_ORIGIN_X, 18, yOrigin + PAINT_BUCKET_SLOT_ORIGIN_Y, 18))
 		{
 			renderTooltip(pose, Component.translatable("workbench.slot.paint_can"), xMouse, yMouse);
-			return true;
+			return;
 		}
 		if(InBox(xMouse, yMouse, xOrigin + MAG_UPGRADE_SLOT_ORIGIN_X, 18, yOrigin + MAG_UPGRADE_SLOT_ORIGIN_Y, 18))
 		{
 			renderTooltip(pose, Component.translatable("workbench.slot.mag_upgrade"), xMouse, yMouse);
-			return true;
+			return;
 		}
 		if (InBox(xMouse, yMouse, xOrigin + ATTACHMENT_SLOTS_ORIGIN_X + 26, 24, yOrigin + ATTACHMENT_SLOTS_ORIGIN_Y + 26, 24))
 		{
 			renderTooltip(pose, Component.translatable("workbench.slot.gun"), xMouse, yMouse);
-			return true;
+			return;
 		}
 
 
@@ -698,7 +705,7 @@ public class WorkbenchScreen extends AbstractContainerScreen<WorkbenchMenu>
 						if (InBox(xMouse, yMouse, xOrigin + ATTACHMENT_SLOTS_ORIGIN_X + modSlot.x * 26, 24, yOrigin + ATTACHMENT_SLOTS_ORIGIN_Y + modSlot.y * 26, 24))
 						{
 							renderTooltip(pose, Component.translatable("workbench.slot.attachments." + modSlot.attachType.toString().toLowerCase()), xMouse, yMouse);
-							return true;
+							return;
 						}
 					}
 				}
@@ -713,7 +720,7 @@ public class WorkbenchScreen extends AbstractContainerScreen<WorkbenchMenu>
 						lines.add(Component.translatable("paintjob.default").getVisualOrderText());
 						lines.add(Component.translatable("paintjob.free_to_swap").getVisualOrderText());
 						renderTooltip(pose, lines, xMouse, yMouse);
-						return true;
+						return;
 					}
 					// Other skin buttons
 					for(int p = 0; p < paintableDefinition.paintjobs.length; p++)
@@ -730,7 +737,7 @@ public class WorkbenchScreen extends AbstractContainerScreen<WorkbenchMenu>
 							else lines.add(Component.translatable("paintjob.cost", paintCost).getVisualOrderText());
 
 							renderTooltip(pose, lines, xMouse, yMouse);
-							return true;
+							return;
 						}
 					}
 				}
@@ -776,7 +783,7 @@ public class WorkbenchScreen extends AbstractContainerScreen<WorkbenchMenu>
 									}
 
 									renderTooltip(pose, lines, xMouse, yMouse);
-									return true;
+									return;
 								}
 							}
 						}
@@ -784,7 +791,6 @@ public class WorkbenchScreen extends AbstractContainerScreen<WorkbenchMenu>
 				}
 			}
 		}
-		return false;
 	}
 
 	private void RenderGunModifyingBG(PoseStack pose, int xOrigin, int yOrigin)
@@ -796,7 +802,7 @@ public class WorkbenchScreen extends AbstractContainerScreen<WorkbenchMenu>
 			pose.translate(xOrigin + imageWidth + 64f, yOrigin + 64f, 0f);
 			pose.mulPose(new Quaternionf()
 				.rotateLocalZ(-Maths.PiF * 0.25f)
-				.rotateLocalY(Minecraft.getInstance().level.getGameTime() * 0.01f));
+				.rotateLocalY(GunAngle * Maths.TauF / 4f));
 			pose.translate(-10f, 0f, 0f);
 
 			RenderGunStack(pose, 0, 0, Workbench.GunContainer.getItem(0));
@@ -941,9 +947,21 @@ public class WorkbenchScreen extends AbstractContainerScreen<WorkbenchMenu>
 				}
 			}
 		}
-
-
 	}
+
+	private boolean UpdateScrollGunModifying(int xMouse, int yMouse, double scroll)
+	{
+		int xOrigin = (width - imageWidth) / 2;
+		int yOrigin = (height - imageHeight) / 2;
+
+		if(scroll != 0 && xMouse >= xOrigin + imageWidth)
+		{
+			GunAngularVelocity += scroll * 2.0f;
+			return true;
+		}
+		return false;
+	}
+
 
 	// =================================================================================================================
 	// ================================================ PART CRAFTING ==================================================
@@ -1659,9 +1677,8 @@ public class WorkbenchScreen extends AbstractContainerScreen<WorkbenchMenu>
 
 	}
 
-	private boolean RenderArmourCraftingTooltip(PoseStack pose, int xMouse, int yMouse)
+	private void RenderArmourCraftingTooltip(PoseStack pose, int xMouse, int yMouse)
 	{
-		return false;
 	}
 
 	private void RenderArmourCraftingBG(PoseStack pose, int xOrigin, int yOrigin)
@@ -2522,19 +2539,22 @@ public class WorkbenchScreen extends AbstractContainerScreen<WorkbenchMenu>
 		{
 			pose.pushPose();
 			{
+				Lighting.setupForEntityInInventory();
 				MultiBufferSource.BufferSource buffers = Minecraft.getInstance().renderBuffers().bufferSource();
 				pose.translate(x + 8, y + 12, getBlitOffset());
 				pose.scale(-32f, 32f, 32f);
 				pose.mulPose(new Quaternionf().rotateLocalX(Maths.PiF));
 				pose.mulPose(new Quaternionf().rotateLocalY(Maths.PiF));
+				pose.translate(-0.5f, -0.5f, -0.5f);
 				gunRenderer.RenderDirect(null, gunStack, new RenderContext(
 					buffers,
 					ItemTransforms.TransformType.GROUND,
 					pose,
-					0xffffff,
+					0xf000f0,
 					0
 				));
 				buffers.endBatch();
+				Lighting.setupFor3DItems();
 			}
 			pose.popPose();
 		}
