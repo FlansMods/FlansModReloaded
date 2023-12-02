@@ -1,0 +1,16 @@
+{
+    "tags": [
+        "flansvendersgame:fc_blowpipe"
+    ],
+    "modifiers": [],
+    "ammoLoadMode": "OneBulletAtATime",
+    "ammoConsumeMode": "FirstNonEmpty",
+    "upgradeCost": 0,
+    "numRounds": 1,
+    "allRoundsMustBeIdentical": false,
+    "matchBulletNames": [],
+    "requiredBulletTags": [
+        "flansmod:artillery_shell"
+    ],
+    "disallowedBulletTags": []
+}

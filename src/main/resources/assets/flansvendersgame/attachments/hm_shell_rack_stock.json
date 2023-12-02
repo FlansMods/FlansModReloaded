@@ -1,0 +1,27 @@
+{
+    "itemSettings": {
+        "maxStackSize": 1,
+        "tags": [
+            "flansmod:attach_to_shotgun",
+            "flansmod:stock_attach"
+        ]
+    },
+    "attachmentType": "Stock",
+    "modifiers": [
+        {
+            "Stat": "magazine_size",
+            "Filter": "",
+            "Add": 3.0,
+            "Multiply": 1.0,
+            "SetValue": "",
+            "ApplyFilters": []
+        }
+    ],
+    "mechaEffects": [],
+    "mechaEffectFilter": "",
+    "handlerOverrides": [],
+    "actionOverrides": [],
+    "reloadOverrides": [],
+    "modeOverride": "FullAuto",
+    "overrideFireMode": false
+}

@@ -1,6 +1,7 @@
 package com.flansmod.common.actions;
 
 import com.flansmod.client.FlansModClient;
+import com.flansmod.client.render.FirstPersonManager;
 import com.flansmod.common.FlansMod;
 import com.flansmod.common.gunshots.EPressType;
 import com.flansmod.common.network.FlansModPacketHandler;
@@ -318,9 +319,9 @@ public class ActionStack
 			int magSize = groupContext.GetMagazineSize(magIndex);
 
 			if(groupContext.GetMagazineType(magIndex).ammoLoadMode == EAmmoLoadMode.FullMag)
-				FlansModClient.LocalPlayerStartReload(1);
+				FirstPersonManager.LocalPlayerStartReload(1);
 			else
-				FlansModClient.LocalPlayerStartReload(magSize - bulletsInMag);
+				FirstPersonManager.LocalPlayerStartReload(magSize - bulletsInMag);
 		}
 	}
 
@@ -336,7 +337,7 @@ public class ActionStack
 	@OnlyIn(Dist.CLIENT)
 	private boolean Client_LocalPlayerCanReloadOne(ActionGroupContext groupContext)
 	{
-		return FlansModClient.ConsumeLoadOne();
+		return FirstPersonManager.ConsumeLoadOne();
 	}
 
 	// -------------------------------------------------------------------------------------------------

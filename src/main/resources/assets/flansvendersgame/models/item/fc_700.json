@@ -4,6 +4,7 @@
         "default": "flansvendersgame:skins/fc_700",
         "fc_700_aged": "flansvendersgame:skins/fc_700_aged",
         "fc_700_polymer": "flansvendersgame:skins/fc_700_polymer",
+        "fc_700_new": "flansvendersgame:skins/fc_700_new",
         "particle": "minecraft:block/iron_block"
     },
     "icons": {

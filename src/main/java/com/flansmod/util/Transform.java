@@ -1,6 +1,8 @@
 package com.flansmod.util;
 
 import com.flansmod.common.FlansMod;
+import net.minecraft.client.renderer.block.model.ItemTransform;
+import net.minecraft.client.renderer.block.model.ItemTransforms;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.phys.Vec3;
 import org.joml.*;
@@ -16,9 +18,11 @@ public class Transform
     {
         return new Transform(Maths.IdentityPosD(), Maths.IdentityQuat());
     }
-    public static Transform RotationFromEuler(Vector3f euler) { return new Transform(Maths.IdentityPosD(), new Quaternionf().rotateXYZ(euler.x, euler.y, euler.z)); }
-    public static Transform FromPosAndEuler(Vector3f pos, Vector3f euler) { return new Transform(pos, new Quaternionf().rotateXYZ(euler.x, euler.y, euler.z)); }
-    public static Transform FromPosAndEuler(Vector3d pos, Vector3f euler) { return new Transform(pos, new Quaternionf().rotateXYZ(euler.x, euler.y, euler.z));}
+    public static Transform RotationFromEuler(Vector3f euler) { return new Transform(Maths.IdentityPosD(), new Quaternionf().rotateXYZ(euler.x * Maths.DegToRadF, euler.y * Maths.DegToRadF, euler.z * Maths.DegToRadF)); }
+    public static Transform FromPosAndEuler(Vector3f pos, Vector3f euler) { return new Transform(pos, new Quaternionf().rotateXYZ(euler.x * Maths.DegToRadF, euler.y * Maths.DegToRadF, euler.z * Maths.DegToRadF)); }
+    public static Transform FromPosAndEuler(Vector3d pos, Vector3f euler) { return new Transform(pos, new Quaternionf().rotateXYZ(euler.x * Maths.DegToRadF, euler.y * Maths.DegToRadF, euler.z * Maths.DegToRadF));}
+    public static Transform FromItemTransform(ItemTransform itemTransform) { return new Transform(itemTransform.translation, new Quaternionf().rotateXYZ(itemTransform.rotation.x * Maths.DegToRadF, itemTransform.rotation.y * Maths.DegToRadF, itemTransform.rotation.z * Maths.DegToRadF));}
+
 
     public Transform(Vec3 pos)
     {
@@ -88,11 +92,34 @@ public class Transform
             (Quaternionf) Quaternionf.slerp(orientations, weights, new Quaternionf()));
     }
 
+    public static Transform Interpolate(List<Transform> transforms, float[] weights)
+    {
+        if(transforms.size() <= 0)
+            return Transform.Identity();
+        if(transforms.size() == 1)
+            return transforms.get(0);
+
+        Vector3d position = new Vector3d();
+        Quaternionf[] orientations = new Quaternionf[transforms.size()];
+        float totalWeight = 0.0f;
+        for(int i = 0; i < transforms.size(); i++)
+        {
+            position.add(transforms.get(i).position.mul(weights[i], new Vector3d()));
+            orientations[i] = transforms.get(i).orientation;
+            totalWeight += weights[i];
+        }
+
+        return new Transform(
+            position.mul(1d / totalWeight),
+            (Quaternionf) Quaternionf.slerp(orientations, weights, new Quaternionf()));
+    }
+
     public Transform copy()
     {
         return new Transform(position, orientation);
     }
 
+    public Transform ScalePosition(float scalar) { return new Transform(position.mul(scalar, new Vector3d()), orientation); }
     public static Vector3d UnitX() { return new Vector3d(1d, 0d, 0d); }
     public static Vector3d UnitY() { return new Vector3d(0d, 1d, 0d); }
     public static Vector3d UnitZ() { return new Vector3d(0d, 0d, 1d); }

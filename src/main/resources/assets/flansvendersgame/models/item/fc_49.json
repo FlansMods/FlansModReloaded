@@ -4,12 +4,14 @@
         "default": "flansvendersgame:skins/fc_49",
         "fc_49_aged": "flansvendersgame:skins/fc_49_aged",
         "fc_49_polymer": "flansvendersgame:skins/fc_49_polymer",
+        "fc_49_counterfeit": "flansvendersgame:skins/fc_49_counterfeit",
         "particle": "minecraft:block/iron_block"
     },
     "icons": {
         "default": "flansvendersgame:item/fc_49",
         "fc_49_aged": "flansvendersgame:item/fc_49_aged",
-        "fc_49_polymer": "flansvendersgame:item/fc_49_polymer"
+        "fc_49_polymer": "flansvendersgame:item/fc_49_polymer",
+        "fc_49_counterfeit": "flansvendersgame:item/fc_49_counterfeit"
     },
     "animations": {
         "gun_slide_distance": 0.1875

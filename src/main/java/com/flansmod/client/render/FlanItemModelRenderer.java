@@ -172,7 +172,16 @@ public abstract class FlanItemModelRenderer extends BlockEntityWithoutLevelRende
 
             if(shouldRenderRig)
             {
-                BakedRig.ApplyTransform(transformType, requestedPoseStack, false);
+                if(transformType.firstPerson())
+                {
+                    Transform adsBlendTransform = FirstPersonManager.GetFirstPersonRenderPos(stack, transformType);
+                    requestedPoseStack.translate(adsBlendTransform.position.x, adsBlendTransform.position.y, adsBlendTransform.position.z);
+                    requestedPoseStack.mulPose(adsBlendTransform.orientation);
+                }
+                else
+                {
+                    BakedRig.ApplyTransform(transformType, requestedPoseStack, false);
+                }
 
                 // Bind texture
                 ResourceLocation texture = BakedRig.GetTexture(skin);
@@ -265,35 +274,12 @@ public abstract class FlanItemModelRenderer extends BlockEntityWithoutLevelRende
                 }
             }
 
-            float adsBlend = renderContext.TransformType.firstPerson() ? FlansModClient.ADS_BLEND : 0.0f;
-            if(poses.size() > 0)
-            {
-                Transform resultPose = Transform.Interpolate(poses);
-                if(adsBlend > 0.0f && partName.equals("body"))
-                {
-                    Transform eyeLine = GetEyeLine(renderContext.TransformType);
-                    Vector3d blendedPos = resultPose.position.lerp(eyeLine.position, adsBlend);
-                    Quaternionf blendedOri = resultPose.orientation.slerp(eyeLine.orientation, adsBlend);
-                    renderContext.Poses.translate(blendedPos.x, blendedPos.y, blendedPos.z);
-                    renderContext.Poses.mulPose(blendedOri);
-                }
-                else
-                {
-                    renderContext.Poses.translate(resultPose.position.x, resultPose.position.y, resultPose.position.z);
-                    renderContext.Poses.mulPose(resultPose.orientation);
-                }
-            }
-            else
-            {
-                if(adsBlend > 0.0f && partName.equals("body"))
-                {
-                    Transform eyeLine = GetEyeLine(renderContext.TransformType);
-                    Vector3d blendedPos = new Vector3d().lerp(eyeLine.position, adsBlend);
-                    Quaternionf blendedOri = new Quaternionf().slerp(eyeLine.orientation, adsBlend);
-                    renderContext.Poses.translate(blendedPos.x, blendedPos.y, blendedPos.z);
-                    renderContext.Poses.mulPose(blendedOri);
-                }
-            }
+           if(poses.size() > 0)
+           {
+               Transform resultPose = Transform.Interpolate(poses);
+               renderContext.Poses.translate(resultPose.position.x, resultPose.position.y, resultPose.position.z);
+               renderContext.Poses.mulPose(resultPose.orientation);
+           }
 
             // Apply the model offset after animating
             if(UnbakedRig != null)
@@ -488,14 +474,60 @@ public abstract class FlanItemModelRenderer extends BlockEntityWithoutLevelRende
         }
     }
 
-    public Vector3f GetAttachPoint(String apName)
+    @Nullable
+    public TurboRig.AttachPoint GetAttachPoint(String apName)
     {
         if(UnbakedRig != null)
-        {
-            TurboRig.AttachPoint ap = UnbakedRig.GetAttachPoint(apName);
-            if(ap != null)
-                return ap.Offset;
-        }
-        return new Vector3f();
+            return UnbakedRig.GetAttachPoint(apName.toLowerCase());
+        return null;
     }
+    public void GetAttachPointTree(String apName, List<TurboRig.AttachPoint> apList)
+    {
+        TurboRig.AttachPoint ap = GetAttachPoint(apName);
+        if(ap != null)
+        {
+            apList.add(ap);
+            if(ap.AttachTo.length() > 0 && !ap.AttachTo.equals("body") && !ap.AttachTo.equals("none"))
+                GetAttachPointTree(ap.AttachTo, apList);
+        }
+    }
+    public Transform GetDefaultTransform(String apName)
+    {
+        TurboRig.AttachPoint ap = GetAttachPoint(apName);
+        if (ap != null)
+        {
+            if(ap.AttachTo.length() > 0 && !ap.AttachTo.equals("body") && !ap.AttachTo.equals("none"))
+            {
+                Transform childTransform = GetDefaultTransform(ap.AttachTo);
+                return Transform.FromPosAndEuler(ap.Offset, ap.Euler).RightMultiply(childTransform);
+            }
+            return Transform.FromPosAndEuler(ap.Offset, ap.Euler);
+        }
+        return Transform.Identity();
+
+    }
+    public Transform GetDefaultTransform(EAttachmentType attachmentType, int attachmentIndex)
+    {
+        if(attachmentIndex == 0)
+        {
+            TurboRig.AttachPoint ap = GetAttachPoint(attachmentType.toString());
+            if (ap != null)
+            {
+                return GetDefaultTransform(attachmentType.toString());
+            }
+        }
+
+        return GetDefaultTransform(attachmentType + "_" + attachmentIndex);
+    }
+
+   //public Vector3f GetAttachPoint(String apName)
+   //{
+   //    if(UnbakedRig != null)
+   //    {
+   //        TurboRig.AttachPoint ap = UnbakedRig.GetAttachPoint(apName);
+   //        if(ap != null)
+   //            return ap.Offset;
+   //    }
+   //    return new Vector3f();
+   //}
 }

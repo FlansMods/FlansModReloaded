@@ -4,12 +4,14 @@
         "default": "flansvendersgame:skins/hm_pocket",
         "hm_pocket_red": "flansvendersgame:skins/hm_pocket_red",
         "hm_pocket_yellow": "flansvendersgame:skins/hm_pocket_yellow",
+        "hm_pocket_venom": "flansvendersgame:skins/hm_pocket_venom",
         "particle": "minecraft:block/iron_block"
     },
     "icons": {
         "default": "flansvendersgame:item/hm_pocket",
         "hm_pocket_red": "flansvendersgame:item/hm_pocket_red",
-        "hm_pocket_yellow": "flansvendersgame:item/hm_pocket_yellow"
+        "hm_pocket_yellow": "flansvendersgame:item/hm_pocket_yellow",
+        "hm_pocket_venom": "flansvendersgame:item/hm_pocket_venom"
     },
     "animations": {
         "gun_slide_distance": 0.25

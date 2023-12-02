@@ -25,7 +25,6 @@ import net.minecraftforge.server.ServerLifecycleHooks;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Locale;
 
 public class MinecraftHelpers
@@ -148,6 +147,17 @@ public class MinecraftHelpers
 			case FIRST_PERSON_RIGHT_HAND -> rightHanded ? InteractionHand.MAIN_HAND : InteractionHand.OFF_HAND;
 			case THIRD_PERSON_LEFT_HAND -> InteractionHand.OFF_HAND;
 			default -> InteractionHand.MAIN_HAND;
+		};
+	}
+
+	@OnlyIn(Dist.CLIENT)
+	public static ItemTransforms.TransformType GetFirstPersonTransformType(InteractionHand hand)
+	{
+		boolean rightHanded = Minecraft.getInstance().options.mainHand().get() == HumanoidArm.RIGHT;
+		return switch (hand)
+		{
+			case MAIN_HAND -> rightHanded ? ItemTransforms.TransformType.FIRST_PERSON_RIGHT_HAND : ItemTransforms.TransformType.FIRST_PERSON_LEFT_HAND;
+			case OFF_HAND -> rightHanded ? ItemTransforms.TransformType.FIRST_PERSON_LEFT_HAND : ItemTransforms.TransformType.FIRST_PERSON_RIGHT_HAND;
 		};
 	}
 

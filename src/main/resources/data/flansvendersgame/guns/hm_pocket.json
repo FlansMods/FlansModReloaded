@@ -16,6 +16,11 @@
                 "textureName": "hm_pocket_yellow",
                 "paintBucketsRequired": 1,
                 "entitlementKey": ""
+            },
+            {
+                "textureName": "hm_pocket_venom",
+                "paintBucketsRequired": 1,
+                "entitlementKey": ""
             }
         ]
     },
@@ -248,19 +253,6 @@
                     "fovFactor": 1.25,
                     "scopeOverlay": "",
                     "anim": "",
-                    "toolLevel": 1.0,
-                    "harvestSpeed": 1.0,
-                    "reach": 1.0
-                },
-                {
-                    "actionType": "Animation",
-                    "duration": 0.0,
-                    "sounds": [],
-                    "itemStack": "",
-                    "modifiers": [],
-                    "fovFactor": 1.25,
-                    "scopeOverlay": "",
-                    "anim": "aim_down_sights",
                     "toolLevel": 1.0,
                     "harvestSpeed": 1.0,
                     "reach": 1.0

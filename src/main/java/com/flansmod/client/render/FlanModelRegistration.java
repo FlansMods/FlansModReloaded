@@ -3,6 +3,7 @@ package com.flansmod.client.render;
 import com.flansmod.client.render.models.TurboRig;
 import com.flansmod.common.FlansMod;
 import com.flansmod.common.item.FlanItem;
+import com.flansmod.common.types.JsonDefinition;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.block.model.BlockModel;
 import net.minecraft.client.renderer.texture.TextureManager;
@@ -135,6 +136,19 @@ public class FlanModelRegistration implements PreparableReloadListener
                 }
             }
         }
+    }
+
+    public FlanItemModelRenderer GetModelRenderer(JsonDefinition def)
+    {
+        Item item = ForgeRegistries.ITEMS.getValue(def.Location);
+        if(item instanceof FlanItem flanItem)
+        {
+            if(ITEMS_TO_REGISTER.containsKey(flanItem))
+            {
+                return ITEMS_TO_REGISTER.get(flanItem);
+            }
+        }
+        return null;
     }
 
     public FlanItemModelRenderer GetModelRenderer(ItemStack stack)

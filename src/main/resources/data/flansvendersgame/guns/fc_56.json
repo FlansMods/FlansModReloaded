@@ -16,6 +16,11 @@
                 "textureName": "fc_56_polymer",
                 "paintBucketsRequired": 1,
                 "entitlementKey": ""
+            },
+            {
+                "textureName": "fc_56_counterfeit",
+                "paintBucketsRequired": 1,
+                "entitlementKey": ""
             }
         ]
     },
@@ -248,19 +253,6 @@
                     "fovFactor": 2.0,
                     "scopeOverlay": "",
                     "anim": "",
-                    "toolLevel": 1.0,
-                    "harvestSpeed": 1.0,
-                    "reach": 1.0
-                },
-                {
-                    "actionType": "Animation",
-                    "duration": 0.0,
-                    "sounds": [],
-                    "itemStack": "",
-                    "modifiers": [],
-                    "fovFactor": 1.25,
-                    "scopeOverlay": "",
-                    "anim": "aim_down_sights",
                     "toolLevel": 1.0,
                     "harvestSpeed": 1.0,
                     "reach": 1.0

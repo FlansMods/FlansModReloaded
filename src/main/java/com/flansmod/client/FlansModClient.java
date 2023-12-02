@@ -3,6 +3,7 @@ package com.flansmod.client;
 import com.flansmod.client.gui.crafting.WorkbenchScreen;
 import com.flansmod.client.render.ClientRenderHooks;
 import com.flansmod.client.input.ClientInputHooks;
+import com.flansmod.client.render.FirstPersonManager;
 import com.flansmod.client.render.FlanModelRegistration;
 import com.flansmod.client.render.MagazineTextureAtlas;
 import com.flansmod.client.render.animation.AnimationDefinitions;
@@ -61,9 +62,6 @@ public class FlansModClient
 
 	public static long PREV_FRAME_NS = 0L;
 	public static long THIS_FRAME_NS = 0L;
-	public static float ADS_BLEND = 0.0f;
-	// I don't like this, but server keeps sending us an updated ItemStack and we're like "guess I don't need to play an anim"
-	public static int NUM_LOAD_ANIMS_TO_PLAY = 0;
 	public static float FrameDeltaSeconds() { return (THIS_FRAME_NS - PREV_FRAME_NS) / 1000000000f; }
 	public static float FrameAbsoluteSeconds() { return THIS_FRAME_NS / 1000000000f; }
 
@@ -123,20 +121,7 @@ public class FlansModClient
 		}
 	}
 
-	public static void LocalPlayerStartReload(int count)
-	{
-		NUM_LOAD_ANIMS_TO_PLAY = count;
-	}
 
-	public static boolean ConsumeLoadOne()
-	{
-		if(NUM_LOAD_ANIMS_TO_PLAY > 0)
-		{
-			NUM_LOAD_ANIMS_TO_PLAY--;
-			return true;
-		}
-		return false;
-	}
 
 	@SubscribeEvent
 	public static void ShaderRegistryEvent(RegisterShadersEvent event)
@@ -158,34 +143,7 @@ public class FlansModClient
 		PREV_FRAME_NS = THIS_FRAME_NS;
 		THIS_FRAME_NS = Util.getNanos();
 
-		if(Minecraft.getInstance().player != null)
-		{
-			ShooterContext playerContext = ShooterContext.GetOrCreate(Minecraft.getInstance().player);
-			List<ActionInstance> adsActions = new ArrayList<>();
-			for(GunContext gunContext : playerContext.GetAllActiveGunContexts())
-			{
-				if(gunContext.IsValid())
-				{
-					for (ActionGroupInstance actionGroup : gunContext.GetActionStack().GetActiveActionGroups())
-					{
-						for (ActionInstance action : actionGroup.GetActions())
-						{
-							if (action instanceof AimDownSightAction adsAction)
-								adsActions.add(adsAction);
-						}
-					}
-				}
-			}
-
-			if(adsActions.size() > 0)
-			{
-				ADS_BLEND = Maths.Lerp(ADS_BLEND, 1.0f, FlansModClient.FrameDeltaSeconds() * 8f);
-			}
-			else
-			{
-				ADS_BLEND = Maths.Lerp(ADS_BLEND, 0.0f, FlansModClient.FrameDeltaSeconds() * 10f);
-			}
-		}
+		FirstPersonManager.RenderTick();
 	}
 
 	@SubscribeEvent

@@ -1,6 +1,7 @@
 package com.flansmod.client.render.bullets;
 
 import com.flansmod.client.FlansModClient;
+import com.flansmod.client.render.FirstPersonManager;
 import com.flansmod.client.render.FlanItemModelRenderer;
 import com.flansmod.client.render.RenderContext;
 import com.flansmod.common.FlansMod;
@@ -9,8 +10,10 @@ import com.flansmod.common.gunshots.GunshotContext;
 import com.flansmod.common.gunshots.ShooterContext;
 import com.flansmod.common.item.BulletItem;
 import com.flansmod.common.item.FlanItem;
+import com.flansmod.common.types.attachments.EAttachmentType;
 import com.flansmod.util.Maths;
 import com.flansmod.util.MinecraftHelpers;
+import com.flansmod.util.Transform;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.*;
 import net.minecraft.client.Camera;
@@ -49,42 +52,48 @@ public class ShotRenderer
 
 	public int AddLocalPlayerTrail(Vec3 origin, Vec3 endpoint, GunshotContext gunshotContext)
 	{
-		if(Minecraft.getInstance().player != null)
+		if(Minecraft.getInstance().player != null && gunshotContext.ActionGroup.Gun instanceof GunContextPlayer playerGunContext)
 		{
 			ItemStack gunStack = gunshotContext.ActionGroup.Gun.GetItemStack();
-			FlanItemModelRenderer gunRenderer = FlansModClient.MODEL_REGISTRATION.GetModelRenderer(gunStack);
-			if(gunRenderer != null)
-			{
-				// TODO: Offset if barrel attachment used
 
-				Vector3f barrelAP = gunRenderer.GetAttachPoint("barrel");
-				Vec3 firstPersonRelative = new Vec3(2f - barrelAP.x, barrelAP.y - 6f, 13f + barrelAP.z);
-				firstPersonRelative = firstPersonRelative.scale(1f/16f);
-				if(gunshotContext.ActionGroup.Gun instanceof GunContextPlayer playerGunContext)
-				{
-					if(MinecraftHelpers.GetArm(playerGunContext.GetHand()) == HumanoidArm.LEFT)
-					{
-						firstPersonRelative = new Vec3(-firstPersonRelative.x, firstPersonRelative.y, firstPersonRelative.z);
-					}
-				}
+			Transform shootOrigin = FirstPersonManager.GetWorldSpaceAttachmentTransform(gunStack, MinecraftHelpers.GetFirstPersonTransformType(playerGunContext.GetHand()), "shoot_origin");
+			ShotRenderInstance shot = new ShotRenderInstance(shootOrigin.PositionVec3(), endpoint, 0.05f, 10.0f, 10.0f, null, GetBulletRenderer(gunshotContext));
+			shots.add(shot);
+			return shot.GetLifetime();
 
-				if(FlansModClient.ADS_BLEND > 0.0f)
-				{
-					firstPersonRelative = firstPersonRelative.lerp(new Vec3(0d, 0d, 3d), FlansModClient.ADS_BLEND);
-				}
-
-				Vec3 playerPos = Minecraft.getInstance().player.getEyePosition();
-				float playerYaw = Minecraft.getInstance().player.getYHeadRot();
-				float playerPitch = Minecraft.getInstance().player.getXRot();
-
-				Vec3 globalOrigin = firstPersonRelative.xRot(-playerPitch * Maths.DegToRadF);
-				globalOrigin = globalOrigin.yRot(-playerYaw * Maths.DegToRadF);
-				globalOrigin = globalOrigin.add(playerPos);
-
-				ShotRenderInstance shot = new ShotRenderInstance(globalOrigin, endpoint, 0.05f, 10.0f, 10.0f, null, GetBulletRenderer(gunshotContext));
-				shots.add(shot);
-				return shot.GetLifetime();
-			}
+			//FlanItemModelRenderer gunRenderer = FlansModClient.MODEL_REGISTRATION.GetModelRenderer(gunStack);
+			//if(gunRenderer != null)
+			//{
+			//	// TODO: Offset if barrel attachment used
+//
+			//	Transform barrelAP = gunRenderer.GetDefaultTransform(EAttachmentType.Barrel, 0);
+			//	Vec3 firstPersonRelative = new Vec3(2f - barrelAP.position.x, barrelAP.position.y - 6f, 13f + barrelAP.position.z);
+			//	firstPersonRelative = firstPersonRelative.scale(1f/16f);
+			//	if(gunshotContext.ActionGroup.Gun instanceof GunContextPlayer playerGunContext)
+			//	{
+			//		if(MinecraftHelpers.GetArm(playerGunContext.GetHand()) == HumanoidArm.LEFT)
+			//		{
+			//			firstPersonRelative = new Vec3(-firstPersonRelative.x, firstPersonRelative.y, firstPersonRelative.z);
+			//		}
+			//	}
+//
+			//	if(FirstPersonManager.ADS_BLEND > 0.0f)
+			//	{
+			//		firstPersonRelative = firstPersonRelative.lerp(new Vec3(0d, 0d, 3d), FirstPersonManager.ADS_BLEND);
+			//	}
+//
+			//	Vec3 playerPos = Minecraft.getInstance().player.getEyePosition();
+			//	float playerYaw = Minecraft.getInstance().player.getYHeadRot();
+			//	float playerPitch = Minecraft.getInstance().player.getXRot();
+//
+			//	Vec3 globalOrigin = firstPersonRelative.xRot(-playerPitch * Maths.DegToRadF);
+			//	globalOrigin = globalOrigin.yRot(-playerYaw * Maths.DegToRadF);
+			//	globalOrigin = globalOrigin.add(playerPos);
+//
+			//	ShotRenderInstance shot = new ShotRenderInstance(globalOrigin, endpoint, 0.05f, 10.0f, 10.0f, null, GetBulletRenderer(gunshotContext));
+			//	shots.add(shot);
+			//	return shot.GetLifetime();
+			//}
 		}
 
 		ShotRenderInstance shot = new ShotRenderInstance(origin, endpoint, 0.05f, 10.0f, 10.0f, null, GetBulletRenderer(gunshotContext));
@@ -179,7 +188,7 @@ public class ShotRenderer
 			endPoint = end;
 			width = w;
 			length = l;
-			bulletSpeed = speed;// * 0.001d; // <- Do this if you want to test trails
+			bulletSpeed = speed * 0.001d; // <- Do this if you want to test trails
 			trailTexture = trail;
 			distanceToTarget = start.distanceTo(end);
 			lifetime = bulletSpeed <= 0.0001d ? 1 : Maths.Floor((distanceToTarget - length) / bulletSpeed);
