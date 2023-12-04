@@ -120,6 +120,7 @@ public class Transform
     }
 
     public Transform ScalePosition(float scalar) { return new Transform(position.mul(scalar, new Vector3d()), orientation); }
+    public Transform ScalePosition(float dx, float dy, float dz) { return new Transform(new Vector3d(position.x * dx, position.y * dy, position.z * dz), orientation); }
     public static Vector3d UnitX() { return new Vector3d(1d, 0d, 0d); }
     public static Vector3d UnitY() { return new Vector3d(0d, 1d, 0d); }
     public static Vector3d UnitZ() { return new Vector3d(0d, 0d, 1d); }
@@ -209,6 +210,7 @@ public class Transform
         return new Transform(rotation.transform(position, new Vector3d()),
             orientation.mul(rotation, new Quaternionf()));
     }
+
     public Transform RotateAround(Vector3d origin, Quaternionf rotation)
     {
         Vector3d pos = new Vector3d(position);
@@ -225,6 +227,9 @@ public class Transform
         ori.rotateLocalY(-yaw * Maths.DegToRadF);
         return new Transform(position, ori);
     }
+    public Transform RotateGlobalYaw(float yAngle) { return new Transform(position.rotateY(-yAngle * Maths.DegToRadF, new Vector3d()), orientation.rotateY(-yAngle * Maths.DegToRadF, new Quaternionf())); }
+    public Transform RotateGlobalPitch(float xAngle) { return new Transform(position.rotateX(xAngle * Maths.DegToRadF, new Vector3d()), orientation.rotateX(xAngle * Maths.DegToRadF, new Quaternionf())); }
+    public Transform RotateGlobalRoll(float zAngle) {  return new Transform(position.rotateZ(zAngle * Maths.DegToRadF, new Vector3d()), orientation.rotateZ(zAngle * Maths.DegToRadF, new Quaternionf()));  }
     public Transform RotateYaw(float yAngle) { return new Transform(position, orientation.rotateY(-yAngle * Maths.DegToRadF, new Quaternionf())); }
     public Transform RotatePitch(float xAngle) { return new Transform(position, orientation.rotateX(xAngle * Maths.DegToRadF, new Quaternionf())); }
     public Transform RotateRoll(float zAngle) {  return new Transform(position, orientation.rotateZ(zAngle * Maths.DegToRadF, new Quaternionf()));  }

@@ -107,6 +107,7 @@ val Project.minecraft: UserDevExtension
 
 minecraft.runs.create("client") {
     workingDirectory = "run"
+    jvmArgs = listOf( "-XX:+AllowRedefinitionToAddDeleteMethods" )
     properties["forge.logging.markers"] = "REGISTRIES"
     properties["forge.logging.console.level"] = "debug"
     properties["forge.enabledGameTestNamespaces"] = "flansmod"

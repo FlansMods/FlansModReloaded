@@ -59,15 +59,27 @@ public class FirstPersonManager
 	public static Transform GetWorldSpaceAttachmentTransform(ItemStack stack, ItemTransforms.TransformType transformType, String apName)
 	{
 		Player player = Minecraft.getInstance().player;
+		float dt = Minecraft.getInstance().getPartialTick();
 		if(player != null)
 		{
-			Transform firstPersonPos = GetFirstPersonAttachmentTransform(stack, transformType, apName).ScalePosition(1f/16f);
-			Transform playerPos = Transform.FromPosAndEuler(
-				player.getEyePosition().toVector3f(),
-				new Vector3f(-player.getViewXRot(Minecraft.getInstance().getPartialTick()),
-							-90f - player.getViewYRot(Minecraft.getInstance().getPartialTick()),
-							0.0f));
-			return firstPersonPos.RightMultiply(playerPos);
+			Transform firstPersonPos = GetFirstPersonAttachmentTransform(stack, transformType, apName).ScalePosition(-1f/16f, 1f/16f, -1f/16f);
+
+			firstPersonPos = firstPersonPos.RotateGlobalPitch(player.getViewXRot(dt));
+			firstPersonPos = firstPersonPos.RotateGlobalYaw(player.getViewYRot(dt));
+
+			//Transform playerPos = Transform.FromPosAndEuler(
+			//	player.getEyePosition().toVector3f(),
+			//	new Vector3f(0.0f,
+			//				-player.getViewYRot(),
+			//				player.getViewXRot(Minecraft.getInstance().getPartialTick())));
+			//return firstPersonPos.RightMultiply(playerPos);
+
+			return new Transform(
+				new Vector3d(
+					player.getEyePosition(dt).x +firstPersonPos.position.x,
+					player.getEyePosition(dt).y +firstPersonPos.position.y,
+					player.getEyePosition(dt).z +firstPersonPos.position.z),
+				firstPersonPos.orientation);
 		}
 		return Transform.Identity();
 	}
@@ -79,7 +91,8 @@ public class FirstPersonManager
 		if(gunRenderer != null)
 		{
 			Transform apPos = gunRenderer.GetDefaultTransform(apName);
-			return rootPos.RightMultiply(apPos);
+			apPos.ScalePosition(1f/16f);
+			return apPos.RightMultiply(rootPos);
 		}
 		return rootPos;
 	}
