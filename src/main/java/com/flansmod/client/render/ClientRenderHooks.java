@@ -288,14 +288,16 @@ public class ClientRenderHooks
 
 	private void RenderPlayerAmmoOverlay(PoseStack poseStack)
 	{
+		Player player = Minecraft.getInstance().player;
+
 		int screenX = MinecraftHelpers.GetClient().getWindow().getGuiScaledWidth();
 		int screenY = MinecraftHelpers.GetClient().getWindow().getGuiScaledHeight();
 
 		int anchorX = screenX / 2;
 		int anchorY = screenY;
 
-		ShooterContext shooterContext = ShooterContext.GetOrCreate(Minecraft.getInstance().player);
-		if(!shooterContext.IsValid())
+		ShooterContext shooterContext = ShooterContext.GetOrCreate(player);
+		if(player == null || !shooterContext.IsValid())
 			return;
 
 		GunContext[] gunContexts = shooterContext.GetAllActiveGunContexts();
@@ -358,6 +360,11 @@ public class ClientRenderHooks
 			}
 
 			RenderString(poseStack, anchorX + 96, anchorY - 29, mainContext.GetItemStack().getHoverName(), 0xffffff);
+
+			if(mainHandPrimaryContext.Def.twoHanded && !player.getItemInHand(InteractionHand.OFF_HAND).isEmpty())
+			{
+				RenderString(poseStack, anchorX + 96, anchorY - 39, Component.translatable("tooltip.dual_wielding_two_handed"), 0xb0b0b0);
+			}
 
 			// TODO: If alternate ammo?
 		}
@@ -423,6 +430,12 @@ public class ClientRenderHooks
 				anchorY - 31,
 				offContext.GetItemStack().getHoverName(),
 				0xffffff);
+
+			if(offHandPrimaryContext.Def.twoHanded && !player.getItemInHand(InteractionHand.MAIN_HAND).isEmpty())
+			{
+				Component warningString = Component.translatable("tooltip.dual_wielding_two_handed");
+				RenderString(poseStack, anchorX - 98 - Minecraft.getInstance().font.width(warningString), anchorY - 39, warningString, 0xb0b0b0);
+			}
 		}
 	}
 
