@@ -6,7 +6,8 @@
             "flansmod:attach_to_rifle",
             "flansmod:attach_to_shotgun",
             "flansmod:attach_to_grenade_launcher",
-            "flansmod:stock_attach"
+            "flansmod:stock_attach",
+            "flansbasicparts:add_to_part_fab"
         ]
     },
     "attachmentType": "Stock",

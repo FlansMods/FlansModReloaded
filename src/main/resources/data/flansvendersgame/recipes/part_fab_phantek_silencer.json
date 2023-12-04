@@ -1,0 +1,24 @@
+{
+  "type": "flansmod:part_fabrication",
+  "category": "equipment",
+  "ingredients": [
+	{
+		"type": "flansmod:tiered_material",
+		"material": "flansbasicparts:phantex",
+		"count": 63
+	},
+	{
+		"type": "flansmod:stacked_vanilla",
+		"tags": 
+		[ 
+			"minecraft:wool" 
+		],
+		"count": 3
+	}
+  ],
+  "result": {
+    "item": "flansvendersgame:phantek_silencer"
+  },
+  "craft_time": 300,
+  "show_notification": true
+}

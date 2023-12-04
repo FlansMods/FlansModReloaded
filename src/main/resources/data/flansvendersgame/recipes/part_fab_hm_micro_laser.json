@@ -1,0 +1,32 @@
+{
+  "type": "flansmod:part_fabrication",
+  "category": "equipment",
+  "ingredients": [
+	{
+		"type": "flansmod:tiered_material",
+		"material": "flansbasicparts:fiberglass",
+		"count": 54
+	},
+	{
+		"type": "flansmod:stacked_vanilla",
+		"items": 
+		[ 
+			"minecraft:diamond" 
+		],
+		"count": 1
+	},
+	{
+		"type": "flansmod:stacked_vanilla",
+		"items": 
+		[ 
+			"flansbasicparts:quartz_circuitry" 
+		],
+		"count": 8
+	}
+  ],
+  "result": {
+    "item": "flansvendersgame:hm_micro_laser"
+  },
+  "craft_time": 300,
+  "show_notification": true
+}

@@ -37,6 +37,9 @@
             "flansbasicparts:projectile_grenade_incendiary",
             "flansbasicparts:projectile_grenade_sticky"
         ],
+        "partsByTag": [
+            "flansbasicparts:add_to_bullet_fab"
+        ],
         "partsByTier": []
     },
     "gunModifying": {

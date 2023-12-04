@@ -273,6 +273,10 @@ public class BasicPartsMod
 	public static final RegistryObject<Item> BULLET_SHOTGUN_SHELL_FLECHETTE =				FlansMod.Bullet(ITEMS, MODID, "shotgun_shell_flechette");
 	public static final RegistryObject<Item> BULLET_SHOTGUN_SHELL_FLECHETTE_POISONED =		FlansMod.Bullet(ITEMS, MODID, "shotgun_shell_flechette_poisoned");
 
+	public static final RegistryObject<Item> ATTACHMENT_FIRE_MODE_AUTO = 					FlansMod.Attachment(ITEMS, MODID, "fire_mode_auto");
+	public static final RegistryObject<Item> ATTACHMENT_FIRE_MODE_SINGLE =					FlansMod.Attachment(ITEMS, MODID, "fire_mode_single");
+	public static final RegistryObject<Item> ATTACHMENT_FIRE_MODE_BURST =					FlansMod.Attachment(ITEMS, MODID, "fire_mode_burst");
+
 
 
 	public static final RegistryObject<Block> WORKBENCH_BLOCK_PARTS = 						FlansMod.Workbench_Block(BLOCKS, MODID, "part_fabricator");

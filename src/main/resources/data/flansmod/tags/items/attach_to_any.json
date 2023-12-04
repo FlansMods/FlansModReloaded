@@ -1,6 +1,9 @@
 {
   "replace": "false",
   "values": [
+    "flansbasicparts:fire_mode_auto",
+    "flansbasicparts:fire_mode_burst",
+    "flansbasicparts:fire_mode_single",
     "flansvendersgame:fc_deluxe_foregrip",
     "flansvendersgame:fc_diamond_sights",
     "flansvendersgame:fc_premium_foregrip",

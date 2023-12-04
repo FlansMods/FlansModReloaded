@@ -1,9 +1,6 @@
 {
   "replace": "false",
   "values": [
-    "flansbasicparts:fire_mode_auto",
-    "flansbasicparts:fire_mode_burst",
-    "flansbasicparts:fire_mode_single",
     "flansbasicparts:artillery_shell",
     "flansbasicparts:artillery_shell_ap",
     "flansbasicparts:artillery_shell_ex",

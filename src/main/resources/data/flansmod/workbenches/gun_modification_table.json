@@ -13,6 +13,7 @@
         "timePerCraft": 1.0,
         "FECostPerCraft": 0.0,
         "partsByName": [],
+        "partsByTag": [],
         "partsByTier": []
     },
     "gunModifying": {

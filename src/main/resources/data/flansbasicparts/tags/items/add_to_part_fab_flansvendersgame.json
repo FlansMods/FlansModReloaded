@@ -1,0 +1,21 @@
+{
+  "replace": "false",
+  "values": [
+    "flansvendersgame:fc_aged_oak_stock",
+    "flansvendersgame:fc_deluxe_compensator",
+    "flansvendersgame:fc_deluxe_foregrip",
+    "flansvendersgame:fc_diamond_sights",
+    "flansvendersgame:fc_premium_foregrip",
+    "flansvendersgame:hm_pinpoint_sight",
+    "flansvendersgame:hm_pocket_silencer",
+    "flansvendersgame:hm_precision_barrel",
+    "flansvendersgame:hm_red_dot",
+    "flansvendersgame:hm_shell_rack_stock",
+    "flansvendersgame:hm_snap_stock",
+    "flansvendersgame:hm_steady_foregrip",
+    "flansvendersgame:phantek_4x_optic",
+    "flansvendersgame:phantek_impact_stock",
+    "flansvendersgame:phantek_shotgun_silencer",
+    "flansvendersgame:phantek_silencer"
+  ]
+}

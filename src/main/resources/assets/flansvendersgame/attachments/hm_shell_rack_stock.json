@@ -3,7 +3,8 @@
         "maxStackSize": 1,
         "tags": [
             "flansmod:attach_to_shotgun",
-            "flansmod:stock_attach"
+            "flansmod:stock_attach",
+            "flansbasicparts:add_to_part_fab"
         ]
     },
     "attachmentType": "Stock",

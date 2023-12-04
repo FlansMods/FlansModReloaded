@@ -1,0 +1,16 @@
+{
+  "type": "flansmod:part_fabrication",
+  "category": "equipment",
+  "ingredients": [
+	{
+		"type": "flansmod:tiered_material",
+		"material": "flansbasicparts:steel",
+		"count": 36
+	}
+  ],
+  "result": {
+    "item": "flansvendersgame:fc_deluxe_compensator"
+  },
+  "craft_time": 300,
+  "show_notification": true
+}

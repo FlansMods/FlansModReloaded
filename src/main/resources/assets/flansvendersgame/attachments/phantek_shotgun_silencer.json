@@ -3,7 +3,8 @@
         "maxStackSize": 1,
         "tags": [
             "flansmod:attach_to_shotgun",
-            "flansmod:barrel_attach"
+            "flansmod:barrel_attach",
+            "flansbasicparts:add_to_part_fab"
         ]
     },
     "attachmentType": "Barrel",

@@ -1,0 +1,16 @@
+{
+  "type": "flansmod:part_fabrication",
+  "category": "equipment",
+  "ingredients": [
+	{
+		"type": "flansmod:tiered_material",
+		"material": "flansbasicparts:phantex",
+		"count": 126
+	}
+  ],
+  "result": {
+    "item": "flansvendersgame:phantek_impact_stock"
+  },
+  "craft_time": 300,
+  "show_notification": true
+}

@@ -1,0 +1,16 @@
+{
+  "type": "flansmod:part_fabrication",
+  "category": "equipment",
+  "ingredients": [
+	{
+		"type": "flansmod:tiered_material",
+		"material": "flansbasicparts:fiberglass",
+		"count": 63
+	}
+  ],
+  "result": {
+    "item": "flansvendersgame:hm_snap_stock"
+  },
+  "craft_time": 300,
+  "show_notification": true
+}

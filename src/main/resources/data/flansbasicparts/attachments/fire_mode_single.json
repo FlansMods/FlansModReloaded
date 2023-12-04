@@ -2,8 +2,8 @@
     "itemSettings": {
         "maxStackSize": 1,
         "tags": [
-            "flansmod:bullet",
-            "flansmod:generic"
+            "flansmod:generic",
+            "flansmod:attach_to_any"
         ]
     },
     "attachmentType": "Generic",

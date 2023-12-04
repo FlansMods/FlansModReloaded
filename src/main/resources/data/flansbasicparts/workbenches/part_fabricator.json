@@ -12,7 +12,14 @@
         "outputSlots": 16,
         "timePerCraft": 1.0,
         "FECostPerCraft": 0.0,
-        "partsByName": [],
+        "partsByName": [
+            "flansbasicparts:fire_mode_auto",
+            "flansbasicparts:fire_mode_single",
+            "flansbasicparts:fire_mode_burst"
+        ],
+        "partsByTag": [
+            "flansbasicparts:add_to_part_fab"
+        ],
         "partsByTier": [
             {
                 "tag": "flansmod:upper_receiver",

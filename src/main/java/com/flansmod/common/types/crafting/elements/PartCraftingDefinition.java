@@ -3,7 +3,9 @@ package com.flansmod.common.types.crafting.elements;
 import com.flansmod.common.FlansMod;
 import com.flansmod.common.crafting.PartFabricationRecipe;
 import com.flansmod.common.types.JsonField;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
@@ -32,6 +34,8 @@ public class PartCraftingDefinition
 	@JsonField
 	public String[] partsByName = new String[0];
 	@JsonField
+	public String[] partsByTag = new String[0];
+	@JsonField
 	public TieredIngredientDefinition[] partsByTier = new TieredIngredientDefinition[0];
 
 	private List<ItemStack> Matches = null;
@@ -41,15 +45,27 @@ public class PartCraftingDefinition
 		if(Matches == null)
 		{
 			Matches = new ArrayList<>();
-			List<ResourceLocation> matchResLocs = new ArrayList<>(partsByName.length);
 
-			// Check for items by name first
+			// Check for items by name or tag first
+			List<ResourceLocation> matchResLocs = new ArrayList<>(partsByName.length);
+			List<TagKey<Item>> matchTagKeys = new ArrayList<>();
 			for(String name : partsByName)
 				matchResLocs.add(new ResourceLocation(name));
+			for(String tag : partsByTag)
+				matchTagKeys.add(TagKey.create(Registries.ITEM, new ResourceLocation(tag)));
 			for(Item item : ForgeRegistries.ITEMS.getValues())
 			{
 				if(matchResLocs.contains(item.builtInRegistryHolder().key().location()))
 					Matches.add(new ItemStack(item));
+				else
+				{
+					for (TagKey<Item> tag : matchTagKeys)
+						if (item.builtInRegistryHolder().is(tag))
+						{
+							Matches.add(new ItemStack(item));
+							break;
+						}
+				}
 			}
 
 			// Then add tiered & tagged parts that match

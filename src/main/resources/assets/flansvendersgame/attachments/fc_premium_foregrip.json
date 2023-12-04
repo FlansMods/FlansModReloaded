@@ -3,7 +3,8 @@
         "maxStackSize": 1,
         "tags": [
             "flansmod:attach_to_any",
-            "flansmod:grip_attach"
+            "flansmod:grip_attach",
+            "flansbasicparts:add_to_part_fab"
         ]
     },
     "attachmentType": "Grip",
