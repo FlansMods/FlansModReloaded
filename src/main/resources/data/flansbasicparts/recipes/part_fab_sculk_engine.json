@@ -1,6 +1,6 @@
 {
   "type": "flansmod:part_fabrication",
-  "category": "material",
+  "category": "equipment",
   "ingredients": [
 		{
 		"type": "flansmod:tiered_material",
