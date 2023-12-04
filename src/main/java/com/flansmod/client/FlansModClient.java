@@ -6,16 +6,12 @@ import com.flansmod.client.input.ClientInputHooks;
 import com.flansmod.client.render.FirstPersonManager;
 import com.flansmod.client.render.FlanModelRegistration;
 import com.flansmod.client.render.MagazineTextureAtlas;
-import com.flansmod.client.render.animation.AnimationDefinitions;
+import com.flansmod.client.render.animation.FlanimationDefinitions;
 import com.flansmod.client.render.bullets.BulletEntityRenderer;
 import com.flansmod.client.render.debug.DebugRenderer;
 import com.flansmod.client.render.decals.DecalRenderer;
 import com.flansmod.client.render.bullets.ShotRenderer;
 import com.flansmod.common.FlansMod;
-import com.flansmod.common.actions.*;
-import com.flansmod.common.actions.ActionInstance;
-import com.flansmod.common.gunshots.ShooterContext;
-import com.flansmod.util.Maths;
 import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import net.minecraft.Util;
 import net.minecraft.client.Minecraft;
@@ -41,8 +37,6 @@ import net.minecraftforge.fml.util.ObfuscationReflectionHelper;
 
 import javax.annotation.Nullable;
 import java.lang.reflect.Field;
-import java.util.ArrayList;
-import java.util.List;
 
 @OnlyIn(Dist.CLIENT)
 @Mod.EventBusSubscriber(value = Dist.CLIENT, bus = Mod.EventBusSubscriber.Bus.MOD, modid = FlansMod.MODID)
@@ -53,7 +47,7 @@ public class FlansModClient
 	public static final ClientInputHooks CLIENT_INPUT_HOOKS = new ClientInputHooks();
 	public static final ClientRenderHooks CLIENT_OVERLAY_HOOKS = new ClientRenderHooks();
 	public static final FlanModelRegistration MODEL_REGISTRATION = new FlanModelRegistration();
-	public static final AnimationDefinitions ANIMATIONS = new AnimationDefinitions();
+	public static final FlanimationDefinitions ANIMATIONS = new FlanimationDefinitions();
 	public static final DecalRenderer DECAL_RENDERER = new DecalRenderer();
 	public static final ClientActionManager ACTIONS_CLIENT = new ClientActionManager();
 	public static final MagazineTextureAtlas MAGAZINE_ATLAS = new MagazineTextureAtlas();

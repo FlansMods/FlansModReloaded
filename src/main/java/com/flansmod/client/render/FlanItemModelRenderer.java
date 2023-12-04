@@ -7,7 +7,7 @@ import java.util.function.BiFunction;
 import java.util.function.Function;
 
 import com.flansmod.client.FlansModClient;
-import com.flansmod.client.render.animation.AnimationDefinition;
+import com.flansmod.client.render.animation.FlanimationDefinition;
 import com.flansmod.client.render.animation.ESmoothSetting;
 import com.flansmod.client.render.animation.elements.KeyframeDefinition;
 import com.flansmod.client.render.animation.elements.PoseDefinition;
@@ -34,7 +34,6 @@ import net.minecraft.client.renderer.block.model.ItemTransforms;
 import net.minecraft.client.renderer.texture.MissingTextureAtlasSprite;
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.HumanoidArm;
 import net.minecraft.world.item.ItemStack;
@@ -196,7 +195,7 @@ public abstract class FlanItemModelRenderer extends BlockEntityWithoutLevelRende
         requestedPoseStack.popPose();
     }
 
-    protected void ApplyAnimations(RenderContext renderContext, AnimationDefinition animationSet, ActionStack actionStack, String partName)
+    protected void ApplyAnimations(RenderContext renderContext, FlanimationDefinition animationSet, ActionStack actionStack, String partName)
     {
         if(UnbakedRig == null)
             return;

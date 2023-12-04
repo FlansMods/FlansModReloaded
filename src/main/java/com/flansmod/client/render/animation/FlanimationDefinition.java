@@ -11,14 +11,14 @@ import net.minecraft.resources.ResourceLocation;
 
 import java.util.Optional;
 
-public class AnimationDefinition extends JsonDefinition
+public class FlanimationDefinition extends JsonDefinition
 {
-	public static final String TYPE = "animation";
-	public static final String FOLDER = "animations";
-	public static final AnimationDefinition INVALID = new AnimationDefinition(new ResourceLocation(FlansMod.MODID, "animations/null"));
+	public static final String TYPE = "flanimation";
+	public static final String FOLDER = "flanimations";
+	public static final FlanimationDefinition INVALID = new FlanimationDefinition(new ResourceLocation(FlansMod.MODID, "animations/null"));
 
 
-	public AnimationDefinition(ResourceLocation srcLoc)
+	public FlanimationDefinition(ResourceLocation srcLoc)
 	{
 		super(srcLoc);
 	}

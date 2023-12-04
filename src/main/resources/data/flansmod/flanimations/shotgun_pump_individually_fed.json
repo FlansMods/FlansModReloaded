@@ -30,14 +30,14 @@
                 {
                     "applyTo": "body",
                     "position": [
-                        "-3",
-                        "1",
+                        "-5",
+                        "0",
                         "0"
                     ],
                     "rotation": [
                         "0",
                         "0",
-                        "10"
+                        "5"
                     ],
                     "scale": [
                         1.0,
@@ -72,14 +72,14 @@
                 {
                     "applyTo": "body",
                     "position": [
+                        "6",
                         "-2",
-                        "2",
-                        "0"
+                        "6"
                     ],
                     "rotation": [
-                        "-10",
+                        "35",
                         "0",
-                        "60"
+                        "40"
                     ],
                     "scale": [
                         1.0,
@@ -89,59 +89,7 @@
                 }
             ],
             "parents": [
-                "idle_empty"
-            ]
-        },
-        {
-            "name": "ammo_ejected",
-            "poses": [
-                {
-                    "applyTo": "ammo_0",
-                    "position": [
-                        "-1",
-                        "-4",
-                        "0"
-                    ],
-                    "rotation": [
-                        "0",
-                        "0",
-                        "0"
-                    ],
-                    "scale": [
-                        1.0,
-                        1.0,
-                        1.0
-                    ]
-                }
-            ],
-            "parents": [
-                "ready_to_reload"
-            ]
-        },
-        {
-            "name": "ammo_ejected_physics",
-            "poses": [
-                {
-                    "applyTo": "ammo_0",
-                    "position": [
-                        "-25",
-                        "-20",
-                        "0"
-                    ],
-                    "rotation": [
-                        "0",
-                        "0",
-                        "179"
-                    ],
-                    "scale": [
-                        1.0,
-                        1.0,
-                        1.0
-                    ]
-                }
-            ],
-            "parents": [
-                "ready_to_reload"
+                "pump_action"
             ]
         },
         {
@@ -150,13 +98,13 @@
                 {
                     "applyTo": "ammo_0",
                     "position": [
-                        "-5",
-                        "-5",
-                        "-15"
+                        "-20",
+                        "-20",
+                        "0"
                     ],
                     "rotation": [
-                        "-90",
                         "0",
+                        "75",
                         "0"
                     ],
                     "scale": [
@@ -171,85 +119,19 @@
             ]
         },
         {
-            "name": "idle_empty",
-            "poses": [
-                {
-                    "applyTo": "slide",
-                    "position": [
-                        "-3",
-                        "0",
-                        "0"
-                    ],
-                    "rotation": [
-                        "0",
-                        "0",
-                        "0"
-                    ],
-                    "scale": [
-                        1.0,
-                        1.0,
-                        1.0
-                    ]
-                }
-            ],
-            "parents": []
-        },
-        {
             "name": "look_at_pose_0",
             "poses": [
                 {
                     "applyTo": "body",
                     "position": [
-                        "2",
+                        "0",
                         "1",
                         "0"
                     ],
                     "rotation": [
-                        "30",
-                        "0",
-                        "50"
-                    ],
-                    "scale": [
-                        1.0,
-                        1.0,
-                        1.0
-                    ]
-                },
-                {
-                    "applyTo": "slide",
-                    "position": [
-                        "-3",
-                        "0",
-                        "0"
-                    ],
-                    "rotation": [
-                        "0",
-                        "0",
-                        "0"
-                    ],
-                    "scale": [
-                        1.0,
-                        1.0,
-                        1.0
-                    ]
-                }
-            ],
-            "parents": []
-        },
-        {
-            "name": "look_at_pose_1",
-            "poses": [
-                {
-                    "applyTo": "body",
-                    "position": [
-                        "1",
-                        "3",
-                        "-6"
-                    ],
-                    "rotation": [
-                        "-60",
-                        "-45",
-                        "45"
+                        "-30",
+                        "80",
+                        "30"
                     ],
                     "scale": [
                         1.0,
@@ -405,14 +287,14 @@
             "parents": []
         },
         {
-            "name": "iron_sights",
+            "name": "pump_action",
             "poses": [
                 {
-                    "applyTo": "body",
+                    "applyTo": "pump",
                     "position": [
-                        "2",
-                        "2",
-                        "8"
+                        "-3",
+                        "0",
+                        "0"
                     ],
                     "rotation": [
                         "0",
@@ -426,30 +308,144 @@
                     ]
                 }
             ],
+            "parents": [
+                "tilt_for_pump"
+            ]
+        },
+        {
+            "name": "tilt_for_pump",
+            "poses": [
+                {
+                    "applyTo": "body",
+                    "position": [
+                        "0",
+                        "0",
+                        "0"
+                    ],
+                    "rotation": [
+                        "10",
+                        "0",
+                        "25"
+                    ],
+                    "scale": [
+                        1.0,
+                        1.0,
+                        1.0
+                    ]
+                }
+            ],
             "parents": []
+        },
+        {
+            "name": "ammo_in_magazine",
+            "poses": [
+                {
+                    "applyTo": "ammo_0",
+                    "position": [
+                        "0",
+                        "0",
+                        "1"
+                    ],
+                    "rotation": [
+                        "0",
+                        "0",
+                        "0"
+                    ],
+                    "scale": [
+                        1.0,
+                        1.0,
+                        1.0
+                    ]
+                },
+                {
+                    "applyTo": "body",
+                    "position": [
+                        "7",
+                        "-2",
+                        "7"
+                    ],
+                    "rotation": [
+                        "35",
+                        "-2",
+                        "40"
+                    ],
+                    "scale": [
+                        1.0,
+                        1.0,
+                        1.0
+                    ]
+                }
+            ],
+            "parents": [
+                "ready_to_reload"
+            ]
+        },
+        {
+            "name": "ammo_ready_to_insert",
+            "poses": [
+                {
+                    "applyTo": "ammo_0",
+                    "position": [
+                        "0",
+                        "0",
+                        "-2"
+                    ],
+                    "rotation": [
+                        "0",
+                        "-45",
+                        "0"
+                    ],
+                    "scale": [
+                        1.0,
+                        1.0,
+                        1.0
+                    ]
+                }
+            ],
+            "parents": [
+                "ready_to_reload"
+            ]
         }
     ],
     "sequences": [
         {
             "name": "shoot",
-            "ticks": 8,
+            "ticks": 15,
             "frames": [
                 {
                     "tick": 0,
                     "entry": "linear",
-                    "exit": "instant",
+                    "exit": "linear",
                     "frame": "idle"
                 },
                 {
                     "tick": 1,
-                    "entry": "instant",
-                    "exit": "linear",
+                    "entry": "linear",
+                    "exit": "smooth",
                     "frame": "shot_fired"
                 },
                 {
                     "tick": 8,
+                    "entry": "smooth",
+                    "exit": "linear",
+                    "frame": "tilt_for_pump"
+                },
+                {
+                    "tick": 9,
+                    "entry": "smooth",
+                    "exit": "smooth",
+                    "frame": "pump_action"
+                },
+                {
+                    "tick": 11,
+                    "entry": "smooth",
+                    "exit": "linear",
+                    "frame": "tilt_for_pump"
+                },
+                {
+                    "tick": 15,
                     "entry": "linear",
-                    "exit": "instant",
+                    "exit": "linear",
                     "frame": "idle"
                 }
             ]
@@ -474,7 +470,7 @@
         },
         {
             "name": "reload_load_one",
-            "ticks": 12,
+            "ticks": 15,
             "frames": [
                 {
                     "tick": 0,
@@ -485,12 +481,18 @@
                 {
                     "tick": 10,
                     "entry": "smooth",
-                    "exit": "linear",
-                    "frame": "ammo_ejected"
+                    "exit": "smooth",
+                    "frame": "ammo_ready_to_insert"
                 },
                 {
-                    "tick": 12,
-                    "entry": "linear",
+                    "tick": 13,
+                    "entry": "smooth",
+                    "exit": "smooth",
+                    "frame": "ammo_in_magazine"
+                },
+                {
+                    "tick": 15,
+                    "entry": "smooth",
                     "exit": "linear",
                     "frame": "ready_to_reload"
                 }
@@ -498,7 +500,7 @@
         },
         {
             "name": "reload_end",
-            "ticks": 11,
+            "ticks": 20,
             "frames": [
                 {
                     "tick": 0,
@@ -510,10 +512,22 @@
                     "tick": 10,
                     "entry": "linear",
                     "exit": "smooth",
-                    "frame": "idle_empty"
+                    "frame": "tilt_for_pump"
                 },
                 {
                     "tick": 11,
+                    "entry": "linear",
+                    "exit": "linear",
+                    "frame": "pump_action"
+                },
+                {
+                    "tick": 13,
+                    "entry": "linear",
+                    "exit": "linear",
+                    "frame": "tilt_for_pump"
+                },
+                {
+                    "tick": 20,
                     "entry": "linear",
                     "exit": "linear",
                     "frame": "idle"
@@ -534,13 +548,13 @@
                     "tick": 5,
                     "entry": "linear",
                     "exit": "smooth",
-                    "frame": "ammo_ejected"
+                    "frame": "idle"
                 },
                 {
                     "tick": 20,
                     "entry": "smooth",
                     "exit": "linear",
-                    "frame": "ammo_ejected_physics"
+                    "frame": "idle"
                 }
             ]
         },
@@ -569,18 +583,36 @@
                 {
                     "tick": 20,
                     "entry": "smooth",
-                    "exit": "linear",
-                    "frame": "look_at_pose_1"
+                    "exit": "smooth",
+                    "frame": "idle"
                 },
                 {
-                    "tick": 30,
-                    "entry": "linear",
+                    "tick": 22,
+                    "entry": "smooth",
                     "exit": "smooth",
-                    "frame": "look_at_pose_1"
+                    "frame": "spin_over"
+                },
+                {
+                    "tick": 26,
+                    "entry": "smooth",
+                    "exit": "smooth",
+                    "frame": "spin_0"
+                },
+                {
+                    "tick": 28,
+                    "entry": "smooth",
+                    "exit": "smooth",
+                    "frame": "spin_1"
+                },
+                {
+                    "tick": 32,
+                    "entry": "smooth",
+                    "exit": "linear",
+                    "frame": "spin_over"
                 },
                 {
                     "tick": 35,
-                    "entry": "smooth",
+                    "entry": "linear",
                     "exit": "linear",
                     "frame": "idle"
                 }

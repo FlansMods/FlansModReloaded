@@ -49,7 +49,7 @@ public class GunItemRenderer extends FlanItemModelRenderer
                         return;
 
             // Find our animation set
-            AnimationDefinition animationSet = FlansModClient.ANIMATIONS.Get(new ResourceLocation(gunContext.CacheGunDefinition().animationSet));
+            FlanimationDefinition animationSet = FlansModClient.ANIMATIONS.Get(new ResourceLocation(gunContext.CacheGunDefinition().animationSet));
 
             // Find our skin
             ResourceLocation skin = GetSkin(stack);
@@ -146,7 +146,7 @@ public class GunItemRenderer extends FlanItemModelRenderer
     }
 
 
-    private void RenderPartOrAttachment(GunContext gunContext, AnimationDefinition animationSet, ActionStack actionStack, ResourceLocation skin, RenderContext renderContext, String partName, EAttachmentType attachmentType)
+    private void RenderPartOrAttachment(GunContext gunContext, FlanimationDefinition animationSet, ActionStack actionStack, ResourceLocation skin, RenderContext renderContext, String partName, EAttachmentType attachmentType)
     {
         AttachmentSettingsDefinition attachmentSettings = gunContext.CacheGunDefinition().GetAttachmentSettings(attachmentType);
         boolean anyAttachmentsPresent = false;
@@ -180,7 +180,7 @@ public class GunItemRenderer extends FlanItemModelRenderer
         }
     }
 
-    private void RenderPart(GunContext gunContext, AnimationDefinition animationSet, ActionStack actionStack, ResourceLocation skin, RenderContext renderContext, String partName)
+    private void RenderPart(GunContext gunContext, FlanimationDefinition animationSet, ActionStack actionStack, ResourceLocation skin, RenderContext renderContext, String partName)
     {
         renderContext.Poses.pushPose();
         ApplyAnimations(renderContext, animationSet, actionStack, partName);

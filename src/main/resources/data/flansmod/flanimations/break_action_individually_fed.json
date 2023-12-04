@@ -30,14 +30,14 @@
                 {
                     "applyTo": "body",
                     "position": [
-                        "-3",
-                        "1",
+                        "-5",
+                        "0",
                         "0"
                     ],
                     "rotation": [
                         "0",
                         "0",
-                        "10"
+                        "5"
                     ],
                     "scale": [
                         1.0,
@@ -74,116 +74,12 @@
                     "position": [
                         "-2",
                         "2",
-                        "0"
+                        "6"
                     ],
                     "rotation": [
-                        "-10",
+                        "-35",
                         "0",
-                        "60"
-                    ],
-                    "scale": [
-                        1.0,
-                        1.0,
-                        1.0
-                    ]
-                }
-            ],
-            "parents": [
-                "idle_empty"
-            ]
-        },
-        {
-            "name": "ammo_ejected",
-            "poses": [
-                {
-                    "applyTo": "ammo_0",
-                    "position": [
-                        "-1",
-                        "-4",
-                        "0"
-                    ],
-                    "rotation": [
-                        "0",
-                        "0",
-                        "0"
-                    ],
-                    "scale": [
-                        1.0,
-                        1.0,
-                        1.0
-                    ]
-                }
-            ],
-            "parents": [
-                "ready_to_reload"
-            ]
-        },
-        {
-            "name": "ammo_ejected_physics",
-            "poses": [
-                {
-                    "applyTo": "ammo_0",
-                    "position": [
-                        "-25",
-                        "-20",
-                        "0"
-                    ],
-                    "rotation": [
-                        "0",
-                        "0",
-                        "179"
-                    ],
-                    "scale": [
-                        1.0,
-                        1.0,
-                        1.0
-                    ]
-                }
-            ],
-            "parents": [
-                "ready_to_reload"
-            ]
-        },
-        {
-            "name": "ammo_grab_from_left",
-            "poses": [
-                {
-                    "applyTo": "ammo_0",
-                    "position": [
-                        "-5",
-                        "-5",
-                        "-15"
-                    ],
-                    "rotation": [
-                        "-90",
-                        "0",
-                        "0"
-                    ],
-                    "scale": [
-                        1.0,
-                        1.0,
-                        1.0
-                    ]
-                }
-            ],
-            "parents": [
-                "ready_to_reload"
-            ]
-        },
-        {
-            "name": "idle_empty",
-            "poses": [
-                {
-                    "applyTo": "slide",
-                    "position": [
-                        "-3",
-                        "0",
-                        "0"
-                    ],
-                    "rotation": [
-                        "0",
-                        "0",
-                        "0"
+                        "-10"
                     ],
                     "scale": [
                         1.0,
@@ -195,36 +91,44 @@
             "parents": []
         },
         {
-            "name": "look_at_pose_0",
+            "name": "ammo_grab_from_left",
             "poses": [
                 {
-                    "applyTo": "body",
+                    "applyTo": "ammo_0",
                     "position": [
-                        "2",
-                        "1",
-                        "0"
+                        "0",
+                        "-20",
+                        "30"
                     ],
                     "rotation": [
-                        "30",
                         "0",
-                        "50"
+                        "75",
+                        "0"
                     ],
                     "scale": [
                         1.0,
                         1.0,
                         1.0
                     ]
-                },
+                }
+            ],
+            "parents": [
+                "break_action_open"
+            ]
+        },
+        {
+            "name": "look_at_pose_0",
+            "poses": [
                 {
-                    "applyTo": "slide",
+                    "applyTo": "body",
                     "position": [
-                        "-3",
-                        "0",
-                        "0"
+                        "-1",
+                        "3",
+                        "-4"
                     ],
                     "rotation": [
-                        "0",
-                        "0",
+                        "-45",
+                        "90",
                         "0"
                     ],
                     "scale": [
@@ -242,14 +146,14 @@
                 {
                     "applyTo": "body",
                     "position": [
-                        "1",
-                        "3",
-                        "-6"
+                        "0",
+                        "0",
+                        "6"
                     ],
                     "rotation": [
-                        "-60",
+                        "-30",
                         "-45",
-                        "45"
+                        "60"
                     ],
                     "scale": [
                         1.0,
@@ -258,7 +162,9 @@
                     ]
                 }
             ],
-            "parents": []
+            "parents": [
+                "break_action_open"
+            ]
         },
         {
             "name": "spin_0",
@@ -405,14 +311,14 @@
             "parents": []
         },
         {
-            "name": "iron_sights",
+            "name": "pump_action",
             "poses": [
                 {
-                    "applyTo": "body",
+                    "applyTo": "pump",
                     "position": [
-                        "2",
-                        "2",
-                        "8"
+                        "-3",
+                        "0",
+                        "0"
                     ],
                     "rotation": [
                         "0",
@@ -426,30 +332,228 @@
                     ]
                 }
             ],
+            "parents": [
+                "tilt_for_pump"
+            ]
+        },
+        {
+            "name": "tilt_for_pump",
+            "poses": [
+                {
+                    "applyTo": "body",
+                    "position": [
+                        "0",
+                        "0",
+                        "0"
+                    ],
+                    "rotation": [
+                        "10",
+                        "0",
+                        "25"
+                    ],
+                    "scale": [
+                        1.0,
+                        1.0,
+                        1.0
+                    ]
+                }
+            ],
             "parents": []
+        },
+        {
+            "name": "break_action_open",
+            "poses": [
+                {
+                    "applyTo": "break_action",
+                    "position": [
+                        "0",
+                        "0",
+                        "0"
+                    ],
+                    "rotation": [
+                        "0",
+                        "0",
+                        "-80"
+                    ],
+                    "scale": [
+                        1.0,
+                        1.0,
+                        1.0
+                    ]
+                }
+            ],
+            "parents": [
+                "ready_to_reload"
+            ]
+        },
+        {
+            "name": "ammo_ejected_highpoint",
+            "poses": [
+                {
+                    "applyTo": "ammo_0",
+                    "position": [
+                        "-4",
+                        "4",
+                        "-4"
+                    ],
+                    "rotation": [
+                        "30",
+                        "0",
+                        "-180"
+                    ],
+                    "scale": [
+                        1.0,
+                        1.0,
+                        1.0
+                    ]
+                }
+            ],
+            "parents": [
+                "break_action_open"
+            ]
+        },
+        {
+            "name": "ammo_ejected_physics",
+            "poses": [
+                {
+                    "applyTo": "ammo_0",
+                    "position": [
+                        "15",
+                        "-10",
+                        "-15"
+                    ],
+                    "rotation": [
+                        "0",
+                        "0",
+                        "360"
+                    ],
+                    "scale": [
+                        1.0,
+                        1.0,
+                        1.0
+                    ]
+                }
+            ],
+            "parents": [
+                "break_action_open"
+            ]
+        },
+        {
+            "name": "ammo_insert",
+            "poses": [
+                {
+                    "applyTo": "ammo_0",
+                    "position": [
+                        "-4",
+                        "0",
+                        "0"
+                    ],
+                    "rotation": [
+                        "0",
+                        "0",
+                        "0"
+                    ],
+                    "scale": [
+                        1.0,
+                        1.0,
+                        1.0
+                    ]
+                }
+            ],
+            "parents": [
+                "break_action_open"
+            ]
+        },
+        {
+            "name": "end_reload_kick",
+            "poses": [
+                {
+                    "applyTo": "body",
+                    "position": [
+                        "0",
+                        "0",
+                        "0"
+                    ],
+                    "rotation": [
+                        "0",
+                        "0",
+                        "25"
+                    ],
+                    "scale": [
+                        1.0,
+                        1.0,
+                        1.0
+                    ]
+                }
+            ],
+            "parents": []
+        },
+        {
+            "name": "end_reload_dip",
+            "poses": [
+                {
+                    "applyTo": "body",
+                    "position": [
+                        "0",
+                        "0",
+                        "0"
+                    ],
+                    "rotation": [
+                        "0",
+                        "0",
+                        "-50"
+                    ],
+                    "scale": [
+                        1.0,
+                        1.0,
+                        1.0
+                    ]
+                }
+            ],
+            "parents": [
+                "break_action_open"
+            ]
         }
     ],
     "sequences": [
         {
             "name": "shoot",
-            "ticks": 8,
+            "ticks": 15,
             "frames": [
                 {
                     "tick": 0,
                     "entry": "linear",
-                    "exit": "instant",
+                    "exit": "linear",
                     "frame": "idle"
                 },
                 {
                     "tick": 1,
-                    "entry": "instant",
-                    "exit": "linear",
+                    "entry": "linear",
+                    "exit": "smooth",
                     "frame": "shot_fired"
                 },
                 {
                     "tick": 8,
+                    "entry": "smooth",
+                    "exit": "linear",
+                    "frame": "tilt_for_pump"
+                },
+                {
+                    "tick": 9,
+                    "entry": "smooth",
+                    "exit": "smooth",
+                    "frame": "pump_action"
+                },
+                {
+                    "tick": 11,
+                    "entry": "smooth",
+                    "exit": "linear",
+                    "frame": "tilt_for_pump"
+                },
+                {
+                    "tick": 15,
                     "entry": "linear",
-                    "exit": "instant",
+                    "exit": "linear",
                     "frame": "idle"
                 }
             ]
@@ -468,13 +572,13 @@
                     "tick": 10,
                     "entry": "linear",
                     "exit": "linear",
-                    "frame": "ready_to_reload"
+                    "frame": "break_action_open"
                 }
             ]
         },
         {
             "name": "reload_load_one",
-            "ticks": 12,
+            "ticks": 16,
             "frames": [
                 {
                     "tick": 0,
@@ -486,34 +590,40 @@
                     "tick": 10,
                     "entry": "smooth",
                     "exit": "linear",
-                    "frame": "ammo_ejected"
+                    "frame": "ammo_insert"
                 },
                 {
-                    "tick": 12,
+                    "tick": 16,
                     "entry": "linear",
                     "exit": "linear",
-                    "frame": "ready_to_reload"
+                    "frame": "break_action_open"
                 }
             ]
         },
         {
             "name": "reload_end",
-            "ticks": 11,
+            "ticks": 12,
             "frames": [
                 {
                     "tick": 0,
                     "entry": "linear",
                     "exit": "linear",
-                    "frame": "ready_to_reload"
+                    "frame": "break_action_open"
                 },
                 {
-                    "tick": 10,
+                    "tick": 5,
                     "entry": "linear",
                     "exit": "smooth",
-                    "frame": "idle_empty"
+                    "frame": "end_reload_dip"
                 },
                 {
-                    "tick": 11,
+                    "tick": 9,
+                    "entry": "smooth",
+                    "exit": "linear",
+                    "frame": "end_reload_kick"
+                },
+                {
+                    "tick": 12,
                     "entry": "linear",
                     "exit": "linear",
                     "frame": "idle"
@@ -522,23 +632,23 @@
         },
         {
             "name": "reload_eject",
-            "ticks": 20,
+            "ticks": 10,
             "frames": [
                 {
                     "tick": 0,
                     "entry": "linear",
                     "exit": "linear",
-                    "frame": "ready_to_reload"
+                    "frame": "break_action_open"
                 },
                 {
                     "tick": 5,
                     "entry": "linear",
-                    "exit": "smooth",
-                    "frame": "ammo_ejected"
+                    "exit": "linear",
+                    "frame": "ammo_ejected_highpoint"
                 },
                 {
-                    "tick": 20,
-                    "entry": "smooth",
+                    "tick": 10,
+                    "entry": "linear",
                     "exit": "linear",
                     "frame": "ammo_ejected_physics"
                 }
