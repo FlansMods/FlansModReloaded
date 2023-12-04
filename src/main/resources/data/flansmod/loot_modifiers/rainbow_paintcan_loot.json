@@ -1,5 +1,5 @@
 {
-  "type": "flansvendersgame:chest_loot",
+  "type": "flansmod:loot_populator",
   "conditions": [
 	{
 		"condition": "minecraft:alternative",
@@ -24,5 +24,14 @@
 		]
 	}
   ],
-  "radio_chance": 0.25
+  "entries": [
+	{
+	  "chance":0.25,
+	  "min_stack_size":1,
+	  "max_stack_size":1,
+	  "item": {
+		"id": "flansmod:rainbow_paintcan"
+	  }
+	}
+  ]
 }

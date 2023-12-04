@@ -1,7 +1,6 @@
 {
   "replace": false,
   "entries": [
-    "flansvendersgame:chest_loot",
 	"flansmod:magazine_upgrade_loot",
 	"flansmod:rainbow_paintcan_loot"
   ]
