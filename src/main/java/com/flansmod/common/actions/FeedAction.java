@@ -32,7 +32,7 @@ public class FeedAction extends ActionInstance
 	@Override
 	public void OnTriggerServer(int triggerIndex)
 	{
-		Transform ray = Group.Context.Gun.GetShooter().GetShootOrigin();
+		Transform ray = Group.Context.Gun.GetShootOrigin();
 		Vec3 origin = ray.PositionVec3();
 		Vec3 direction = ray.ForwardVec3();
 		float reach = Reach();

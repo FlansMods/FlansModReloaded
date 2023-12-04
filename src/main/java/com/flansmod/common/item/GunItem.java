@@ -160,7 +160,8 @@ public class GunItem extends FlanItem
         super.appendHoverText(stack, level, tooltips, flags);
     }
 
-    public CompoundTag GetRootTag(ItemStack stack, String groupPath)
+    @Nonnull
+    public CompoundTag GetRootTag(@Nonnull ItemStack stack, @Nonnull String groupPath)
     {
         String rootTagName = groupPath;
         GunContext gunContext = GunContext.GetGunContext(stack);
@@ -179,7 +180,8 @@ public class GunItem extends FlanItem
         return stack.getOrCreateTag().getCompound(rootTagName);
     }
 
-    public CompoundTag GetMagTag(ItemStack stack, String groupPath, int magIndex)
+    @Nonnull
+    public CompoundTag GetMagTag(@Nonnull ItemStack stack, @Nonnull String groupPath, int magIndex)
     {
         CompoundTag rootTag = GetRootTag(stack, groupPath);
         final String magTag = "mag_" + magIndex;
@@ -187,7 +189,7 @@ public class GunItem extends FlanItem
             rootTag.put(magTag, new CompoundTag());
         return rootTag.getCompound(magTag);
     }
-
+    @Nonnull
     public MagazineDefinition GetMagazineType(ItemStack stack, String groupPath, int magIndex)
     {
         // Get the root tag for our magazine
@@ -201,20 +203,100 @@ public class GunItem extends FlanItem
         List<MagazineDefinition> matches = Def().GetMagazineSettings(groupPath).GetMatchingMagazines();
         if(matches.size() > 0)
         {
-            //SetMagazineType(stack, groupPath, magIndex, matches.get(0));
             return matches.get(0);
         }
-        //FlansMod.LOGGER.warn("ItemStack " + stack + " had no mag type tag, and no default for that gun found.");
-        //SetMagazineType(stack, groupPath, magIndex, MagazineDefinition.INVALID);
         return MagazineDefinition.INVALID;
     }
-
-    public void SetMagazineType(ItemStack stack, String groupPath, int magIndex, MagazineDefinition magDef)
+    @Nonnull
+    public ItemStack[] GetCombinedBulletStacks(@Nonnull ItemStack stack, @Nonnull String groupPath, int magIndex)
     {
         CompoundTag magTags = GetMagTag(stack, groupPath, magIndex);
-        magTags.putString("type", magDef.GetLocationString());
+        if(magTags.contains("bullets"))
+        {
+            CompoundTag bulletTags = magTags.getCompound("bullets");
+            ItemStack[] stacks = new ItemStack[bulletTags.size()];
+            int stackIndex = 0;
+            for(String key : bulletTags.getAllKeys())
+            {
+                stacks[stackIndex] = ItemStack.of(bulletTags.getCompound(key));
+                stackIndex++;
+            }
+            return stacks;
+        }
+        return new ItemStack[0];
     }
+    @Nonnull
+    public ItemStack GetBulletAtIndex(@Nonnull ItemStack stack, @Nonnull String groupPath, int magIndex, int bulletIndex)
+    {
+        CompoundTag magTags = GetMagTag(stack, groupPath, magIndex);
+        if (magTags.contains("bullets"))
+        {
+            CompoundTag bulletTags = magTags.getCompound("bullets");
+            for(String key : bulletTags.getAllKeys())
+            {
+                int startIndex = Integer.parseInt(key);
+                ItemStack bulletStack = ItemStack.of(bulletTags.getCompound(key));
 
+                // Apple represents empty spaces because Minecraft hides 5xAir as 0xAir
+                if(bulletStack.getItem() == Items.APPLE)
+                    return ItemStack.EMPTY;
+
+                int endIndex = startIndex + bulletStack.getCount();
+                if(startIndex <= bulletIndex && bulletIndex < endIndex)
+                {
+                    return bulletStack.copyWithCount(1);
+                }
+            }
+        }
+        return ItemStack.EMPTY;
+    }
+    public int GetNumBulletsInMag(@Nonnull ItemStack stack, @Nonnull String groupPath, int magIndex)
+    {
+        int count = 0;
+        CompoundTag magTags = GetMagTag(stack, groupPath, magIndex);
+        if (magTags.contains("bullets"))
+        {
+            CompoundTag bulletTags = magTags.getCompound("bullets");
+            for(String key : bulletTags.getAllKeys())
+            {
+                int startIndex = Integer.parseInt(key);
+                ItemStack bulletStack = ItemStack.of(bulletTags.getCompound(key));
+
+                // Apple represents empty spaces because Minecraft hides 5xAir as 0xAir
+                if(bulletStack.getItem() == Items.APPLE)
+                    continue;
+
+                count += bulletStack.getCount();
+            }
+        }
+        return count;
+    }
+    @Nonnull
+    public Item[] ExtractCompactStacks(@Nonnull ItemStack stack, @Nonnull String groupPath, int magIndex)
+    {
+        MagazineDefinition magDef = GetMagazineType(stack, groupPath, magIndex);
+        CompoundTag magTags = GetMagTag(stack, groupPath, magIndex);
+        Item[] items = new Item[magDef.numRounds];
+        for(int i = 0; i < magDef.numRounds; i++)
+            items[i] = Items.APPLE;
+
+        if (magTags.contains("bullets"))
+        {
+            CompoundTag bulletTags = magTags.getCompound("bullets");
+            for(String key : bulletTags.getAllKeys())
+            {
+                int startIndex = Integer.parseInt(key);
+                ItemStack bulletStack = ItemStack.of(bulletTags.getCompound(key));
+                int endIndex = startIndex + bulletStack.getCount();
+                for(int i = startIndex; i < endIndex; i++)
+                {
+                    if(0 <= i && i < magDef.numRounds)
+                        items[i] = bulletStack.getItem();
+                }
+            }
+        }
+        return items;
+    }
     @OnlyIn(Dist.CLIENT)
     public void ClientHandleMouse(Player player, ItemStack stack, InputEvent.InteractionKeyMappingTriggered event)
     {
@@ -228,7 +310,6 @@ public class GunItem extends FlanItem
             //FlansModClient.ACTIONS_CLIENT.ClientInputEvent(player, event.getHand(), EActionInput.SECONDARY);
         }
     }
-
     @OnlyIn(Dist.CLIENT)
     public void ClientUpdateUsing(Player player, ItemStack stack, LivingEntityUseItemEvent.Tick event)
     {

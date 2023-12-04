@@ -69,7 +69,7 @@ public class SummonNpcAction extends ActionInstance
 		}
 
 		// Check for other matching NPCs in the nearby loaded chunks
-		Vector3d pos = Group.Context.Gun.GetShooter().GetShootOrigin().Position();
+		Vector3d pos = Group.Context.Gun.GetShootOrigin().Position();
 		double checkRange = 400D;
 		for(ShopkeeperEntity nearbyShopkeeper : level.getEntitiesOfClass(
 			ShopkeeperEntity.class,
@@ -112,7 +112,7 @@ public class SummonNpcAction extends ActionInstance
 				Entity entity = entityType.create(level);
 				if(entity != null)
 				{
-					Vec3 srcPos = Group.Context.Gun.GetShooter().GetShootOrigin().PositionVec3();
+					Vec3 srcPos = Group.Context.Gun.GetShootOrigin().PositionVec3();
 					entity.setPos(srcPos);
 					Optional<Vec3> freePos = level.findFreePosition(
 						entity,

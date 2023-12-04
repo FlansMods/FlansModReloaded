@@ -2,32 +2,34 @@ package com.flansmod.common.gunshots;
 
 import com.flansmod.common.actions.ActionStack;
 import com.flansmod.common.actions.GunContext;
+import com.flansmod.util.Transform;
 import net.minecraft.world.Container;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.Vec3;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.Objects;
 
 public class GunContextInventoryItem extends GunContext
 {
+	@Nullable
+	private final Vec3 Position;
 	private final Container Inv;
 	private final int Slot;
-	public GunContextInventoryItem(Container inv, int slot, net.minecraft.world.level.Level level)
+	public GunContextInventoryItem(Container inv, int slot, @Nullable Vec3 position, @Nullable net.minecraft.world.level.Level level)
 	{
 		super(inv.getItem(slot), level);
+		Position = position;
 		Inv = inv;
 		Slot = slot;
 	}
-
 	@Override
 	public void OnItemStackChanged(ItemStack stack)
 	{
-		if(!StackUpdateWouldInvalidate(Inv.getItem(Slot)))
-		{
-			Inv.setItem(Slot, stack);
-		}
+		Inv.setItem(Slot, stack);
 	}
 	@Override
 	public boolean UpdateFromItemStack()
@@ -42,6 +44,8 @@ public class GunContextInventoryItem extends GunContext
 	@Override
 	@Nonnull
 	public ShooterContext GetShooter() { return ShooterContext.INVALID; }
+	@Override
+	public Transform GetShootOrigin() { return new Transform(Position); }
 	@Override
 	public Container GetAttachedInventory() { return Inv; }
 	@Override

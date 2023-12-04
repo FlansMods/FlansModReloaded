@@ -237,7 +237,7 @@ public class ShootAction extends ActionInstance
 				{
 					Transform randomizedDirection = RandomizeVectorDirection(
 						Group.Context.Gun.GetShooter().Entity().level.random,
-						Group.Context.Gun.GetShooter().GetShootOrigin(),
+						Group.Context.Gun.GetShootOrigin(),
 						bulletSpread,
 						shotContext.SpreadPattern());
 
@@ -388,7 +388,7 @@ public class ShootAction extends ActionInstance
 
 		float loudness = Group.Context.Loudness();
 		if(loudness >= 30.0f)
-			level.gameEvent(Group.Context.Gun.GetShooter().Entity(), GameEvent.EXPLODE, Group.Context.Gun.GetShooter().GetShootOrigin().BlockPos());
+			level.gameEvent(Group.Context.Gun.GetShooter().Entity(), GameEvent.EXPLODE, Group.Context.Gun.GetShootOrigin().BlockPos());
 
 	}
 

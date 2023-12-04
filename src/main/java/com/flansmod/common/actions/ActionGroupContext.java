@@ -20,6 +20,8 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 
 import javax.annotation.Nonnull;
+import java.util.ArrayList;
+import java.util.List;
 
 public class ActionGroupContext
 {
@@ -41,12 +43,19 @@ public class ActionGroupContext
 	public final ActionGroupDefinition Def;
 
 	// Helpers
-	public boolean IsAttachment() { return GroupPath.contains("/"); }
-	public boolean IsValid() { return Gun.IsValid() && !GroupPath.isEmpty(); }
+	public boolean IsAttachment()
+	{
+		return GroupPath.contains("/");
+	}
+
+	public boolean IsValid()
+	{
+		return Gun.IsValid() && !GroupPath.isEmpty();
+	}
 
 	public static ActionGroupContext CreateFrom(GunContext gunContext, String groupPath)
 	{
-		if(gunContext.IsValid())
+		if (gunContext.IsValid())
 			return gunContext.GetActionGroupContext(groupPath);
 		return INVALID;
 	}
@@ -57,28 +66,31 @@ public class ActionGroupContext
 		GroupPath = groupPath;
 		Def = CacheGroupDef();
 	}
+
 	public EAttachmentType GetAttachmentType()
 	{
-		if(IsAttachment())
+		if (IsAttachment())
 		{
 			String[] components = GroupPath.split("/");
 			return EAttachmentType.Parse(components[0]);
 		}
 		return null;
 	}
+
 	public int GetAttachmentIndex()
 	{
-		if(IsAttachment())
+		if (IsAttachment())
 		{
 			String[] components = GroupPath.split("/");
-			if(components.length == 3)
+			if (components.length == 3)
 				return Integer.parseInt(components[1]);
 		}
 		return 0;
 	}
+
 	public String GetActionKey()
 	{
-		if(IsAttachment())
+		if (IsAttachment())
 		{
 			String[] components = GroupPath.split("/");
 			return components[components.length - 1];
@@ -89,19 +101,19 @@ public class ActionGroupContext
 	@Nonnull
 	private ActionGroupDefinition CacheGroupDef()
 	{
-		if(IsAttachment())
+		if (IsAttachment())
 		{
 			String[] components = GroupPath.split("/");
 			EAttachmentType attachmentType = EAttachmentType.Parse(components[0]);
 			int index = 0;
 			String subPath = components[1];
-			if(components.length >= 3)
+			if (components.length >= 3)
 			{
 				index = Integer.parseInt(components[1]);
 				subPath = components[2];
 			}
 			AttachmentDefinition attachment = Gun.GetAttachmentDefinition(attachmentType, index);
-			if(attachment.IsValid())
+			if (attachment.IsValid())
 			{
 				return attachment.GetActionGroup(subPath);
 			}
@@ -119,32 +131,30 @@ public class ActionGroupContext
 		ReloadDefinition reloadDef = Gun.GetReloadDefinitionContaining(this);
 		return reloadDef != null ? reloadDef.key : GroupPath;
 	}
+
 	@Nonnull
 	protected CompoundTag GetRootTag()
 	{
 		return Gun.GetTags(GetRootTagKey());
 	}
+
 	protected void SetRootTag(CompoundTag tags)
 	{
 		Gun.SetTags(GetRootTagKey(), tags);
 	}
+
 	@Nonnull
 	protected CompoundTag GetMagTag(int magIndex)
 	{
-		CompoundTag rootTag = GetRootTag();
-
-		final String magTag = "mag_" + magIndex;
-		if (rootTag.contains(magTag))
-			return rootTag.getCompound(magTag);
+		if (Gun.GetItemStack().getItem() instanceof GunItem gunItem)
+			return gunItem.GetMagTag(Gun.GetItemStack(), GroupPath, magIndex);
 		return new CompoundTag();
 	}
+
 	protected void SetMagTag(int magIndex, CompoundTag tags)
 	{
-		CompoundTag rootTags = GetRootTag();
-		CompoundTag updatedTags = rootTags.copy();
-
+		CompoundTag updatedTags = GetRootTag().copy();
 		updatedTags.put("mag_" + magIndex, tags);
-
 		SetRootTag(updatedTags);
 	}
 	// --------------------------------------------------------------------------
@@ -155,15 +165,51 @@ public class ActionGroupContext
 	@Nonnull
 	public MagazineDefinition GetMagazineType(int magIndex)
 	{
-		if(Gun.GetItemStack().getItem() instanceof GunItem gunItem)
+		if (Gun.GetItemStack().getItem() instanceof GunItem gunItem)
 		{
 			return gunItem.GetMagazineType(Gun.GetItemStack(), GroupPath, magIndex);
 		}
 		return MagazineDefinition.INVALID;
 	}
+
 	public int GetMagazineSize(int magIndex)
 	{
 		return GetMagazineType(magIndex).numRounds;
+	}
+
+	public void SetMagazineType(int magIndex, @Nonnull MagazineDefinition magDef)
+	{
+		int newMagSize = magDef.numRounds;
+		Item[] bulletsInMag = ExtractCompactStacks(magIndex);
+		Item[] resultingBulletsInMag = new Item[newMagSize];
+		List<ItemStack> expelBullets = new ArrayList<>();
+
+		CompoundTag updatedTags = GetMagTag(magIndex).copy();
+		updatedTags.putString("type", magDef.GetLocationString());
+		SetMagTag(magIndex, updatedTags);
+
+		int bulletCount = 0;
+		for(int i = 0; i < bulletsInMag.length; i++)
+		{
+			if(bulletsInMag[i] != Items.APPLE)
+			{
+				if(bulletCount < newMagSize)
+				{
+					// Move this bullet into the new array
+					resultingBulletsInMag[bulletCount] = bulletsInMag[i];
+				}
+				else
+				{
+					// Eject this bullet
+					expelBullets.add(new ItemStack(bulletsInMag[i], 1));
+				}
+				bulletCount++;
+			}
+		}
+
+		// Re-assign the remaining bullets to the mag
+		CompactStacks(magIndex, resultingBulletsInMag);
+		Gun.ExpelItems(expelBullets);
 	}
 
 	// --------------------------------------------------------------------------
@@ -172,67 +218,22 @@ public class ActionGroupContext
 	@Nonnull
 	public ItemStack[] GetCombinedBulletStacks(int magIndex)
 	{
-		CompoundTag magTags = GetMagTag(magIndex);
-		if(magTags.contains("bullets"))
-		{
-			CompoundTag bulletTags = magTags.getCompound("bullets");
-			ItemStack[] stacks = new ItemStack[bulletTags.size()];
-			int stackIndex = 0;
-			for(String key : bulletTags.getAllKeys())
-			{
-				stacks[stackIndex] = ItemStack.of(bulletTags.getCompound(key));
-				stackIndex++;
-			}
-			return stacks;
-		}
+		if(Gun.GetItemStack().getItem() instanceof GunItem gunItem)
+			return gunItem.GetCombinedBulletStacks(Gun.GetItemStack(), GroupPath, magIndex);
 		return new ItemStack[0];
 	}
 	@Nonnull
 	public ItemStack GetBulletAtIndex(int magIndex, int bulletIndex)
 	{
-		CompoundTag magTags = GetMagTag(magIndex);
-		if (magTags.contains("bullets"))
-		{
-			CompoundTag bulletTags = magTags.getCompound("bullets");
-			for(String key : bulletTags.getAllKeys())
-			{
-				int startIndex = Integer.parseInt(key);
-				ItemStack stack = ItemStack.of(bulletTags.getCompound(key));
-
-				// Apple represents empty spaces because Minecraft hides 5xAir as 0xAir
-				if(stack.getItem() == Items.APPLE)
-					return ItemStack.EMPTY;
-
-				int endIndex = startIndex + stack.getCount();
-				if(startIndex <= bulletIndex && bulletIndex < endIndex)
-				{
-
-					return stack.copyWithCount(1);
-				}
-			}
-		}
+		if(Gun.GetItemStack().getItem() instanceof GunItem gunItem)
+			return gunItem.GetBulletAtIndex(Gun.GetItemStack(), GroupPath, magIndex, bulletIndex);
 		return ItemStack.EMPTY;
 	}
 	public int GetNumBulletsInMag(int magIndex)
 	{
-		int count = 0;
-		CompoundTag magTags = GetMagTag(magIndex);
-		if (magTags.contains("bullets"))
-		{
-			CompoundTag bulletTags = magTags.getCompound("bullets");
-			for(String key : bulletTags.getAllKeys())
-			{
-				int startIndex = Integer.parseInt(key);
-				ItemStack stack = ItemStack.of(bulletTags.getCompound(key));
-
-				// Apple represents empty spaces because Minecraft hides 5xAir as 0xAir
-				if(stack.getItem() == Items.APPLE)
-					continue;
-
-				count += stack.getCount();
-			}
-		}
-		return count;
+		if(Gun.GetItemStack().getItem() instanceof GunItem gunItem)
+			return gunItem.GetNumBulletsInMag(Gun.GetItemStack(), GroupPath, magIndex);
+		return 0;
 	}
 	@Nonnull
 	protected ItemStack ConsumeBulletAtIndex(int magIndex, int bulletIndex)
@@ -261,14 +262,13 @@ public class ActionGroupContext
 			//	for(int i = 0; i < magDef.numRounds; i++)
 			//		ConsumeBulletAtIndex(magIndex, i);
 			//}
-			case INVALID_FIRE_INDEX -> {
+			case ActionGroupContext.INVALID_FIRE_INDEX -> {
 				// No-op
 			}
 			default -> {
 				return ConsumeBulletAtIndex(magIndex, indexToFire);
 			}
 		}
-
 		return ItemStack.EMPTY;
 	}
 	@Nonnull
@@ -312,37 +312,16 @@ public class ActionGroupContext
 		}
 		return bulletStack;
 	}
-
 	@Nonnull
 	private Item[] ExtractCompactStacks(int magIndex)
 	{
-		MagazineDefinition magDef = GetMagazineType(magIndex);
-		CompoundTag magTags = GetMagTag(magIndex);
-		Item[] items = new Item[magDef.numRounds];
-		for(int i = 0; i < magDef.numRounds; i++)
-			items[i] = Items.APPLE;
-
-		if (magTags.contains("bullets"))
-		{
-			CompoundTag bulletTags = magTags.getCompound("bullets");
-			for(String key : bulletTags.getAllKeys())
-			{
-				int startIndex = Integer.parseInt(key);
-				ItemStack stack = ItemStack.of(bulletTags.getCompound(key));
-				int endIndex = startIndex + stack.getCount();
-				for(int i = startIndex; i < endIndex; i++)
-				{
-					if(0 <= i && i < magDef.numRounds)
-						items[i] = stack.getItem();
-				}
-			}
-		}
-		return items;
+		if(Gun.GetItemStack().getItem() instanceof GunItem gunItem)
+			return gunItem.ExtractCompactStacks(Gun.GetItemStack(), GroupPath, magIndex);
+		return new Item[0];
 	}
-
-	private void CompactStacks(int magIndex, Item[] items)
+	private void CompactStacks(int magIndex, @Nonnull Item[] items)
 	{
-		if(items == null || items.length == 0)
+		if(items.length == 0)
 			return;
 
 		CompoundTag bulletsTag = new CompoundTag();

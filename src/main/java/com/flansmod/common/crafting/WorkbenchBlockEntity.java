@@ -2,6 +2,7 @@ package com.flansmod.common.crafting;
 
 import com.flansmod.common.FlansMod;
 import com.flansmod.common.actions.Actions;
+import com.flansmod.common.actions.GunContext;
 import com.flansmod.common.item.FlanItem;
 import com.flansmod.common.item.GunItem;
 import com.flansmod.common.types.crafting.EWorkbenchInventoryType;
@@ -1078,16 +1079,19 @@ public class WorkbenchBlockEntity extends BlockEntity implements WorldlyContaine
 			if (gunContainer.getContainerSize() > 0 && !gunContainer.getItem(0).isEmpty() && gunContainer.getItem(0).getItem() instanceof GunItem gunItem)
 			{
 				ItemStack gunStack = gunContainer.getItem(0);
-				List<MagazineDefinition> mags = gunItem.Def().GetMagazineSettings(Actions.DefaultPrimaryActionKey).GetMatchingMagazines();
-				if (0 <= magIndex && magIndex < mags.size())
+				GunContext gunContext = GunContext.GetGunContext(gunContainer, 0);
+				if(gunContext.IsValid())
 				{
-					int magCost = mags.get(magIndex).upgradeCost + gunItem.Def().GetMagazineSettings(Actions.DefaultPrimaryActionKey).baseCostToSwap;
-					magUpgradeContainer.getItem(0).setCount(magUpgradeContainer.getItem(0).getCount() - magCost);
-					gunItem.SetMagazineType(gunStack, Actions.DefaultPrimaryActionKey, 0, mags.get(magIndex));
-				}
-				else
-				{
-					FlansMod.LOGGER.warn(player.getName().getString() + " tried to set mag index " + magIndex + " on gun (" + gunItem.Def().Location + ") with only " + mags.size() + " mag options");
+					List<MagazineDefinition> mags = gunItem.Def().GetMagazineSettings(Actions.DefaultPrimaryActionKey).GetMatchingMagazines();
+					if (0 <= magIndex && magIndex < mags.size())
+					{
+						int magCost = mags.get(magIndex).upgradeCost + gunItem.Def().GetMagazineSettings(Actions.DefaultPrimaryActionKey).baseCostToSwap;
+						magUpgradeContainer.getItem(0).setCount(magUpgradeContainer.getItem(0).getCount() - magCost);
+						gunContext.GetActionGroupContext(Actions.DefaultPrimaryActionKey).SetMagazineType(0, mags.get(magIndex));
+					} else
+					{
+						FlansMod.LOGGER.warn(player.getName().getString() + " tried to set mag index " + magIndex + " on gun (" + gunItem.Def().Location + ") with only " + mags.size() + " mag options");
+					}
 				}
 			}
 		}

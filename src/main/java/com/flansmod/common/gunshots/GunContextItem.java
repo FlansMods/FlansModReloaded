@@ -19,7 +19,8 @@ public class GunContextItem extends GunContext
 	// We don't even know where this ItemStack lives, no-op
 	@Override
 	public void OnItemStackChanged(ItemStack stack) { }
-	// Kinda want to return a "Maybe" here
+	@Override
+	protected boolean CanInvalidateItemStack() { return false; }
 	@Override
 	public boolean UpdateFromItemStack() { return false; }
 	@Override

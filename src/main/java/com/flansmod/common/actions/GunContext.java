@@ -1,6 +1,8 @@
 package com.flansmod.common.actions;
 
 import com.flansmod.common.FlansMod;
+import com.flansmod.common.crafting.RestrictedContainer;
+import com.flansmod.common.crafting.WorkbenchBlockEntity;
 import com.flansmod.common.gunshots.*;
 import com.flansmod.common.item.*;
 import com.flansmod.common.types.attachments.AttachmentDefinition;
@@ -11,11 +13,14 @@ import com.flansmod.common.types.guns.*;
 import com.flansmod.common.types.magazines.MagazineDefinition;
 import com.flansmod.common.types.parts.PartDefinition;
 import com.flansmod.common.types.vehicles.EPlayerInput;
+import com.flansmod.util.Transform;
 import com.mojang.datafixers.util.Pair;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.Container;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
@@ -65,11 +70,16 @@ public abstract class GunContext
 	}
 
 	@Nonnull
-	public static GunContext GetGunContext(Inventory inventory, int slot)
+	public static GunContext GetGunContext(Container container, int slot)
 	{
 		// No caching, because we don't know where this inventory is
-		if(inventory.getContainerSize() > slot && inventory.getItem(slot).getItem() instanceof GunItem gun)
-			return new GunContextInventoryItem(inventory, slot, inventory.player.level);
+		if(container.getContainerSize() > slot && container.getItem(slot).getItem() instanceof GunItem gun)
+			if(container instanceof Inventory inventory)
+				return new GunContextInventoryItem(container, slot, inventory.player.position(), inventory.player.level);
+			else if(container instanceof RestrictedContainer workbench)
+				return new GunContextInventoryItem(container, slot, workbench.OwnedBy.getBlockPos().getCenter(), workbench.OwnedBy.getLevel());
+			else
+				return new GunContextInventoryItem(container, slot, null, null);
 		return INVALID;
 	}
 
@@ -189,9 +199,10 @@ public abstract class GunContext
 	// Helpers
 	// --------------------------------------------------------------------------
 	public ItemStack GetItemStack() { return Stack; }
+	protected boolean CanInvalidateItemStack() { return true; }
 	public void SetItemStack(ItemStack stack)
 	{
-		if(StackUpdateWouldInvalidate(stack))
+		if(!CanInvalidateItemStack() && StackUpdateWouldInvalidate(stack))
 		{
 			FlansMod.LOGGER.error("Trying to update GunStack with an invalidating change: " + Stack + " to " + stack);
 			return;
@@ -199,6 +210,10 @@ public abstract class GunContext
 
 		Stack = stack;
 		OnItemStackChanged(stack);
+	}
+	public Transform GetShootOrigin()
+	{
+		return GetShooter().GetShootOrigin();
 	}
 	public boolean IsValid()
 	{
@@ -290,14 +305,14 @@ public abstract class GunContext
 	// ItemStack Operations
 	// --------------------------------------------------------------------------
 	@Nonnull
-	protected CompoundTag GetTags(String key)
+	protected CompoundTag GetTags(@Nonnull String key)
 	{
 		CompoundTag root = GetItemStack().getOrCreateTag();
 		if(root.contains(key))
 			return root.getCompound(key);
 		return new CompoundTag();
 	}
-	protected void SetTags(String key, CompoundTag tags)
+	protected void SetTags(@Nonnull String key, @Nonnull CompoundTag tags)
 	{
 		ItemStack updatedStack = Stack.copy();
 		updatedStack.getOrCreateTag().put(key, tags);
@@ -573,6 +588,24 @@ public abstract class GunContext
 	// -----------------------------------------------------------------------------------------------------------------
 	// Util methods
 	// -----------------------------------------------------------------------------------------------------------------
+
+	public boolean ExpelItems(List<ItemStack> stacks)
+	{
+		if(Level == null)
+			return false;
+		if(Level.isClientSide)
+			return false;
+
+		for(ItemStack stack : stacks)
+		{
+			ItemEntity itemEntity = new ItemEntity(EntityType.ITEM, Level);
+			itemEntity.setItem(stack);
+			itemEntity.setPos(GetShootOrigin().PositionVec3());
+			Level.addFreshEntity(itemEntity);
+		}
+
+		return true;
+	}
 
 	public void Save(CompoundTag tags)
 	{

@@ -37,7 +37,7 @@ public class PlaceBlockAction extends ActionInstance
 		Block block = ForgeRegistries.BLOCKS.getValue(new ResourceLocation(blockID));
 		if(block != null)
 		{
-			Transform ray = Group.Context.Gun.GetShooter().GetShootOrigin();
+			Transform ray = Group.Context.Gun.GetShootOrigin();
 			Vec3 origin = ray.PositionVec3();
 			Vec3 direction = ray.ForwardVec3();
 			float reach = Reach();

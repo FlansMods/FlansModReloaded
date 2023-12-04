@@ -203,12 +203,12 @@ public class ActionGroupInstance
 		}
 		if(!Def.canActUnderwater)
 		{
-			if(Context.Gun.GetShooter().Entity().level.isWaterAt(new BlockPos(Context.Gun.GetShooter().GetShootOrigin().PositionVec3())))
+			if(Context.Gun.GetShooter().Entity().level.isWaterAt(new BlockPos(Context.Gun.GetShootOrigin().PositionVec3())))
 				return EActionResult.TryNextAction;
 		}
 		if(!Def.canActUnderOtherLiquid)
 		{
-			if(Context.Gun.GetShooter().Entity().level.isFluidAtPosition(new BlockPos(Context.Gun.GetShooter().GetShootOrigin().PositionVec3()), (fluidState) -> { return !fluidState.isEmpty() && !fluidState.isSourceOfType(Fluids.WATER); }))
+			if(Context.Gun.GetShooter().Entity().level.isFluidAtPosition(new BlockPos(Context.Gun.GetShootOrigin().PositionVec3()), (fluidState) -> { return !fluidState.isEmpty() && !fluidState.isSourceOfType(Fluids.WATER); }))
 				return EActionResult.TryNextAction;
 		}
 
