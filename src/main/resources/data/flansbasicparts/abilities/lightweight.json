@@ -8,8 +8,9 @@
     "effectParameters": [
         "minecraft:generic.movement_speed"
     ],
-    "baseAmount": 0.25,
-    "extraAmountPerLevel": 0.25,
+    "modifiers": [],
+    "baseAmount": 0.02,
+    "extraAmountPerLevel": 0.02,
     "baseDuration": 0.0,
     "extraDurationPerLevel": 0.0,
     "stackAmount": false,

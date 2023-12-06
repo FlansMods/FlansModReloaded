@@ -5,7 +5,7 @@ import com.flansmod.common.actions.*;
 import com.flansmod.common.gunshots.*;
 import com.flansmod.common.item.*;
 import com.flansmod.common.types.abilities.AbilityDefinition;
-import com.flansmod.common.types.abilities.EAbilityTrigger;
+import com.flansmod.common.types.abilities.elements.EAbilityTrigger;
 import com.flansmod.common.types.attachments.AttachmentDefinition;
 import com.flansmod.common.types.attachments.EAttachmentType;
 import com.flansmod.common.types.guns.elements.*;

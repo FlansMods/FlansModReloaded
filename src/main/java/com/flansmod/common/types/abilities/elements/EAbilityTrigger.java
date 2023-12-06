@@ -1,4 +1,4 @@
-package com.flansmod.common.types.abilities;
+package com.flansmod.common.types.abilities.elements;
 
 public enum EAbilityTrigger
 {

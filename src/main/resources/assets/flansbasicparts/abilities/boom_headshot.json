@@ -1,17 +1,27 @@
 {
     "maxLevel": 5,
-    "startTrigger": "Instant",
+    "startTrigger": "ShotEntity",
     "endTrigger": "Instant",
     "triggerConditions": [],
     "targetType": "Shooter",
-    "effectType": "ApplyDamage",
+    "effectType": "ApplyMobEffect",
     "effectParameters": [],
+    "modifiers": [
+        {
+            "Stat": "impact_damage",
+            "Filter": "",
+            "Add": 0.0,
+            "Multiply": 1.5,
+            "SetValue": "",
+            "ApplyFilters": []
+        }
+    ],
     "baseAmount": 1.0,
-    "extraAmountPerLevel": 1.0,
-    "baseDuration": 1.0,
-    "extraDurationPerLevel": 1.0,
-    "stackAmount": false,
-    "maxAmount": 1.0,
+    "extraAmountPerLevel": 0.0,
+    "baseDuration": 2.0,
+    "extraDurationPerLevel": 2.0,
+    "stackAmount": true,
+    "maxAmount": 3.0,
     "stackDuration": false,
     "maxDuration": 1.0
 }

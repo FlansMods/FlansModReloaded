@@ -3,7 +3,7 @@ package com.flansmod.common.abilities;
 import com.flansmod.common.FlansMod;
 import com.flansmod.common.actions.contexts.GunContext;
 import com.flansmod.common.types.abilities.AbilityDefinition;
-import com.flansmod.common.types.abilities.EAbilityTarget;
+import com.flansmod.common.types.abilities.elements.EAbilityTarget;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;

@@ -50,19 +50,29 @@ public class GunshotContext
 
 	public boolean IsValid() { return ActionGroup.IsValid() && Bullet.IsValid(); }
 
-	public void ProcessImpact(Level level, Gunshot shotData)
+	public void Server_ProcessImpact(Level level, Gunshot shotData)
 	{
 		for (HitResult hit : shotData.hits)
 		{
 			Entity targetEntity = null;
 
+			HitResult toProcess = hit;
+			if(hit instanceof UnresolvedEntityHitResult unresolved)
+			{
+				Entity entity = level.getEntity(unresolved.EntityID());
+				if(entity != null)
+				{
+					toProcess = new EntityHitResult(entity);
+				}
+			}
+
 			// Apply damage etc
-			switch (hit.getType())
+			switch (toProcess.getType())
 			{
 				case BLOCK -> {
 					if (Bullet.shootStats.breaksMaterials.length > 0)
 					{
-						BlockHitResult blockHit = (BlockHitResult) hit;
+						BlockHitResult blockHit = (BlockHitResult) toProcess;
 						BlockState stateHit = level.getBlockState(blockHit.getBlockPos());
 						if (Bullet.shootStats.BreaksMaterial(stateHit.getMaterial()))
 						{
@@ -72,15 +82,15 @@ public class GunshotContext
 				}
 				case ENTITY -> {
 					EPlayerHitArea hitArea = EPlayerHitArea.BODY;
-					if (hit instanceof UnresolvedEntityHitResult unresolvedHit)
+					if (toProcess instanceof UnresolvedEntityHitResult unresolvedHit)
 					{
 						targetEntity = level.getEntity(unresolvedHit.EntityID());
 						hitArea = unresolvedHit.HitboxArea();
-					} else if (hit instanceof PlayerHitResult playerHit)
+					} else if (toProcess instanceof PlayerHitResult playerHit)
 					{
 						targetEntity = playerHit.getEntity();
 						hitArea = playerHit.GetHitbox().area;
-					} else if (hit instanceof EntityHitResult entityHit)
+					} else if (toProcess instanceof EntityHitResult entityHit)
 					{
 						targetEntity = entityHit.getEntity();
 					}
@@ -89,12 +99,12 @@ public class GunshotContext
 				}
 			}
 
-			ActionGroup.Gun.GetActionStack().CheckAbilities_Hit(ActionGroup.Gun, hit);
+			ActionGroup.Gun.GetActionStack().CheckAbilities_Hit(ActionGroup.Gun, toProcess);
 
 			float splashRadius = SplashDamageRadius();
 			if(splashRadius > 0.0f)
 			{
-				Vec3 center = hit.getLocation();
+				Vec3 center = toProcess.getLocation();
 				Vec3 halfExtents = new Vec3(splashRadius, splashRadius, splashRadius);
 				for(Entity splashEntity : level.getEntities(targetEntity, new AABB(center.subtract(halfExtents), center.add(halfExtents))))
 				{
@@ -110,7 +120,7 @@ public class GunshotContext
 			float explosionRadius = ExplosionRadius();
 			if(explosionRadius > 0.0f)
 			{
-				level.explode(null, hit.getLocation().x, hit.getLocation().y, hit.getLocation().z, explosionRadius, Level.ExplosionInteraction.TNT);
+				level.explode(null, toProcess.getLocation().x, toProcess.getLocation().y, toProcess.getLocation().z, explosionRadius, Level.ExplosionInteraction.TNT);
 			}
 
 			float fireSpreadRadius = FireSpreadRadius();
@@ -125,8 +135,8 @@ public class GunshotContext
 						{
 							if(level.random.nextFloat() < fireSpreadAmount)
 							{
-								BlockPos pos = new BlockPos(hit.getLocation().add(i, j, k));
-								if (pos.distToCenterSqr(hit.getLocation()) <= fireSpreadRadius * fireSpreadRadius)
+								BlockPos pos = new BlockPos(toProcess.getLocation().add(i, j, k));
+								if (pos.distToCenterSqr(toProcess.getLocation()) <= fireSpreadRadius * fireSpreadRadius)
 								{
 									if(level.getBlockState(pos).isAir())
 									{

@@ -409,7 +409,7 @@ public class ShootAction extends ActionInstance
 
 	private void ServerProcessImpact(Level level, Gunshot shot, GunshotContext gunshotContext)
 	{
-		gunshotContext.ProcessImpact(level, shot);
+		gunshotContext.Server_ProcessImpact(level, shot);
 	}
 
 	@Override

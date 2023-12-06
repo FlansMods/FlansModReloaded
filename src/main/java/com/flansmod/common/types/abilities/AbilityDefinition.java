@@ -3,6 +3,10 @@ package com.flansmod.common.types.abilities;
 import com.flansmod.common.FlansMod;
 import com.flansmod.common.types.JsonDefinition;
 import com.flansmod.common.types.JsonField;
+import com.flansmod.common.types.abilities.elements.EAbilityEffect;
+import com.flansmod.common.types.abilities.elements.EAbilityTarget;
+import com.flansmod.common.types.abilities.elements.EAbilityTrigger;
+import com.flansmod.common.types.elements.ModifierDefinition;
 import com.flansmod.util.Maths;
 import net.minecraft.resources.ResourceLocation;
 
@@ -39,6 +43,8 @@ public class AbilityDefinition extends JsonDefinition
 	public EAbilityEffect effectType = EAbilityEffect.Nothing;
 	@JsonField
 	public String[] effectParameters = new String[0];
+	@JsonField(Docs = "The modifiers to add when the effect is active")
+	public ModifierDefinition[] modifiers = new ModifierDefinition[0];
 
 	public float GetAmount(int level)
 	{

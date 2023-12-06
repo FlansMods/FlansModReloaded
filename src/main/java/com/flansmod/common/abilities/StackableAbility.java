@@ -20,10 +20,13 @@ public abstract class StackableAbility extends AbilityInstance
 
 	public float GetAmount() { return Amount; }
 	public float GetDurationSeconds() { return Duration; }
+	public int GetDurationTicks() { return Maths.Ceil(Duration * 20.0f); }
 
 	@Override
 	public void Trigger(@Nonnull GunContext gun, @Nullable HitResult hit)
 	{
+
+
 		if(Def.stackAmount)
 		{
 			Amount += Def.GetAmount(Level);
@@ -52,5 +55,7 @@ public abstract class StackableAbility extends AbilityInstance
 	{
 		Duration -= 1f/20f;
 		Duration = Maths.Clamp(Duration, 0, 9999);
+		if(Duration <= 0.0f)
+			Amount = 0.0f;
 	}
 }

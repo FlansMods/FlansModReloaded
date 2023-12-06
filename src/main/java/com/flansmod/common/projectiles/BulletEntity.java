@@ -223,7 +223,7 @@ public class BulletEntity extends Projectile
 		shot.hits = new HitResult[] {
 			hit
 		};
-		Context.ProcessImpact(level, shot);
+		Context.Server_ProcessImpact(level, shot);
 		kill();
 	}
 

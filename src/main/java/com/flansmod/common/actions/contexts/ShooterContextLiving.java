@@ -1,9 +1,12 @@
 package com.flansmod.common.actions.contexts;
 
+import com.flansmod.common.effects.FlansMobEffect;
 import com.flansmod.common.item.FlanItem;
+import com.flansmod.common.types.elements.ModifierDefinition;
 import com.flansmod.util.Transform;
 import net.minecraft.world.Container;
 import net.minecraft.world.InteractionHand;
+import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
@@ -108,6 +111,7 @@ public class ShooterContextLiving extends ShooterContext implements Container
 		hash ^= HashSlot(EquipmentSlot.CHEST);
 		hash ^= HashSlot(EquipmentSlot.LEGS);
 		hash ^= HashSlot(EquipmentSlot.FEET);
+		hash ^= HashMobEffects();
 
 		return hash;
 	}
@@ -120,6 +124,18 @@ public class ShooterContextLiving extends ShooterContext implements Container
 		}
 		return 0;
 	}
+	private int HashMobEffects()
+	{
+		int hash = 0;
+		for(MobEffectInstance effect : Shooter.getActiveEffects())
+		{
+			if(effect.getEffect() instanceof FlansMobEffect flansEffect)
+			{
+				hash ^= effect.hashCode();
+			}
+		}
+		return hash;
+	}
 	@Override
 	public void RecalculateModifierCache()
 	{
@@ -127,12 +143,28 @@ public class ShooterContextLiving extends ShooterContext implements Container
 		CacheSlot(EquipmentSlot.CHEST);
 		CacheSlot(EquipmentSlot.LEGS);
 		CacheSlot(EquipmentSlot.FEET);
+		CacheMobEffects();
 	}
 	private void CacheSlot(EquipmentSlot slot)
 	{
 		if(Shooter.getItemBySlot(EquipmentSlot.HEAD).getItem() instanceof FlanItem flanItem)
 		{
 			// TODO: Cache armour stats
+		}
+	}
+	private void CacheMobEffects()
+	{
+		for(MobEffectInstance effect : Shooter.getActiveEffects())
+		{
+			if(effect.getEffect() instanceof FlansMobEffect flansEffect)
+			{
+				for(ModifierDefinition modifier : flansEffect.Def().modifiers)
+				{
+					// Is this sus? Adding the same modifier many times to represent stacks?
+					for(int i = 0; i < effect.getAmplifier() + 1; i++)
+						ModifierCache.add(modifier);
+				}
+			}
 		}
 	}
 

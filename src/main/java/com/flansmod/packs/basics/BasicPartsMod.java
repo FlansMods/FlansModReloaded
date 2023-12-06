@@ -3,17 +3,17 @@ package com.flansmod.packs.basics;
 import com.flansmod.client.render.FlanModelRegistration;
 import com.flansmod.common.FlansMod;
 import com.flansmod.common.crafting.WorkbenchBlockEntity;
+import com.flansmod.packs.basics.common.MobEffectBonusDamage;
 import com.flansmod.packs.basics.client.DistillationTowerScreen;
-import com.flansmod.packs.basics.common.DistillationRecipe;
-import com.flansmod.packs.basics.common.DistillationTowerBlock;
-import com.flansmod.packs.basics.common.DistillationTowerBlockEntity;
-import com.flansmod.packs.basics.common.DistillationTowerMenu;
+import com.flansmod.packs.basics.common.*;
 import com.mojang.logging.LogUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraft.client.renderer.ItemModelShaper;
 import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.effect.MobEffect;
+import net.minecraft.world.effect.MobEffectCategory;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
@@ -53,6 +53,7 @@ public class BasicPartsMod
 	public static final DeferredRegister<MenuType<?>> MENUS = DeferredRegister.create(ForgeRegistries.MENU_TYPES, MODID);
 	public static final DeferredRegister<RecipeType<?>> RECIPE_TYPES = DeferredRegister.create(ForgeRegistries.RECIPE_TYPES, MODID);
 	public static final DeferredRegister<RecipeSerializer<?>> RECIPE_SERIALIZERS = DeferredRegister.create(ForgeRegistries.RECIPE_SERIALIZERS, MODID);
+	public static final DeferredRegister<MobEffect> EFFECTS = DeferredRegister.create(ForgeRegistries.MOB_EFFECTS, MODID);
 
 	// Storage helper blocks
 	public static final RegistryObject<Item> GUNPOWDER_SPECK = ITEMS.register("gunpowder_speck", () -> new Item(new Item.Properties()));
@@ -301,6 +302,7 @@ public class BasicPartsMod
 	public static final RegistryObject<RecipeType<DistillationRecipe>> DISTILLATION_RECIPE_TYPE = RECIPE_TYPES.register("distillation", () -> RecipeType.simple(new ResourceLocation(MODID, "distillation")));
 	public static final RegistryObject<RecipeSerializer<DistillationRecipe>> DISTILLATION_RECIPE_SERIALIZER = RECIPE_SERIALIZERS.register("distillation", DistillationRecipe.Serializer::new);
 
+	public static final RegistryObject<MobEffect> EFFECT_BOOM_HEADSHOT =					EFFECTS.register("boom_headshot", () -> new MobEffectBonusDamage(new ResourceLocation(MODID, "boom_headshot"), MobEffectCategory.BENEFICIAL, 0xff4040));
 
 	public BasicPartsMod()
 	{
@@ -311,6 +313,7 @@ public class BasicPartsMod
 		MENUS.register(modEventBus);
 		RECIPE_TYPES.register(modEventBus);
 		RECIPE_SERIALIZERS.register(modEventBus);
+		EFFECTS.register(modEventBus);
 		modEventBus.register(this);
 
 	}

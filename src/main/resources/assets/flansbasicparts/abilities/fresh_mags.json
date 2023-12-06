@@ -6,6 +6,7 @@
     "targetType": "Shooter",
     "effectType": "ApplyDamage",
     "effectParameters": [],
+    "modifiers": [],
     "baseAmount": 1.0,
     "extraAmountPerLevel": 1.0,
     "baseDuration": 1.0,
