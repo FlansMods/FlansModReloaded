@@ -1,7 +1,7 @@
 package com.flansmod.common.types.guns;
 
 import com.flansmod.common.FlansMod;
-import com.flansmod.common.actions.GunInputContext;
+import com.flansmod.common.actions.contexts.GunInputContext;
 import com.flansmod.common.types.JsonDefinition;
 import com.flansmod.common.types.JsonField;
 import com.flansmod.common.types.attachments.EAttachmentType;

@@ -17,8 +17,11 @@ import com.flansmod.client.render.guns.AttachmentItemRenderer;
 import com.flansmod.client.render.models.*;
 import com.flansmod.common.FlansMod;
 import com.flansmod.common.actions.*;
-import com.flansmod.common.gunshots.GunContextPlayer;
-import com.flansmod.common.gunshots.ShooterContext;
+import com.flansmod.common.actions.contexts.GunContext;
+import com.flansmod.common.actions.nodes.AimDownSightAction;
+import com.flansmod.common.actions.nodes.AnimationAction;
+import com.flansmod.common.actions.contexts.GunContextPlayer;
+import com.flansmod.common.actions.contexts.ShooterContext;
 import com.flansmod.common.item.FlanItem;
 import com.flansmod.common.types.attachments.EAttachmentType;
 import com.flansmod.util.Maths;
@@ -308,7 +311,7 @@ public abstract class FlanItemModelRenderer extends BlockEntityWithoutLevelRende
         ShooterContext shooterContext = ShooterContext.GetOrCreate(Minecraft.getInstance().player);
         if(shooterContext.IsValid())
         {
-            for(GunContext gunContext : shooterContext.GetAllActiveGunContexts())
+            for(GunContext gunContext : shooterContext.GetAllGunContexts(true))
             {
                 if(gunContext.IsValid() && gunContext instanceof GunContextPlayer gunContextPlayer)
                 {
@@ -471,6 +474,11 @@ public abstract class FlanItemModelRenderer extends BlockEntityWithoutLevelRende
                 TurboRenderUtility.Render(unbaked, vc, renderContext.Poses, renderContext.Light, renderContext.Overlay);
             }
         }
+    }
+
+    protected void RenderAttachedEffect(String attachPointName, ResourceLocation texture, ResourceLocation model, RenderContext renderContext)
+    {
+
     }
 
     @Nullable

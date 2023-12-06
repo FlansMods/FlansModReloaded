@@ -14,6 +14,12 @@
         ]
     },
     "modifiers": [],
+    "abilities": [
+        {
+            "ability": "flansbasicparts:fresh_mags",
+            "level": 1
+        }
+    ],
     "engine": {
         "maxAcceleration": 1.0,
         "maxDeceleration": 1.0,

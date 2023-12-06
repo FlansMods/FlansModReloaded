@@ -1,24 +1,26 @@
 package com.flansmod.common.actions;
 
-import com.flansmod.client.FlansModClient;
 import com.flansmod.client.render.FirstPersonManager;
 import com.flansmod.common.FlansMod;
+import com.flansmod.common.abilities.Abilities;
+import com.flansmod.common.actions.contexts.ActionGroupContext;
+import com.flansmod.common.actions.contexts.GunContext;
 import com.flansmod.common.gunshots.EPressType;
 import com.flansmod.common.network.FlansModPacketHandler;
 import com.flansmod.common.network.bidirectional.ActionUpdateMessage;
+import com.flansmod.common.abilities.AbilityInstance;
 import com.flansmod.common.types.guns.elements.*;
 import com.flansmod.common.types.magazines.EAmmoLoadMode;
 import com.flansmod.util.Maths;
-import com.flansmod.util.MinecraftHelpers;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import javax.swing.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -40,9 +42,11 @@ public class ActionStack
 	};
 
 	private final List<ActionGroupInstance> ActiveActionGroups = new ArrayList<>();
+	private final List<AbilityInstance> ActiveAbilities = new ArrayList<>();
 	private float ShotCooldown = 0.0f;
 	private boolean cancelActionRequested = false;
-	private final boolean IsClient;
+	public final boolean IsClient;
+	public boolean IsEquipped = false;
 
 	public ActionStack(boolean client)
 	{
@@ -144,10 +148,17 @@ public class ActionStack
 				groupInstance.OnStartServer(doInitialTrigger);
 
 			OnActionGroupStarted(groupContext);
+			CheckAbilities_ActionGroupStarted(groupContext);
+			if(reload != null)
+			{
+				EReloadStage stage = reload.GetStage(groupContext.GroupPath);
+				CheckAbilities_ReloadStage(groupContext, stage);
+			}
 		}
 		return result;
 	}
-	private EActionResult TryUpdateInputHeld(ActionGroupContext groupContext, boolean held)
+	@Nonnull
+	private EActionResult TryUpdateInputHeld(@Nonnull ActionGroupContext groupContext, boolean held)
 	{
 		ActionGroupInstance groupInstance = TryGetGroupInstance(groupContext);
 		if(groupInstance == null)
@@ -158,10 +169,23 @@ public class ActionStack
 		return EActionResult.CanProcess;
 	}
 
-	public void CancelGroupInstance(ActionGroupContext context)
+	public void CancelGroupInstance(@Nonnull ActionGroupContext context)
 	{
 		StopActionGroup(context);
 	}
+	public void UpdateEquipped(GunContext context, boolean isEquipped)
+	{
+		if(isEquipped && !IsEquipped)
+		{
+			CheckAbilities_Equip(context, true);
+		}
+		else if(!isEquipped && IsEquipped)
+		{
+			CheckAbilities_Equip(context, false);
+		}
+		IsEquipped = isEquipped;
+	}
+
 	private void TickActions()
 	{
 		// Reverse iterate to delete when done
@@ -201,6 +225,8 @@ public class ActionStack
 
 			if(stillFinished)
 			{
+				CheckAbilities_ActionGroupEnded(groupContext);
+
 				if (IsClient)
 					groupInstance.OnFinishClient();
 				else
@@ -362,6 +388,14 @@ public class ActionStack
 		//FlansMod.LOGGER.info("[" + MinecraftHelpers.GetTick() +
 		//	(IsClient ? "|Client]" : "|Server]")
 		//	+ string);
+	}
+
+	public void Clear(GunContext gunContext)
+	{
+		for(ActionGroupInstance actionGroup : ActiveActionGroups)
+			actionGroup.SetFinished();
+		for(AbilityInstance ability : ActiveAbilities)
+			ability.End(gunContext);
 	}
 
 	// -------------------------------------------------------------------------------------------------
@@ -538,7 +572,7 @@ public class ActionStack
 		// Send a message to the nearby clients about these actions if required
 		if (result == EActionResult.CanProcess && (groupInstance.PropogateToServer() || groupInstance.NeedsNetSync()))
 		{
-			Level level = groupContext.Gun.Level;
+			Level level = groupContext.Gun.GetLevel();
 			if (level != null)
 			{
 				double radius = groupInstance.GetPropogationRadius();
@@ -566,4 +600,84 @@ public class ActionStack
 		}
 		return result;
 	}
+
+
+	// -------------------------------------------------------------------------------------------------
+	// ABILTIES
+	// -------------------------------------------------------------------------------------------------
+	public void CheckInitTriggers(@Nonnull GunContext gunContext)
+	{
+		if(ActiveAbilities.isEmpty())
+		{
+			for (var kvp : gunContext.GetAbilities().entrySet())
+			{
+				AbilityInstance instance = Abilities.InstanceAbility(kvp.getKey(), kvp.getValue());
+				if(instance != null)
+					ActiveAbilities.add(instance);
+				else
+					FlansMod.LOGGER.warn("Could not spawn AbilityInstance " + kvp.getKey());
+			}
+		}
+	}
+
+	public void CheckAbilities_Equip(@Nonnull GunContext gun, boolean equip)
+	{
+		CheckInitTriggers(gun);
+		for(AbilityInstance instance : ActiveAbilities)
+			instance.OnEquip(gun, equip);
+	}
+	public void CheckAbilities_Hit(@Nonnull GunContext gun, @Nonnull HitResult hit)
+	{
+		CheckInitTriggers(gun);
+		for(AbilityInstance instance : ActiveAbilities)
+			instance.OnHit(gun, hit);
+	}
+	public void CheckAbilities_ReloadStage(@Nonnull ActionGroupContext actionGroup, @Nonnull EReloadStage stage)
+	{
+		CheckInitTriggers(actionGroup.Gun);
+		for(AbilityInstance instance : ActiveAbilities)
+			instance.OnReloadStage(actionGroup, stage);
+	}
+	public void CheckAbilities_ActionGroupStarted(@Nonnull ActionGroupContext actionGroup)
+	{
+		CheckInitTriggers(actionGroup.Gun);
+		for(AbilityInstance instance : ActiveAbilities)
+			instance.OnActionGroupStarted(actionGroup);
+	}
+	public void CheckAbilities_ActionGroupTriggered(@Nonnull ActionGroupContext actionGroup)
+	{
+		CheckInitTriggers(actionGroup.Gun);
+		for(AbilityInstance instance : ActiveAbilities)
+			instance.OnActionGroupTriggered(actionGroup);
+	}
+	public void CheckAbilities_ActionGroupEnded(@Nonnull ActionGroupContext actionGroup)
+	{
+		CheckInitTriggers(actionGroup.Gun);
+		for(AbilityInstance instance : ActiveAbilities)
+			instance.OnActionGroupEnded(actionGroup);
+	}
+	public void CheckAbilities_ModeSwitch(@Nonnull GunContext gun, @Nonnull String modeSelected)
+	{
+		CheckInitTriggers(gun);
+		for(AbilityInstance instance : ActiveAbilities)
+			instance.OnModeSwitch(gun, modeSelected);
+	}
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

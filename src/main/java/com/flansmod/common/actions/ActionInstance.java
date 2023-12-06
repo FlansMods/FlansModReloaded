@@ -1,5 +1,6 @@
 package com.flansmod.common.actions;
 
+import com.flansmod.common.actions.contexts.GunContext;
 import com.flansmod.common.gunshots.*;
 import com.flansmod.common.types.guns.elements.ActionDefinition;
 import com.flansmod.common.types.elements.ModifierDefinition;

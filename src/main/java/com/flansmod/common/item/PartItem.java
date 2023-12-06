@@ -1,6 +1,8 @@
 package com.flansmod.common.item;
 
 import com.flansmod.common.FlansMod;
+import com.flansmod.common.types.abilities.AbilityDefinition;
+import com.flansmod.common.types.abilities.elements.AbilityProviderDefinition;
 import com.flansmod.common.types.parts.PartDefinition;
 import com.flansmod.util.Maths;
 import com.flansmod.util.MinecraftHelpers;
@@ -11,8 +13,11 @@ import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class PartItem extends FlanItem
 {
@@ -95,4 +100,13 @@ public class PartItem extends FlanItem
 		}
 	}
 
+	@Nonnull
+	@Override
+	public Map<AbilityDefinition, Integer> GetAbilities(@Nonnull ItemStack stack)
+	{
+		Map<AbilityDefinition, Integer> abilityMap = super.GetAbilities(stack);
+		for(AbilityProviderDefinition provider : Def().abilities)
+			abilityMap.put(provider.GetAbility(), provider.level);
+		return abilityMap;
+	}
 }

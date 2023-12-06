@@ -3,9 +3,11 @@ package com.flansmod.client.render;
 import com.flansmod.client.FlansModClient;
 import com.flansmod.common.FlansMod;
 import com.flansmod.common.actions.*;
-import com.flansmod.common.actions.ActionGroupContext;
-import com.flansmod.common.actions.GunContext;
-import com.flansmod.common.gunshots.ShooterContext;
+import com.flansmod.common.actions.contexts.ActionGroupContext;
+import com.flansmod.common.actions.contexts.GunContext;
+import com.flansmod.common.actions.nodes.AimDownSightAction;
+import com.flansmod.common.actions.nodes.ScopeAction;
+import com.flansmod.common.actions.contexts.ShooterContext;
 import com.flansmod.common.types.magazines.MagazineDefinition;
 import com.flansmod.util.Maths;
 import com.flansmod.util.MinecraftHelpers;
@@ -63,7 +65,7 @@ public class ClientRenderHooks
 		float totalFOVModifier = 0.0f;
 		int FOVModifierCount = 0;
 
-		GunContext[] gunContexts = shooterContext.GetAllActiveGunContexts();
+		GunContext[] gunContexts = shooterContext.GetAllGunContexts(true);
 		for(GunContext gunContext : gunContexts)
 		{
 			if(!gunContext.IsValid())
@@ -126,7 +128,7 @@ public class ClientRenderHooks
 		if(!shooterContext.IsValid())
 			return;
 
-		GunContext[] gunContexts = shooterContext.GetAllActiveGunContexts();
+		GunContext[] gunContexts = shooterContext.GetAllGunContexts(true);
 		GunContext mainContext = gunContexts[0];
 		GunContext offContext = gunContexts[1];
 		if (event instanceof RenderGuiOverlayEvent.Pre)
@@ -300,7 +302,7 @@ public class ClientRenderHooks
 		if(player == null || !shooterContext.IsValid())
 			return;
 
-		GunContext[] gunContexts = shooterContext.GetAllActiveGunContexts();
+		GunContext[] gunContexts = shooterContext.GetAllGunContexts(true);
 		GunContext mainContext = gunContexts[0];
 		GunContext offContext = gunContexts[1];
 		if(gunContexts[0].IsValid())

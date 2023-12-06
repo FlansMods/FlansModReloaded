@@ -4,7 +4,7 @@ import com.flansmod.common.FlansMod;
 import com.flansmod.common.actions.ActionGroupInstance;
 import com.flansmod.common.actions.ActionStack;
 import com.flansmod.common.gunshots.Gunshot;
-import com.flansmod.common.gunshots.GunshotContext;
+import com.flansmod.common.actions.contexts.GunshotContext;
 import com.flansmod.common.types.bullets.BulletDefinition;
 import com.flansmod.util.Maths;
 import net.minecraft.core.Direction;

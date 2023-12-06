@@ -2,7 +2,7 @@ package com.flansmod.client.render.guns;
 
 import com.flansmod.client.render.FlanItemModelRenderer;
 import com.flansmod.client.render.RenderContext;
-import com.flansmod.common.actions.GunContext;
+import com.flansmod.common.actions.contexts.GunContext;
 import com.flansmod.common.types.attachments.EAttachmentType;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;

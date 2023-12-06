@@ -1,0 +1,19 @@
+{
+    "maxLevel": 5,
+    "startTrigger": "Equip",
+    "endTrigger": "Unequip",
+    "triggerConditions": [],
+    "targetType": "Shooter",
+    "effectType": "ApplyAttributeModifier",
+    "effectParameters": [
+        "minecraft:generic.movement_speed"
+    ],
+    "baseAmount": 0.25,
+    "extraAmountPerLevel": 0.25,
+    "baseDuration": 0.0,
+    "extraDurationPerLevel": 0.0,
+    "stackAmount": false,
+    "maxAmount": 1.0,
+    "stackDuration": false,
+    "maxDuration": 1.0
+}

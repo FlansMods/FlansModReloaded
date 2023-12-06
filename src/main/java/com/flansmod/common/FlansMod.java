@@ -1,14 +1,15 @@
 package com.flansmod.common;
 
 import com.flansmod.client.FlansModClient;
+import com.flansmod.common.actions.contexts.GunContextCache;
 import com.flansmod.common.actions.ServerActionManager;
 import com.flansmod.common.crafting.*;
 import com.flansmod.common.entity.NpcRelationshipCapabilityAttacher;
-import com.flansmod.common.actions.ActionManager;
 import com.flansmod.common.gunshots.Raytracer;
-import com.flansmod.common.gunshots.ShooterContext;
+import com.flansmod.common.actions.contexts.ShooterContext;
 import com.flansmod.common.item.*;
 import com.flansmod.common.projectiles.BulletEntity;
+import com.flansmod.common.types.abilities.AbilityDefinitions;
 import com.flansmod.common.types.attachments.AttachmentDefinitions;
 import com.flansmod.common.types.crafting.MaterialDefinitions;
 import com.flansmod.common.types.crafting.WorkbenchDefinitions;
@@ -19,7 +20,6 @@ import com.flansmod.common.types.magazines.MagazineDefinitions;
 import com.flansmod.common.types.npc.NpcDefinitions;
 import com.flansmod.common.types.parts.PartDefinitions;
 import com.flansmod.common.worldgen.loot.LootPopulator;
-import com.flansmod.packs.vendersgame.VendersGameMod;
 import com.mojang.logging.LogUtils;
 import com.mojang.serialization.Codec;
 import net.minecraft.network.chat.Component;
@@ -39,7 +39,6 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.material.Material;
 import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.crafting.CraftingHelper;
 import net.minecraftforge.common.extensions.IForgeMenuType;
@@ -49,7 +48,6 @@ import net.minecraftforge.event.CreativeModeTabEvent;
 import net.minecraftforge.event.level.LevelEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.fml.loading.FMLEnvironment;
@@ -125,9 +123,11 @@ public class FlansMod
     public static final MaterialDefinitions MATERIALS = new MaterialDefinitions();
     public static final MagazineDefinitions MAGAZINES = new MagazineDefinitions();
     public static final NpcDefinitions NPCS = new NpcDefinitions();
+    public static final AbilityDefinitions ABILITIES = new AbilityDefinitions();
 
     // Server handlers
     public static final ServerActionManager ACTIONS_SERVER = new ServerActionManager();
+    public static final GunContextCache GUN_CONTEXTS_SERVER = new GunContextCache();
 
     public static RegistryObject<Item> Gun(DeferredRegister<Item> itemRegister, String modID, String name)
     {
@@ -178,6 +178,15 @@ public class FlansMod
         return tileEntityTypeRegister.register(name, () -> new WorkbenchBlockEntity.WorkbenchBlockEntityTypeHolder(loc).CreateType());
     }
 
+    public static GunContextCache GetGunContextCache(boolean client)
+    {
+        if(client)
+        {
+            return GetClientGunContextCache();
+        }
+        return GUN_CONTEXTS_SERVER;
+    }
+    private static GunContextCache GetClientGunContextCache() { return FlansModClient.GUN_CONTEXTS_CLIENT; }
 
     public FlansMod()
     {
@@ -332,5 +341,6 @@ public class FlansMod
         registerFunc.accept(MATERIALS);
         registerFunc.accept(MAGAZINES);
         registerFunc.accept(NPCS);
+        registerFunc.accept(ABILITIES);
     }
 }

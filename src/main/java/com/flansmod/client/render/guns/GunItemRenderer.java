@@ -7,7 +7,10 @@ import com.flansmod.client.render.animation.*;
 import com.flansmod.client.render.models.TurboRig;
 import com.flansmod.common.actions.*;
 import com.flansmod.common.actions.ActionInstance;
-import com.flansmod.common.gunshots.ShooterContext;
+import com.flansmod.common.actions.contexts.ActionGroupContext;
+import com.flansmod.common.actions.contexts.GunContext;
+import com.flansmod.common.actions.contexts.GunContextCache;
+import com.flansmod.common.actions.contexts.ShooterContext;
 import com.flansmod.common.types.attachments.AttachmentDefinition;
 import com.flansmod.common.types.attachments.EAttachmentType;
 import com.flansmod.common.types.guns.elements.AttachmentSettingsDefinition;
@@ -37,8 +40,8 @@ public class GunItemRenderer extends FlanItemModelRenderer
 
         ShooterContext shooterContext = ShooterContext.GetOrCreate(heldByEntity);
         GunContext gunContext = shooterContext.IsValid() ?
-            GunContext.GetGunContext(shooterContext, MinecraftHelpers.GetHand(renderContext.TransformType)) :
-            GunContext.GetGunContext(stack);
+            GunContextCache.Get(true).Create(shooterContext, MinecraftHelpers.GetHand(renderContext.TransformType)) :
+            GunContextCache.Get(true).Create(stack);
         if(gunContext.IsValid())
         {
             // If there is a valid action stack applicable to this gun, scan it for animation actions

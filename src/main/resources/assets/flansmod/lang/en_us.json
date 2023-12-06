@@ -154,5 +154,6 @@
   "item_group.flansmod.creative_tab_bullets": "Flan's Mod Bullets",
   "item.flansmod.magazine_upgrade": "Magazine Upgrade Kit",
   "item.flansmod.rainbow_paintcan": "Rainbow Paintcan",
-  "tooltip.dual_wielding_two_handed": "This is a two-handed weapon!"
+  "tooltip.dual_wielding_two_handed": "This is a two-handed weapon!",
+  "tooltip.ability_with_level": "%s %s"
 }

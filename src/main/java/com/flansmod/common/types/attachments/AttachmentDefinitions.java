@@ -9,6 +9,6 @@ public class AttachmentDefinitions extends Definitions<AttachmentDefinition>
 		super(AttachmentDefinition.FOLDER,
 			  AttachmentDefinition.class,
 			  AttachmentDefinition.INVALID,
-			  (key) -> { return new AttachmentDefinition(key); } );
+			AttachmentDefinition::new);
 	}
 }

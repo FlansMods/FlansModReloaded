@@ -2,8 +2,8 @@ package com.flansmod.client;
 
 import com.flansmod.common.FlansMod;
 import com.flansmod.common.actions.*;
+import com.flansmod.common.actions.contexts.*;
 import com.flansmod.common.gunshots.EPressType;
-import com.flansmod.common.gunshots.ShooterContext;
 import com.flansmod.common.network.FlansModPacketHandler;
 import com.flansmod.common.network.bidirectional.ActionUpdateMessage;
 import com.flansmod.common.types.vehicles.EPlayerInput;
@@ -15,6 +15,10 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
 
 public class ClientActionManager extends ActionManager
 {
@@ -43,7 +47,7 @@ public class ClientActionManager extends ActionManager
 			return;
 
 		// Ask the ShooterContext which Guns to use
-		for (GunContext gunContext : shooter.GetAllActiveGunContexts())
+		for (GunContext gunContext : shooter.GetAllGunContexts(true))
 		{
 			if (!gunContext.IsValid())
 				continue;
@@ -63,7 +67,7 @@ public class ClientActionManager extends ActionManager
 			return;
 
 		// Ask the ShooterContext which Guns to use
-		for (GunContext gunContext : shooter.GetAllActiveGunContexts())
+		for (GunContext gunContext : shooter.GetAllGunContexts(true))
 		{
 			if (!gunContext.IsValid())
 				continue;
@@ -83,7 +87,7 @@ public class ClientActionManager extends ActionManager
 			return;
 
 		// Ask the ShooterContext which Guns to use
-		for (GunContext gunContext : shooter.GetAllActiveGunContexts())
+		for (GunContext gunContext : shooter.GetAllGunContexts(true))
 		{
 			if (!gunContext.IsValid())
 				continue;
@@ -168,15 +172,24 @@ public class ClientActionManager extends ActionManager
 	{
 		if(tickEvent.phase == TickEvent.Phase.START)
 		{
+			List<UUID> invalidIDs = new ArrayList<>();
 			for(var kvp : ActionStacks.entrySet())
 			{
-				GunContext gunContext = kvp.getKey();
-				ActionStack stack = kvp.getValue();
-				if(stack.IsValid() && gunContext.IsValid())
+				UUID gunID = kvp.getKey();
+				GunContext gunContext = GunContextCache.Get(true).GetContextIfStillValid(gunID);
+				if(gunContext != null && gunContext.IsValid())
 				{
-					stack.OnTick(Minecraft.getInstance().level, gunContext);
+					ActionStack stack = kvp.getValue();
+					if (stack.IsValid())
+					{
+						stack.OnTick(Minecraft.getInstance().level, gunContext);
+					}
 				}
+				else invalidIDs.add(gunID);
 			}
+
+			for(UUID invalidID : invalidIDs)
+				ActionStacks.remove(invalidID);
 		}
 	}
 }

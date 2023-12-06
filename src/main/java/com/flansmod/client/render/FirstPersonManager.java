@@ -3,10 +3,11 @@ package com.flansmod.client.render;
 import com.flansmod.client.FlansModClient;
 import com.flansmod.common.actions.ActionGroupInstance;
 import com.flansmod.common.actions.ActionInstance;
-import com.flansmod.common.actions.AimDownSightAction;
-import com.flansmod.common.actions.GunContext;
-import com.flansmod.common.gunshots.GunContextPlayer;
-import com.flansmod.common.gunshots.ShooterContext;
+import com.flansmod.common.actions.contexts.GunContextCache;
+import com.flansmod.common.actions.nodes.AimDownSightAction;
+import com.flansmod.common.actions.contexts.GunContext;
+import com.flansmod.common.actions.contexts.GunContextPlayer;
+import com.flansmod.common.actions.contexts.ShooterContext;
 import com.flansmod.common.types.attachments.AttachmentDefinition;
 import com.flansmod.common.types.attachments.EAttachmentType;
 import com.flansmod.util.Maths;
@@ -16,9 +17,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.block.model.ItemTransforms;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import org.joml.Quaternionf;
 import org.joml.Vector3d;
-import org.joml.Vector3f;
 
 import java.util.*;
 
@@ -104,7 +103,7 @@ public class FirstPersonManager
 		{
 			if(attachmentIndex >= 0)
 			{
-				GunContext gunContext = GunContext.GetGunContext(stack);
+				GunContext gunContext = GunContextCache.Get(true).Create(stack);
 				if(gunContext.IsValid())
 				{
 					Transform attachTransform = gunRenderer.GetDefaultTransform(attachmentType, attachmentIndex);
@@ -186,7 +185,7 @@ public class FirstPersonManager
 			for(AdsInstance instance : ADS_INSTANCES.values())
 				instance.IsActive = false;
 
-			for(GunContext gunContext : playerContext.GetAllActiveGunContexts())
+			for(GunContext gunContext : playerContext.GetAllGunContexts(true))
 			{
 				if(gunContext.IsValid())
 				{

@@ -2,18 +2,23 @@ package com.flansmod.common.actions;
 
 import com.flansmod.client.FlansModClient;
 import com.flansmod.common.FlansMod;
+import com.flansmod.common.actions.contexts.ActionGroupContext;
+import com.flansmod.common.actions.contexts.GunContext;
+import com.flansmod.common.actions.contexts.GunInputContext;
+import com.flansmod.common.item.FlanItem;
 import com.mojang.datafixers.util.Pair;
 import net.minecraft.world.level.Level;
 
 import javax.annotation.Nonnull;
 import java.util.HashMap;
 import java.util.List;
+import java.util.UUID;
 import java.util.function.Function;
 
 public abstract class ActionManager
 {
 	protected final boolean IsClient;
-	protected HashMap<GunContext, ActionStack> ActionStacks = new HashMap<GunContext, ActionStack>();
+	protected HashMap<UUID, ActionStack> ActionStacks = new HashMap<UUID, ActionStack>();
 
 	public ActionManager(boolean client)
 	{
@@ -23,22 +28,22 @@ public abstract class ActionManager
 	@Nonnull
 	public ActionStack GetActionStack(GunContext context)
 	{
-		if(!context.IsValid())
+		return GetActionStack(context.GetUUID());
+	}
+	@Nonnull
+	public ActionStack GetActionStack(UUID gunID)
+	{
+		if(gunID.equals(FlanItem.InvalidGunUUID))
 		{
 			FlansMod.LOGGER.warn("Tried to get action stack for invalid context");
 			return ActionStack.Invalid;
 		}
-		if(!context.GetShooter().IsValid())
-		{
-			FlansMod.LOGGER.warn("Tried to get action stack for a valid context, but without an entity. This may be supported later");
-			return ActionStack.Invalid;
-		}
 
-		ActionStack entitysActionStack = ActionStacks.get(context);
+		ActionStack entitysActionStack = ActionStacks.get(gunID);
 		if(entitysActionStack == null)
 		{
 			entitysActionStack = new ActionStack(IsClient);
-			ActionStacks.put(context, entitysActionStack);
+			ActionStacks.put(gunID, entitysActionStack);
 		}
 		return entitysActionStack;
 	}
@@ -46,7 +51,7 @@ public abstract class ActionManager
 	@Nonnull
 	public static ActionStack SafeGetActionStack(GunContext context)
 	{
-		Level level = context.Level();
+		Level level = context.GetLevel();
 		if(level != null)
 		{
 			if (level.isClientSide)

@@ -5,11 +5,12 @@ import com.flansmod.client.render.FlanItemModelRenderer;
 import com.flansmod.client.render.RenderContext;
 import com.flansmod.common.FlansMod;
 import com.flansmod.common.actions.Actions;
+import com.flansmod.common.actions.contexts.GunContextCache;
 import com.flansmod.common.crafting.PartFabricationRecipe;
 import com.flansmod.common.crafting.TieredMaterialIngredient;
 import com.flansmod.common.crafting.WorkbenchBlockEntity;
 import com.flansmod.common.crafting.WorkbenchMenu;
-import com.flansmod.common.actions.GunContext;
+import com.flansmod.common.actions.contexts.GunContext;
 import com.flansmod.common.gunshots.ModifierStack;
 import com.flansmod.common.item.FlanItem;
 import com.flansmod.common.item.GunItem;
@@ -2104,7 +2105,7 @@ public class WorkbenchScreen extends AbstractContainerScreen<WorkbenchMenu>
 			if(recipe != null && recipe.outputs.length > 0)
 			{
 				ItemStack stack = recipe.outputs[0].CreateStack();
-				GunContext context = GunContext.GetGunContext(stack);
+				GunContext context = GunContextCache.Get(true).Create(stack);
 				if(context.IsValid())
 				{
 					int statBoxX = xOrigin + GUN_STATS_X_ORIGIN;

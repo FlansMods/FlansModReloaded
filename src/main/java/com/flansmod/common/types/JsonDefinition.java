@@ -22,4 +22,6 @@ public abstract class JsonDefinition
 	{
 		return Location.hashCode();
 	}
+	@Override
+	public String toString() { return GetTypeName() + "@[" + Location.toString() + "]"; }
 }

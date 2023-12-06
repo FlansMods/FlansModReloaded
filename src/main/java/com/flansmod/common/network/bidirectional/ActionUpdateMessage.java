@@ -1,15 +1,17 @@
 package com.flansmod.common.network.bidirectional;
 
 import com.flansmod.common.actions.*;
-import com.flansmod.common.actions.ActionGroupContext;
+import com.flansmod.common.actions.contexts.ActionGroupContext;
+import com.flansmod.common.actions.contexts.GunContextCache;
 import com.flansmod.common.gunshots.EPressType;
-import com.flansmod.common.actions.GunContext;
-import com.flansmod.common.gunshots.ShooterContext;
+import com.flansmod.common.actions.contexts.GunContext;
+import com.flansmod.common.actions.contexts.ShooterContext;
 import com.flansmod.common.network.FlansModMessage;
 import com.flansmod.common.network.elements.ActionGroupNetID;
 import com.flansmod.util.MinecraftHelpers;
 import net.minecraft.network.FriendlyByteBuf;
 
+import javax.annotation.Nonnull;
 import java.util.*;
 
 public class ActionUpdateMessage extends FlansModMessage
@@ -79,6 +81,7 @@ public class ActionUpdateMessage extends FlansModMessage
 		return lastTick;
 	}
 
+	@Nonnull
 	public ActionGroupContext GetActionGroupContext(boolean client)
 	{
 		// Construct the shooter context first
@@ -87,7 +90,7 @@ public class ActionUpdateMessage extends FlansModMessage
 			return ActionGroupContext.INVALID;
 
 		// Specifically construct the GunContext using the hash, so we can look up historical data
-		GunContext gunContext = shooterContext.GetOrCreateSpecificContext(Context.InventorySlotIndex, Context.ContextHash);
+		GunContext gunContext = GunContextCache.Get(client).Create(shooterContext, Context.GunID);
 		if(!gunContext.IsValid())
 			return ActionGroupContext.INVALID;
 
@@ -106,7 +109,7 @@ public class ActionUpdateMessage extends FlansModMessage
 			actionGroupContext.Gun.GetShooter().EntityUUID(),
 			actionGroupContext.GroupPath.hashCode(),
 			actionGroupContext.Gun.GetInventorySlotIndex(),
-			actionGroupContext.Gun.hashCode()
+			actionGroupContext.Gun.GetUUID()
 		);
 		PressType = pressType;
 	}

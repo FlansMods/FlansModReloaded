@@ -1,6 +1,8 @@
 package com.flansmod.common.actions;
 
 import com.flansmod.common.FlansMod;
+import com.flansmod.common.actions.contexts.ActionGroupContext;
+import com.flansmod.common.actions.nodes.ShootAction;
 import com.flansmod.common.types.guns.elements.ActionDefinition;
 import com.flansmod.common.types.guns.elements.ActionGroupDefinition;
 import com.flansmod.common.types.guns.elements.ERepeatMode;
@@ -60,7 +62,7 @@ public class ActionGroupInstance
 		Actions = new ArrayList<>();
 	}
 
-	protected void AddAction(ActionInstance action)
+	public void AddAction(ActionInstance action)
 	{
 		Actions.add(action);
 	}
@@ -86,7 +88,7 @@ public class ActionGroupInstance
 		{
 			Progress = 0;
 			StartedTick = 0L;
-			Level level = Context.Gun.Level();
+			Level level = Context.Gun.GetLevel();
 			if (level != null)
 				StartedTick = level.getLevelData().getGameTime();
 
@@ -141,7 +143,7 @@ public class ActionGroupInstance
 		{
 			Progress = 0;
 			StartedTick = 0L;
-			Level level = Context.Gun.Level;
+			Level level = Context.Gun.GetLevel();
 			if (level != null)
 				StartedTick = level.getLevelData().getGameTime();
 

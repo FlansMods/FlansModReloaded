@@ -12,6 +12,7 @@ import com.flansmod.client.render.debug.DebugRenderer;
 import com.flansmod.client.render.decals.DecalRenderer;
 import com.flansmod.client.render.bullets.ShotRenderer;
 import com.flansmod.common.FlansMod;
+import com.flansmod.common.actions.contexts.GunContextCache;
 import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import net.minecraft.Util;
 import net.minecraft.client.Minecraft;
@@ -49,9 +50,11 @@ public class FlansModClient
 	public static final FlanModelRegistration MODEL_REGISTRATION = new FlanModelRegistration();
 	public static final FlanimationDefinitions ANIMATIONS = new FlanimationDefinitions();
 	public static final DecalRenderer DECAL_RENDERER = new DecalRenderer();
-	public static final ClientActionManager ACTIONS_CLIENT = new ClientActionManager();
 	public static final MagazineTextureAtlas MAGAZINE_ATLAS = new MagazineTextureAtlas();
 	public static final RecoilManager RECOIL = new RecoilManager();
+
+	public static final ClientActionManager ACTIONS_CLIENT = new ClientActionManager();
+	public static final GunContextCache GUN_CONTEXTS_CLIENT = new GunContextCache();
 
 
 	public static long PREV_FRAME_NS = 0L;

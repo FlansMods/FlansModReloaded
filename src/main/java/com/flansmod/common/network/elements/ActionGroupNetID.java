@@ -9,19 +9,19 @@ public class ActionGroupNetID
 	public UUID EntityUUID;
 	public int GroupPathHash;
 	public int InventorySlotIndex;
-	public int ContextHash;
+	public UUID GunID;
 
 	public ActionGroupNetID()
 	{
 
 	}
 
-	public ActionGroupNetID(UUID entityUUID, int groupPathHash, int inventorySlotIndex, int contextHash)
+	public ActionGroupNetID(UUID entityUUID, int groupPathHash, int inventorySlotIndex, UUID gunID)
 	{
 		EntityUUID = entityUUID;
 		GroupPathHash = groupPathHash;
 		InventorySlotIndex = inventorySlotIndex;
-		ContextHash = contextHash;
+		GunID = gunID;
 	}
 
 	public void Encode(FriendlyByteBuf buf)
@@ -29,7 +29,7 @@ public class ActionGroupNetID
 		buf.writeShort(InventorySlotIndex);
 		buf.writeInt(GroupPathHash);
 		buf.writeUUID(EntityUUID);
-		buf.writeInt(ContextHash);
+		buf.writeUUID(GunID);
 	}
 
 	public void Decode(FriendlyByteBuf buf)
@@ -37,6 +37,6 @@ public class ActionGroupNetID
 		InventorySlotIndex = buf.readShort();
 		GroupPathHash = buf.readInt();
 		EntityUUID = buf.readUUID();
-		ContextHash = buf.readInt();
+		GunID = buf.readUUID();
 	}
 }
