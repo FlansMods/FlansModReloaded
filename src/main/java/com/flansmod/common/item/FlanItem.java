@@ -12,6 +12,8 @@ import com.flansmod.common.types.elements.PaintableDefinition;
 import com.flansmod.common.types.guns.GunDefinition;
 import com.flansmod.common.types.parts.PartDefinition;
 import com.flansmod.util.Maths;
+import com.mojang.blaze3d.platform.InputConstants;
+import net.minecraft.client.Minecraft;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
@@ -52,16 +54,26 @@ public abstract class FlanItem extends Item
                                 @Nonnull List<Component> tooltips,
                                 @Nonnull TooltipFlag flags)
     {
-        PartDefinition[] craftedFromParts = GetCraftingInputs(stack);
-        for(PartDefinition craftedFrom : craftedFromParts)
+        boolean expanded = InputConstants.isKeyDown(Minecraft.getInstance().getWindow().getWindow(), InputConstants.KEY_RSHIFT)
+            || InputConstants.isKeyDown(Minecraft.getInstance().getWindow().getWindow(), InputConstants.KEY_LSHIFT);
+
+        if(!expanded)
         {
-            tooltips.add(Component.translatable(
-                "tooltip.crafted_from",
-                Component.translatable("item." + craftedFrom.GetLocation().getNamespace() + "." + craftedFrom.GetLocation().getPath())
-            ));
-            for(ModifierDefinition modDef : craftedFrom.modifiers)
+            tooltips.add(Component.translatable("tooltip.flansmod.hold_shift_for_more"));
+        }
+        else
+        {
+            PartDefinition[] craftedFromParts = GetCraftingInputs(stack);
+            for (PartDefinition craftedFrom : craftedFromParts)
             {
-                tooltips.add(Component.translatable("tooltip.crafted_from.modifier_format", modDef.GetModifierString()));
+                tooltips.add(Component.translatable(
+                    "tooltip.crafted_from",
+                    Component.translatable("item." + craftedFrom.GetLocation().getNamespace() + "." + craftedFrom.GetLocation().getPath())
+                ));
+                for (ModifierDefinition modDef : craftedFrom.modifiers)
+                {
+                    tooltips.add(Component.translatable("tooltip.crafted_from.modifier_format", modDef.GetModifierString()));
+                }
             }
         }
 
@@ -69,11 +81,23 @@ public abstract class FlanItem extends Item
         {
             Component abilityString = Component.translatable("tooltip.ability_with_level",
                 Component.translatable("ability." + kvp.getKey().Location.getNamespace() + "." + kvp.getKey().Location.getPath()),
-                Component.translatable("enchantment.level." + kvp.getValue()));
+                Component.translatable(Maths.ToRomanNumerals(kvp.getValue())));
 
             Component abilityColour = Component.translatable("ability." + kvp.getKey().Location.getNamespace() + "." + kvp.getKey().Location.getPath() + ".colour");
 
-            tooltips.add(Component.literal("\u00A7" + abilityColour.getString() + abilityString.getString()));
+
+            if(!expanded)
+            {
+                tooltips.add(Component.literal("\u00A7" + abilityColour.getString() + abilityString.getString()));
+            }
+            else
+            {
+                Component abilityTooltipString = Component.translatable(
+                    "ability."  + kvp.getKey().Location.getNamespace() +"." + kvp.getKey().Location.getPath() + ".tooltip." + kvp.getValue());
+                tooltips.add(Component.literal("\u00A7" + abilityColour.getString() + abilityString.getString() + " - " + abilityTooltipString.getString()));
+
+            }
+
         }
 
 

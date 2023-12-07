@@ -5,7 +5,9 @@
     "triggerConditions": [],
     "targetType": "Shooter",
     "effectType": "ApplyMobEffect",
-    "effectParameters": [],
+    "effectParameters": [
+        "flansbasicparts:boom_headshot"
+    ],
     "modifiers": [
         {
             "Stat": "impact_damage",
@@ -16,8 +18,11 @@
             "ApplyFilters": []
         }
     ],
-    "baseAmount": 1.0,
-    "extraAmountPerLevel": 0.0,
+    "baseIntensity": 1.0,
+    "addIntensityPerLevel": 0.0,
+    "mulIntensityPerAttachment": 0.0,
+    "mulIntensityForFullMag": 0.0,
+    "invertMagFullness": false,
     "baseDuration": 2.0,
     "extraDurationPerLevel": 2.0,
     "stackAmount": true,

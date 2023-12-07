@@ -8,6 +8,7 @@ import com.flansmod.common.actions.contexts.GunContext;
 import com.flansmod.common.actions.nodes.AimDownSightAction;
 import com.flansmod.common.actions.nodes.ScopeAction;
 import com.flansmod.common.actions.contexts.ShooterContext;
+import com.flansmod.common.effects.FlansMobEffect;
 import com.flansmod.common.types.magazines.MagazineDefinition;
 import com.flansmod.util.Maths;
 import com.flansmod.util.MinecraftHelpers;
@@ -17,12 +18,14 @@ import com.mojang.blaze3d.vertex.*;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.client.renderer.block.model.ItemTransforms;
+import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionHand;
+import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -363,6 +366,31 @@ public class ClientRenderHooks
 
 			RenderString(poseStack, anchorX + 96, anchorY - 29, mainContext.GetItemStack().getHoverName(), 0xffffff);
 
+			// Render stacks of effects
+			int xOffset = 0;
+			for(MobEffectInstance mobEffect : player.getActiveEffects())
+			{
+				if(mobEffect.getEffect() instanceof FlansMobEffect flansMobEffect)
+				{
+					TextureAtlasSprite sprite = Minecraft.getInstance().getMobEffectTextures().get(flansMobEffect);
+					RenderSystem.setShaderTexture(0, sprite.atlasLocation());
+					RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0f);
+					RenderSprite(anchorX + 100 + xOffset, anchorY - 49, 18, 18, sprite);
+
+
+
+					String stacksString = Integer.toString(mobEffect.getAmplifier() + 1);
+					int stacksStringWidth = Minecraft.getInstance().font.width(stacksString);
+					RenderString(poseStack, anchorX + 118 + xOffset - stacksStringWidth, anchorY - 49, Component.literal(stacksString), 0xffffff);
+
+					String timeRemaining = ".".repeat(Math.max(0, Maths.Min(mobEffect.getDuration() / 20, 5)));
+					RenderString(poseStack, anchorX + 102 + xOffset, anchorY - 39, Component.literal(timeRemaining), 0xffffff);
+
+
+					xOffset += 20;
+				}
+			}
+
 			if(mainHandPrimaryContext.Def.twoHanded && !player.getItemInHand(InteractionHand.OFF_HAND).isEmpty())
 			{
 				RenderString(poseStack, anchorX + 96, anchorY - 39, Component.translatable("tooltip.dual_wielding_two_handed"), 0xb0b0b0);
@@ -450,6 +478,24 @@ public class ClientRenderHooks
 	private void RenderTeamInfoOverlay()
 	{
 
+	}
+
+	private void RenderSprite(float x, float y, float w, float h, TextureAtlasSprite sprite)
+	{
+		float u0 = sprite.getU0();
+		float u1 = sprite.getU1();
+		float v0 = sprite.getV0();
+		float v1 = sprite.getV1();
+		RenderSystem.enableTexture();
+		RenderSystem.setShader(GameRenderer::getPositionTexShader);
+		Tesselator tesselator = Tesselator.getInstance();
+		BufferBuilder builder = tesselator.getBuilder();
+		builder.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX);
+		builder.vertex(x, y + h, -90f)		.uv(u0, v1).endVertex();
+		builder.vertex(x + w, y + h, -90f)	.uv(u1, v1).endVertex();
+		builder.vertex(x + w, y, -90f)		.uv(u1, v0).endVertex();
+		builder.vertex(x, y, -90f)			.uv(u0, v0).endVertex();
+		tesselator.end();
 	}
 
 	private void RenderQuad(float x, float y, float w, float h, float u0, float v0, float texW, float texH)

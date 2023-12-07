@@ -35,7 +35,7 @@ public class ApplyEffectAbility extends StackableAbility
 				if (entity instanceof LivingEntity living)
 				{
 					living.addEffect(
-						new MobEffectInstance(Effect, GetDurationTicks(), Maths.Ceil(GetAmount())),
+						new MobEffectInstance(Effect, GetDurationTicks(), Maths.Ceil(GetIntensity() - 1)),
 						gun.GetShooter().Owner());
 				}
 			}
@@ -45,12 +45,12 @@ public class ApplyEffectAbility extends StackableAbility
 	@Override
 	public void End(@Nonnull GunContext gun)
 	{
-
+		super.End(gun);
 	}
 
 	@Override
 	public void Tick()
 	{
-
+		super.Tick();
 	}
 }

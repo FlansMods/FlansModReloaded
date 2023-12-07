@@ -50,7 +50,7 @@ public class ApplyAttributeAbility extends StackableAbility
 				{
 					instance.removeModifier(IdentifyingKey);
 					instance.addTransientModifier(new AttributeModifier(
-						IdentifyingKey, "Flan's Ability Effect", GetAmount(), AttributeModifier.Operation.ADDITION)
+						IdentifyingKey, "Flan's Ability Effect", GetIntensity(), AttributeModifier.Operation.ADDITION)
 					);
 				}
 			}

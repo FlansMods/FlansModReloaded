@@ -1,16 +1,30 @@
 {
     "maxLevel": 5,
-    "startTrigger": "Instant",
+    "startTrigger": "ReloadEnd",
     "endTrigger": "Instant",
     "triggerConditions": [],
     "targetType": "Shooter",
-    "effectType": "ApplyDamage",
-    "effectParameters": [],
-    "modifiers": [],
-    "baseAmount": 1.0,
-    "extraAmountPerLevel": 1.0,
-    "baseDuration": 1.0,
-    "extraDurationPerLevel": 1.0,
+    "effectType": "ApplyMobEffect",
+    "effectParameters": [
+        "flansbasicparts:fresh_mags"
+    ],
+    "modifiers": [
+        {
+            "Stat": "impact_damage",
+            "Filter": "",
+            "Add": 0.0,
+            "Multiply": 1.3,
+            "SetValue": "",
+            "ApplyFilters": []
+        }
+    ],
+    "baseIntensity": 1.0,
+    "addIntensityPerLevel": 1.0,
+    "mulIntensityPerAttachment": 0.0,
+    "mulIntensityForFullMag": 0.0,
+    "invertMagFullness": false,
+    "baseDuration": 5.0,
+    "extraDurationPerLevel": 0.0,
     "stackAmount": false,
     "maxAmount": 1.0,
     "stackDuration": false,

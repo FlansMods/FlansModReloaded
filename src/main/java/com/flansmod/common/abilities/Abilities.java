@@ -10,7 +10,8 @@ public class Abilities
 	{
 		switch(def.effectType)
 		{
-			case ApplyAttributeModifier -> { return new ApplyAttributeAbility(def, level); }
+			case ApplyAttribute -> { return new ApplyAttributeAbility(def, level); }
+			case ApplyModifier -> { return new ApplyModifierAbility(def, level); }
 			case ApplyMobEffect -> { return new ApplyEffectAbility(def, level); }
 			case ApplyDamage -> { return new ApplyDamageAbility(def, level); }
 			case DamageArmour -> { return new DamageArmourAbility(def, level); }

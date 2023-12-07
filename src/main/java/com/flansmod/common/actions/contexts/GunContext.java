@@ -1,11 +1,11 @@
 package com.flansmod.common.actions.contexts;
 
 import com.flansmod.common.FlansMod;
+import com.flansmod.common.abilities.ApplyModifierAbility;
 import com.flansmod.common.actions.*;
 import com.flansmod.common.gunshots.*;
 import com.flansmod.common.item.*;
 import com.flansmod.common.types.abilities.AbilityDefinition;
-import com.flansmod.common.types.abilities.elements.EAbilityTrigger;
 import com.flansmod.common.types.attachments.AttachmentDefinition;
 import com.flansmod.common.types.attachments.EAttachmentType;
 import com.flansmod.common.types.guns.elements.*;
@@ -23,7 +23,6 @@ import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.phys.HitResult;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -108,7 +107,7 @@ public abstract class GunContext
 	}
 	// ---------------------------------------------------------------------------------------------------
 
-	protected final List<ModifierDefinition> ModifierCache;
+	private final HashMap<ModifierDefinition, Float> ModifierCache;
 	private int ModifierHash;
 	public ItemStack Stack;
 	@Nonnull
@@ -140,6 +139,11 @@ public abstract class GunContext
 	// Helpers
 	// --------------------------------------------------------------------------
 
+	protected void AddModifierToCache(ModifierDefinition modDef, float multiplier)
+	{
+		ModifierCache.put(modDef, ModifierCache.getOrDefault(modDef, 0.0f) + multiplier);
+	}
+
 	public ItemStack GetItemStack() { return Stack; }
 	public void SetItemStack(ItemStack stack)
 	{
@@ -166,7 +170,7 @@ public abstract class GunContext
 	protected GunContext(@Nonnull ItemStack stackAtTimeOfCreation)
 	{
 		Stack = stackAtTimeOfCreation.copy();
-		ModifierCache = new ArrayList<>();
+		ModifierCache = new HashMap<>();
 		ModifierHash = 0;
 		Def = CacheGunDefinition();
 	}
@@ -184,13 +188,14 @@ public abstract class GunContext
 	// Stat Cache
 	// --------------------------------------------------------------------------
 	@Nonnull
-	public List<ModifierDefinition> GetModifiers()
+	public Map<ModifierDefinition, Float> GetModifiers()
 	{
-		int updatedModifierHash = HashModifierSources() ^ HashAttachments();
+		int updatedModifierHash = HashModifierSources() ^ HashAttachmentModifiers() ^ HashAbilityModifiers();
 		if(updatedModifierHash != ModifierHash)
 		{
 			ModifierCache.clear();
 			RecalculateAttachmentModifierCache();
+			RecalculateAbilityModifierCache();
 			RecalculateModifierCache();
 			ModifierHash = updatedModifierHash;
 		}
@@ -200,8 +205,8 @@ public abstract class GunContext
 	{
 		GetShooter().Apply(modStack);
 
-		for(ModifierDefinition mod : GetModifiers())
-			modStack.Apply(mod);
+		for(var kvp : GetModifiers().entrySet())
+			modStack.Modify(kvp.getKey(), kvp.getValue());
 	}
 
 	// --------------------------------------------------------------------------
@@ -426,6 +431,10 @@ public abstract class GunContext
 		}
 		return defs;
 	}
+	public int GetNumAttachments()
+	{
+		return GetAttachmentStacks().size();
+	}
 	public int GetNumAttachmentStacks(EAttachmentType attachType)
 	{
 		return Def.GetAttachmentSettings(attachType).numAttachmentSlots;
@@ -467,7 +476,7 @@ public abstract class GunContext
 		return new ArrayList<>();
 	}
 
-	private int HashAttachments()
+	private int HashAttachmentModifiers()
 	{
 		int hash = 0xa77ac4;
 		for(ItemStack stack : GetAttachmentStacks())
@@ -482,20 +491,13 @@ public abstract class GunContext
 	{
 		for(ItemStack stack : GetAttachmentStacks())
 			if(stack.getItem() instanceof AttachmentItem attachmentItem)
-				ModifierCache.addAll(Arrays.asList(attachmentItem.Def().modifiers));
+				for(ModifierDefinition modDef : attachmentItem.Def().modifiers)
+					AddModifierToCache(modDef, 1.0f);
 	}
 
 	// -----------------------------------------------------------------------------------------------------------------
 	// Abilities
 	// -----------------------------------------------------------------------------------------------------------------
-
-	private void RecalculateAbilityCache()
-	{
-		//for(ItemStack stack : GetAttachmentStacks())
-		//	if(stack.getItem() instanceof AttachmentItem attachmentItem)
-		//		ModifierCache.addAll(Arrays.asList(attachmentItem.Def().modifiers));
-	}
-
 	@Nonnull
 	public Map<AbilityDefinition, Integer> GetAbilities()
 	{
@@ -506,24 +508,28 @@ public abstract class GunContext
 		return Map.of();
 	}
 
-
-
-	public void OnTrigger(EAbilityTrigger triggerType, @Nullable HitResult hit)
+	public int HashAbilityModifiers()
 	{
-		//for(AbilityDefinition abilityDef : GetAbilities())
-		//{
-		//	if(abilityDef.startTrigger == triggerType)
-		//	{
-		//		switch(abilityDef.targetType)
-		//		{
-		//			//case Shooter:
-		//				//if(GetShooter().IsValid())
-//
-		//		}
-		//	}
-		//}
+		int hash = 0;
+		ActionStack stack = GetActionStack();
+		if(stack.IsValid())
+		{
+			for(ApplyModifierAbility modAbility : stack.GetActiveModifierAbilities())
+			{
+				hash ^= modAbility.hashCode();
+			}
+		}
+		return hash;
 	}
 
+	public void RecalculateAbilityModifierCache()
+	{
+		ActionStack stack = GetActionStack();
+		if(stack.IsValid())
+			for(ApplyModifierAbility modAbility : stack.GetActiveModifierAbilities())
+				for(ModifierDefinition modDef : modAbility.GetModifiers())
+					AddModifierToCache(modDef, modAbility.GetIntensity(this));
+	}
 
 	// -----------------------------------------------------------------------------------------------------------------
 	// Util methods

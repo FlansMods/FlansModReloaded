@@ -16,7 +16,10 @@ public abstract class InstantAbility extends AbilityInstance
 		super(def, level);
 	}
 
-	public float GetAmount() { return Def.GetAmount(Level); }
+	public float GetIntensity(@Nonnull GunContext gun)
+	{
+		return Def.CalculateIntensity(Level, gun);
+	}
 	public float GetDurationSeconds() { return 0.0f; }
 	public float GetTimeSinceLastTriggerSeconds() { return TimeSinceLastTrigger; }
 

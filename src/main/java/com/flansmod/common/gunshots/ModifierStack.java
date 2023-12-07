@@ -16,12 +16,12 @@ public class ModifierStack
 		Stat = stat;
 	}
 
-	public ModifierStack Apply(ModifierDefinition modifier)
+	public ModifierStack Modify(ModifierDefinition modifier, float multiplier)
 	{
 		if(modifier.AppliesTo(Stat, GroupPath))
 		{
-			Add += modifier.Add;
-			Multiply += (modifier.Multiply - 1.0f);
+			Add += (modifier.Add * multiplier);
+			Multiply += ((modifier.Multiply - 1.0f) * multiplier);
 			if (!modifier.SetValue.isEmpty())
 				SetValue = modifier.SetValue;
 		}

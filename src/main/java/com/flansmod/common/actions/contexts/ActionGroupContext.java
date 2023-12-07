@@ -595,7 +595,7 @@ public class ActionGroupContext
 		// No need to maintain a separate cache, this is just reading from the definition
 		for(ActionDefinition def : Def.actions)
 			for(ModifierDefinition mod : def.modifiers)
-				modStack.Apply(mod);
+				modStack.Modify(mod, 1.0f);
 	}
 	public float ModifyFloat(String key, float baseValue)
 	{

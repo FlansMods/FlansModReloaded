@@ -23,14 +23,14 @@ public class ApplyDamageAbility extends InstantAbility
 		switch(Def.targetType)
 		{
 			case Owner -> {
-				gun.GetShooter().Owner().hurt(DamageSource.MAGIC, GetAmount());
+				gun.GetShooter().Owner().hurt(DamageSource.MAGIC, GetIntensity(gun));
 			}
 			case Shooter -> {
-				gun.GetShooter().Entity().hurt(DamageSource.MAGIC, GetAmount());
+				gun.GetShooter().Entity().hurt(DamageSource.MAGIC, GetIntensity(gun));
 			}
 			case ShotEntity -> {
 				if(hit instanceof EntityHitResult entityHit)
-					entityHit.getEntity().hurt(DamageSource.MAGIC, GetAmount());
+					entityHit.getEntity().hurt(DamageSource.MAGIC, GetIntensity(gun));
 			}
 		}
 	}

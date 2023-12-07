@@ -303,6 +303,7 @@ public class BasicPartsMod
 	public static final RegistryObject<RecipeSerializer<DistillationRecipe>> DISTILLATION_RECIPE_SERIALIZER = RECIPE_SERIALIZERS.register("distillation", DistillationRecipe.Serializer::new);
 
 	public static final RegistryObject<MobEffect> EFFECT_BOOM_HEADSHOT =					EFFECTS.register("boom_headshot", () -> new MobEffectBonusDamage(new ResourceLocation(MODID, "boom_headshot"), MobEffectCategory.BENEFICIAL, 0xff4040));
+	public static final RegistryObject<MobEffect> EFFECT_SHREDDER =							EFFECTS.register("shredder", () -> new MobEffectBonusDamage(new ResourceLocation(MODID, "shredder"), MobEffectCategory.BENEFICIAL, 0xb0b0b0));
 
 	public BasicPartsMod()
 	{

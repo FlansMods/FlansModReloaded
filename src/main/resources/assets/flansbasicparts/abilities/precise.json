@@ -1,14 +1,26 @@
 {
     "maxLevel": 5,
-    "startTrigger": "Instant",
-    "endTrigger": "Instant",
+    "startTrigger": "AlwaysOn",
+    "endTrigger": "AlwaysOn",
     "triggerConditions": [],
     "targetType": "Shooter",
-    "effectType": "ApplyDamage",
+    "effectType": "ApplyModifier",
     "effectParameters": [],
-    "modifiers": [],
-    "baseAmount": 1.0,
-    "extraAmountPerLevel": 1.0,
+    "modifiers": [
+        {
+            "Stat": "spread",
+            "Filter": "",
+            "Add": 0.0,
+            "Multiply": 0.85,
+            "SetValue": "",
+            "ApplyFilters": []
+        }
+    ],
+    "baseIntensity": 1.0,
+    "addIntensityPerLevel": 1.0,
+    "mulIntensityPerAttachment": 0.0,
+    "mulIntensityForFullMag": 0.0,
+    "invertMagFullness": false,
     "baseDuration": 1.0,
     "extraDurationPerLevel": 1.0,
     "stackAmount": false,

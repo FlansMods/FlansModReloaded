@@ -4,10 +4,11 @@ public enum EAbilityEffect
 {
 	Nothing,
 
-	ApplyAttributeModifier,
+	ApplyAttribute,
 	ApplyMobEffect,
 	ApplyDamage,
 	DamageArmour,
 
 	PerformAction,
+	ApplyModifier,
 }

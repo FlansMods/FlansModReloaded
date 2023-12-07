@@ -38,6 +38,7 @@ public class Maths
     public static double Lerp(double a, double b, double t) { return a + (b-a)*t; }
     public static double Sign(double d) { return d > 0.0d ? 1.0d : (d < 0.0d ? -1.0d : 0.0d); }
     public static double Exp(double d) { return Math.exp(d); }
+    public static double Pow(double a, double b) { return Math.pow(a, b); }
 
     // Float maths
     public static final float EpsilonF = 0.000001f;
@@ -55,6 +56,7 @@ public class Maths
     public static float Lerp(float a, float b, float t) { return a + (b-a)*Maths.Clamp(t, 0f, 1f); }
     public static float Sign(float f) { return f > 0.0f ? 1.0f : (f < 0.0f ? -1.0f : 0.0f); }
     public static float ExpF(float f) { return (float)Math.exp(f); }
+    public static float PowF(float a, float b) { return (float)Math.pow(a, b); }
 
     public static final double Pi = 3.1415926535897932384626433832795028841971d;
     public static final double Tau = 2.0d * Pi;
@@ -183,5 +185,60 @@ public class Maths
         return new BlockPos(roughGuess.getX() + dx, roughGuess.getY() + dy, roughGuess.getZ() + dz);
     }
 
+
+    public static String ToRomanNumerals(int n)
+    {
+        StringBuilder builder = new StringBuilder();
+        if(n >= 10000)
+        {
+            builder.append(n/1000).append('M');
+        }
+        else
+        {
+            while (n >= 1000)
+            {
+                builder.append("M");
+                n -= 1000;
+            }
+        }
+        n = GenerateNumeralsForPow10(n, builder, 100, 'M', 'D', 'C');
+        n = GenerateNumeralsForPow10(n, builder, 10, 'C', 'L', 'X');
+        n = GenerateNumeralsForPow10(n, builder, 1, 'X', 'V', 'I');
+        return builder.toString();
+    }
+
+    private static int GenerateNumeralsForPow10(int n, StringBuilder builder, int pow10, char ten, char five, char one)
+    {
+        // n should be < pow10 * 10
+        if(n >= pow10 * 9)
+        {
+            builder.append(one).append(ten);
+            n -= pow10 * 9;
+        }
+        else if(n >= pow10 * 5)
+        {
+            builder.append(five);
+            while(n >= pow10 * 6)
+            {
+                builder.append(one);
+                n -= pow10;
+            }
+            n -= pow10 * 5;
+        }
+        else if(n >= pow10 * 4)
+        {
+            builder.append(one).append(five);
+            n -= pow10 * 4;
+        }
+        else
+        {
+            while(n >= pow10)
+            {
+                builder.append(one);
+                n -= pow10;
+            }
+        }
+        return n;
+    }
 
 }

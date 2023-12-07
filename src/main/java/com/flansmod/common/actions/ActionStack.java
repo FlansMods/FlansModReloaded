@@ -3,12 +3,14 @@ package com.flansmod.common.actions;
 import com.flansmod.client.render.FirstPersonManager;
 import com.flansmod.common.FlansMod;
 import com.flansmod.common.abilities.Abilities;
+import com.flansmod.common.abilities.ApplyModifierAbility;
 import com.flansmod.common.actions.contexts.ActionGroupContext;
 import com.flansmod.common.actions.contexts.GunContext;
 import com.flansmod.common.gunshots.EPressType;
 import com.flansmod.common.network.FlansModPacketHandler;
 import com.flansmod.common.network.bidirectional.ActionUpdateMessage;
 import com.flansmod.common.abilities.AbilityInstance;
+import com.flansmod.common.types.abilities.elements.EAbilityTrigger;
 import com.flansmod.common.types.guns.elements.*;
 import com.flansmod.common.types.magazines.EAmmoLoadMode;
 import com.flansmod.util.Maths;
@@ -381,6 +383,7 @@ public class ActionStack
 			ShotCooldown = 0.0f;
 
 		TickActions();
+		TickAbilities();
 	}
 
 	protected void DebugLog(String string)
@@ -613,11 +616,31 @@ public class ActionStack
 			{
 				AbilityInstance instance = Abilities.InstanceAbility(kvp.getKey(), kvp.getValue());
 				if(instance != null)
+				{
 					ActiveAbilities.add(instance);
+					if(instance.Def.startTrigger == EAbilityTrigger.AlwaysOn)
+						instance.Trigger(gunContext, null);
+				}
 				else
 					FlansMod.LOGGER.warn("Could not spawn AbilityInstance " + kvp.getKey());
 			}
 		}
+	}
+
+	public List<ApplyModifierAbility> GetActiveModifierAbilities()
+	{
+		List<ApplyModifierAbility> list = new ArrayList<>();
+		for(AbilityInstance ability : ActiveAbilities)
+			if(ability instanceof ApplyModifierAbility applyModAbility)
+				if(applyModAbility.IsActive)
+					list.add(applyModAbility);
+		return list;
+	}
+
+	private void TickAbilities()
+	{
+		for(AbilityInstance ability : ActiveAbilities)
+			ability.Tick();
 	}
 
 	public void CheckAbilities_Equip(@Nonnull GunContext gun, boolean equip)

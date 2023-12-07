@@ -4,11 +4,14 @@ import com.flansmod.common.FlansMod;
 import com.flansmod.common.actions.*;
 import com.flansmod.common.actions.contexts.*;
 import com.flansmod.common.gunshots.EPressType;
+import com.flansmod.common.item.FlanItem;
+import com.flansmod.common.item.GunItem;
 import com.flansmod.common.network.FlansModPacketHandler;
 import com.flansmod.common.network.bidirectional.ActionUpdateMessage;
 import com.flansmod.common.types.vehicles.EPlayerInput;
 import com.flansmod.util.Maths;
 import net.minecraft.client.Minecraft;
+import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -176,20 +179,43 @@ public class ClientActionManager extends ActionManager
 			for(var kvp : ActionStacks.entrySet())
 			{
 				UUID gunID = kvp.getKey();
+				ActionStack actionStack = kvp.getValue();
 				GunContext gunContext = GunContextCache.Get(true).GetContextIfStillValid(gunID);
 				if(gunContext != null && gunContext.IsValid())
 				{
-					ActionStack stack = kvp.getValue();
-					if (stack.IsValid())
-					{
-						stack.OnTick(Minecraft.getInstance().level, gunContext);
-					}
+					if (actionStack.IsValid())
+						actionStack.OnTick(Minecraft.getInstance().level, gunContext);
 				}
-				else invalidIDs.add(gunID);
+				else
+				{
+					actionStack.Clear(gunContext);
+					invalidIDs.add(gunID);
+				}
 			}
 
 			for(UUID invalidID : invalidIDs)
 				ActionStacks.remove(invalidID);
+
+			Player player = Minecraft.getInstance().player;
+			if(player != null)
+			{
+				ShooterContext shooterContext = ShooterContext.GetOrCreate(player);
+				for (int i = 0; i < player.getInventory().getContainerSize(); i++)
+				{
+					if (player.getInventory().getItem(i).getItem() instanceof GunItem)
+					{
+						UUID gunID = FlanItem.GetGunID(player.getInventory().getItem(i));
+						if(gunID != FlanItem.InvalidGunUUID)
+						{
+							GunContext gunContext = GunContextCache.Get(false).Create(shooterContext, gunID);
+							ActionStack actionStack = GetActionStack(gunID);
+							boolean equipped = (i == player.getInventory().selected)
+								|| (i == Inventory.SLOT_OFFHAND);
+							actionStack.UpdateEquipped(gunContext, equipped);
+						}
+					}
+				}
+			}
 		}
 	}
 }

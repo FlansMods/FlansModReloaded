@@ -155,17 +155,9 @@ public class ShooterContextLiving extends ShooterContext implements Container
 	private void CacheMobEffects()
 	{
 		for(MobEffectInstance effect : Shooter.getActiveEffects())
-		{
 			if(effect.getEffect() instanceof FlansMobEffect flansEffect)
-			{
 				for(ModifierDefinition modifier : flansEffect.Def().modifiers)
-				{
-					// Is this sus? Adding the same modifier many times to represent stacks?
-					for(int i = 0; i < effect.getAmplifier() + 1; i++)
-						ModifierCache.add(modifier);
-				}
-			}
-		}
+					AddModifierToCache(modifier, effect.getAmplifier() + 1);
 	}
 
 	@Override

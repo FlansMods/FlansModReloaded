@@ -49,7 +49,7 @@ public class ActionDefinition
 	{
 		ModifierStack stack = new ModifierStack(key, groupPath);
 		for(ModifierDefinition mod : modifiers)
-			stack.Apply(mod);
+			stack.Modify(mod, 1.0f);
 		return stack.ApplyTo(baseValue);
 	}
 	public int ToolLevel(String groupPath)

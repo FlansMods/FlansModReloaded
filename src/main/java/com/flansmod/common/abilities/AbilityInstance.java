@@ -218,4 +218,10 @@ public abstract class AbilityInstance
 		}
 		return targets;
 	}
+
+	@Override
+	public int hashCode()
+	{
+		return Def.hashCode() ^ (Level << 7);
+	}
 }

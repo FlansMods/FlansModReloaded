@@ -19,10 +19,7 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 public abstract class ShooterContext
 {
@@ -169,12 +166,16 @@ public abstract class ShooterContext
 		return new ShooterContextUnresolvedEntity(ownerUUID, shooterUUID);
 	}
 	// ---------------------------------------------------------------------------------------------------
-	protected final List<ModifierDefinition> ModifierCache;
+	private final HashMap<ModifierDefinition, Float> ModifierCache;
 	private int ModifierHash;
+	protected void AddModifierToCache(ModifierDefinition modDef, float multiplier)
+	{
+		ModifierCache.put(modDef, ModifierCache.getOrDefault(modDef, 0.0f) + multiplier);
+	}
 
 	public ShooterContext()
 	{
-		ModifierCache = new ArrayList<>();
+		ModifierCache = new HashMap<>();
 		ModifierHash = 0;
 	}
 
@@ -195,7 +196,7 @@ public abstract class ShooterContext
 
 
 	@Nonnull
-	public List<ModifierDefinition> GetModifiers()
+	public Map<ModifierDefinition, Float> GetModifiers()
 	{
 		int updatedModifierHash = HashModifierSources();
 		if(updatedModifierHash != ModifierHash)
@@ -208,8 +209,8 @@ public abstract class ShooterContext
 	}
 	public void Apply(@Nonnull ModifierStack modStack)
 	{
-		for(ModifierDefinition mod : GetModifiers())
-			modStack.Apply(mod);
+		for(var kvp : GetModifiers().entrySet())
+			modStack.Modify(kvp.getKey(), kvp.getValue());
 	}
 
 	public void Save(@Nonnull CompoundTag tags)

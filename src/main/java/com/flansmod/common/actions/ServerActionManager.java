@@ -66,50 +66,49 @@ public class ServerActionManager extends ActionManager
 		if(tickEvent.phase == TickEvent.Phase.START)
 		{
 			List<UUID> invalidIDs = new ArrayList<>();
-			for(var kvp : ActionStacks.entrySet())
+			for (var kvp : ActionStacks.entrySet())
 			{
 				UUID gunID = kvp.getKey();
 				ActionStack actionStack = kvp.getValue();
 				GunContext gunContext = GunContextCache.Get(false).GetLastKnownAppearanceOfGun(gunID);
-				if(gunContext.IsValid())
+				if (gunContext.IsValid())
 				{
 					if (actionStack.IsValid())
 						actionStack.OnTick(gunContext.GetLevel(), gunContext);
-				}
-				else
+				} else
 				{
 					actionStack.Clear(gunContext);
 					invalidIDs.add(gunID);
 				}
 			}
 
-			for(UUID invalidID : invalidIDs)
+			for (UUID invalidID : invalidIDs)
 			{
 				ActionStacks.remove(invalidID);
 			}
-		}
 
-		for(var level : MinecraftHelpers.Server_GetLoadedLevels())
-		{
-			for(var player : level.players())
+			for (var level : MinecraftHelpers.Server_GetLoadedLevels())
 			{
-				ShooterContext shooterContext = ShooterContext.GetOrCreate(player);
-				LazyOptional<INpcRelationshipsCapability> relationshipCap = player.getCapability(NpcRelationshipsCapability.INSTANCE);
-				if(relationshipCap.isPresent() && relationshipCap.resolve().isPresent())
+				for (var player : level.players())
 				{
-					relationshipCap.resolve().get().TickAllCooldowns(1);
-				}
-
-				for(int i = 0 ; i < player.getInventory().getContainerSize(); i++)
-				{
-					if(player.getInventory().getItem(i).getItem() instanceof GunItem)
+					ShooterContext shooterContext = ShooterContext.GetOrCreate(player);
+					LazyOptional<INpcRelationshipsCapability> relationshipCap = player.getCapability(NpcRelationshipsCapability.INSTANCE);
+					if (relationshipCap.isPresent() && relationshipCap.resolve().isPresent())
 					{
-						UUID gunID = FlanItem.Server_GetOrSetNewGunID(player.getInventory().getItem(i));
-						GunContext gunContext = GunContextCache.Get(false).Create(shooterContext, gunID);
-						ActionStack actionStack = GetActionStack(gunID);
-						boolean equipped = (i == player.getInventory().selected)
-							|| (i == Inventory.SLOT_OFFHAND);
-						actionStack.UpdateEquipped(gunContext, equipped);
+						relationshipCap.resolve().get().TickAllCooldowns(1);
+					}
+
+					for (int i = 0; i < player.getInventory().getContainerSize(); i++)
+					{
+						if (player.getInventory().getItem(i).getItem() instanceof GunItem)
+						{
+							UUID gunID = FlanItem.Server_GetOrSetNewGunID(player.getInventory().getItem(i));
+							GunContext gunContext = GunContextCache.Get(false).Create(shooterContext, gunID);
+							ActionStack actionStack = GetActionStack(gunID);
+							boolean equipped = (i == player.getInventory().selected)
+								|| (i == Inventory.SLOT_OFFHAND);
+							actionStack.UpdateEquipped(gunContext, equipped);
+						}
 					}
 				}
 			}
