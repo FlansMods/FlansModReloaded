@@ -14,7 +14,12 @@
         ]
     },
     "modifiers": [],
-    "abilities": [],
+    "abilities": [
+        {
+            "ability": "flansbasicparts:stoic",
+            "level": 1
+        }
+    ],
     "engine": {
         "maxAcceleration": 1.0,
         "maxDeceleration": 1.0,

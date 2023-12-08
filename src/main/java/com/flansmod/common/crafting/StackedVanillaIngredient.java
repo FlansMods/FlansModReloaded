@@ -139,7 +139,7 @@ public class StackedVanillaIngredient extends StackedIngredient
 				buffer.writeUtf(ingredient.Items[i].toString());
 			buffer.writeInt(ingredient.Tags.size());
 			for(int i = 0; i < ingredient.Tags.size(); i++)
-				buffer.writeUtf(ingredient.Tags.get(i).toString());
+				buffer.writeUtf(ingredient.Tags.get(i).location().toString());
 			buffer.writeInt(ingredient.Count);
 		}
 

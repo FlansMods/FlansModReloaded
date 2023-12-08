@@ -10,12 +10,14 @@
     ],
     "modifiers": [
         {
-            "Stat": "impact_damage",
+            "Stat": "duration",
             "Filter": "",
             "Add": 0.0,
-            "Multiply": 1.5,
+            "Multiply": 0.25,
             "SetValue": "",
-            "ApplyFilters": []
+            "ApplyFilters": [
+                "reload_primary"
+            ]
         }
     ],
     "baseIntensity": 1.0,
@@ -25,8 +27,8 @@
     "invertMagFullness": false,
     "baseDuration": 2.0,
     "extraDurationPerLevel": 2.0,
-    "stackAmount": true,
-    "maxAmount": 3.0,
+    "stackAmount": false,
+    "maxAmount": 1.0,
     "stackDuration": false,
     "maxDuration": 1.0
 }

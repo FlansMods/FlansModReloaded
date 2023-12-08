@@ -36,7 +36,6 @@ public class ClientActionManager extends ActionManager
 
 	public void HookClient(IEventBus modEventBus)
 	{
-		FlansModPacketHandler.RegisterClientHandler(ActionUpdateMessage.ToClient.class, ActionUpdateMessage.ToClient::new, this::OnClientReceivedActionUpdate);
 		MinecraftForge.EVENT_BUS.addListener(this::ClientTick);
 	}
 
@@ -103,7 +102,7 @@ public class ClientActionManager extends ActionManager
 
 	// This will only be sent to you when someone else fires a shot. This is where you play various actions in response
 	@OnlyIn(Dist.CLIENT)
-	private void OnClientReceivedActionUpdate(ActionUpdateMessage.ToClient msg)
+	public void OnClientReceivedActionUpdate(ActionUpdateMessage.ToClient msg)
 	{
 		ActionGroupContext groupContext = msg.Data.GetActionGroupContext(true);
 		if(groupContext.IsValid())

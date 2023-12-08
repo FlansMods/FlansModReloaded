@@ -8,6 +8,7 @@ import com.flansmod.common.entity.NpcRelationshipCapabilityAttacher;
 import com.flansmod.common.gunshots.Raytracer;
 import com.flansmod.common.actions.contexts.ShooterContext;
 import com.flansmod.common.item.*;
+import com.flansmod.common.network.FlansModPacketHandler;
 import com.flansmod.common.projectiles.BulletEntity;
 import com.flansmod.common.types.abilities.AbilityDefinitions;
 import com.flansmod.common.types.attachments.AttachmentDefinitions;
@@ -196,6 +197,7 @@ public class FlansMod
         MinecraftForge.EVENT_BUS.addListener(this::loadLevel);
         MinecraftForge.EVENT_BUS.addListener(this::onReloadResources);
         ACTIONS_SERVER.HookServer(modEventBus);
+        FlansModPacketHandler.RegisterMessages();
         modEventBus.addListener(this::onCreativeTabRegistry);
         modEventBus.addListener(this::OnRegsiterEvent);
 

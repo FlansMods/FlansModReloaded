@@ -304,6 +304,7 @@ public class BasicPartsMod
 
 	public static final RegistryObject<MobEffect> EFFECT_BOOM_HEADSHOT =					EFFECTS.register("boom_headshot", () -> new MobEffectBonusDamage(new ResourceLocation(MODID, "boom_headshot"), MobEffectCategory.BENEFICIAL, 0xff4040));
 	public static final RegistryObject<MobEffect> EFFECT_SHREDDER =							EFFECTS.register("shredder", () -> new MobEffectBonusDamage(new ResourceLocation(MODID, "shredder"), MobEffectCategory.BENEFICIAL, 0xb0b0b0));
+	public static final RegistryObject<MobEffect> EFFECT_FRESH_MAGS =						EFFECTS.register("fresh_mags", () -> new MobEffectBonusDamage(new ResourceLocation(MODID, "fresh_mags"), MobEffectCategory.BENEFICIAL, 0xffff20));
 
 	public BasicPartsMod()
 	{

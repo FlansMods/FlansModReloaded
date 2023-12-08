@@ -37,16 +37,12 @@ public class ServerActionManager extends ActionManager
 
 	public void HookServer(IEventBus modEventBus)
 	{
-		FlansModPacketHandler.RegisterServerHandler(
-			ActionUpdateMessage.ToServer.class,
-			ActionUpdateMessage.ToServer::new,
-			this::OnServerReceivedActionUpdate);
 		MinecraftForge.EVENT_BUS.register(this);
 	}
 
 	// When a client tells us they want to reload, we need to process their items
 	private static final double RELOAD_MSG_RADIUS = 50d;
-	private void OnServerReceivedActionUpdate(ActionUpdateMessage.ToServer msg, ServerPlayer from)
+	public void OnServerReceivedActionUpdate(ActionUpdateMessage.ToServer msg, ServerPlayer from)
 	{
 		// Check that this is a valid context
 		ActionGroupContext groupContext = msg.Data.GetActionGroupContext(false);

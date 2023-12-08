@@ -1,7 +1,9 @@
 package com.flansmod.common.network;
 
+import com.flansmod.client.FlansModClient;
 import com.flansmod.common.FlansMod;
 import com.flansmod.common.network.bidirectional.ActionUpdateMessage;
+import net.minecraft.client.Minecraft;
 import net.minecraft.network.Connection;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.resources.ResourceKey;
@@ -14,6 +16,8 @@ import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.fml.DistExecutor;
+import net.minecraftforge.fml.loading.FMLEnvironment;
 import net.minecraftforge.network.NetworkRegistry;
 import net.minecraftforge.network.PacketDistributor;
 import net.minecraftforge.network.simple.SimpleChannel;
@@ -35,6 +39,19 @@ public class FlansModPacketHandler
 		PROTOCOL_VERSION::equals
 	);
 	private static int NextMessageID = 0;
+
+	public static void RegisterMessages()
+	{
+		FlansModPacketHandler.RegisterClientHandler(
+			ActionUpdateMessage.ToClient.class,
+			ActionUpdateMessage.ToClient::new,
+			() -> FlansModClient.ACTIONS_CLIENT::OnClientReceivedActionUpdate);
+
+		FlansModPacketHandler.RegisterServerHandler(
+			ActionUpdateMessage.ToServer.class,
+			ActionUpdateMessage.ToServer::new,
+			FlansMod.ACTIONS_SERVER::OnServerReceivedActionUpdate);
+	}
 
 	public interface Factory<TMessage>
 	{
@@ -72,28 +89,45 @@ public class FlansModPacketHandler
 	public static <TMessage extends FlansModMessage> void RegisterClientHandler(
 		Class<TMessage> clazz,
 		Factory<TMessage> factory,
-		Consumer<TMessage> handler
+		Supplier<Consumer<TMessage>> handlerSupplier
 	)
 	{
-		INSTANCE.registerMessage(
-			NextMessageID,
-			clazz,
-			FlansModMessage::Encode,
-			(buf) ->
-			{
-				TMessage msg = factory.Create();
-				msg.Decode(buf);
-				return msg;
-			},
-			(msg, ctx) ->
-			{
-				ctx.get().enqueueWork(() ->
+		DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> {
+			INSTANCE.registerMessage(
+				NextMessageID,
+				clazz,
+				FlansModMessage::Encode,
+				(buf) ->
 				{
-					handler.accept(msg);
-					ctx.get().setPacketHandled(true);
-				});
-			}
-		);
+					TMessage msg = factory.Create();
+					msg.Decode(buf);
+					return msg;
+				},
+				(msg, ctx) ->
+				{
+					ctx.get().enqueueWork(() ->
+					{
+						handlerSupplier.get().accept(msg);
+						ctx.get().setPacketHandled(true);
+					});
+				}
+			);
+		});
+		DistExecutor.unsafeRunWhenOn(Dist.DEDICATED_SERVER, () -> () -> {
+			INSTANCE.registerMessage(
+				NextMessageID,
+				clazz,
+				FlansModMessage::Encode,
+				(buf) ->
+				{
+					TMessage msg = factory.Create();
+					msg.Decode(buf);
+					return msg;
+				},
+				(msg, ctx) -> {}
+			);
+
+		});
 
 		NextMessageID++;
 	}

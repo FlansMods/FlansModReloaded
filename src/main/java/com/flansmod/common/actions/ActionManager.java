@@ -6,6 +6,8 @@ import com.flansmod.common.actions.contexts.ActionGroupContext;
 import com.flansmod.common.actions.contexts.GunContext;
 import com.flansmod.common.actions.contexts.GunInputContext;
 import com.flansmod.common.item.FlanItem;
+import com.flansmod.common.network.FlansModPacketHandler;
+import com.flansmod.common.network.bidirectional.ActionUpdateMessage;
 import com.mojang.datafixers.util.Pair;
 import net.minecraft.world.level.Level;
 
@@ -24,7 +26,6 @@ public abstract class ActionManager
 	{
 		IsClient = client;
 	}
-
 	@Nonnull
 	public ActionStack GetActionStack(GunContext context)
 	{
