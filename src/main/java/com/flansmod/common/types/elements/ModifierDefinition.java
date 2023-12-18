@@ -50,16 +50,21 @@ public class ModifierDefinition
 	public static final String STAT_SOUND_PITCH = "pitch";
 	public static final String STAT_LIGHT_STRENGTH = "flashlight_strength";
 	public static final String STAT_LIGHT_RANGE = "flashlight_range";
+	public static final String STAT_EYE_LINE_ROLL = "eye_line_roll";
 
 	public static final String KEY_ENTITY_TAG = "entity_tag";
 	public static final String KEY_ENTITY_ID = "entity_id";
 	public static final String KEY_ACTION_KEY = "action_key";
 	public static final String KEY_MODEL_ID = "model_id";
+	public static final String KEY_MODE = "mode";
+	public static final String KEY_SET_VALUE = "set_value";
+	public static final String KEY_EYE_LINE_NAME = "eye_line_name";
 
 	public static final String STAT_LASER_ORIGIN = "laser_origin";
 	public static final String STAT_LASER_RED = "laser_red";
 	public static final String STAT_LASER_GREEN = "laser_green";
 	public static final String STAT_LASER_BLUE = "laser_blue";
+	public static final String MODAL_FIXED_LASER_DIRECTION = "fixed_laser_direction";
 
 	@JsonField
 	public String Stat = "";

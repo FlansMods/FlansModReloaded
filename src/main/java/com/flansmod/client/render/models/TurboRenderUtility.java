@@ -20,7 +20,7 @@ import javax.annotation.Nullable;
 public class TurboRenderUtility
 {
 	public static boolean USE_MODELVIEW_MATRIX_RENDER_MODE = false;
-	public static boolean USE_BAKED_TURBO_MODELS = true;
+	public static boolean USE_BAKED_TURBO_MODELS = false;
 
 	public static void Render(@Nullable TurboRig unbaked, @Nullable TurboRig.Baked baked, @Nonnull String partName, @Nonnull TransformStack transformStack, @Nonnull VertexConsumer vc, int light, int overlay)
 	{

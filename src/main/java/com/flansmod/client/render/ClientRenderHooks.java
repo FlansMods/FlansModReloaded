@@ -9,6 +9,7 @@ import com.flansmod.common.actions.nodes.AimDownSightAction;
 import com.flansmod.common.actions.nodes.ScopeAction;
 import com.flansmod.common.actions.contexts.ShooterContext;
 import com.flansmod.common.effects.FlansMobEffect;
+import com.flansmod.common.types.guns.elements.ModeDefinition;
 import com.flansmod.common.types.magazines.MagazineDefinition;
 import com.flansmod.util.Maths;
 import com.flansmod.util.MinecraftHelpers;
@@ -367,6 +368,15 @@ public class ClientRenderHooks
 			if(mainHandPrimaryContext.Def.twoHanded && !player.getItemInHand(InteractionHand.OFF_HAND).isEmpty())
 			{
 				RenderString(poseStack, anchorX + 96, anchorY - 39, Component.translatable("tooltip.dual_wielding_two_handed"), 0xb0b0b0);
+			}
+			else if(mainContext.GetAllModeDefs().length > 0)
+			{
+				for (int i = 0; i < mainContext.GetAllModeDefs().length; i++)
+				{
+					ModeDefinition modeDef = mainContext.GetAllModeDefs()[i];
+					String value = mainContext.GetModeValue(modeDef.key);
+					RenderString(poseStack, anchorX + 96, anchorY - 39 - 10 * i, Component.translatable("tooltip.mode."+modeDef.key+"."+value), 0xb0b0b0);
+				}
 			}
 
 			// TODO: If alternate ammo?

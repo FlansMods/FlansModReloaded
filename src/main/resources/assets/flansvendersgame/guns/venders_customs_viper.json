@@ -489,6 +489,7 @@
             "endActionKey": "reload_primary_end"
         }
     ],
+    "modes": [],
     "loopingSounds": [],
     "barrelAttachments": {
         "matchNames": [],

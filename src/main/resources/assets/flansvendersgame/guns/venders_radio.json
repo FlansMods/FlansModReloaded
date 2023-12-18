@@ -86,6 +86,7 @@
     ],
     "magazines": [],
     "reloads": [],
+    "modes": [],
     "loopingSounds": [],
     "barrelAttachments": {
         "matchNames": [],

@@ -206,6 +206,9 @@ public abstract class FlanItemModelRenderer extends BlockEntityWithoutLevelRende
 
         if(actionStack != null)
         {
+            if(!animationSet.IsValid())
+                return Transform.Error("Missing animation set");
+
             List<AnimationAction> animActions = new ArrayList<>();
             for(ActionGroupInstance group : actionStack.GetActiveActionGroups())
                 for(ActionInstance action : group.GetActions())
@@ -217,7 +220,6 @@ public abstract class FlanItemModelRenderer extends BlockEntityWithoutLevelRende
             List<Transform> poses = new ArrayList<>();
             for (AnimationAction animAction : animActions)
             {
-
                 SequenceDefinition sequence = animationSet.GetSequence(animAction.Def.anim);
                 if (sequence == null)
                 {

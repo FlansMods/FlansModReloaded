@@ -249,19 +249,14 @@ public abstract class GunContext
 	// Only remember parts that we used, not arbitrary item stacks with NBT
 	public PartDefinition[] GetCraftingInputs()
 	{
-		if(GetItemStack().getItem() instanceof FlanItem flanItem)
-		{
-			return flanItem.GetCraftingInputs(GetItemStack());
-		}
-		return new PartDefinition[0];
+		return FlanItem.GetCraftingInputs(GetItemStack());
 	}
 
 	public void SetCraftingInputs(ItemStack[] stacks)
 	{
-		if(GetItemStack().getItem() instanceof FlanItem flanItem)
-		{
-			flanItem.SetCraftingInputs(GetItemStack(), stacks);
-		}
+		ItemStack gunStack = GetItemStack();
+		FlanItem.SetCraftingInputs(gunStack, stacks);
+		SetItemStack(gunStack);
 	}
 
 	// --------------------------------------------------------------------------
@@ -325,8 +320,21 @@ public abstract class GunContext
 		HandlerDefinition handler = Def.GetInputHandler(inputContext);
 		for(HandlerNodeDefinition node : handler.nodes)
 		{
-			// TODO: if(!node.modalCheck.isEmpty())
+			if(!node.modalCheck.isEmpty())
+			{
+				String modeKey = node.modalCheck;
+				String modeValue = "on";
+				if(node.modalCheck.contains(":"))
+				{
+					String[] split = node.modalCheck.split(":");
+					modeKey = split[0];
+					modeValue = split[1];
+				}
 
+				String currentValue = inputContext.Gun.GetModeValue(modeKey);
+				if(!currentValue.equals(modeValue))
+					continue;
+			}
 			if(!node.canTriggerWhileReloading)
 			{
 				if(inputContext.Gun.GetActionStack().IsReloading())
@@ -360,7 +368,21 @@ public abstract class GunContext
 		for(HandlerNodeDefinition node : attachmentInputHandler.nodes)
 		{
 			boolean matched = false;
-			// TODO: if(!node.modalCheck.isEmpty())
+			if(!node.modalCheck.isEmpty())
+			{
+				String modeKey = node.modalCheck;
+				String modeValue = "on";
+				if(node.modalCheck.contains(":"))
+				{
+					String[] split = node.modalCheck.split(":");
+					modeKey = split[0];
+					modeValue = split[1];
+				}
+
+				String currentValue = inputContext.Gun.GetModeValue(modeKey);
+				if(!currentValue.equals(modeValue))
+					continue;
+			}
 
 			if(node.deferToAttachment)
 			{
@@ -410,21 +432,15 @@ public abstract class GunContext
 	// --------------------------------------------------------------------------
 	// PAINTJOBS
 	// --------------------------------------------------------------------------
+	@Nonnull
 	public String GetPaintjobName()
 	{
-		if(GetItemStack().getItem() instanceof FlanItem flanItem)
-		{
-			return flanItem.GetPaintjobName(GetItemStack());
-		}
-		return "default";
+		return FlanItem.GetPaintjobName(GetItemStack());
 	}
 
-	public void SetPaintjobName(String paint)
+	public void SetPaintjobName(@Nonnull String paint)
 	{
-		if(GetItemStack().getItem() instanceof FlanItem flanItem)
-		{
-			flanItem.SetPaintjobName(GetItemStack(), paint);
-		}
+		FlanItem.SetPaintjobName(GetItemStack(), paint);
 	}
 
 	// --------------------------------------------------------------------------
@@ -462,38 +478,27 @@ public abstract class GunContext
 	@Nonnull
 	public ItemStack GetAttachmentStack(EAttachmentType attachType, int slot)
 	{
-		if(GetItemStack().getItem() instanceof FlanItem flanItem)
-			return flanItem.GetAttachmentInSlot(GetItemStack(), attachType, slot);
-		return ItemStack.EMPTY;
+		return FlanItem.GetAttachmentInSlot(GetItemStack(), attachType, slot);
 	}
 
 	public void SetAttachmentStack(EAttachmentType attachType, int slot, ItemStack attachmentStack)
 	{
 		ItemStack gunStack = GetItemStack();
-		if(gunStack.getItem() instanceof FlanItem flanItem)
-		{
-			flanItem.SetAttachmentInSlot(gunStack, attachType, slot, attachmentStack);
-		}
+		FlanItem.SetAttachmentInSlot(gunStack, attachType, slot, attachmentStack);
+		SetItemStack(gunStack);
 	}
 	@Nonnull
 	public ItemStack RemoveAttachmentFromSlot(EAttachmentType attachType, int slot)
 	{
 		ItemStack gunStack = GetItemStack();
-		if(gunStack.getItem() instanceof FlanItem flanItem)
-		{
-			return flanItem.RemoveAttachmentFromSlot(gunStack, attachType, slot);
-		}
-		return ItemStack.EMPTY;
+		ItemStack removedStack = FlanItem.RemoveAttachmentFromSlot(gunStack, attachType, slot);
+		SetItemStack(gunStack);
+		return removedStack;
 	}
 	@Nonnull
 	public List<ItemStack> GetAttachmentStacks()
 	{
-		ItemStack gunStack = GetItemStack();
-		if(gunStack.getItem() instanceof FlanItem flanItem)
-		{
-			return flanItem.GetAttachmentStacks(gunStack);
-		}
-		return new ArrayList<>();
+		return FlanItem.GetAttachmentStacks(GetItemStack());
 	}
 
 	private int HashAttachmentModifiers()
@@ -521,11 +526,7 @@ public abstract class GunContext
 	@Nonnull
 	public Map<AbilityDefinition, Integer> GetAbilities()
 	{
-		if(GetItemStack().getItem() instanceof FlanItem flanItem)
-		{
-			return flanItem.GetAbilities(GetItemStack());
-		}
-		return Map.of();
+		return FlanItem.GetAbilities(GetItemStack());
 	}
 
 	public int HashAbilityModifiers()
@@ -549,6 +550,46 @@ public abstract class GunContext
 			for(ApplyModifierAbility modAbility : stack.GetActiveModifierAbilities())
 				for(ModifierDefinition modDef : modAbility.GetModifiers())
 					AddModifierToCache(modDef, modAbility.GetIntensity(this));
+	}
+
+	// -----------------------------------------------------------------------------------------------------------------
+	// Modes
+	// -----------------------------------------------------------------------------------------------------------------
+
+	@Nonnull
+	public ModeDefinition[] GetAllModeDefs()
+	{
+		return Def.modes;
+	}
+	@Nullable
+	public ModeDefinition GetModeDef(@Nonnull String modeKey)
+	{
+		for(ModeDefinition modeDef : Def.modes)
+			if(modeDef.key.equals(modeKey))
+				return modeDef;
+
+		// TODO: Modal toggles on attachments
+
+		return null;
+	}
+	@Nonnull
+	public String GetDefaultModeValue(@Nonnull String modeKey)
+	{
+		ModeDefinition modeDef = GetModeDef(modeKey);
+		if(modeDef != null)
+			return modeDef.defaultValue;
+		return "";
+	}
+	@Nonnull
+	public String GetModeValue(@Nonnull String modeKey)
+	{
+		return FlanItem.GetModeValue(GetItemStack(), modeKey, GetDefaultModeValue(modeKey));
+	}
+	public void SetModeValue(@Nonnull String modeKey, @Nonnull String modeValue)
+	{
+		ItemStack stack = GetItemStack();
+		FlanItem.SetModeValue(stack, modeKey, modeValue);
+		SetItemStack(stack);
 	}
 
 	// -----------------------------------------------------------------------------------------------------------------

@@ -78,11 +78,14 @@ public class VendersGameMod
 	public static final RegistryObject<Item> ATTACHMENT_FC_PREMIUM_FOREGRIP = 	FlansMod.Attachment(ITEMS, MODID, "fc_premium_foregrip");
 	public static final RegistryObject<Item> ATTACHMENT_FC_DIAMOND_SIGHTS = 	FlansMod.Attachment(ITEMS, MODID, "fc_diamond_sights");
 	public static final RegistryObject<Item> ATTACHMENT_FC_AGED_OAK_STOCK = 	FlansMod.Attachment(ITEMS, MODID, "fc_aged_oak_stock");
+	public static final RegistryObject<Item> ATTACHMENT_FC_TELESCOPIC_SIGHT = 	FlansMod.Attachment(ITEMS, MODID, "fc_telescopic_sight");
+	public static final RegistryObject<Item> ATTACHMENT_FC_BAYONET = 			FlansMod.Attachment(ITEMS, MODID, "fc_bayonet");
 
 	// HitMarket Budget Weaponry
 	public static final RegistryObject<Item> GUN_HM_9 = 						FlansMod.Gun(ITEMS, MODID, "hm_9");
 	public static final RegistryObject<Item> GUN_HM_14 = 						FlansMod.Gun(ITEMS, MODID, "hm_14");
 	public static final RegistryObject<Item> GUN_HM_16 = 						FlansMod.Gun(ITEMS, MODID, "hm_16");
+	public static final RegistryObject<Item> GUN_HM_21 = 						FlansMod.Gun(ITEMS, MODID, "hm_21");
 	public static final RegistryObject<Item> GUN_HM_1200 = 						FlansMod.Gun(ITEMS, MODID, "hm_1200");
 	public static final RegistryObject<Item> GUN_HM_COMBINE = 					FlansMod.Gun(ITEMS, MODID, "hm_combine");
 	public static final RegistryObject<Item> GUN_HM_POCKET = 					FlansMod.Gun(ITEMS, MODID, "hm_pocket");
@@ -103,6 +106,7 @@ public class VendersGameMod
 	public static final RegistryObject<Item> ATTACHMENT_HM_SNAP_STOCK = 		FlansMod.Attachment(ITEMS, MODID, "hm_snap_stock");
 	public static final RegistryObject<Item> ATTACHMENT_HM_SHELL_RACK_STOCK =	FlansMod.Attachment(ITEMS, MODID, "hm_shell_rack_stock");
 	public static final RegistryObject<Item> ATTACHMENT_HM_MICRO_LASER =		FlansMod.Attachment(ITEMS, MODID, "hm_micro_laser");
+	public static final RegistryObject<Item> ATTACHMENT_HM_ACOG =				FlansMod.Attachment(ITEMS, MODID, "hm_acog");
 
 
 	// PhanTek Advanced Guns
@@ -123,6 +127,7 @@ public class VendersGameMod
 	public static final RegistryObject<Item> ATTACHMENT_PHANTEK_SHOTGUN_SILENCER = FlansMod.Attachment(ITEMS, MODID, "phantek_shotgun_silencer");
 	public static final RegistryObject<Item> ATTACHMENT_PHANTEK_SILENCER = 		FlansMod.Attachment(ITEMS, MODID, "phantek_silencer");
 	public static final RegistryObject<Item> ATTACHMENT_PHANTEK_IMPACT_STOCK = 	FlansMod.Attachment(ITEMS, MODID, "phantek_impact_stock");
+	public static final RegistryObject<Item> ATTACHMENT_PHANTEK_PHASERASER_LASER =	FlansMod.Attachment(ITEMS, MODID, "phantek_phaseraser_laser");
 
 	// Vender Customs and Rare Items
 	public static final RegistryObject<Item> GUN_VENDERS_CUSTOMS_VIPER =		FlansMod.Gun(ITEMS, MODID, "venders_customs_viper");

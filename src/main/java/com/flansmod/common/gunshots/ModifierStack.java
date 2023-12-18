@@ -28,6 +28,11 @@ public class ModifierStack
 		return this;
 	}
 
+	public boolean ApplyTo(boolean input)
+	{
+		return SetValue.isEmpty() ? input : Boolean.parseBoolean(SetValue);
+	}
+
 	public float ApplyTo(float input)
 	{
 		return (input + Add) * Multiply;

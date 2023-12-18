@@ -49,6 +49,16 @@ public abstract class FlanItem extends Item implements IForgeItem
         ALL_ITEMS.add(this);
     }
 
+    @Nonnull
+    public PaintableDefinition GetPaintDef()
+    {
+        if(Def() instanceof GunDefinition gunDef)
+            return gunDef.paints;
+
+        return PaintableDefinition.Invalid;
+    }
+
+
     @Override
     public boolean shouldCauseReequipAnimation(ItemStack oldStack, ItemStack newStack, boolean slotChanged)
     {
@@ -172,9 +182,9 @@ public abstract class FlanItem extends Item implements IForgeItem
         return false;
     }
     @Nonnull
-    private String GetSlotKey(@Nonnull EAttachmentType type, int slot) { return type.name() + "_" + slot; }
+    private static String GetSlotKey(@Nonnull EAttachmentType type, int slot) { return type.name() + "_" + slot; }
     @Nonnull
-    public ItemStack GetAttachmentInSlot(@Nonnull ItemStack stack, @Nonnull EAttachmentType type, int slot)
+    public static ItemStack GetAttachmentInSlot(@Nonnull ItemStack stack, @Nonnull EAttachmentType type, int slot)
     {
         if(stack.hasTag())
         {
@@ -191,7 +201,7 @@ public abstract class FlanItem extends Item implements IForgeItem
         return ItemStack.EMPTY;
     }
     @Nonnull
-    public List<AttachmentDefinition> GetAttachmentDefinitions(@Nonnull ItemStack stack)
+    public static List<AttachmentDefinition> GetAttachmentDefinitions(@Nonnull ItemStack stack)
     {
         List<AttachmentDefinition> defs = new ArrayList<>();
         for(ItemStack attachmentStack : GetAttachmentStacks(stack))
@@ -202,7 +212,7 @@ public abstract class FlanItem extends Item implements IForgeItem
         return defs;
     }
     @Nonnull
-    public List<ItemStack> GetAttachmentStacks(@Nonnull ItemStack stack)
+    public static List<ItemStack> GetAttachmentStacks(@Nonnull ItemStack stack)
     {
         List<ItemStack> attachmentStacks = new ArrayList<>();
         if(stack.hasTag())
@@ -222,7 +232,7 @@ public abstract class FlanItem extends Item implements IForgeItem
         return attachmentStacks;
     }
 
-    public void SetAttachmentInSlot(@Nonnull ItemStack stack, @Nonnull EAttachmentType type, int slot, @Nonnull ItemStack attachmentStack)
+    public static void SetAttachmentInSlot(@Nonnull ItemStack stack, @Nonnull EAttachmentType type, int slot, @Nonnull ItemStack attachmentStack)
     {
         CompoundTag tags = stack.getOrCreateTag();
         CompoundTag attachTags = tags.getCompound("attachments");
@@ -235,7 +245,7 @@ public abstract class FlanItem extends Item implements IForgeItem
     }
 
     @Nonnull
-    public ItemStack RemoveAttachmentFromSlot(@Nonnull ItemStack stack, @Nonnull EAttachmentType type, int slot)
+    public static ItemStack RemoveAttachmentFromSlot(@Nonnull ItemStack stack, @Nonnull EAttachmentType type, int slot)
     {
         ItemStack ret = GetAttachmentInSlot(stack, type, slot);
         SetAttachmentInSlot(stack, type, slot, ItemStack.EMPTY);
@@ -243,15 +253,7 @@ public abstract class FlanItem extends Item implements IForgeItem
     }
 
     @Nonnull
-    public PaintableDefinition GetPaintDef()
-    {
-        if(Def() instanceof GunDefinition gunDef)
-            return gunDef.paints;
-
-        return PaintableDefinition.Invalid;
-    }
-
-    public String GetPaintjobName(@Nonnull ItemStack stack)
+    public static String GetPaintjobName(@Nonnull ItemStack stack)
     {
         if(stack.hasTag() && stack.getOrCreateTag().contains("paint"))
         {
@@ -260,21 +262,14 @@ public abstract class FlanItem extends Item implements IForgeItem
         return "default";
     }
 
-    public void SetPaintjobName(@Nonnull ItemStack stack, @Nonnull String paint)
+    public static void SetPaintjobName(@Nonnull ItemStack stack, @Nonnull String paint)
     {
         stack.getOrCreateTag().putString("paint", paint);
-        stack.getOrCreateTag().putInt("CustomModelData", 0);
-        if (!paint.equals("default") && GetPaintDef().IsValid())
-        {
-            for (int i = 0; i < GetPaintDef().paintjobs.length; i++)
-                if (GetPaintDef().paintjobs[i].textureName.equals(paint))
-                    stack.getOrCreateTag().putInt("CustomModelData", i+1);
-        }
     }
 
     // Only remember parts that we used, not arbitrary item stacks with NBT
     @Nonnull
-    public PartDefinition[] GetCraftingInputs(@Nonnull ItemStack stack)
+    public static PartDefinition[] GetCraftingInputs(@Nonnull ItemStack stack)
     {
         if(stack.hasTag() && stack.getOrCreateTag().contains("parts"))
         {
@@ -291,7 +286,7 @@ public abstract class FlanItem extends Item implements IForgeItem
         }
         return new PartDefinition[0];
     }
-    public void SetCraftingInputs(@Nonnull ItemStack stack, @Nonnull List<ItemStack> partStacks)
+    public static void SetCraftingInputs(@Nonnull ItemStack stack, @Nonnull List<ItemStack> partStacks)
     {
         CompoundTag craftingTags = new CompoundTag();
         int index = 0;
@@ -307,7 +302,7 @@ public abstract class FlanItem extends Item implements IForgeItem
         }
         stack.getOrCreateTag().put("parts", craftingTags);
     }
-    public void SetCraftingInputs(@Nonnull ItemStack stack, @Nonnull ItemStack[] partStacks)
+    public static void SetCraftingInputs(@Nonnull ItemStack stack, @Nonnull ItemStack[] partStacks)
     {
         CompoundTag craftingTags = new CompoundTag();
         int index = 0;
@@ -322,9 +317,13 @@ public abstract class FlanItem extends Item implements IForgeItem
             index++;
         }
         stack.getOrCreateTag().put("parts", craftingTags);
+    }
+    protected void CollectAbilities(@Nonnull ItemStack stack, @Nonnull Map<AbilityDefinition, Integer> abilityMap)
+    {
+
     }
     @Nonnull
-    public Map<AbilityDefinition, Integer> GetAbilities(@Nonnull ItemStack stack)
+    public static Map<AbilityDefinition, Integer> GetAbilities(@Nonnull ItemStack stack)
     {
         Map<AbilityDefinition, Integer> abilityMap = new HashMap<>();
         for(PartDefinition part : GetCraftingInputs(stack))
@@ -353,6 +352,24 @@ public abstract class FlanItem extends Item implements IForgeItem
                 }
             }
         }
+        if(stack.getItem() instanceof FlanItem flanItem)
+            flanItem.CollectAbilities(stack, abilityMap);
         return abilityMap;
+    }
+    @Nonnull
+    public static String GetModeValue(@Nonnull ItemStack stack, @Nonnull String modeKey, @Nonnull String defaultValue)
+    {
+        if(stack.getOrCreateTag().contains("modes"))
+        {
+            return stack.getOrCreateTag().getCompound("modes").getString(modeKey);
+        }
+        return defaultValue;
+    }
+    public static void SetModeValue(@Nonnull ItemStack stack, @Nonnull String modeKey, @Nonnull String modeValue)
+    {
+        if(!stack.getOrCreateTag().contains("modes"))
+            stack.getOrCreateTag().put("modes", new CompoundTag());
+
+        stack.getOrCreateTag().getCompound("modes").putString(modeKey, modeValue);
     }
 }

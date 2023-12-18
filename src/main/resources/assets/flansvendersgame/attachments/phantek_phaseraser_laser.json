@@ -1,0 +1,62 @@
+{
+    "itemSettings": {
+        "maxStackSize": 1,
+        "tags": [
+            "flansmod:attach_to_any",
+            "flansmod:grip"
+        ]
+    },
+    "attachmentType": "Grip",
+    "modifiers": [],
+    "mechaEffects": [],
+    "mechaEffectFilter": "",
+    "handlerOverrides": [
+        {
+            "inputType": "SpecialKey2",
+            "nodes": [
+                {
+                    "actionGroupToTrigger": "gadget_button",
+                    "modalCheck": "",
+                    "canTriggerWhileReloading": true,
+                    "deferToAttachment": false,
+                    "attachmentType": "Barrel",
+                    "attachmentIndex": 0,
+                    "andContinueEvaluating": false
+                }
+            ]
+        }
+    ],
+    "actionOverrides": [
+        {
+            "key": "gadget_button",
+            "canActUnderwater": true,
+            "canActUnderOtherLiquid": true,
+            "canBeOverriden": false,
+            "twoHanded": false,
+            "repeatMode": "Toggle",
+            "repeatDelay": 0.0,
+            "repeatCount": 0,
+            "spinUpDuration": 0.0,
+            "loudness": 0.0,
+            "actions": [
+                {
+                    "actionType": "Laser",
+                    "duration": 0.0,
+                    "sounds": [],
+                    "itemStack": "",
+                    "modifiers": [],
+                    "fovFactor": 0.0,
+                    "scopeOverlay": "",
+                    "anim": "",
+                    "toolLevel": 0.0,
+                    "harvestSpeed": 0.0,
+                    "reach": 0.0
+                }
+            ]
+        }
+    ],
+    "reloadOverrides": [],
+    "abilities": [],
+    "modeOverride": "FullAuto",
+    "overrideFireMode": false
+}

@@ -43,7 +43,7 @@ public class GunContextCache
 		if(GunContextCache.containsKey(gunID))
 		{
 			GunContext existingContext = GunContextCache.get(gunID);
-			if(existingContext.IsValid())
+			if(existingContext.IsValid() && existingContext.GetUUID().equals(gunID))
 				return existingContext;
 		}
 		return null;

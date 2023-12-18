@@ -69,9 +69,21 @@ public class GunItemRenderer extends FlanItemModelRenderer
                     innerRenderContext.Transforms.PushSaveState();
                     ApplyAnimations(innerRenderContext, animationSet, actionStack, partName);
 
-                    if(partName.equals("grip") || partName.equals("barrel") || partName.equals("stock") || partName.equals("sights"))
+                    if(partName.startsWith("grip") || partName.startsWith("barrel") || partName.startsWith("stock") || partName.startsWith("sights"))
                     {
-                        return RenderAttachmentPoint(gunContext, innerRenderContext, partName, EAttachmentType.Parse(partName));
+                        EAttachmentType attachmentType = EAttachmentType.Generic;
+                        int attachmentIndex = -1;
+                        if(partName.contains("_"))
+                        {
+                            attachmentType = EAttachmentType.Parse(partName.split("_")[0]);
+                            attachmentIndex = Integer.parseInt(partName.split("_")[1]);
+                        }
+                        else
+                        {
+                            attachmentType = EAttachmentType.Parse("partName");
+                            attachmentIndex = 0;
+                        }
+                        return RenderAttachmentPoint(gunContext, innerRenderContext, partName, attachmentType, attachmentIndex);
                     }
                     else if(partName.startsWith("ammo_"))
                     {
@@ -120,27 +132,24 @@ public class GunItemRenderer extends FlanItemModelRenderer
         }
     }
 
-    private boolean RenderAttachmentPoint(GunContext gunContext, RenderContext renderContext, String partName, EAttachmentType attachmentType)
+    private boolean RenderAttachmentPoint(GunContext gunContext, RenderContext renderContext, String partName, EAttachmentType attachmentType, int attachmentIndex)
     {
         AttachmentSettingsDefinition attachmentSettings = gunContext.CacheGunDefinition().GetAttachmentSettings(attachmentType);
         boolean anyAttachmentsPresent = false;
-        for(int attachmentSlot = 0; attachmentSlot < attachmentSettings.numAttachmentSlots; attachmentSlot++)
+        ItemStack attachmentStack = gunContext.GetAttachmentStack(attachmentType, attachmentIndex);
+        AttachmentDefinition attachment = gunContext.GetAttachmentDefinition(attachmentType, attachmentIndex);
+
+        // Then render the attachment if we have one
+        if (attachment != AttachmentDefinition.INVALID)
         {
-            ItemStack attachmentStack = gunContext.GetAttachmentStack(attachmentType, attachmentSlot);
-            AttachmentDefinition attachment = gunContext.GetAttachmentDefinition(attachmentType, attachmentSlot);
+            anyAttachmentsPresent = true;
 
-            // Then render the attachment if we have one
-            if (attachment != AttachmentDefinition.INVALID)
+            FlanItemModelRenderer attachmentRenderer = FlansModClient.MODEL_REGISTRATION.GetModelRenderer(attachmentStack);
+            if (attachmentRenderer instanceof AttachmentItemRenderer attachmentItemRenderer)
             {
-                anyAttachmentsPresent = true;
-
-                FlanItemModelRenderer attachmentRenderer = FlansModClient.MODEL_REGISTRATION.GetModelRenderer(attachmentStack);
-                if (attachmentRenderer instanceof AttachmentItemRenderer attachmentItemRenderer)
-                {
-                    renderContext.Transforms.PushSaveState();
-                    attachmentItemRenderer.RenderAsAttachment(renderContext, gunContext, attachmentType, attachmentSlot);
-                    renderContext.Transforms.PopSaveState();
-                }
+                renderContext.Transforms.PushSaveState();
+                attachmentItemRenderer.RenderAsAttachment(renderContext, gunContext, attachmentType, attachmentIndex);
+                renderContext.Transforms.PopSaveState();
             }
         }
 

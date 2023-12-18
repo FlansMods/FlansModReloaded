@@ -1,6 +1,7 @@
 {
   "replace": "false",
   "values": [
-    "flansvendersgame:hm_micro_laser"
+    "flansvendersgame:hm_micro_laser",
+    "flansvendersgame:phantek_phaseraser_laser"
   ]
 }

@@ -100,13 +100,10 @@ public class PartItem extends FlanItem
 		}
 	}
 
-	@Nonnull
 	@Override
-	public Map<AbilityDefinition, Integer> GetAbilities(@Nonnull ItemStack stack)
+	protected void CollectAbilities(@Nonnull ItemStack stack, @Nonnull Map<AbilityDefinition, Integer> abilityMap)
 	{
-		Map<AbilityDefinition, Integer> abilityMap = super.GetAbilities(stack);
 		for(AbilityProviderDefinition provider : Def().abilities)
 			abilityMap.put(provider.GetAbility(), provider.level);
-		return abilityMap;
 	}
 }

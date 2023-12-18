@@ -27,10 +27,15 @@ public class WorkbenchMenu extends AbstractContainerMenu
 {
 	public enum ModSlot
 	{
-		SCOPE(1,0, EAttachmentType.Sights, 0),
+		SIGHTS(1,0, EAttachmentType.Sights, 0),
 		BARREL(0, 1, EAttachmentType.Barrel, 0),
 		GRIP(1, 2, EAttachmentType.Grip, 0),
-		STOCK(2, 1, EAttachmentType.Stock, 0);
+		STOCK(2, 1, EAttachmentType.Stock, 0),
+
+		SECONDARY_SIGHTS(2,0, EAttachmentType.Sights, 1),
+		SECONDARY_BARREL(0, 0, EAttachmentType.Barrel, 1),
+		SECONDARY_GRIP(0, 2, EAttachmentType.Grip, 1),
+		SECONDARY_STOCK(2, 2, EAttachmentType.Stock, 1);
 
 		ModSlot(int x, int y, EAttachmentType type, int index)
 		{

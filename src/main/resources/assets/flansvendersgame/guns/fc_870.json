@@ -121,6 +121,47 @@
                     "andContinueEvaluating": false
                 }
             ]
+        },
+        {
+            "inputType": "SpecialKey2",
+            "nodes": [
+                {
+                    "actionGroupToTrigger": "gadget_button",
+                    "modalCheck": "",
+                    "canTriggerWhileReloading": false,
+                    "deferToAttachment": true,
+                    "attachmentType": "Barrel",
+                    "attachmentIndex": 0,
+                    "andContinueEvaluating": true
+                },
+                {
+                    "actionGroupToTrigger": "gadget_button",
+                    "modalCheck": "",
+                    "canTriggerWhileReloading": false,
+                    "deferToAttachment": true,
+                    "attachmentType": "Sights",
+                    "attachmentIndex": 0,
+                    "andContinueEvaluating": true
+                },
+                {
+                    "actionGroupToTrigger": "gadget_button",
+                    "modalCheck": "",
+                    "canTriggerWhileReloading": false,
+                    "deferToAttachment": true,
+                    "attachmentType": "Stock",
+                    "attachmentIndex": 0,
+                    "andContinueEvaluating": true
+                },
+                {
+                    "actionGroupToTrigger": "gadget_button",
+                    "modalCheck": "",
+                    "canTriggerWhileReloading": false,
+                    "deferToAttachment": true,
+                    "attachmentType": "Grip",
+                    "attachmentIndex": 0,
+                    "andContinueEvaluating": true
+                }
+            ]
         }
     ],
     "actionGroups": [
@@ -466,6 +507,7 @@
             "endActionKey": "reload_primary_end"
         }
     ],
+    "modes": [],
     "loopingSounds": [],
     "barrelAttachments": {
         "matchNames": [],

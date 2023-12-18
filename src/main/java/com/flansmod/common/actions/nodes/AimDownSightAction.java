@@ -7,6 +7,7 @@ import com.flansmod.common.types.elements.ModifierDefinition;
 import com.flansmod.util.Maths;
 
 import javax.annotation.Nonnull;
+import java.lang.reflect.Modifier;
 
 public class AimDownSightAction extends ActionInstance
 {
@@ -36,4 +37,6 @@ public class AimDownSightAction extends ActionInstance
 		Magnitude = Maths.LerpF(Magnitude, 1.0f, 1f/20f);
 	}
 	public float FOVFactor() { return Group.Context.ModifyFloat(ModifierDefinition.STAT_ZOOM_FOV_FACTOR, Def.fovFactor); }
+	public float EyeLineRoll() { return Group.Context.ModifyFloat(ModifierDefinition.STAT_EYE_LINE_ROLL, 0.0f); }
+	public String EyeLineName() { return Group.Context.ModifyString(ModifierDefinition.KEY_EYE_LINE_NAME, "eye_line"); }
 }

@@ -72,14 +72,32 @@
                 {
                     "applyTo": "body",
                     "position": [
-                        "-2",
-                        "2",
+                        "4",
+                        "7",
                         "0"
                     ],
                     "rotation": [
-                        "-10",
-                        "-10",
+                        "0",
+                        "45",
                         "110"
+                    ],
+                    "scale": [
+                        1.0,
+                        1.0,
+                        1.0
+                    ]
+                },
+                {
+                    "applyTo": "ammo_0",
+                    "position": [
+                        "0",
+                        "0",
+                        "0"
+                    ],
+                    "rotation": [
+                        "0",
+                        "0",
+                        "0"
                     ],
                     "scale": [
                         1.0,
@@ -150,9 +168,9 @@
                 {
                     "applyTo": "ammo_0",
                     "position": [
-                        "-5",
-                        "-5",
-                        "15"
+                        "-25",
+                        "15",
+                        "-15"
                     ],
                     "rotation": [
                         "0",
@@ -418,9 +436,9 @@
                 {
                     "applyTo": "body",
                     "position": [
-                        "0",
+                        "4",
                         "-4",
-                        "0"
+                        "2"
                     ],
                     "rotation": [
                         "30",
@@ -532,12 +550,36 @@
         },
         {
             "name": "reload_end",
-            "ticks": 0,
+            "ticks": 25,
             "frames": [
                 {
                     "tick": 0,
                     "entry": "linear",
                     "exit": "smooth",
+                    "frame": "ready_to_reload"
+                },
+                {
+                    "tick": 10,
+                    "entry": "linear",
+                    "exit": "linear",
+                    "frame": "ready_to_cock"
+                },
+                {
+                    "tick": 15,
+                    "entry": "linear",
+                    "exit": "linear",
+                    "frame": "cocking"
+                },
+                {
+                    "tick": 20,
+                    "entry": "linear",
+                    "exit": "linear",
+                    "frame": "ready_to_cock"
+                },
+                {
+                    "tick": 25,
+                    "entry": "linear",
+                    "exit": "linear",
                     "frame": "idle"
                 }
             ]

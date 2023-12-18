@@ -1,4 +1,4 @@
-package com.flansmod.common.actions;
+package com.flansmod.common.types.guns.elements;
 
 public enum EActionType
 {
@@ -37,4 +37,5 @@ public enum EActionType
 
 	AttachEffect,		// TODO:
 	Laser,
+	SwitchMode,
 }

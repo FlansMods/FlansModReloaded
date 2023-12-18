@@ -1,7 +1,7 @@
 package com.flansmod.common.actions.contexts;
 
 import com.flansmod.common.FlansMod;
-import com.flansmod.common.actions.EActionType;
+import com.flansmod.common.types.guns.elements.EActionType;
 import com.flansmod.common.gunshots.ModifierStack;
 import com.flansmod.common.item.BulletItem;
 import com.flansmod.common.item.GunItem;
@@ -621,6 +621,12 @@ public class ActionGroupContext
 				modStack.Modify(mod, 1.0f);
 	}
 	public float ModifyFloat(String key, float baseValue)
+	{
+		ModifierStack stack = new ModifierStack(key, GroupPath);
+		Apply(stack);
+		return stack.ApplyTo(baseValue);
+	}
+	public boolean ModifyBoolean(String key, boolean baseValue)
 	{
 		ModifierStack stack = new ModifierStack(key, GroupPath);
 		Apply(stack);

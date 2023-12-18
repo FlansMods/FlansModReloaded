@@ -40,7 +40,8 @@ public class GunDefinition extends JsonDefinition
 	public MagazineSlotSettingsDefinition[] magazines = new MagazineSlotSettingsDefinition[0];
 	@JsonField
 	public ReloadDefinition[] reloads = new ReloadDefinition[0];
-
+	@JsonField
+	public ModeDefinition[] modes = new ModeDefinition[0];
 
 	@JsonField
 	public SoundDefinition[] loopingSounds = new SoundDefinition[0];

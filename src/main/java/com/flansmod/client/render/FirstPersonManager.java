@@ -49,6 +49,7 @@ public class FirstPersonManager
 		public EAttachmentType AttachmentType;
 		public int AttachmentIndex;
 		public boolean IsActive;
+		public String EyeLineName;
 	}
 
 	public static HashMap<String, AdsInstance> ADS_INSTANCES = new HashMap<>();
@@ -158,8 +159,8 @@ public class FirstPersonManager
 		}
 	}
 
-	private static final Transform MC_FIRST_PERSON_OFFSET_RIGHT = new Transform("MC 1st person R", new Vec3(-0.06d, 0.45d, 0.5d));
-	private static final Transform MC_FIRST_PERSON_OFFSET_LEFT = new Transform("MC 1st person L", new Vec3(1.06d, 0.45d, 0.5d));
+	private static final Transform MC_FIRST_PERSON_OFFSET_RIGHT = new Transform("MC 1st person R", new Vec3(-0.06d, 1.0d, 1.0d));
+	private static final Transform MC_FIRST_PERSON_OFFSET_LEFT = new Transform("MC 1st person L", new Vec3(1.06d, 1.0d, 1.0d));
 	private static final Transform MC_THIRD_PERSON_OFFSET = new Transform("MC 3rd person", new Vec3(0.5d, 0.5d, 0.5d), Transform.FromEuler(0f, 90f, 0f));
 	private static final Transform MC_GROUND_OFFSET = new Transform("MC ground", new Vec3(0.5d, 0.5d, 0.5d));
 
@@ -344,8 +345,8 @@ public class FirstPersonManager
 		for (AdsInstance instance : ADS_INSTANCES.values())
 		{
 			String eyeLinePath = instance.AttachmentIndex >= 0
-				? ActionGroupContext.CreateGroupPath(instance.AttachmentType, instance.AttachmentIndex, "eye_line")
-				: "eye_line";
+				? ActionGroupContext.CreateGroupPath(instance.AttachmentType, instance.AttachmentIndex, instance.EyeLineName)
+				: instance.EyeLineName;
 			Transform eyeLine = GetModelSpaceAPTransform(gunContext, transformType, eyeLinePath);
 			if (instance.TransformType == transformType)
 			{
@@ -379,9 +380,10 @@ public class FirstPersonManager
 		// Push it forwards, so there's some gap between the "eye" and the "eye_line" AP
 		eyeLineStack.add(new Transform("EyeToEyeLineGap", new Vec3(0f, 0f, -0.5f)));
 		// Hmm, use default orientation
-		eyeLineStack.add(new Transform("EyeLineOri", defaultPose.Orientation));
+		eyeLineStack.add(new Transform("DefaultOri", defaultPose.Orientation));
+		eyeLineStack.add(new Transform("InvEyeLineOri", eyeLinePos.Orientation.invert(new Quaternionf())));
 		// Then, offset by the "eye_line" in world space
-		eyeLineStack.add(new Transform("EyeLinePos", eyeLinePos.Position.mul(-1d/16d, new Vector3d())));
+		eyeLineStack.add(new Transform("EyeLinePos", eyeLinePos.Position.mul(-1d, new Vector3d())));
 
 		Transform lookDownEyeLineTransform = eyeLineStack.Top();
 
@@ -421,6 +423,7 @@ public class FirstPersonManager
 									newInst.IsActive = true;
 									newInst.BlendAmount = 0.0f;
 									newInst.TransformType = transformType;
+									newInst.EyeLineName = adsAction.EyeLineName();
 									if(actionGroup.Context.IsAttachment())
 									{
 										newInst.AttachmentType = actionGroup.Context.GetAttachmentType();
