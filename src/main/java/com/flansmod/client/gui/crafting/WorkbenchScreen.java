@@ -2526,8 +2526,8 @@ public class WorkbenchScreen extends AbstractContainerScreen<WorkbenchMenu>
 		float parametric = value / (max - min);
 		float scrollbarPxSize = Maths.Max(scrollbarPxHeight / (max - min), scrollbarMinSize);
 
-		float minPx = Maths.Lerp(0, scrollbarPxHeight - scrollbarPxSize, parametric);
-		float maxPx = Maths.Lerp(scrollbarPxSize, scrollbarPxHeight, parametric);
+		float minPx = Maths.LerpF(0, scrollbarPxHeight - scrollbarPxSize, parametric);
+		float maxPx = Maths.LerpF(scrollbarPxSize, scrollbarPxHeight, parametric);
 
 		blit(pose, x, y + Maths.Floor(minPx), getBlitOffset(), 208, 18, scrollbarPxWidth, Maths.Floor(scrollbarPxSize) - 8, TEXTURE_WIDTH, TEXTURE_HEIGHT);
 		blit(pose, x, y + Maths.Floor(maxPx) - 8, getBlitOffset(), 208, 82, scrollbarPxWidth, 8, TEXTURE_WIDTH, TEXTURE_HEIGHT);

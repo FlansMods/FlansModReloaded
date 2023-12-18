@@ -3724,8 +3724,8 @@
             "name": "sights",
             "attachTo": "body",
             "offset": [
-                1.5,
-                4.5,
+                -1.0,
+                3.5,
                 0.0
             ]
         }

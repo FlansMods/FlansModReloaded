@@ -86,9 +86,9 @@ public class TurboFace
 			float u = uvs.getU(i); //sprite.getU(uvs.getU(i) * 0.999d + uvs.getU((i + 2) % 4) * 0.001d);
 			float v = uvs.getV(i); //sprite.getV(uvs.getV(i) * 0.999d + uvs.getV((i + 2) % 4) * 0.001d);
 
-			magicVertData[offset + 0] = Float.floatToRawIntBits(positions[i].x());	// 0
-			magicVertData[offset + 1] = Float.floatToRawIntBits(positions[i].y());	// 4
-			magicVertData[offset + 2] = Float.floatToRawIntBits(positions[i].z());	// 8
+			magicVertData[offset + 0] = Float.floatToRawIntBits(positions[i].x() / 16f);	// 0
+			magicVertData[offset + 1] = Float.floatToRawIntBits(positions[i].y() / 16f);	// 4
+			magicVertData[offset + 2] = Float.floatToRawIntBits(positions[i].z() / 16f);	// 8
 			magicVertData[offset + 3] = -1; // Colour = 0xffffffff					// 12
 			magicVertData[offset + 4] = Float.floatToRawIntBits(u);					// 16
 			magicVertData[offset + 5] = Float.floatToRawIntBits(v);					// 20

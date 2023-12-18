@@ -34,8 +34,8 @@ public class PlayerHitbox
     public PlayerHitResult Raycast(Player player, Vec3 origin, Vec3 motion)
     {
         // Localise
-        origin = transform.InverseTransformPosition(origin);
-        motion = transform.InverseTransformDirection(motion);
+        origin = transform.GlobalToLocalPosition(origin);
+        motion = transform.GlobalToLocalDirection(motion);
 
         // We now have an AABB starting at -halfExtents and with dimensions 2*halfExtents and our ray in the same coordinate system
         // We are looking for a point at which the ray enters the box, so we need only consider faces that the ray can see. Partition the space into 3 areas in each axis
@@ -118,10 +118,9 @@ public class PlayerHitbox
     @OnlyIn(Dist.CLIENT)
     public void debugRender(Vector4f colour)
     {
-        Transform renderPos = transform.copy(); //.Translate(0.0d, 0.0d, 2.0d);
+        Transform renderPos = transform; //.Translate(0.0d, 0.0d, 2.0d);
         
         DebugRenderer.RenderCube(renderPos, 40, colour, halfExtents);
-        renderPos = renderPos.TranslateLocal(new Vector3d(0.0d, 0.0d, 1.0d));
         Vector3f quarterExtents = new Vector3f(halfExtents.x * 0.5f, halfExtents.y * 0.5f, halfExtents.z * 0.5f);
         DebugRenderer.RenderCube(renderPos, 40, colour, quarterExtents);
 

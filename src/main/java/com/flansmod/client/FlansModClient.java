@@ -11,17 +11,22 @@ import com.flansmod.client.render.bullets.BulletEntityRenderer;
 import com.flansmod.client.render.debug.DebugRenderer;
 import com.flansmod.client.render.decals.DecalRenderer;
 import com.flansmod.client.render.bullets.ShotRenderer;
+import com.flansmod.client.render.decals.LaserRenderer;
 import com.flansmod.common.FlansMod;
 import com.flansmod.common.actions.contexts.GunContextCache;
+import com.flansmod.util.Maths;
 import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import net.minecraft.Util;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.MenuScreens;
+import net.minecraft.client.renderer.ItemInHandRenderer;
 import net.minecraft.client.renderer.ItemModelShaper;
 import net.minecraft.client.renderer.ShaderInstance;
 import net.minecraft.client.renderer.entity.EntityRenderers;
 import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.entity.HumanoidArm;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.event.ModelEvent;
@@ -44,6 +49,7 @@ import java.lang.reflect.Field;
 public class FlansModClient
 {
 	public static final ShotRenderer SHOT_RENDERER= new ShotRenderer();
+	public static final LaserRenderer LASER_RENDERER = new LaserRenderer();
 	public static final DebugRenderer DEBUG_RENDERER = new DebugRenderer();
 	public static final ClientInputHooks CLIENT_INPUT_HOOKS = new ClientInputHooks();
 	public static final ClientRenderHooks CLIENT_OVERLAY_HOOKS = new ClientRenderHooks();
@@ -106,17 +112,6 @@ public class FlansModClient
 
 	public static ShaderInstance GetGunCutoutShader() { return GUN_CUTOUT; }
 
-	public static void SetMissTime(int missTime)
-	{
-		try
-		{
-			MINECRAFT_MISS_TIME.set(Minecraft.getInstance(), missTime);
-		}
-		catch (Exception e)
-		{
-			FlansMod.LOGGER.error("Failed to SetMissTime due to " + e);
-		}
-	}
 
 
 
@@ -156,9 +151,55 @@ public class FlansModClient
 	// REFLECTION
 	// ---------------------------
 	private static final Field MINECRAFT_MISS_TIME = ObfuscationReflectionHelper.findField(Minecraft.class, "f_91078_");
+	private static final Field ITEM_IN_HAND_RENDERER_MAIN_HAND_HEIGHT = ObfuscationReflectionHelper.findField(ItemInHandRenderer.class, "f_109302_");
+	private static final Field ITEM_IN_HAND_RENDERER_O_MAIN_HAND_HEIGHT = ObfuscationReflectionHelper.findField(ItemInHandRenderer.class, "f_109303_");
+	private static final Field ITEM_IN_HAND_RENDERER_OFF_HAND_HEIGHT = ObfuscationReflectionHelper.findField(ItemInHandRenderer.class, "f_109304_");
+	private static final Field ITEM_IN_HAND_RENDERER_O_OFF_HAND_HEIGHT = ObfuscationReflectionHelper.findField(ItemInHandRenderer.class, "f_109305_");
 	private static void InitReflection()
 	{
 		MINECRAFT_MISS_TIME.setAccessible(true);
+		ITEM_IN_HAND_RENDERER_MAIN_HAND_HEIGHT.setAccessible(true);
+		ITEM_IN_HAND_RENDERER_O_MAIN_HAND_HEIGHT.setAccessible(true);
+		ITEM_IN_HAND_RENDERER_OFF_HAND_HEIGHT.setAccessible(true);
+		ITEM_IN_HAND_RENDERER_O_OFF_HAND_HEIGHT.setAccessible(true);
+	}
+	public static float GetHandHeight(InteractionHand hand, float dt)
+	{
+		try
+		{
+			ItemInHandRenderer iihr = Minecraft.getInstance().gameRenderer.itemInHandRenderer;
+			switch (hand)
+			{
+				case MAIN_HAND -> {
+					return
+						Maths.LerpF((float)ITEM_IN_HAND_RENDERER_O_MAIN_HAND_HEIGHT.get(iihr),
+									(float)ITEM_IN_HAND_RENDERER_MAIN_HAND_HEIGHT.get(iihr),
+								    dt);
+				}
+				case OFF_HAND -> {
+					return
+						Maths.LerpF((float)ITEM_IN_HAND_RENDERER_O_OFF_HAND_HEIGHT.get(iihr),
+							(float)ITEM_IN_HAND_RENDERER_OFF_HAND_HEIGHT.get(iihr),
+							dt);
+				}
+			}
+		}
+		catch(Exception e)
+		{
+			FlansMod.LOGGER.error("Failed to GetHandHeight due to " + e);
+		}
+		return 0.0f;
+	}
+	public static void SetMissTime(int missTime)
+	{
+		try
+		{
+			MINECRAFT_MISS_TIME.set(Minecraft.getInstance(), missTime);
+		}
+		catch (Exception e)
+		{
+			FlansMod.LOGGER.error("Failed to SetMissTime due to " + e);
+		}
 	}
 
 }

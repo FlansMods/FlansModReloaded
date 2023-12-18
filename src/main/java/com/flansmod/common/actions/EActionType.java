@@ -36,4 +36,5 @@ public enum EActionType
 	Flatten,			// Vanilla, untested
 
 	AttachEffect,		// TODO:
+	Laser,
 }

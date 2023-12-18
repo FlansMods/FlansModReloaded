@@ -1,14 +1,15 @@
 package com.flansmod.client.render.models;
 
 import com.flansmod.common.FlansMod;
-import com.flansmod.common.item.AttachmentItem;
 import com.flansmod.common.types.attachments.EAttachmentType;
 import com.flansmod.util.Maths;
+import com.flansmod.util.Transform;
+import com.flansmod.util.TransformStack;
 import com.google.common.collect.Maps;
 import com.google.gson.*;
 import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.datafixers.util.Either;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.block.model.*;
 import net.minecraft.client.renderer.texture.TextureAtlas;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
@@ -17,7 +18,6 @@ import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.GsonHelper;
 import net.minecraft.util.RandomSource;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.client.model.geometry.IGeometryBakingContext;
 import net.minecraftforge.client.model.geometry.IGeometryLoader;
@@ -28,7 +28,6 @@ import org.joml.Quaternionf;
 import org.joml.Vector3f;
 
 import javax.annotation.Nonnull;
-import javax.json.Json;
 import java.lang.reflect.Type;
 import java.util.*;
 import java.util.function.Function;
@@ -41,6 +40,34 @@ public class TurboRig implements IUnbakedGeometry<TurboRig>, UnbakedModel
 
 	public static final class AttachPoint
 	{
+		public static class Baked
+		{
+			@Nonnull
+			public final String PartName;
+			@Nullable
+			public final Baked Parent;
+			@Nonnull
+			public final Vector3f Offset;
+			@Nonnull
+			public final Quaternionf Rotation;
+
+			public Baked(@Nonnull String partName)
+			{
+				PartName = partName;
+				Parent = null;
+				Offset = new Vector3f();
+				Rotation = new Quaternionf();
+			}
+
+			public Baked(@Nonnull String partName, @Nonnull Baked parent, @Nonnull Vector3f offset, @Nonnull Vector3f euler)
+			{
+				PartName = partName;
+				Parent = parent;
+				Offset = offset;
+				Rotation = Transform.FromEuler(euler);
+			}
+		}
+
 		public final String AttachTo;
 		public final Vector3f Offset;
 		public final Vector3f Euler;
@@ -50,6 +77,7 @@ public class TurboRig implements IUnbakedGeometry<TurboRig>, UnbakedModel
 			Offset = offset;
 			Euler = euler;
 		}
+		public boolean IsValid() { return AttachTo.length() > 0; }
 		public static final AttachPoint Invalid = new AttachPoint("", new Vector3f(), new Vector3f());
 	}
 
@@ -133,25 +161,66 @@ public class TurboRig implements IUnbakedGeometry<TurboRig>, UnbakedModel
 			bakedModels.put(kvp.getKey(), (TurboModel.Baked)kvp.getValue().bake(context, baker, spriteGetter, modelState, overrides, modelLocation));
 		}
 
-		return new Baked(iconModels, bakedModels, Textures, Transforms);
+		Map<String, AttachPoint.Baked> bakedAPs = new HashMap<>();
+		bakedAPs.put("body", new AttachPoint.Baked("body"));
+		for(var kvp : AttachPoints.entrySet())
+		{
+			BakeAP(kvp.getKey(), kvp.getValue(), bakedAPs);
+		}
+
+		return new Baked(iconModels, bakedModels, bakedAPs, Textures, Transforms);
 	}
+
+	private void BakeAP(@Nonnull String apName, @Nonnull AttachPoint ap, @Nonnull Map<String, AttachPoint.Baked> bakedAPs)
+	{
+		if(!bakedAPs.containsKey(ap.AttachTo))
+		{
+			AttachPoint parentAP = AttachPoints.get(ap.AttachTo);
+			if(parentAP != null)
+			{
+				BakeAP(ap.AttachTo, parentAP, bakedAPs);
+			}
+		}
+
+		if(!bakedAPs.containsKey(apName) && bakedAPs.containsKey(ap.AttachTo))
+		{
+			bakedAPs.put(apName, new AttachPoint.Baked(
+				apName,
+				bakedAPs.get(ap.AttachTo),
+				ap.Offset.mul(1f/16f, new Vector3f()),
+				ap.Euler));
+		}
+	}
+
 
 	public static class Baked implements BakedModel
 	{
 		private final Map<String, BakedModel> IconModels;
 		private final Map<String, TurboModel.Baked> BakedModels;
+		private final Map<String, AttachPoint.Baked> BakedAPs;
 		private final Map<String, ResourceLocation> Textures;
+
 		private final ItemTransforms Transforms;
 
 		public Baked(Map<String, BakedModel> bakedIcons,
 					 Map<String, TurboModel.Baked> bakedParts,
+					 Map<String, AttachPoint.Baked> bakedAPs,
 					 Map<String, ResourceLocation> textures,
 					 ItemTransforms transforms)
 		{
 			IconModels = bakedIcons;
 			BakedModels = bakedParts;
+			BakedAPs = bakedAPs;
 			Textures = textures;
 			Transforms = transforms;
+		}
+
+		@Nonnull
+		public Set<Map.Entry<String, AttachPoint.Baked>> GetAttachPoints() { return BakedAPs.entrySet(); }
+		@Nullable
+		public AttachPoint.Baked GetAttachPoint(String apName)
+		{
+			return BakedAPs.get(apName);
 		}
 
 		@Nullable
@@ -164,38 +233,15 @@ public class TurboRig implements IUnbakedGeometry<TurboRig>, UnbakedModel
 			return null;
 		}
 
-		public void ApplyTransform(ItemTransforms.TransformType transformType, PoseStack ms, boolean bFlip)
+		public Transform GetTransform(ItemTransforms.TransformType transformType)
+		{
+			return new Transform("BakedItemTransform["+transformType+"]", Transforms.getTransform(transformType));
+		}
+
+		public void ApplyTransform(TransformStack transformStack, ItemTransforms.TransformType transformType, boolean bFlip)
 		{
 			ItemTransform transform = Transforms.getTransform(transformType);
-			switch(transformType)
-			{
-				case FIRST_PERSON_RIGHT_HAND, FIRST_PERSON_LEFT_HAND ->
-				{
-					transform = new ItemTransform(transform.rotation, transform.translation.mul(16f, new Vector3f()), transform.scale);
-					transform.apply(bFlip, ms);
-				}
-				case THIRD_PERSON_RIGHT_HAND, THIRD_PERSON_LEFT_HAND ->
-				{
-					ms.translate(0.5f, 0.5f, 0.5f);
-					ms.mulPose((new Quaternionf().rotateY(Maths.TauF / 4f)));
-					transform.apply(bFlip, ms);
-					ms.scale(1f/16f, 1f/16f, 1f/16f);
-				}
-				case FIXED ->
-				{
-					transform.apply(bFlip, ms);
-					ms.scale(1f/16f, 1f/16f, 1f/16f);
-				}
-				case GROUND ->
-				{
-					ms.translate(0.5f, 0.5f, 0.5f);
-					transform.apply(bFlip, ms);
-				}
-				default ->
-				{
-					transform.apply(bFlip, ms);
-				}
-			}
+			transformStack.add(new Transform("BakedItemTransform["+transformType+"]", transform));
 		}
 
 		public TurboModel.Baked GetPart(String part)

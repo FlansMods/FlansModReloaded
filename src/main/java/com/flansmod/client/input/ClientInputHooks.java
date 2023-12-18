@@ -43,6 +43,12 @@ public class ClientInputHooks
 		InputConstants.Type.KEYSYM,
 		GLFW.GLFW_KEY_L,
 		"key.categories.flansmod"); });
+	public static final Lazy<KeyMapping> MODE_TOGGLE_MAPPING = Lazy.of(() -> { return new KeyMapping(
+		"key.flansmod.mode_toggle",
+		KeyConflictContext.IN_GAME,
+		InputConstants.Type.KEYSYM,
+		GLFW.GLFW_KEY_C,
+		"key.categories.flansmod"); });
 
 	public static final Lazy<KeyMapping> MANUAL_RELOAD_MAPPING = Lazy.of(() -> { return new KeyMapping(
 		"key.flansmod.manual_reload",
@@ -65,6 +71,7 @@ public class ClientInputHooks
 	{
 		event.register(LOOK_AT_MAPPING.get());
 		event.register(MANUAL_RELOAD_MAPPING.get());
+		event.register(MODE_TOGGLE_MAPPING.get());
 	}
 
 	public void OnClickInput(InputEvent.InteractionKeyMappingTriggered event)
@@ -94,6 +101,10 @@ public class ClientInputHooks
 			while(LOOK_AT_MAPPING.get().consumeClick())
 			{
 				FlansModClient.ACTIONS_CLIENT.ClientKeyPressed(player, EPlayerInput.SpecialKey1);
+			}
+			while(MODE_TOGGLE_MAPPING.get().consumeClick())
+			{
+				FlansModClient.ACTIONS_CLIENT.ClientKeyPressed(player, EPlayerInput.SpecialKey2);
 			}
 
 			while(MANUAL_RELOAD_MAPPING.get().consumeClick())

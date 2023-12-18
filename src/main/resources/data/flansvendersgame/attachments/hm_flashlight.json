@@ -27,6 +27,7 @@
     "handlerOverrides": [],
     "actionOverrides": [],
     "reloadOverrides": [],
+    "abilities": [],
     "modeOverride": "FullAuto",
     "overrideFireMode": false
 }

@@ -89,7 +89,6 @@ public class DefinitionParser
 			catch(Exception e) { FlansMod.LOGGER.error("Failed to parse JsonNode " + jNode + " into " + ref + " as Vector3f due to exception: " + e); throw e; }
 		});
 		Parsers.put(VecWithOverride.class, VecWithOverride::ParseFunc);
-		Parsers.put(ColourDefinition.class, ColourDefinition::ParseFunc);
 
 	}
 	private static FieldParseMethod GetParserFor(Field field) { return GetParserFor(field.getType()); }

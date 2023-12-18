@@ -1,5 +1,7 @@
 package com.flansmod.client.render.debug;
 
+import com.flansmod.common.actions.contexts.GunContext;
+import com.flansmod.common.actions.contexts.ShooterContext;
 import com.flansmod.util.Maths;
 import com.flansmod.util.MinecraftHelpers;
 import com.flansmod.util.Transform;
@@ -10,6 +12,7 @@ import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.client.renderer.LevelRenderer;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.client.event.RenderLevelStageEvent;
 import net.minecraftforge.common.MinecraftForge;
@@ -50,43 +53,50 @@ public class DebugRenderer
             direction = dir;
         }
 
+        protected void RenderLine(PoseStack poseStack, Tesselator tesselator, Vec3 start, Vec3 ray, Vector4f col)
+        {
+            BufferBuilder buf = tesselator.getBuilder();
+            buf.begin(VertexFormat.Mode.TRIANGLE_STRIP, DefaultVertexFormat.POSITION_COLOR);
+
+            Vec3 center = new Vec3(
+                start.x + ray.x * 0.5f,
+                start.y + ray.y * 0.5f,
+                start.z + ray.z * 0.5f);
+            Vec3 toCamera = Maths.Sub(center, MinecraftHelpers.GetCamera().position());
+            Vec3 lateralAxis = Maths.Cross(toCamera, ray).normalize();
+            lateralAxis = lateralAxis.scale(0.02d);
+
+            buf.vertex(poseStack.last().pose(), (float)lateralAxis.x, (float)lateralAxis.y, (float)lateralAxis.z)
+                .color(col.x, col.y, col.z, col.w)
+                .endVertex();
+            buf.vertex(poseStack.last().pose(), (float)-lateralAxis.x, (float)-lateralAxis.y, (float)-lateralAxis.z)
+                .color(col.x, col.y, col.z, col.w)
+                .endVertex();
+
+
+            buf.vertex(poseStack.last().pose(),
+                    (float)(ray.x + lateralAxis.x),
+                    (float)(ray.y + lateralAxis.y),
+                    (float)(ray.z + lateralAxis.z))
+                .color(col.x, col.y, col.z, col.w)
+                .endVertex();
+            buf.vertex(poseStack.last().pose(),
+                    (float)(ray.x - lateralAxis.x),
+                    (float)(ray.y - lateralAxis.y),
+                    (float)(ray.z - lateralAxis.z))
+                .color(col.x, col.y, col.z, col.w)
+                .endVertex();
+
+            tesselator.end();
+        }
+
         @Override
         public void Render(PoseStack poseStack, Tesselator tesselator)
         {
             if(MinecraftHelpers.GetCamera() == null)
                 return;
 
-            BufferBuilder buf = tesselator.getBuilder();
-            buf.begin(VertexFormat.Mode.TRIANGLE_STRIP, DefaultVertexFormat.POSITION_COLOR);
-
-            Vec3 center = new Vec3(transform.position.x + direction.x * 0.5f,
-                                    transform.position.y + direction.y * 0.5f,
-                                    transform.position.z + direction.z * 0.5f);
-            Vec3 toCamera = Maths.Sub(center, MinecraftHelpers.GetCamera().position());
-            Vec3 lateralAxis = Maths.Cross(toCamera, direction).normalize();
-            lateralAxis = lateralAxis.scale(0.1d);
-
-            buf.vertex(poseStack.last().pose(), (float)lateralAxis.x, (float)lateralAxis.y, (float)lateralAxis.z)
-                .color(colour.x, colour.y, colour.z, colour.w)
-                .endVertex();
-            buf.vertex(poseStack.last().pose(), (float)-lateralAxis.x, (float)-lateralAxis.y, (float)-lateralAxis.z)
-                .color(colour.x, colour.y, colour.z, colour.w)
-                .endVertex();
-
-            buf.vertex(poseStack.last().pose(),
-                    (float)(direction.x - lateralAxis.x),
-                    (float)(direction.y - lateralAxis.y),
-                    (float)(direction.z - lateralAxis.z))
-                .color(colour.x, colour.y, colour.z, colour.w)
-                .endVertex();
-            buf.vertex(poseStack.last().pose(),
-                    (float)(direction.x + lateralAxis.x),
-                    (float)(direction.y + lateralAxis.y),
-                    (float)(direction.z + lateralAxis.z))
-                .color(colour.x, colour.y, colour.z, colour.w)
-                .endVertex();
-
-            tesselator.end();
+            RenderLine(poseStack, tesselator, transform.PositionVec3(), direction, colour);
         }
     }
 
@@ -113,7 +123,7 @@ public class DebugRenderer
                     for(int z = 0; z < 2; z++)
                     {
                         verts[z*4 + y*2 + x] = new Vector3f((x*2-1)*halfExtents.x, (y*2-1)*halfExtents.y, (z*2-1)*halfExtents.z);
-                        transform.orientation.transform(verts[z*4 + y*2 + x]);
+                        transform.Orientation.transform(verts[z*4 + y*2 + x]);
                     }
 
             for(int i = 0; i < BoxStrips.length; i++)
@@ -127,16 +137,40 @@ public class DebugRenderer
         }
     }
 
+    private static class DebugRenderAxes extends DebugRenderLine
+    {
+        public DebugRenderAxes(Transform t, int ticks, Vector4f col)
+        {
+            super(t, ticks, col, t.ForwardVec3());
+        }
+
+        @Override
+        public void Render(PoseStack poseStack, Tesselator tesselator)
+        {
+            if(MinecraftHelpers.GetCamera() == null)
+                return;
+
+            RenderLine(poseStack, tesselator, transform.PositionVec3(), transform.ForwardVec3(), new Vector4f(1f, 0f, 0f, 1f));
+            RenderLine(poseStack, tesselator, transform.PositionVec3(), transform.UpVec3(), new Vector4f(0f, 1f, 0f, 1f));
+            RenderLine(poseStack, tesselator, transform.PositionVec3(), transform.RightVec3(), new Vector4f(0f, 0f, 1f, 1f));
+        }
+    }
+
     public static ArrayList<DebugRenderItem> renderItems = new ArrayList<>();
 
     public static void RenderCube(Transform t, int ticks, Vector4f col, Vector3f h)
     {
-        renderItems.add(new DebugRenderCube(t.copy(), ticks, col, h));
+        renderItems.add(new DebugRenderCube(t, ticks, col, h));
     }
 
     public static void RenderLine(Vec3 origin, int ticks, Vector4f col, Vec3 ray)
     {
-        renderItems.add(new DebugRenderLine(new Transform(origin), ticks, col, ray));
+        renderItems.add(new DebugRenderLine(new Transform("DebugLine", origin), ticks, col, ray));
+    }
+
+    public static void RenderAxes(Transform t, int ticks, Vector4f col)
+    {
+        renderItems.add(new DebugRenderAxes(t, ticks, col));
     }
 
     public DebugRenderer()
@@ -165,7 +199,7 @@ public class DebugRenderer
             for (DebugRenderItem item : renderItems)
             {
                 poseStack.pushPose();
-                poseStack.translate(item.transform.position.x - pos.x, item.transform.position.y - pos.y, item.transform.position.z - pos.z);
+                poseStack.translate(item.transform.Position.x - pos.x, item.transform.Position.y - pos.y, item.transform.Position.z - pos.z);
                 item.Render(poseStack, tesselator);
                 poseStack.popPose();
             }
@@ -183,5 +217,24 @@ public class DebugRenderer
             if(renderItems.get(i).ticksLeft-- <= 0)
                 renderItems.remove(i);
         }
+
+        // Add some useful rendering
+        //Player player = Minecraft.getInstance().player;
+        //if(player != null)
+        //{
+        //    ShooterContext playerShooterContext = ShooterContext.GetOrCreate(player);
+        //    if(playerShooterContext.IsValid())
+        //    {
+        //        for(GunContext gunContext : playerShooterContext.GetAllGunContexts(true))
+        //        {
+        //            if(gunContext.IsValid())
+        //            {
+        //                Transform shootOrigin = gunContext.GetShootOrigin();
+        //                if (shootOrigin != null)
+        //                    RenderAxes(shootOrigin, 1, new Vector4f());
+        //            }
+        //        }
+        //    }
+        //}
     }
 }

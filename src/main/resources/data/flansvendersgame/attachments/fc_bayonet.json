@@ -1,0 +1,84 @@
+{
+    "itemSettings": {
+        "maxStackSize": 1,
+        "tags": [
+            "flansmod:attach_to_rifle",
+            "flansmod:barrel_attach"
+        ]
+    },
+    "attachmentType": "Barrel",
+    "modifiers": [
+        {
+            "Stat": "melee_damage",
+            "Filter": "",
+            "Add": 0.0,
+            "Multiply": 0.0,
+            "SetValue": "4",
+            "ApplyFilters": []
+        }
+    ],
+    "mechaEffects": [],
+    "mechaEffectFilter": "",
+    "handlerOverrides": [
+        {
+            "inputType": "SpecialKey1",
+            "nodes": [
+                {
+                    "actionGroupToTrigger": "look",
+                    "modalCheck": "",
+                    "canTriggerWhileReloading": false,
+                    "deferToAttachment": false,
+                    "attachmentType": "Barrel",
+                    "attachmentIndex": 0,
+                    "andContinueEvaluating": false
+                }
+            ]
+        }
+    ],
+    "actionOverrides": [
+        {
+            "key": "look",
+            "canActUnderwater": true,
+            "canActUnderOtherLiquid": true,
+            "canBeOverriden": false,
+            "twoHanded": false,
+            "repeatMode": "SemiAuto",
+            "repeatDelay": 0.05,
+            "repeatCount": 0,
+            "spinUpDuration": 0.0,
+            "loudness": 0.0,
+            "actions": [
+                {
+                    "actionType": "Melee",
+                    "duration": 1.0,
+                    "sounds": [],
+                    "itemStack": "",
+                    "modifiers": [],
+                    "fovFactor": 1.0,
+                    "scopeOverlay": "",
+                    "anim": "",
+                    "toolLevel": 2.0,
+                    "harvestSpeed": 0.0,
+                    "reach": 2.0
+                },
+                {
+                    "actionType": "Animation",
+                    "duration": 1.0,
+                    "sounds": [],
+                    "itemStack": "",
+                    "modifiers": [],
+                    "fovFactor": 1.0,
+                    "scopeOverlay": "",
+                    "anim": "melee",
+                    "toolLevel": 0.0,
+                    "harvestSpeed": 0.0,
+                    "reach": 0.0
+                }
+            ]
+        }
+    ],
+    "reloadOverrides": [],
+    "abilities": [],
+    "modeOverride": "FullAuto",
+    "overrideFireMode": false
+}

@@ -16,6 +16,7 @@ import com.flansmod.common.types.guns.elements.ActionDefinition;
 import com.flansmod.common.types.guns.elements.ESpreadPattern;
 import com.flansmod.util.Maths;
 import com.flansmod.util.Transform;
+import com.flansmod.util.TransformStack;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.particle.ParticleEngine;
@@ -240,11 +241,15 @@ public class ShootAction extends ActionInstance
 				float bulletSpread = 0.0025f * shotContext.Spread();
 				for (int i = 0; i < shotContext.BulletCount(); i++)
 				{
-					Transform randomizedDirection = RandomizeVectorDirection(
+					TransformStack transformStack = new TransformStack();
+					transformStack.add(Group.Context.Gun.GetShootOrigin());
+					RandomizeVectorDirection(
+						transformStack,
 						Group.Context.Gun.GetShooter().Entity().level.random,
-						Group.Context.Gun.GetShootOrigin(),
 						bulletSpread,
 						shotContext.SpreadPattern());
+
+					Transform randomizedDirection = transformStack.Top();
 
 					float penetrationPower = shotContext.PenetrationPower();
 
@@ -285,11 +290,11 @@ public class ShootAction extends ActionInstance
 		}
 	}
 
-	private Transform RandomizeVectorDirection(RandomSource rand, Transform aim, float spread, ESpreadPattern spreadPattern)
+	private void RandomizeVectorDirection(@Nonnull TransformStack transformStack,
+										  @Nonnull RandomSource rand,
+										  float spread,
+										  @Nonnull ESpreadPattern spreadPattern)
 	{
-		Transform result = aim.copy();
-		Vector3d yAxis = aim.Up();
-		Vector3d xAxis = aim.Right();
 		float xComponent;
 		float yComponent;
 
@@ -343,10 +348,7 @@ public class ShootAction extends ActionInstance
 		float yaw = Maths.AtanF(xComponent);
 		float pitch = Maths.AtanF(yComponent);
 
-		result = result.RotateLocalYaw(yaw * Maths.RadToDegF);
-		result = result.RotateLocalPitch(pitch * Maths.RadToDegF);
-
-		return result;
+		transformStack.add(new Transform("Spread["+spreadPattern+"x"+spread+"]", Transform.FromEuler(pitch, yaw, 0f)));
 	}
 
 	@Override

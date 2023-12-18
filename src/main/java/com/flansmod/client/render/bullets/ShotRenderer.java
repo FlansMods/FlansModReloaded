@@ -47,9 +47,7 @@ public class ShotRenderer
 	{
 		if(Minecraft.getInstance().player != null && gunshotContext.ActionGroup.Gun instanceof GunContextPlayer playerGunContext)
 		{
-			ItemStack gunStack = gunshotContext.ActionGroup.Gun.GetItemStack();
-
-			Transform shootOrigin = FirstPersonManager.GetWorldSpaceAttachmentTransform(gunStack, MinecraftHelpers.GetFirstPersonTransformType(playerGunContext.GetHand()), "shoot_origin");
+			Transform shootOrigin = FirstPersonManager.GetWorldSpaceAPTransform(gunshotContext.ActionGroup.Gun, MinecraftHelpers.GetFirstPersonTransformType(playerGunContext.GetHand()), "shoot_origin");
 			ShotRenderInstance shot = new ShotRenderInstance(shootOrigin.PositionVec3(), endpoint, 0.05f, 10.0f, 10.0f, null, GetBulletRenderer(gunshotContext));
 			shots.add(shot);
 			return shot.GetLifetime();

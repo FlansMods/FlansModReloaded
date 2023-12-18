@@ -102,6 +102,7 @@ public class VendersGameMod
 	public static final RegistryObject<Item> ATTACHMENT_HM_STEADY_FOREGRIP = 	FlansMod.Attachment(ITEMS, MODID, "hm_steady_foregrip");
 	public static final RegistryObject<Item> ATTACHMENT_HM_SNAP_STOCK = 		FlansMod.Attachment(ITEMS, MODID, "hm_snap_stock");
 	public static final RegistryObject<Item> ATTACHMENT_HM_SHELL_RACK_STOCK =	FlansMod.Attachment(ITEMS, MODID, "hm_shell_rack_stock");
+	public static final RegistryObject<Item> ATTACHMENT_HM_MICRO_LASER =		FlansMod.Attachment(ITEMS, MODID, "hm_micro_laser");
 
 
 	// PhanTek Advanced Guns

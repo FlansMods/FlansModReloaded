@@ -9,8 +9,8 @@
         "minecraft:generic.armor_toughness"
     ],
     "modifiers": [],
-    "baseIntensity": 1.0,
-    "addIntensityPerLevel": 1.0,
+    "baseIntensity": 2.0,
+    "addIntensityPerLevel": 2.0,
     "mulIntensityPerAttachment": 0.0,
     "mulIntensityForFullMag": 0.0,
     "invertMagFullness": false,

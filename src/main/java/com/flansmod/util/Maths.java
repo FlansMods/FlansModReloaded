@@ -53,7 +53,7 @@ public class Maths
     public static int Floor(float d) { return (int)Math.floor(d); }
     public static int Round(float d) { return (int)Math.round(d); }
     public static boolean Approx(float a, float b) { return Abs(a-b) < EpsilonF; }
-    public static float Lerp(float a, float b, float t) { return a + (b-a)*Maths.Clamp(t, 0f, 1f); }
+    public static float LerpF(float a, float b, float t) { return a + (b-a)*Maths.Clamp(t, 0f, 1f); }
     public static float Sign(float f) { return f > 0.0f ? 1.0f : (f < 0.0f ? -1.0f : 0.0f); }
     public static float ExpF(float f) { return (float)Math.exp(f); }
     public static float PowF(float a, float b) { return (float)Math.pow(a, b); }
@@ -111,6 +111,7 @@ public class Maths
     public static Quaternionf QuaternionFromEuler(float x, float y, float z) { return new Quaternionf().rotateXYZ(x* Maths.DegToRadF, y * Maths.DegToRadF, z* Maths.DegToRadF); }
     public static Quaternionf QuaternionFromEuler(Vector3f v) { return new Quaternionf().rotateXYZ(v.x* Maths.DegToRadF, v.y * Maths.DegToRadF, v.z* Maths.DegToRadF); }
     public static Quaternionf Slerp(Quaternionf a, Quaternionf b, float t) { return a.slerp(b, t, new Quaternionf()); }
+    public static Orientation Slerp(Orientation a, Orientation b, float t) { return a.Slerp(b, t); }
 
     public static float ClampDegrees(float f)
     {

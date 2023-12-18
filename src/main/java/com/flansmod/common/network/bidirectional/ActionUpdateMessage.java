@@ -1,5 +1,6 @@
 package com.flansmod.common.network.bidirectional;
 
+import com.flansmod.common.FlansMod;
 import com.flansmod.common.actions.*;
 import com.flansmod.common.actions.contexts.ActionGroupContext;
 import com.flansmod.common.actions.contexts.GunContextCache;

@@ -94,33 +94,6 @@ public class ClientRenderHooks
 	}
 
 	@SubscribeEvent
-	public void OnRenderHands(RenderHandEvent event)
-	{
-		FlanItemModelRenderer renderer = FlansModClient.MODEL_REGISTRATION.GetModelRenderer(event.getItemStack());
-		if(renderer != null && renderer.ShouldRenderWhenHeld)
-		{
-			renderer.RenderFirstPerson(
-				Minecraft.getInstance().player,
-				event.getItemStack(),
-				MinecraftHelpers.GetArm(event.getHand()),
-				event.getHand() == InteractionHand.OFF_HAND ? ItemTransforms.TransformType.FIRST_PERSON_LEFT_HAND : ItemTransforms.TransformType.FIRST_PERSON_RIGHT_HAND,
-				event.getPoseStack(),
-				event.getMultiBufferSource(),
-				event.getPackedLight(),
-				0,
-				event.getEquipProgress());
-
-			event.setCanceled(true);
-		}
-	}
-
-	//@SubscribeEvent
-	//public void OnRenderLiving(RenderLivingEvent<LivingEntity> event)
-	//{
-
-	//}
-
-	@SubscribeEvent
 	public void OnRenderOverlay(RenderGuiOverlayEvent event)
 	{
 		int i = MinecraftHelpers.GetClient().getWindow().getWidth();

@@ -482,6 +482,12 @@ public class ActionStack
 			return EActionResult.TryNextAction;
 		}
 
+		if(!groupContext.Gun.GetShooter().IsValid())
+		{
+			FlansMod.LOGGER.warn("OnServerReceivedActionUpdate had invalid shooter");
+			return EActionResult.TryNextAction;
+		}
+
 		EActionResult startResult = EActionResult.CanProcess;
 		ActionGroupInstance groupInstance = GetOrCreateGroupInstance(groupContext);
 		if (!groupInstance.HasStarted())
@@ -555,6 +561,8 @@ public class ActionStack
 		{
 			FlansMod.LOGGER.warn("Server believes we cannot start " + groupContext + " that client sent us");
 			CancelGroupInstance(groupContext);
+			// If we have a desync, lets remind them of the stack contents at this point
+			groupContext.Gun.SetItemStack(groupContext.Gun.GetItemStack());
 		}
 
 		return startResult;

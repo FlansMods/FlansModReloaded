@@ -3,10 +3,22 @@ package com.flansmod.client.render.guns;
 import com.flansmod.client.render.FlanItemModelRenderer;
 import com.flansmod.client.render.RenderContext;
 import com.flansmod.common.actions.contexts.GunContext;
+import com.flansmod.common.item.AttachmentItem;
+import com.flansmod.common.types.attachments.AttachmentDefinition;
 import com.flansmod.common.types.attachments.EAttachmentType;
+import com.flansmod.util.Transform;
+import com.mojang.blaze3d.systems.RenderSystem;
+import com.mojang.blaze3d.vertex.BufferBuilder;
+import com.mojang.blaze3d.vertex.DefaultVertexFormat;
+import com.mojang.blaze3d.vertex.Tesselator;
+import com.mojang.blaze3d.vertex.VertexFormat;
+import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.phys.Vec3;
+import org.joml.Vector3f;
+import org.joml.Vector4f;
 
 public class AttachmentItemRenderer extends FlanItemModelRenderer
 {
@@ -18,7 +30,7 @@ public class AttachmentItemRenderer extends FlanItemModelRenderer
 		// Find our skin
 		ResourceLocation skin = GetSkin(stack);
 
-		renderContext.Poses.pushPose();
+		renderContext.Transforms.PushSaveState();
 		RenderPartIteratively(renderContext,
 			"body",
 			// Texture func
@@ -32,7 +44,10 @@ public class AttachmentItemRenderer extends FlanItemModelRenderer
 			}
 		);
 		//RenderPartTexturedSolid("attachment", skin, renderContext);
-		renderContext.Poses.popPose();
+
+		renderContext.Transforms.PopSaveState();
+
+
 	}
 
 	public void RenderAsAttachment(RenderContext gunRendererContext, GunContext context, EAttachmentType attachmentType, int attachmentSlot)
@@ -43,7 +58,7 @@ public class AttachmentItemRenderer extends FlanItemModelRenderer
 			new RenderContext(
 				gunRendererContext.Buffers,
 				null,
-				gunRendererContext.Poses,
+				gunRendererContext.Transforms,
 				gunRendererContext.Light,
 				gunRendererContext.Overlay));
 	}

@@ -68,36 +68,59 @@ public class ActionGroupContext
 		Def = CacheGroupDef();
 	}
 
-	public EAttachmentType GetAttachmentType()
+	@Nonnull
+	public static String CreateGroupPath(@Nonnull String actionGroupKey)
 	{
-		if (IsAttachment())
+		return actionGroupKey;
+	}
+	@Nonnull
+	public static String CreateGroupPath(@Nonnull EAttachmentType attachmentType, @Nonnull String actionGroupKey)
+	{
+		return attachmentType + "/" + actionGroupKey;
+	}
+	@Nonnull
+	public static String CreateGroupPath(@Nonnull EAttachmentType attachmentType, int attachmentIndex, @Nonnull String actionGroupKey)
+	{
+		return attachmentType + "/" + attachmentIndex + "/" + actionGroupKey;
+	}
+	@Nonnull
+	public static EAttachmentType GetAttachmentType(String actionGroupPath)
+	{
+		String[] components = actionGroupPath.split("/");
+		switch(components.length)
 		{
-			String[] components = GroupPath.split("/");
-			return EAttachmentType.Parse(components[0]);
+			// Either "Barrel/shoot_origin" or "Barrel/0/shoot_origin" format
+			case 2, 3 -> { return EAttachmentType.Parse(components[0]); }
+			default -> { return EAttachmentType.Generic; }
 		}
-		return null;
+	}
+	public static int GetAttachmentIndex(String actionGroupPath)
+	{
+		String[] components = actionGroupPath.split("/");
+		switch(components.length)
+		{
+			// "Barrel/shoot_origin" format
+			case 2 -> { return 0; }
+			// "Barrel/0/shoot_origin" format
+			case 3 -> { return Integer.parseInt(components[1]); }
+			default -> { return -1; }
+		}
+	}
+	@Nonnull
+	public static String GetActionGroupKey(String actionGroupPath)
+	{
+		String[] components = actionGroupPath.split("/");
+		if (components.length == 0)
+			return "";
+		// Any valid format "shoot_origin", "Barrel/shoot_origin" or "Barrel/0/shoot_origin"
+		return components[components.length - 1];
 	}
 
-	public int GetAttachmentIndex()
-	{
-		if (IsAttachment())
-		{
-			String[] components = GroupPath.split("/");
-			if (components.length == 3)
-				return Integer.parseInt(components[1]);
-		}
-		return 0;
-	}
-
-	public String GetActionKey()
-	{
-		if (IsAttachment())
-		{
-			String[] components = GroupPath.split("/");
-			return components[components.length - 1];
-		}
-		return GroupPath;
-	}
+	@Nonnull
+	public EAttachmentType GetAttachmentType() { return GetAttachmentType(GroupPath); }
+	public int GetAttachmentIndex() { return GetAttachmentIndex(GroupPath); }
+	@Nonnull
+	public String GetActionGroupKey() { return GetActionGroupKey(GroupPath); }
 
 	@Nonnull
 	private ActionGroupDefinition CacheGroupDef()

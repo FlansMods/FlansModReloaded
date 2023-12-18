@@ -15,13 +15,17 @@ import net.minecraftforge.client.event.RenderLevelStageEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.TickEvent;
 import org.joml.Quaternionf;
+import org.joml.Vector4f;
+import org.lwjgl.system.linux.Stat;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
+import java.util.UUID;
 
 public class DecalRenderer
 {
-	private HashMap<ResourceLocation, ArrayList<DecalInfo>> DecalsByTexture = new HashMap<>();
+	private final HashMap<ResourceLocation, DecalLayerInfo> DecalsByTexture = new HashMap<>();
 	private static TextureManager textureManager;
 	private final static int MAX_DECALS_PER_TEXTURE = 512;
 
@@ -47,26 +51,31 @@ public class DecalRenderer
 	public void AddDecal(ResourceLocation texture, Vec3 position, Vec3 normal, float yaw, int lifetime)
 	{
 		if(!DecalsByTexture.containsKey(texture))
-			DecalsByTexture.put(texture, new ArrayList<>());
+			DecalsByTexture.put(texture, new DecalLayerInfo());
 
-		if(DecalsByTexture.get(texture).size() >= MAX_DECALS_PER_TEXTURE)
-		{
-			DecalsByTexture.get(texture).remove(0);
-		}
-		DecalsByTexture.get(texture).add(new DecalInfo(position, normal, yaw, lifetime));
+		DecalsByTexture.get(texture).AddDecal(position, normal, yaw, lifetime);
+	}
+
+	public void AddOrUpdateDecal(ResourceLocation texture, UUID uuid, Vec3 position, Vec3 normal, float yaw, int lifetime)
+	{
+		if(!DecalsByTexture.containsKey(texture))
+			DecalsByTexture.put(texture, new DecalLayerInfo());
+
+		DecalsByTexture.get(texture).AddOrUpdateDecal(uuid, position, normal, yaw, lifetime);
+	}
+	public void AddOrUpdateDecal(ResourceLocation texture, UUID uuid, Vec3 position, Vec3 normal, Vector4f colour, float yaw, int lifetime)
+	{
+		if(!DecalsByTexture.containsKey(texture))
+			DecalsByTexture.put(texture, new DecalLayerInfo());
+
+		DecalsByTexture.get(texture).AddOrUpdateDecal(uuid, position, normal, colour, yaw, lifetime);
 	}
 
 	public void ClientTick(TickEvent.ClientTickEvent event)
 	{
 		for(var list : DecalsByTexture.values())
 		{
-			for (int i = list.size() - 1; i >= 0; i--)
-			{
-				list.get(i).Update();
-				if (list.get(i).Finished())
-					//shots.get(i).ticksExisted = 0;
-					list.remove(i);
-			}
+			list.ClientTick();
 		}
 	}
 
@@ -74,49 +83,103 @@ public class DecalRenderer
 	{
 		if (event.getStage() == RenderLevelStageEvent.Stage.AFTER_PARTICLES)
 		{
-			PoseStack poseStack = event.getPoseStack();
-			Camera camera = event.getCamera();
-			Vec3 pos = camera.getPosition();
-			Tesselator tesselator = Tesselator.getInstance();
-			RenderSystem.setShader(GameRenderer::getPositionTexShader);
-			//RenderSystem.disableDepthTest();
-
+			RenderSystem.setShader(GameRenderer::getPositionTexColorShader);
 			for(var kvp : DecalsByTexture.entrySet())
 			{
-				if(kvp.getKey() != null && kvp.getValue().size() > 0)
+				if(kvp.getKey() != null && kvp.getValue().HasAnyDecals())
 				{
-					//textureManager.bindForSetup(kvp.getKey());
 					RenderSystem.setShaderTexture(0, kvp.getKey());
 					RenderSystem.enableTexture();
+
+					kvp.getValue().RenderTick(
+						Tesselator.getInstance(),
+						event.getPoseStack(),
+						event.getCamera().getPosition(),
+						event.getPartialTick());
 				}
-
-
-				RenderSystem.enableBlend();
-				//RenderSystem.blendEquation(GlConst.GL_FUNC_ADD);
-				RenderSystem.blendFunc(GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
-				//RenderSystem.disableDepthTest();
-				//RenderSystem.depthFunc(GlConst.GL_LEQUAL);
-
-				for(DecalInfo decal : kvp.getValue())
-					decal.Render(tesselator, poseStack, pos, event.getPartialTick());
 			}
 		}
 	}
 
-	private static class DecalInfo
+	public static class DecalLayerInfo
+	{
+		public final ArrayList<DecalInfo> StaticDecals = new ArrayList<>();
+		public final HashMap<UUID, DecalInfo> DynamicDecals = new HashMap<UUID, DecalInfo>();
+
+		public boolean HasAnyDecals()
+		{
+			return StaticDecals.size() + DynamicDecals.size() > 0;
+		}
+
+		public void AddDecal(Vec3 position, Vec3 normal, float yaw, int lifetime)
+		{
+			if(StaticDecals.size() >= MAX_DECALS_PER_TEXTURE)
+			{
+				StaticDecals.remove(0);
+			}
+			StaticDecals.add(new DecalInfo(position, normal, yaw, lifetime));
+		}
+
+		public void AddOrUpdateDecal(UUID uuid, Vec3 position, Vec3 normal, float yaw, int lifetime)
+		{
+			DynamicDecals.put(uuid, new DecalInfo(position, normal, yaw, lifetime));
+		}
+		public void AddOrUpdateDecal(UUID uuid, Vec3 position, Vec3 normal, Vector4f colour, float yaw, int lifetime)
+		{
+			DynamicDecals.put(uuid, new DecalInfo(position, normal, colour, yaw, lifetime));
+		}
+
+		public void ClientTick()
+		{
+			for (int i = StaticDecals.size() - 1; i >= 0; i--)
+			{
+				StaticDecals.get(i).Update();
+				if (StaticDecals.get(i).Finished())
+					StaticDecals.remove(i);
+			}
+			List<UUID> toRemove = new ArrayList<>();
+			for(var kvp : DynamicDecals.entrySet())
+			{
+				kvp.getValue().Update();
+				if (kvp.getValue().Finished())
+					toRemove.add(kvp.getKey());
+			}
+			for(UUID remove : toRemove)
+				DynamicDecals.remove(remove);
+		}
+
+		public void RenderTick(Tesselator tesselator, PoseStack poseStack, Vec3 pos, float partialTick)
+		{
+			RenderSystem.enableBlend();
+			RenderSystem.blendFunc(GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
+
+			for(DecalInfo decal : StaticDecals)
+				decal.Render(tesselator, poseStack, pos, partialTick);
+			for(DecalInfo decal : DynamicDecals.values())
+				decal.Render(tesselator, poseStack, pos, partialTick);
+		}
+	}
+
+	public static class DecalInfo
 	{
 		private final Vec3 Position;
 		private final Vec3 Normal;
+		private final Vector4f Colour;
 		private final float Yaw;
 		private final int Lifetime;
 		private int TicksExisted = 0;
 
-		public DecalInfo(Vec3 pos, Vec3 norm, float yaw, int life)
+		public DecalInfo(Vec3 pos, Vec3 norm, Vector4f colour, float yaw, int life)
 		{
 			Position = pos;
 			Normal = norm;
+			Colour = colour;
 			Yaw = yaw;
 			Lifetime = life;
+		}
+		public DecalInfo(Vec3 pos, Vec3 norm, float yaw, int life)
+		{
+			this(pos, norm, new Vector4f(1f, 1f, 1f, 1f), yaw, life);
 		}
 
 		public void Update()
@@ -143,7 +206,7 @@ public class DecalRenderer
 			Vec3 yAxis = Maths.Cross(xAxis, Normal);
 
 			BufferBuilder buf = tesselator.getBuilder();
-			buf.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX);
+			buf.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX_COLOR);
 
 			xAxis = xAxis.normalize().scale(0.25d);
 			yAxis = yAxis.normalize().scale(0.25d);
@@ -157,15 +220,19 @@ public class DecalRenderer
 
 			buf.vertex(poseStack.last().pose(), (float)v0.x, (float)v0.y, (float)v0.z)
 				.uv(0f, 0f)
+				.color(Colour.x, Colour.y, Colour.z, Colour.w)
 				.endVertex();
 			buf.vertex(poseStack.last().pose(), (float)v1.x, (float)v1.y, (float)v1.z)
 				.uv(0f, 1f)
+				.color(Colour.x, Colour.y, Colour.z, Colour.w)
 				.endVertex();
 			buf.vertex(poseStack.last().pose(), (float)v2.x, (float)v2.y, (float)v2.z)
 				.uv(1f, 1f)
+				.color(Colour.x, Colour.y, Colour.z, Colour.w)
 				.endVertex();
 			buf.vertex(poseStack.last().pose(), (float)v3.x, (float)v3.y, (float)v3.z)
 				.uv(1f, 0f)
+				.color(Colour.x, Colour.y, Colour.z, Colour.w)
 				.endVertex();
 
 			tesselator.end();

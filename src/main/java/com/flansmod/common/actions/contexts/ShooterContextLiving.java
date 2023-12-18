@@ -4,6 +4,7 @@ import com.flansmod.common.effects.FlansMobEffect;
 import com.flansmod.common.item.FlanItem;
 import com.flansmod.common.types.elements.ModifierDefinition;
 import com.flansmod.util.Transform;
+import com.flansmod.util.TransformStack;
 import net.minecraft.world.Container;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.effect.MobEffectInstance;
@@ -80,13 +81,17 @@ public class ShooterContextLiving extends ShooterContext implements Container
 	@Override
 	public Transform GetShootOrigin()
 	{
-		Transform transform = new Transform(Shooter.getEyePosition());
-		transform = transform.RotateLocalEuler(Shooter.getXRot(), Shooter.getYRot(), 0.0f);
-		return transform;
+		return new Transform(
+			"ShootOrigin",
+			Shooter.getEyePosition(),
+			Transform.FromEuler(
+				-Shooter.getXRot(),
+				180f - Shooter.getYRot(),
+				0.0f));
 	}
 
 	@Override
-	public boolean IsValid() { return true; }
+	public boolean IsValid() { return Shooter.isAlive(); }
 	@Override
 	public boolean IsCreative() { return false; }
 	@Override

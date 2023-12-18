@@ -66,7 +66,7 @@ public class GunItemRenderer extends FlanItemModelRenderer
                 },
                 // Pre-Func
                 (partName, innerRenderContext) -> {
-                    innerRenderContext.Poses.pushPose();
+                    innerRenderContext.Transforms.PushSaveState();
                     ApplyAnimations(innerRenderContext, animationSet, actionStack, partName);
 
                     if(partName.equals("grip") || partName.equals("barrel") || partName.equals("stock") || partName.equals("sights"))
@@ -113,7 +113,7 @@ public class GunItemRenderer extends FlanItemModelRenderer
                 },
                 // Post-Func
                 (partName, innerRenderContext) -> {
-                    innerRenderContext.Poses.popPose();
+                    innerRenderContext.Transforms.PopSaveState();
                 });
 
 
@@ -137,57 +137,14 @@ public class GunItemRenderer extends FlanItemModelRenderer
                 FlanItemModelRenderer attachmentRenderer = FlansModClient.MODEL_REGISTRATION.GetModelRenderer(attachmentStack);
                 if (attachmentRenderer instanceof AttachmentItemRenderer attachmentItemRenderer)
                 {
-                    renderContext.Poses.pushPose();
+                    renderContext.Transforms.PushSaveState();
                     attachmentItemRenderer.RenderAsAttachment(renderContext, gunContext, attachmentType, attachmentSlot);
-                    renderContext.Poses.popPose();
+                    renderContext.Transforms.PopSaveState();
                 }
             }
         }
 
         // Render the default mesh if we have no attachment or it is set to render anyway
         return !anyAttachmentsPresent || !attachmentSettings.hideDefaultMesh;
-    }
-
-
-    private void RenderPartOrAttachment(GunContext gunContext, FlanimationDefinition animationSet, ActionStack actionStack, ResourceLocation skin, RenderContext renderContext, String partName, EAttachmentType attachmentType)
-    {
-        AttachmentSettingsDefinition attachmentSettings = gunContext.CacheGunDefinition().GetAttachmentSettings(attachmentType);
-        boolean anyAttachmentsPresent = false;
-        for(int attachmentSlot = 0; attachmentSlot < attachmentSettings.numAttachmentSlots; attachmentSlot++)
-        {
-            ItemStack attachmentStack = gunContext.GetAttachmentStack(attachmentType, attachmentSlot);
-            AttachmentDefinition attachment = gunContext.GetAttachmentDefinition(attachmentType, attachmentSlot);
-
-            // Then render the attachment if we have one
-            if (attachment != AttachmentDefinition.INVALID)
-            {
-                anyAttachmentsPresent = true;
-
-                FlanItemModelRenderer attachmentRenderer = FlansModClient.MODEL_REGISTRATION.GetModelRenderer(attachmentStack);
-                if (attachmentRenderer instanceof AttachmentItemRenderer attachmentItemRenderer)
-                {
-                    renderContext.Poses.pushPose();
-                    TurboRig.AttachPoint ap = UnbakedRig.GetAttachPoint(partName);
-                    // TODO: Apply additional transform based on attach-to part
-                    renderContext.Poses.translate(ap.Offset.x, ap.Offset.y, ap.Offset.z);
-                    attachmentItemRenderer.RenderAsAttachment(renderContext, gunContext, attachmentType, attachmentSlot);
-                    renderContext.Poses.popPose();
-                }
-            }
-        }
-
-        // Render the default mesh if we have no attachment or it is set to render anyway
-        if (!anyAttachmentsPresent || !attachmentSettings.hideDefaultMesh)
-        {
-            RenderPart(gunContext, animationSet, actionStack, skin, renderContext, partName);
-        }
-    }
-
-    private void RenderPart(GunContext gunContext, FlanimationDefinition animationSet, ActionStack actionStack, ResourceLocation skin, RenderContext renderContext, String partName)
-    {
-        renderContext.Poses.pushPose();
-        ApplyAnimations(renderContext, animationSet, actionStack, partName);
-        RenderPartTexturedSolid(partName, skin, renderContext);
-        renderContext.Poses.popPose();
     }
 }

@@ -91,10 +91,25 @@ public abstract class GunContext
 		if(!CachedGroupPathNames.containsKey(groupPathHash))
 		{
 			for(ActionGroupDefinition agDef : Def.actionGroups)
-				CachedGroupPathNames.put(agDef.key.hashCode(), agDef.key);
-			for(AttachmentDefinition attachmentDef : GetAttachmentDefinitions())
-				for(ActionGroupDefinition agDef : attachmentDef.actionOverrides)
-					CachedGroupPathNames.put(agDef.hashCode(), agDef.key);
+			{
+				String groupPath = ActionGroupContext.CreateGroupPath(agDef.key);
+				CachedGroupPathNames.put(groupPath.hashCode(), groupPath);
+			}
+			for(EAttachmentType attachmentType : EAttachmentType.values())
+			{
+				for (int i = 0; i < GetNumAttachmentStacks(attachmentType); i++)
+				{
+					AttachmentDefinition attachmentDefintion = GetAttachmentDefinition(attachmentType, i);
+					if(attachmentDefintion.IsValid())
+					{
+						for(ActionGroupDefinition agDef : attachmentDefintion.actionOverrides)
+						{
+							String groupPath = ActionGroupContext.CreateGroupPath(attachmentType, i, agDef.key);
+							CachedGroupPathNames.put(groupPath.hashCode(), groupPath);
+						}
+					}
+				}
+			}
 		}
 		return GetActionGroupContext(CachedGroupPathNames.get(groupPathHash));
 	}
@@ -102,7 +117,9 @@ public abstract class GunContext
 	public ActionGroupContext GetActionGroupContextSibling(ActionGroupContext original, String newKey)
 	{
 		if(original.IsAttachment())
-			return GetActionGroupContext(original.GetAttachmentType() + "/" + original.GetAttachmentIndex() + "/" + newKey);
+		{
+			ActionGroupContext.CreateGroupPath(original.GetAttachmentType(), original.GetAttachmentIndex(), newKey);
+		}
 		return GetActionGroupContext(newKey);
 	}
 	// ---------------------------------------------------------------------------------------------------
@@ -320,7 +337,10 @@ public abstract class GunContext
 				AttachmentDefinition attachmentDef = GetAttachmentDefinition(node.attachmentType, node.attachmentIndex);
 				if(attachmentDef.IsValid())
 				{
-					EvaluateAttachmentInputHandler(inputContext, node.attachmentType + "/" + node.attachmentIndex + "/", attachmentDef, results);
+					EvaluateAttachmentInputHandler(inputContext,
+						ActionGroupContext.CreateGroupPath(node.attachmentType, node.attachmentIndex, ""),
+						attachmentDef,
+						results);
 				}
 			}
 			else

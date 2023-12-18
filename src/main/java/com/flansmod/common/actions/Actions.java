@@ -32,6 +32,7 @@ public class Actions
 				return null;
 			}
 			case AttachEffect 		-> { return new AttachEffectAction(group, def); }
+			case Laser 				-> { return new LaserAction(group, def); }
 			default					-> { return null; }
 		}
 		// TODO: Add a registration event for other mods

@@ -3462,7 +3462,7 @@
             "name": "eye_line",
             "attachTo": "body",
             "offset": [
-                -4.0,
+                -3.71,
                 10.0,
                 0.0
             ]

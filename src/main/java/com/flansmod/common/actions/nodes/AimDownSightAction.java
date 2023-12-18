@@ -33,7 +33,7 @@ public class AimDownSightAction extends ActionInstance
 	@Override
 	public void OnTickClient()
 	{
-		Magnitude = Maths.Lerp(Magnitude, 1.0f, 1f/20f);
+		Magnitude = Maths.LerpF(Magnitude, 1.0f, 1f/20f);
 	}
 	public float FOVFactor() { return Group.Context.ModifyFloat(ModifierDefinition.STAT_ZOOM_FOV_FACTOR, Def.fovFactor); }
 }

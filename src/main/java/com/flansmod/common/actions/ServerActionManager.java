@@ -46,7 +46,7 @@ public class ServerActionManager extends ActionManager
 	{
 		// Check that this is a valid context
 		ActionGroupContext groupContext = msg.Data.GetActionGroupContext(false);
-		if(!groupContext.IsValid())
+		if(!groupContext.IsValid() || !groupContext.Gun.GetShooter().IsValid())
 		{
 			FlansMod.LOGGER.warn("OnServerReceivedActionUpdate had invalid action");
 			return;

@@ -56,6 +56,11 @@ public class ModifierDefinition
 	public static final String KEY_ACTION_KEY = "action_key";
 	public static final String KEY_MODEL_ID = "model_id";
 
+	public static final String STAT_LASER_ORIGIN = "laser_origin";
+	public static final String STAT_LASER_RED = "laser_red";
+	public static final String STAT_LASER_GREEN = "laser_green";
+	public static final String STAT_LASER_BLUE = "laser_blue";
+
 	@JsonField
 	public String Stat = "";
 	@JsonField

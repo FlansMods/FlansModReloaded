@@ -3,6 +3,7 @@ package com.flansmod.common.gunshots;
 import com.flansmod.common.FlansMod;
 import com.flansmod.util.Maths;
 import com.flansmod.util.Transform;
+import com.flansmod.util.TransformStack;
 import com.mojang.math.Transformation;
 import net.minecraft.core.Direction;
 import net.minecraft.world.entity.LivingEntity;
@@ -38,7 +39,7 @@ public class PlayerSnapshot
         rootPos = Vec3.ZERO;
         for(int i = 0; i < EPlayerHitArea.NUM_AREAS; i++)
         {
-            hitboxes[i] = new PlayerHitbox(EPlayerHitArea.values()[i], Transform.Identity(), Maths.IdentityPosF());
+            hitboxes[i] = new PlayerHitbox(EPlayerHitArea.values()[i], Transform.IDENTITY, Maths.IdentityPosF());
         }
     }
 
@@ -47,8 +48,8 @@ public class PlayerSnapshot
         valid = true;
         player = p;
 
-        rootPos = p.getPosition(0.0f);
-        Transform playerRoot = new Transform(rootPos);
+        TransformStack transformStack = new TransformStack();
+        transformStack.add(new Transform("Pos", p.getPosition(0.0f)));
 
         // This block of code is good fun. We need to get the CLIENT ONLY poses onto the server
         // float attackTime = getAttackAnim()
@@ -80,7 +81,7 @@ public class PlayerSnapshot
             if(bedDir != null)
             {
                 float eyeHeight = player.getEyeHeight(Pose.STANDING) - 0.1f;
-                playerRoot.Translate(-bedDir.getStepX() * eyeHeight, 0.0d, -bedDir.getStepZ() * eyeHeight);
+                transformStack.add(new Transform("SleepPose", new Vec3(-bedDir.getStepX() * eyeHeight, 0.0d, -bedDir.getStepZ() * eyeHeight)));
             }
         }
 
@@ -92,7 +93,7 @@ public class PlayerSnapshot
                 yBody += Maths.CosF(player.tickCount * 3.25f) * Maths.PiF * 0.4f;
 
             if (!player.hasPose(Pose.SLEEPING))
-                playerRoot = playerRoot.RotateYaw(180.0f - yBody);
+                transformStack.add(new Transform("PlayerYaw", Transform.FromEuler(0f, 180f - yBody, 0f)));
 
             if (player.deathTime > 0)
             {
@@ -100,27 +101,25 @@ public class PlayerSnapshot
                 deathTime = Maths.SqrtF(deathTime);
                 deathTime = Maths.Clamp(deathTime, Float.MIN_VALUE, 1.0f);
 
-                playerRoot = playerRoot.RotateRoll(deathTime * 90.0f);
+                transformStack.add(new Transform("DeathAnim", Transform.FromEuler(0f, 0f, deathTime * 90.0f)));
             }
             else if (player.isAutoSpinAttack())
             {
-                playerRoot = playerRoot.RotatePitch(-90.0f - player.getXRot());
-                playerRoot = playerRoot.RotateYaw(player.tickCount * -75.0f);
+                transformStack.add(new Transform("SpinAttack", Transform.FromEuler(-90.0f - player.getXRot(), player.tickCount * -75.0f, 0f)));
             }
             else if (player.hasPose(Pose.SLEEPING))
             {
                 Direction bedDir = player.getBedOrientation();
                 float bedAngle = bedDir != null ? (90.0f - bedDir.toYRot()) : yBody;
-                playerRoot = playerRoot.RotateYaw(bedAngle);
-                playerRoot = playerRoot.RotateRoll(90.0f);
-                playerRoot = playerRoot.RotateYaw(270.0f);
+                transformStack.add(new Transform("Sleeping", Transform.FromEuler(0f, bedAngle, 0f)));
+                transformStack.add(new Transform("Sleeping", Transform.FromEuler(0f, 270.0f, 90.0f)));
             }
         }
         // else dinnerbone, nty
 
         // Scale(-1, -1, 1)
         // this.Scale(?)
-        playerRoot.Translate(0f, -1.5f, 0f);
+        transformStack.add(new Transform("UnapplyEyeLine", new Vec3(0f, -1.5f, 0f)));
         float anim8 = 0f, anim5 = 0f;
         if(!shouldSit && player.isAlive())
         {
@@ -140,22 +139,27 @@ public class PlayerSnapshot
         }
 
         // Body
-        Transform bodyTransform = playerRoot
-                .RotateLocalYaw(p.yBodyRot)
-                .Translate(0.0d, 0.7d, 0.0d);
-        Vector3f bodyHalfSize = new Vector3f(0.25f, 0.7f, 0.15f);
-        UpdateHitbox(EPlayerHitArea.BODY, bodyTransform, bodyHalfSize);
+        {
+            transformStack.PushSaveState();
+            transformStack.add(new Transform("BodyYaw", Transform.FromEuler(0f, p.yBodyRot, 0f)));
+            transformStack.add(new Transform("BodyCenter", new Vec3(0d, 0.7d, 0d)));
+            Vector3f bodyHalfSize = new Vector3f(0.25f, 0.7f, 0.15f);
+            UpdateHitbox(EPlayerHitArea.BODY, transformStack.Top(), bodyHalfSize);
+            transformStack.pop();
+            transformStack.pop();
+            transformStack.PopSaveState();
+        }
 
         // Head
-        Transform headTransform = playerRoot
-                .Translate(0.0d, 0.25d, 0.0d) // Add half a head height
-                .RotateLocalEuler(p.yHeadRot, p.xRotO, 0.0f) // Rotate around the neck
-                .Translate(0.0d, 1.4d, 0.0d); // Then add the neck pivot point
-        Vector3f headHalfSize = new Vector3f(0.25f, 0.25f, 0.25f);
-        UpdateHitbox(EPlayerHitArea.HEAD, headTransform, headHalfSize);
-
-
-
+        {
+            transformStack.PushSaveState();
+            transformStack.add(new Transform("NeckOffset", new Vec3(0d, 1.4d, 0d))); // Then add the neck pivot point
+            transformStack.add(new Transform("NeckRot", Transform.FromEuler(p.xRotO, p.yHeadRot, 0.0f))); // Rotate around the neck
+            transformStack.add(new Transform("HeadHalfHeight", new Vec3(0d, 0.25d, 0d))); // Add half a head height
+            Vector3f headHalfSize = new Vector3f(0.25f, 0.25f, 0.25f);
+            UpdateHitbox(EPlayerHitArea.HEAD, transformStack.Top(), headHalfSize);
+            transformStack.PopSaveState();
+        }
     }
 
     private void UpdateHitbox(EPlayerHitArea area, Transform centerPoint, Vector3f halfExtents)

@@ -196,5 +196,8 @@
   "enchantment.level.48": "XLVIII",
   "enchantment.level.49": "XLIX",
   "enchantment.level.50": "L",
-  "tooltip.flansmod.hold_shift_for_more": "§6Hold shift for more details..."
+  "tooltip.flansmod.hold_shift_for_more": "§6Hold shift for more details...",
+  "key.flansmod.look_at": "Look At Weapon",
+  "key.flansmod.manual_reload": "Reload Weapon",
+  "key.flansmod.mode_toggle": "Toggle Weapon Mode"
 }

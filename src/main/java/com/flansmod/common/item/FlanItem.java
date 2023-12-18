@@ -24,13 +24,14 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
+import net.minecraftforge.common.extensions.IForgeItem;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.*;
 
-public abstract class FlanItem extends Item
+public abstract class FlanItem extends Item implements IForgeItem
 {
     private static final List<FlanItem> ALL_ITEMS = new ArrayList<>(256);
 
@@ -46,6 +47,12 @@ public abstract class FlanItem extends Item
         super(props);
         DefinitionLocation = definitionLocation;
         ALL_ITEMS.add(this);
+    }
+
+    @Override
+    public boolean shouldCauseReequipAnimation(ItemStack oldStack, ItemStack newStack, boolean slotChanged)
+    {
+        return slotChanged;
     }
 
     @Override

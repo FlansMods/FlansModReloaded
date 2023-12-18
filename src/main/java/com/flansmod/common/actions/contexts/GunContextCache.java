@@ -163,18 +163,21 @@ public class GunContextCache
 			GunContext existingContext = GetContextIfStillValid(gunID);
 			if (existingContext != null)
 			{
-				if (existingContext instanceof GunContextPlayer)
+				if(existingContext.GetShooter().IsValid())
 				{
-					if (shooter instanceof ShooterContextPlayer)
-						return existingContext;
-					else
-						FlansMod.LOGGER.warn("Found GunContextPlayer under non-player ShooterContext " + shooter);
-				} else if (existingContext instanceof GunContextLiving)
-				{
-					if (shooter instanceof ShooterContextLiving)
-						return existingContext;
-					else
-						FlansMod.LOGGER.warn("Found GunContextLiving under non-living ShooterContext " + shooter);
+					if (existingContext instanceof GunContextPlayer)
+					{
+						if (shooter instanceof ShooterContextPlayer)
+							return existingContext;
+						else
+							FlansMod.LOGGER.warn("Found GunContextPlayer under non-player ShooterContext " + shooter);
+					} else if (existingContext instanceof GunContextLiving)
+					{
+						if (shooter instanceof ShooterContextLiving)
+							return existingContext;
+						else
+							FlansMod.LOGGER.warn("Found GunContextLiving under non-living ShooterContext " + shooter);
+					}
 				}
 			}
 

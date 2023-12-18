@@ -82,6 +82,7 @@
         }
     ],
     "reloadOverrides": [],
+    "abilities": [],
     "modeOverride": "FullAuto",
     "overrideFireMode": false
 }

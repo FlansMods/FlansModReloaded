@@ -179,8 +179,8 @@ public class ClientActionManager extends ActionManager
 			{
 				UUID gunID = kvp.getKey();
 				ActionStack actionStack = kvp.getValue();
-				GunContext gunContext = GunContextCache.Get(true).GetContextIfStillValid(gunID);
-				if(gunContext != null && gunContext.IsValid())
+				GunContext gunContext = GunContextCache.Get(true).GetLastKnownAppearanceOfGun(gunID);
+				if(gunContext.IsValid())
 				{
 					if (actionStack.IsValid())
 						actionStack.OnTick(Minecraft.getInstance().level, gunContext);

@@ -13,20 +13,17 @@ import com.flansmod.client.render.animation.elements.KeyframeDefinition;
 import com.flansmod.client.render.animation.elements.PoseDefinition;
 import com.flansmod.client.render.animation.elements.SequenceDefinition;
 import com.flansmod.client.render.animation.elements.SequenceEntryDefinition;
-import com.flansmod.client.render.guns.AttachmentItemRenderer;
 import com.flansmod.client.render.models.*;
 import com.flansmod.common.FlansMod;
 import com.flansmod.common.actions.*;
+import com.flansmod.common.actions.contexts.ActionGroupContext;
 import com.flansmod.common.actions.contexts.GunContext;
-import com.flansmod.common.actions.nodes.AimDownSightAction;
+import com.flansmod.common.actions.contexts.GunContextCache;
 import com.flansmod.common.actions.nodes.AnimationAction;
-import com.flansmod.common.actions.contexts.GunContextPlayer;
-import com.flansmod.common.actions.contexts.ShooterContext;
 import com.flansmod.common.item.FlanItem;
+import com.flansmod.common.types.attachments.AttachmentDefinition;
 import com.flansmod.common.types.attachments.EAttachmentType;
-import com.flansmod.util.Maths;
-import com.flansmod.util.MinecraftHelpers;
-import com.flansmod.util.Transform;
+import com.flansmod.util.*;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.*;
 
@@ -35,15 +32,19 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.*;
 import net.minecraft.client.renderer.block.model.ItemTransforms;
 import net.minecraft.client.renderer.texture.MissingTextureAtlasSprite;
+import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.model.BakedModel;
+import net.minecraft.client.resources.model.UnbakedModel;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.HumanoidArm;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.phys.Vec3;
 import org.joml.*;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import javax.swing.*;
 
 public abstract class FlanItemModelRenderer extends BlockEntityWithoutLevelRenderer
 {
@@ -91,9 +92,15 @@ public abstract class FlanItemModelRenderer extends BlockEntityWithoutLevelRende
         super(null, null);
         ShouldRenderWhenHeld = shouldRenderWhenHeld;
     }
-
-    protected abstract void DoRender(@Nullable Entity heldByEntity, @Nullable ItemStack stack, @Nonnull RenderContext renderContext);
-
+    public void OnUnbakedModelLoaded(TurboRig unbaked)
+    {
+        UnbakedRig = unbaked;
+    }
+    public void OnBakeComplete(TurboRig.Baked baked)
+    {
+        BakedRig = baked;
+    }
+    // Entry point for vanilla render calls
     @Override
     public void renderByItem(@Nullable ItemStack stack,
                              @Nonnull ItemTransforms.TransformType transformType,
@@ -104,65 +111,51 @@ public abstract class FlanItemModelRenderer extends BlockEntityWithoutLevelRende
     {
         RenderSystem.enableDepthTest();
         ms.pushPose();
-        RenderItem(null, transformType, stack, ms, buffers, light, overlay);
+        RenderItem(null, transformType, stack, new TransformStack(Transform.FromPoseStack("ItemPose", ms)), buffers, light, overlay);
         ms.popPose();
     }
-
-    public void RenderFirstPerson(Entity entity,
-                                  ItemStack stack,
-                                  HumanoidArm arm,
-                                  ItemTransforms.TransformType transformType,
-                                  PoseStack ms,
-                                  MultiBufferSource buffers,
-                                  int light,
-                                  int overlay,
-                                  float equipProgress)
-    {
-        if(BakedRig == null)
-            return;
-
-        RenderItem(entity, transformType, stack, ms, buffers, light, overlay);
-    }
-
+    // Not sure why you need to do this but another way in
     public void RenderDirect(@Nullable Entity heldByEntity, @Nullable ItemStack stack, @Nonnull RenderContext renderContext)
     {
-        renderContext.Poses.pushPose();
+        renderContext.Transforms.PushSaveState();
         {
             // Apply root transform
-            if(renderContext.TransformType != null)
-                BakedRig.ApplyTransform(renderContext.TransformType, renderContext.Poses, false);
+            //if(renderContext.TransformType != null)
+            //   BakedRig.ApplyTransform(renderContext.TransformType, renderContext.Transforms, false);
 
             DoRender(heldByEntity, stack, renderContext);
         }
-        renderContext.Poses.popPose();
+        renderContext.Transforms.PopSaveState();
     }
+
+
+
 
     protected void RenderItem(@Nullable Entity entity,
                               @Nonnull ItemTransforms.TransformType transformType,
                               @Nullable ItemStack stack,
-                              @Nonnull PoseStack requestedPoseStack,
+                              @Nonnull TransformStack transformStack,
                               @Nonnull MultiBufferSource buffers,
                               int light,
                               int overlay)
     {
-        requestedPoseStack.pushPose();
+        transformStack.PushSaveState();
         {
-            FlanItem flanItem = stack != null ? (stack.getItem() instanceof FlanItem ? (FlanItem)stack.getItem() : null) : null;
-            String skin = "default";
-            if(flanItem != null)
-                skin = flanItem.GetPaintjobName(stack);
-
             boolean shouldRenderRig = true;
             if(transformType == ItemTransforms.TransformType.GUI)
             {
+                FlanItem flanItem = stack != null ? (stack.getItem() instanceof FlanItem ? (FlanItem)stack.getItem() : null) : null;
+                String skin = "default";
+                if(flanItem != null)
+                    skin = flanItem.GetPaintjobName(stack);
                 BakedModel iconModel = BakedRig.GetIconModel(skin);
                 if(iconModel != null)
                 {
                     shouldRenderRig = false;
-                    requestedPoseStack.setIdentity();
-                    requestedPoseStack.translate(-0.5f, -0.5f, 0f);
+                    PoseStack poseStack = new PoseStack();
+                    poseStack.translate(-0.5f, -0.5f, 0f);
                     Minecraft.getInstance().getBlockRenderer().getModelRenderer().renderModel(
-                        requestedPoseStack.last(),
+                        poseStack.last(),
                         buffers.getBuffer(Sheets.cutoutBlockSheet()),
                         null,
                         iconModel,
@@ -174,34 +167,42 @@ public abstract class FlanItemModelRenderer extends BlockEntityWithoutLevelRende
 
             if(shouldRenderRig)
             {
-                if(transformType.firstPerson())
-                {
-                    Transform adsBlendTransform = FirstPersonManager.GetFirstPersonRenderPos(stack, transformType);
-                    requestedPoseStack.translate(adsBlendTransform.position.x, adsBlendTransform.position.y, adsBlendTransform.position.z);
-                    requestedPoseStack.mulPose(adsBlendTransform.orientation);
-                }
-                else
-                {
-                    BakedRig.ApplyTransform(transformType, requestedPoseStack, false);
-                }
-
-                // Bind texture
-                ResourceLocation texture = BakedRig.GetTexture(skin);
-
-                // Find the right buffer
-                VertexConsumer vc = buffers.getBuffer(flanItemRenderType(texture));
+                FirstPersonManager.ApplyRootToModel(
+                        transformStack,
+                        GunContextCache.Get(true).Create(stack),
+                        transformType);
 
                 // Render item
-                DoRender(entity, stack, new RenderContext(buffers, transformType, requestedPoseStack, light, overlay));
+                DoRender(entity, stack, new RenderContext(buffers, transformType, transformStack, light, overlay));
             }
         }
-        requestedPoseStack.popPose();
+        transformStack.PopSaveState();
     }
 
-    protected void ApplyAnimations(RenderContext renderContext, FlanimationDefinition animationSet, ActionStack actionStack, String partName)
+    // The specifics handled by each render type, gun etc.
+    protected abstract void DoRender(@Nullable Entity heldByEntity, @Nullable ItemStack stack, @Nonnull RenderContext renderContext);
+
+    // Then a bunch of functions you can call while in the render func
+    protected void ApplyAnimations(@Nonnull RenderContext renderContext,
+                                   @Nullable FlanimationDefinition animationSet,
+                                   @Nullable ActionStack actionStack,
+                                   @Nonnull String partName)
+    {
+        renderContext.Transforms.add(GetPose(animationSet, actionStack, partName));
+    }
+
+    protected void ApplyAnimations(@Nonnull TransformStack transformStack,
+                                   @Nullable FlanimationDefinition animationSet,
+                                   @Nullable ActionStack actionStack,
+                                   @Nonnull String partName)
+    {
+        transformStack.add(GetPose(animationSet, actionStack, partName));
+    }
+
+    protected Transform GetPose(FlanimationDefinition animationSet, ActionStack actionStack, String partName)
     {
         if(UnbakedRig == null)
-            return;
+            return Transform.Error("Unbaked Rig Missing");
 
         if(actionStack != null)
         {
@@ -270,137 +271,30 @@ public abstract class FlanItemModelRenderer extends BlockEntityWithoutLevelRende
                         Vector3f pos = PoseDefinition.LerpPosition(UnbakedRig.GetFloatParams(), fromPose, toPose, outputParameter);
                         Quaternionf rotation = PoseDefinition.LerpRotation(UnbakedRig.GetFloatParams(), fromPose, toPose, outputParameter);
 
-                        Transform test = new Transform(pos, rotation);
+                        //!
+                        Transform test = new Transform("Pose["+from.name+"-"+to.name+"]", pos.mul(1f/16f), rotation);
                         poses.add(test);
                     }
                 }
             }
 
-           if(poses.size() > 0)
-           {
-               Transform resultPose = Transform.Interpolate(poses);
-               renderContext.Poses.translate(resultPose.position.x, resultPose.position.y, resultPose.position.z);
-               renderContext.Poses.mulPose(resultPose.orientation);
-           }
-
-            // Apply the model offset after animating
-            if(UnbakedRig != null)
+            Transform resultPose = poses.size() > 0 ? Transform.Interpolate(poses) : new Transform("Anim no-op");
+            TurboModel model = UnbakedRig.GetPart(partName);
+            if (model != null)
             {
-                TurboModel model = UnbakedRig.GetPart(partName);
-                if (model != null)
-                {
-                    renderContext.Poses.translate(model.offset.x, model.offset.y, model.offset.z);
-                }
+                //return resultPose.Translate(model.offset.x, model.offset.y, model.offset.z);
             }
+            // else
+            return resultPose;
         }
+
+        return new Transform("No Anims");
     }
 
     private void ApplyItemArmTransform(PoseStack poseStack, HumanoidArm arm, float equipProgress)
     {
         int i = arm == HumanoidArm.RIGHT ? 1 : -1;
         poseStack.translate((float)i * 0.56F, -0.52F + equipProgress * -0.6F, -0.72F);
-    }
-
-    protected Transform GetEyeLine(ItemTransforms.TransformType transformType)
-    {
-        if(UnbakedRig == null)
-            return Transform.Identity();
-
-        List<Transform> otherEyeLines = new ArrayList<>();
-        List<Transform> myEyeLines = new ArrayList<>();
-        ShooterContext shooterContext = ShooterContext.GetOrCreate(Minecraft.getInstance().player);
-        if(shooterContext.IsValid())
-        {
-            for(GunContext gunContext : shooterContext.GetAllGunContexts(true))
-            {
-                if(gunContext.IsValid() && gunContext instanceof GunContextPlayer gunContextPlayer)
-                {
-                    boolean isThisHand = MinecraftHelpers.GetHand(transformType) == gunContextPlayer.GetHand();
-                    for(ActionGroupInstance groupInstance : gunContext.GetActionStack().GetActiveActionGroups())
-                    {
-                        boolean hasADS = false;
-                        for(ActionInstance actionInstance : groupInstance.GetActions())
-                        {
-                            if(actionInstance instanceof AimDownSightAction adsAction)
-                            {
-                                hasADS = true;
-                            }
-                        }
-
-                        if(hasADS)
-                        {
-                            if(groupInstance.Context.IsAttachment())
-                            {
-                                EAttachmentType attachmentType = groupInstance.Context.GetAttachmentType();
-                                int attachmentIndex = groupInstance.Context.GetAttachmentIndex();
-
-                                TurboRig.AttachPoint ap = UnbakedRig.GetAttachPoint(attachmentType, attachmentIndex);
-                                Transform apTransform = Transform.FromPosAndEuler(ap.Offset, ap.Euler);
-                                while(!ap.AttachTo.equals("body"))
-                                {
-                                    TurboRig.AttachPoint parentAP = UnbakedRig.GetAttachPoint(ap.AttachTo);
-                                    if(parentAP == null)
-                                        break;
-
-                                    apTransform = apTransform.RightMultiply(Transform.FromPosAndEuler(ap.Offset, ap.Euler));
-                                    ap = parentAP;
-                                }
-
-                                ItemStack attachmentStack = gunContext.GetAttachmentStack(attachmentType, attachmentIndex);
-                                FlanItemModelRenderer attachmentRenderer = FlansModClient.MODEL_REGISTRATION.GetModelRenderer(attachmentStack);
-                                if (attachmentRenderer instanceof AttachmentItemRenderer attachmentItemRenderer)
-                                {
-                                    if(attachmentRenderer.UnbakedRig != null)
-                                    {
-                                        TurboRig.AttachPoint eyeLineAPOnAttachment = attachmentRenderer.UnbakedRig.GetAttachPoint("eye_line");
-                                        if(eyeLineAPOnAttachment != null)
-                                        {
-                                            Transform eyeLineTransform = Transform.FromPosAndEuler(eyeLineAPOnAttachment.Offset, eyeLineAPOnAttachment.Euler);
-                                            if (isThisHand)
-                                                myEyeLines.add(apTransform.RightMultiply(eyeLineTransform));
-                                            else
-                                                otherEyeLines.add(apTransform.RightMultiply(eyeLineTransform));
-                                        }
-                                    }
-                                }
-                            }
-                            else
-                            {
-                                TurboRig.AttachPoint ap = UnbakedRig.GetAttachPoint("eye_line");
-                                if(ap != null)
-                                {
-                                    Transform eyeLineTransform = Transform.FromPosAndEuler(ap.Offset, ap.Euler);
-                                    if (isThisHand)
-                                        myEyeLines.add(eyeLineTransform);
-                                    else
-                                        otherEyeLines.add(eyeLineTransform);
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
-
-        if(myEyeLines.size() > 0)
-        {
-            Vector3f srcOffset = UnbakedRig.GetTransforms(transformType).translation;
-            boolean leftHanded = transformType == ItemTransforms.TransformType.FIRST_PERSON_LEFT_HAND;
-            Vector3d returnToCenter = new Vector3d(0f, -srcOffset.y*16f, leftHanded ? 8f : -8f);
-
-            Vector3d targetDelta = returnToCenter.sub(myEyeLines.get(0).position);
-            Quaternionf targetRotation = myEyeLines.get(0).orientation;
-
-            if(otherEyeLines.size() > 0)
-            {
-                // Both guns are ADS, go halfway
-                targetDelta.mul(0.5f);
-            }
-
-            return new Transform(targetDelta, targetRotation);
-        }
-
-        return Transform.Identity();
     }
 
     public ResourceLocation GetSkin(@Nullable ItemStack stack)
@@ -413,15 +307,6 @@ public abstract class FlanItemModelRenderer extends BlockEntityWithoutLevelRende
         return BakedRig.GetTexture(skin);
     }
 
-    public void OnUnbakedModelLoaded(TurboRig unbaked)
-    {
-        UnbakedRig = unbaked;
-    }
-
-    public void OnBakeComplete(TurboRig.Baked baked)
-    {
-        BakedRig = baked;
-    }
 
     protected void RenderFirstPersonArm(PoseStack poseStack)
     {
@@ -438,42 +323,35 @@ public abstract class FlanItemModelRenderer extends BlockEntityWithoutLevelRende
                                          BiFunction<String, RenderContext, Boolean> preRenderFunc,
                                          BiConsumer<String, RenderContext> postRenderFunc)
     {
-        renderContext.Poses.pushPose();
+        renderContext.Transforms.PushSaveState();
         {
             boolean shouldRender = preRenderFunc.apply(partName, renderContext);
             if(shouldRender)
             {
                 RenderPartTexturedSolid(partName, textureFunc.apply(partName), renderContext);
-                if(UnbakedRig != null)
+                if(BakedRig != null)
                 {
-                    for (var kvp : UnbakedRig.GetAttachmentPoints())
+                    for (var kvp : BakedRig.GetAttachPoints())
                     {
-                        if (kvp.getValue().AttachTo.equals(partName))
+                        if (kvp.getValue().Parent != null && kvp.getValue().Parent.PartName.equals(partName))
                         {
-                            renderContext.Poses.pushPose();
-                            renderContext.Poses.translate(kvp.getValue().Offset.x, kvp.getValue().Offset.y, kvp.getValue().Offset.z);
+                            renderContext.Transforms.PushSaveState();
+                            renderContext.Transforms.add(new Transform("Offset[" + kvp.getKey() + "]", kvp.getValue().Offset, kvp.getValue().Rotation));
                             RenderPartIteratively(renderContext, kvp.getKey(), textureFunc, preRenderFunc, postRenderFunc);
-                            renderContext.Poses.popPose();
+                            renderContext.Transforms.PopSaveState();
                         }
                     }
                 }
             }
             postRenderFunc.accept(partName, renderContext);
         }
-        renderContext.Poses.popPose();
+        renderContext.Transforms.PopSaveState();
     }
 
     protected void RenderPartTexturedSolid(String partName, ResourceLocation withTexture, RenderContext renderContext)
     {
         VertexConsumer vc = renderContext.Buffers.getBuffer(flanItemRenderType(withTexture));
-        if(UnbakedRig != null)
-        {
-            TurboModel unbaked = UnbakedRig.GetPart(partName);
-            if (unbaked != null)
-            {
-                TurboRenderUtility.Render(unbaked, vc, renderContext.Poses, renderContext.Light, renderContext.Overlay);
-            }
-        }
+        TurboRenderUtility.Render(UnbakedRig, BakedRig, partName, renderContext.Transforms, vc, renderContext.Light, renderContext.Overlay);
     }
 
     protected void RenderAttachedEffect(String attachPointName, ResourceLocation texture, ResourceLocation model, RenderContext renderContext)
@@ -481,60 +359,51 @@ public abstract class FlanItemModelRenderer extends BlockEntityWithoutLevelRende
 
     }
 
-    @Nullable
-    public TurboRig.AttachPoint GetAttachPoint(String apName)
+    public void ApplyAPOffsetInternal(@Nonnull TransformStack transformStack,
+                                       @Nonnull String apName,
+                                       @Nullable FlanimationDefinition animationSet,
+                                       @Nullable ActionStack actionStack)
     {
-        if(UnbakedRig != null)
-            return UnbakedRig.GetAttachPoint(apName.toLowerCase());
-        return null;
-    }
-    public void GetAttachPointTree(String apName, List<TurboRig.AttachPoint> apList)
-    {
-        TurboRig.AttachPoint ap = GetAttachPoint(apName);
+        TurboRig.AttachPoint.Baked ap = BakedRig.GetAttachPoint(apName);
         if(ap != null)
         {
-            apList.add(ap);
-            if(ap.AttachTo.length() > 0 && !ap.AttachTo.equals("body") && !ap.AttachTo.equals("none"))
-                GetAttachPointTree(ap.AttachTo, apList);
-        }
-    }
-    public Transform GetDefaultTransform(String apName)
-    {
-        TurboRig.AttachPoint ap = GetAttachPoint(apName);
-        if (ap != null)
-        {
-            if(ap.AttachTo.length() > 0 && !ap.AttachTo.equals("body") && !ap.AttachTo.equals("none"))
+            // Resolve the AP that we are attached to first
+            if (ap.Parent != null)
             {
-                Transform childTransform = GetDefaultTransform(ap.AttachTo);
-                return Transform.FromPosAndEuler(ap.Offset, ap.Euler).RightMultiply(childTransform);
+                ApplyAPOffsetInternal(transformStack, ap.Parent.PartName, animationSet, actionStack);
             }
-            return Transform.FromPosAndEuler(ap.Offset, ap.Euler);
-        }
-        return Transform.Identity();
 
+            // Then offset by our AP
+            transformStack.add(new Transform("AP Offset["+apName+"]", ap.Offset, ap.Rotation, 1.0f));
+            // Then offset by our animation
+            if(animationSet != null && actionStack != null)
+            {
+                transformStack.add(GetPose(animationSet, actionStack, apName));
+            }
+        }
+        else
+        {
+            transformStack.add(Transform.Error("Could not find AP '" + apName + "'"));
+        }
     }
-    public Transform GetDefaultTransform(EAttachmentType attachmentType, int attachmentIndex)
+
+
+
+    public String GetAPKey(EAttachmentType attachmentType, int attachmentIndex)
     {
+        String apKey = attachmentType.toString().toLowerCase() + "_" + attachmentIndex;
+        if(BakedRig.GetAttachPoint(apKey) != null)
+            return apKey;
+
+        // Backup, try without the index i.e. "barrel" instead of "barrel_0"
         if(attachmentIndex == 0)
         {
-            TurboRig.AttachPoint ap = GetAttachPoint(attachmentType.toString());
-            if (ap != null)
-            {
-                return GetDefaultTransform(attachmentType.toString());
-            }
+            apKey = attachmentType.toString().toLowerCase();
+            if(BakedRig.GetAttachPoint(apKey) != null)
+                return apKey;
         }
-
-        return GetDefaultTransform(attachmentType + "_" + attachmentIndex);
+        return "";
     }
 
-   //public Vector3f GetAttachPoint(String apName)
-   //{
-   //    if(UnbakedRig != null)
-   //    {
-   //        TurboRig.AttachPoint ap = UnbakedRig.GetAttachPoint(apName);
-   //        if(ap != null)
-   //            return ap.Offset;
-   //    }
-   //    return new Vector3f();
-   //}
+
 }
