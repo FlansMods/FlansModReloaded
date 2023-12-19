@@ -10,6 +10,7 @@ import com.flansmod.common.types.guns.elements.ActionGroupDefinition;
 import com.flansmod.common.types.guns.elements.ERepeatMode;
 import com.flansmod.common.types.guns.elements.HandlerDefinition;
 import com.flansmod.common.types.guns.elements.ReloadDefinition;
+import com.flansmod.common.types.vehicles.EPlayerInput;
 import net.minecraft.resources.ResourceLocation;
 
 public class AttachmentDefinition extends JsonDefinition
@@ -39,6 +40,14 @@ public class AttachmentDefinition extends JsonDefinition
 			if(group.key.equals(key))
 				return group;
 		return ActionGroupDefinition.INVALID;
+	}
+
+	public HandlerDefinition GetInputHandler(EPlayerInput inputType)
+	{
+		for(HandlerDefinition handler : handlerOverrides)
+			if(handler.inputType == inputType)
+				return handler;
+		return HandlerDefinition.INVALID;
 	}
 
 	public HandlerDefinition GetInputHandler(GunInputContext inputContext)

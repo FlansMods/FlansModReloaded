@@ -26,6 +26,8 @@ public class ActionGroupDefinition
 	public float spinUpDuration = 1.0f;
 	@JsonField(Docs = "The distance this action should be 'heard' from, in block radius. Modify this for silenced actions to not even show up in the net msgs of other players")
 	public float loudness = 150f;
+	@JsonField(Docs = "If this is set, this action group will untrigger when NOT in this mode")
+	public String autoCancelIfNotInMode = "";
 
 	@JsonField
 	public ActionDefinition[] actions = new ActionDefinition[0];
