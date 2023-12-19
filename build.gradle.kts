@@ -1,3 +1,4 @@
+import org.spongepowered.asm.gradle.plugins.MixinExtension
 import com.matthewprenger.cursegradle.CurseExtension
 import com.matthewprenger.cursegradle.CurseProject
 import com.matthewprenger.cursegradle.CurseRelation
@@ -23,17 +24,23 @@ buildscript {
             name = "forge"
             setUrl("https://maven.minecraftforge.net/")
         }
+        maven {
+            name = "sponge"
+            setUrl("https://repo.spongepowered.org/repository/maven-public/")
+        }
     }
 
     dependencies {
         //minecraft 'net.minecraftforge:forge:1.19.3-44.1.0'
         classpath("org.eclipse.jgit:org.eclipse.jgit:5.8.0.202006091008-r")
         classpath("org.apache.commons:commons-lang3:3.12.0")
+        classpath("org.spongepowered:mixingradle:0.7.+")
         // compile against the JEI API but do not include it at runtime
         //compileOnly(fg.deobf("mezz.jei:jei-${mc_version}-common-api:${jei_version}"))
         //compileOnly(fg.deobf("mezz.jei:jei-${mc_version}-forge-api:${jei_version}"))
         // at runtime, use the full JEI jar for Forge
         //runtimeOnly(fg.deobf("mezz.jei:jei-${mc_version}-forge:${jei_version}"))
+
     }
 }
 
@@ -43,6 +50,14 @@ plugins {
     id("net.minecraftforge.gradle") version "5.1.+"
     id("java")
     id("com.matthewprenger.cursegradle") version "1.1.0"
+}
+apply(plugin = "org.spongepowered.mixin")
+
+val Project.mixin: MixinExtension
+    get() = extensions.getByType()
+mixin.run {
+    add(sourceSets.main.get(), "flansmod.refmap.json")
+    config("flansmod.mixins.json")
 }
 
 val config: Properties = file("gradle.properties").inputStream().let {
@@ -99,6 +114,7 @@ repositories {
 dependencies {
     //"deobfCompile"("mezz.jei:jei_$mcVersion:$jeiVersion")
     "minecraft"("net.minecraftforge:forge:$mcFullVersion")
+    annotationProcessor("org.spongepowered:mixin:0.8.5:processor")
 }
 
 // processResources
