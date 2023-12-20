@@ -23,6 +23,7 @@
                 0.0,
                 0.0
             ],
+            "material": "Cutout",
             "turboelements": [
                 {
                     "verts": [
@@ -368,6 +369,7 @@
                 0.0,
                 0.0
             ],
+            "material": "Cutout",
             "turboelements": [
                 {
                     "verts": [
@@ -713,6 +715,7 @@
                 0.0,
                 0.0
             ],
+            "material": "Cutout",
             "turboelements": [
                 {
                     "verts": [

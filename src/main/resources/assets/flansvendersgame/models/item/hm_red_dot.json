@@ -15,6 +15,7 @@
                 0.0,
                 0.0
             ],
+            "material": "Cutout",
             "turboelements": [
                 {
                     "verts": [
@@ -463,7 +464,17 @@
                             "texture": "#default"
                         }
                     }
-                },
+                }
+            ]
+        },
+        "emissive": {
+            "origin": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "material": "Emissive",
+            "turboelements": [
                 {
                     "verts": [
                         [
@@ -586,6 +597,15 @@
             "offset": [
                 -1.0,
                 1.125,
+                0.0
+            ]
+        },
+        {
+            "name": "emissive",
+            "attachTo": "body",
+            "offset": [
+                0.0,
+                0.0,
                 0.0
             ]
         }

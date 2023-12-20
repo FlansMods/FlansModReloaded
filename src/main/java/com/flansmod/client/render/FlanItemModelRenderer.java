@@ -48,13 +48,28 @@ import javax.swing.*;
 
 public abstract class FlanItemModelRenderer extends BlockEntityWithoutLevelRenderer
 {
+    protected static final RenderStateShard.ShaderStateShard GUN_SOLID_SHADER = new RenderStateShard.ShaderStateShard(FlansModClient::GetGunSolidShader);
     protected static final RenderStateShard.ShaderStateShard GUN_CUTOUT_SHADER = new RenderStateShard.ShaderStateShard(FlansModClient::GetGunCutoutShader);
+    protected static final RenderStateShard.ShaderStateShard GUN_EMISSIVE_SHADER = new RenderStateShard.ShaderStateShard(FlansModClient::GetGunEmissiveShader);
+    protected static final RenderStateShard.ShaderStateShard GUN_TRANSPARENT_SHADER = new RenderStateShard.ShaderStateShard(FlansModClient::GetGunTransparentShader);
+
     private static class RenderTypeFlanItem extends RenderType {
-        protected static final Function<ResourceLocation, RenderType> GUN_CUTOUT = Util.memoize((p_173204_) -> {
-            RenderType.CompositeState rendertype$compositestate =
+
+        protected static RenderType.CompositeState.CompositeStateBuilder BaseState(ResourceLocation texture)
+        {
+            return RenderType.CompositeState.builder()
+                .setTextureState(new RenderStateShard.TextureStateShard(texture, false, false))
+                .setCullState(CULL)
+                .setOverlayState(OVERLAY)
+                .setLightmapState(LIGHTMAP)
+                .setDepthTestState(LEQUAL_DEPTH_TEST);
+        }
+
+        protected static final Function<ResourceLocation, RenderType> GUN_CUTOUT = Util.memoize((texture) -> {
+            RenderType.CompositeState compositeState =
                 RenderType.CompositeState.builder()
                     .setShaderState(GUN_CUTOUT_SHADER)
-                    .setTextureState(new RenderStateShard.TextureStateShard(p_173204_, false, false))
+                    .setTextureState(new RenderStateShard.TextureStateShard(texture, false, false))
                     .setTransparencyState(NO_TRANSPARENCY)
                     .setCullState(CULL)
                     .setOverlayState(OVERLAY)
@@ -67,19 +82,65 @@ public abstract class FlanItemModelRenderer extends BlockEntityWithoutLevelRende
                 256,
                 true,
                 false,
-                rendertype$compositestate);
+                compositeState);
         });
 
-        public RenderTypeFlanItem(String p_173178_, VertexFormat p_173179_, VertexFormat.Mode p_173180_, int p_173181_, boolean p_173182_, boolean p_173183_, Runnable p_173184_, Runnable p_173185_)
+
+        protected static final Function<ResourceLocation, RenderType> GUN_EMISSIVE =
+            Util.memoize((texture) ->
+                create("flan_gun_emissive",
+                    DefaultVertexFormat.BLOCK,
+                    VertexFormat.Mode.QUADS,
+                    256,
+                    true,
+                    false,
+                    BaseState(texture)
+                        .setShaderState(GUN_EMISSIVE_SHADER)
+                        .setTransparencyState(ADDITIVE_TRANSPARENCY)
+                        .setWriteMaskState(COLOR_WRITE)
+                        .createCompositeState(false)));
+        protected static final Function<ResourceLocation, RenderType> GUN_TRANSPARENT =
+            Util.memoize((texture) ->
+                create("flan_gun_transparent",
+                    DefaultVertexFormat.BLOCK,
+                    VertexFormat.Mode.QUADS,
+                    256,
+                    true,
+                    false,
+                    BaseState(texture)
+                        .setShaderState(GUN_TRANSPARENT_SHADER)
+                        .setTransparencyState(TRANSLUCENT_TRANSPARENCY)
+                        .createCompositeState(true)));
+        protected static final Function<ResourceLocation, RenderType> GUN_SOLID =
+            Util.memoize((texture) ->
+                create("flan_gun_solid",
+                DefaultVertexFormat.BLOCK,
+                VertexFormat.Mode.QUADS,
+                256,
+                true,
+                false,
+                BaseState(texture)
+                    .setShaderState(GUN_SOLID_SHADER)
+                    .setTransparencyState(NO_TRANSPARENCY)
+                    .createCompositeState(true)));
+
+        public RenderTypeFlanItem(String name, VertexFormat vf, VertexFormat.Mode vfm, int bufferSize, boolean affectsCrumbling, boolean sortOnUpload, Runnable setupFunc, Runnable cleanupFunc)
         {
-            super(p_173178_, p_173179_, p_173180_, p_173181_, p_173182_, p_173183_, p_173184_, p_173185_);
+            super(name, vf, vfm, bufferSize, affectsCrumbling, sortOnUpload, setupFunc, cleanupFunc);
         }
     }
-    public static RenderType flanItemRenderType(ResourceLocation texture)
+    @Nonnull
+    public static RenderType flanItemRenderType(@Nullable ResourceLocation texture, @Nonnull ETurboRenderMaterial material)
     {
         if(texture == null)
             texture = MissingTextureAtlasSprite.getLocation();
-        return RenderTypeFlanItem.GUN_CUTOUT.apply(texture);
+        return switch (material)
+        {
+            case Solid -> RenderTypeFlanItem.GUN_SOLID.apply(texture);
+            case Cutout -> RenderTypeFlanItem.GUN_CUTOUT.apply(texture);
+            case Emissive -> RenderTypeFlanItem.GUN_EMISSIVE.apply(texture);
+            case Transparent -> RenderTypeFlanItem.GUN_TRANSPARENT.apply(texture);
+        };
     }
 
 
@@ -330,7 +391,9 @@ public abstract class FlanItemModelRenderer extends BlockEntityWithoutLevelRende
             boolean shouldRender = preRenderFunc.apply(partName, renderContext);
             if(shouldRender)
             {
-                RenderPartTexturedSolid(partName, textureFunc.apply(partName), renderContext);
+                TurboModel unbakedModel = UnbakedRig.GetPart(partName);
+                ETurboRenderMaterial material = unbakedModel != null ? unbakedModel.material : ETurboRenderMaterial.Cutout;
+                RenderPart(partName, material, textureFunc.apply(partName), renderContext);
                 if(BakedRig != null)
                 {
                     for (var kvp : BakedRig.GetAttachPoints())
@@ -352,7 +415,16 @@ public abstract class FlanItemModelRenderer extends BlockEntityWithoutLevelRende
 
     protected void RenderPartTexturedSolid(String partName, ResourceLocation withTexture, RenderContext renderContext)
     {
-        VertexConsumer vc = renderContext.Buffers.getBuffer(flanItemRenderType(withTexture));
+        VertexConsumer vc = renderContext.Buffers.getBuffer(flanItemRenderType(withTexture, ETurboRenderMaterial.Cutout));
+        TurboRenderUtility.Render(UnbakedRig, BakedRig, partName, renderContext.Transforms, vc, renderContext.Light, renderContext.Overlay);
+    }
+
+    protected void RenderPart(@Nonnull String partName,
+                              @Nonnull ETurboRenderMaterial material,
+                              @Nullable ResourceLocation withTexture,
+                              @Nonnull RenderContext renderContext)
+    {
+        VertexConsumer vc = renderContext.Buffers.getBuffer(flanItemRenderType(withTexture, material));
         TurboRenderUtility.Render(UnbakedRig, BakedRig, partName, renderContext.Transforms, vc, renderContext.Light, renderContext.Overlay);
     }
 

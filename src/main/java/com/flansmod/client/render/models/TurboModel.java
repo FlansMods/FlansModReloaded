@@ -54,7 +54,7 @@ public class TurboModel implements IUnbakedGeometry<TurboModel>, UnbakedModel
 	public final Vector3f offset;
 	//public final Map<String, Either<Material, String>> textureMap;
 	public final Map<String, ResourceLocation> textures;
-
+	public final ETurboRenderMaterial material;
 
 	@Nullable
 	public TurboModel parent;
@@ -69,7 +69,8 @@ public class TurboModel implements IUnbakedGeometry<TurboModel>, UnbakedModel
 					  @Nullable BlockModel.GuiLight guiLight,
 					  ItemTransforms transforms,
 					  List<ItemOverride> overrides,
-					  Vector3f offset)
+					  Vector3f offset,
+					  ETurboRenderMaterial material)
 	{
 		this.elements = elements;
 		this.hasAmbientOcclusion = hasAmbientOcclusion;
@@ -80,6 +81,7 @@ public class TurboModel implements IUnbakedGeometry<TurboModel>, UnbakedModel
 		this.transforms = transforms;
 		this.overrides = overrides;
 		this.offset = offset;
+		this.material = material;
 	}
 
 	public List<TurboElement> GetElements() { return elements; }
@@ -226,6 +228,12 @@ public class TurboModel implements IUnbakedGeometry<TurboModel>, UnbakedModel
 				offset = getVector3f(jObject.get("origin"));
 			}
 
+			ETurboRenderMaterial material = ETurboRenderMaterial.Solid;
+			if(jObject.has("material"))
+			{
+				material = ETurboRenderMaterial.valueOf(jObject.get("material").getAsString());
+			}
+
 			ResourceLocation parentLocation = parentName.isEmpty() ? null : new ResourceLocation(parentName);
 			return new TurboModel(
 				parentLocation,
@@ -235,7 +243,8 @@ public class TurboModel implements IUnbakedGeometry<TurboModel>, UnbakedModel
 				blockmodel$guilight,
 				itemTransforms,
 				list1,
-				offset);
+				offset,
+				material);
 		}
 
 		protected List<ItemOverride> getOverrides(JsonDeserializationContext p_111495_, JsonObject p_111496_) {

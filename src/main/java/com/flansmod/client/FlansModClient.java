@@ -69,7 +69,14 @@ public class FlansModClient
 	public static float FrameAbsoluteSeconds() { return THIS_FRAME_NS / 1000000000f; }
 
 	@Nullable
+	private static ShaderInstance GUN_SOLID;
+	@Nullable
 	private static ShaderInstance GUN_CUTOUT;
+	@Nullable
+	private static ShaderInstance GUN_EMISSIVE;
+	@Nullable
+	private static ShaderInstance GUN_TRANSPARENT;
+
 
 	@SubscribeEvent
 	public static void ClientInit(final FMLClientSetupEvent event)
@@ -110,18 +117,31 @@ public class FlansModClient
 		}
 	}
 
+	@Nullable
+	public static ShaderInstance GetGunSolidShader() { return GUN_SOLID; }
+	@Nullable
 	public static ShaderInstance GetGunCutoutShader() { return GUN_CUTOUT; }
-
-
-
+	@Nullable
+	public static ShaderInstance GetGunEmissiveShader() { return GUN_EMISSIVE; }
+	@Nullable
+	public static ShaderInstance GetGunTransparentShader() { return GUN_TRANSPARENT; }
 
 	@SubscribeEvent
 	public static void ShaderRegistryEvent(RegisterShadersEvent event)
 	{
 		try
 		{
+			event.registerShader(new ShaderInstance(event.getResourceProvider(), "flansmod:rendertype_flans_gun_solid", DefaultVertexFormat.BLOCK), (shader) -> {
+				GUN_SOLID = shader;
+			});
 			event.registerShader(new ShaderInstance(event.getResourceProvider(), "flansmod:rendertype_flans_gun_cutout", DefaultVertexFormat.BLOCK), (shader) -> {
 				GUN_CUTOUT = shader;
+			});
+			event.registerShader(new ShaderInstance(event.getResourceProvider(), "flansmod:rendertype_flans_gun_emissive", DefaultVertexFormat.BLOCK), (shader) -> {
+				GUN_EMISSIVE = shader;
+			});
+			event.registerShader(new ShaderInstance(event.getResourceProvider(), "flansmod:rendertype_flans_gun_transparent", DefaultVertexFormat.BLOCK), (shader) -> {
+				GUN_TRANSPARENT = shader;
 			});
 		}
 		catch(Exception ignored)

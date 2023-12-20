@@ -21,6 +21,7 @@
                 0.0,
                 0.0
             ],
+            "material": "Cutout",
             "turboelements": [
                 {
                     "verts": [
@@ -3838,6 +3839,7 @@
                 0.0,
                 0.0
             ],
+            "material": "Cutout",
             "turboelements": [
                 {
                     "verts": [
@@ -4631,6 +4633,7 @@
                 0.0,
                 0.0
             ],
+            "material": "Cutout",
             "turboelements": [
                 {
                     "verts": [
@@ -4752,6 +4755,7 @@
                 0.0,
                 0.0
             ],
+            "material": "Cutout",
             "turboelements": [
                 {
                     "verts": [
@@ -5097,6 +5101,7 @@
                 0.0,
                 0.0
             ],
+            "material": "Cutout",
             "turboelements": [
                 {
                     "verts": [
@@ -5461,8 +5466,8 @@
             ],
             "translation": [
                 0.0,
-                0.0,
-                -2.0
+                1.0,
+                0.0
             ],
             "scale": [
                 1.0,
@@ -5478,8 +5483,8 @@
             ],
             "translation": [
                 0.0,
-                0.0,
-                -2.0
+                1.0,
+                0.0
             ],
             "scale": [
                 1.0,
