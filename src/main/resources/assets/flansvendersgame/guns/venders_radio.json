@@ -36,6 +36,7 @@
             "repeatCount": 3,
             "spinUpDuration": 1.5,
             "loudness": 150.0,
+            "autoCancelIfNotInMode": "",
             "actions": [
                 {
                     "actionType": "SummonNpc",

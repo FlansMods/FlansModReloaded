@@ -145,17 +145,17 @@ public class Transform
     public Vec3 LocalToGlobalPosition(Vec3 localPos)
     {
         Vector3d scratch = new Vector3d(localPos.x, localPos.y, localPos.z);
+        scratch.mul(Scale);
         Orientation.transform(scratch);
         scratch.add(Position);
-        scratch.mul(Scale);
         return new Vec3(scratch.x, scratch.y, scratch.z);
     }
     public Vec3 GlobalToLocalPosition(Vec3 globalPos)
     {
         Vector3d scratch = new Vector3d(globalPos.x, globalPos.y, globalPos.z);
-        scratch.mul(1.0f / Scale);
         scratch.sub(Position);
         Orientation.transformInverse(scratch);
+        scratch.mul(1.0f / Scale);
         return new Vec3(scratch.x, scratch.y, scratch.z);
     }
 

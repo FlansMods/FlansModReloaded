@@ -64,6 +64,7 @@
             "repeatCount": 0,
             "spinUpDuration": 0.0,
             "loudness": 0.0,
+            "autoCancelIfNotInMode": "",
             "actions": [
                 {
                     "actionType": "Scope",

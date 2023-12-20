@@ -184,6 +184,7 @@
             "repeatCount": 3,
             "spinUpDuration": 1.5,
             "loudness": 150.0,
+            "autoCancelIfNotInMode": "",
             "actions": [
                 {
                     "actionType": "Shoot",
@@ -297,6 +298,7 @@
             "repeatCount": 3,
             "spinUpDuration": 1.5,
             "loudness": 150.0,
+            "autoCancelIfNotInMode": "",
             "actions": [
                 {
                     "actionType": "AimDownSights",
@@ -324,6 +326,7 @@
             "repeatCount": 0,
             "spinUpDuration": 1.0,
             "loudness": 150.0,
+            "autoCancelIfNotInMode": "",
             "actions": [
                 {
                     "actionType": "Animation",
@@ -351,6 +354,7 @@
             "repeatCount": 0,
             "spinUpDuration": 1.0,
             "loudness": 150.0,
+            "autoCancelIfNotInMode": "",
             "actions": [
                 {
                     "actionType": "Animation",
@@ -378,6 +382,7 @@
             "repeatCount": 0,
             "spinUpDuration": 1.0,
             "loudness": 150.0,
+            "autoCancelIfNotInMode": "",
             "actions": [
                 {
                     "actionType": "Animation",
@@ -429,6 +434,7 @@
             "repeatCount": 0,
             "spinUpDuration": 1.0,
             "loudness": 150.0,
+            "autoCancelIfNotInMode": "",
             "actions": [
                 {
                     "actionType": "Animation",
@@ -480,6 +486,7 @@
             "repeatCount": 0,
             "spinUpDuration": 1.0,
             "loudness": 150.0,
+            "autoCancelIfNotInMode": "",
             "actions": [
                 {
                     "actionType": "Animation",

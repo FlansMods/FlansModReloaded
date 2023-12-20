@@ -51,27 +51,29 @@ public class LaserRenderer
 				{
 					for (GunContext gunContext : playerContext.GetAllGunContexts(true))
 					{
-						for(ActionGroupInstance actionGroup : gunContext.GetActionStack().GetActiveActionGroups())
+						if(gunContext.IsValid())
 						{
-							for(ActionInstance actionInstance : actionGroup.GetActions())
+							for (ActionGroupInstance actionGroup : gunContext.GetActionStack().GetActiveActionGroups())
 							{
-								if(actionInstance instanceof LaserAction laserAction)
+								for (ActionInstance actionInstance : actionGroup.GetActions())
 								{
-									if(actionGroup.Context.IsAttachment())
+									if (actionInstance instanceof LaserAction laserAction)
 									{
-										RenderLaserFirstPerson(event,
-											gunContext,
-											actionGroup.Context.GetAttachmentType(),
-											actionGroup.Context.GetAttachmentIndex(),
-											laserAction.LaserOrigin());
-									}
-									else
-									{
-										RenderLaserFirstPerson(event,
-											gunContext,
-											EAttachmentType.Generic,
-											-1,
-											laserAction.LaserOrigin());
+										if (actionGroup.Context.IsAttachment())
+										{
+											RenderLaserFirstPerson(event,
+												gunContext,
+												actionGroup.Context.GetAttachmentType(),
+												actionGroup.Context.GetAttachmentIndex(),
+												laserAction.LaserOrigin());
+										} else
+										{
+											RenderLaserFirstPerson(event,
+												gunContext,
+												EAttachmentType.Generic,
+												-1,
+												laserAction.LaserOrigin());
+										}
 									}
 								}
 							}
