@@ -1,8 +1,10 @@
 package com.flansmod.common;
 
 import com.flansmod.client.FlansModClient;
+import com.flansmod.common.actions.contexts.GunContext;
 import com.flansmod.common.actions.contexts.GunContextCache;
 import com.flansmod.common.actions.ServerActionManager;
+import com.flansmod.common.actions.contexts.GunContextPlayer;
 import com.flansmod.common.crafting.*;
 import com.flansmod.common.entity.NpcRelationshipCapabilityAttacher;
 import com.flansmod.common.gunshots.Raytracer;
@@ -10,8 +12,12 @@ import com.flansmod.common.actions.contexts.ShooterContext;
 import com.flansmod.common.item.*;
 import com.flansmod.common.network.FlansModPacketHandler;
 import com.flansmod.common.projectiles.BulletEntity;
+import com.flansmod.common.types.abilities.AbilityDefinition;
 import com.flansmod.common.types.abilities.AbilityDefinitions;
+import com.flansmod.common.types.abilities.elements.AbilityProviderDefinition;
+import com.flansmod.common.types.abilities.elements.EAbilityEffect;
 import com.flansmod.common.types.attachments.AttachmentDefinitions;
+import com.flansmod.common.types.attachments.EAttachmentType;
 import com.flansmod.common.types.crafting.MaterialDefinitions;
 import com.flansmod.common.types.crafting.WorkbenchDefinitions;
 import com.flansmod.common.types.grenades.GrenadeDefinitions;
@@ -23,11 +29,17 @@ import com.flansmod.common.types.parts.PartDefinitions;
 import com.flansmod.common.worldgen.loot.LootPopulator;
 import com.mojang.logging.LogUtils;
 import com.mojang.serialization.Codec;
+import net.minecraft.advancements.CriteriaTriggers;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.packs.resources.PreparableReloadListener;
-import net.minecraft.world.effect.MobEffect;
+import net.minecraft.stats.Stats;
+import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.MobCategory;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.item.BlockItem;
@@ -47,8 +59,10 @@ import net.minecraftforge.common.extensions.IForgeMenuType;
 import net.minecraftforge.common.loot.IGlobalLootModifier;
 import net.minecraftforge.event.AddReloadListenerEvent;
 import net.minecraftforge.event.CreativeModeTabEvent;
+import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.event.level.LevelEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
@@ -192,13 +206,12 @@ public class FlansMod
 
     public FlansMod()
     {
+        MinecraftForge.EVENT_BUS.register(this);
         IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
         modEventBus.addListener(this::CommonInit);
-        MinecraftForge.EVENT_BUS.addListener(this::loadLevel);
-        MinecraftForge.EVENT_BUS.addListener(this::onReloadResources);
         ACTIONS_SERVER.HookServer(modEventBus);
         FlansModPacketHandler.RegisterMessages();
-        modEventBus.addListener(this::onCreativeTabRegistry);
+        modEventBus.addListener(this::OnCreativeTabRegistry);
         modEventBus.addListener(this::OnRegsiterEvent);
 
         new NpcRelationshipCapabilityAttacher();
@@ -217,7 +230,8 @@ public class FlansMod
     {
     }
 
-    private void loadLevel(LevelEvent.Load event)
+    @SubscribeEvent
+    public void OnLevelLoad(LevelEvent.Load event)
     {
         new Raytracer(event.getLevel()).hook();
         ShooterContext.OnLevelLoaded();
@@ -228,7 +242,7 @@ public class FlansMod
     public static final Component CREATIVE_TAB_NAME_BULLETS = Component.translatable("item_group." + MODID + ".creative_tab_bullets");
     public static final Component CREATIVE_TAB_NAME_MODIFIERS = Component.translatable("item_group." + MODID + ".creative_tab_modifiers");
 
-    private void onCreativeTabRegistry(CreativeModeTabEvent.Register event)
+    private void OnCreativeTabRegistry(CreativeModeTabEvent.Register event)
     {
         event.registerCreativeModeTab(new ResourceLocation(MODID, "creative_tab_guns"), builder ->
         {
@@ -325,12 +339,68 @@ public class FlansMod
                 StackedVanillaIngredient.Serializer.INSTANCE);
         }
     }
-    
-    private void onReloadResources(AddReloadListenerEvent event)
+
+    @SubscribeEvent
+    public void OnReloadResources(AddReloadListenerEvent event)
     {
         if(FMLEnvironment.dist == Dist.DEDICATED_SERVER)
         {
             RegisterCommonReloadListeners(event::addListener);
+        }
+    }
+
+    @SubscribeEvent
+    public void OnLivingDeath(LivingDeathEvent deathEvent)
+    {
+        DamageSource damageSource = deathEvent.getSource();
+        LivingEntity target = deathEvent.getEntity();
+        if(!damageSource.isBypassInvul())
+        {
+            if(target instanceof ServerPlayer player)
+            {
+                ShooterContext shooterContext = ShooterContext.GetOrCreate(player);
+                for(GunContext gunContext : shooterContext.GetAllGunContexts(false))
+                {
+                    if(gunContext.IsValid() && gunContext instanceof GunContextPlayer gunContextPlayer)
+                    {
+                        // We ONLY check for this ability on attachments, because we need something to consume to stop it going infinite
+                        for(EAttachmentType attachmentType : EAttachmentType.values())
+                        {
+                            for(int i = 0; i < gunContext.GetNumAttachmentStacks(attachmentType); i++)
+                            {
+                                ItemStack attachmentStack = gunContext.GetAttachmentStack(attachmentType, i);
+                                if(attachmentStack.getItem() instanceof AttachmentItem attachmentItem)
+                                {
+                                    for(AbilityProviderDefinition abilityProvider : attachmentItem.Def().abilities)
+                                    {
+                                        AbilityDefinition abilityDef = abilityProvider.GetAbility();
+                                        if(abilityDef.effectType == EAbilityEffect.TotemOfUndying)
+                                        {
+                                            if(net.minecraftforge.common.ForgeHooks.onLivingUseTotem(player, damageSource, attachmentStack, gunContextPlayer.GetHand()))
+                                            {
+                                                gunContext.SetAttachmentStack(attachmentType, i, ItemStack.EMPTY);
+
+                                                player.awardStat(Stats.ITEM_USED.get(attachmentStack.getItem()), 1);
+                                                CriteriaTriggers.USED_TOTEM.trigger(player, attachmentStack);
+
+                                                player.setHealth(1.0f);
+                                                player.removeAllEffects();
+                                                player.addEffect(new MobEffectInstance(MobEffects.REGENERATION, 900, 1));
+                                                player.addEffect(new MobEffectInstance(MobEffects.ABSORPTION, 100, 1));
+                                                player.addEffect(new MobEffectInstance(MobEffects.FIRE_RESISTANCE, 800, 0));
+                                                player.level.broadcastEntityEvent(player, (byte)35);
+
+                                                deathEvent.setCanceled(true);
+                                                return;
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
         }
     }
 

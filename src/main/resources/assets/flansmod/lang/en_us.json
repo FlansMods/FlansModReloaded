@@ -155,6 +155,7 @@
   "item.flansmod.magazine_upgrade": "Magazine Upgrade Kit",
   "item.flansmod.rainbow_paintcan": "Rainbow Paintcan",
   "tooltip.dual_wielding_two_handed": "This is a two-handed weapon!",
+  "tooltip.ability_without_level": "%s",
   "tooltip.ability_with_level": "%s %s",
   "enchantment.level.11": "XI",
   "enchantment.level.12": "XII",

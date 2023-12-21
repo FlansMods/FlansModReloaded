@@ -96,9 +96,12 @@ public abstract class FlanItem extends Item implements IForgeItem
 
         for(var kvp : GetAbilities(stack).entrySet())
         {
-            Component abilityString = Component.translatable("tooltip.ability_with_level",
+            Component abilityString = (kvp.getKey().maxLevel == 1)
+             ? (Component.translatable("tooltip.ability_without_level",
+                Component.translatable("ability." + kvp.getKey().Location.getNamespace() + "." + kvp.getKey().Location.getPath())))
+             : (Component.translatable("tooltip.ability_with_level",
                 Component.translatable("ability." + kvp.getKey().Location.getNamespace() + "." + kvp.getKey().Location.getPath()),
-                Component.translatable(Maths.ToRomanNumerals(kvp.getValue())));
+                Component.translatable(Maths.ToRomanNumerals(kvp.getValue()))));
 
             Component abilityColour = Component.translatable("ability." + kvp.getKey().Location.getNamespace() + "." + kvp.getKey().Location.getPath() + ".colour");
 

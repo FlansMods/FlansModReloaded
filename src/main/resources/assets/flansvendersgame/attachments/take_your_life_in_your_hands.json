@@ -1,7 +1,10 @@
 {
     "itemSettings": {
         "maxStackSize": 1,
-        "tags": []
+        "tags": [
+            "flansmod:grip",
+            "flansmod:attach_to_any"
+        ]
     },
     "attachmentType": "Grip",
     "modifiers": [],
@@ -10,7 +13,12 @@
     "handlerOverrides": [],
     "actionOverrides": [],
     "reloadOverrides": [],
-    "abilities": [],
+    "abilities": [
+        {
+            "ability": "flansvendersgame:undying",
+            "level": 1
+        }
+    ],
     "modeOverride": "FullAuto",
     "overrideFireMode": false
 }
