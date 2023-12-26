@@ -21,14 +21,14 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
-import net.minecraft.world.level.material.Material;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.event.ModelEvent;
 import net.minecraftforge.common.extensions.IForgeMenuType;
-import net.minecraftforge.event.CreativeModeTabEvent;
+import net.minecraftforge.event.BuildCreativeModeTabContentsEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -57,7 +57,7 @@ public class BasicPartsMod
 
 	// Storage helper blocks
 	public static final RegistryObject<Item> GUNPOWDER_SPECK = ITEMS.register("gunpowder_speck", () -> new Item(new Item.Properties()));
-	public static final RegistryObject<Block> GUNPOWDER_BLOCK = BLOCKS.register("gunpowder_block", () -> new Block(BlockBehaviour.Properties.of(Material.STONE)));
+	public static final RegistryObject<Block> GUNPOWDER_BLOCK = BLOCKS.register("gunpowder_block", () -> new Block(BlockBehaviour.Properties.copy(Blocks.STONE)));
 	public static final RegistryObject<Item> GUNPOWDER_BLOCK_ITEM = ITEMS.register("gunpowder_block", () -> new BlockItem(GUNPOWDER_BLOCK.get(), new Item.Properties()));
 
 	// MATERIALS
@@ -67,47 +67,47 @@ public class BasicPartsMod
 	public static final RegistryObject<Item> STEEL_NUGGET = ITEMS.register("steel_nugget", () -> new Item(new Item.Properties()));
 	public static final RegistryObject<Item> STEEL_INGOT = ITEMS.register("steel_ingot", () -> new Item(new Item.Properties()));
 	public static final RegistryObject<Item> STEEL_SHEET = ITEMS.register("steel_sheet", () -> new Item(new Item.Properties()));
-	public static final RegistryObject<Block> STEEL_BLOCK = BLOCKS.register("steel_block", () -> new Block(BlockBehaviour.Properties.of(Material.HEAVY_METAL)));
+	public static final RegistryObject<Block> STEEL_BLOCK = BLOCKS.register("steel_block", () -> new Block(BlockBehaviour.Properties.copy(Blocks.IRON_BLOCK)));
 	public static final RegistryObject<Item> STEEL_BLOCK_ITEM = ITEMS.register("steel_block", () -> new BlockItem(STEEL_BLOCK.get(), new Item.Properties()));
 	public static final RegistryObject<Item> ALUMINIUM_NUGGET = ITEMS.register("aluminium_nugget", () -> new Item(new Item.Properties()));
 	public static final RegistryObject<Item> ALUMINIUM_INGOT = ITEMS.register("aluminium_ingot", () -> new Item(new Item.Properties()));
 	public static final RegistryObject<Item> ALUMINIUM_SHEET = ITEMS.register("aluminium_sheet", () -> new Item(new Item.Properties()));
-	public static final RegistryObject<Block> ALUMINIUM_BLOCK = BLOCKS.register("aluminium_block", () -> new Block(BlockBehaviour.Properties.of(Material.HEAVY_METAL)));
+	public static final RegistryObject<Block> ALUMINIUM_BLOCK = BLOCKS.register("aluminium_block", () -> new Block(BlockBehaviour.Properties.copy(Blocks.IRON_BLOCK)));
 	public static final RegistryObject<Item> ALUMINIUM_BLOCK_ITEM = ITEMS.register("aluminium_block", () -> new BlockItem(ALUMINIUM_BLOCK.get(), new Item.Properties()));
 	// Tier III = Nethersteel
 	public static final RegistryObject<Item> NETHERSTEEL_NUGGET = ITEMS.register("nethersteel_nugget", () -> new Item(new Item.Properties()));
 	public static final RegistryObject<Item> NETHERSTEEL_INGOT = ITEMS.register("nethersteel_ingot", () -> new Item(new Item.Properties()));
 	public static final RegistryObject<Item> NETHERSTEEL_SHEET = ITEMS.register("nethersteel_sheet", () -> new Item(new Item.Properties()));
-	public static final RegistryObject<Block> NETHERSTEEL_BLOCK = BLOCKS.register("nethersteel_block", () -> new Block(BlockBehaviour.Properties.of(Material.HEAVY_METAL)));
+	public static final RegistryObject<Block> NETHERSTEEL_BLOCK = BLOCKS.register("nethersteel_block", () -> new Block(BlockBehaviour.Properties.copy(Blocks.NETHERITE_BLOCK)));
 	public static final RegistryObject<Item> NETHERSTEEL_BLOCK_ITEM = ITEMS.register("nethersteel_block", () -> new BlockItem(NETHERSTEEL_BLOCK.get(), new Item.Properties()));
 
 	// Composites
 	// Tier I = Fiberglass
 	public static final RegistryObject<Item> CLAY_AND_SAND_MIXTURE = ITEMS.register("clay_and_sand_mixture", () -> new Item(new Item.Properties()));
 	public static final RegistryObject<Item> FIBERGLASS = ITEMS.register("fiberglass", () -> new Item(new Item.Properties()));
-	public static final RegistryObject<Block> FIBERGLASS_BLOCK = BLOCKS.register("fiberglass_block", () -> new Block(BlockBehaviour.Properties.of(Material.CLAY)));
+	public static final RegistryObject<Block> FIBERGLASS_BLOCK = BLOCKS.register("fiberglass_block", () -> new Block(BlockBehaviour.Properties.copy(Blocks.CLAY)));
 	public static final RegistryObject<Item> FIBERGLASS_BLOCK_ITEM = ITEMS.register("fiberglass_block", () -> new BlockItem(FIBERGLASS_BLOCK.get(), new Item.Properties()));
 	// Tier II = Phantom Membrane
 	public static final RegistryObject<Item> PHANTASMAL_RESIDUE = ITEMS.register("phantasmal_residue", () -> new Item(new Item.Properties()));
 	public static final RegistryObject<Item> PHANTEX_SHEET = ITEMS.register("phantex_sheet", () -> new Item(new Item.Properties()));
-	public static final RegistryObject<Block> PHANTEX_BLOCK = BLOCKS.register("phantex_block", () -> new Block(BlockBehaviour.Properties.of(Material.CLAY)));
+	public static final RegistryObject<Block> PHANTEX_BLOCK = BLOCKS.register("phantex_block", () -> new Block(BlockBehaviour.Properties.copy(Blocks.IRON_BLOCK)));
 	public static final RegistryObject<Item> PHANTEX_BLOCK_ITEM = ITEMS.register("phantex_block", () -> new BlockItem(PHANTEX_BLOCK.get(), new Item.Properties()));
 	// Tier III = Carbon Fiber
 	public static final RegistryObject<Item> CARBON_HEAVY_COAL = ITEMS.register("carbon_heavy_coal", () -> new Item(new Item.Properties()));
 	public static final RegistryObject<Item> CARBON_PRECURSOR_CRYSTAL = ITEMS.register("carbon_precursor_crystal", () -> new Item(new Item.Properties()));
 	public static final RegistryObject<Item> CARBON_FIBER_SHEET = ITEMS.register("carbon_fiber_sheet", () -> new Item(new Item.Properties()));
-	public static final RegistryObject<Block> CARBON_FIBER_BLOCK = BLOCKS.register("carbon_fiber_block", () -> new Block(BlockBehaviour.Properties.of(Material.HEAVY_METAL)));
+	public static final RegistryObject<Block> CARBON_FIBER_BLOCK = BLOCKS.register("carbon_fiber_block", () -> new Block(BlockBehaviour.Properties.copy(Blocks.IRON_BLOCK)));
 	public static final RegistryObject<Item> CARBON_FIBER_BLOCK_ITEM = ITEMS.register("carbon_fiber_block", () -> new BlockItem(CARBON_FIBER_BLOCK.get(), new Item.Properties()));
 
 	// Fabrics
 	// Tier I = Wool
 	// Tier II = Leather, Polyester
 	public static final RegistryObject<Item> POLYESTER_THREAD = ITEMS.register("polyester_thread", () -> new Item(new Item.Properties()));
-	public static final RegistryObject<Block> POLYESTER_BLOCK = BLOCKS.register("polyester_block", () -> new Block(BlockBehaviour.Properties.of(Material.WOOL)));
+	public static final RegistryObject<Block> POLYESTER_BLOCK = BLOCKS.register("polyester_block", () -> new Block(BlockBehaviour.Properties.copy(Blocks.WHITE_WOOL)));
 	public static final RegistryObject<Item> POLYESTER_BLOCK_ITEM = ITEMS.register("polyester_block", () -> new BlockItem(POLYESTER_BLOCK.get(), new Item.Properties()));
 	// Tier III = Shulker, Kevlar
 	public static final RegistryObject<Item> KEVLAR_PANEL = ITEMS.register("kevlar_panel", () -> new Item(new Item.Properties()));
-	public static final RegistryObject<Block> KEVLAR_BLOCK = BLOCKS.register("kevlar_block", () -> new Block(BlockBehaviour.Properties.of(Material.WOOL)));
+	public static final RegistryObject<Block> KEVLAR_BLOCK = BLOCKS.register("kevlar_block", () -> new Block(BlockBehaviour.Properties.copy(Blocks.WHITE_WOOL)));
 	public static final RegistryObject<Item> KEVLAR_BLOCK_ITEM = ITEMS.register("kevlar_block", () -> new BlockItem(KEVLAR_BLOCK.get(), new Item.Properties()));
 
 	// Woods
@@ -290,8 +290,8 @@ public class BasicPartsMod
 		FlansMod.Workbench_TileEntityType(TILE_ENTITIES, MODID, "bullet_fabricator");
 
 
-	public static final RegistryObject<Block> DISTILLATION_TOWER_TOP = 						BLOCKS.register("distillation_tower_top", () -> new DistillationTowerBlock(true, BlockBehaviour.Properties.of(Material.HEAVY_METAL)));
-	public static final RegistryObject<Block> DISTILLATION_TOWER = 							BLOCKS.register("distillation_tower", () -> new DistillationTowerBlock(false, BlockBehaviour.Properties.of(Material.HEAVY_METAL)));
+	public static final RegistryObject<Block> DISTILLATION_TOWER_TOP = 						BLOCKS.register("distillation_tower_top", () -> new DistillationTowerBlock(true, BlockBehaviour.Properties.copy(Blocks.STONECUTTER)));
+	public static final RegistryObject<Block> DISTILLATION_TOWER = 							BLOCKS.register("distillation_tower", () -> new DistillationTowerBlock(false, BlockBehaviour.Properties.copy(Blocks.STONECUTTER)));
 	public static final RegistryObject<Item> DISTILLATION_TOWER_TOP_ITEM = 					ITEMS.register("distillation_tower_top", () -> new BlockItem(DISTILLATION_TOWER_TOP.get(), new Item.Properties()));
 	public static final RegistryObject<Item> DISTILLATION_TOWER_ITEM = 						ITEMS.register("distillation_tower", () -> new BlockItem(DISTILLATION_TOWER.get(), new Item.Properties()));
 	public static final RegistryObject<BlockEntityType<DistillationTowerBlockEntity>> DISTILLATION_TOWER_TOP_TILE_ENTITY =
@@ -321,7 +321,7 @@ public class BasicPartsMod
 	}
 
 	@SubscribeEvent
-	public void OnCreativeTabs(CreativeModeTabEvent.BuildContents event)
+	public void OnCreativeTabs(BuildCreativeModeTabContentsEvent event)
 	{
 		if(event.getTab().getDisplayName() == FlansMod.CREATIVE_TAB_NAME_BULLETS)
 		{

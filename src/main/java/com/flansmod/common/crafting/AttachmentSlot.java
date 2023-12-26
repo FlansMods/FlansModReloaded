@@ -7,6 +7,8 @@ import net.minecraft.world.Container;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 
+import javax.annotation.Nonnull;
+
 public class AttachmentSlot extends RestrictedSlot
 {
 	private final RestrictedSlot ParentSlot;
@@ -31,12 +33,13 @@ public class AttachmentSlot extends RestrictedSlot
 			&& flanItem.HasAttachmentSlot(AttachmentType, AttachmentIndex);
 	}
 
+	@Nonnull
 	@Override
 	public ItemStack getItem()
 	{
-		if(ParentSlot.isActive() && ParentSlot.getItem().getItem() instanceof FlanItem flanItem)
+		if(ParentSlot.isActive() && ParentSlot.getItem().getItem() instanceof FlanItem)
 		{
-			return flanItem.GetAttachmentInSlot(ParentSlot.getItem(), AttachmentType, AttachmentIndex);
+			return FlanItem.GetAttachmentInSlot(ParentSlot.getItem(), AttachmentType, AttachmentIndex);
 		}
 		return ItemStack.EMPTY;
 	}
@@ -49,22 +52,24 @@ public class AttachmentSlot extends RestrictedSlot
 	public void setChanged() {
 		ParentSlot.setChanged();
 	}
+	@Nonnull
 	@Override
 	public ItemStack remove(int count)
 	{
-		if(ParentSlot.isActive() && ParentSlot.getItem().getItem() instanceof FlanItem flanItem)
+		if(ParentSlot.isActive() && ParentSlot.getItem().getItem() instanceof FlanItem)
 		{
-			return flanItem.RemoveAttachmentFromSlot(ParentSlot.getItem(), AttachmentType, AttachmentIndex);
+			return FlanItem.RemoveAttachmentFromSlot(ParentSlot.getItem(), AttachmentType, AttachmentIndex);
 		}
 		return ItemStack.EMPTY;
 	}
 	@Override
-	public void set(ItemStack stack)
+	public void set(@Nonnull ItemStack stack)
 	{
-		if(ParentSlot.isActive() && ParentSlot.getItem().getItem() instanceof FlanItem flanItem)
+		if(ParentSlot.isActive() && ParentSlot.getItem().getItem() instanceof FlanItem)
 		{
-			flanItem.SetAttachmentInSlot(ParentSlot.getItem(), AttachmentType, AttachmentIndex, stack);
+			FlanItem.SetAttachmentInSlot(ParentSlot.getItem(), AttachmentType, AttachmentIndex, stack);
 		}
+		setChanged();
 	}
 	@Override
 	public boolean mayPlace(ItemStack stack)
@@ -77,11 +82,5 @@ public class AttachmentSlot extends RestrictedSlot
 			if(ParentSlot.getItem().getItem() instanceof FlanItem flanItem)
 				return flanItem.CanAcceptAttachment(stack, AttachmentType, AttachmentIndex);
 		return false;
-	}
-	@Override
-	public void initialize(ItemStack stack)
-	{
-		set(stack);
-		setChanged();
 	}
 }

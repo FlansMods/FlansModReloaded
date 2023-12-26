@@ -51,8 +51,8 @@ public class SoundDefinition
 	{
 		entity.playSound(
 			SoundEvent.createFixedRangeEvent(new ResourceLocation(sound), maxRange),
-			PickRandomVolume(entity.level.random),
-			PickRandomPitch(entity.level.random)
+			PickRandomVolume(entity.level().random),
+			PickRandomPitch(entity.level().random)
 		);
 	}
 

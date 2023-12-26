@@ -82,7 +82,7 @@ public abstract class ShooterContext
 		if(entity == null)
 			return ShooterContext.INVALID;
 
-		var cache = ContextCache(entity.level.isClientSide);
+		var cache = ContextCache(entity.level().isClientSide);
 
 		UUID uuid = entity.getUUID();
 		if(cache.containsKey(uuid))
@@ -187,7 +187,7 @@ public abstract class ShooterContext
 	@Nullable
 	public Level Level()
 	{
-		return Entity() != null ? Entity().level : null;
+		return Entity() != null ? Entity().level() : null;
 	}
 	@Nonnull
 	public UUID EntityUUID() { return Entity() != null ? Entity().getUUID() : InvalidShooterContextUUID; }

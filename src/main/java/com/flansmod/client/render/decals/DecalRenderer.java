@@ -89,8 +89,6 @@ public class DecalRenderer
 				if(kvp.getKey() != null && kvp.getValue().HasAnyDecals())
 				{
 					RenderSystem.setShaderTexture(0, kvp.getKey());
-					RenderSystem.enableTexture();
-
 					kvp.getValue().RenderTick(
 						Tesselator.getInstance(),
 						event.getPoseStack(),

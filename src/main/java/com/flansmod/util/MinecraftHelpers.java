@@ -4,17 +4,18 @@ import com.flansmod.common.FlansMod;
 import com.flansmod.common.types.elements.ItemStackDefinition;
 import com.mojang.brigadier.StringReader;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.block.model.ItemTransforms;
 import net.minecraft.nbt.*;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.tags.TagKey;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.HumanoidArm;
+import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.material.Material;
+import net.minecraft.world.level.block.Block;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.fml.DistExecutor;
@@ -25,7 +26,6 @@ import net.minecraftforge.server.ServerLifecycleHooks;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.ArrayList;
-import java.util.Locale;
 
 public class MinecraftHelpers
 {
@@ -107,6 +107,7 @@ public class MinecraftHelpers
 		return 0L;
 	}
 
+	@Nonnull
 	public static String GetFEString(int fe)
 	{
 		if(fe >= 1000000000)
@@ -130,7 +131,8 @@ public class MinecraftHelpers
 	}
 
 	@OnlyIn(Dist.CLIENT)
-	public static HumanoidArm GetArm(InteractionHand hand)
+	@Nonnull
+	public static HumanoidArm GetArm(@Nonnull InteractionHand hand)
 	{
 		return hand == InteractionHand.MAIN_HAND ?
 			Minecraft.getInstance().options.mainHand().get() :
@@ -138,7 +140,8 @@ public class MinecraftHelpers
 	}
 
 	@OnlyIn(Dist.CLIENT)
-	public static InteractionHand GetHand(ItemTransforms.TransformType transformType)
+	@Nonnull
+	public static InteractionHand GetHand(@Nonnull ItemDisplayContext transformType)
 	{
 		boolean rightHanded = Minecraft.getInstance().options.mainHand().get() == HumanoidArm.RIGHT;
 		return switch (transformType)
@@ -151,13 +154,14 @@ public class MinecraftHelpers
 	}
 
 	@OnlyIn(Dist.CLIENT)
-	public static ItemTransforms.TransformType GetFirstPersonTransformType(InteractionHand hand)
+	@Nonnull
+	public static ItemDisplayContext GetFirstPersonTransformType(@Nonnull InteractionHand hand)
 	{
 		boolean rightHanded = Minecraft.getInstance().options.mainHand().get() == HumanoidArm.RIGHT;
 		return switch (hand)
 		{
-			case MAIN_HAND -> rightHanded ? ItemTransforms.TransformType.FIRST_PERSON_RIGHT_HAND : ItemTransforms.TransformType.FIRST_PERSON_LEFT_HAND;
-			case OFF_HAND -> rightHanded ? ItemTransforms.TransformType.FIRST_PERSON_LEFT_HAND : ItemTransforms.TransformType.FIRST_PERSON_RIGHT_HAND;
+			case MAIN_HAND -> rightHanded ? ItemDisplayContext.FIRST_PERSON_RIGHT_HAND : ItemDisplayContext.FIRST_PERSON_LEFT_HAND;
+			case OFF_HAND -> rightHanded ? ItemDisplayContext.FIRST_PERSON_LEFT_HAND : ItemDisplayContext.FIRST_PERSON_RIGHT_HAND;
 		};
 	}
 
@@ -175,65 +179,6 @@ public class MinecraftHelpers
 	public static Level Client_GetCurrentLevel()
 	{
 		return GetClient().level;
-	}
-
-
-	public static Material FindMaterial(String name)
-	{
-		switch (name.toUpperCase(Locale.ROOT))
-		{
-			case "AIR" -> 								{ return Material.AIR; }
-			case "STRUCTURALAIR" -> 					{ return Material.STRUCTURAL_AIR; }
-			case "PORTAL" -> 							{ return Material.PORTAL; }
-			case "CLOTHDECORATION" -> 					{ return Material.CLOTH_DECORATION; }
-			case "PLANT" -> 							{ return Material.PLANT; }
-			case "WATERPLANT" -> 						{ return Material.WATER_PLANT; }
-			case "REPLACEABLEPLANT" -> 					{ return Material.REPLACEABLE_PLANT; }
-			case "REPLACEABLEFIREPROOFPLANT" -> 		{ return Material.REPLACEABLE_FIREPROOF_PLANT; }
-			case "REPLACEABLEWATERPLANT" -> 			{ return Material.REPLACEABLE_WATER_PLANT; }
-			case "WATER" -> 							{ return Material.WATER; }
-			case "BUBBLECOLUMN" -> 						{ return Material.BUBBLE_COLUMN; }
-			case "LAVA" -> 								{ return Material.LAVA; }
-			case "TOPSNOW" -> 							{ return Material.TOP_SNOW; }
-			case "FIRE" -> 								{ return Material.FIRE; }
-			case "DECORATION" -> 						{ return Material.DECORATION; }
-			case "WEB" -> 								{ return Material.WEB; }
-			case "SCULK" -> 							{ return Material.SCULK; }
-			case "BUILDABLEGLASS" -> 					{ return Material.BUILDABLE_GLASS; }
-			case "CLAY" -> 								{ return Material.CLAY; }
-			case "DIRT" -> 								{ return Material.DIRT; }
-			case "GRASS" -> 							{ return Material.GRASS; }
-			case "ICESOLID" -> 							{ return Material.ICE_SOLID; }
-			case "SAND" -> 								{ return Material.SAND; }
-			case "SPONGE" -> 							{ return Material.SPONGE; }
-			case "SHULKERSHELL" -> 						{ return Material.SHULKER_SHELL; }
-			case "WOOD" -> 								{ return Material.WOOD; }
-			case "NETHERWOOD" -> 						{ return Material.NETHER_WOOD; }
-			case "BAMBOOSAPLING" -> 					{ return Material.BAMBOO_SAPLING; }
-			case "BAMBOO" -> 							{ return Material.BAMBOO; }
-			case "WOOL" -> 								{ return Material.WOOL; }
-			case "EXPLOSIVE" -> 						{ return Material.EXPLOSIVE; }
-			case "LEAVES" -> 							{ return Material.LEAVES; }
-			case "GLASS" -> 							{ return Material.GLASS; }
-			case "ICE" -> 								{ return Material.ICE; }
-			case "CACTUS" -> 							{ return Material.CACTUS; }
-			case "STONE" -> 							{ return Material.STONE; }
-			case "METAL" -> 							{ return Material.METAL; }
-			case "SNOW" -> 								{ return Material.SNOW; }
-			case "HEAVYMETAL" -> 						{ return Material.HEAVY_METAL; }
-			case "BARRIER" -> 							{ return Material.BARRIER; }
-			case "PISTON" -> 							{ return Material.PISTON; }
-			case "MOSS" -> 								{ return Material.MOSS; }
-			case "VEGETABLE" -> 						{ return Material.VEGETABLE; }
-			case "EGG" -> 								{ return Material.EGG; }
-			case "CAKE" -> 								{ return Material.CAKE; }
-			case "AMETHYST" -> 							{ return Material.AMETHYST; }
-			case "POWDERSNOW" -> 						{ return Material.POWDER_SNOW; }
-			case "FROGSPAWN" -> 						{ return Material.FROGSPAWN; }
-			case "FROGLIGHT" -> 						{ return Material.FROGLIGHT; }
-
-			default -> 									{ return Material.AIR; }
-		}
 	}
 
 	public static ResourceLocation CreateLocation(String locString)
@@ -256,5 +201,12 @@ public class MinecraftHelpers
 			}
 		}
 		return new ItemStack(ForgeRegistries.ITEMS.getValue(CreateLocation(def.item)), def.count);
+	}
+
+	@Nonnull
+	public static TagKey<Block> FindBlockTag(String location)
+	{
+		ResourceLocation resLoc = new ResourceLocation(location);
+		return TagKey.create(ForgeRegistries.BLOCKS.getRegistryKey(), resLoc);
 	}
 }

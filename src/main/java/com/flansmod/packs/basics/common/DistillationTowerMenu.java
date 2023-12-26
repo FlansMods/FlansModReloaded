@@ -45,7 +45,7 @@ public class DistillationTowerMenu extends AbstractContainerMenu
 	{
 		super(BasicPartsMod.DISTILLATION_TOWER_MENU.get(), containerID);
 		BlockPos blockPos = data.readBlockPos();
-		BlockEntity blockEntity = inventory.player.level.getBlockEntity(blockPos);
+		BlockEntity blockEntity = inventory.player.level().getBlockEntity(blockPos);
 		if(blockEntity instanceof DistillationTowerBlockEntity distillationTowerBlockEntity)
 		{
 			IsTop = distillationTowerBlockEntity.IsTop;

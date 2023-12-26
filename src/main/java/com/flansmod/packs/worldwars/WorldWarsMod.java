@@ -17,7 +17,7 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.EntityRenderersEvent;
 import net.minecraftforge.client.event.ModelEvent;
-import net.minecraftforge.event.CreativeModeTabEvent;
+import net.minecraftforge.event.BuildCreativeModeTabContentsEvent;
 import net.minecraftforge.event.entity.EntityAttributeCreationEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -136,7 +136,7 @@ public class WorldWarsMod
 	}
 
 	@SubscribeEvent
-	public void OnCreativeTabs(CreativeModeTabEvent.BuildContents event)
+	public void OnCreativeTabs(BuildCreativeModeTabContentsEvent event)
 	{
 		if (event.getTab().getDisplayName() == FlansMod.CREATIVE_TAB_NAME_GUNS)
 		{

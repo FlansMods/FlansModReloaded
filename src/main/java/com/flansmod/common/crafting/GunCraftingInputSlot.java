@@ -1,6 +1,7 @@
 package com.flansmod.common.crafting;
 
-import com.flansmod.common.item.FlanItem;
+import com.flansmod.common.crafting.menus.WorkbenchMenu;
+import com.flansmod.common.crafting.menus.WorkbenchMenuGunCrafting;
 import com.flansmod.common.types.crafting.elements.GunCraftingEntryDefinition;
 import com.flansmod.common.types.crafting.elements.IngredientDefinition;
 import com.flansmod.common.types.crafting.elements.RecipePartDefinition;
@@ -14,8 +15,8 @@ import javax.annotation.Nullable;
 
 public class GunCraftingInputSlot extends RestrictedSlot
 {
-	private final WorkbenchMenu Menu;
-	public GunCraftingInputSlot(WorkbenchMenu menu, Container container, int index, int x, int y)
+	private final WorkbenchMenuGunCrafting Menu;
+	public GunCraftingInputSlot(WorkbenchMenuGunCrafting menu, Container container, int index, int x, int y)
 	{
 		super(container, index, x, y);
 		Menu = menu;
@@ -75,6 +76,5 @@ public class GunCraftingInputSlot extends RestrictedSlot
 	{
 		super.set(stack);
 		Menu.UpdateGunCraftingOutput();
-		Menu.SwitchToGunCrafting();
 	}
 }

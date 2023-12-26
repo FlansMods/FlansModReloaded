@@ -148,11 +148,11 @@ public class Gunshot
 			{
 				case -2 -> // invalid
 				{
-					hits[i] = BlockHitResult.miss(hitPos, Direction.UP, new BlockPos(hitPos));
+					hits[i] = BlockHitResult.miss(hitPos, Direction.UP, BlockPos.containing(hitPos));
 				}
 				case -1 -> // block
 				{
-					BlockPos roughBlockPos = new BlockPos(hitPos);
+					BlockPos roughBlockPos = BlockPos.containing(hitPos);
 					BlockPos exactBlockPos = Maths.ResolveBlockPos(roughBlockPos, extraData);
 
 					hits[i] = new BlockHitResult(

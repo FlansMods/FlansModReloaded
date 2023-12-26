@@ -123,8 +123,8 @@ public class PlayerSnapshot
         float anim8 = 0f, anim5 = 0f;
         if(!shouldSit && player.isAlive())
         {
-            anim8 = player.animationSpeed;
-            anim5 = player.animationPosition - player.animationSpeed;// * (1f - dT);
+            anim8 = player.walkAnimation.speed();
+            anim5 = player.walkAnimation.position();
             anim8 = Maths.Clamp(anim8, Float.MIN_VALUE, 1.0f);
         }
         // this.prepareMobModel (player, anim5, anim8, dT)

@@ -47,7 +47,7 @@ buildscript {
 plugins {
     id("eclipse")
     id("maven-publish")
-    id("net.minecraftforge.gradle") version "5.1.+"
+    id("net.minecraftforge.gradle") version "[6.0,6.2)"
     id("java")
     id("com.matthewprenger.cursegradle") version "1.1.0"
 }
@@ -75,8 +75,8 @@ val vendersCurseForgeID = config["vendersgame.curseforge"] as String
 
 
 
-val mcVersion = config["minecraft.version"] as String
-val mcFullVersion = "$mcVersion-${config["forge.version"]}"
+val mcVersion = config["minecraft_version"] as String
+val mcFullVersion = "$mcVersion-${config["forge_version"]}"
 val majorVersion = config["flansmod.version.major"] as String
 val minorVersion = config["flansmod.version.minor"] as String
 val jeiVersion = config["jei.version"] as String
@@ -97,7 +97,7 @@ configure<BasePluginConvention> {
 }
 
 configure<UserDevExtension> {
-    mappings("official",  "1.19.3")
+    mappings("official",  "1.20.1")
 }
 
 repositories {
@@ -159,7 +159,7 @@ tasks.withType<Jar> {
     // this will ensure that this task is redone when the versions change.
     inputs.property("version", project.version)
 
-    baseName = "flansmod-all"
+    archiveBaseName.set("flansmod-all")
 
     version = mcVersion
 
@@ -195,7 +195,7 @@ val reobfTask = jar.finalizedBy("reobfJar")
 // ---------------------- BUILD AND REPACK TASKS ---------------------------
 val sourceTask: Jar = tasks.create("source", Jar::class.java) {
     from(sourceSets["main"].allSource)
-    classifier = "sources"
+    archiveClassifier.set("sources")
 }
 
 val devTask: Jar = tasks.create("dev", Jar::class.java) {
@@ -233,9 +233,9 @@ fun modTask(taskName: String, srcTask: Task, classfier: String): Jar {
             else name
         }
         includeEmptyDirs = false
-        classifier = classfier
+        archiveClassifier.set(classfier)
         version = "$mcVersion-$modVersion"
-        getArchiveBaseName().set("flansmod")
+        archiveBaseName.set("flansmod")
         destinationDirectory.set(file("$projectDir/build/output"))
         group = "flansmod build"
     }
@@ -268,9 +268,9 @@ fun repackTask(taskName: String, modID: String, modNamespace: String, srcTask: T
             else name
         }
         includeEmptyDirs = false
-        classifier = classfier
+        archiveClassifier.set(classfier)
         version = "$mcVersion-$modVersion"
-        getArchiveBaseName().set(modID)
+        archiveBaseName.set(modID)
         destinationDirectory.set(file("$projectDir/build/output"))
         group = "flansmod build"
     }

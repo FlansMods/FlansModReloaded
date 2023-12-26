@@ -4,6 +4,7 @@ import com.flansmod.common.crafting.RestrictedContainer;
 import com.flansmod.packs.basics.BasicPartsMod;
 import com.google.gson.JsonObject;
 import net.minecraft.core.NonNullList;
+import net.minecraft.core.RegistryAccess;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.GsonHelper;
@@ -34,12 +35,12 @@ public class DistillationRecipe implements Recipe<DistillationTowerBlockEntity>
 	}
 	@Nonnull
 	@Override
-	public ItemStack getResultItem() { return Result; }
+	public ItemStack getResultItem(@Nonnull RegistryAccess registryAccess) { return Result; }
 	@Override
 	public boolean canCraftInDimensions(int x, int y) { return true; }
 	@Nonnull
 	@Override
-	public ItemStack assemble(@Nonnull DistillationTowerBlockEntity distiller) { return Result.copy(); }
+	public ItemStack assemble(@Nonnull DistillationTowerBlockEntity distiller, @Nonnull RegistryAccess registryAccess) { return Result.copy(); }
 	@Nonnull
 	@Override
 	public ResourceLocation getId() { return Loc; }
@@ -83,6 +84,8 @@ public class DistillationRecipe implements Recipe<DistillationTowerBlockEntity>
 		}
 		return false;
 	}
+
+
 
 	@Override
 	@Nonnull

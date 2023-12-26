@@ -2,13 +2,10 @@ package com.flansmod.client.render.models;
 
 import com.flansmod.common.FlansMod;
 import com.flansmod.common.types.attachments.EAttachmentType;
-import com.flansmod.util.Maths;
 import com.flansmod.util.Transform;
 import com.flansmod.util.TransformStack;
 import com.google.common.collect.Maps;
 import com.google.gson.*;
-import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.datafixers.util.Either;
 import net.minecraft.client.renderer.block.model.*;
 import net.minecraft.client.renderer.texture.TextureAtlas;
@@ -18,6 +15,7 @@ import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.GsonHelper;
 import net.minecraft.util.RandomSource;
+import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.client.model.geometry.IGeometryBakingContext;
 import net.minecraftforge.client.model.geometry.IGeometryLoader;
@@ -121,7 +119,7 @@ public class TurboRig implements IUnbakedGeometry<TurboRig>, UnbakedModel
 
 	public TurboModel GetPart(String partName) { return Parts.get(partName); }
 
-	public ItemTransform GetTransforms(ItemTransforms.TransformType transformType) { return Transforms.getTransform(transformType); }
+	public ItemTransform GetTransforms(ItemDisplayContext transformType) { return Transforms.getTransform(transformType); }
 	@Override
 	@Nonnull
 	public Collection<ResourceLocation> getDependencies() { return Collections.emptyList(); }
@@ -233,12 +231,12 @@ public class TurboRig implements IUnbakedGeometry<TurboRig>, UnbakedModel
 			return null;
 		}
 
-		public Transform GetTransform(ItemTransforms.TransformType transformType)
+		public Transform GetTransform(ItemDisplayContext transformType)
 		{
 			return new Transform("BakedItemTransform["+transformType+"]", Transforms.getTransform(transformType));
 		}
 
-		public void ApplyTransform(TransformStack transformStack, ItemTransforms.TransformType transformType, boolean bFlip)
+		public void ApplyTransform(TransformStack transformStack, ItemDisplayContext transformType, boolean bFlip)
 		{
 			ItemTransform transform = Transforms.getTransform(transformType);
 			transformStack.add(new Transform("BakedItemTransform["+transformType+"]", transform));

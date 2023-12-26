@@ -551,7 +551,7 @@ public class ActionStack
 				// Then send them some messages about the shot
 				FlansModPacketHandler.SendToAllAroundPoints(
 					new ActionUpdateMessage.ToClient(msg.Data),
-					from.level.dimension(),
+					from.level().dimension(),
 					positions,
 					radius,
 					groupContext.Gun.GetShooter().Owner());

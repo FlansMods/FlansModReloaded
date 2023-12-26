@@ -2,41 +2,39 @@ package com.flansmod.common.types.guns.elements;
 
 import com.flansmod.common.types.JsonField;
 import com.flansmod.common.types.elements.ImpactDefinition;
-import com.flansmod.common.types.guns.elements.ESpreadPattern;
 import com.flansmod.util.MinecraftHelpers;
-import net.minecraft.world.level.material.Material;
+import net.minecraft.tags.TagKey;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.BlockState;
 
 import javax.annotation.Nonnull;
 
 public class ShotDefinition
 {
-	private Material[] BreakMaterialReferences = null;
-	public Material[] GetBreakMaterials()
+	private TagKey<Block>[] BreakTagRefs = null;
+	public TagKey<Block>[] GetBreakMaterials()
 	{
-		if(BreakMaterialReferences == null)
+		if(BreakTagRefs == null)
 		{
-			BreakMaterialReferences = new Material[breaksMaterials.length];
-			for(int i = 0; i < breaksMaterials.length; i++)
+			BreakTagRefs = new TagKey[breaksBlockTags.length];
+			for(int i = 0; i < breaksBlockTags.length; i++)
 			{
-				BreakMaterialReferences[i] = MinecraftHelpers.FindMaterial(breaksMaterials[i]);
+				BreakTagRefs[i] = MinecraftHelpers.FindBlockTag(breaksBlockTags[i]);
 			}
 		}
-		return BreakMaterialReferences;
+		return BreakTagRefs;
 	}
-	public boolean BreaksMaterial(Material material)
+	public boolean BreaksBlock(BlockState blockState)
 	{
-		Material[] breaks = GetBreakMaterials();
-		for(int i = 0; i < breaks.length; i++)
+		TagKey<Block>[] breaks = GetBreakMaterials();
+		for (int i = 0; i < breaks.length; i++)
 		{
-			if(breaks[i] == material)
+			if (blockState.is(breaks[i]))
 				return true;
 		}
 		return false;
 	}
-
-
-
-
 
 	// These apply to all bullet types
 	@JsonField
@@ -54,7 +52,7 @@ public class ShotDefinition
 	@JsonField(Docs = "If using minigun fire mode, this is the max rotational speed (in degrees/second) of the barrels")
 	public float spinSpeed = 360.0f;
 	@JsonField
-	public String[] breaksMaterials = new String[0];
+	public String[] breaksBlockTags = new String[0];
 	@JsonField
 	public float penetrationPower = 1.0f;
 	@JsonField

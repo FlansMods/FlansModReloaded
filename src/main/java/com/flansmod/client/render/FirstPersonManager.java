@@ -2,33 +2,24 @@ package com.flansmod.client.render;
 
 import com.flansmod.client.FlansModClient;
 import com.flansmod.client.render.animation.FlanimationDefinition;
-import com.flansmod.common.FlansMod;
 import com.flansmod.common.actions.ActionGroupInstance;
 import com.flansmod.common.actions.ActionInstance;
 import com.flansmod.common.actions.ActionStack;
 import com.flansmod.common.actions.contexts.*;
 import com.flansmod.common.actions.nodes.AimDownSightAction;
-import com.flansmod.common.item.FlanItem;
 import com.flansmod.common.types.attachments.AttachmentDefinition;
 import com.flansmod.common.types.attachments.EAttachmentType;
 import com.flansmod.util.Maths;
 import com.flansmod.util.MinecraftHelpers;
 import com.flansmod.util.Transform;
 import com.flansmod.util.TransformStack;
-import com.google.common.base.MoreObjects;
-import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.math.Axis;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
-import net.minecraft.client.renderer.ItemInHandRenderer;
-import net.minecraft.client.renderer.block.model.ItemTransforms;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
-import net.minecraft.world.InteractionHand;
-import net.minecraft.world.entity.HumanoidArm;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.phys.Vec3;
 import org.joml.Quaternionf;
 import org.joml.Vector3d;
@@ -44,7 +35,7 @@ public class FirstPersonManager
 
 	public static class AdsInstance
 	{
-		public ItemTransforms.TransformType TransformType;
+		public ItemDisplayContext TransformType;
 		public float BlendAmount;
 		public EAttachmentType AttachmentType;
 		public int AttachmentIndex;
@@ -76,7 +67,7 @@ public class FirstPersonManager
 
 
 	public static Transform GetModelSpaceAPTransform(@Nonnull GunContext gunContext,
-													 @Nonnull ItemTransforms.TransformType transformType,
+													 @Nonnull ItemDisplayContext transformType,
 													 @Nonnull String apName)
 	{
 		TransformStack transformStack = new TransformStack();
@@ -85,7 +76,7 @@ public class FirstPersonManager
 	}
 
 	public static Transform GetWorldSpaceAPTransform(@Nonnull GunContext gunContext,
-													 @Nonnull ItemTransforms.TransformType transformType,
+													 @Nonnull ItemDisplayContext transformType,
 													 @Nonnull String apName)
 	{
 		TransformStack transformStack = new TransformStack();
@@ -106,7 +97,7 @@ public class FirstPersonManager
 	}
 
 	public static Transform GetWorldSpaceRootTransform(@Nonnull GunContext gunContext,
-											     	   @Nonnull ItemTransforms.TransformType transformType)
+											     	   @Nonnull ItemDisplayContext transformType)
 	{
 		TransformStack transformStack = new TransformStack();
 		ApplyWorldToRoot(transformStack, gunContext, transformType);
@@ -114,7 +105,7 @@ public class FirstPersonManager
 	}
 
 	public static Transform GetRootSpaceModelTransform(@Nonnull GunContext gunContext,
-													   @Nonnull ItemTransforms.TransformType transformType)
+													   @Nonnull ItemDisplayContext transformType)
 	{
 		TransformStack transformStack = new TransformStack();
 		ApplyRootToModel(transformStack, gunContext, transformType);
@@ -130,7 +121,7 @@ public class FirstPersonManager
 	// - first person 0,0 (sort of)
 	public static void ApplyWorldToRoot(@Nonnull TransformStack transformStack,
 										@Nonnull GunContext gunContext,
-										@Nonnull ItemTransforms.TransformType transformType)
+										@Nonnull ItemDisplayContext transformType)
 	{
 		float dt = Minecraft.getInstance().getPartialTick();
 		switch (transformType)
@@ -167,7 +158,7 @@ public class FirstPersonManager
 	// This takes us from the Minecraft "Model Root" to the "body" piece of this model
 	public static void ApplyRootToModel(@Nonnull TransformStack transformStack,
 										@Nonnull GunContext gunContext,
-										@Nonnull ItemTransforms.TransformType transformType)
+										@Nonnull ItemDisplayContext transformType)
 	{
 		float dt = Minecraft.getInstance().getPartialTick();
 		FlanItemModelRenderer gunRenderer = FlansModClient.MODEL_REGISTRATION.GetModelRenderer(gunContext.Stack);
@@ -177,7 +168,7 @@ public class FirstPersonManager
 			switch(transformType)
 			{
 				case FIRST_PERSON_RIGHT_HAND, FIRST_PERSON_LEFT_HAND -> {
-					if(transformType == ItemTransforms.TransformType.FIRST_PERSON_RIGHT_HAND)
+					if(transformType == ItemDisplayContext.FIRST_PERSON_RIGHT_HAND)
 						transformStack.add(MC_FIRST_PERSON_OFFSET_RIGHT);
 					else
 						transformStack.add(MC_FIRST_PERSON_OFFSET_LEFT);
@@ -282,7 +273,7 @@ public class FirstPersonManager
 
 			f /= (float)livingCamera.hurtDuration;
 			f = Mth.sin(f * f * f * f * (float)Math.PI);
-			float f2 = livingCamera.hurtDir;
+			float f2 = livingCamera.getHurtDir();
 			transformStack.add(new Transform("GameRenderer.bobHurt["+f+"]",Transform.FromEuler(0f, -f2, 0f)));
 			transformStack.add(new Transform("GameRenderer.bobHurt["+f+"]",Transform.FromEuler(0f, 0f, -f * 14.0F)));
 			transformStack.add(new Transform("GameRenderer.bobHurt["+f+"]",Transform.FromEuler(0f, f2, 0f)));
@@ -309,9 +300,9 @@ public class FirstPersonManager
 
 	}
 
-	private static void Vanilla_ApplyHandAnimation(@Nonnull TransformStack transformStack, ItemTransforms.TransformType transformType, float dt)
+	private static void Vanilla_ApplyHandAnimation(@Nonnull TransformStack transformStack, ItemDisplayContext transformType, float dt)
 	{
-		boolean rightHand = transformType == ItemTransforms.TransformType.FIRST_PERSON_RIGHT_HAND || transformType == ItemTransforms.TransformType.THIRD_PERSON_RIGHT_HAND;
+		boolean rightHand = transformType == ItemDisplayContext.FIRST_PERSON_RIGHT_HAND || transformType == ItemDisplayContext.THIRD_PERSON_RIGHT_HAND;
 		int i = rightHand ? 1 : -1;
 
 		// ItemInHandRenderer::renderArmWithItem
@@ -337,7 +328,7 @@ public class FirstPersonManager
 	// Calculate in world coords
 	private static Transform CalculateADSPosition(@Nonnull Transform defaultPose,
 												  @Nonnull GunContext gunContext,
-												  @Nonnull ItemTransforms.TransformType transformType)
+												  @Nonnull ItemDisplayContext transformType)
 	{
 		List<Transform> posesAppliedToMe = new ArrayList<>();
 		List<Float> weights = new ArrayList<>();
@@ -373,7 +364,7 @@ public class FirstPersonManager
 		if(posesAppliedToOthers.size() > 0)
 		{
 			blendWeight *= 0.5f;
-			boolean leftHanded = transformType == ItemTransforms.TransformType.FIRST_PERSON_LEFT_HAND;
+			boolean leftHanded = transformType == ItemDisplayContext.FIRST_PERSON_LEFT_HAND;
 			eyeLineStack.add(new Transform(leftHanded ? "DualWieldTiltLeft" : "DualWieldTiltRight", Transform.FromEuler(0f, 0f, leftHanded ? -30f : 30f)));
 		}
 
@@ -413,7 +404,7 @@ public class FirstPersonManager
 						{
 							if (action instanceof AimDownSightAction adsAction)
 							{
-								ItemTransforms.TransformType transformType = actionGroup.Context.Gun instanceof GunContextPlayer gunContextPlayer ? MinecraftHelpers.GetFirstPersonTransformType(gunContextPlayer.GetHand()) : ItemTransforms.TransformType.FIXED;
+								ItemDisplayContext transformType = actionGroup.Context.Gun instanceof GunContextPlayer gunContextPlayer ? MinecraftHelpers.GetFirstPersonTransformType(gunContextPlayer.GetHand()) : ItemDisplayContext.FIXED;
 								String key = transformType + "/" + actionGroup.Context.GroupPath;
 
 								// We don't know about it, must be new

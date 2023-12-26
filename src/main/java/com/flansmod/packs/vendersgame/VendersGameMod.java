@@ -1,17 +1,9 @@
 package com.flansmod.packs.vendersgame;
 
 import com.flansmod.common.FlansMod;
-import com.flansmod.common.actions.contexts.GunContext;
-import com.flansmod.common.actions.contexts.GunContextPlayer;
-import com.flansmod.common.actions.contexts.ShooterContext;
 import com.flansmod.common.crafting.WorkbenchBlockEntity;
 import com.flansmod.common.item.AttachmentItem;
 import com.flansmod.common.item.GunItem;
-import com.flansmod.common.types.abilities.AbilityDefinition;
-import com.flansmod.common.types.abilities.elements.AbilityProviderDefinition;
-import com.flansmod.common.types.abilities.elements.EAbilityEffect;
-import com.flansmod.common.types.attachments.EAttachmentType;
-import com.flansmod.common.types.guns.GunDefinition;
 import com.flansmod.packs.vendersgame.client.VenderModel;
 import com.flansmod.packs.vendersgame.client.VenderRenderer;
 import com.flansmod.packs.vendersgame.common.VenderEntity;
@@ -20,18 +12,11 @@ import com.mojang.logging.LogUtils;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
-import net.minecraft.advancements.CriteriaTriggers;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.ItemModelShaper;
 import net.minecraft.client.resources.model.ModelResourceLocation;
-import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.stats.Stats;
 import net.minecraft.util.ExtraCodecs;
-import net.minecraft.world.damagesource.DamageSource;
-import net.minecraft.world.effect.MobEffectInstance;
-import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.MobCategory;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -44,9 +29,8 @@ import net.minecraftforge.client.event.EntityRenderersEvent;
 import net.minecraftforge.client.event.ModelEvent;
 import net.minecraftforge.common.loot.IGlobalLootModifier;
 import net.minecraftforge.common.loot.LootModifier;
-import net.minecraftforge.event.CreativeModeTabEvent;
+import net.minecraftforge.event.BuildCreativeModeTabContentsEvent;
 import net.minecraftforge.event.entity.EntityAttributeCreationEvent;
-import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -182,7 +166,7 @@ public class VendersGameMod
 	}
 
 	@SubscribeEvent
-	public void OnCreativeTabs(CreativeModeTabEvent.BuildContents event)
+	public void OnCreativeTabs(BuildCreativeModeTabContentsEvent event)
 	{
 		if (event.getTab().getDisplayName() == FlansMod.CREATIVE_TAB_NAME_GUNS)
 		{

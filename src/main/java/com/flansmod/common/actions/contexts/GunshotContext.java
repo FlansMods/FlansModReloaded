@@ -70,11 +70,11 @@ public class GunshotContext
 			switch (toProcess.getType())
 			{
 				case BLOCK -> {
-					if (Bullet.shootStats.breaksMaterials.length > 0)
+					if (Bullet.shootStats.breaksBlockTags.length > 0)
 					{
 						BlockHitResult blockHit = (BlockHitResult) toProcess;
 						BlockState stateHit = level.getBlockState(blockHit.getBlockPos());
-						if (Bullet.shootStats.BreaksMaterial(stateHit.getMaterial()))
+						if (Bullet.shootStats.BreaksBlock(stateHit))
 						{
 							level.destroyBlock(blockHit.getBlockPos(), true, ActionGroup.Gun.GetShooter().Entity());
 						}
@@ -135,7 +135,7 @@ public class GunshotContext
 						{
 							if(level.random.nextFloat() < fireSpreadAmount)
 							{
-								BlockPos pos = new BlockPos(toProcess.getLocation().add(i, j, k));
+								BlockPos pos = BlockPos.containing(toProcess.getLocation().add(i, j, k));
 								if (pos.distToCenterSqr(toProcess.getLocation()) <= fireSpreadRadius * fireSpreadRadius)
 								{
 									if(level.getBlockState(pos).isAir())

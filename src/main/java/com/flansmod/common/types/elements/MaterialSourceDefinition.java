@@ -65,7 +65,7 @@ public class MaterialSourceDefinition
 	{
 		for(ItemStack checkMatch : GetMatches())
 		{
-			if(stack.sameItem(checkMatch))
+			if(ItemStack.isSameItem(stack, checkMatch))
 				return count * stack.getCount();
 		}
 		return 0;

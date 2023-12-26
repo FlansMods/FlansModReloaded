@@ -153,7 +153,7 @@ public class FlansModPacketHandler
 		{
 			if(excluding.equals(player))
 				continue;
-			if(player.level.dimension().equals(dimension))
+			if(player.level().dimension().equals(dimension))
 			{
 				// If the player is within range of ANY point, send it
 				if(player.position().distanceTo(point) <= radius)
@@ -171,7 +171,7 @@ public class FlansModPacketHandler
 		{
 			if(excluding.equals(player))
 				continue;
-			if(player.level.dimension().equals(dimension))
+			if(player.level().dimension().equals(dimension))
 			{
 				for(Vec3 checkPoint : points)
 				{

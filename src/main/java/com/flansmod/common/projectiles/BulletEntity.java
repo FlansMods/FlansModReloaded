@@ -49,7 +49,7 @@ public class BulletEntity extends Projectile
 
 	public Entity Owner()
 	{
-		return level.getPlayerByUUID(OwnerUUID);
+		return level().getPlayerByUUID(OwnerUUID);
 	}
 
 	public BulletEntity(EntityType<? extends BulletEntity> entityType, Level level)
@@ -156,7 +156,7 @@ public class BulletEntity extends Projectile
 
 	protected void UpdateFuse()
 	{
-		if(!level.isClientSide)
+		if(!level().isClientSide)
 		{
 			if (Def.shootStats.fuseTime > 0.0f)
 			{
@@ -170,7 +170,7 @@ public class BulletEntity extends Projectile
 	protected Vec3 OnImpact(Vec3 motion)
 	{
 		// Work out which thing we collided with (Minecraft is bad at telling us this...)
-		HitResult hitResult = ProjectileUtil.getHitResult(this, this::CanHitEntity);
+		HitResult hitResult = ProjectileUtil.getHitResultOnMoveVector(this, this::CanHitEntity);
 		switch(hitResult.getType())
 		{
 			case MISS:
@@ -223,7 +223,7 @@ public class BulletEntity extends Projectile
 		shot.hits = new HitResult[] {
 			hit
 		};
-		Context.Server_ProcessImpact(level, shot);
+		Context.Server_ProcessImpact(level(), shot);
 		kill();
 	}
 
@@ -262,7 +262,7 @@ public class BulletEntity extends Projectile
 		}
 		FuseRemaining = tags.getInt("fuse");
 		Stuck = tags.getBoolean("stuck");
-		Context = GunshotContext.Load(tags.getCompound("context"), level.isClientSide);
+		Context = GunshotContext.Load(tags.getCompound("context"), level().isClientSide);
 	}
 
 

@@ -9,6 +9,7 @@ import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.Resource;
 import net.minecraft.util.RandomSource;
+import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraftforge.client.event.ModelEvent;
 import net.minecraftforge.client.model.BakedModelWrapper;
 import net.minecraftforge.client.model.data.ModelData;
@@ -148,7 +149,7 @@ public abstract class FlanItemModel extends BakedModelWrapper<BakedModel>
     }
 
     @Override
-    public BakedModel applyTransform(ItemTransforms.TransformType cameraTransformType, PoseStack mat, boolean leftHand)
+    public BakedModel applyTransform(ItemDisplayContext cameraTransformType, PoseStack mat, boolean leftHand)
     {
         super.applyTransform(cameraTransformType, mat, leftHand);
         return this;

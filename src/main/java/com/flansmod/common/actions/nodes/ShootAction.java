@@ -245,7 +245,7 @@ public class ShootAction extends ActionInstance
 					transformStack.add(Group.Context.Gun.GetShootOrigin());
 					RandomizeVectorDirection(
 						transformStack,
-						Group.Context.Gun.GetShooter().Entity().level.random,
+						Group.Context.Gun.GetShooter().Entity().level().random,
 						bulletSpread,
 						shotContext.SpreadPattern());
 
@@ -258,7 +258,7 @@ public class ShootAction extends ActionInstance
 						// Hitscan: Use the raytracer on client, find our hits and let the server know what they were
 						// Server will verify these results
 						List<HitResult> hits = new ArrayList<HitResult>(8);
-						Raytracer.ForLevel(Group.Context.Gun.GetShooter().Entity().level).CastBullet(
+						Raytracer.ForLevel(Group.Context.Gun.GetShooter().Entity().level()).CastBullet(
 							Group.Context.Gun.GetShooter().Entity(),
 							randomizedDirection.PositionVec3(),
 							randomizedDirection.ForwardVec3().scale(RAYCAST_LENGTH),
@@ -597,7 +597,7 @@ public class ShootAction extends ActionInstance
 	{
 		if(Group.Context.Gun.GetShooter().Entity() instanceof Player player)
 		{
-			PlayerSnapshot snapshot = Raytracer.ForLevel(player.level).GetSnapshot(player, nTicksAgo);
+			PlayerSnapshot snapshot = Raytracer.ForLevel(player.level()).GetSnapshot(player, nTicksAgo);
 			snapshot.GetMuzzlePosition();
 		}
 		else if(Group.Context.Gun.GetShooter().Entity() instanceof LivingEntity living)

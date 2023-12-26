@@ -17,6 +17,7 @@ import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.*;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.client.renderer.block.model.ItemTransforms;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
@@ -28,6 +29,7 @@ import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.levelgen.LegacyRandomSource;
@@ -37,6 +39,7 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 
+import javax.annotation.Nonnull;
 import java.util.ArrayList;
 
 public class ClientRenderHooks
@@ -97,9 +100,7 @@ public class ClientRenderHooks
 	@SubscribeEvent
 	public void OnRenderOverlay(RenderGuiOverlayEvent event)
 	{
-		int i = MinecraftHelpers.GetClient().getWindow().getWidth();
-		int j = MinecraftHelpers.GetClient().getWindow().getHeight();
-		Tesselator tesselator = Tesselator.getInstance();
+		GuiGraphics graphics = event.getGuiGraphics();
 		Player player = MinecraftHelpers.GetClient().player;
 		ShooterContext shooterContext = ShooterContext.GetOrCreate(player);
 		if(!shooterContext.IsValid())
@@ -144,7 +145,7 @@ public class ClientRenderHooks
 				}
 				case "hotbar":
 				{
-					RenderPlayerAmmoOverlay(event.getPoseStack());
+					RenderPlayerAmmoOverlay(event.getGuiGraphics());
 					RenderKillMessageOverlay();
 					RenderTeamInfoOverlay();
 
@@ -178,7 +179,6 @@ public class ClientRenderHooks
 								RenderSystem.setShader(GameRenderer::getPositionTexShader);
 								RenderSystem.enableBlend();
 								RenderSystem.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
-								RenderSystem.enableTexture();
 								RenderSystem.setShaderTexture(0, overlayLocation);
 
 								Tesselator tesselator = Tesselator.getInstance();
@@ -236,7 +236,6 @@ public class ClientRenderHooks
 		int i = MinecraftHelpers.GetClient().getWindow().getGuiScaledWidth();
 		int j = MinecraftHelpers.GetClient().getWindow().getGuiScaledHeight();
 
-		RenderSystem.enableTexture();
 		RenderSystem.enableBlend();
 		RenderSystem.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
 		RenderSystem.setShader(GameRenderer::getPositionTexShader);
@@ -265,7 +264,7 @@ public class ClientRenderHooks
 			16, 16);
 	}
 
-	private void RenderPlayerAmmoOverlay(PoseStack poseStack)
+	private void RenderPlayerAmmoOverlay(@Nonnull GuiGraphics graphics)
 	{
 		Player player = Minecraft.getInstance().player;
 
@@ -286,7 +285,7 @@ public class ClientRenderHooks
 		{
 			RenderUntexturedQuad(anchorX + 94, anchorY - 20, 300, 18, 0x80808080);
 
-			Minecraft.getInstance().getItemRenderer().renderGuiItem(mainContext.GetItemStack(), anchorX + 95, anchorY - 19);
+			RenderItem(graphics, mainContext.GetItemStack(), anchorX + 95, anchorY - 19, false);
 
 			int x = anchorX + 113;
 
@@ -316,7 +315,7 @@ public class ClientRenderHooks
 								if(!bulletStacks[stackIndex].isEmpty() && bulletStacks[stackIndex].getItem() != Items.APPLE)
 								{
 									int y = anchorY - 20 + (i % 4 == 3 ? 2 : (i % 4 == 2 ? 0 : (i % 4 == 1 ? 1 : 3)));
-									Minecraft.getInstance().getItemRenderer().renderGuiItem(bulletStacks[stackIndex], x, y);
+									RenderItem(graphics, bulletStacks[stackIndex],  x, y, false);
 									x += 5;
 								}
 								bulletIndex++;
@@ -331,14 +330,13 @@ public class ClientRenderHooks
 						if (bulletStack.isEmpty() || bulletStack.getItem() == Items.APPLE)
 							continue;
 						int y = anchorY - 20;
-						Minecraft.getInstance().getItemRenderer().renderGuiItem(bulletStack, x, y);
-						Minecraft.getInstance().getItemRenderer().renderGuiItemDecorations(Minecraft.getInstance().font, bulletStack, x, y);
+						RenderItem(graphics, bulletStack, x, y, true);
 						x += 16;
 					}
 				}
 			}
 
-			RenderString(poseStack, anchorX + 96, anchorY - 29, mainContext.GetItemStack().getHoverName(), 0xffffff);
+			RenderString(graphics, anchorX + 96, anchorY - 29, mainContext.GetItemStack().getHoverName(), 0xffffff);
 
 			// Render stacks of effects
 			int xOffset = 0;
@@ -349,16 +347,16 @@ public class ClientRenderHooks
 					TextureAtlasSprite sprite = Minecraft.getInstance().getMobEffectTextures().get(flansMobEffect);
 					RenderSystem.setShaderTexture(0, sprite.atlasLocation());
 					RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0f);
-					RenderSprite(anchorX + 100 + xOffset, anchorY - 49, 18, 18, sprite);
+					RenderSprite(graphics, anchorX + 100 + xOffset, anchorY - 49, 18, 18, sprite);
 
 
 
 					String stacksString = Integer.toString(mobEffect.getAmplifier() + 1);
 					int stacksStringWidth = Minecraft.getInstance().font.width(stacksString);
-					RenderString(poseStack, anchorX + 118 + xOffset - stacksStringWidth, anchorY - 49, Component.literal(stacksString), 0xffffff);
+					RenderString(graphics, anchorX + 118 + xOffset - stacksStringWidth, anchorY - 49, Component.literal(stacksString), 0xffffff);
 
 					String timeRemaining = ".".repeat(Math.max(0, Maths.Min(mobEffect.getDuration() / 20, 5)));
-					RenderString(poseStack, anchorX + 102 + xOffset, anchorY - 39, Component.literal(timeRemaining), 0xffffff);
+					RenderString(graphics, anchorX + 102 + xOffset, anchorY - 39, Component.literal(timeRemaining), 0xffffff);
 
 
 					xOffset += 20;
@@ -367,7 +365,7 @@ public class ClientRenderHooks
 
 			if(mainHandPrimaryContext.Def.twoHanded && !player.getItemInHand(InteractionHand.OFF_HAND).isEmpty())
 			{
-				RenderString(poseStack, anchorX + 96, anchorY - 39, Component.translatable("tooltip.dual_wielding_two_handed"), 0xb0b0b0);
+				RenderString(graphics, anchorX + 96, anchorY - 39, Component.translatable("tooltip.dual_wielding_two_handed"), 0xb0b0b0);
 			}
 			else if(mainContext.GetAllModeDefs().length > 0)
 			{
@@ -375,7 +373,7 @@ public class ClientRenderHooks
 				{
 					ModeDefinition modeDef = mainContext.GetAllModeDefs()[i];
 					String value = mainContext.GetModeValue(modeDef.key);
-					RenderString(poseStack, anchorX + 96, anchorY - 39 - 10 * i, Component.translatable("tooltip.mode."+modeDef.key+"."+value), 0xb0b0b0);
+					RenderString(graphics, anchorX + 96, anchorY - 39 - 10 * i, Component.translatable("tooltip.mode."+modeDef.key+"."+value), 0xb0b0b0);
 				}
 			}
 
@@ -416,7 +414,7 @@ public class ClientRenderHooks
 								if(!bulletStacks[stackIndex].isEmpty() && bulletStacks[stackIndex].getItem() != Items.APPLE)
 								{
 									int y = anchorY - 20 + (i % 4 == 3 ? 2 : (i % 4 == 2 ? 0 : (i % 4 == 1 ? 1 : 3)));
-									Minecraft.getInstance().getItemRenderer().renderGuiItem(bulletStacks[stackIndex], x, y);
+									RenderItem(graphics, bulletStacks[stackIndex], x, y, false);
 									x -= 5;
 								}
 								bulletIndex++;
@@ -431,14 +429,13 @@ public class ClientRenderHooks
 						if (bulletStack.isEmpty() || bulletStack.getItem() == Items.APPLE)
 							continue;
 						int y = anchorY - 20;
-						Minecraft.getInstance().getItemRenderer().renderGuiItem(bulletStack, x, y);
-						Minecraft.getInstance().getItemRenderer().renderGuiItemDecorations(Minecraft.getInstance().font, bulletStack, x, y);
+						RenderItem(graphics, bulletStack, x, y, true);
 						x -= 16;
 					}
 				}
 			}
 
-			RenderString(poseStack,
+			RenderString(graphics,
 				anchorX - 98 - Minecraft.getInstance().font.width(offContext.GetItemStack().getHoverName()),
 				anchorY - 31,
 				offContext.GetItemStack().getHoverName(),
@@ -447,7 +444,7 @@ public class ClientRenderHooks
 			if(offHandPrimaryContext.Def.twoHanded && !player.getItemInHand(InteractionHand.MAIN_HAND).isEmpty())
 			{
 				Component warningString = Component.translatable("tooltip.dual_wielding_two_handed");
-				RenderString(poseStack, anchorX - 98 - Minecraft.getInstance().font.width(warningString), anchorY - 39, warningString, 0xb0b0b0);
+				RenderString(graphics, anchorX - 98 - Minecraft.getInstance().font.width(warningString), anchorY - 39, warningString, 0xb0b0b0);
 			}
 		}
 	}
@@ -463,13 +460,19 @@ public class ClientRenderHooks
 
 	}
 
-	private void RenderSprite(float x, float y, float w, float h, TextureAtlasSprite sprite)
+	private void RenderItem(@Nonnull GuiGraphics graphics, @Nonnull ItemStack stack, float x, float y, boolean decorate)
+	{
+		graphics.renderItem(stack, Maths.Floor(x), Maths.Floor(y));
+		if(decorate)
+			graphics.renderItemDecorations(Minecraft.getInstance().font, stack, Maths.Floor(x), Maths.Floor(y));
+	}
+
+	private void RenderSprite(@Nonnull GuiGraphics graphics, float x, float y, float w, float h, @Nonnull TextureAtlasSprite sprite)
 	{
 		float u0 = sprite.getU0();
 		float u1 = sprite.getU1();
 		float v0 = sprite.getV0();
 		float v1 = sprite.getV1();
-		RenderSystem.enableTexture();
 		RenderSystem.setShader(GameRenderer::getPositionTexShader);
 		Tesselator tesselator = Tesselator.getInstance();
 		BufferBuilder builder = tesselator.getBuilder();
@@ -483,7 +486,6 @@ public class ClientRenderHooks
 
 	private void RenderQuad(float x, float y, float w, float h, float u0, float v0, float texW, float texH)
 	{
-		RenderSystem.enableTexture();
 		RenderSystem.setShader(GameRenderer::getPositionTexShader);
 		Tesselator tesselator = Tesselator.getInstance();
 		BufferBuilder builder = tesselator.getBuilder();
@@ -497,7 +499,6 @@ public class ClientRenderHooks
 
 	private void RenderUntexturedQuad(float x, float y, float w, float h, int colour)
 	{
-		RenderSystem.disableTexture();
 		RenderSystem.setShader(GameRenderer::getPositionColorShader);
 		Tesselator tesselator = Tesselator.getInstance();
 		BufferBuilder builder = tesselator.getBuilder();
@@ -507,11 +508,10 @@ public class ClientRenderHooks
 		builder.vertex(x + w, y, -90f)		.color(colour)	.endVertex();
 		builder.vertex(x, y, -90f)			.color(colour)	.endVertex();
 		tesselator.end();
-		RenderSystem.enableTexture();
 	}
 
-	private void RenderString(PoseStack poseStack, float x, float y, Component content, int colour)
+	private void RenderString(@Nonnull GuiGraphics graphics, float x, float y, @Nonnull Component content, int colour)
 	{
-		Minecraft.getInstance().font.draw(poseStack, content, x, y, colour);
+		graphics.drawString(Minecraft.getInstance().font, content, Maths.Floor(x), Maths.Floor(y), colour);
 	}
 }

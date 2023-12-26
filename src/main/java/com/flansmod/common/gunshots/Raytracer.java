@@ -129,9 +129,9 @@ public class Raytracer
                     case BLOCK ->
                     {
                         BlockHitResult blockHit = (BlockHitResult) hit;
-                        if(from.level.isLoaded(blockHit.getBlockPos()))
+                        if(from.level().isLoaded(blockHit.getBlockPos()))
                         {
-                            bCanPenetrate = penetrationPowerVsBlocks >= from.level.getBlockState(blockHit.getBlockPos()).getBlock().defaultDestroyTime();
+                            bCanPenetrate = penetrationPowerVsBlocks >= from.level().getBlockState(blockHit.getBlockPos()).getBlock().defaultDestroyTime();
                         }
                         else bCanPenetrate = false;
                     }
@@ -156,7 +156,7 @@ public class Raytracer
             if(numTests > 100)
             {
                 FlansMod.LOGGER.warn("Raytrace exceeded 100 raycasts, something is probably wrong");
-                if(from.level.isClientSide)
+                if(from.level().isClientSide)
                 {
                     DebugRenderer.RenderLine(
                         origin,

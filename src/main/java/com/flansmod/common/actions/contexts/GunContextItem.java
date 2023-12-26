@@ -21,7 +21,7 @@ public class GunContextItem extends GunContext
 	@Override
 	public boolean UpdateFromItemStack() { return false; }
 	@Override
-	public DamageSource CreateDamageSource() { return DamageSource.GENERIC; }
+	public DamageSource CreateDamageSource() { return null; }
 	@Override
 	@Nonnull
 	public ShooterContext GetShooter() { return ShooterContext.INVALID; }
@@ -50,7 +50,7 @@ public class GunContextItem extends GunContext
 		if(other == this) return true;
 		if(other instanceof GunContextItem otherContext)
 		{
-			return ItemStack.isSame(Stack, otherContext.Stack);
+			return ItemStack.isSameItemSameTags(Stack, otherContext.Stack);
 		}
 		return false;
 	}

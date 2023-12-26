@@ -221,7 +221,7 @@ public abstract class ShopkeeperEntity extends PathfinderMob implements Npc, Mer
 	@Override
 	public boolean removeWhenFarAway(double distance) { return false; }
 	@Override
-	public boolean isClientSide() { return level.isClientSide; }
+	public boolean isClientSide() { return level().isClientSide; }
 
 	// -----------------------------------------------------------------------------------
 	// SFX and Voice Lines
@@ -258,8 +258,8 @@ public abstract class ShopkeeperEntity extends PathfinderMob implements Npc, Mer
 	}
 	private void PlayVoiceLine(VoiceLineDefinition voiceLine)
 	{
-		voiceLine.audioClip.PlayUnLODed(level, position());
-		for(Player player : level.getNearbyPlayers(TargetingConditions.forNonCombat(), this, getBoundingBox().inflate(50d)))
+		voiceLine.audioClip.PlayUnLODed(level(), position());
+		for(Player player : level().getNearbyPlayers(TargetingConditions.forNonCombat(), this, getBoundingBox().inflate(50d)))
 		{
 			player.sendSystemMessage(Component.translatable(voiceLine.unlocalisedString));
 		}
@@ -328,7 +328,7 @@ public abstract class ShopkeeperEntity extends PathfinderMob implements Npc, Mer
 	public void TeleportAway()
 	{
 		TryPlayVoiceLine(EVoiceLineType.Goodbye);
-		for(Player player : level.getEntitiesOfClass(Player.class, getBoundingBox().inflate(50d)))
+		for(Player player : level().getEntitiesOfClass(Player.class, getBoundingBox().inflate(50d)))
 		{
 			OnLeavePlayer(player);
 		}
@@ -356,17 +356,17 @@ public abstract class ShopkeeperEntity extends PathfinderMob implements Npc, Mer
 			}
 			if (hasNoOffers)
 			{
-				return InteractionResult.sidedSuccess(level.isClientSide);
+				return InteractionResult.sidedSuccess(level().isClientSide);
 			}
 			else
 			{
-				if (!level.isClientSide)
+				if (!level().isClientSide)
 				{
 					setTradingPlayer(player);
 					openTradingScreen(player, getDisplayName(), GetLevelForPlayer(player));
 				}
 
-				return InteractionResult.sidedSuccess(this.level.isClientSide);
+				return InteractionResult.sidedSuccess(this.level().isClientSide);
 			}
 		}
 		else return super.mobInteract(player, hand);
@@ -502,7 +502,7 @@ public abstract class ShopkeeperEntity extends PathfinderMob implements Npc, Mer
 		@Override
 		public boolean canUse()
 		{
-			for(Player player : Shopkeeper.level.getNearbyPlayers(TargetingConditions.forNonCombat(), Shopkeeper, Shopkeeper.getBoundingBox().inflate(CHAT_RADIUS)))
+			for(Player player : Shopkeeper.level().getNearbyPlayers(TargetingConditions.forNonCombat(), Shopkeeper, Shopkeeper.getBoundingBox().inflate(CHAT_RADIUS)))
 			{
 				if(!Shopkeeper.PlayersInRange.contains(player))
 				{
@@ -589,7 +589,7 @@ public abstract class ShopkeeperEntity extends PathfinderMob implements Npc, Mer
 		@Override
 		public boolean canUse()
 		{
-			TalkToTarget = Shopkeeper.level.getNearestPlayer(Shopkeeper, CHAT_RADIUS);
+			TalkToTarget = Shopkeeper.level().getNearestPlayer(Shopkeeper, CHAT_RADIUS);
 			if (TalkToTarget != null)
 			{
 				ENpcRelationship relationship = Shopkeeper.GetRelationshipTo(TalkToTarget);

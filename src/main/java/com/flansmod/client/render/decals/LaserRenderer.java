@@ -21,6 +21,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.client.renderer.block.model.ItemTransforms;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.BlockHitResult;
@@ -87,7 +88,7 @@ public class LaserRenderer
 	private static final ResourceLocation LaserTexture = new ResourceLocation(FlansMod.MODID, "textures/effects/laser_point.png");
 	public void RenderLaserFirstPerson(RenderLevelStageEvent event, GunContext gunContext, EAttachmentType attachType, int attachIndex, String apName)
 	{
-		ItemTransforms.TransformType transformType = ItemTransforms.TransformType.FIRST_PERSON_RIGHT_HAND;
+		ItemDisplayContext transformType = ItemDisplayContext.FIRST_PERSON_RIGHT_HAND;
 		if(gunContext instanceof GunContextPlayer playerGunContext)
 			transformType = MinecraftHelpers.GetFirstPersonTransformType(playerGunContext.GetHand());
 
@@ -153,7 +154,6 @@ public class LaserRenderer
 		Camera camera = event.getCamera();
 		Tesselator tesselator = Tesselator.getInstance();
 		RenderSystem.setShader(GameRenderer::getPositionColorShader);
-		RenderSystem.disableTexture();
 		RenderSystem.enableBlend();
 		RenderSystem.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
 
@@ -195,7 +195,6 @@ public class LaserRenderer
 
 		tesselator.end();
 		RenderSystem.disableBlend();
-		RenderSystem.enableTexture();
 		poseStack.popPose();
 	}
 }

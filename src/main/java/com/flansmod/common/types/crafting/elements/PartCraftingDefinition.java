@@ -3,6 +3,7 @@ package com.flansmod.common.types.crafting.elements;
 import com.flansmod.common.FlansMod;
 import com.flansmod.common.crafting.PartFabricationRecipe;
 import com.flansmod.common.types.JsonField;
+import net.minecraft.core.RegistryAccess;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
@@ -91,7 +92,7 @@ public class PartCraftingDefinition
 				{
 					boolean allowed = false;
 					for (ItemStack validOutput : allOutputs)
-						if (validOutput.sameItem(recipe.getResultItem()))
+						if (ItemStack.isSameItem(validOutput, recipe.getResultItem(RegistryAccess.EMPTY)))
 							allowed = true;
 					if (allowed)
 						recipeCache.add(recipe);
@@ -103,8 +104,8 @@ public class PartCraftingDefinition
 					return -1;
 				if(o2 == null)
 					return +1;
-				int hash1 = o1.getResultItem().getItem().hashCode();
-				int hash2 = o2.getResultItem().getItem().hashCode();
+				int hash1 = o1.getResultItem(RegistryAccess.EMPTY).getItem().hashCode();
+				int hash2 = o2.getResultItem(RegistryAccess.EMPTY).getItem().hashCode();
 				if(hash1 < hash2)
 					return -1;
 				else if(hash2 < hash1)

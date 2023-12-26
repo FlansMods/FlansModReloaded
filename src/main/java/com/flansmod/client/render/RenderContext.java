@@ -7,6 +7,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.block.model.ItemTransforms;
+import net.minecraft.world.item.ItemDisplayContext;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -16,14 +17,14 @@ public class RenderContext
 	@Nonnull
 	public final MultiBufferSource Buffers;
 	@Nullable
-	public final ItemTransforms.TransformType TransformType;
+	public final ItemDisplayContext TransformType;
 	@Nonnull
 	public final TransformStack Transforms;
 	public final int Light;
 	public final int Overlay;
 
 	public RenderContext(@Nonnull MultiBufferSource buffers,
-						 @Nullable ItemTransforms.TransformType transformType,
+						 @Nullable ItemDisplayContext transformType,
 						 @Nonnull TransformStack transforms,
 						 int light,
 						 int overlay)
@@ -35,7 +36,7 @@ public class RenderContext
 		Overlay = overlay;
 	}
 	public RenderContext(@Nonnull MultiBufferSource buffers,
-						 @Nullable ItemTransforms.TransformType transformType,
+						 @Nullable ItemDisplayContext transformType,
 						 @Nonnull PoseStack poses,
 						 int light,
 						 int overlay)
@@ -47,7 +48,7 @@ public class RenderContext
 		Overlay = overlay;
 	}
 	public RenderContext(@Nonnull MultiBufferSource buffers,
-						 @Nullable ItemTransforms.TransformType transformType,
+						 @Nullable ItemDisplayContext transformType,
 						 int light,
 						 int overlay)
 	{

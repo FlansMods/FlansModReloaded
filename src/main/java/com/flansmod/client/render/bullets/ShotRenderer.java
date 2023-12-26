@@ -20,6 +20,7 @@ import net.minecraft.client.renderer.block.model.ItemTransforms;
 import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.client.event.RenderLevelStageEvent;
@@ -171,12 +172,10 @@ public class ShotRenderer
 			if(trailTexture != null)
 			{
 				textureManager().bindForSetup(trailTexture);
-				RenderSystem.enableTexture();
 			}
 			else
 			{
 				colour = DEFAULT_TRAIL_COLOUR;
-				RenderSystem.disableTexture();
 			}
 
 			Vec3 startPos = origin;
@@ -245,7 +244,7 @@ public class ShotRenderer
 					null,
 					null,
 					new RenderContext(buffers,
-						ItemTransforms.TransformType.FIXED,
+						ItemDisplayContext.FIXED,
 						pose,
 						0xffffff,
 						0));

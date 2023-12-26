@@ -6,6 +6,7 @@ import com.flansmod.common.actions.contexts.GunContextCache;
 import com.flansmod.common.actions.ServerActionManager;
 import com.flansmod.common.actions.contexts.GunContextPlayer;
 import com.flansmod.common.crafting.*;
+import com.flansmod.common.crafting.menus.*;
 import com.flansmod.common.entity.NpcRelationshipCapabilityAttacher;
 import com.flansmod.common.gunshots.Raytracer;
 import com.flansmod.common.actions.contexts.ShooterContext;
@@ -30,35 +31,34 @@ import com.flansmod.common.worldgen.loot.LootPopulator;
 import com.mojang.logging.LogUtils;
 import com.mojang.serialization.Codec;
 import net.minecraft.advancements.CriteriaTriggers;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.packs.resources.PreparableReloadListener;
 import net.minecraft.stats.Stats;
+import net.minecraft.tags.DamageTypeTags;
 import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.damagesource.DamageType;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.MobCategory;
 import net.minecraft.world.inventory.MenuType;
-import net.minecraft.world.item.BlockItem;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
+import net.minecraft.world.item.*;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
-import net.minecraft.world.level.material.Material;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.crafting.CraftingHelper;
 import net.minecraftforge.common.extensions.IForgeMenuType;
 import net.minecraftforge.common.loot.IGlobalLootModifier;
 import net.minecraftforge.event.AddReloadListenerEvent;
-import net.minecraftforge.event.CreativeModeTabEvent;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.event.level.LevelEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
@@ -94,6 +94,7 @@ public class FlansMod
     public static final DeferredRegister<BlockEntityType<?>> TILE_ENTITIES = DeferredRegister.create(ForgeRegistries.BLOCK_ENTITY_TYPES, MODID);
     public static final DeferredRegister<MenuType<?>> MENUS = DeferredRegister.create(ForgeRegistries.MENU_TYPES, MODID);
     public static final DeferredRegister<Codec<? extends IGlobalLootModifier>> LOOT_MODIFIERS = DeferredRegister.create(ForgeRegistries.Keys.GLOBAL_LOOT_MODIFIER_SERIALIZERS, MODID);
+    public static final DeferredRegister<CreativeModeTab> CREATIVE_TABS = DeferredRegister.create(Registries.CREATIVE_MODE_TAB, MODID);
 
     // Core mod blocks & items
     public static final RegistryObject<EntityType<BulletEntity>> ENT_TYPE_BULLET = ENTITY_TYPES.register(
@@ -120,7 +121,11 @@ public class FlansMod
     public static final RegistryObject<BlockEntityType<WorkbenchBlockEntity>> GUN_MODIFICATION_TILE_ENTITY = Workbench_TileEntityType(TILE_ENTITIES, MODID, "gun_modification_table");
 
     // Menus
-    public static final RegistryObject<MenuType<WorkbenchMenu>> WORKBENCH_MENU = MENUS.register("workbench", () -> IForgeMenuType.create(WorkbenchMenu::new));
+    public static final RegistryObject<MenuType<WorkbenchMenuGunCrafting>> WORKBENCH_MENU_GUN_CRAFTING = MENUS.register("workbench_gun_crafting", () -> IForgeMenuType.create(WorkbenchMenuGunCrafting::new));
+    public static final RegistryObject<MenuType<WorkbenchMenuPower>> WORKBENCH_MENU_POWER = MENUS.register("workbench_power", () -> IForgeMenuType.create(WorkbenchMenuPower::new));
+    public static final RegistryObject<MenuType<WorkbenchMenuMaterials>> WORKBENCH_MENU_MATERIALS = MENUS.register("workbench_materials", () -> IForgeMenuType.create(WorkbenchMenuMaterials::new));
+    public static final RegistryObject<MenuType<WorkbenchMenuModification>> WORKBENCH_MENU_MODIFICATION  = MENUS.register("workbench_modification", () -> IForgeMenuType.create(WorkbenchMenuModification::new));
+    public static final RegistryObject<MenuType<WorkbenchMenuPartCrafting>> WORKBENCH_MENU_PART_CRAFTING = MENUS.register("workbench_part_crafting", () -> IForgeMenuType.create(WorkbenchMenuPartCrafting::new));
 
     // Recipes
     public static final RegistryObject<RecipeType<PartFabricationRecipe>> PART_FABRICATION_RECIPE_TYPE = RECIPE_TYPES.register("part_fabrication", () -> RecipeType.simple(new ResourceLocation(MODID, "part_fabrication")));
@@ -128,6 +133,97 @@ public class FlansMod
 
     // Loot Modifiers
     public static final RegistryObject<Codec<LootPopulator>> LOOT_POPULATOR =               LOOT_MODIFIERS.register("loot_populator", LootPopulator.CODEC);
+
+    // Damage Types
+    public static final ResourceKey<DamageType> DAMAGE_TYPE_GUN = ResourceKey.create(Registries.DAMAGE_TYPE, new ResourceLocation(MODID, "gun"));
+
+    // Creative Tabs
+    public static final Component CREATIVE_TAB_NAME_GUNS = Component.translatable("item_group." + MODID + ".creative_tab_guns");
+    public static final RegistryObject<CreativeModeTab> CREATIVE_TAB_GUNS = CREATIVE_TABS.register("creative_tab_guns",
+        () -> {
+            List<ItemStack> stacks = new ArrayList<>();
+            for(Item item : ForgeRegistries.ITEMS.getValues())
+            {
+                if(item instanceof GunItem)
+                    stacks.add(new ItemStack(item));
+            }
+
+            return CreativeModeTab.builder()
+                .title(CREATIVE_TAB_NAME_GUNS)
+                .icon(() -> stacks.size() > 0 ? stacks.get(0) : new ItemStack(Items.DIAMOND))
+                .displayItems((itemDisplayParameters, output) ->
+                {
+                    output.accept(GUN_MOD_TABLE_ITEM.get());
+                    output.accept(DIESEL_GENERATOR_ITEM.get());
+                    output.accept(COAL_GENERATOR_ITEM.get());
+                    for(ItemStack stack : stacks)
+                        output.accept(stack);
+                })
+                .build();
+        });
+    public static final Component CREATIVE_TAB_NAME_BULLETS = Component.translatable("item_group." + MODID + ".creative_tab_bullets");
+    public static final RegistryObject<CreativeModeTab> CREATIVE_TAB_BULLETS = CREATIVE_TABS.register("creative_tab_bullets",
+        () -> {
+            List<ItemStack> stacks = new ArrayList<>();
+            for(Item item : ForgeRegistries.ITEMS.getValues())
+            {
+                if(item instanceof BulletItem || item instanceof GrenadeItem)
+                    stacks.add(new ItemStack(item));
+            }
+
+            return CreativeModeTab.builder()
+                .title(CREATIVE_TAB_NAME_BULLETS)
+                .icon(() -> stacks.size() > 0 ? stacks.get(0) : new ItemStack(Items.STICK))
+                .displayItems((itemDisplayParameters, output) ->
+                {
+                    for(ItemStack stack : stacks)
+                        output.accept(stack);
+                })
+                .build();
+        });
+    public static final Component CREATIVE_TAB_NAME_PARTS = Component.translatable("item_group." + MODID + ".creative_tab_parts");
+    public static final RegistryObject<CreativeModeTab> CREATIVE_TAB_PARTS = CREATIVE_TABS.register("creative_tab_parts",
+        () -> {
+            List<ItemStack> stacks = new ArrayList<>();
+            for(Item item : ForgeRegistries.ITEMS.getValues())
+            {
+                if(item instanceof PartItem)
+                    stacks.add(new ItemStack(item));
+            }
+
+            return CreativeModeTab.builder()
+                .title(CREATIVE_TAB_NAME_BULLETS)
+                .icon(() -> stacks.size() > 0 ? stacks.get(0) : new ItemStack(Items.STICK))
+                .displayItems((itemDisplayParameters, output) ->
+                {
+                    for(ItemStack stack : stacks)
+                        output.accept(stack);
+                })
+                .build();
+        });
+    public static final Component CREATIVE_TAB_NAME_MODIFIERS = Component.translatable("item_group." + MODID + ".creative_tab_modifiers");
+    public static final RegistryObject<CreativeModeTab> CREATIVE_TAB_MODIFIERS = CREATIVE_TABS.register("creative_tab_modifiers",
+        () -> {
+            List<ItemStack> stacks = new ArrayList<>();
+            for(Item item : ForgeRegistries.ITEMS.getValues())
+            {
+                if(item instanceof AttachmentItem)
+                    stacks.add(new ItemStack(item));
+            }
+
+            return CreativeModeTab.builder()
+                .title(CREATIVE_TAB_NAME_BULLETS)
+                .icon(() -> stacks.size() > 0 ? stacks.get(0) : new ItemStack(Items.BOOK))
+                .displayItems((itemDisplayParameters, output) ->
+                {
+                    output.accept(GUN_MOD_TABLE_ITEM.get());
+                    output.accept(RAINBOW_PAINT_CAN_ITEM.get());
+                    output.accept(MAG_UPGRADE_ITEM.get());
+                    for(ItemStack stack : stacks)
+                        output.accept(stack);
+                })
+                .build();
+        });
 
     // Definition Repositories
     public static final GunDefinitions GUNS = new GunDefinitions();
@@ -179,7 +275,7 @@ public class FlansMod
     public static RegistryObject<Block> Workbench_Block(DeferredRegister<Block> blockRegister, String modID, String name)
     {
         ResourceLocation loc = new ResourceLocation(modID, name);
-        return blockRegister.register(name, () -> new WorkbenchBlock(loc, BlockBehaviour.Properties.of(Material.STONE).dynamicShape()));
+        return blockRegister.register(name, () -> new WorkbenchBlock(loc, BlockBehaviour.Properties.of().dynamicShape()));
     }
 
     public static RegistryObject<Item> Workbench_Item(DeferredRegister<Item> itemRegister, String modID, String name, RegistryObject<Block> block)
@@ -211,7 +307,6 @@ public class FlansMod
         modEventBus.addListener(this::CommonInit);
         ACTIONS_SERVER.HookServer(modEventBus);
         FlansModPacketHandler.RegisterMessages();
-        modEventBus.addListener(this::OnCreativeTabRegistry);
         modEventBus.addListener(this::OnRegsiterEvent);
 
         new NpcRelationshipCapabilityAttacher();
@@ -224,6 +319,7 @@ public class FlansMod
         RECIPE_TYPES.register(modEventBus);
         RECIPE_SERIALIZERS.register(modEventBus);
         LOOT_MODIFIERS.register(modEventBus);
+        CREATIVE_TABS.register(modEventBus);
     }
 
     private void CommonInit(final FMLCommonSetupEvent event)
@@ -235,96 +331,6 @@ public class FlansMod
     {
         new Raytracer(event.getLevel()).hook();
         ShooterContext.OnLevelLoaded();
-    }
-
-    public static final Component CREATIVE_TAB_NAME_GUNS = Component.translatable("item_group." + MODID + ".creative_tab_guns");
-    public static final Component CREATIVE_TAB_NAME_PARTS = Component.translatable("item_group." + MODID + ".creative_tab_parts");
-    public static final Component CREATIVE_TAB_NAME_BULLETS = Component.translatable("item_group." + MODID + ".creative_tab_bullets");
-    public static final Component CREATIVE_TAB_NAME_MODIFIERS = Component.translatable("item_group." + MODID + ".creative_tab_modifiers");
-
-    private void OnCreativeTabRegistry(CreativeModeTabEvent.Register event)
-    {
-        event.registerCreativeModeTab(new ResourceLocation(MODID, "creative_tab_guns"), builder ->
-        {
-            List<ItemStack> stacks = new ArrayList<>();
-            for(Item item : ForgeRegistries.ITEMS.getValues())
-            {
-                if(item instanceof GunItem)
-                    stacks.add(new ItemStack(item));
-            }
-
-            builder
-                .title(CREATIVE_TAB_NAME_GUNS)
-                .icon(() -> stacks.size() > 0 ? stacks.get(0) : new ItemStack(Items.DIAMOND))
-                .displayItems((enabledFlags, populator, hasPermissions) ->
-                {
-                    populator.accept(GUN_MOD_TABLE_ITEM.get());
-                    populator.accept(DIESEL_GENERATOR_ITEM.get());
-                    populator.accept(COAL_GENERATOR_ITEM.get());
-                   for(ItemStack stack : stacks)
-                       populator.accept(stack);
-                });
-        });
-
-        event.registerCreativeModeTab(new ResourceLocation(MODID, "creative_tab_bullets"), builder ->
-        {
-            List<ItemStack> stacks = new ArrayList<>();
-            for(Item item : ForgeRegistries.ITEMS.getValues())
-            {
-                if(item instanceof BulletItem || item instanceof GrenadeItem)
-                    stacks.add(new ItemStack(item));
-            }
-
-            builder
-                .title(CREATIVE_TAB_NAME_BULLETS)
-                .icon(() -> stacks.size() > 0 ? stacks.get(0) : new ItemStack(Items.STICK))
-                .displayItems((enabledFlags, populator, hasPermissions) ->
-                {
-                    for(ItemStack stack : stacks)
-                        populator.accept(stack);
-                });
-        });
-
-        event.registerCreativeModeTab(new ResourceLocation(MODID, "creative_tab_parts"), builder ->
-        {
-            List<ItemStack> stacks = new ArrayList<>();
-            for(Item item : ForgeRegistries.ITEMS.getValues())
-            {
-                if(item instanceof PartItem)
-                    stacks.add(new ItemStack(item));
-            }
-
-            builder
-                .title(CREATIVE_TAB_NAME_PARTS)
-                .icon(() -> stacks.size() > 0 ? stacks.get(0) : new ItemStack(Items.STICK))
-                .displayItems((enabledFlags, populator, hasPermissions) ->
-                {
-                    for(ItemStack stack : stacks)
-                            populator.accept(stack);
-                });
-        });
-
-        event.registerCreativeModeTab(new ResourceLocation(MODID, "creative_tab_modifiers"), builder ->
-        {
-            List<ItemStack> stacks = new ArrayList<>();
-            for(Item item : ForgeRegistries.ITEMS.getValues())
-            {
-                if(item instanceof AttachmentItem)
-                    stacks.add(new ItemStack(item));
-            }
-
-            builder
-                .title(CREATIVE_TAB_NAME_MODIFIERS)
-                .icon(() -> stacks.size() > 0 ? stacks.get(0) : new ItemStack(Items.BOOK))
-                .displayItems((enabledFlags, populator, hasPermissions) ->
-                {
-                    populator.accept(GUN_MOD_TABLE_ITEM.get());
-                    populator.accept(RAINBOW_PAINT_CAN_ITEM.get());
-                    populator.accept(MAG_UPGRADE_ITEM.get());
-                    for(ItemStack stack : stacks)
-                        populator.accept(stack);
-                });
-        });
     }
 
     private void OnRegsiterEvent(RegisterEvent event)
@@ -354,7 +360,7 @@ public class FlansMod
     {
         DamageSource damageSource = deathEvent.getSource();
         LivingEntity target = deathEvent.getEntity();
-        if(!damageSource.isBypassInvul())
+        if(!damageSource.is(DamageTypeTags.BYPASSES_INVULNERABILITY))
         {
             if(target instanceof ServerPlayer player)
             {
@@ -388,7 +394,7 @@ public class FlansMod
                                                 player.addEffect(new MobEffectInstance(MobEffects.REGENERATION, 900, 1));
                                                 player.addEffect(new MobEffectInstance(MobEffects.ABSORPTION, 100, 1));
                                                 player.addEffect(new MobEffectInstance(MobEffects.FIRE_RESISTANCE, 800, 0));
-                                                player.level.broadcastEntityEvent(player, (byte)35);
+                                                player.level().broadcastEntityEvent(player, (byte)35);
 
                                                 deathEvent.setCanceled(true);
                                                 return;

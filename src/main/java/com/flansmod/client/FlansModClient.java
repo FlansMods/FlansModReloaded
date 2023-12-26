@@ -1,6 +1,6 @@
 package com.flansmod.client;
 
-import com.flansmod.client.gui.crafting.WorkbenchScreen;
+import com.flansmod.client.gui.crafting.*;
 import com.flansmod.client.render.ClientRenderHooks;
 import com.flansmod.client.input.ClientInputHooks;
 import com.flansmod.client.render.FirstPersonManager;
@@ -26,7 +26,6 @@ import net.minecraft.client.renderer.entity.EntityRenderers;
 import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.entity.HumanoidArm;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.event.ModelEvent;
@@ -89,7 +88,11 @@ public class FlansModClient
 		InitReflection();
 
 		// Screens
-		MenuScreens.register(FlansMod.WORKBENCH_MENU.get(), WorkbenchScreen::new);
+		MenuScreens.register(FlansMod.WORKBENCH_MENU_GUN_CRAFTING.get(), WorkbenchScreenTabGunCrafting::new);
+		MenuScreens.register(FlansMod.WORKBENCH_MENU_MODIFICATION.get(), WorkbenchScreenTabModification::new);
+		MenuScreens.register(FlansMod.WORKBENCH_MENU_PART_CRAFTING.get(), WorkbenchScreenTabPartCrafting::new);
+		MenuScreens.register(FlansMod.WORKBENCH_MENU_POWER.get(), WorkbenchScreenTabPower::new);
+		MenuScreens.register(FlansMod.WORKBENCH_MENU_MATERIALS.get(), WorkbenchScreenTabMaterials::new);
 
 		// Entity Renderers
 		EntityRenderers.register(FlansMod.ENT_TYPE_BULLET.get(), BulletEntityRenderer::new);

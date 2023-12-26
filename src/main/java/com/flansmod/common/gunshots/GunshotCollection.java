@@ -78,7 +78,7 @@ public class GunshotCollection
 
 	public GunshotCollection WithOwner(Entity owner)
 	{
-		OwnerDimension = owner.getLevel().dimension();
+		OwnerDimension = owner.level().dimension();
 		OwnerEntityID = owner.getId();
 		return this;
 	}
@@ -92,7 +92,7 @@ public class GunshotCollection
 
 	public GunshotCollection WithShooter(Entity owner)
 	{
-		ShooterDimension = owner.getLevel().dimension();
+		ShooterDimension = owner.level().dimension();
 		ShooterEntityID = owner.getId();
 		return this;
 	}

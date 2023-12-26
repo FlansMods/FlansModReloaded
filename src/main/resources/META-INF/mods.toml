@@ -58,7 +58,7 @@ license="All rights reserved"
     description='''
     Modern Weapons
     '''
-	
+
 [[mods]] #mandatory
     modId="flansbasicparts"
     version="${file.jarVersion}"
@@ -102,7 +102,7 @@ license="All rights reserved"
     description='''
     High Tek and Classic weaponry all in one pack and helpfully distributed by your friend Vender
     '''
-	
+
 # A dependency - use the . to indicate dependency for a specific modid. Dependencies are optional.
 [[dependencies.flansmod]] #optional
     # the modid of the dependency
@@ -120,6 +120,6 @@ license="All rights reserved"
     modId="minecraft"
     mandatory=true
 # This version range declares a minimum of the current minecraft version up to but not including the next major version
-    versionRange="[1.19.3,1.20)"
+    versionRange="[1.20,1.21)"
     ordering="NONE"
     side="BOTH"

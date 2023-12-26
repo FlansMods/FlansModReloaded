@@ -4,6 +4,7 @@ import com.flansmod.common.FlansMod;
 import com.flansmod.common.actions.Actions;
 import com.flansmod.common.actions.contexts.GunContext;
 import com.flansmod.common.actions.contexts.GunContextCache;
+import com.flansmod.common.crafting.menus.*;
 import com.flansmod.common.item.FlanItem;
 import com.flansmod.common.item.GunItem;
 import com.flansmod.common.types.crafting.EWorkbenchInventoryType;
@@ -52,6 +53,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.annotation.Nonnull;
+import javax.xml.crypto.Data;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -108,7 +110,7 @@ public class WorkbenchBlockEntity extends BlockEntity implements WorldlyContaine
 	public int[] CraftQueueCount = new int[NUM_CRAFTING_QUEUE_SLOTS];
 	public int[] CraftingPart = new int[] { CRAFTING_NO_PART, CRAFTING_NO_PART, CRAFTING_NO_PART, CRAFTING_NO_PART }; // new int[NUM_CRAFTING_QUEUE_SLOTS];
 
-	protected final ContainerData DataAccess = new ContainerData()
+	public final ContainerData DataAccess = new ContainerData()
 	{
 		@Override
 		public int get(int id)
@@ -547,21 +549,16 @@ public class WorkbenchBlockEntity extends BlockEntity implements WorldlyContaine
 	@Override
 	public AbstractContainerMenu createMenu(int containerID, @Nonnull Inventory inventory, @Nonnull Player player)
 	{
-		return new WorkbenchMenu(containerID,
-			inventory,
-			Def,
-			this,
-			GunContainer,
-			PaintCanContainer,
-			MagUpgradeContainer,
-			GunCraftingInputContainer,
-			GunCraftingOutputContainer,
-			PartCraftingInputContainer,
-			PartCraftingOutputContainer,
-			MaterialContainer,
-			BatteryContainer,
-			FuelContainer,
-			DataAccess);
+		if(Def.gunCrafting.isActive)
+			return new WorkbenchMenuGunCrafting(containerID, inventory, this);
+		if(Def.partCrafting.isActive)
+			return new WorkbenchMenuPartCrafting(containerID, inventory, this);
+		if(Def.gunModifying.isActive)
+			return new WorkbenchMenuModification(containerID, inventory, this);
+		if(Def.energy.maxFE > 0.0f)
+			return new WorkbenchMenuPower(containerID, inventory, this);
+
+		return new WorkbenchMenuMaterials(containerID, inventory, this);
 	}
 
 	public static void serverTick(@Nonnull Level level, @Nonnull BlockPos pos, @Nonnull BlockState state, @Nonnull WorkbenchBlockEntity workbench)
@@ -648,7 +645,7 @@ public class WorkbenchBlockEntity extends BlockEntity implements WorldlyContaine
 	public boolean RecipeCanBeCraftedInThisWorkbench(ItemStack output)
 	{
 		for(ItemStack stack : Def.partCrafting.GetAllOutputs())
-			if(stack.sameItem(output))
+			if(ItemStack.isSameItem(stack, output))
 				return true;
 		return false;
 	}
@@ -754,7 +751,7 @@ public class WorkbenchBlockEntity extends BlockEntity implements WorldlyContaine
 		for(int i = 0; i < PartCraftingOutputContainer.getContainerSize(); i++)
 		{
 			ItemStack stackInSlot = PartCraftingOutputContainer.getItem(i);
-			if(result.sameItem(stackInSlot))
+			if(ItemStack.isSameItem(result, stackInSlot))
 				if(stackInSlot.getCount() < PartCraftingOutputContainer.getMaxStackSize())
 					return i;
 		}
@@ -883,7 +880,7 @@ public class WorkbenchBlockEntity extends BlockEntity implements WorldlyContaine
 					stack.setCount(0);
 				}
 			}
-			else if(stackInSlot.sameItem(stack))
+			else if(ItemStack.isSameItem(stackInSlot, stack))
 			{
 				int countToAdd = Maths.Min(stack.getCount(), maxStack - stackInSlot.getCount());
 				if(countToAdd > 0)
@@ -916,7 +913,7 @@ public class WorkbenchBlockEntity extends BlockEntity implements WorldlyContaine
 			ItemStack existing = PartCraftingOutputContainer.getItem(outputSlot);
 			if(existing.isEmpty())
 				PartCraftingOutputContainer.setItem(outputSlot, result.copy());
-			else if(existing.sameItem(result))
+			else if(ItemStack.isSameItem(existing, result))
 				existing.setCount(existing.getCount() + result.getCount());
 			else
 				FlansMod.LOGGER.error("CraftOnePart tried to craft into invalid slot " + outputSlot);
@@ -1080,7 +1077,7 @@ public class WorkbenchBlockEntity extends BlockEntity implements WorldlyContaine
 			if (gunContainer.getContainerSize() > 0 && !gunContainer.getItem(0).isEmpty() && gunContainer.getItem(0).getItem() instanceof GunItem gunItem)
 			{
 				ItemStack gunStack = gunContainer.getItem(0);
-				GunContext gunContext = GunContextCache.Get(player.level.isClientSide).Create(gunContainer, 0);
+				GunContext gunContext = GunContextCache.Get(player.level().isClientSide).Create(gunContainer, 0);
 				if(gunContext.IsValid())
 				{
 					List<MagazineDefinition> mags = gunItem.Def().GetMagazineSettings(Actions.DefaultPrimaryActionKey).GetMatchingMagazines();
@@ -1163,7 +1160,7 @@ public class WorkbenchBlockEntity extends BlockEntity implements WorldlyContaine
 			{
 				return PutStackInSlot(slot, stack, simulate);
 			}
-			else if(existingStack.sameItem(stack))
+			else if(ItemStack.isSameItem(existingStack, stack))
 			{
 				return PutStackInSlot(slot, existingStack.copyWithCount(existingStack.getCount() + stack.getCount()), simulate);
 			}

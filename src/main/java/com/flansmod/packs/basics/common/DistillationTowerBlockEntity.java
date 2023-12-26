@@ -350,7 +350,7 @@ public class DistillationTowerBlockEntity extends BaseContainerBlockEntity imple
 	public void setItem(int slot, @Nonnull ItemStack stack)
 	{
 		ItemStack existing = getItem(slot);
-		boolean matching = !stack.isEmpty() && stack.sameItem(existing) && ItemStack.tagMatches(stack, existing);
+		boolean matching = !stack.isEmpty() && ItemStack.isSameItemSameTags(stack, existing);
 		Slots[slot] = stack;
 
 		// Check for new recipe
@@ -402,7 +402,7 @@ public class DistillationTowerBlockEntity extends BaseContainerBlockEntity imple
 				{
 					// Also check that we can output this item
 					if(stackAtLayer.getItem(OUTPUT_SLOT).isEmpty()
-					|| stackAtLayer.getItem(OUTPUT_SLOT).sameItem(matches[y-1].Result))
+					|| ItemStack.isSameItem(stackAtLayer.getItem(OUTPUT_SLOT), matches[y-1].Result))
 					{
 						numMatches++;
 						if (matches[y - 1].DistillationTime > maxTimeRequired)

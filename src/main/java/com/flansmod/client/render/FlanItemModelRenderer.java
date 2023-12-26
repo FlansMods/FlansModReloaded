@@ -24,6 +24,7 @@ import com.flansmod.common.item.FlanItem;
 import com.flansmod.common.types.attachments.AttachmentDefinition;
 import com.flansmod.common.types.attachments.EAttachmentType;
 import com.flansmod.util.*;
+import com.mojang.blaze3d.platform.Lighting;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.*;
 
@@ -38,6 +39,7 @@ import net.minecraft.client.resources.model.UnbakedModel;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.HumanoidArm;
+import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.Vec3;
 import org.joml.*;
@@ -164,7 +166,7 @@ public abstract class FlanItemModelRenderer extends BlockEntityWithoutLevelRende
     // Entry point for vanilla render calls
     @Override
     public void renderByItem(@Nullable ItemStack stack,
-                             @Nonnull ItemTransforms.TransformType transformType,
+                             @Nonnull ItemDisplayContext transformType,
                              @Nonnull PoseStack ms,
                              @Nonnull MultiBufferSource buffers,
                              int light,
@@ -193,7 +195,7 @@ public abstract class FlanItemModelRenderer extends BlockEntityWithoutLevelRende
 
 
     protected void RenderItem(@Nullable Entity entity,
-                              @Nonnull ItemTransforms.TransformType transformType,
+                              @Nonnull ItemDisplayContext transformType,
                               @Nullable ItemStack stack,
                               @Nonnull TransformStack transformStack,
                               @Nonnull MultiBufferSource buffers,
@@ -203,18 +205,22 @@ public abstract class FlanItemModelRenderer extends BlockEntityWithoutLevelRende
         transformStack.PushSaveState();
         {
             boolean shouldRenderRig = true;
-            if(transformType == ItemTransforms.TransformType.GUI)
+            if(transformType == ItemDisplayContext.GUI)
             {
-                FlanItem flanItem = stack != null ? (stack.getItem() instanceof FlanItem ? (FlanItem)stack.getItem() : null) : null;
                 String skin = "default";
-                if(flanItem != null)
-                    skin = flanItem.GetPaintjobName(stack);
+                if(stack != null)
+                    skin = FlanItem.GetPaintjobName(stack);
                 BakedModel iconModel = BakedRig.GetIconModel(skin);
                 if(iconModel != null)
                 {
+
                     shouldRenderRig = false;
-                    PoseStack poseStack = new PoseStack();
-                    poseStack.translate(-0.5f, -0.5f, 0f);
+                    //PoseStack poseStack = new PoseStack();
+                    //transformStack.add(new Transform("Offset to GUI origin", new Vec3(-0.5d, -0.5d, 0d)));
+                    transformStack.add(new Transform("Scale to GUI size", -2.0f));
+                    PoseStack poseStack = transformStack.Top().ToNewPoseStack();
+                    poseStack.scale(-1f, 1f, 1f);
+                    Lighting.setupForFlatItems();
                     Minecraft.getInstance().getBlockRenderer().getModelRenderer().renderModel(
                         poseStack.last(),
                         buffers.getBuffer(Sheets.cutoutBlockSheet()),

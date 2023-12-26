@@ -6,11 +6,14 @@ import com.flansmod.packs.basics.common.DistillationTowerMenu;
 import com.flansmod.util.Maths;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
+
+import javax.annotation.Nonnull;
 
 public class DistillationTowerScreen extends AbstractContainerScreen<DistillationTowerMenu>
 {
@@ -49,7 +52,7 @@ public class DistillationTowerScreen extends AbstractContainerScreen<Distillatio
 	}
 
 	@Override
-	protected void renderBg(PoseStack pose, float f, int x, int y)
+	protected void renderBg(@Nonnull GuiGraphics graphics, float f, int x, int y)
 	{
 		int xOrigin = (width - imageWidth) / 2;
 		int yOrigin = (height - imageHeight) / 2;
@@ -59,33 +62,33 @@ public class DistillationTowerScreen extends AbstractContainerScreen<Distillatio
 		RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
 		RenderSystem.setShaderTexture(0, BACKGROUND_LOCATION);
 
-		blit(pose, xOrigin, yOrigin, getBlitOffset(), 0, 0, imageWidth, imageHeight, TEXTURE_WIDTH, TEXTURE_HEIGHT);
+		graphics.blit(BACKGROUND_LOCATION, xOrigin, yOrigin, 0, 0, imageWidth, imageHeight, TEXTURE_WIDTH, TEXTURE_HEIGHT);
 
 		DistillationTowerBlockEntity[] distillerStack = DistillationTower.Distiller.GetStack();
 		DistillationTowerBlockEntity topDistiller = distillerStack[0];
 
 		// Hint warning labels
 		if(topDistiller == null || !topDistiller.IsTop)
-			blit(pose, xOrigin + 102, yOrigin + 13, getBlitOffset(), 207, 176, 49, 20, TEXTURE_WIDTH, TEXTURE_HEIGHT);
+			graphics.blit(BACKGROUND_LOCATION, xOrigin + 102, yOrigin + 13, 207, 176, 49, 20, TEXTURE_WIDTH, TEXTURE_HEIGHT);
 		else if(distillerStack[1] == null || distillerStack[1].IsTop)
-			blit(pose, xOrigin + 102, yOrigin + 38, getBlitOffset(), 207, 196, 49, 20, TEXTURE_WIDTH, TEXTURE_HEIGHT);
+			graphics.blit(BACKGROUND_LOCATION, xOrigin + 102, yOrigin + 38, 207, 196, 49, 20, TEXTURE_WIDTH, TEXTURE_HEIGHT);
 		else if(distillerStack[2] == null || distillerStack[2].IsTop)
-			blit(pose, xOrigin + 102, yOrigin + 58, getBlitOffset(), 207, 216, 49, 20, TEXTURE_WIDTH, TEXTURE_HEIGHT);
+			graphics.blit(BACKGROUND_LOCATION, xOrigin + 102, yOrigin + 58,207, 216, 49, 20, TEXTURE_WIDTH, TEXTURE_HEIGHT);
 		else if(distillerStack[3] == null || distillerStack[3].IsTop)
-			blit(pose, xOrigin + 102, yOrigin + 78, getBlitOffset(), 207, 236, 49, 20, TEXTURE_WIDTH, TEXTURE_HEIGHT);
+			graphics.blit(BACKGROUND_LOCATION, xOrigin + 102, yOrigin + 78,207, 236, 49, 20, TEXTURE_WIDTH, TEXTURE_HEIGHT);
 
 		// Hide the input if there is no top on the stack
 		if(topDistiller == null || !topDistiller.IsTop)
-			blit(pose, xOrigin + 10, yOrigin + 18, getBlitOffset(), 172, 101, 47, 68, TEXTURE_WIDTH, TEXTURE_HEIGHT);
+			graphics.blit(BACKGROUND_LOCATION, xOrigin + 10, yOrigin + 18, 172, 101, 47, 68, TEXTURE_WIDTH, TEXTURE_HEIGHT);
 		// Hide output 1 if there is no output in the stack
 		if(distillerStack[1] == null || distillerStack[1].IsTop)
-			blit(pose, xOrigin + 43, yOrigin + 39, getBlitOffset(), 172, 39, 53, 19, TEXTURE_WIDTH, TEXTURE_HEIGHT);
+			graphics.blit(BACKGROUND_LOCATION, xOrigin + 43, yOrigin + 39, 172, 39, 53, 19, TEXTURE_WIDTH, TEXTURE_HEIGHT);
 		// Hide output 2 if the stack is only 1 high
 		if(distillerStack[2] == null || distillerStack[2].IsTop)
-			blit(pose, xOrigin + 43, yOrigin + 58, getBlitOffset(), 172, 58, 53, 20, TEXTURE_WIDTH, TEXTURE_HEIGHT);
+			graphics.blit(BACKGROUND_LOCATION, xOrigin + 43, yOrigin + 58, 172, 58, 53, 20, TEXTURE_WIDTH, TEXTURE_HEIGHT);
 		// Hide output 3 if the stack is 1 or 2 high
 		if(distillerStack[3] == null || distillerStack[3].IsTop)
-			blit(pose, xOrigin + 43, yOrigin + 78, getBlitOffset(), 172, 78, 53, 20, TEXTURE_WIDTH, TEXTURE_HEIGHT);
+			graphics.blit(BACKGROUND_LOCATION, xOrigin + 43, yOrigin + 78, 172, 78, 53, 20, TEXTURE_WIDTH, TEXTURE_HEIGHT);
 
 		if(topDistiller != null)
 		{
@@ -96,7 +99,7 @@ public class DistillationTowerScreen extends AbstractContainerScreen<Distillatio
 			for(int i = 0; i < DistillationTowerBlockEntity.MAX_DISTILLATION_STACK_HEIGHT; i++)
 				if(topDistiller.DataAccess.get(DistillationTowerBlockEntity.DATA_HAS_VALID_RECIPE_AT_DEPTH_1 + i) != 0)
 				{
-					blit(pose, xOrigin + 64, yOrigin + 44 + 20 * i, getBlitOffset(), 27, 221, Maths.Ceil(12 * craftProportion), 9, TEXTURE_WIDTH, TEXTURE_HEIGHT);
+					graphics.blit(BACKGROUND_LOCATION, xOrigin + 64, yOrigin + 44 + 20 * i, 27, 221, Maths.Ceil(12 * craftProportion), 9, TEXTURE_WIDTH, TEXTURE_HEIGHT);
 				}
 
 			// If fuel is being added, render the burn time
@@ -104,17 +107,17 @@ public class DistillationTowerScreen extends AbstractContainerScreen<Distillatio
 			int litProgress = topDistiller.DataAccess.get(DistillationTowerBlockEntity.DATA_LIT_TIME);
 			float burnProgress = litTotalTime > 0 ? ((float)litProgress / (float)litTotalTime) : 0f;
 			int burnPx = Maths.Ceil(11f * burnProgress);
-			blit(pose, xOrigin + 19, yOrigin + 64 - burnPx, getBlitOffset(), 7, 232 - burnPx, 9, burnPx, TEXTURE_WIDTH, TEXTURE_HEIGHT);
+			graphics.blit(BACKGROUND_LOCATION, xOrigin + 19, yOrigin + 64 - burnPx, 7, 232 - burnPx, 9, burnPx, TEXTURE_WIDTH, TEXTURE_HEIGHT);
 		}
 	}
 
 	@Override
-	public void render(PoseStack pose, int xMouse, int yMouse, float f)
+	public void render(@Nonnull GuiGraphics graphics, int xMouse, int yMouse, float f)
 	{
-		super.render(pose, xMouse, yMouse, f);
+		super.render(graphics, xMouse, yMouse, f);
 		if (menu.getCarried().isEmpty() && hoveredSlot != null && hoveredSlot.hasItem())
 		{
-			super.renderTooltip(pose, xMouse, yMouse);
+			super.renderTooltip(graphics, xMouse, yMouse);
 		}
 		else
 		{
@@ -132,31 +135,31 @@ public class DistillationTowerScreen extends AbstractContainerScreen<Distillatio
 				if(topDistiller == null || !topDistiller.IsTop)
 				{
 					if (20 <= y && y < 40)
-						renderTooltip(pose, HINT_TOP_NOT_INSTALLED, xMouse, yMouse);
+						graphics.renderTooltip(font, HINT_TOP_NOT_INSTALLED, xMouse, yMouse);
 				}
 				else if(distillerStack[1] == null)
 				{
 					if (40 <= y && y < 60)
-						renderTooltip(pose, HINT_STACKS_NOT_INSTALLED, xMouse, yMouse);
+						graphics.renderTooltip(font, HINT_STACKS_NOT_INSTALLED, xMouse, yMouse);
 				}
 				else if(distillerStack[2] == null)
 				{
 					if (60 <= y && y < 80)
-						renderTooltip(pose, HINT_TIER_2_OUTPUT_AVAILABLE, xMouse, yMouse);
+						graphics.renderTooltip(font, HINT_TIER_2_OUTPUT_AVAILABLE, xMouse, yMouse);
 				}
 				else if(distillerStack[3] == null)
 				{
 					if (80 <= y && y < 100)
-						renderTooltip(pose, HINT_TIER_3_OUTPUT_AVAILABLE, xMouse, yMouse);
+						graphics.renderTooltip(font, HINT_TIER_3_OUTPUT_AVAILABLE, xMouse, yMouse);
 				}
 			}
 		}
 	}
 
 	@Override
-	protected void renderLabels(PoseStack pose, int x, int y)
+	protected void renderLabels(@Nonnull GuiGraphics graphics, int x, int y)
 	{
-		super.renderLabels(pose, x, y);
+		super.renderLabels(graphics, x, y);
 
 		DistillationTowerBlockEntity[] distillerStack = DistillationTower.Distiller.GetStack();
 

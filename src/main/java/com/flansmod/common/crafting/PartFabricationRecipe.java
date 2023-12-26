@@ -4,6 +4,7 @@ import com.flansmod.common.FlansMod;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import net.minecraft.core.NonNullList;
+import net.minecraft.core.RegistryAccess;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.GsonHelper;
@@ -33,7 +34,7 @@ public class PartFabricationRecipe implements Recipe<WorkbenchBlockEntity>
 	}
 	@Nonnull
 	@Override
-	public ItemStack getResultItem() { return Result; }
+	public ItemStack getResultItem(@Nonnull RegistryAccess registryAccess) { return Result; }
 	@Override
 	public boolean canCraftInDimensions(int x, int y) { return true; }
 	@Nonnull
@@ -101,7 +102,7 @@ public class PartFabricationRecipe implements Recipe<WorkbenchBlockEntity>
 	}
 	@Nonnull
 	@Override
-	public ItemStack assemble(@Nonnull WorkbenchBlockEntity distiller) { return Result.copy(); }
+	public ItemStack assemble(@Nonnull WorkbenchBlockEntity distiller, @Nonnull RegistryAccess registryAccess) { return Result.copy(); }
 	@Override
 	@Nonnull
 	public RecipeSerializer<?> getSerializer() { return FlansMod.PART_FABRICATION_RECIPE_SERIALIZER.get(); }
