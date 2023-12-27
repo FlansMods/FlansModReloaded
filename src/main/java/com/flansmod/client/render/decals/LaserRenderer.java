@@ -47,7 +47,7 @@ public class LaserRenderer
 		{
 			if(Minecraft.getInstance().player != null)
 			{
-				ShooterContext playerContext = ShooterContext.GetOrCreate(Minecraft.getInstance().player);
+				ShooterContext playerContext = ShooterContext.of(Minecraft.getInstance().player);
 				if(playerContext.IsValid())
 				{
 					for (GunContext gunContext : playerContext.GetAllGunContexts(true))

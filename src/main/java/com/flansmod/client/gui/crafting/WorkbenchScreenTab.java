@@ -41,7 +41,7 @@ public abstract class WorkbenchScreenTab<T extends WorkbenchMenu> extends FMScre
 		IsActive = false;
 
 		imageWidth = 172;
-		imageHeight = 217;
+		imageHeight = 218;
 
 		titleLabelY = -1000;
 		inventoryLabelX = 6;
@@ -51,11 +51,15 @@ public abstract class WorkbenchScreenTab<T extends WorkbenchMenu> extends FMScre
 	@Override
 	protected void init()
 	{
+		super.init();
 		xOrigin = width / 2 - imageWidth / 2;
 		yOrigin = height / 2 - imageHeight / 2;
 
 		if(IsTabPresent())
+		{
 			InitTab();
+			OnTabSelected(true);
+		}
 		else
 			Minecraft.getInstance().setScreen(null);
 
@@ -148,7 +152,7 @@ public abstract class WorkbenchScreenTab<T extends WorkbenchMenu> extends FMScre
 				int xPos = 5;
 				if(GetWidth() > 172)
 					xPos = 97;
-				graphics.drawString(font, GetTitle(), xPos, 5, 0x505050);
+				graphics.drawString(font, GetTitle(), xPos, 5, 0x505050, false);
 			}
 
 			// Render tabs over BG
@@ -199,7 +203,7 @@ public abstract class WorkbenchScreenTab<T extends WorkbenchMenu> extends FMScre
 	public void RenderPowerBarFG(@Nonnull GuiGraphics graphics, int x, int y, int fe, int feMax)
 	{
 		String storedEnergyAmount = MinecraftHelpers.GetFEString(fe) + " / " + MinecraftHelpers.GetFEString(feMax);
-		graphics.drawString(font, storedEnergyAmount, Maths.Floor(x - (font.width(storedEnergyAmount) / 2f)), y, 0x505050);
+		graphics.drawString(font, storedEnergyAmount, Maths.Floor(x - (font.width(storedEnergyAmount) / 2f)), y, 0x505050, false);
 	}
 	protected void RenderGUIItem(@Nonnull GuiGraphics graphics, int x, int y, @Nonnull ItemStack stack, boolean withText)
 	{

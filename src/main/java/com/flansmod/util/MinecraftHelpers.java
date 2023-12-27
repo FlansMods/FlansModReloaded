@@ -1,6 +1,7 @@
 package com.flansmod.util;
 
 import com.flansmod.common.FlansMod;
+import com.flansmod.common.actions.contexts.EContextSide;
 import com.flansmod.common.types.elements.ItemStackDefinition;
 import com.mojang.brigadier.StringReader;
 import net.minecraft.client.Minecraft;
@@ -22,6 +23,7 @@ import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.loading.FMLEnvironment;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.server.ServerLifecycleHooks;
+import org.spongepowered.asm.mixin.MixinEnvironment;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -124,6 +126,17 @@ public class MinecraftHelpers
 		return FMLEnvironment.dist == Dist.CLIENT;
 	}
 
+	public static EContextSide GetLogicalSide()
+	{
+		MinecraftServer currentServer = ServerLifecycleHooks.getCurrentServer();
+		if(currentServer != null)
+			if(Thread.currentThread() == currentServer.getRunningThread())
+				return EContextSide.Server;
+		if(IsClient())
+			return EContextSide.Client;
+		return EContextSide.Unknown;
+	}
+
 	@Nullable
 	public static MinecraftServer GetServer()
 	{
@@ -141,9 +154,11 @@ public class MinecraftHelpers
 
 	@OnlyIn(Dist.CLIENT)
 	@Nonnull
-	public static InteractionHand GetHand(@Nonnull ItemDisplayContext transformType)
+	public static InteractionHand GetHand(@Nullable ItemDisplayContext transformType)
 	{
 		boolean rightHanded = Minecraft.getInstance().options.mainHand().get() == HumanoidArm.RIGHT;
+		if(transformType == null)
+			return InteractionHand.MAIN_HAND;
 		return switch (transformType)
 		{
 			case FIRST_PERSON_LEFT_HAND -> rightHanded ? InteractionHand.OFF_HAND : InteractionHand.MAIN_HAND;

@@ -1,9 +1,8 @@
 package com.flansmod.common.network.bidirectional;
 
-import com.flansmod.common.FlansMod;
 import com.flansmod.common.actions.*;
 import com.flansmod.common.actions.contexts.ActionGroupContext;
-import com.flansmod.common.actions.contexts.GunContextCache;
+import com.flansmod.common.actions.contexts.ContextCache;
 import com.flansmod.common.gunshots.EPressType;
 import com.flansmod.common.actions.contexts.GunContext;
 import com.flansmod.common.actions.contexts.ShooterContext;
@@ -86,12 +85,12 @@ public class ActionUpdateMessage extends FlansModMessage
 	public ActionGroupContext GetActionGroupContext(boolean client)
 	{
 		// Construct the shooter context first
-		ShooterContext shooterContext = ShooterContext.GetOrCreate(Context.EntityUUID, client);
+		ShooterContext shooterContext = ShooterContext.of(Context.EntityUUID, Context.EntityUUID, client);
 		if(!shooterContext.IsValid())
 			return ActionGroupContext.INVALID;
 
 		// Specifically construct the GunContext using the hash, so we can look up historical data
-		GunContext gunContext = GunContextCache.Get(client).Create(shooterContext, Context.GunID);
+		GunContext gunContext = GunContext.of(shooterContext, Context.GunID);
 		if(!gunContext.IsValid())
 			return ActionGroupContext.INVALID;
 

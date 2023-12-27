@@ -67,9 +67,7 @@ public class GunItem extends FlanItem
                                 @NotNull List<Component> tooltips,
                                 @Nonnull TooltipFlag flags)
     {
-        GunContext gunContext = level != null
-            ? GunContextCache.Get(level.isClientSide).Create(stack)
-            : GunContextCache.CreateWithoutCaching(stack);
+        GunContext gunContext = GunContext.of(stack, EContextSide.of(level));
         if(gunContext.IsValid())
         {
             ActionGroupContext actionContext = ActionGroupContext.CreateFrom(gunContext, Actions.DefaultPrimaryActionKey);
@@ -158,7 +156,7 @@ public class GunItem extends FlanItem
     public CompoundTag GetRootTag(@Nonnull ItemStack stack, @Nonnull String groupPath)
     {
         String rootTagName = groupPath;
-        GunContext gunContext = GunContextCache.CreateWithoutCaching(stack);
+        GunContext gunContext = ContextCache.CreateWithoutCaching(stack);
         if(gunContext.IsValid())
         {
             ActionGroupContext actionGroupContext = gunContext.GetActionGroupContext(groupPath);
@@ -319,7 +317,7 @@ public class GunItem extends FlanItem
         if(player.isCreative())
             return false;
 
-        ShooterContext shooterContext = ShooterContext.GetOrCreate(player);
+        ShooterContext shooterContext = ShooterContext.of(player);
         if(shooterContext.IsValid())
         {
             for(GunContext gunContext : shooterContext.GetAllGunContexts(world.isClientSide))
@@ -342,7 +340,7 @@ public class GunItem extends FlanItem
     public boolean isCorrectToolForDrops(ItemStack stack, BlockState blockState)
     {
         List<Tier> tiers = TierSortingRegistry.getSortedTiers();
-        GunContext gunContext = GunContextCache.CreateWithoutCaching(stack);
+        GunContext gunContext = ContextCache.CreateWithoutCaching(stack);
         for (ActionDefinition actionDef : gunContext.GetPotentialPrimaryActions())
         {
             int harvestLevel = actionDef.ToolLevel(Actions.DefaultPrimaryActionKey);
@@ -395,7 +393,7 @@ public class GunItem extends FlanItem
                 if (player.getInventory().selected == i)
                 {
                     // If we have a vanilla left-click action, don't do anything
-                    GunContext gunContext = GunContextCache.Get(true).Create(stack);
+                    GunContext gunContext = GunContext.of(stack, EContextSide.of(level));
                     for (ActionDefinition actionDef : gunContext.GetPotentialPrimaryActions())
                     {
                         switch (actionDef.actionType)
@@ -416,7 +414,7 @@ public class GunItem extends FlanItem
     @Override
     public Multimap<Attribute, AttributeModifier> getAttributeModifiers(EquipmentSlot slot, ItemStack stack)
     {
-        GunContext gunContext = GunContextCache.CreateWithoutCaching(stack);
+        GunContext gunContext = ContextCache.CreateWithoutCaching(stack);
         if(gunContext.IsValid())
         {
             ActionGroupContext actionGroupContext = gunContext.GetActionGroupContext(Actions.DefaultPrimaryActionKey);
@@ -464,7 +462,7 @@ public class GunItem extends FlanItem
     @Nonnull
     public UseAnim getUseAnimation(@Nonnull ItemStack stack)
     {
-        GunContext gunContext = GunContextCache.CreateWithoutCaching(stack);
+        GunContext gunContext = ContextCache.CreateWithoutCaching(stack);
         for (ActionDefinition actionDef : gunContext.GetPotentialSecondaryActions())
         {
             switch (actionDef.actionType)
@@ -477,7 +475,7 @@ public class GunItem extends FlanItem
     @Override
     public int getUseDuration(@Nonnull ItemStack stack)
     {
-        GunContext gunContext = GunContextCache.CreateWithoutCaching(stack);
+        GunContext gunContext = ContextCache.CreateWithoutCaching(stack);
         for (ActionDefinition actionDef : gunContext.GetPotentialSecondaryActions())
         {
             switch (actionDef.actionType)
@@ -491,7 +489,7 @@ public class GunItem extends FlanItem
     @Override
     public InteractionResultHolder<ItemStack> use(@Nonnull Level world, @Nonnull Player player, @Nonnull InteractionHand hand)
     {
-        ShooterContext shooterContext = ShooterContext.GetOrCreate(player);
+        ShooterContext shooterContext = ShooterContext.of(player);
         if(shooterContext.IsValid() && shooterContext instanceof ShooterContextPlayer playerContext)
         {
             GunContext gunContext = playerContext.GetGunContextForSlot(hand, world.isClientSide);
@@ -514,7 +512,7 @@ public class GunItem extends FlanItem
     @Override
     public InteractionResult useOn(UseOnContext context)
     {
-        ShooterContext shooter = ShooterContext.GetOrCreate(context.getPlayer());
+        ShooterContext shooter = ShooterContext.of(context.getPlayer());
         if(shooter.IsValid() && shooter instanceof ShooterContextPlayer playerContext)
         {
             GunContext gunContext = playerContext.GetGunContextForSlot(context.getHand(), context.getLevel().isClientSide);
@@ -556,7 +554,7 @@ public class GunItem extends FlanItem
     @Override
     public boolean canPerformAction(ItemStack stack, ToolAction toolAction)
     {
-        GunContext gunContext = GunContextCache.CreateWithoutCaching(stack);
+        GunContext gunContext = ContextCache.CreateWithoutCaching(stack);
         if(gunContext.IsValid())
         {
             // If this is a right click action, check secondary

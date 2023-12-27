@@ -3,7 +3,7 @@ package com.flansmod.common.crafting;
 import com.flansmod.common.FlansMod;
 import com.flansmod.common.actions.Actions;
 import com.flansmod.common.actions.contexts.GunContext;
-import com.flansmod.common.actions.contexts.GunContextCache;
+import com.flansmod.common.actions.contexts.ContextCache;
 import com.flansmod.common.crafting.menus.*;
 import com.flansmod.common.item.FlanItem;
 import com.flansmod.common.item.GunItem;
@@ -53,7 +53,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.annotation.Nonnull;
-import javax.xml.crypto.Data;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -1077,7 +1076,7 @@ public class WorkbenchBlockEntity extends BlockEntity implements WorldlyContaine
 			if (gunContainer.getContainerSize() > 0 && !gunContainer.getItem(0).isEmpty() && gunContainer.getItem(0).getItem() instanceof GunItem gunItem)
 			{
 				ItemStack gunStack = gunContainer.getItem(0);
-				GunContext gunContext = GunContextCache.Get(player.level().isClientSide).Create(gunContainer, 0);
+				GunContext gunContext = GunContext.of(gunContainer, 0, player.level().isClientSide);
 				if(gunContext.IsValid())
 				{
 					List<MagazineDefinition> mags = gunItem.Def().GetMagazineSettings(Actions.DefaultPrimaryActionKey).GetMatchingMagazines();

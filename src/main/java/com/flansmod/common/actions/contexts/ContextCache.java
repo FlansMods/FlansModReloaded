@@ -5,8 +5,10 @@ import com.flansmod.common.FlansMod;
 import com.flansmod.common.item.FlanItem;
 import net.minecraft.world.Container;
 import net.minecraft.world.InteractionHand;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 
 import javax.annotation.Nonnull;
@@ -14,19 +16,91 @@ import javax.annotation.Nullable;
 import java.util.HashMap;
 import java.util.UUID;
 
-public class GunContextCache
+public abstract class ContextCache
 {
+	private final HashMap<UUID, ShooterContext> ShooterContexts = new HashMap<>();
+	private final HashMap<UUID, GunContext> GunContextCache = new HashMap<>();
+	protected final EContextSide Side;
+
+	public ContextCache(EContextSide side)
+	{
+		Side = side;
+	}
+
+	public void OnLevelLoaded()
+	{
+		ShooterContexts.clear();
+		GunContextCache.clear();
+	}
+
+	// ---------------------------------------------------------------------------------------------------
+	// SHOOTER CONTEXT CACHE
+	// ---------------------------------------------------------------------------------------------------
+	@Nonnull
+	public ShooterContext GetShooter(@Nonnull Entity shooter)
+	{
+		return GetShooter(shooter.getUUID(), shooter.getUUID());
+	}
+	@Nonnull
+	public ShooterContext GetShooter(@Nonnull Entity shooter, @Nullable Entity owner)
+	{
+		return GetShooter(shooter.getUUID(), owner != null ? owner.getUUID() : ShooterContext.InvalidID);
+	}
+	@Nonnull
+	public ShooterContext GetShooter(@Nonnull UUID shooterID, @Nonnull UUID ownerID)
+	{
+		ShooterContext existing = TryGetExistingShooter(shooterID, ownerID);
+		if(existing != null)
+			if(existing.EntityUUID().equals(shooterID))
+				if(existing.OwnerUUID().equals(ownerID))
+					return existing;
+
+		return CreateShooterContext(shooterID, ownerID);
+	}
+
+	@Nullable
+	private ShooterContext TryGetExistingShooter(@Nonnull UUID shooterID)
+	{
+		return TryGetExistingShooter(shooterID, shooterID);
+	}
+	@Nullable
+	private ShooterContext TryGetExistingShooter(@Nonnull UUID shooterID, @Nonnull UUID ownerID)
+	{
+		if (ShooterContexts.containsKey(shooterID))
+		{
+			ShooterContext candidate = ShooterContexts.get(shooterID);
+			candidate = ValidateShooterContext(candidate);
+			if(candidate != null)
+				return candidate;
+		}
+
+		return null;
+	}
+	@Nullable
+	private ShooterContext ValidateShooterContext(ShooterContext shooterContext)
+	{
+		if(!VerifyCallingFromCorrectSide(shooterContext))
+			return null;
+		if(shooterContext instanceof ShooterContextUnresolvedEntity unresolvedContext)
+		{
+			// Try find the actual context
+			return TryResolve(unresolvedContext);
+		}
+		return shooterContext;
+	}
+	@Nonnull
+	protected abstract ShooterContext CreateShooterContext(@Nonnull UUID shooterID, @Nonnull UUID ownerID);
+	@Nonnull
+	protected abstract ShooterContext TryResolve(@Nonnull ShooterContextUnresolvedEntity unresolvedContext);
+
 	// ---------------------------------------------------------------------------------------------------
 	// GUN CONTEXT CACHE
 	// ---------------------------------------------------------------------------------------------------
-	private final HashMap<UUID, GunContext> GunContextCache = new HashMap<>();
-
-	public static GunContextCache Get(boolean client)
+	// Only use when you really don't know which logical side you are on
+	@Nonnull
+	public static GunContextItem CreateWithoutCaching(ItemStack stack)
 	{
-		if(client)
-			return FlansModClient.GUN_CONTEXTS_CLIENT;
-		else
-			return FlansMod.GUN_CONTEXTS_SERVER;
+		return new GunContextItem(stack);
 	}
 
 	@Nonnull
@@ -47,13 +121,6 @@ public class GunContextCache
 				return existingContext;
 		}
 		return null;
-	}
-
-	// Only use when you really don't know which logical side you are on
-	@Nonnull
-	public static GunContextItem CreateWithoutCaching(ItemStack stack)
-	{
-		return new GunContextItem(stack);
 	}
 
 	// The most minimal context - you just know that you have an item, but not necessarily where it is
@@ -135,22 +202,28 @@ public class GunContextCache
 	@Nonnull
 	public GunContext Create(ShooterContext shooter, InteractionHand hand)
 	{
-		if (shooter.IsValid())
-		{
-			int slot = 0;
-			if (shooter instanceof ShooterContextPlayer player)
-				slot = hand == InteractionHand.MAIN_HAND ? player.Player.getInventory().selected : Inventory.SLOT_OFFHAND;
-			else
-				slot = hand == InteractionHand.MAIN_HAND ? 0 : 1;
-			return Create(shooter, shooter.GetGunIDForSlot(slot));
-		}
-		return GunContext.INVALID;
+		if(!VerifyCallingFromCorrectSide(shooter))
+			return GunContext.INVALID;
+
+		if (!shooter.IsValid())
+			return GunContext.INVALID;
+
+		int slot;
+		if (shooter instanceof ShooterContextPlayer player)
+			slot = hand == InteractionHand.MAIN_HAND ? player.Player.getInventory().selected : Inventory.SLOT_OFFHAND;
+		else
+			slot = hand == InteractionHand.MAIN_HAND ? 0 : 1;
+		return Create(shooter, shooter.GetGunIDForSlot(slot));
 	}
 	@Nonnull
 	public GunContext Create(ShooterContext shooter, int gunSlotIndex)
 	{
+		if(!VerifyCallingFromCorrectSide(shooter))
+			return GunContext.INVALID;
+
 		if (shooter.IsValid())
 			return Create(shooter, shooter.GetGunIDForSlot(gunSlotIndex));
+
 		return GunContext.INVALID;
 	}
 	// Or you are looking at something that can shoot
@@ -178,4 +251,15 @@ public class GunContextCache
 		return GunContext.INVALID;
 	}
 
+
+	private boolean VerifyCallingFromCorrectSide(@Nonnull ShooterContext shooter)
+	{
+		EContextSide side = shooter.GetSide();
+		return side == Side || side == EContextSide.Unknown;
+	}
+	private boolean VerifyCallingFromCorrectSide(@Nonnull GunContext gun)
+	{
+		EContextSide side = gun.GetShooter().GetSide();
+		return side == Side || side == EContextSide.Unknown;
+	}
 }

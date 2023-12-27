@@ -3,13 +3,12 @@ package com.flansmod.common.actions;
 import com.flansmod.common.FlansMod;
 import com.flansmod.common.actions.contexts.ActionGroupContext;
 import com.flansmod.common.actions.contexts.GunContext;
-import com.flansmod.common.actions.contexts.GunContextCache;
+import com.flansmod.common.actions.contexts.ContextCache;
 import com.flansmod.common.actions.contexts.ShooterContext;
 import com.flansmod.common.entity.INpcRelationshipsCapability;
 import com.flansmod.common.entity.NpcRelationshipsCapability;
 import com.flansmod.common.item.FlanItem;
 import com.flansmod.common.item.GunItem;
-import com.flansmod.common.network.FlansModPacketHandler;
 import com.flansmod.common.network.bidirectional.ActionUpdateMessage;
 import com.flansmod.util.MinecraftHelpers;
 import net.minecraft.server.level.ServerPlayer;
@@ -66,7 +65,7 @@ public class ServerActionManager extends ActionManager
 			{
 				UUID gunID = kvp.getKey();
 				ActionStack actionStack = kvp.getValue();
-				GunContext gunContext = GunContextCache.Get(false).GetLastKnownAppearanceOfGun(gunID);
+				GunContext gunContext = GunContext.of(gunID);
 				if (gunContext.IsValid())
 				{
 					if (actionStack.IsValid())
@@ -87,7 +86,7 @@ public class ServerActionManager extends ActionManager
 			{
 				for (var player : level.players())
 				{
-					ShooterContext shooterContext = ShooterContext.GetOrCreate(player);
+					ShooterContext shooterContext = ShooterContext.of(player);
 					LazyOptional<INpcRelationshipsCapability> relationshipCap = player.getCapability(NpcRelationshipsCapability.INSTANCE);
 					if (relationshipCap.isPresent() && relationshipCap.resolve().isPresent())
 					{
@@ -99,7 +98,7 @@ public class ServerActionManager extends ActionManager
 						if (player.getInventory().getItem(i).getItem() instanceof GunItem)
 						{
 							UUID gunID = FlanItem.Server_GetOrSetNewGunID(player.getInventory().getItem(i));
-							GunContext gunContext = GunContextCache.Get(false).Create(shooterContext, gunID);
+							GunContext gunContext = GunContext.of(shooterContext, gunID);
 							ActionStack actionStack = GetActionStack(gunID);
 							boolean equipped = (i == player.getInventory().selected)
 								|| (i == Inventory.SLOT_OFFHAND);

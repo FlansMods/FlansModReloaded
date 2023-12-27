@@ -10,15 +10,23 @@ import java.util.UUID;
 
 public class ShooterContextUnresolvedEntity extends ShooterContext
 {
+	@Nonnull
+	public final EContextSide Side;
+	@Nonnull
 	public final UUID OwnerUUID;
+	@Nonnull
 	public final UUID EntityUUID;
 
-	public ShooterContextUnresolvedEntity(UUID ownerUUID, UUID entityUUID)
+	public ShooterContextUnresolvedEntity(@Nonnull UUID ownerUUID, @Nonnull UUID entityUUID, @Nonnull EContextSide side)
 	{
+		Side = side;
 		OwnerUUID = ownerUUID;
 		EntityUUID = entityUUID;
 	}
 
+	@Override
+	@Nonnull
+	public EContextSide GetSide() { return Side; }
 	@Nonnull
 	@Override
 	public UUID EntityUUID() { return EntityUUID; }

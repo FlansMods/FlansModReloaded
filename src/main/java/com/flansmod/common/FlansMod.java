@@ -1,15 +1,12 @@
 package com.flansmod.common;
 
 import com.flansmod.client.FlansModClient;
-import com.flansmod.common.actions.contexts.GunContext;
-import com.flansmod.common.actions.contexts.GunContextCache;
+import com.flansmod.common.actions.contexts.*;
 import com.flansmod.common.actions.ServerActionManager;
-import com.flansmod.common.actions.contexts.GunContextPlayer;
 import com.flansmod.common.crafting.*;
 import com.flansmod.common.crafting.menus.*;
 import com.flansmod.common.entity.NpcRelationshipCapabilityAttacher;
 import com.flansmod.common.gunshots.Raytracer;
-import com.flansmod.common.actions.contexts.ShooterContext;
 import com.flansmod.common.item.*;
 import com.flansmod.common.network.FlansModPacketHandler;
 import com.flansmod.common.projectiles.BulletEntity;
@@ -192,7 +189,7 @@ public class FlansMod
             }
 
             return CreativeModeTab.builder()
-                .title(CREATIVE_TAB_NAME_BULLETS)
+                .title(CREATIVE_TAB_NAME_PARTS)
                 .icon(() -> stacks.size() > 0 ? stacks.get(0) : new ItemStack(Items.STICK))
                 .displayItems((itemDisplayParameters, output) ->
                 {
@@ -212,7 +209,7 @@ public class FlansMod
             }
 
             return CreativeModeTab.builder()
-                .title(CREATIVE_TAB_NAME_BULLETS)
+                .title(CREATIVE_TAB_NAME_MODIFIERS)
                 .icon(() -> stacks.size() > 0 ? stacks.get(0) : new ItemStack(Items.BOOK))
                 .displayItems((itemDisplayParameters, output) ->
                 {
@@ -239,7 +236,7 @@ public class FlansMod
 
     // Server handlers
     public static final ServerActionManager ACTIONS_SERVER = new ServerActionManager();
-    public static final GunContextCache GUN_CONTEXTS_SERVER = new GunContextCache();
+    public static final ContextCache CONTEXT_CACHE = new ServerContextCache();
 
     public static RegistryObject<Item> Gun(DeferredRegister<Item> itemRegister, String modID, String name)
     {
@@ -290,15 +287,15 @@ public class FlansMod
         return tileEntityTypeRegister.register(name, () -> new WorkbenchBlockEntity.WorkbenchBlockEntityTypeHolder(loc).CreateType());
     }
 
-    public static GunContextCache GetGunContextCache(boolean client)
+    public static ContextCache GetGunContextCache(boolean client)
     {
         if(client)
         {
             return GetClientGunContextCache();
         }
-        return GUN_CONTEXTS_SERVER;
+        return CONTEXT_CACHE;
     }
-    private static GunContextCache GetClientGunContextCache() { return FlansModClient.GUN_CONTEXTS_CLIENT; }
+    private static ContextCache GetClientGunContextCache() { return FlansModClient.CONTEXT_CACHE; }
 
     public FlansMod()
     {
@@ -330,7 +327,7 @@ public class FlansMod
     public void OnLevelLoad(LevelEvent.Load event)
     {
         new Raytracer(event.getLevel()).hook();
-        ShooterContext.OnLevelLoaded();
+        CONTEXT_CACHE.OnLevelLoaded();
     }
 
     private void OnRegsiterEvent(RegisterEvent event)
@@ -364,7 +361,7 @@ public class FlansMod
         {
             if(target instanceof ServerPlayer player)
             {
-                ShooterContext shooterContext = ShooterContext.GetOrCreate(player);
+                ShooterContext shooterContext = CONTEXT_CACHE.GetShooter(player);
                 for(GunContext gunContext : shooterContext.GetAllGunContexts(false))
                 {
                     if(gunContext.IsValid() && gunContext instanceof GunContextPlayer gunContextPlayer)

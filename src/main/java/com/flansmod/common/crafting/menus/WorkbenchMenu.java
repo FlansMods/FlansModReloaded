@@ -47,7 +47,6 @@ public abstract class WorkbenchMenu extends AbstractContainerMenu
 		Def = workbench.Def;
 		BlockEntity = workbench;
 		WorkbenchData = workbench.DataAccess;
-		CreateSlots(inventory, 0);
 	}
 
 	public WorkbenchMenu(MenuType<? extends WorkbenchMenu> menuType, int containerID, Inventory inventory, FriendlyByteBuf data)
@@ -69,7 +68,6 @@ public abstract class WorkbenchMenu extends AbstractContainerMenu
 			BlockEntity = null;
 			WorkbenchData = null;
 		}
-		CreateSlots(inventory, 0);
 	}
 
 	protected void CreateSlots(@Nonnull Inventory playerInventory, int inventorySlotOffsetX)

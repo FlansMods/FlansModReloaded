@@ -25,7 +25,7 @@ public class MixinMouseHandler
 	{
 		if(player != null)
 		{
-			ShooterContext shooterContext = ShooterContext.GetOrCreate(player);
+			ShooterContext shooterContext = ShooterContext.of(player);
 			if(shooterContext.IsValid())
 			{
 				for(GunContext gunContext : shooterContext.GetAllGunContexts(true))

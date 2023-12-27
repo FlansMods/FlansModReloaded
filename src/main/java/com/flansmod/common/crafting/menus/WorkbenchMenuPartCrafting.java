@@ -49,6 +49,7 @@ public class WorkbenchMenuPartCrafting extends WorkbenchMenu
 		super(FlansMod.WORKBENCH_MENU_PART_CRAFTING.get(), containerID, inventory, workbench);
 		PartCraftingInputContainer = BlockEntity.PartCraftingInputContainer;
 		PartCraftingOutputContainer = BlockEntity.PartCraftingOutputContainer;
+		CreateSlots(inventory, 0);
 	}
 
 	public WorkbenchMenuPartCrafting(int containerID,
@@ -59,6 +60,7 @@ public class WorkbenchMenuPartCrafting extends WorkbenchMenu
 
 		PartCraftingInputContainer = BlockEntity.PartCraftingInputContainer;
 		PartCraftingOutputContainer = BlockEntity.PartCraftingOutputContainer;
+		CreateSlots(inventory, 0);
 	}
 
 	@Override

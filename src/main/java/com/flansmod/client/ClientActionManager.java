@@ -6,7 +6,6 @@ import com.flansmod.common.actions.contexts.*;
 import com.flansmod.common.gunshots.EPressType;
 import com.flansmod.common.item.FlanItem;
 import com.flansmod.common.item.GunItem;
-import com.flansmod.common.network.FlansModPacketHandler;
 import com.flansmod.common.network.bidirectional.ActionUpdateMessage;
 import com.flansmod.common.types.vehicles.EPlayerInput;
 import com.flansmod.util.Maths;
@@ -44,7 +43,7 @@ public class ClientActionManager extends ActionManager
 	{
 		// See if pressing this button should trigger any actions
 		// First on our main hand, then on our off hand
-		ShooterContext shooter = ShooterContext.GetOrCreate(player);
+		ShooterContext shooter = ShooterContext.of(player);
 		if (!shooter.IsValid())
 			return;
 
@@ -64,7 +63,7 @@ public class ClientActionManager extends ActionManager
 	public void ClientKeyHeld(Player player, EPlayerInput inputType)
 	{
 		// See if any of the in-progress actions on this gun should stop on release
-		ShooterContext shooter = ShooterContext.GetOrCreate(player);
+		ShooterContext shooter = ShooterContext.of(player);
 		if (!shooter.IsValid())
 			return;
 
@@ -84,7 +83,7 @@ public class ClientActionManager extends ActionManager
 	public void ClientKeyReleased(Player player, EPlayerInput inputType, int ticksSinceHeld)
 	{
 		// See if any of the in-progress actions on this gun should stop on release
-		ShooterContext shooter = ShooterContext.GetOrCreate(player);
+		ShooterContext shooter = ShooterContext.of(player);
 		if (!shooter.IsValid())
 			return;
 
@@ -179,7 +178,7 @@ public class ClientActionManager extends ActionManager
 			{
 				UUID gunID = kvp.getKey();
 				ActionStack actionStack = kvp.getValue();
-				GunContext gunContext = GunContextCache.Get(true).GetLastKnownAppearanceOfGun(gunID);
+				GunContext gunContext = GunContext.of(gunID);
 				if(gunContext.IsValid())
 				{
 					if (actionStack.IsValid())
@@ -198,7 +197,7 @@ public class ClientActionManager extends ActionManager
 			Player player = Minecraft.getInstance().player;
 			if(player != null)
 			{
-				ShooterContext shooterContext = ShooterContext.GetOrCreate(player);
+				ShooterContext shooterContext = ShooterContext.of(player);
 				for (int i = 0; i < player.getInventory().getContainerSize(); i++)
 				{
 					if (player.getInventory().getItem(i).getItem() instanceof GunItem)
@@ -206,7 +205,7 @@ public class ClientActionManager extends ActionManager
 						UUID gunID = FlanItem.GetGunID(player.getInventory().getItem(i));
 						if(gunID != FlanItem.InvalidGunUUID)
 						{
-							GunContext gunContext = GunContextCache.Get(false).Create(shooterContext, gunID);
+							GunContext gunContext = GunContext.of(shooterContext, gunID);
 							ActionStack actionStack = GetActionStack(gunID);
 							boolean equipped = (i == player.getInventory().selected)
 								|| (i == Inventory.SLOT_OFFHAND);

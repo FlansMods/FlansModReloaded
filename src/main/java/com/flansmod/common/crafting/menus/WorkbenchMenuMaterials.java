@@ -24,6 +24,7 @@ public class WorkbenchMenuMaterials extends WorkbenchMenu
 	{
 		super(FlansMod.WORKBENCH_MENU_MATERIALS.get(), containerID, inventory, workbench);
 		MaterialContainer = BlockEntity.MaterialContainer;
+		CreateSlots(inventory, 0);
 	}
 
 	public WorkbenchMenuMaterials(int containerID,
@@ -33,6 +34,7 @@ public class WorkbenchMenuMaterials extends WorkbenchMenu
 		super(FlansMod.WORKBENCH_MENU_MATERIALS.get(), containerID, inventory, data);
 
 		MaterialContainer = BlockEntity.MaterialContainer;
+		CreateSlots(inventory, 0);
 	}
 
 	@Override

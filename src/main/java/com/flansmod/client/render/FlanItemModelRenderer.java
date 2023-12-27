@@ -16,12 +16,11 @@ import com.flansmod.client.render.animation.elements.SequenceEntryDefinition;
 import com.flansmod.client.render.models.*;
 import com.flansmod.common.FlansMod;
 import com.flansmod.common.actions.*;
-import com.flansmod.common.actions.contexts.ActionGroupContext;
+import com.flansmod.common.actions.contexts.ContextCache;
+import com.flansmod.common.actions.contexts.EContextSide;
 import com.flansmod.common.actions.contexts.GunContext;
-import com.flansmod.common.actions.contexts.GunContextCache;
 import com.flansmod.common.actions.nodes.AnimationAction;
 import com.flansmod.common.item.FlanItem;
-import com.flansmod.common.types.attachments.AttachmentDefinition;
 import com.flansmod.common.types.attachments.EAttachmentType;
 import com.flansmod.util.*;
 import com.mojang.blaze3d.platform.Lighting;
@@ -31,22 +30,17 @@ import com.mojang.blaze3d.vertex.*;
 import net.minecraft.Util;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.*;
-import net.minecraft.client.renderer.block.model.ItemTransforms;
 import net.minecraft.client.renderer.texture.MissingTextureAtlasSprite;
-import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.model.BakedModel;
-import net.minecraft.client.resources.model.UnbakedModel;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.HumanoidArm;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.phys.Vec3;
 import org.joml.*;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import javax.swing.*;
 
 public abstract class FlanItemModelRenderer extends BlockEntityWithoutLevelRenderer
 {
@@ -236,7 +230,7 @@ public abstract class FlanItemModelRenderer extends BlockEntityWithoutLevelRende
             {
                 FirstPersonManager.ApplyRootToModel(
                         transformStack,
-                        GunContextCache.Get(true).Create(stack),
+                        GunContext.of(stack, EContextSide.Client),
                         transformType);
 
                 // Render item

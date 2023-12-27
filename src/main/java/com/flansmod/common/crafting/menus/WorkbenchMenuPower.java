@@ -27,6 +27,7 @@ public class WorkbenchMenuPower extends WorkbenchMenu
 		super(FlansMod.WORKBENCH_MENU_POWER.get(), containerID, inventory, workbench);
 		BatteryContainer = BlockEntity.BatteryContainer;
 		FuelContainer = BlockEntity.FuelContainer;
+		CreateSlots(inventory, 0);
 	}
 
 	public WorkbenchMenuPower(int containerID,
@@ -37,6 +38,7 @@ public class WorkbenchMenuPower extends WorkbenchMenu
 
 		BatteryContainer = BlockEntity.BatteryContainer;
 		FuelContainer = BlockEntity.FuelContainer;
+		CreateSlots(inventory, 0);
 	}
 
 	@Override

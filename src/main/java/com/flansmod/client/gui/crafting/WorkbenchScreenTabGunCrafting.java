@@ -1,13 +1,10 @@
 package com.flansmod.client.gui.crafting;
 
-import com.flansmod.client.gui.FMScreen;
 import com.flansmod.common.FlansMod;
 import com.flansmod.common.actions.Actions;
 import com.flansmod.common.actions.contexts.GunContext;
-import com.flansmod.common.actions.contexts.GunContextCache;
-import com.flansmod.common.crafting.menus.WorkbenchMenu;
+import com.flansmod.common.actions.contexts.ContextCache;
 import com.flansmod.common.crafting.menus.WorkbenchMenuGunCrafting;
-import com.flansmod.common.crafting.menus.WorkbenchMenuModification;
 import com.flansmod.common.gunshots.ModifierStack;
 import com.flansmod.common.types.crafting.elements.*;
 import com.flansmod.common.types.elements.ModifierDefinition;
@@ -389,7 +386,7 @@ public class WorkbenchScreenTabGunCrafting extends WorkbenchScreenTab<WorkbenchM
 			if(recipe != null && recipe.outputs.length > 0)
 			{
 				ItemStack stack = recipe.outputs[0].CreateStack();
-				GunContext context = GunContextCache.Get(true).Create(stack);
+				GunContext context = GunContext.of(stack);
 				if(context.IsValid())
 				{
 					int statBoxX = xOrigin + GUN_STATS_X_ORIGIN;
@@ -538,12 +535,12 @@ public class WorkbenchScreenTabGunCrafting extends WorkbenchScreenTab<WorkbenchM
 			if(entry != null)
 			{
 				ResourceLocation resLoc = new ResourceLocation(entry.outputs[0].item);
-				graphics.drawString(font, Component.translatable("item." + resLoc.getNamespace() + "." + resLoc.getPath()), GUN_STATS_X_ORIGIN, GUN_STATS_Y_ORIGIN, 0x404040);
+				graphics.drawString(font, Component.translatable("item." + resLoc.getNamespace() + "." + resLoc.getPath()), GUN_STATS_X_ORIGIN, GUN_STATS_Y_ORIGIN, 0x404040, false);
 			}
 		}
 		else
 		{
-			graphics.drawString(font, Component.translatable("crafting.select_a_recipe"),50, 21, 0x404040);
+			graphics.drawString(font, Component.translatable("crafting.select_a_recipe"),50, 21, 0x404040, false);
 		}
 
 		// Render all ItemStacks into the menu

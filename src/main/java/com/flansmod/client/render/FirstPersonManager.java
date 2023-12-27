@@ -338,7 +338,11 @@ public class FirstPersonManager
 			String eyeLinePath = instance.AttachmentIndex >= 0
 				? ActionGroupContext.CreateGroupPath(instance.AttachmentType, instance.AttachmentIndex, instance.EyeLineName)
 				: instance.EyeLineName;
-			Transform eyeLine = GetModelSpaceAPTransform(gunContext, transformType, eyeLinePath);
+
+			// This looks hacky. It is, but it looks nice. We want to hold the un-animated eye-line position to our eye,
+			// then animate on top, so pass in a new context that only knows about attachments, no anims
+			GunContext animlessContext = GunContext.of(gunContext.GetItemStack());
+			Transform eyeLine = GetModelSpaceAPTransform(animlessContext, transformType, eyeLinePath);
 			if (instance.TransformType == transformType)
 			{
 				posesAppliedToMe.add(eyeLine);
@@ -388,7 +392,7 @@ public class FirstPersonManager
 	{
 		if(Minecraft.getInstance().player != null)
 		{
-			ShooterContext playerContext = ShooterContext.GetOrCreate(Minecraft.getInstance().player);
+			ShooterContext playerContext = ShooterContext.of(Minecraft.getInstance().player);
 
 			// "Deactivate" all, then reactivate the ones that are still there
 			for(AdsInstance instance : ADS_INSTANCES.values())

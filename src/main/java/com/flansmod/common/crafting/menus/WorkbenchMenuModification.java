@@ -64,6 +64,7 @@ public class WorkbenchMenuModification extends WorkbenchMenu
 		GunContainer = BlockEntity.GunContainer;
 		PaintCanContainer = BlockEntity.PaintCanContainer;
 		MagUpgradeContainer = BlockEntity.MagUpgradeContainer;
+		CreateSlots(inventory, 0);
 	}
 
 	public WorkbenchMenuModification(int containerID,
@@ -75,6 +76,7 @@ public class WorkbenchMenuModification extends WorkbenchMenu
 		GunContainer = BlockEntity.GunContainer;
 		PaintCanContainer = BlockEntity.PaintCanContainer;
 		MagUpgradeContainer = BlockEntity.MagUpgradeContainer;
+		CreateSlots(inventory, 0);
 	}
 
 	@Override

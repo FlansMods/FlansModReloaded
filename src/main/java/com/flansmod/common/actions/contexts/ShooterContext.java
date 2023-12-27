@@ -1,17 +1,14 @@
 package com.flansmod.common.actions.contexts;
 
+import com.flansmod.client.FlansModClient;
+import com.flansmod.common.FlansMod;
 import com.flansmod.common.gunshots.ModifierStack;
 import com.flansmod.common.item.FlanItem;
 import com.flansmod.common.types.elements.ModifierDefinition;
-import com.flansmod.util.MinecraftHelpers;
 import com.flansmod.util.Transform;
-import net.minecraft.client.Minecraft;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.server.MinecraftServer;
-import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.Container;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.api.distmarker.Dist;
@@ -23,6 +20,7 @@ import java.util.*;
 
 public abstract class ShooterContext
 {
+	public static final UUID InvalidID = new UUID(0L, 0L);
 	public static final ShooterContext INVALID = new ShooterContext()
 	{
 		@Override
@@ -56,115 +54,51 @@ public abstract class ShooterContext
 		public void RecalculateModifierCache() {}
 	};
 
-	// ---------------------------------------------------------------------------------------------------
-	// SHOOTER CONTEXT CACHE
-	// ---------------------------------------------------------------------------------------------------
-	public static final UUID InvalidShooterContextUUID = new UUID(0L, 0L);
-	private static final HashMap<UUID, ShooterContext> Client_ContextCache = new HashMap<>();
-	private static final HashMap<UUID, ShooterContext> Server_ContextCache = new HashMap<>();
-	private static HashMap<UUID, ShooterContext> ContextCache(boolean client)
-	{
-		if(client)
-			return Client_ContextCache;
-		else
-			return Server_ContextCache;
-	}
-
-	public static void OnLevelLoaded()
-	{
-		Client_ContextCache.clear();
-		Server_ContextCache.clear();
-	}
-
 	@Nonnull
-	public static ShooterContext GetOrCreate(Entity entity)
+	public static ShooterContext of(@Nullable Entity shooter)
 	{
-		if(entity == null)
-			return ShooterContext.INVALID;
-
-		var cache = ContextCache(entity.level().isClientSide);
-
-		UUID uuid = entity.getUUID();
-		if(cache.containsKey(uuid))
+		if(shooter != null)
 		{
-			ShooterContext context = cache.get(uuid);
-			if(context.Entity() == entity)
-				return context;
-			else
-				cache.remove(uuid);
+			if (shooter.level().isClientSide)
+				return client(shooter);
+			return server(shooter);
 		}
-
-		ShooterContext context;
-		if(entity instanceof Player player)
-			context = new ShooterContextPlayer(player);
-		else if(entity instanceof LivingEntity living)
-			context = new ShooterContextLiving(living);
-		else
-			context = INVALID;
-
-		cache.put(uuid, context);
-		return context;
+		return INVALID;
 	}
-
 	@Nonnull
-	public static ShooterContext GetOrCreate(UUID ownerUUID, UUID shooterUUID, boolean client)
+	public static ShooterContext of(@Nullable Entity shooter, @Nullable Entity owner)
 	{
-		var cache = ContextCache(client);
-		ShooterContext context;
-		if (cache.containsKey(shooterUUID))
+		if(shooter != null)
 		{
-			context = cache.get(shooterUUID);
-			if(context.Entity() != null && context.Entity().isRemoved())
-				cache.remove(shooterUUID);
-			else
-				return context;
+			if (shooter.level().isClientSide)
+				return client(shooter, owner);
+			return server(shooter, owner);
 		}
-
-
-		if(client)
-		{
-			return Client_GetOrCreate(shooterUUID, ownerUUID);
-		}
-		else
-		{
-			return Server_GetOrCreate(shooterUUID, ownerUUID);
-		}
+		return INVALID;
 	}
-
 	@Nonnull
-	public static ShooterContext GetOrCreate(UUID uuid, boolean client)
+	public static ShooterContext of(@Nonnull UUID shooterID, @Nonnull UUID ownerID, boolean isClient)
 	{
-		return GetOrCreate(uuid, uuid, client);
+		return isClient ? client(shooterID, ownerID) : server(shooterID, ownerID);
 	}
+	@Nonnull
+	public static ShooterContext server(@Nonnull Entity shooter) { return FlansMod.CONTEXT_CACHE.GetShooter(shooter); }
+	@Nonnull
+	public static ShooterContext server(@Nonnull Entity shooter, @Nullable Entity owner) { return FlansMod.CONTEXT_CACHE.GetShooter(shooter, owner); }
+	@Nonnull
+	public static ShooterContext server(@Nonnull UUID shooterID, @Nonnull UUID ownerID) { return FlansMod.CONTEXT_CACHE.GetShooter(shooterID, ownerID); }
 
 	@OnlyIn(Dist.CLIENT)
-	private static ShooterContext Client_GetOrCreate(UUID shooterUUID, UUID ownerUUID)
-	{
-		if(Minecraft.getInstance().level != null)
-		{
-			for (Entity entity : Minecraft.getInstance().level.entitiesForRendering())
-			{
-				if(entity.getUUID().equals(shooterUUID))
-					return GetOrCreate(entity);
-			}
-		}
-		return new ShooterContextUnresolvedEntity(ownerUUID, shooterUUID);
-	}
+	@Nonnull
+	public static ShooterContext client(@Nonnull Entity shooter) { return FlansModClient.CONTEXT_CACHE.GetShooter(shooter); }
+	@OnlyIn(Dist.CLIENT)
+	@Nonnull
+	public static ShooterContext client(@Nonnull Entity shooter, @Nullable Entity owner) { return FlansModClient.CONTEXT_CACHE.GetShooter(shooter, owner); }
+	@OnlyIn(Dist.CLIENT)
+	@Nonnull
+	public static ShooterContext client(@Nonnull UUID shooterID, @Nonnull UUID ownerID) { return FlansModClient.CONTEXT_CACHE.GetShooter(shooterID, ownerID); }
 
-	private static ShooterContext Server_GetOrCreate(UUID shooterUUID, UUID ownerUUID)
-	{
-		MinecraftServer server = MinecraftHelpers.GetServer();
-		if(server != null && server.isRunning())
-		{
-			for(ServerLevel serverLevel : server.getAllLevels())
-			{
-				Entity shooter = serverLevel.getEntity(shooterUUID);
-				if(shooter != null)
-					return GetOrCreate(shooter);
-			}
-		}
-		return new ShooterContextUnresolvedEntity(ownerUUID, shooterUUID);
-	}
+
 	// ---------------------------------------------------------------------------------------------------
 	private final HashMap<ModifierDefinition, Float> ModifierCache;
 	private int ModifierHash;
@@ -183,16 +117,17 @@ public abstract class ShooterContext
 	{
 		return Owner() != null && Owner() instanceof Player player && player.isLocalPlayer();
 	}
-
+	@Nonnull
+	public EContextSide GetSide() { return EContextSide.of(Entity()); }
 	@Nullable
 	public Level Level()
 	{
 		return Entity() != null ? Entity().level() : null;
 	}
 	@Nonnull
-	public UUID EntityUUID() { return Entity() != null ? Entity().getUUID() : InvalidShooterContextUUID; }
+	public UUID EntityUUID() { return Entity() != null ? Entity().getUUID() : InvalidID; }
 	@Nonnull
-	public UUID OwnerUUID() { return Owner() != null ? Owner().getUUID() : InvalidShooterContextUUID; }
+	public UUID OwnerUUID() { return Owner() != null ? Owner().getUUID() : InvalidID; }
 
 
 	@Nonnull
@@ -224,7 +159,7 @@ public abstract class ShooterContext
 	{
 		UUID ownerID = tags.getUUID("owner");
 		UUID entityID = tags.getUUID("entity");
-		return ShooterContext.GetOrCreate(ownerID, entityID, client);
+		return ShooterContext.of(ownerID, entityID, client);
 	}
 
 	@Nonnull
@@ -232,7 +167,7 @@ public abstract class ShooterContext
 	{
 		UUID gunID = GetGunIDForSlot(gunSlotIndex);
 		if(gunID != FlanItem.InvalidGunUUID)
-			return GunContextCache.Get(client).Create(this, gunID);
+			return GunContext.of(this, gunID);
 		return GunContext.INVALID;
 	}
 
@@ -243,7 +178,7 @@ public abstract class ShooterContext
 		GunContext[] contexts = new GunContext[ids.length];
 		for(int i = 0; i < ids.length; i++)
 		{
-			contexts[i] = GunContextCache.Get(client).Create(this, ids[i]);
+			contexts[i] = GunContext.of(this, ids[i]);
 		}
 		return contexts;
 	}

@@ -49,6 +49,7 @@ public class WorkbenchMenuGunCrafting extends WorkbenchMenu
 		super(FlansMod.WORKBENCH_MENU_GUN_CRAFTING.get(), containerID, inventory, workbench);
 		GunCraftingInputContainer = BlockEntity.GunCraftingInputContainer;
 		GunCraftingOutputContainer = BlockEntity.GunCraftingOutputContainer;
+		CreateSlots(inventory, 0);
 	}
 
 	public WorkbenchMenuGunCrafting(int containerID,
@@ -59,6 +60,7 @@ public class WorkbenchMenuGunCrafting extends WorkbenchMenu
 
 		GunCraftingInputContainer = BlockEntity.GunCraftingInputContainer;
 		GunCraftingOutputContainer = BlockEntity.GunCraftingOutputContainer;
+		CreateSlots(inventory, 0);
 	}
 
 	@Override

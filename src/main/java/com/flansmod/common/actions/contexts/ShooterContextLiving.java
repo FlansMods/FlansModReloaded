@@ -4,7 +4,6 @@ import com.flansmod.common.effects.FlansMobEffect;
 import com.flansmod.common.item.FlanItem;
 import com.flansmod.common.types.elements.ModifierDefinition;
 import com.flansmod.util.Transform;
-import com.flansmod.util.TransformStack;
 import net.minecraft.world.Container;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.effect.MobEffectInstance;
@@ -35,7 +34,7 @@ public class ShooterContextLiving extends ShooterContext implements Container
 	{
 		UUID gunID = GetGunID(hand);
 		if(gunID != FlanItem.InvalidGunUUID)
-			return GunContextCache.Get(client).Create(this, gunID);
+			return GunContext.of(this, gunID);
 		return GunContext.INVALID;
 	}
 	@Override

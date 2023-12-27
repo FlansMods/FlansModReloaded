@@ -74,6 +74,9 @@ public class WorkbenchScreenTabPartCrafting extends WorkbenchScreenTab<Workbench
 	public WorkbenchScreenTabPartCrafting(@Nonnull WorkbenchMenuPartCrafting menu, @Nonnull Inventory inventory, @Nonnull Component title)
 	{
 		super(menu, inventory, title);
+
+		imageWidth = 356;
+		inventoryLabelX = 97;
 	}
 	@Override
 	protected boolean IsTabPresent() { return Workbench.Def.partCrafting.isActive; }
@@ -166,6 +169,7 @@ public class WorkbenchScreenTabPartCrafting extends WorkbenchScreenTab<Workbench
 			.build());
 
 
+		UpdatePartCraftingFilters();
 		UpdateActivePartSelectionButtons();
 	}
 	@Override
@@ -545,16 +549,16 @@ public class WorkbenchScreenTabPartCrafting extends WorkbenchScreenTab<Workbench
 	@Override
 	protected void RenderFG(@Nonnull GuiGraphics graphics, int xMouse, int yMouse)
 	{
-		graphics.drawString(font, Component.translatable("workbench.input"), PART_CRAFTING_INPUT_SLOTS_X, PART_CRAFTING_INPUT_SLOTS_Y - 11, 0x404040);
-		graphics.drawString(font, Component.translatable("workbench.queue"), PART_CRAFTING_OUTPUT_SLOTS_X, 5, 0x404040);
-		graphics.drawString(font, Component.translatable("workbench.output"), PART_CRAFTING_OUTPUT_SLOTS_X, PART_CRAFTING_OUTPUT_SLOTS_Y - 11, 0x404040);
+		graphics.drawString(font, Component.translatable("workbench.input"), PART_CRAFTING_INPUT_SLOTS_X, PART_CRAFTING_INPUT_SLOTS_Y - 11, 0x404040, false);
+		graphics.drawString(font, Component.translatable("workbench.queue"), PART_CRAFTING_OUTPUT_SLOTS_X, 5, 0x404040, false);
+		graphics.drawString(font, Component.translatable("workbench.output"), PART_CRAFTING_OUTPUT_SLOTS_X, PART_CRAFTING_OUTPUT_SLOTS_Y - 11, 0x404040, false);
 
 		// Render info about the selected part
 		if(SelectedPartIndex >= 0 && SelectedPartIndex < Workbench.BlockEntity.GetAllRecipes().size())
 		{
 			ItemStack selectedPart = Workbench.BlockEntity.GetAllRecipes().get(SelectedPartIndex).getResultItem(RegistryAccess.EMPTY);
 			List<FormattedCharSequence> wordWrap = font.split(selectedPart.getHoverName(), 151);
-			graphics.drawString(font, wordWrap.get(0), 104, 70, 0xffffff);
+			graphics.drawString(font, wordWrap.get(0), 104, 70, 0xffffff, false);
 		}
 
 		int craftingSelection = SelectedPartIndex;

@@ -1,5 +1,6 @@
 package com.flansmod.common.actions.contexts;
 
+import com.flansmod.client.FlansModClient;
 import com.flansmod.common.FlansMod;
 import com.flansmod.common.abilities.ApplyModifierAbility;
 import com.flansmod.common.actions.*;
@@ -13,16 +14,19 @@ import com.flansmod.common.types.elements.ModifierDefinition;
 import com.flansmod.common.types.guns.*;
 import com.flansmod.common.types.parts.PartDefinition;
 import com.flansmod.common.types.vehicles.EPlayerInput;
+import com.flansmod.util.MinecraftHelpers;
 import com.flansmod.util.Transform;
 import com.mojang.datafixers.util.Pair;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.Container;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.entity.BlockEntity;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -55,6 +59,132 @@ public abstract class GunContext
 		@Override
 		public void RecalculateModifierCache() { }
 	};
+
+	// -----------------------------------------------------------------------------------------------
+	// A bunch of "of" methods to let you really easily just grab a context wherever you need it
+	// -----------------------------------------------------------------------------------------------
+	@Nonnull
+	public static GunContext of(@Nonnull ItemStack stack)
+	{
+		return unknownSide(stack);
+	}
+	@Nonnull
+	public static GunContext of(@Nonnull ItemStack stack, EContextSide side) {
+		return switch(side) {
+			case Client -> client(stack);
+			case Server -> server(stack);
+			default -> unknownSide(stack);
+		};
+	}
+	@Nonnull
+	public static GunContext of(@Nonnull ShooterContext shooter, @Nonnull UUID gunID)
+	{
+		switch(shooter.GetSide())
+		{
+			case Client -> { return client(shooter, gunID); }
+			case Server -> { return server(shooter, gunID); }
+			default -> { return unknownSide(gunID); }
+		}
+	}
+	@Nonnull
+	public static GunContext of(@Nonnull ShooterContext shooter, int index)
+	{
+		switch(shooter.GetSide())
+		{
+			case Client -> { return client(shooter, index); }
+			case Server -> { return server(shooter, index); }
+			default -> { return unknownSide(shooter.GetGunIDForSlot(index)); }
+		}
+	}
+	@Nonnull
+	public static GunContext of(@Nonnull ShooterContext shooter, @Nonnull InteractionHand hand)
+	{
+		if(shooter instanceof ShooterContextLiving livingContext)
+		{
+			switch(shooter.GetSide())
+			{
+				case Client -> { return client(livingContext, hand); }
+				case Server -> { return server(livingContext, hand); }
+				default -> { return unknownSide(livingContext.GetGunID(hand)); }
+			}
+		}
+		return GunContext.INVALID;
+	}
+	@Nonnull
+	public static GunContext of(@Nonnull UUID gunID)
+	{
+		switch(MinecraftHelpers.GetLogicalSide())
+		{
+			case Client -> { return client(gunID); }
+			case Server -> { return server(gunID); }
+			default -> { return unknownSide(gunID); }
+		}
+	}
+	@Nonnull
+	public static GunContext of(@Nonnull Container container, int slotIndex, boolean isClient)
+	{
+		return isClient ? client(container, slotIndex) : server(container, slotIndex);
+	}
+	@Nonnull
+	public static GunContext of(@Nonnull BlockEntity blockEntity, @Nonnull Container container, int slotIndex)
+	{
+		switch(EContextSide.of(blockEntity))
+		{
+			case Client -> { return client(blockEntity, container, slotIndex); }
+			case Server -> { return server(blockEntity, container, slotIndex); }
+			default -> { return unknownSide(blockEntity, container, slotIndex); }
+		}
+	}
+
+
+
+	// -----------------------------------------------------------------------------------------------------------------
+	// Client specific - keeping these private for now, could go public if we trust general code to get it right, hmm..
+	// -----------------------------------------------------------------------------------------------------------------
+	@Nonnull
+	private static GunContext client(@Nonnull UUID gunID) { return FlansModClient.CONTEXT_CACHE.GetLastKnownAppearanceOfGun(gunID); }
+	@Nonnull
+	private static GunContext client(@Nonnull ItemStack stack) { return FlansModClient.CONTEXT_CACHE.Create(stack); }
+	@Nonnull
+	private static GunContext client(@Nonnull Container container, int slotIndex) { return FlansModClient.CONTEXT_CACHE.Create(container, slotIndex); }
+	@Nonnull
+	private static GunContext client(@Nonnull BlockEntity blockEntity, @Nonnull Container container, int slotIndex) { return FlansModClient.CONTEXT_CACHE.Create(blockEntity, container, slotIndex); }
+	@Nonnull
+	private static GunContext client(@Nonnull ShooterContext shooter, int slotIndex) { return FlansModClient.CONTEXT_CACHE.Create(shooter, slotIndex);  }
+	@Nonnull
+	private static GunContext client(@Nonnull ShooterContext shooter, @Nonnull UUID gunID) { return FlansModClient.CONTEXT_CACHE.Create(shooter, gunID); }
+	@Nonnull
+	private static GunContext client(@Nonnull ShooterContextLiving living, @Nonnull InteractionHand hand) { return FlansModClient.CONTEXT_CACHE.Create(living, hand); }
+
+	// -----------------------------------------------------------------------------------------------------------------
+	// Server specific - same applies
+	// -----------------------------------------------------------------------------------------------------------------
+	@Nonnull
+	private static GunContext server(@Nonnull UUID gunID) { return FlansMod.CONTEXT_CACHE.GetLastKnownAppearanceOfGun(gunID); }
+	@Nonnull
+	private static GunContext server(@Nonnull ItemStack stack) { return FlansMod.CONTEXT_CACHE.Create(stack); }
+	@Nonnull
+	private static GunContext server(@Nonnull Container container, int slotIndex) { return FlansMod.CONTEXT_CACHE.Create(container, slotIndex); }
+	@Nonnull
+	private static GunContext server(@Nonnull BlockEntity blockEntity, @Nonnull Container container, int slotIndex) { return FlansMod.CONTEXT_CACHE.Create(blockEntity, container, slotIndex); }
+	@Nonnull
+	private static GunContext server(@Nonnull ShooterContext shooter, int slotIndex) { return FlansMod.CONTEXT_CACHE.Create(shooter, slotIndex);  }
+	@Nonnull
+	private static GunContext server(@Nonnull ShooterContext shooter, @Nonnull UUID gunID) { return FlansMod.CONTEXT_CACHE.Create(shooter, gunID); }
+	@Nonnull
+	private static GunContext server(@Nonnull ShooterContextLiving living, @Nonnull InteractionHand hand) { return FlansMod.CONTEXT_CACHE.Create(living, hand); }
+
+	// -----------------------------------------------------------------------------------------------------------------
+	// Side unknown, these are generally low quality contexts, so should only be used in limited situations,
+	// like rendering. You won't get ActionStacks or inventory management here.
+	// -----------------------------------------------------------------------------------------------------------------
+	@Nonnull
+	private static GunContext unknownSide(@Nonnull BlockEntity blockEntity, @Nonnull Container container, int slotIndex) { return ContextCache.CreateWithoutCaching(container.getItem(slotIndex)); }
+	@Nonnull
+	private static GunContext unknownSide(@Nonnull ItemStack stack) { return ContextCache.CreateWithoutCaching(stack); }
+	// TODO: Is this a valid query?
+	@Nonnull
+	private static GunContext unknownSide(@Nonnull UUID gunID) { return INVALID; }
 
 	// ---------------------------------------------------------------------------------------------------
 	// CONTEXT CACHES (Contained in the GunContext and built over time)
@@ -647,7 +777,7 @@ public abstract class GunContext
 			return shooter.CreateContext(gunID);
 
 		// Last option, we don't know who made this, but we can give an isolated context to allow _some_ functionality
-		return GunContextCache.CreateWithoutCaching(stack);
+		return ContextCache.CreateWithoutCaching(stack);
 	}
 
 	@Override

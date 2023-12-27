@@ -65,7 +65,7 @@ public class ClientRenderHooks
 	@SubscribeEvent
 	public void OnComputeFOV(ComputeFovModifierEvent event)
 	{
-		ShooterContext shooterContext = ShooterContext.GetOrCreate(MinecraftHelpers.GetClient().player);
+		ShooterContext shooterContext = ShooterContext.of(MinecraftHelpers.GetClient().player);
 		if(!shooterContext.IsValid())
 			return;
 
@@ -102,7 +102,7 @@ public class ClientRenderHooks
 	{
 		GuiGraphics graphics = event.getGuiGraphics();
 		Player player = MinecraftHelpers.GetClient().player;
-		ShooterContext shooterContext = ShooterContext.GetOrCreate(player);
+		ShooterContext shooterContext = ShooterContext.of(player);
 		if(!shooterContext.IsValid())
 			return;
 
@@ -274,7 +274,7 @@ public class ClientRenderHooks
 		int anchorX = screenX / 2;
 		int anchorY = screenY;
 
-		ShooterContext shooterContext = ShooterContext.GetOrCreate(player);
+		ShooterContext shooterContext = ShooterContext.of(player);
 		if(player == null || !shooterContext.IsValid())
 			return;
 
