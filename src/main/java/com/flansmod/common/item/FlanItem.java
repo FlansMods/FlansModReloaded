@@ -16,6 +16,7 @@ import com.mojang.blaze3d.platform.InputConstants;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.IntArrayTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
@@ -146,6 +147,9 @@ public abstract class FlanItem extends Item implements IForgeItem
     {
         if(stack.getTag() == null || !stack.getTag().contains("id"))
             return InvalidGunUUID;
+        if(stack.getTag().get("id").getType() != IntArrayTag.TYPE){ //Fix crashing when installed alongside tetra
+            return InvalidGunUUID;
+        }
         return stack.getTag().getUUID("id");
     }
 
