@@ -4,6 +4,7 @@ import com.flansmod.common.FlansMod;
 import com.flansmod.common.actions.contexts.EContextSide;
 import com.flansmod.common.types.elements.ItemStackDefinition;
 import com.mojang.brigadier.StringReader;
+import com.mojang.datafixers.types.templates.Check;
 import net.minecraft.client.Minecraft;
 import net.minecraft.nbt.*;
 import net.minecraft.resources.ResourceKey;
@@ -23,11 +24,14 @@ import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.loading.FMLEnvironment;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.server.ServerLifecycleHooks;
+import org.joml.Quaternionf;
+import org.joml.Vector3f;
 import org.spongepowered.asm.mixin.MixinEnvironment;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.ArrayList;
+import java.util.Vector;
 
 public class MinecraftHelpers
 {

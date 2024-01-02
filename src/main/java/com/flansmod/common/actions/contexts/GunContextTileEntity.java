@@ -27,5 +27,5 @@ public class GunContextTileEntity extends GunContextInventoryItem
 	public Level GetLevel() { return TileEntity.getLevel(); }
 	@Override
 	@Nullable
-	public Transform GetPosition() { return new Transform("BlockPos", TileEntity.getBlockPos().getCenter()); }
+	public Transform GetPosition() { return Transform.FromBlockPos("\"BlockPos\"", TileEntity.getBlockPos()); }
 }

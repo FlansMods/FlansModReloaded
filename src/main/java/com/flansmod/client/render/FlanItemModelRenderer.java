@@ -2,6 +2,7 @@ package com.flansmod.client.render;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
 import java.util.function.Function;
@@ -9,6 +10,7 @@ import java.util.function.Function;
 import com.flansmod.client.FlansModClient;
 import com.flansmod.client.render.animation.FlanimationDefinition;
 import com.flansmod.client.render.animation.ESmoothSetting;
+import com.flansmod.client.render.animation.PoseCache;
 import com.flansmod.client.render.animation.elements.KeyframeDefinition;
 import com.flansmod.client.render.animation.elements.PoseDefinition;
 import com.flansmod.client.render.animation.elements.SequenceDefinition;
@@ -143,10 +145,14 @@ public abstract class FlanItemModelRenderer extends BlockEntityWithoutLevelRende
     protected TurboRig UnbakedRig;
     protected TurboRig.Baked BakedRig;
     public final boolean ShouldRenderWhenHeld;
+    @Nullable
+    public final FlanItem Item;
 
-    public FlanItemModelRenderer(boolean shouldRenderWhenHeld)
+
+    public FlanItemModelRenderer(@Nullable FlanItem flanItem, boolean shouldRenderWhenHeld)
     {
         super(null, null);
+        Item = flanItem;
         ShouldRenderWhenHeld = shouldRenderWhenHeld;
     }
     public void OnUnbakedModelLoaded(TurboRig unbaked)
@@ -159,17 +165,48 @@ public abstract class FlanItemModelRenderer extends BlockEntityWithoutLevelRende
     }
     // Entry point for vanilla render calls
     @Override
-    public void renderByItem(@Nullable ItemStack stack,
+    public void renderByItem(@Nonnull ItemStack stack,
                              @Nonnull ItemDisplayContext transformType,
                              @Nonnull PoseStack ms,
                              @Nonnull MultiBufferSource buffers,
                              int light,
                              int overlay)
     {
-        RenderSystem.enableDepthTest();
-        ms.pushPose();
-        RenderItem(null, transformType, stack, new TransformStack(Transform.FromPoseStack("ItemPose", ms)), buffers, light, overlay);
-        ms.popPose();
+        TransformStack transformStack = new TransformStack(Transform.FromPoseStack("ItemPose", ms));
+        boolean shouldRenderRig = true;
+        if(transformType == ItemDisplayContext.GUI)
+        {
+            String skin = FlanItem.GetPaintjobName(stack);
+            BakedModel iconModel = BakedRig.GetIconModel(skin);
+            if(iconModel != null)
+            {
+                shouldRenderRig = false;
+                transformStack.add(Transform.FromScale("\"Scale to GUI size\"", -2.0f));
+                PoseStack poseStack = transformStack.Top().ToNewPoseStack();
+                poseStack.scale(-1f, 1f, 1f);
+                Lighting.setupForFlatItems();
+                Minecraft.getInstance().getBlockRenderer().getModelRenderer().renderModel(
+                    poseStack.last(),
+                    buffers.getBuffer(Sheets.cutoutBlockSheet()),
+                    null,
+                    iconModel,
+                    1f, 1f, 1f,
+                    light,
+                    overlay);
+            }
+        }
+
+        if(shouldRenderRig)
+        {
+            FirstPersonManager.ApplyRootToModel(
+                transformStack,
+                GunContext.of(stack, EContextSide.Client),
+                transformType);
+
+            // Render item
+            Entity heldBy = transformType.firstPerson() ? Minecraft.getInstance().player : null;
+            DoRender(heldBy, stack, new RenderContext(buffers, transformType, transformStack, light, overlay));
+        }
     }
     // Not sure why you need to do this but another way in
     public void RenderDirect(@Nullable Entity heldByEntity, @Nullable ItemStack stack, @Nonnull RenderContext renderContext)
@@ -196,48 +233,7 @@ public abstract class FlanItemModelRenderer extends BlockEntityWithoutLevelRende
                               int light,
                               int overlay)
     {
-        transformStack.PushSaveState();
-        {
-            boolean shouldRenderRig = true;
-            if(transformType == ItemDisplayContext.GUI)
-            {
-                String skin = "default";
-                if(stack != null)
-                    skin = FlanItem.GetPaintjobName(stack);
-                BakedModel iconModel = BakedRig.GetIconModel(skin);
-                if(iconModel != null)
-                {
 
-                    shouldRenderRig = false;
-                    //PoseStack poseStack = new PoseStack();
-                    //transformStack.add(new Transform("Offset to GUI origin", new Vec3(-0.5d, -0.5d, 0d)));
-                    transformStack.add(new Transform("Scale to GUI size", -2.0f));
-                    PoseStack poseStack = transformStack.Top().ToNewPoseStack();
-                    poseStack.scale(-1f, 1f, 1f);
-                    Lighting.setupForFlatItems();
-                    Minecraft.getInstance().getBlockRenderer().getModelRenderer().renderModel(
-                        poseStack.last(),
-                        buffers.getBuffer(Sheets.cutoutBlockSheet()),
-                        null,
-                        iconModel,
-                        1f, 1f, 1f,
-                        light,
-                        overlay);
-                }
-            }
-
-            if(shouldRenderRig)
-            {
-                FirstPersonManager.ApplyRootToModel(
-                        transformStack,
-                        GunContext.of(stack, EContextSide.Client),
-                        transformType);
-
-                // Render item
-                DoRender(entity, stack, new RenderContext(buffers, transformType, transformStack, light, overlay));
-            }
-        }
-        transformStack.PopSaveState();
     }
 
     // The specifics handled by each render type, gun etc.
@@ -328,20 +324,20 @@ public abstract class FlanItemModelRenderer extends BlockEntityWithoutLevelRende
                                 outputParameter = linearParameter * linearParameter * (3f - 2f * linearParameter);
                         }
 
-                        PoseDefinition fromPose = animationSet.GetPoseForPart(from, partName);
-                        PoseDefinition toPose = animationSet.GetPoseForPart(to, partName);
+                        //PoseDefinition fromPose = animationSet.GetPoseForPart(from, partName);
+                        //PoseDefinition toPose = animationSet.GetPoseForPart(to, partName);
 
-                        Vector3f pos = PoseDefinition.LerpPosition(UnbakedRig.GetFloatParams(), fromPose, toPose, outputParameter);
-                        Quaternionf rotation = PoseDefinition.LerpRotation(UnbakedRig.GetFloatParams(), fromPose, toPose, outputParameter);
-
-                        //!
-                        Transform test = new Transform("Pose["+from.name+"-"+to.name+"]", pos.mul(1f/16f), rotation);
-                        poses.add(test);
+                        poses.add(PoseCache.Lerp(GetDefLoc(),
+                            animationSet.Location,
+                            from.name,
+                            to.name,
+                            partName,
+                            outputParameter));
                     }
                 }
             }
 
-            Transform resultPose = poses.size() > 0 ? Transform.Interpolate(poses) : new Transform("Anim no-op");
+            Transform resultPose = poses.size() > 0 ? Transform.Interpolate(poses) : Transform.Identity("\"Anim no-op\"");
             TurboModel model = UnbakedRig.GetPart(partName);
             if (model != null)
             {
@@ -351,7 +347,7 @@ public abstract class FlanItemModelRenderer extends BlockEntityWithoutLevelRende
             return resultPose;
         }
 
-        return new Transform("No Anims");
+        return Transform.Identity("\"No Anims\"");
     }
 
     private void ApplyItemArmTransform(PoseStack poseStack, HumanoidArm arm, float equipProgress)
@@ -359,15 +355,22 @@ public abstract class FlanItemModelRenderer extends BlockEntityWithoutLevelRende
         int i = arm == HumanoidArm.RIGHT ? 1 : -1;
         poseStack.translate((float)i * 0.56F, -0.52F + equipProgress * -0.6F, -0.72F);
     }
-
+    @Nonnull
     public ResourceLocation GetSkin(@Nullable ItemStack stack)
     {
-        String skin = "default";
-        if(stack != null && stack.getItem() instanceof FlanItem flanItem)
-        {
-            skin = flanItem.GetPaintjobName(stack);
-        }
+        String skin = stack != null ? FlanItem.GetPaintjobName(stack) : "default";
         return BakedRig.GetTexture(skin);
+    }
+    @Nonnull
+    public Map<String, Float> GetParameters()
+    {
+        return UnbakedRig.GetFloatParams();
+    }
+    private static final ResourceLocation UnknownModelLocation = new ResourceLocation(FlansMod.MODID, "models/unknown");
+    @Nonnull
+    public ResourceLocation GetDefLoc()
+    {
+        return Item != null ? Item.DefinitionLocation : UnknownModelLocation;
     }
 
 
@@ -401,7 +404,7 @@ public abstract class FlanItemModelRenderer extends BlockEntityWithoutLevelRende
                         if (kvp.getValue().Parent != null && kvp.getValue().Parent.PartName.equals(partName))
                         {
                             renderContext.Transforms.PushSaveState();
-                            renderContext.Transforms.add(new Transform("Offset[" + kvp.getKey() + "]", kvp.getValue().Offset, kvp.getValue().Rotation));
+                            renderContext.Transforms.add(kvp.getValue().Offset);
                             RenderPartIteratively(renderContext, kvp.getKey(), textureFunc, preRenderFunc, postRenderFunc);
                             renderContext.Transforms.PopSaveState();
                         }
@@ -448,7 +451,7 @@ public abstract class FlanItemModelRenderer extends BlockEntityWithoutLevelRende
             }
 
             // Then offset by our AP
-            transformStack.add(new Transform("AP Offset["+apName+"]", ap.Offset, ap.Rotation, 1.0f));
+            transformStack.add(ap.Offset);
             // Then offset by our animation
             if(animationSet != null && actionStack != null)
             {

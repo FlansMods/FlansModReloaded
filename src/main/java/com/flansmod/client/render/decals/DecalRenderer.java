@@ -209,7 +209,7 @@ public class DecalRenderer
 			xAxis = xAxis.normalize().scale(0.25d);
 			yAxis = yAxis.normalize().scale(0.25d);
 
-			Vec3 smolNormal = Normal.normalize().scale(0.0001d * toCamera.lengthSqr());
+			Vec3 smolNormal = Normal.normalize().scale(0.001d * toCamera.length());
 
 			Vec3 v0 = Maths.Add(smolNormal, Maths.Add(xAxis, yAxis));
 			Vec3 v1 = Maths.Add(smolNormal, Maths.Sub(xAxis, yAxis));

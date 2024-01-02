@@ -23,6 +23,7 @@ import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.registries.ForgeRegistries;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
@@ -137,7 +138,20 @@ public class FlanModelRegistration implements PreparableReloadListener
             }
         }
     }
-
+    @Nullable
+    public FlanItemModelRenderer GetModelRenderer(ResourceLocation loc)
+    {
+        Item item = ForgeRegistries.ITEMS.getValue(loc);
+        if(item instanceof FlanItem flanItem)
+        {
+            if(ITEMS_TO_REGISTER.containsKey(flanItem))
+            {
+                return ITEMS_TO_REGISTER.get(flanItem);
+            }
+        }
+        return null;
+    }
+    @Nullable
     public FlanItemModelRenderer GetModelRenderer(JsonDefinition def)
     {
         Item item = ForgeRegistries.ITEMS.getValue(def.Location);
@@ -150,7 +164,7 @@ public class FlanModelRegistration implements PreparableReloadListener
         }
         return null;
     }
-
+    @Nullable
     public FlanItemModelRenderer GetModelRenderer(ItemStack stack)
     {
         if(stack.getItem() instanceof FlanItem flanItem)

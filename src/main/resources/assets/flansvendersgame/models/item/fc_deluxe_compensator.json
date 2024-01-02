@@ -69,7 +69,7 @@
                     ],
                     "eulerRotations": [
                         0.0,
-                        0.0,
+                        90.0,
                         0.0
                     ],
                     "rotationOrigin": [
@@ -181,7 +181,7 @@
                     ],
                     "eulerRotations": [
                         0.0,
-                        0.0,
+                        90.0,
                         0.0
                     ],
                     "rotationOrigin": [
@@ -253,12 +253,12 @@
     },
     "attachPoints": [
         {
-            "name": "bullet_origin",
+            "name": "shoot_origin",
             "attachTo": "body",
             "offset": [
-                4.0,
+                2.38418579E-07,
                 0.0,
-                0.0
+                -3.99999976
             ]
         }
     ],
@@ -266,7 +266,7 @@
         "firstperson_righthand": {
             "rotation": [
                 0.0,
-                90.0,
+                0.0,
                 0.0
             ],
             "translation": [
@@ -283,7 +283,7 @@
         "firstperson_lefthand": {
             "rotation": [
                 0.0,
-                90.0,
+                0.0,
                 0.0
             ],
             "translation": [
@@ -300,7 +300,7 @@
         "thirdperson_righthand": {
             "rotation": [
                 0.0,
-                90.0,
+                0.0,
                 0.0
             ],
             "translation": [
@@ -317,7 +317,7 @@
         "thirdperson_lefthand": {
             "rotation": [
                 0.0,
-                90.0,
+                0.0,
                 0.0
             ],
             "translation": [
@@ -334,7 +334,7 @@
         "gui": {
             "rotation": [
                 0.0,
-                135.0,
+                45.0,
                 90.0
             ],
             "translation": [
@@ -351,7 +351,7 @@
         "head": {
             "rotation": [
                 270.0,
-                0.0,
+                270.0,
                 0.0
             ],
             "translation": [
@@ -368,7 +368,7 @@
         "ground": {
             "rotation": [
                 0.0,
-                0.0,
+                270.0,
                 0.0
             ],
             "translation": [
@@ -377,16 +377,16 @@
                 0.0
             ],
             "scale": [
-                1.0,
-                1.0,
-                1.0
+                0.0625,
+                0.0625,
+                0.0625
             ]
         },
         "fixed": {
             "rotation": [
                 0.0,
-                0.0,
-                45.0000038
+                270.0,
+                45.0
             ],
             "translation": [
                 6.0,

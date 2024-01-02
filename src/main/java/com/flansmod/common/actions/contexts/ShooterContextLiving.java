@@ -80,13 +80,12 @@ public class ShooterContextLiving extends ShooterContext implements Container
 	@Override
 	public Transform GetShootOrigin()
 	{
-		return new Transform(
-			"ShootOrigin",
+		return Transform.FromPosAndEuler(
+			"\"ShootOrigin\"",
 			Shooter.getEyePosition(),
-			Transform.FromEuler(
-				-Shooter.getXRot(),
-				180f - Shooter.getYRot(),
-				0.0f));
+			Shooter.getXRot(),
+			180f + Shooter.getYRot(),
+			0.0f);
 	}
 
 	@Override

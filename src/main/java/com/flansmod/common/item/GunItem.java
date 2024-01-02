@@ -603,7 +603,7 @@ public class GunItem extends FlanItem
     @OnlyIn(Dist.CLIENT)
     public void initializeClient(Consumer<IClientItemExtensions> consumer)
     {
-        consumer.accept(FlanClientItemExtensions.create(this, new GunItemRenderer()));
+        consumer.accept(FlanClientItemExtensions.create(this, new GunItemRenderer(this)));
     }
 
     // Random parameter overrides

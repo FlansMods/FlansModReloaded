@@ -15,6 +15,7 @@
                 0.0,
                 0.0
             ],
+            "material": "Cutout",
             "turboelements": [
                 {
                     "verts": [
@@ -472,6 +473,7 @@
                 0.0,
                 0.0
             ],
+            "material": "Cutout",
             "turboelements": [
                 {
                     "verts": [
@@ -603,7 +605,7 @@
         "firstperson_righthand": {
             "rotation": [
                 0.0,
-                90.0,
+                270.0,
                 0.0
             ],
             "translation": [
@@ -620,7 +622,7 @@
         "firstperson_lefthand": {
             "rotation": [
                 0.0,
-                90.0,
+                270.0,
                 0.0
             ],
             "translation": [

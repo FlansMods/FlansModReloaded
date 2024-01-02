@@ -62,7 +62,7 @@
                     ],
                     "eulerRotations": [
                         0.0,
-                        0.0,
+                        90.0,
                         0.0
                     ],
                     "rotationOrigin": [
@@ -174,7 +174,7 @@
                     ],
                     "eulerRotations": [
                         0.0,
-                        0.0,
+                        90.0,
                         0.0
                     ],
                     "rotationOrigin": [
@@ -286,7 +286,7 @@
                     ],
                     "eulerRotations": [
                         0.0,
-                        0.0,
+                        90.0,
                         0.0
                     ],
                     "rotationOrigin": [
@@ -398,7 +398,7 @@
                     ],
                     "eulerRotations": [
                         0.0,
-                        0.0,
+                        90.0,
                         0.0
                     ],
                     "rotationOrigin": [
@@ -464,17 +464,7 @@
                             "texture": "#default"
                         }
                     }
-                }
-            ]
-        },
-        "emissive": {
-            "origin": [
-                0.0,
-                0.0,
-                0.0
-            ],
-            "material": "Emissive",
-            "turboelements": [
+                },
                 {
                     "verts": [
                         [
@@ -520,7 +510,7 @@
                     ],
                     "eulerRotations": [
                         0.0,
-                        0.0,
+                        90.0,
                         0.0
                     ],
                     "rotationOrigin": [
@@ -595,18 +585,9 @@
             "name": "eye_line",
             "attachTo": "body",
             "offset": [
-                -1.0,
+                -5.96046448E-08,
                 1.125,
-                0.0
-            ]
-        },
-        {
-            "name": "emissive",
-            "attachTo": "body",
-            "offset": [
-                0.0,
-                0.0,
-                0.0
+                0.99999994
             ]
         }
     ],
@@ -614,7 +595,7 @@
         "firstperson_righthand": {
             "rotation": [
                 0.0,
-                90.0,
+                0.0,
                 0.0
             ],
             "translation": [
@@ -631,7 +612,7 @@
         "firstperson_lefthand": {
             "rotation": [
                 0.0,
-                90.0,
+                0.0,
                 0.0
             ],
             "translation": [
@@ -648,7 +629,7 @@
         "thirdperson_righthand": {
             "rotation": [
                 0.0,
-                90.0,
+                0.0,
                 0.0
             ],
             "translation": [
@@ -665,7 +646,7 @@
         "thirdperson_lefthand": {
             "rotation": [
                 0.0,
-                90.0,
+                0.0,
                 0.0
             ],
             "translation": [
@@ -682,7 +663,7 @@
         "gui": {
             "rotation": [
                 0.0,
-                135.0,
+                45.0,
                 90.0
             ],
             "translation": [
@@ -699,7 +680,7 @@
         "head": {
             "rotation": [
                 270.0,
-                0.0,
+                270.0,
                 0.0
             ],
             "translation": [
@@ -716,7 +697,7 @@
         "ground": {
             "rotation": [
                 0.0,
-                0.0,
+                270.0,
                 0.0
             ],
             "translation": [
@@ -725,16 +706,16 @@
                 0.0
             ],
             "scale": [
-                1.0,
-                1.0,
-                1.0
+                0.0625,
+                0.0625,
+                0.0625
             ]
         },
         "fixed": {
             "rotation": [
                 0.0,
-                0.0,
-                45.0000038
+                270.0,
+                45.0
             ],
             "translation": [
                 6.0,

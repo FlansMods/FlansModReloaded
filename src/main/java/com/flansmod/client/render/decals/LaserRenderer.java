@@ -27,10 +27,13 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
+import net.minecraftforge.client.event.RenderHandEvent;
 import net.minecraftforge.client.event.RenderLevelStageEvent;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
 import org.joml.Vector4f;
 
+import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -38,21 +41,22 @@ public class LaserRenderer
 {
 	public LaserRenderer()
 	{
-		MinecraftForge.EVENT_BUS.addListener(this::RenderTick);
+		MinecraftForge.EVENT_BUS.register(this);
 	}
 
+	@SubscribeEvent
 	public void RenderTick(RenderLevelStageEvent event)
 	{
 		if(event.getStage() == RenderLevelStageEvent.Stage.AFTER_PARTICLES)
 		{
-			if(Minecraft.getInstance().player != null)
+			if (Minecraft.getInstance().player != null)
 			{
 				ShooterContext playerContext = ShooterContext.of(Minecraft.getInstance().player);
-				if(playerContext.IsValid())
+				if (playerContext.IsValid())
 				{
 					for (GunContext gunContext : playerContext.GetAllGunContexts(true))
 					{
-						if(gunContext.IsValid())
+						if (gunContext.IsValid())
 						{
 							for (ActionGroupInstance actionGroup : gunContext.GetActionStack().GetActiveActionGroups())
 							{
@@ -62,14 +66,16 @@ public class LaserRenderer
 									{
 										if (actionGroup.Context.IsAttachment())
 										{
-											RenderLaserFirstPerson(event,
+											RenderLaserFirstPerson(event.getPoseStack(),
+												event.getCamera(),
 												gunContext,
 												actionGroup.Context.GetAttachmentType(),
 												actionGroup.Context.GetAttachmentIndex(),
 												laserAction.LaserOrigin());
 										} else
 										{
-											RenderLaserFirstPerson(event,
+											RenderLaserFirstPerson(event.getPoseStack(),
+												event.getCamera(),
 												gunContext,
 												EAttachmentType.Generic,
 												-1,
@@ -83,10 +89,16 @@ public class LaserRenderer
 				}
 			}
 		}
+
+	}
+	@SubscribeEvent
+	public void OnRenderFirstPersonHands(RenderHandEvent event)
+	{
+
 	}
 
 	private static final ResourceLocation LaserTexture = new ResourceLocation(FlansMod.MODID, "textures/effects/laser_point.png");
-	public void RenderLaserFirstPerson(RenderLevelStageEvent event, GunContext gunContext, EAttachmentType attachType, int attachIndex, String apName)
+	public void RenderLaserFirstPerson(@Nonnull PoseStack poseStack, @Nonnull Camera camera, @Nonnull GunContext gunContext, @Nonnull EAttachmentType attachType, int attachIndex, @Nonnull String apName)
 	{
 		ItemDisplayContext transformType = ItemDisplayContext.FIRST_PERSON_RIGHT_HAND;
 		if(gunContext instanceof GunContextPlayer playerGunContext)
@@ -121,7 +133,8 @@ public class LaserRenderer
 
 					Vector4f laserColour = new Vector4f(1f, 0f, 0f, 1f);
 
-					RenderLaser(event,
+					RenderLaser(poseStack,
+						camera,
 						origin.PositionVec3(),
 						origin.ForwardVec3(),
 						hits.get(0).getLocation(),
@@ -138,7 +151,8 @@ public class LaserRenderer
 				}
 				else
 				{
-					RenderLaser(event,
+					RenderLaser(poseStack,
+						camera,
 						origin.PositionVec3(),
 						origin.ForwardVec3(),
 						origin.PositionVec3().add(ray),
@@ -148,10 +162,8 @@ public class LaserRenderer
 		}
 	}
 
-	public void RenderLaser(RenderLevelStageEvent event, Vec3 startPos, Vec3 startNormal, Vec3 endPos, Vec3 endNormal)
+	public void RenderLaser(@Nonnull PoseStack poseStack, @Nonnull Camera camera, @Nonnull Vec3 startPos, @Nonnull Vec3 startNormal, Vec3 endPos, Vec3 endNormal)
 	{
-		PoseStack poseStack = event.getPoseStack();
-		Camera camera = event.getCamera();
 		Tesselator tesselator = Tesselator.getInstance();
 		RenderSystem.setShader(GameRenderer::getPositionColorShader);
 		RenderSystem.enableBlend();

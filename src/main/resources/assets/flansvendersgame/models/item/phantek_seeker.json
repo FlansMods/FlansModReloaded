@@ -69,7 +69,7 @@
                     ],
                     "eulerRotations": [
                         0.0,
-                        0.0,
+                        90.0,
                         0.0
                     ],
                     "rotationOrigin": [
@@ -181,7 +181,7 @@
                     ],
                     "eulerRotations": [
                         0.0,
-                        0.0,
+                        90.0,
                         0.0
                     ],
                     "rotationOrigin": [
@@ -293,7 +293,7 @@
                     ],
                     "eulerRotations": [
                         0.0,
-                        0.0,
+                        90.0,
                         0.0
                     ],
                     "rotationOrigin": [
@@ -405,7 +405,7 @@
                     ],
                     "eulerRotations": [
                         0.0,
-                        0.0,
+                        90.0,
                         0.0
                     ],
                     "rotationOrigin": [
@@ -517,7 +517,7 @@
                     ],
                     "eulerRotations": [
                         0.0,
-                        0.0,
+                        90.0,
                         0.0
                     ],
                     "rotationOrigin": [
@@ -639,12 +639,12 @@
                     ],
                     "eulerRotations": [
                         0.0,
-                        0.0,
-                        0.0
+                        90.0,
+                        270.0
                     ],
                     "rotationOrigin": [
                         0.0,
-                        3.5,
+                        0.0,
                         0.0
                     ],
                     "faces": {
@@ -751,12 +751,12 @@
                     ],
                     "eulerRotations": [
                         0.0,
-                        0.0,
-                        0.0
+                        90.0,
+                        270.0
                     ],
                     "rotationOrigin": [
                         0.0,
-                        3.5,
+                        0.0,
                         0.0
                     ],
                     "faces": {
@@ -863,12 +863,12 @@
                     ],
                     "eulerRotations": [
                         0.0,
-                        0.0,
-                        0.0
+                        90.0,
+                        270.0
                     ],
                     "rotationOrigin": [
                         0.0,
-                        3.5,
+                        0.0,
                         0.0
                     ],
                     "faces": {
@@ -938,23 +938,23 @@
             "name": "sights",
             "attachTo": "body",
             "offset": [
-                6.0,
+                1.00000024,
                 3.5,
-                1.0
+                -5.99999952
             ],
             "euler": [
-                90.0,
                 0.0,
-                0.0
+                0.0,
+                -90.0
             ]
         },
         {
             "name": "barrel",
             "attachTo": "body",
             "offset": [
-                12.0,
+                7.15255737E-07,
                 3.5,
-                0.0
+                -11.999999
             ]
         },
         {
@@ -970,32 +970,27 @@
             "name": "ammo_0",
             "attachTo": "body",
             "offset": [
-                -3.0,
+                -1.78813934E-07,
                 3.5,
-                0.0
-            ],
-            "euler": [
-                0.0,
-                0.0,
-                -90.0
+                2.99999976
             ]
         },
         {
             "name": "eye_line",
             "attachTo": "body",
             "offset": [
-                0.0,
+                2.49999976,
                 3.5,
-                2.5
+                1.49011612E-07
             ]
         },
         {
             "name": "shoot_origin",
             "attachTo": "body",
             "offset": [
-                12.0,
+                7.15255737E-07,
                 3.5,
-                0.0
+                -11.999999
             ]
         }
     ],
@@ -1003,7 +998,7 @@
         "firstperson_righthand": {
             "rotation": [
                 0.0,
-                90.0,
+                0.0,
                 0.0
             ],
             "translation": [
@@ -1020,7 +1015,7 @@
         "firstperson_lefthand": {
             "rotation": [
                 0.0,
-                90.0,
+                0.0,
                 0.0
             ],
             "translation": [
@@ -1037,7 +1032,7 @@
         "thirdperson_righthand": {
             "rotation": [
                 0.0,
-                0.0,
+                270.0,
                 0.0
             ],
             "translation": [
@@ -1054,7 +1049,7 @@
         "thirdperson_lefthand": {
             "rotation": [
                 0.0,
-                0.0,
+                270.0,
                 0.0
             ],
             "translation": [
@@ -1071,7 +1066,7 @@
         "gui": {
             "rotation": [
                 0.0,
-                135.0,
+                45.0,
                 90.0
             ],
             "translation": [
@@ -1088,7 +1083,7 @@
         "head": {
             "rotation": [
                 270.0,
-                0.0,
+                270.0,
                 0.0
             ],
             "translation": [
@@ -1105,7 +1100,7 @@
         "ground": {
             "rotation": [
                 0.0,
-                0.0,
+                270.0,
                 0.0
             ],
             "translation": [
@@ -1114,16 +1109,16 @@
                 0.0
             ],
             "scale": [
-                1.0,
-                1.0,
-                1.0
+                0.0625,
+                0.0625,
+                0.0625
             ]
         },
         "fixed": {
             "rotation": [
                 0.0,
-                0.0,
-                45.0000038
+                270.0,
+                45.0
             ],
             "translation": [
                 6.0,

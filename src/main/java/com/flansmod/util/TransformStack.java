@@ -8,10 +8,12 @@ import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.joml.Quaternionf;
+import org.joml.Vector3f;
 import org.joml.Vector4f;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Stack;
 
@@ -42,6 +44,26 @@ public class TransformStack extends Stack<Transform>
 	{
 		super();
 		add(initial);
+	}
+
+	public static TransformStack of()
+	{
+		return new TransformStack();
+	}
+	public static TransformStack of(Transform transform)
+	{
+		return new TransformStack(transform);
+	}
+	public static TransformStack of(Transform ... transforms)
+	{
+		TransformStack stack = new TransformStack();
+		stack.addAll(Arrays.asList(transforms));
+		return stack;
+	}
+	public TransformStack andThen(Transform transform)
+	{
+		add(transform);
+		return this;
 	}
 
 	public void PushSaveState()
@@ -116,6 +138,17 @@ public class TransformStack extends Stack<Transform>
 		for(int i = 0; i < size(); i++)
 			globalTransform = get(i).GlobalToLocalTransform(globalTransform);
 		return globalTransform;
+	}
+
+	public void ApplyToPoseStack(@Nonnull PoseStack poseStack)
+	{
+		for(int i = 0; i < size(); i++)
+		{
+			Transform t = get(i);
+			poseStack.translate(t.Position.x, t.Position.y, t.Position.z);
+			poseStack.mulPose(t.Orientation);
+			poseStack.scale(t.Scale, t.Scale, t.Scale);
+		}
 	}
 
 	@OnlyIn(Dist.CLIENT)

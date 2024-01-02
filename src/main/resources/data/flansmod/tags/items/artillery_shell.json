@@ -1,0 +1,9 @@
+{
+  "replace": "false",
+  "values": [
+    "flansbasicparts:artillery_shell",
+    "flansbasicparts:artillery_shell_ap",
+    "flansbasicparts:artillery_shell_ex",
+    "flansbasicparts:artillery_shell_incendiary"
+  ]
+}

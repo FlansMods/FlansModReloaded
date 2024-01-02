@@ -25,6 +25,8 @@ import com.flansmod.common.types.magazines.MagazineDefinitions;
 import com.flansmod.common.types.npc.NpcDefinitions;
 import com.flansmod.common.types.parts.PartDefinitions;
 import com.flansmod.common.worldgen.loot.LootPopulator;
+import com.flansmod.util.MinecraftHelpers;
+import com.flansmod.util.Transform;
 import com.mojang.logging.LogUtils;
 import com.mojang.serialization.Codec;
 import net.minecraft.advancements.CriteriaTriggers;
@@ -317,6 +319,8 @@ public class FlansMod
         RECIPE_SERIALIZERS.register(modEventBus);
         LOOT_MODIFIERS.register(modEventBus);
         CREATIVE_TABS.register(modEventBus);
+
+        Transform.RunTests();
     }
 
     private void CommonInit(final FMLCommonSetupEvent event)

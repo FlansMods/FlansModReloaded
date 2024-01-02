@@ -35,6 +35,7 @@ public class Maths
     public static double Max(double a, double b) { return a > b ? a : b; }
     public static double Min(double a, double b) { return a < b ? a : b; }
     public static boolean Approx(double a, double b) { return Abs(a-b) < Epsilon; }
+    public static boolean Approx(double a, double b, double epsilon) { return Abs(a-b) < epsilon; }
     public static double Lerp(double a, double b, double t) { return a + (b-a)*t; }
     public static double Sign(double d) { return d > 0.0d ? 1.0d : (d < 0.0d ? -1.0d : 0.0d); }
     public static double Exp(double d) { return Math.exp(d); }
@@ -53,6 +54,7 @@ public class Maths
     public static int Floor(float d) { return (int)Math.floor(d); }
     public static int Round(float d) { return (int)Math.round(d); }
     public static boolean Approx(float a, float b) { return Abs(a-b) < EpsilonF; }
+    public static boolean Approx(float a, float b, float epsilon) { return Abs(a-b) < epsilon; }
     public static float LerpF(float a, float b, float t) { return a + (b-a)*Maths.Clamp(t, 0f, 1f); }
     public static float Sign(float f) { return f > 0.0f ? 1.0f : (f < 0.0f ? -1.0f : 0.0f); }
     public static float ExpF(float f) { return (float)Math.exp(f); }
@@ -104,12 +106,6 @@ public class Maths
     public static Vec3 Cross(Vec3 a, Vec3 b) { return a.cross(b); }
 
 
-    public static Quaternionf IdentityQuat()
-    {
-        return new Quaternionf(0.0f, 0.0f, 0.0f, 1.0f);
-    }
-    public static Quaternionf QuaternionFromEuler(float x, float y, float z) { return new Quaternionf().rotateXYZ(x* Maths.DegToRadF, y * Maths.DegToRadF, z* Maths.DegToRadF); }
-    public static Quaternionf QuaternionFromEuler(Vector3f v) { return new Quaternionf().rotateXYZ(v.x* Maths.DegToRadF, v.y * Maths.DegToRadF, v.z* Maths.DegToRadF); }
     public static Quaternionf Slerp(Quaternionf a, Quaternionf b, float t) { return a.slerp(b, t, new Quaternionf()); }
     public static Orientation Slerp(Orientation a, Orientation b, float t) { return a.Slerp(b, t); }
 

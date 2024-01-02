@@ -17,8 +17,10 @@ import com.flansmod.common.actions.contexts.ContextCache;
 import com.flansmod.util.Maths;
 import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import net.minecraft.Util;
+import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.MenuScreens;
+import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.client.renderer.ItemInHandRenderer;
 import net.minecraft.client.renderer.ItemModelShaper;
 import net.minecraft.client.renderer.ShaderInstance;
@@ -39,9 +41,11 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.fml.util.ObfuscationReflectionHelper;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
 import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 
 @OnlyIn(Dist.CLIENT)
 @Mod.EventBusSubscriber(value = Dist.CLIENT, bus = Mod.EventBusSubscriber.Bus.MOD, modid = FlansMod.MODID)
@@ -178,6 +182,7 @@ public class FlansModClient
 	private static final Field ITEM_IN_HAND_RENDERER_O_MAIN_HAND_HEIGHT = ObfuscationReflectionHelper.findField(ItemInHandRenderer.class, "f_109303_");
 	private static final Field ITEM_IN_HAND_RENDERER_OFF_HAND_HEIGHT = ObfuscationReflectionHelper.findField(ItemInHandRenderer.class, "f_109304_");
 	private static final Field ITEM_IN_HAND_RENDERER_O_OFF_HAND_HEIGHT = ObfuscationReflectionHelper.findField(ItemInHandRenderer.class, "f_109305_");
+	private static final Method GET_FOV = ObfuscationReflectionHelper.findMethod(GameRenderer.class, "m_109141_", Camera.class, Float.TYPE, Boolean.TYPE);
 	private static void InitReflection()
 	{
 		MINECRAFT_MISS_TIME.setAccessible(true);
@@ -185,6 +190,19 @@ public class FlansModClient
 		ITEM_IN_HAND_RENDERER_O_MAIN_HAND_HEIGHT.setAccessible(true);
 		ITEM_IN_HAND_RENDERER_OFF_HAND_HEIGHT.setAccessible(true);
 		ITEM_IN_HAND_RENDERER_O_OFF_HAND_HEIGHT.setAccessible(true);
+		GET_FOV.setAccessible(true);
+	}
+	public static double GetFOV(Camera camera, float dt, boolean applyFOVSetting)
+	{
+		try
+		{
+			return (double) GET_FOV.invoke(Minecraft.getInstance().gameRenderer, camera, dt, applyFOVSetting);
+		}
+		catch(Exception e)
+		{
+			FlansMod.LOGGER.error("Failed to GetFOV due to " + e);
+		}
+		return 1.0d;
 	}
 	public static float GetHandHeight(InteractionHand hand, float dt)
 	{

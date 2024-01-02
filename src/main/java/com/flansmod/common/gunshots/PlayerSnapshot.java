@@ -49,7 +49,7 @@ public class PlayerSnapshot
         player = p;
 
         TransformStack transformStack = new TransformStack();
-        transformStack.add(new Transform("Pos", p.getPosition(0.0f)));
+        transformStack.add(Transform.FromPos("\"Pos\"", p.getPosition(0.0f)));
 
         // This block of code is good fun. We need to get the CLIENT ONLY poses onto the server
         // float attackTime = getAttackAnim()
@@ -81,7 +81,7 @@ public class PlayerSnapshot
             if(bedDir != null)
             {
                 float eyeHeight = player.getEyeHeight(Pose.STANDING) - 0.1f;
-                transformStack.add(new Transform("SleepPose", new Vec3(-bedDir.getStepX() * eyeHeight, 0.0d, -bedDir.getStepZ() * eyeHeight)));
+                transformStack.add(Transform.FromPos("\"SleepPose\"", new Vec3(-bedDir.getStepX() * eyeHeight, 0.0d, -bedDir.getStepZ() * eyeHeight)));
             }
         }
 
@@ -93,7 +93,7 @@ public class PlayerSnapshot
                 yBody += Maths.CosF(player.tickCount * 3.25f) * Maths.PiF * 0.4f;
 
             if (!player.hasPose(Pose.SLEEPING))
-                transformStack.add(new Transform("PlayerYaw", Transform.FromEuler(0f, 180f - yBody, 0f)));
+                transformStack.add(Transform.FromEuler("\"PlayerYaw\"", 0f, 180f - yBody, 0f));
 
             if (player.deathTime > 0)
             {
@@ -101,25 +101,25 @@ public class PlayerSnapshot
                 deathTime = Maths.SqrtF(deathTime);
                 deathTime = Maths.Clamp(deathTime, Float.MIN_VALUE, 1.0f);
 
-                transformStack.add(new Transform("DeathAnim", Transform.FromEuler(0f, 0f, deathTime * 90.0f)));
+                transformStack.add(Transform.FromEuler("\"DeathAnim\"", 0f, 0f, deathTime * 90.0f));
             }
             else if (player.isAutoSpinAttack())
             {
-                transformStack.add(new Transform("SpinAttack", Transform.FromEuler(-90.0f - player.getXRot(), player.tickCount * -75.0f, 0f)));
+                transformStack.add(Transform.FromEuler("\"SpinAttack\"", -90.0f - player.getXRot(), player.tickCount * -75.0f, 0f));
             }
             else if (player.hasPose(Pose.SLEEPING))
             {
                 Direction bedDir = player.getBedOrientation();
                 float bedAngle = bedDir != null ? (90.0f - bedDir.toYRot()) : yBody;
-                transformStack.add(new Transform("Sleeping", Transform.FromEuler(0f, bedAngle, 0f)));
-                transformStack.add(new Transform("Sleeping", Transform.FromEuler(0f, 270.0f, 90.0f)));
+                transformStack.add(Transform.FromEuler("\"Sleeping\"", 0f, bedAngle, 0f));
+                transformStack.add(Transform.FromEuler("\"Sleeping\"", 0f, 270.0f, 90.0f));
             }
         }
         // else dinnerbone, nty
 
         // Scale(-1, -1, 1)
         // this.Scale(?)
-        transformStack.add(new Transform("UnapplyEyeLine", new Vec3(0f, -1.5f, 0f)));
+        transformStack.add(Transform.FromPos("\"UnapplyEyeLine\"", new Vec3(0f, -1.5f, 0f)));
         float anim8 = 0f, anim5 = 0f;
         if(!shouldSit && player.isAlive())
         {
@@ -141,8 +141,8 @@ public class PlayerSnapshot
         // Body
         {
             transformStack.PushSaveState();
-            transformStack.add(new Transform("BodyYaw", Transform.FromEuler(0f, p.yBodyRot, 0f)));
-            transformStack.add(new Transform("BodyCenter", new Vec3(0d, 0.7d, 0d)));
+            transformStack.add(Transform.FromEuler("\"BodyYaw\"", 0f, p.yBodyRot, 0f));
+            transformStack.add(Transform.FromPos("\"BodyCenter\"", 0d, 0.7d, 0d));
             Vector3f bodyHalfSize = new Vector3f(0.25f, 0.7f, 0.15f);
             UpdateHitbox(EPlayerHitArea.BODY, transformStack.Top(), bodyHalfSize);
             transformStack.pop();
@@ -153,9 +153,9 @@ public class PlayerSnapshot
         // Head
         {
             transformStack.PushSaveState();
-            transformStack.add(new Transform("NeckOffset", new Vec3(0d, 1.4d, 0d))); // Then add the neck pivot point
-            transformStack.add(new Transform("NeckRot", Transform.FromEuler(p.xRotO, p.yHeadRot, 0.0f))); // Rotate around the neck
-            transformStack.add(new Transform("HeadHalfHeight", new Vec3(0d, 0.25d, 0d))); // Add half a head height
+            transformStack.add(Transform.FromPos("\"NeckOffset\"", 0d, 1.4d, 0d)); // Then add the neck pivot point
+            transformStack.add(Transform.FromEuler("\"NeckRot\"", p.xRotO, p.yHeadRot, 0.0f)); // Rotate around the neck
+            transformStack.add(Transform.FromPos("\"HeadHalfHeight\"", 0d, 0.25d, 0d)); // Add half a head height
             Vector3f headHalfSize = new Vector3f(0.25f, 0.25f, 0.25f);
             UpdateHitbox(EPlayerHitArea.HEAD, transformStack.Top(), headHalfSize);
             transformStack.PopSaveState();

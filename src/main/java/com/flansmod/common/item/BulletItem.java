@@ -58,6 +58,6 @@ public class BulletItem extends FlanItem implements IForgeItem
 	@OnlyIn(Dist.CLIENT)
 	public void initializeClient(Consumer<IClientItemExtensions> consumer)
 	{
-		consumer.accept(FlanClientItemExtensions.create(this, new BulletItemRenderer()));
+		consumer.accept(FlanClientItemExtensions.create(this, new BulletItemRenderer(this)));
 	}
 }

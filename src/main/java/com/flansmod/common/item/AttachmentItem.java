@@ -27,7 +27,7 @@ public class AttachmentItem extends FlanItem
 	@OnlyIn(Dist.CLIENT)
 	public void initializeClient(Consumer<IClientItemExtensions> consumer)
 	{
-		consumer.accept(FlanClientItemExtensions.create(this, new AttachmentItemRenderer()));
+		consumer.accept(FlanClientItemExtensions.create(this, new AttachmentItemRenderer(this)));
 	}
 
 	// Random parameter overrides

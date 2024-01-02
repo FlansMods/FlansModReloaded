@@ -63,6 +63,12 @@ public class ClientRenderHooks
 	}
 
 	@SubscribeEvent
+	public void OnRenderFirstPersonHands(RenderHandEvent event)
+	{
+
+	}
+
+	@SubscribeEvent
 	public void OnComputeFOV(ComputeFovModifierEvent event)
 	{
 		ShooterContext shooterContext = ShooterContext.of(MinecraftHelpers.GetClient().player);

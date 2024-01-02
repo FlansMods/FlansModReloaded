@@ -20,9 +20,14 @@ import net.minecraft.world.phys.Vec3;
 import org.joml.Vector3f;
 import org.joml.Vector4f;
 
+import javax.annotation.Nullable;
+
 public class AttachmentItemRenderer extends FlanItemModelRenderer
 {
-	public AttachmentItemRenderer() { super(false); }
+	public AttachmentItemRenderer(@Nullable AttachmentItem attachmentItem)
+	{
+		super(attachmentItem, false);
+	}
 
 	@Override
 	protected void DoRender(Entity heldByEntity, ItemStack stack, RenderContext renderContext)

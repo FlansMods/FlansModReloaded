@@ -9,6 +9,8 @@ import com.flansmod.common.types.JsonDefinition;
 import com.flansmod.common.types.JsonField;
 import net.minecraft.resources.ResourceLocation;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.Optional;
 
 public class FlanimationDefinition extends JsonDefinition
@@ -25,37 +27,37 @@ public class FlanimationDefinition extends JsonDefinition
 
 	@Override
 	public String GetTypeName() { return TYPE; }
-
+	@Nullable
 	public SequenceDefinition GetSequence(String name)
 	{
-		for(int i = 0; i < sequences.length; i++)
+		for (SequenceDefinition sequence : sequences)
 		{
-			if(sequences[i].name.toLowerCase().equals(name.toLowerCase()))
-				return sequences[i];
+			if (sequence.name.toLowerCase().equals(name.toLowerCase()))
+				return sequence;
 		}
 		return null;
 	}
-
+	@Nullable
 	public KeyframeDefinition GetKeyframe(SequenceEntryDefinition entry)
 	{
 		return entry == null ? null : GetKeyframe(entry.frame);
 	}
-
+	@Nullable
 	public KeyframeDefinition GetKeyframe(String name)
 	{
-		for(int i = 0; i < keyframes.length; i++)
+		for (KeyframeDefinition keyframe : keyframes)
 		{
-			if(keyframes[i].name.equals(name))
-				return keyframes[i];
+			if (keyframe.name.equals(name))
+				return keyframe;
 		}
 		return null;
 	}
-
+	@Nonnull
 	public PoseDefinition GetPoseForPart(KeyframeDefinition keyframe, String partName)
 	{
 		return GetPoseForPartOptional(keyframe, partName).orElse(PoseDefinition.Identity());
 	}
-
+	@Nonnull
 	private Optional<PoseDefinition> GetPoseForPartOptional(KeyframeDefinition keyframe, String partName)
 	{
 		if(keyframe.HasPoseForPart(partName))

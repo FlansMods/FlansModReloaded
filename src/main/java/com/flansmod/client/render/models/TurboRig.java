@@ -45,24 +45,20 @@ public class TurboRig implements IUnbakedGeometry<TurboRig>, UnbakedModel
 			@Nullable
 			public final Baked Parent;
 			@Nonnull
-			public final Vector3f Offset;
-			@Nonnull
-			public final Quaternionf Rotation;
+			public final Transform Offset;
 
 			public Baked(@Nonnull String partName)
 			{
 				PartName = partName;
 				Parent = null;
-				Offset = new Vector3f();
-				Rotation = new Quaternionf();
+				Offset = Transform.IDENTITY;
 			}
 
-			public Baked(@Nonnull String partName, @Nonnull Baked parent, @Nonnull Vector3f offset, @Nonnull Vector3f euler)
+			public Baked(@Nonnull String partName, @Nonnull Baked parent, @Nonnull Transform offset)
 			{
 				PartName = partName;
 				Parent = parent;
 				Offset = offset;
-				Rotation = Transform.FromEuler(euler);
 			}
 		}
 
@@ -185,8 +181,10 @@ public class TurboRig implements IUnbakedGeometry<TurboRig>, UnbakedModel
 			bakedAPs.put(apName, new AttachPoint.Baked(
 				apName,
 				bakedAPs.get(ap.AttachTo),
-				ap.Offset.mul(1f/16f, new Vector3f()),
-				ap.Euler));
+				Transform.FromPosAndEuler(
+					"\"AP Offset["+apName+"]\"",
+					ap.Offset.mul(1f/16f, new Vector3f()),
+					ap.Euler)));
 		}
 	}
 
@@ -233,13 +231,13 @@ public class TurboRig implements IUnbakedGeometry<TurboRig>, UnbakedModel
 
 		public Transform GetTransform(ItemDisplayContext transformType)
 		{
-			return new Transform("BakedItemTransform["+transformType+"]", Transforms.getTransform(transformType));
+			return Transform.FromItemTransform("\"BakedItemTransform["+transformType+"]\"", Transforms.getTransform(transformType));
 		}
 
 		public void ApplyTransform(TransformStack transformStack, ItemDisplayContext transformType, boolean bFlip)
 		{
 			ItemTransform transform = Transforms.getTransform(transformType);
-			transformStack.add(new Transform("BakedItemTransform["+transformType+"]", transform));
+			transformStack.add(Transform.FromItemTransform("\"BakedItemTransform["+transformType+"]\"", transform));
 		}
 
 		public TurboModel.Baked GetPart(String part)

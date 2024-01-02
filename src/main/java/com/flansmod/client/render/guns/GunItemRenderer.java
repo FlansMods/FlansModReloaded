@@ -7,6 +7,8 @@ import com.flansmod.client.render.animation.*;
 import com.flansmod.common.actions.*;
 import com.flansmod.common.actions.ActionInstance;
 import com.flansmod.common.actions.contexts.*;
+import com.flansmod.common.item.FlanItem;
+import com.flansmod.common.item.GunItem;
 import com.flansmod.common.types.attachments.AttachmentDefinition;
 import com.flansmod.common.types.attachments.EAttachmentType;
 import com.flansmod.common.types.guns.elements.AttachmentSettingsDefinition;
@@ -23,9 +25,9 @@ import javax.annotation.Nullable;
 
 public class GunItemRenderer extends FlanItemModelRenderer
 {
-    public GunItemRenderer()
+    public GunItemRenderer(@Nullable GunItem gunItem)
     {
-        super(true);
+        super(gunItem, true);
     }
 
     @Override
