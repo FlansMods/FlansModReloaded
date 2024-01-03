@@ -98,6 +98,9 @@ public class WorkbenchScreenTabGunCrafting extends WorkbenchScreenTab<WorkbenchM
 		LowerReciever(2, 0),
 		Stock(3, 0),
 		Grip(4, 0),
+		Handguard(11, 0),
+		BoltAction(12, 0),
+		RevolverAction(13, 0),
 		Scope(5, 0),
 		Armour(6, 0),
 		Seat(7, 0),
@@ -125,6 +128,9 @@ public class WorkbenchScreenTabGunCrafting extends WorkbenchScreenTab<WorkbenchM
 				case "flansmod:lower_receiver": return LowerReciever;
 				case "flansmod:stock": return Stock;
 				case "flansmod:grip": return Grip;
+				case "flansmod:handguard": return Handguard;
+				case "flansmod:bolt_action": return BoltAction;
+				case "flansmod:revolver_action": return RevolverAction;
 				case "flansmod:scope": return Scope;
 				case "flansmod:armour": return Armour;
 				case "flansmod:seat": return Seat;

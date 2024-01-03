@@ -10,6 +10,9 @@ public enum ERecipePart
 	grip,
 	stock,
 	magazine,
+	handguard,
+	bolt_action,
+	revolver_action,
 
 	cockpit,
 	wing,
