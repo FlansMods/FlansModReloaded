@@ -38,7 +38,7 @@ public abstract class WorkbenchScreenTab<T extends WorkbenchMenu> extends FMScre
 		super(menu, inventory, title);
 		font = Minecraft.getInstance().font;
 		Workbench = menu;
-		IsActive = false;
+		IsActive = true;
 
 		imageWidth = 172;
 		imageHeight = 218;

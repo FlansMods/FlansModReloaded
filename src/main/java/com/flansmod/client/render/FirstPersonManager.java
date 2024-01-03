@@ -395,7 +395,7 @@ public class FirstPersonManager
 			float f = player.walkDist - player.walkDistO;
 			float f1 = -(player.walkDist + f * dt);
 			float f2 = Mth.lerp(dt, player.oBob, player.bob);
-			transformStack.add(Transform.FromPos("\"GameRenderer.bobView["+f2+"]\"", -Mth.sin(f1 * Maths.PiF) * f2 * 0.5F, Math.abs(Mth.cos(f1 * Maths.PiF) * f2), 0.0F));
+			transformStack.add(Transform.FromPos("\"GameRenderer.bobView["+f2+"]\"", Mth.sin(f1 * Maths.PiF) * f2 * 0.5F, -Math.abs(Mth.cos(f1 * Maths.PiF) * f2), 0.0F));
 			transformStack.add(Transform.FromEuler("\"GameRenderer.bobView["+f2+"]\"", Math.abs(Mth.cos(f1 * Maths.PiF - 0.2F) * f2) * 5.0F, 0f, Mth.sin(f1 * Maths.PiF) * f2 * 3.0F));
 		}
 

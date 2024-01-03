@@ -78,9 +78,13 @@ public class AttachmentSlot extends RestrictedSlot
 			return false;
 		if(stack.isEmpty())
 			return true;
-		if(ParentSlot.isActive())
-			if(ParentSlot.getItem().getItem() instanceof FlanItem flanItem)
-				return flanItem.CanAcceptAttachment(stack, AttachmentType, AttachmentIndex);
+		if(stack.getItem() instanceof AttachmentItem attachmentItem)
+		{
+			if(attachmentItem.Def().attachmentType == AttachmentType)
+				if (ParentSlot.isActive())
+					if (ParentSlot.getItem().getItem() instanceof FlanItem flanItem)
+						return flanItem.CanAcceptAttachment(stack, AttachmentType, AttachmentIndex);
+		}
 		return false;
 	}
 }
