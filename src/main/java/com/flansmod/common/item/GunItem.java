@@ -15,6 +15,7 @@ import com.flansmod.common.types.guns.elements.ReloadDefinition;
 import com.flansmod.common.types.magazines.MagazineDefinition;
 import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.Multimap;
+import com.mojang.blaze3d.platform.InputConstants;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
@@ -74,7 +75,9 @@ public class GunItem extends FlanItem
             if (actionContext.IsValid())
             {
                 boolean advanced = flags.isAdvanced();
-                boolean expanded = Minecraft.getInstance().options.keyShift.isDown();
+                boolean expanded = InputConstants.isKeyDown(Minecraft.getInstance().getWindow().getWindow(), InputConstants.KEY_RSHIFT)
+                    || InputConstants.isKeyDown(Minecraft.getInstance().getWindow().getWindow(), InputConstants.KEY_LSHIFT);
+
                 Component fireRateString = actionContext.RepeatMode() == ERepeatMode.SemiAuto ?
                     Component.translatable("tooltip.format.singlefire") :
                     Component.translatable("tooltip.format.fullautorpm", actionContext.RoundsPerMinute());
@@ -229,13 +232,13 @@ public class GunItem extends FlanItem
                 int startIndex = Integer.parseInt(key);
                 ItemStack bulletStack = ItemStack.of(bulletTags.getCompound(key));
 
-                // Apple represents empty spaces because Minecraft hides 5xAir as 0xAir
-                if(bulletStack.getItem() == Items.APPLE)
-                    return ItemStack.EMPTY;
-
                 int endIndex = startIndex + bulletStack.getCount();
                 if(startIndex <= bulletIndex && bulletIndex < endIndex)
                 {
+                    // Apple represents empty spaces because Minecraft hides 5xAir as 0xAir
+                    if(bulletStack.getItem() == Items.APPLE)
+                        return ItemStack.EMPTY;
+
                     return bulletStack.copyWithCount(1);
                 }
             }

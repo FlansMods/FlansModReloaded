@@ -82,15 +82,22 @@ public abstract class FlanItem extends Item implements IForgeItem
         else
         {
             PartDefinition[] craftedFromParts = GetCraftingInputs(stack);
-            for (PartDefinition craftedFrom : craftedFromParts)
+            if(craftedFromParts.length == 0)
             {
-                tooltips.add(Component.translatable(
-                    "tooltip.crafted_from",
-                    Component.translatable("item." + craftedFrom.GetLocation().getNamespace() + "." + craftedFrom.GetLocation().getPath())
-                ));
-                for (ModifierDefinition modDef : craftedFrom.modifiers)
+                tooltips.add(Component.translatable("tooltip.crafted_from_nothing"));
+            }
+            else
+            {
+                for (PartDefinition craftedFrom : craftedFromParts)
                 {
-                    tooltips.add(Component.translatable("tooltip.crafted_from.modifier_format", modDef.GetModifierString()));
+                    tooltips.add(Component.translatable(
+                        "tooltip.crafted_from",
+                        Component.translatable("item." + craftedFrom.GetLocation().getNamespace() + "." + craftedFrom.GetLocation().getPath())
+                    ));
+                    for (ModifierDefinition modDef : craftedFrom.modifiers)
+                    {
+                        tooltips.add(Component.translatable("tooltip.crafted_from.modifier_format", modDef.GetModifierString()));
+                    }
                 }
             }
         }

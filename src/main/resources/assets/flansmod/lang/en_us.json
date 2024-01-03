@@ -27,9 +27,9 @@
   "tooltip.format.singlefire.advanced": " Semi-Automatic",
   "tooltip.format.toggle": "",
   "tooltip.format.toggle.advanced": " Toggleable",
-  "tooltip.format.single_bullet_stack": "%s",
+  "tooltip.format.single_bullet_stack": "§7[%s§7]",
   "tooltip.format.single_bullet_stack_with_durability": "%s (%d/%d)",
-  "tooltip.format.multiple_bullet_stack": "%dx %s",
+  "tooltip.format.multiple_bullet_stack": "§7[%dx %s§7]",
   "tooltip.format.engine_speed_modifier": "Max Speed x%d%%",
   "tooltip.format.engine_acceleration_modifier": "Acceleration x%d%%",
   "tooltip.format.engine_acceleration_and_deceleration_modifier": "Acceleration and Deceleration x%d%%",
@@ -200,5 +200,6 @@
   "tooltip.flansmod.hold_shift_for_more": "§6Hold shift for more details...",
   "key.flansmod.look_at": "Look At Weapon",
   "key.flansmod.manual_reload": "Reload Weapon",
-  "key.flansmod.mode_toggle": "Toggle Weapon Mode"
+  "key.flansmod.mode_toggle": "Toggle Weapon Mode",
+  "tooltip.crafted_from_nothing": "§6This weapon was not crafted, so has no extra abilities"
 }
