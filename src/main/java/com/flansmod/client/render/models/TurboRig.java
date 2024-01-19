@@ -167,7 +167,7 @@ public class TurboRig implements IUnbakedGeometry<TurboRig>, UnbakedModel
 
 	private void BakeAP(@Nonnull String apName, @Nonnull AttachPoint ap, @Nonnull Map<String, AttachPoint.Baked> bakedAPs)
 	{
-		if(!bakedAPs.containsKey(ap.AttachTo))
+		if(!bakedAPs.containsKey(ap.AttachTo) && !ap.AttachTo.equals(apName))
 		{
 			AttachPoint parentAP = AttachPoints.get(ap.AttachTo);
 			if(parentAP != null)

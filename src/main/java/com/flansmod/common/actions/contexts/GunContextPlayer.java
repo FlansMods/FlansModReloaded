@@ -12,7 +12,7 @@ public class GunContextPlayer extends GunContextLiving
 
 	public GunContextPlayer(ShooterContextPlayer shooter, int inventorySlot)
 	{
-		super(shooter, inventorySlot == ((Player)shooter.Shooter).getInventory().selected ? InteractionHand.MAIN_HAND : InteractionHand.OFF_HAND, inventorySlot);
+		super(shooter, inventorySlot == Inventory.SLOT_OFFHAND ? InteractionHand.OFF_HAND : InteractionHand.MAIN_HAND, inventorySlot);
 
 		Player = (Player)shooter.Shooter;
 		InventorySlot = inventorySlot;

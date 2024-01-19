@@ -16,6 +16,11 @@
                 "textureName": "fc_700_polymer",
                 "paintBucketsRequired": 1,
                 "entitlementKey": ""
+            },
+            {
+                "textureName": "fc_700_counterfeit",
+                "paintBucketsRequired": 1,
+                "entitlementKey": ""
             }
         ]
     },

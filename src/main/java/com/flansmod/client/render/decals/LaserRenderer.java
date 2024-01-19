@@ -71,7 +71,8 @@ public class LaserRenderer
 												gunContext,
 												actionGroup.Context.GetAttachmentType(),
 												actionGroup.Context.GetAttachmentIndex(),
-												laserAction.LaserOrigin());
+												laserAction.LaserOrigin(),
+												new Vector4f(laserAction.Red(), laserAction.Green(), laserAction.Blue(), 1f));
 										} else
 										{
 											RenderLaserFirstPerson(event.getPoseStack(),
@@ -79,7 +80,8 @@ public class LaserRenderer
 												gunContext,
 												EAttachmentType.Generic,
 												-1,
-												laserAction.LaserOrigin());
+												laserAction.LaserOrigin(),
+												new Vector4f(laserAction.Red(), laserAction.Green(), laserAction.Blue(), 1f));
 										}
 									}
 								}
@@ -98,7 +100,7 @@ public class LaserRenderer
 	}
 
 	private static final ResourceLocation LaserTexture = new ResourceLocation(FlansMod.MODID, "textures/effects/laser_point.png");
-	public void RenderLaserFirstPerson(@Nonnull PoseStack poseStack, @Nonnull Camera camera, @Nonnull GunContext gunContext, @Nonnull EAttachmentType attachType, int attachIndex, @Nonnull String apName)
+	public void RenderLaserFirstPerson(@Nonnull PoseStack poseStack, @Nonnull Camera camera, @Nonnull GunContext gunContext, @Nonnull EAttachmentType attachType, int attachIndex, @Nonnull String apName, @Nonnull Vector4f colour)
 	{
 		ItemDisplayContext transformType = ItemDisplayContext.FIRST_PERSON_RIGHT_HAND;
 		if(gunContext instanceof GunContextPlayer playerGunContext)
@@ -131,21 +133,20 @@ public class LaserRenderer
 							blockHit.getDirection().getNormal().getY(),
 							blockHit.getDirection().getNormal().getZ());
 
-					Vector4f laserColour = new Vector4f(1f, 0f, 0f, 1f);
-
 					RenderLaser(poseStack,
 						camera,
 						origin.PositionVec3(),
 						origin.ForwardVec3(),
 						hits.get(0).getLocation(),
-						normal);
+						normal,
+						colour);
 
 					FlansModClient.DECAL_RENDERER.AddOrUpdateDecal(
 						LaserTexture,
 						gunContext.GetUUID(),
 						hits.get(0).getLocation(),
 						normal,
-						laserColour,
+						colour,
 						0.0f,
 						2);
 				}
@@ -156,21 +157,19 @@ public class LaserRenderer
 						origin.PositionVec3(),
 						origin.ForwardVec3(),
 						origin.PositionVec3().add(ray),
-						origin.ForwardVec3());
+						origin.ForwardVec3(),
+						colour);
 				}
 			}
 		}
 	}
 
-	public void RenderLaser(@Nonnull PoseStack poseStack, @Nonnull Camera camera, @Nonnull Vec3 startPos, @Nonnull Vec3 startNormal, Vec3 endPos, Vec3 endNormal)
+	public void RenderLaser(@Nonnull PoseStack poseStack, @Nonnull Camera camera, @Nonnull Vec3 startPos, @Nonnull Vec3 startNormal, Vec3 endPos, Vec3 endNormal, @Nonnull Vector4f colour)
 	{
 		Tesselator tesselator = Tesselator.getInstance();
 		RenderSystem.setShader(GameRenderer::getPositionColorShader);
 		RenderSystem.enableBlend();
 		RenderSystem.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
-
-		Vector4f colour = new Vector4f(
-			1.0f, 0.0f, 0.0f, 0.5f);
 
 		Vec3 cameraPos = camera.getPosition();
 		Vec3 centerPos = startPos.add(endPos).scale(0.5d);

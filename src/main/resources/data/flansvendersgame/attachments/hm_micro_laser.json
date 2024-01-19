@@ -45,7 +45,32 @@
                     "duration": 0.0,
                     "sounds": [],
                     "itemStack": "",
-                    "modifiers": [],
+                    "modifiers": [
+                        {
+                            "Stat": "laser_red",
+                            "Filter": "",
+                            "Add": 1.0,
+                            "Multiply": 0.0,
+                            "SetValue": "",
+                            "ApplyFilters": []
+                        },
+                        {
+                            "Stat": "laser_green",
+                            "Filter": "",
+                            "Add": 0.0,
+                            "Multiply": 0.0,
+                            "SetValue": "",
+                            "ApplyFilters": []
+                        },
+                        {
+                            "Stat": "laser_blue",
+                            "Filter": "",
+                            "Add": 0.0,
+                            "Multiply": 0.0,
+                            "SetValue": "",
+                            "ApplyFilters": []
+                        }
+                    ],
                     "fovFactor": 0.0,
                     "scopeOverlay": "",
                     "anim": "",

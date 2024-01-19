@@ -479,7 +479,7 @@ public class FirstPersonManager
 		{
 			blendWeight *= 0.5f;
 			boolean leftHanded = transformType == ItemDisplayContext.FIRST_PERSON_LEFT_HAND;
-			eyeLineStack.add(Transform.FromEuler(leftHanded ? "\"DualWieldTiltLeft\"" : "\"DualWieldTiltRight\"", 0f, 0f, leftHanded ? -30f : 30f));
+			eyeLineStack.add(Transform.FromEuler(leftHanded ? "\"DualWieldTiltLeft\"" : "\"DualWieldTiltRight\"", 0f, 0f, leftHanded ? 30f : -30f));
 		}
 
 		// Push it forwards, so there's some gap between the "eye" and the "eye_line" AP

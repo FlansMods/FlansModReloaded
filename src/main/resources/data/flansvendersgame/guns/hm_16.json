@@ -16,6 +16,16 @@
                 "textureName": "hm_16_wood",
                 "paintBucketsRequired": 1,
                 "entitlementKey": ""
+            },
+            {
+                "textureName": "hm_16_olive",
+                "paintBucketsRequired": 1,
+                "entitlementKey": ""
+            },
+            {
+                "textureName": "hm_16_wood",
+                "paintBucketsRequired": 1,
+                "entitlementKey": ""
             }
         ]
     },

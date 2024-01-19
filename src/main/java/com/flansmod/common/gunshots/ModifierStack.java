@@ -35,7 +35,7 @@ public class ModifierStack
 
 	public float ApplyTo(float input)
 	{
-		return (input + Add) * Multiply;
+		return input * Multiply + Add;
 	}
 
 	public String ApplyTo(String input)

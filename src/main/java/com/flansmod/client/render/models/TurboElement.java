@@ -43,11 +43,14 @@ public class TurboElement
 
 	public TurboFace GetFace(Direction direction) { return faces.get(direction); }
 
+	// Up/Down is +y/-y
 	private static final int[] UP_VERTS 	= new int[] { 7,3,2,6 };
 	private static final int[] DOWN_VERTS 	= new int[] { 5,4,0,1 };
+	// North(-z)/South(+z)
 	private static final int[] NORTH_VERTS 	= new int[] { 0,2,3,1 };
-	private static final int[] EAST_VERTS 	= new int[] { 1,3,7,5 };
 	private static final int[] SOUTH_VERTS 	= new int[] { 5,7,6,4 };
+	// East(+x)/West(-x)
+	private static final int[] EAST_VERTS 	= new int[] { 1,3,7,5 };
 	private static final int[] WEST_VERTS 	= new int[] { 4,6,2,0 };
 
 	public Vector3f GetNormal(Direction direction, boolean applyRotation)

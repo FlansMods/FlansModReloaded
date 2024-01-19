@@ -223,6 +223,113 @@
                     {
                         "outputs": [
                             {
+                                "item": "flansvendersgame:hm_21",
+                                "count": 1,
+                                "damage": 0,
+                                "tags": ""
+                            }
+                        ],
+                        "parts": [
+                            {
+                                "part": "upper_receiver",
+                                "tieredIngredients": [
+                                    {
+                                        "tag": "flansmod:upper_receiver",
+                                        "allowedTiers": [
+                                            1,
+                                            2,
+                                            3
+                                        ],
+                                        "allowedMaterials": [
+                                            "Metal",
+                                            "Composite"
+                                        ]
+                                    }
+                                ],
+                                "rawIngredients": [],
+                                "additionalIngredients": []
+                            },
+                            {
+                                "part": "lower_receiver",
+                                "tieredIngredients": [
+                                    {
+                                        "tag": "flansmod:lower_receiver",
+                                        "allowedTiers": [
+                                            1,
+                                            2,
+                                            3
+                                        ],
+                                        "allowedMaterials": [
+                                            "Metal",
+                                            "Composite"
+                                        ]
+                                    }
+                                ],
+                                "rawIngredients": [],
+                                "additionalIngredients": []
+                            },
+                            {
+                                "part": "barrel",
+                                "tieredIngredients": [
+                                    {
+                                        "tag": "flansmod:barrel",
+                                        "allowedTiers": [
+                                            1,
+                                            2,
+                                            3
+                                        ],
+                                        "allowedMaterials": [
+                                            "Metal",
+                                            "Composite"
+                                        ]
+                                    }
+                                ],
+                                "rawIngredients": [],
+                                "additionalIngredients": []
+                            },
+                            {
+                                "part": "stock",
+                                "tieredIngredients": [
+                                    {
+                                        "tag": "flansmod:stock",
+                                        "allowedTiers": [
+                                            1,
+                                            2,
+                                            3
+                                        ],
+                                        "allowedMaterials": [
+                                            "Composite",
+                                            "Wood"
+                                        ]
+                                    }
+                                ],
+                                "rawIngredients": [],
+                                "additionalIngredients": []
+                            },
+                            {
+                                "part": "grip",
+                                "tieredIngredients": [
+                                    {
+                                        "tag": "flansmod:grip",
+                                        "allowedTiers": [
+                                            1,
+                                            2,
+                                            3
+                                        ],
+                                        "allowedMaterials": [
+                                            "Composite",
+                                            "Wood"
+                                        ]
+                                    }
+                                ],
+                                "rawIngredients": [],
+                                "additionalIngredients": []
+                            }
+                        ]
+                    },
+                    {
+                        "outputs": [
+                            {
                                 "item": "flansvendersgame:hm_combine",
                                 "count": 1,
                                 "damage": 0,
