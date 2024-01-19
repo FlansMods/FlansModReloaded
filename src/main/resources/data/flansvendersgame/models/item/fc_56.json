@@ -266,7 +266,7 @@
                                 0.328125,
                                 0.8671875
                             ],
-                            "rotation": 0,
+                            "rotation": 180,
                             "texture": "#default"
                         },
                         "east": {
@@ -276,7 +276,7 @@
                                 0.3125,
                                 0.8671875
                             ],
-                            "rotation": 0,
+                            "rotation": 180,
                             "texture": "#default"
                         },
                         "south": {
@@ -286,7 +286,7 @@
                                 0.265625,
                                 0.8671875
                             ],
-                            "rotation": 0,
+                            "rotation": 180,
                             "texture": "#default"
                         },
                         "west": {
@@ -296,7 +296,7 @@
                                 0.25,
                                 0.8671875
                             ],
-                            "rotation": 0,
+                            "rotation": 180,
                             "texture": "#default"
                         },
                         "up": {
@@ -306,7 +306,7 @@
                                 0.265625,
                                 0.8515625
                             ],
-                            "rotation": 90,
+                            "rotation": 180,
                             "texture": "#default"
                         },
                         "down": {
@@ -316,7 +316,7 @@
                                 0.28125,
                                 0.8515625
                             ],
-                            "rotation": 0,
+                            "rotation": 270,
                             "texture": "#default"
                         }
                     }
@@ -382,7 +382,7 @@
                                 0.21875,
                                 0.890625
                             ],
-                            "rotation": 0,
+                            "rotation": 180,
                             "texture": "#default"
                         },
                         "east": {
@@ -392,7 +392,7 @@
                                 0.15625,
                                 0.890625
                             ],
-                            "rotation": 0,
+                            "rotation": 180,
                             "texture": "#default"
                         },
                         "south": {
@@ -402,7 +402,7 @@
                                 0.109375,
                                 0.890625
                             ],
-                            "rotation": 0,
+                            "rotation": 180,
                             "texture": "#default"
                         },
                         "west": {
@@ -412,7 +412,7 @@
                                 0.046875,
                                 0.890625
                             ],
-                            "rotation": 0,
+                            "rotation": 180,
                             "texture": "#default"
                         },
                         "up": {
@@ -422,7 +422,7 @@
                                 0.109375,
                                 0.875
                             ],
-                            "rotation": 90,
+                            "rotation": 180,
                             "texture": "#default"
                         },
                         "down": {
@@ -432,7 +432,7 @@
                                 0.171875,
                                 0.875
                             ],
-                            "rotation": 0,
+                            "rotation": 270,
                             "texture": "#default"
                         }
                     }
@@ -498,7 +498,7 @@
                                 0.34375,
                                 0.8125
                             ],
-                            "rotation": 0,
+                            "rotation": 180,
                             "texture": "#default"
                         },
                         "east": {
@@ -508,7 +508,7 @@
                                 0.21875,
                                 0.8125
                             ],
-                            "rotation": 0,
+                            "rotation": 180,
                             "texture": "#default"
                         },
                         "south": {
@@ -518,7 +518,7 @@
                                 0.171875,
                                 0.8125
                             ],
-                            "rotation": 0,
+                            "rotation": 180,
                             "texture": "#default"
                         },
                         "west": {
@@ -528,7 +528,7 @@
                                 0.046875,
                                 0.8125
                             ],
-                            "rotation": 0,
+                            "rotation": 180,
                             "texture": "#default"
                         },
                         "up": {
@@ -538,7 +538,7 @@
                                 0.171875,
                                 0.8046875
                             ],
-                            "rotation": 90,
+                            "rotation": 180,
                             "texture": "#default"
                         },
                         "down": {
@@ -548,7 +548,7 @@
                                 0.296875,
                                 0.8046875
                             ],
-                            "rotation": 0,
+                            "rotation": 270,
                             "texture": "#default"
                         }
                     }
@@ -614,7 +614,7 @@
                                 0.359375,
                                 0.78125
                             ],
-                            "rotation": 0,
+                            "rotation": 180,
                             "texture": "#default"
                         },
                         "east": {
@@ -624,7 +624,7 @@
                                 0.234375,
                                 0.78125
                             ],
-                            "rotation": 0,
+                            "rotation": 180,
                             "texture": "#default"
                         },
                         "south": {
@@ -634,7 +634,7 @@
                                 0.1875,
                                 0.78125
                             ],
-                            "rotation": 0,
+                            "rotation": 180,
                             "texture": "#default"
                         },
                         "west": {
@@ -644,7 +644,7 @@
                                 0.0625,
                                 0.78125
                             ],
-                            "rotation": 0,
+                            "rotation": 180,
                             "texture": "#default"
                         },
                         "up": {
@@ -654,7 +654,7 @@
                                 0.1875,
                                 0.765625
                             ],
-                            "rotation": 90,
+                            "rotation": 180,
                             "texture": "#default"
                         },
                         "down": {
@@ -664,7 +664,7 @@
                                 0.3125,
                                 0.765625
                             ],
-                            "rotation": 0,
+                            "rotation": 270,
                             "texture": "#default"
                         }
                     }
@@ -730,7 +730,7 @@
                                 0.125,
                                 0.4609375
                             ],
-                            "rotation": 0,
+                            "rotation": 180,
                             "texture": "#default"
                         },
                         "east": {
@@ -740,7 +740,7 @@
                                 0.109375,
                                 0.4609375
                             ],
-                            "rotation": 0,
+                            "rotation": 180,
                             "texture": "#default"
                         },
                         "south": {
@@ -750,7 +750,7 @@
                                 0.0625,
                                 0.4609375
                             ],
-                            "rotation": 0,
+                            "rotation": 180,
                             "texture": "#default"
                         },
                         "west": {
@@ -760,7 +760,7 @@
                                 0.046875,
                                 0.4609375
                             ],
-                            "rotation": 0,
+                            "rotation": 180,
                             "texture": "#default"
                         },
                         "up": {
@@ -770,7 +770,7 @@
                                 0.0625,
                                 0.4375
                             ],
-                            "rotation": 90,
+                            "rotation": 180,
                             "texture": "#default"
                         },
                         "down": {
@@ -780,7 +780,7 @@
                                 0.078125,
                                 0.4375
                             ],
-                            "rotation": 0,
+                            "rotation": 270,
                             "texture": "#default"
                         }
                     }
@@ -846,7 +846,7 @@
                                 0.125,
                                 0.4140625
                             ],
-                            "rotation": 0,
+                            "rotation": 180,
                             "texture": "#default"
                         },
                         "east": {
@@ -856,7 +856,7 @@
                                 0.109375,
                                 0.4140625
                             ],
-                            "rotation": 0,
+                            "rotation": 180,
                             "texture": "#default"
                         },
                         "south": {
@@ -866,7 +866,7 @@
                                 0.0625,
                                 0.4140625
                             ],
-                            "rotation": 0,
+                            "rotation": 180,
                             "texture": "#default"
                         },
                         "west": {
@@ -876,7 +876,7 @@
                                 0.046875,
                                 0.4140625
                             ],
-                            "rotation": 0,
+                            "rotation": 180,
                             "texture": "#default"
                         },
                         "up": {
@@ -886,7 +886,7 @@
                                 0.0625,
                                 0.3984375
                             ],
-                            "rotation": 90,
+                            "rotation": 180,
                             "texture": "#default"
                         },
                         "down": {
@@ -896,7 +896,7 @@
                                 0.078125,
                                 0.3984375
                             ],
-                            "rotation": 0,
+                            "rotation": 270,
                             "texture": "#default"
                         }
                     }
@@ -962,7 +962,7 @@
                                 0.140625,
                                 0.0546875
                             ],
-                            "rotation": 0,
+                            "rotation": 180,
                             "texture": "#default"
                         },
                         "east": {
@@ -972,7 +972,7 @@
                                 0.125,
                                 0.0546875
                             ],
-                            "rotation": 0,
+                            "rotation": 180,
                             "texture": "#default"
                         },
                         "south": {
@@ -982,7 +982,7 @@
                                 0.109375,
                                 0.0546875
                             ],
-                            "rotation": 0,
+                            "rotation": 180,
                             "texture": "#default"
                         },
                         "west": {
@@ -992,7 +992,7 @@
                                 0.09375,
                                 0.0546875
                             ],
-                            "rotation": 0,
+                            "rotation": 180,
                             "texture": "#default"
                         },
                         "up": {
@@ -1002,7 +1002,7 @@
                                 0.109375,
                                 0.03125
                             ],
-                            "rotation": 90,
+                            "rotation": 180,
                             "texture": "#default"
                         },
                         "down": {
@@ -1012,7 +1012,7 @@
                                 0.125,
                                 0.03125
                             ],
-                            "rotation": 0,
+                            "rotation": 270,
                             "texture": "#default"
                         }
                     }
@@ -1078,7 +1078,7 @@
                                 0.421875,
                                 0.1875
                             ],
-                            "rotation": 0,
+                            "rotation": 180,
                             "texture": "#default"
                         },
                         "east": {
@@ -1088,7 +1088,7 @@
                                 0.375,
                                 0.1875
                             ],
-                            "rotation": 0,
+                            "rotation": 180,
                             "texture": "#default"
                         },
                         "south": {
@@ -1098,7 +1098,7 @@
                                 0.359375,
                                 0.1875
                             ],
-                            "rotation": 0,
+                            "rotation": 180,
                             "texture": "#default"
                         },
                         "west": {
@@ -1108,7 +1108,7 @@
                                 0.3125,
                                 0.1875
                             ],
-                            "rotation": 0,
+                            "rotation": 180,
                             "texture": "#default"
                         },
                         "up": {
@@ -1118,7 +1118,7 @@
                                 0.359375,
                                 0.1875
                             ],
-                            "rotation": 90,
+                            "rotation": 180,
                             "texture": "#default"
                         },
                         "down": {
@@ -1128,7 +1128,7 @@
                                 0.40625,
                                 0.1875
                             ],
-                            "rotation": 0,
+                            "rotation": 270,
                             "texture": "#default"
                         }
                     }
@@ -1194,7 +1194,7 @@
                                 0.25,
                                 0.203125
                             ],
-                            "rotation": 0,
+                            "rotation": 180,
                             "texture": "#default"
                         },
                         "east": {
@@ -1204,7 +1204,7 @@
                                 0.25,
                                 0.203125
                             ],
-                            "rotation": 0,
+                            "rotation": 180,
                             "texture": "#default"
                         },
                         "south": {
@@ -1214,7 +1214,7 @@
                                 0.234375,
                                 0.203125
                             ],
-                            "rotation": 0,
+                            "rotation": 180,
                             "texture": "#default"
                         },
                         "west": {
@@ -1224,7 +1224,7 @@
                                 0.234375,
                                 0.203125
                             ],
-                            "rotation": 0,
+                            "rotation": 180,
                             "texture": "#default"
                         },
                         "up": {
@@ -1234,7 +1234,7 @@
                                 0.234375,
                                 0.1875
                             ],
-                            "rotation": 90,
+                            "rotation": 180,
                             "texture": "#default"
                         },
                         "down": {
@@ -1244,7 +1244,7 @@
                                 0.234375,
                                 0.1875
                             ],
-                            "rotation": 0,
+                            "rotation": 270,
                             "texture": "#default"
                         }
                     }
@@ -1310,7 +1310,7 @@
                                 0.203125,
                                 0.203125
                             ],
-                            "rotation": 0,
+                            "rotation": 180,
                             "texture": "#default"
                         },
                         "east": {
@@ -1320,7 +1320,7 @@
                                 0.203125,
                                 0.203125
                             ],
-                            "rotation": 0,
+                            "rotation": 180,
                             "texture": "#default"
                         },
                         "south": {
@@ -1330,7 +1330,7 @@
                                 0.1875,
                                 0.203125
                             ],
-                            "rotation": 0,
+                            "rotation": 180,
                             "texture": "#default"
                         },
                         "west": {
@@ -1340,7 +1340,7 @@
                                 0.1875,
                                 0.203125
                             ],
-                            "rotation": 0,
+                            "rotation": 180,
                             "texture": "#default"
                         },
                         "up": {
@@ -1350,7 +1350,7 @@
                                 0.1875,
                                 0.1875
                             ],
-                            "rotation": 90,
+                            "rotation": 180,
                             "texture": "#default"
                         },
                         "down": {
@@ -1360,7 +1360,7 @@
                                 0.1875,
                                 0.1875
                             ],
-                            "rotation": 0,
+                            "rotation": 270,
                             "texture": "#default"
                         }
                     }
@@ -1426,7 +1426,7 @@
                                 0.3125,
                                 0.21875
                             ],
-                            "rotation": 0,
+                            "rotation": 180,
                             "texture": "#default"
                         },
                         "east": {
@@ -1436,7 +1436,7 @@
                                 0.296875,
                                 0.21875
                             ],
-                            "rotation": 0,
+                            "rotation": 180,
                             "texture": "#default"
                         },
                         "south": {
@@ -1446,7 +1446,7 @@
                                 0.28125,
                                 0.21875
                             ],
-                            "rotation": 0,
+                            "rotation": 180,
                             "texture": "#default"
                         },
                         "west": {
@@ -1456,7 +1456,7 @@
                                 0.265625,
                                 0.21875
                             ],
-                            "rotation": 0,
+                            "rotation": 180,
                             "texture": "#default"
                         },
                         "up": {
@@ -1466,7 +1466,7 @@
                                 0.28125,
                                 0.2109375
                             ],
-                            "rotation": 90,
+                            "rotation": 180,
                             "texture": "#default"
                         },
                         "down": {
@@ -1476,7 +1476,7 @@
                                 0.296875,
                                 0.2109375
                             ],
-                            "rotation": 0,
+                            "rotation": 270,
                             "texture": "#default"
                         }
                     }
@@ -1542,7 +1542,7 @@
                                 0.59375,
                                 0.7734375
                             ],
-                            "rotation": 0,
+                            "rotation": 180,
                             "texture": "#default"
                         },
                         "east": {
@@ -1552,7 +1552,7 @@
                                 0.515625,
                                 0.7734375
                             ],
-                            "rotation": 0,
+                            "rotation": 180,
                             "texture": "#default"
                         },
                         "south": {
@@ -1562,7 +1562,7 @@
                                 0.5,
                                 0.7734375
                             ],
-                            "rotation": 0,
+                            "rotation": 180,
                             "texture": "#default"
                         },
                         "west": {
@@ -1572,7 +1572,7 @@
                                 0.421875,
                                 0.7734375
                             ],
-                            "rotation": 0,
+                            "rotation": 180,
                             "texture": "#default"
                         },
                         "up": {
@@ -1582,7 +1582,7 @@
                                 0.5,
                                 0.765625
                             ],
-                            "rotation": 90,
+                            "rotation": 180,
                             "texture": "#default"
                         },
                         "down": {
@@ -1592,7 +1592,7 @@
                                 0.578125,
                                 0.765625
                             ],
-                            "rotation": 0,
+                            "rotation": 270,
                             "texture": "#default"
                         }
                     }
@@ -1658,7 +1658,7 @@
                                 0.40625,
                                 0.765625
                             ],
-                            "rotation": 0,
+                            "rotation": 180,
                             "texture": "#default"
                         },
                         "east": {
@@ -1668,7 +1668,7 @@
                                 0.390625,
                                 0.765625
                             ],
-                            "rotation": 0,
+                            "rotation": 180,
                             "texture": "#default"
                         },
                         "south": {
@@ -1678,7 +1678,7 @@
                                 0.375,
                                 0.765625
                             ],
-                            "rotation": 0,
+                            "rotation": 180,
                             "texture": "#default"
                         },
                         "west": {
@@ -1688,7 +1688,7 @@
                                 0.359375,
                                 0.765625
                             ],
-                            "rotation": 0,
+                            "rotation": 180,
                             "texture": "#default"
                         },
                         "up": {
@@ -1698,7 +1698,7 @@
                                 0.375,
                                 0.7578125
                             ],
-                            "rotation": 90,
+                            "rotation": 180,
                             "texture": "#default"
                         },
                         "down": {
@@ -1708,7 +1708,7 @@
                                 0.390625,
                                 0.7578125
                             ],
-                            "rotation": 0,
+                            "rotation": 270,
                             "texture": "#default"
                         }
                     }
@@ -1774,7 +1774,7 @@
                                 0.5,
                                 0.75
                             ],
-                            "rotation": 0,
+                            "rotation": 180,
                             "texture": "#default"
                         },
                         "east": {
@@ -1784,7 +1784,7 @@
                                 0.46875,
                                 0.75
                             ],
-                            "rotation": 0,
+                            "rotation": 180,
                             "texture": "#default"
                         },
                         "south": {
@@ -1794,7 +1794,7 @@
                                 0.453125,
                                 0.75
                             ],
-                            "rotation": 0,
+                            "rotation": 180,
                             "texture": "#default"
                         },
                         "west": {
@@ -1804,7 +1804,7 @@
                                 0.421875,
                                 0.75
                             ],
-                            "rotation": 0,
+                            "rotation": 180,
                             "texture": "#default"
                         },
                         "up": {
@@ -1814,7 +1814,7 @@
                                 0.453125,
                                 0.7421875
                             ],
-                            "rotation": 90,
+                            "rotation": 180,
                             "texture": "#default"
                         },
                         "down": {
@@ -1824,7 +1824,7 @@
                                 0.484375,
                                 0.7421875
                             ],
-                            "rotation": 0,
+                            "rotation": 270,
                             "texture": "#default"
                         }
                     }
@@ -1890,7 +1890,7 @@
                                 0.0625,
                                 0.734375
                             ],
-                            "rotation": 0,
+                            "rotation": 180,
                             "texture": "#default"
                         },
                         "east": {
@@ -1900,7 +1900,7 @@
                                 0.046875,
                                 0.734375
                             ],
-                            "rotation": 0,
+                            "rotation": 180,
                             "texture": "#default"
                         },
                         "south": {
@@ -1910,7 +1910,7 @@
                                 0.03125,
                                 0.734375
                             ],
-                            "rotation": 0,
+                            "rotation": 180,
                             "texture": "#default"
                         },
                         "west": {
@@ -1920,7 +1920,7 @@
                                 0.015625,
                                 0.734375
                             ],
-                            "rotation": 0,
+                            "rotation": 180,
                             "texture": "#default"
                         },
                         "up": {
@@ -1930,7 +1930,7 @@
                                 0.03125,
                                 0.7265625
                             ],
-                            "rotation": 90,
+                            "rotation": 180,
                             "texture": "#default"
                         },
                         "down": {
@@ -1940,7 +1940,7 @@
                                 0.046875,
                                 0.7265625
                             ],
-                            "rotation": 0,
+                            "rotation": 270,
                             "texture": "#default"
                         }
                     }
@@ -2006,7 +2006,7 @@
                                 0.09375,
                                 0.71875
                             ],
-                            "rotation": 0,
+                            "rotation": 180,
                             "texture": "#default"
                         },
                         "east": {
@@ -2016,7 +2016,7 @@
                                 0.0625,
                                 0.71875
                             ],
-                            "rotation": 0,
+                            "rotation": 180,
                             "texture": "#default"
                         },
                         "south": {
@@ -2026,7 +2026,7 @@
                                 0.046875,
                                 0.71875
                             ],
-                            "rotation": 0,
+                            "rotation": 180,
                             "texture": "#default"
                         },
                         "west": {
@@ -2036,7 +2036,7 @@
                                 0.015625,
                                 0.71875
                             ],
-                            "rotation": 0,
+                            "rotation": 180,
                             "texture": "#default"
                         },
                         "up": {
@@ -2046,7 +2046,7 @@
                                 0.046875,
                                 0.7109375
                             ],
-                            "rotation": 90,
+                            "rotation": 180,
                             "texture": "#default"
                         },
                         "down": {
@@ -2056,7 +2056,7 @@
                                 0.078125,
                                 0.7109375
                             ],
-                            "rotation": 0,
+                            "rotation": 270,
                             "texture": "#default"
                         }
                     }
@@ -2122,7 +2122,7 @@
                                 0.375,
                                 0.703125
                             ],
-                            "rotation": 0,
+                            "rotation": 180,
                             "texture": "#default"
                         },
                         "east": {
@@ -2132,7 +2132,7 @@
                                 0.203125,
                                 0.703125
                             ],
-                            "rotation": 0,
+                            "rotation": 180,
                             "texture": "#default"
                         },
                         "south": {
@@ -2142,7 +2142,7 @@
                                 0.1875,
                                 0.703125
                             ],
-                            "rotation": 0,
+                            "rotation": 180,
                             "texture": "#default"
                         },
                         "west": {
@@ -2152,7 +2152,7 @@
                                 0.015625,
                                 0.703125
                             ],
-                            "rotation": 0,
+                            "rotation": 180,
                             "texture": "#default"
                         },
                         "up": {
@@ -2162,7 +2162,7 @@
                                 0.1875,
                                 0.6953125
                             ],
-                            "rotation": 90,
+                            "rotation": 180,
                             "texture": "#default"
                         },
                         "down": {
@@ -2172,7 +2172,7 @@
                                 0.359375,
                                 0.6953125
                             ],
-                            "rotation": 0,
+                            "rotation": 270,
                             "texture": "#default"
                         }
                     }
@@ -2238,7 +2238,7 @@
                                 0.0625,
                                 0.6875
                             ],
-                            "rotation": 0,
+                            "rotation": 180,
                             "texture": "#default"
                         },
                         "east": {
@@ -2248,7 +2248,7 @@
                                 0.046875,
                                 0.6875
                             ],
-                            "rotation": 0,
+                            "rotation": 180,
                             "texture": "#default"
                         },
                         "south": {
@@ -2258,7 +2258,7 @@
                                 0.03125,
                                 0.6875
                             ],
-                            "rotation": 0,
+                            "rotation": 180,
                             "texture": "#default"
                         },
                         "west": {
@@ -2268,7 +2268,7 @@
                                 0.015625,
                                 0.6875
                             ],
-                            "rotation": 0,
+                            "rotation": 180,
                             "texture": "#default"
                         },
                         "up": {
@@ -2278,7 +2278,7 @@
                                 0.03125,
                                 0.6796875
                             ],
-                            "rotation": 90,
+                            "rotation": 180,
                             "texture": "#default"
                         },
                         "down": {
@@ -2288,7 +2288,7 @@
                                 0.046875,
                                 0.6796875
                             ],
-                            "rotation": 0,
+                            "rotation": 270,
                             "texture": "#default"
                         }
                     }
@@ -2354,7 +2354,7 @@
                                 0.296875,
                                 0.6015625
                             ],
-                            "rotation": 0,
+                            "rotation": 180,
                             "texture": "#default"
                         },
                         "east": {
@@ -2364,7 +2364,7 @@
                                 0.28125,
                                 0.6015625
                             ],
-                            "rotation": 0,
+                            "rotation": 180,
                             "texture": "#default"
                         },
                         "south": {
@@ -2374,7 +2374,7 @@
                                 0.234375,
                                 0.6015625
                             ],
-                            "rotation": 0,
+                            "rotation": 180,
                             "texture": "#default"
                         },
                         "west": {
@@ -2384,7 +2384,7 @@
                                 0.21875,
                                 0.6015625
                             ],
-                            "rotation": 0,
+                            "rotation": 180,
                             "texture": "#default"
                         },
                         "up": {
@@ -2394,7 +2394,7 @@
                                 0.234375,
                                 0.5859375
                             ],
-                            "rotation": 90,
+                            "rotation": 180,
                             "texture": "#default"
                         },
                         "down": {
@@ -2404,7 +2404,7 @@
                                 0.25,
                                 0.5859375
                             ],
-                            "rotation": 0,
+                            "rotation": 270,
                             "texture": "#default"
                         }
                     }
@@ -2470,7 +2470,7 @@
                                 0.125,
                                 0.6328125
                             ],
-                            "rotation": 0,
+                            "rotation": 180,
                             "texture": "#default"
                         },
                         "east": {
@@ -2480,7 +2480,7 @@
                                 0.109375,
                                 0.6328125
                             ],
-                            "rotation": 0,
+                            "rotation": 180,
                             "texture": "#default"
                         },
                         "south": {
@@ -2490,7 +2490,7 @@
                                 0.0625,
                                 0.6328125
                             ],
-                            "rotation": 0,
+                            "rotation": 180,
                             "texture": "#default"
                         },
                         "west": {
@@ -2500,7 +2500,7 @@
                                 0.046875,
                                 0.6328125
                             ],
-                            "rotation": 0,
+                            "rotation": 180,
                             "texture": "#default"
                         },
                         "up": {
@@ -2510,7 +2510,7 @@
                                 0.0625,
                                 0.6171875
                             ],
-                            "rotation": 90,
+                            "rotation": 180,
                             "texture": "#default"
                         },
                         "down": {
@@ -2520,7 +2520,7 @@
                                 0.078125,
                                 0.6171875
                             ],
-                            "rotation": 0,
+                            "rotation": 270,
                             "texture": "#default"
                         }
                     }
@@ -2586,7 +2586,7 @@
                                 0.125,
                                 0.59375
                             ],
-                            "rotation": 0,
+                            "rotation": 180,
                             "texture": "#default"
                         },
                         "east": {
@@ -2596,7 +2596,7 @@
                                 0.109375,
                                 0.59375
                             ],
-                            "rotation": 0,
+                            "rotation": 180,
                             "texture": "#default"
                         },
                         "south": {
@@ -2606,7 +2606,7 @@
                                 0.0625,
                                 0.59375
                             ],
-                            "rotation": 0,
+                            "rotation": 180,
                             "texture": "#default"
                         },
                         "west": {
@@ -2616,7 +2616,7 @@
                                 0.046875,
                                 0.59375
                             ],
-                            "rotation": 0,
+                            "rotation": 180,
                             "texture": "#default"
                         },
                         "up": {
@@ -2626,7 +2626,7 @@
                                 0.0625,
                                 0.5859375
                             ],
-                            "rotation": 90,
+                            "rotation": 180,
                             "texture": "#default"
                         },
                         "down": {
@@ -2636,7 +2636,7 @@
                                 0.078125,
                                 0.5859375
                             ],
-                            "rotation": 0,
+                            "rotation": 270,
                             "texture": "#default"
                         }
                     }
@@ -2702,7 +2702,7 @@
                                 0.0625,
                                 0.515625
                             ],
-                            "rotation": 0,
+                            "rotation": 180,
                             "texture": "#default"
                         },
                         "east": {
@@ -2712,7 +2712,7 @@
                                 0.046875,
                                 0.515625
                             ],
-                            "rotation": 0,
+                            "rotation": 180,
                             "texture": "#default"
                         },
                         "south": {
@@ -2722,7 +2722,7 @@
                                 0.03125,
                                 0.515625
                             ],
-                            "rotation": 0,
+                            "rotation": 180,
                             "texture": "#default"
                         },
                         "west": {
@@ -2732,7 +2732,7 @@
                                 0.015625,
                                 0.515625
                             ],
-                            "rotation": 0,
+                            "rotation": 180,
                             "texture": "#default"
                         },
                         "up": {
@@ -2742,7 +2742,7 @@
                                 0.03125,
                                 0.5
                             ],
-                            "rotation": 90,
+                            "rotation": 180,
                             "texture": "#default"
                         },
                         "down": {
@@ -2752,7 +2752,7 @@
                                 0.046875,
                                 0.5
                             ],
-                            "rotation": 0,
+                            "rotation": 270,
                             "texture": "#default"
                         }
                     }
@@ -2818,7 +2818,7 @@
                                 0.375,
                                 0.4921875
                             ],
-                            "rotation": 0,
+                            "rotation": 180,
                             "texture": "#default"
                         },
                         "east": {
@@ -2828,7 +2828,7 @@
                                 0.234375,
                                 0.4921875
                             ],
-                            "rotation": 0,
+                            "rotation": 180,
                             "texture": "#default"
                         },
                         "south": {
@@ -2838,7 +2838,7 @@
                                 0.1875,
                                 0.4921875
                             ],
-                            "rotation": 0,
+                            "rotation": 180,
                             "texture": "#default"
                         },
                         "west": {
@@ -2848,7 +2848,7 @@
                                 0.046875,
                                 0.4921875
                             ],
-                            "rotation": 0,
+                            "rotation": 180,
                             "texture": "#default"
                         },
                         "up": {
@@ -2858,7 +2858,7 @@
                                 0.1875,
                                 0.484375
                             ],
-                            "rotation": 90,
+                            "rotation": 180,
                             "texture": "#default"
                         },
                         "down": {
@@ -2868,7 +2868,7 @@
                                 0.328125,
                                 0.484375
                             ],
-                            "rotation": 0,
+                            "rotation": 270,
                             "texture": "#default"
                         }
                     }
@@ -2934,7 +2934,7 @@
                                 0.125,
                                 0.4609375
                             ],
-                            "rotation": 0,
+                            "rotation": 180,
                             "texture": "#default"
                         },
                         "east": {
@@ -2944,7 +2944,7 @@
                                 0.109375,
                                 0.4609375
                             ],
-                            "rotation": 0,
+                            "rotation": 180,
                             "texture": "#default"
                         },
                         "south": {
@@ -2954,7 +2954,7 @@
                                 0.0625,
                                 0.4609375
                             ],
-                            "rotation": 0,
+                            "rotation": 180,
                             "texture": "#default"
                         },
                         "west": {
@@ -2964,7 +2964,7 @@
                                 0.046875,
                                 0.4609375
                             ],
-                            "rotation": 0,
+                            "rotation": 180,
                             "texture": "#default"
                         },
                         "up": {
@@ -2974,7 +2974,7 @@
                                 0.0625,
                                 0.4375
                             ],
-                            "rotation": 90,
+                            "rotation": 180,
                             "texture": "#default"
                         },
                         "down": {
@@ -2984,7 +2984,7 @@
                                 0.078125,
                                 0.4375
                             ],
-                            "rotation": 0,
+                            "rotation": 270,
                             "texture": "#default"
                         }
                     }
@@ -3050,7 +3050,7 @@
                                 0.125,
                                 0.4140625
                             ],
-                            "rotation": 0,
+                            "rotation": 180,
                             "texture": "#default"
                         },
                         "east": {
@@ -3060,7 +3060,7 @@
                                 0.109375,
                                 0.4140625
                             ],
-                            "rotation": 0,
+                            "rotation": 180,
                             "texture": "#default"
                         },
                         "south": {
@@ -3070,7 +3070,7 @@
                                 0.0625,
                                 0.4140625
                             ],
-                            "rotation": 0,
+                            "rotation": 180,
                             "texture": "#default"
                         },
                         "west": {
@@ -3080,7 +3080,7 @@
                                 0.046875,
                                 0.4140625
                             ],
-                            "rotation": 0,
+                            "rotation": 180,
                             "texture": "#default"
                         },
                         "up": {
@@ -3090,7 +3090,7 @@
                                 0.0625,
                                 0.3984375
                             ],
-                            "rotation": 90,
+                            "rotation": 180,
                             "texture": "#default"
                         },
                         "down": {
@@ -3100,7 +3100,7 @@
                                 0.078125,
                                 0.3984375
                             ],
-                            "rotation": 0,
+                            "rotation": 270,
                             "texture": "#default"
                         }
                     }
@@ -3166,7 +3166,7 @@
                                 0.15625,
                                 0.375
                             ],
-                            "rotation": 0,
+                            "rotation": 180,
                             "texture": "#default"
                         },
                         "east": {
@@ -3176,7 +3176,7 @@
                                 0.09375,
                                 0.375
                             ],
-                            "rotation": 0,
+                            "rotation": 180,
                             "texture": "#default"
                         },
                         "south": {
@@ -3186,7 +3186,7 @@
                                 0.078125,
                                 0.375
                             ],
-                            "rotation": 0,
+                            "rotation": 180,
                             "texture": "#default"
                         },
                         "west": {
@@ -3196,7 +3196,7 @@
                                 0.015625,
                                 0.375
                             ],
-                            "rotation": 0,
+                            "rotation": 180,
                             "texture": "#default"
                         },
                         "up": {
@@ -3206,7 +3206,7 @@
                                 0.078125,
                                 0.3671875
                             ],
-                            "rotation": 90,
+                            "rotation": 180,
                             "texture": "#default"
                         },
                         "down": {
@@ -3216,7 +3216,7 @@
                                 0.140625,
                                 0.3671875
                             ],
-                            "rotation": 0,
+                            "rotation": 270,
                             "texture": "#default"
                         }
                     }
@@ -3282,7 +3282,7 @@
                                 0.21875,
                                 0.359375
                             ],
-                            "rotation": 0,
+                            "rotation": 180,
                             "texture": "#default"
                         },
                         "east": {
@@ -3292,7 +3292,7 @@
                                 0.125,
                                 0.359375
                             ],
-                            "rotation": 0,
+                            "rotation": 180,
                             "texture": "#default"
                         },
                         "south": {
@@ -3302,7 +3302,7 @@
                                 0.109375,
                                 0.359375
                             ],
-                            "rotation": 0,
+                            "rotation": 180,
                             "texture": "#default"
                         },
                         "west": {
@@ -3312,7 +3312,7 @@
                                 0.015625,
                                 0.359375
                             ],
-                            "rotation": 0,
+                            "rotation": 180,
                             "texture": "#default"
                         },
                         "up": {
@@ -3322,7 +3322,7 @@
                                 0.109375,
                                 0.3515625
                             ],
-                            "rotation": 90,
+                            "rotation": 180,
                             "texture": "#default"
                         },
                         "down": {
@@ -3332,7 +3332,7 @@
                                 0.203125,
                                 0.3515625
                             ],
-                            "rotation": 0,
+                            "rotation": 270,
                             "texture": "#default"
                         }
                     }
@@ -3398,7 +3398,7 @@
                                 0.25,
                                 0.34375
                             ],
-                            "rotation": 0,
+                            "rotation": 180,
                             "texture": "#default"
                         },
                         "east": {
@@ -3408,7 +3408,7 @@
                                 0.15625,
                                 0.34375
                             ],
-                            "rotation": 0,
+                            "rotation": 180,
                             "texture": "#default"
                         },
                         "south": {
@@ -3418,7 +3418,7 @@
                                 0.125,
                                 0.34375
                             ],
-                            "rotation": 0,
+                            "rotation": 180,
                             "texture": "#default"
                         },
                         "west": {
@@ -3428,7 +3428,7 @@
                                 0.03125,
                                 0.34375
                             ],
-                            "rotation": 0,
+                            "rotation": 180,
                             "texture": "#default"
                         },
                         "up": {
@@ -3438,7 +3438,7 @@
                                 0.125,
                                 0.3359375
                             ],
-                            "rotation": 90,
+                            "rotation": 180,
                             "texture": "#default"
                         },
                         "down": {
@@ -3448,7 +3448,7 @@
                                 0.21875,
                                 0.3359375
                             ],
-                            "rotation": 0,
+                            "rotation": 270,
                             "texture": "#default"
                         }
                     }
@@ -3514,7 +3514,7 @@
                                 0.125,
                                 0.3203125
                             ],
-                            "rotation": 0,
+                            "rotation": 180,
                             "texture": "#default"
                         },
                         "east": {
@@ -3524,7 +3524,7 @@
                                 0.09375,
                                 0.3203125
                             ],
-                            "rotation": 0,
+                            "rotation": 180,
                             "texture": "#default"
                         },
                         "south": {
@@ -3534,7 +3534,7 @@
                                 0.0625,
                                 0.3203125
                             ],
-                            "rotation": 0,
+                            "rotation": 180,
                             "texture": "#default"
                         },
                         "west": {
@@ -3544,7 +3544,7 @@
                                 0.03125,
                                 0.3203125
                             ],
-                            "rotation": 0,
+                            "rotation": 180,
                             "texture": "#default"
                         },
                         "up": {
@@ -3554,7 +3554,7 @@
                                 0.0625,
                                 0.296875
                             ],
-                            "rotation": 90,
+                            "rotation": 180,
                             "texture": "#default"
                         },
                         "down": {
@@ -3564,7 +3564,7 @@
                                 0.09375,
                                 0.296875
                             ],
-                            "rotation": 0,
+                            "rotation": 270,
                             "texture": "#default"
                         }
                     }
@@ -3630,7 +3630,7 @@
                                 0.28125,
                                 0.28125
                             ],
-                            "rotation": 0,
+                            "rotation": 180,
                             "texture": "#default"
                         },
                         "east": {
@@ -3640,7 +3640,7 @@
                                 0.171875,
                                 0.28125
                             ],
-                            "rotation": 0,
+                            "rotation": 180,
                             "texture": "#default"
                         },
                         "south": {
@@ -3650,7 +3650,7 @@
                                 0.140625,
                                 0.28125
                             ],
-                            "rotation": 0,
+                            "rotation": 180,
                             "texture": "#default"
                         },
                         "west": {
@@ -3660,7 +3660,7 @@
                                 0.03125,
                                 0.28125
                             ],
-                            "rotation": 0,
+                            "rotation": 180,
                             "texture": "#default"
                         },
                         "up": {
@@ -3670,7 +3670,7 @@
                                 0.140625,
                                 0.234375
                             ],
-                            "rotation": 90,
+                            "rotation": 180,
                             "texture": "#default"
                         },
                         "down": {
@@ -3680,7 +3680,7 @@
                                 0.25,
                                 0.234375
                             ],
-                            "rotation": 0,
+                            "rotation": 270,
                             "texture": "#default"
                         }
                     }
@@ -3746,7 +3746,7 @@
                                 0.125,
                                 0.21875
                             ],
-                            "rotation": 0,
+                            "rotation": 180,
                             "texture": "#default"
                         },
                         "east": {
@@ -3756,7 +3756,7 @@
                                 0.109375,
                                 0.21875
                             ],
-                            "rotation": 0,
+                            "rotation": 180,
                             "texture": "#default"
                         },
                         "south": {
@@ -3766,7 +3766,7 @@
                                 0.0625,
                                 0.21875
                             ],
-                            "rotation": 0,
+                            "rotation": 180,
                             "texture": "#default"
                         },
                         "west": {
@@ -3776,7 +3776,7 @@
                                 0.046875,
                                 0.21875
                             ],
-                            "rotation": 0,
+                            "rotation": 180,
                             "texture": "#default"
                         },
                         "up": {
@@ -3786,7 +3786,7 @@
                                 0.0625,
                                 0.203125
                             ],
-                            "rotation": 90,
+                            "rotation": 180,
                             "texture": "#default"
                         },
                         "down": {
@@ -3796,7 +3796,7 @@
                                 0.078125,
                                 0.203125
                             ],
-                            "rotation": 0,
+                            "rotation": 270,
                             "texture": "#default"
                         }
                     }
@@ -3862,7 +3862,7 @@
                                 0.25,
                                 0.1796875
                             ],
-                            "rotation": 0,
+                            "rotation": 180,
                             "texture": "#default"
                         },
                         "east": {
@@ -3872,7 +3872,7 @@
                                 0.171875,
                                 0.1796875
                             ],
-                            "rotation": 0,
+                            "rotation": 180,
                             "texture": "#default"
                         },
                         "south": {
@@ -3882,7 +3882,7 @@
                                 0.125,
                                 0.1796875
                             ],
-                            "rotation": 0,
+                            "rotation": 180,
                             "texture": "#default"
                         },
                         "west": {
@@ -3892,7 +3892,7 @@
                                 0.046875,
                                 0.1796875
                             ],
-                            "rotation": 0,
+                            "rotation": 180,
                             "texture": "#default"
                         },
                         "up": {
@@ -3902,7 +3902,7 @@
                                 0.125,
                                 0.171875
                             ],
-                            "rotation": 90,
+                            "rotation": 180,
                             "texture": "#default"
                         },
                         "down": {
@@ -3912,7 +3912,7 @@
                                 0.203125,
                                 0.171875
                             ],
-                            "rotation": 0,
+                            "rotation": 270,
                             "texture": "#default"
                         }
                     }
@@ -3978,7 +3978,7 @@
                                 0.40625,
                                 0.109375
                             ],
-                            "rotation": 0,
+                            "rotation": 180,
                             "texture": "#default"
                         },
                         "east": {
@@ -3988,7 +3988,7 @@
                                 0.25,
                                 0.109375
                             ],
-                            "rotation": 0,
+                            "rotation": 180,
                             "texture": "#default"
                         },
                         "south": {
@@ -3998,7 +3998,7 @@
                                 0.203125,
                                 0.109375
                             ],
-                            "rotation": 0,
+                            "rotation": 180,
                             "texture": "#default"
                         },
                         "west": {
@@ -4008,7 +4008,7 @@
                                 0.046875,
                                 0.109375
                             ],
-                            "rotation": 0,
+                            "rotation": 180,
                             "texture": "#default"
                         },
                         "up": {
@@ -4018,7 +4018,7 @@
                                 0.203125,
                                 0.09375
                             ],
-                            "rotation": 90,
+                            "rotation": 180,
                             "texture": "#default"
                         },
                         "down": {
@@ -4028,7 +4028,7 @@
                                 0.359375,
                                 0.09375
                             ],
-                            "rotation": 0,
+                            "rotation": 270,
                             "texture": "#default"
                         }
                     }
@@ -4104,7 +4104,7 @@
                                 0.28125,
                                 0.0234375
                             ],
-                            "rotation": 0,
+                            "rotation": 180,
                             "texture": "#default"
                         },
                         "east": {
@@ -4114,7 +4114,7 @@
                                 0.234375,
                                 0.0234375
                             ],
-                            "rotation": 0,
+                            "rotation": 180,
                             "texture": "#default"
                         },
                         "south": {
@@ -4124,7 +4124,7 @@
                                 0.21875,
                                 0.0234375
                             ],
-                            "rotation": 0,
+                            "rotation": 180,
                             "texture": "#default"
                         },
                         "west": {
@@ -4134,7 +4134,7 @@
                                 0.171875,
                                 0.0234375
                             ],
-                            "rotation": 0,
+                            "rotation": 180,
                             "texture": "#default"
                         },
                         "up": {
@@ -4144,7 +4144,7 @@
                                 0.21875,
                                 0.0078125
                             ],
-                            "rotation": 90,
+                            "rotation": 180,
                             "texture": "#default"
                         },
                         "down": {
@@ -4154,7 +4154,7 @@
                                 0.265625,
                                 0.0078125
                             ],
-                            "rotation": 0,
+                            "rotation": 270,
                             "texture": "#default"
                         }
                     }
@@ -4230,7 +4230,7 @@
                                 0.265625,
                                 0.0546875
                             ],
-                            "rotation": 0,
+                            "rotation": 180,
                             "texture": "#default"
                         },
                         "east": {
@@ -4240,7 +4240,7 @@
                                 0.25,
                                 0.0546875
                             ],
-                            "rotation": 0,
+                            "rotation": 180,
                             "texture": "#default"
                         },
                         "south": {
@@ -4250,7 +4250,7 @@
                                 0.21875,
                                 0.0546875
                             ],
-                            "rotation": 0,
+                            "rotation": 180,
                             "texture": "#default"
                         },
                         "west": {
@@ -4260,7 +4260,7 @@
                                 0.203125,
                                 0.0546875
                             ],
-                            "rotation": 0,
+                            "rotation": 180,
                             "texture": "#default"
                         },
                         "up": {
@@ -4270,7 +4270,7 @@
                                 0.21875,
                                 0.046875
                             ],
-                            "rotation": 90,
+                            "rotation": 180,
                             "texture": "#default"
                         },
                         "down": {
@@ -4280,7 +4280,7 @@
                                 0.234375,
                                 0.046875
                             ],
-                            "rotation": 0,
+                            "rotation": 270,
                             "texture": "#default"
                         }
                     }
@@ -4346,7 +4346,7 @@
                                 0.140625,
                                 0.0546875
                             ],
-                            "rotation": 0,
+                            "rotation": 180,
                             "texture": "#default"
                         },
                         "east": {
@@ -4356,7 +4356,7 @@
                                 0.125,
                                 0.0546875
                             ],
-                            "rotation": 0,
+                            "rotation": 180,
                             "texture": "#default"
                         },
                         "south": {
@@ -4366,7 +4366,7 @@
                                 0.109375,
                                 0.0546875
                             ],
-                            "rotation": 0,
+                            "rotation": 180,
                             "texture": "#default"
                         },
                         "west": {
@@ -4376,7 +4376,7 @@
                                 0.09375,
                                 0.0546875
                             ],
-                            "rotation": 0,
+                            "rotation": 180,
                             "texture": "#default"
                         },
                         "up": {
@@ -4386,7 +4386,7 @@
                                 0.109375,
                                 0.03125
                             ],
-                            "rotation": 90,
+                            "rotation": 180,
                             "texture": "#default"
                         },
                         "down": {
@@ -4396,7 +4396,7 @@
                                 0.125,
                                 0.03125
                             ],
-                            "rotation": 0,
+                            "rotation": 270,
                             "texture": "#default"
                         }
                     }
@@ -4462,7 +4462,7 @@
                                 0.0625,
                                 0.0546875
                             ],
-                            "rotation": 0,
+                            "rotation": 180,
                             "texture": "#default"
                         },
                         "east": {
@@ -4472,7 +4472,7 @@
                                 0.046875,
                                 0.0546875
                             ],
-                            "rotation": 0,
+                            "rotation": 180,
                             "texture": "#default"
                         },
                         "south": {
@@ -4482,7 +4482,7 @@
                                 0.03125,
                                 0.0546875
                             ],
-                            "rotation": 0,
+                            "rotation": 180,
                             "texture": "#default"
                         },
                         "west": {
@@ -4492,7 +4492,7 @@
                                 0.015625,
                                 0.0546875
                             ],
-                            "rotation": 0,
+                            "rotation": 180,
                             "texture": "#default"
                         },
                         "up": {
@@ -4502,7 +4502,7 @@
                                 0.03125,
                                 0.0390625
                             ],
-                            "rotation": 90,
+                            "rotation": 180,
                             "texture": "#default"
                         },
                         "down": {
@@ -4512,7 +4512,7 @@
                                 0.046875,
                                 0.0390625
                             ],
-                            "rotation": 0,
+                            "rotation": 270,
                             "texture": "#default"
                         }
                     }
@@ -4578,7 +4578,7 @@
                                 0.125,
                                 0.0234375
                             ],
-                            "rotation": 0,
+                            "rotation": 180,
                             "texture": "#default"
                         },
                         "east": {
@@ -4588,7 +4588,7 @@
                                 0.078125,
                                 0.0234375
                             ],
-                            "rotation": 0,
+                            "rotation": 180,
                             "texture": "#default"
                         },
                         "south": {
@@ -4598,7 +4598,7 @@
                                 0.0625,
                                 0.0234375
                             ],
-                            "rotation": 0,
+                            "rotation": 180,
                             "texture": "#default"
                         },
                         "west": {
@@ -4608,7 +4608,7 @@
                                 0.015625,
                                 0.0234375
                             ],
-                            "rotation": 0,
+                            "rotation": 180,
                             "texture": "#default"
                         },
                         "up": {
@@ -4618,7 +4618,7 @@
                                 0.0625,
                                 0.0078125
                             ],
-                            "rotation": 90,
+                            "rotation": 180,
                             "texture": "#default"
                         },
                         "down": {
@@ -4628,7 +4628,7 @@
                                 0.109375,
                                 0.0078125
                             ],
-                            "rotation": 0,
+                            "rotation": 270,
                             "texture": "#default"
                         }
                     }
