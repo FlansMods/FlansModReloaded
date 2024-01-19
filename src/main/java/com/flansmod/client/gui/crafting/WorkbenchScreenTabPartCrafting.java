@@ -26,12 +26,13 @@ import net.minecraft.world.item.crafting.Ingredient;
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 public class WorkbenchScreenTabPartCrafting extends WorkbenchScreenTab<WorkbenchMenuPartCrafting>
 {
-	private static final ResourceLocation PARTS_BG = new ResourceLocation(FlansMod.MODID, "textures/gui/part_fabrication_large.png");
-	private static final int PARTS_W = 512;
-	private static final int PARTS_H = 256;
+	public static final ResourceLocation PARTS_BG = new ResourceLocation(FlansMod.MODID, "textures/gui/part_fabrication_large.png");
+	public static final int PARTS_W = 512;
+	public static final int PARTS_H = 256;
 
 	private static final int PART_RECIPE_VIEWER_ROWS = 2;
 	private static final int PART_RECIPE_VIEWER_COLUMNS = 8;
@@ -217,42 +218,7 @@ public class WorkbenchScreenTabPartCrafting extends WorkbenchScreenTab<Workbench
 						xOrigin + BLUEPRINT_ORIGIN_X + 6 + 25 * i, 25,
 						yOrigin + BLUEPRINT_ORIGIN_Y + 18, 23))
 					{
-						int maxProduce = matching[i] / required[i];
-						List<FormattedCharSequence> lines = new ArrayList<>();
-						Ingredient ingredient = recipe.getIngredients().get(i);
-						if (ingredient instanceof TieredMaterialIngredient tiered)
-						{
-							String materialName = "material." + tiered.MaterialType().Location.getNamespace() + "." + tiered.MaterialType().Location.getPath();
-							lines.add(Component.translatable("crafting.match_single", Component.translatable(materialName)).getVisualOrderText());
-
-							String matchingString = tiered.MaterialType().GenerateString(matching[i]);
-							String requiredString = tiered.MaterialType().GenerateString(required[i]);
-
-							String resetColorCode = "\u00A7f";
-							String colorCode = matching[i] < required[i] ? "\u00A74" : resetColorCode;
-
-							lines.add(Component.literal(colorCode + matchingString + resetColorCode + " / " + requiredString  + " (Max: " + maxProduce + ")").getVisualOrderText());
-
-							//lines.add(Component.literal("%s", )
-
-						}
-						else
-						{
-							if(ingredient.getItems().length == 1)
-								lines.add(ingredient.getItems()[0].getHoverName().getVisualOrderText());
-							else
-							{
-								lines.add(Component.translatable("crafting.one_of").getVisualOrderText());
-								for (ItemStack possible : ingredient.getItems())
-								{
-									lines.add(possible.getHoverName().getVisualOrderText());
-								}
-							}
-
-							lines.add(Component.literal(matching[i] + "/" + required[i] + " (Max: " + maxProduce + ")").getVisualOrderText());
-						}
-
-						graphics.renderTooltip(font, lines, xMouse, yMouse);
+						graphics.renderTooltip(font, recipe.GenerateTooltip(i, required[i], matching[i]), Optional.empty(), xMouse, yMouse);
 						return true;
 					}
 				}

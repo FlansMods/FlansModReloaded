@@ -35,12 +35,6 @@ buildscript {
         classpath("org.eclipse.jgit:org.eclipse.jgit:5.8.0.202006091008-r")
         classpath("org.apache.commons:commons-lang3:3.12.0")
         classpath("org.spongepowered:mixingradle:0.7.+")
-        // compile against the JEI API but do not include it at runtime
-        //compileOnly(fg.deobf("mezz.jei:jei-${mc_version}-common-api:${jei_version}"))
-        //compileOnly(fg.deobf("mezz.jei:jei-${mc_version}-forge-api:${jei_version}"))
-        // at runtime, use the full JEI jar for Forge
-        //runtimeOnly(fg.deobf("mezz.jei:jei-${mc_version}-forge:${jei_version}"))
-
     }
 }
 
@@ -71,15 +65,11 @@ val modCurseForgeID = config["flansmod.curseforge"] as String
 val basicsCurseForgeID = config["basicparts.curseforge"] as String
 val vendersCurseForgeID = config["vendersgame.curseforge"] as String
 
-
-
-
-
 val mcVersion = config["minecraft_version"] as String
 val mcFullVersion = "$mcVersion-${config["forge_version"]}"
 val majorVersion = config["flansmod.version.major"] as String
 val minorVersion = config["flansmod.version.minor"] as String
-val jeiVersion = config["jei.version"] as String
+val jeiVersion = config["jei_version"] as String
 val modVersionNoBuild = "$majorVersion.$minorVersion"
 
 val git: Git = Git.open(projectDir)
@@ -101,13 +91,10 @@ configure<UserDevExtension> {
 }
 
 repositories {
-    maven { //JEI
-        name = "Progwml6 maven"
-        setUrl("https://dvs1.progwml6.com/files/maven/")
-    }
-    maven { //JEI fallback
-        name = "ModMaven"
-        setUrl("modmaven.k-4u.nl")
+    maven {
+        // location of the maven that hosts JEI files since January 2023
+        name = "Jared's maven"
+        setUrl("https://maven.blamejared.com/")
     }
 }
 
@@ -115,6 +102,11 @@ dependencies {
     //"deobfCompile"("mezz.jei:jei_$mcVersion:$jeiVersion")
     "minecraft"("net.minecraftforge:forge:$mcFullVersion")
     annotationProcessor("org.spongepowered:mixin:0.8.5:processor")
+    // compile against the JEI API but do not include it at runtime
+    compileOnly(fg.deobf("mezz.jei:jei-${mcVersion}-common-api:${jeiVersion}"))
+    compileOnly(fg.deobf("mezz.jei:jei-${mcVersion}-forge-api:${jeiVersion}"))
+    // at runtime, use the full JEI jar for Forge
+    runtimeOnly(fg.deobf("mezz.jei:jei-${mcVersion}-forge:${jeiVersion}"))
 }
 
 // processResources

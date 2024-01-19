@@ -6,23 +6,28 @@ import com.google.gson.JsonObject;
 import net.minecraft.core.NonNullList;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.FormattedCharSequence;
 import net.minecraft.util.GsonHelper;
+import net.minecraft.world.Container;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.*;
 import net.minecraft.world.level.Level;
 
 import org.jetbrains.annotations.Nullable;
 import javax.annotation.Nonnull;
+import java.util.ArrayList;
+import java.util.List;
 
 public class PartFabricationRecipe implements Recipe<WorkbenchBlockEntity>
 {
-	protected final RecipeType<?> Type;
-	protected final ResourceLocation Loc;
-	protected final String Group;
-	protected final NonNullList<Ingredient> InputIngredients;
-	protected final ItemStack Result;
-	protected final int CraftTime;
+	public final RecipeType<?> Type;
+	public final ResourceLocation Loc;
+	public final String Group;
+	public final NonNullList<Ingredient> InputIngredients;
+	public final ItemStack Result;
+	public final int CraftTime;
 
 	@Nonnull
 	@Override
@@ -58,6 +63,83 @@ public class PartFabricationRecipe implements Recipe<WorkbenchBlockEntity>
 		InputIngredients = NonNullList.of(Ingredient.EMPTY, inputIngredients);
 		Result = result;
 		CraftTime = craftTime;
+	}
+
+	public static int CountInputMatching(@Nonnull Ingredient ingredient, @Nonnull Container container)
+	{
+		int count = 0;
+		for(int i = 0; i < container.getContainerSize(); i++)
+		{
+			ItemStack stack = container.getItem(i);
+			if(ingredient instanceof StackedIngredient stackedIngredient)
+			{
+				count += stackedIngredient.Count(stack);
+			}
+			else if(ingredient.test(stack))
+				count += stack.getCount();
+
+		}
+		return count;
+	}
+	public int[] GetMatchingOfEachIngredient(@Nonnull Container container)
+	{
+		int[] matching = new int[InputIngredients.size()];
+		for (int i = 0; i < InputIngredients.size(); i++)
+		{
+			Ingredient ingredient = InputIngredients.get(i);
+			matching[i] = CountInputMatching(ingredient, container);
+		}
+		return matching;
+	}
+	public int[] GetRequiredOfEachIngredient()
+	{
+		int[] required = new int[InputIngredients.size()];
+		for (int i = 0; i < InputIngredients.size(); i++)
+		{
+			Ingredient ingredient = InputIngredients.get(i);
+			if(ingredient instanceof StackedIngredient stacked)
+				required[i] = stacked.Count;
+			else required[i] = 1;
+		}
+		return required;
+	}
+	@Nonnull
+	public List<Component> GenerateTooltip(int ingredientIndex, int numRequired, int numMatching)
+	{
+		List<Component> lines = new ArrayList<>();
+		int maxProduce = numMatching / numRequired;
+
+		Ingredient ingredient = InputIngredients.get(ingredientIndex);
+		if (ingredient instanceof TieredMaterialIngredient tiered)
+		{
+			String materialName = "material." + tiered.MaterialType().Location.getNamespace() + "." + tiered.MaterialType().Location.getPath();
+			lines.add(Component.translatable("crafting.match_single", Component.translatable(materialName)));
+
+			String matchingString = tiered.MaterialType().GenerateString(numMatching);
+			String requiredString = tiered.MaterialType().GenerateString(numRequired);
+
+			String resetColorCode = "\u00A7f";
+			String colorCode = numMatching < numRequired ? "\u00A74" : resetColorCode;
+
+			lines.add(Component.literal(colorCode + matchingString + resetColorCode + " / " + requiredString  + " (Max: " + maxProduce + ")"));
+		}
+		else
+		{
+			if(ingredient.getItems().length == 1)
+				lines.add(ingredient.getItems()[0].getHoverName());
+			else
+			{
+				lines.add(Component.translatable("crafting.one_of"));
+				for (ItemStack possible : ingredient.getItems())
+				{
+					lines.add(possible.getHoverName());
+				}
+			}
+
+			lines.add(Component.literal(numMatching + "/" + numRequired + " (Max: " + maxProduce + ")"));
+		}
+
+		return lines;
 	}
 
 	@Override

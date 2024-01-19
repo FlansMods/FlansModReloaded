@@ -701,16 +701,7 @@ public class WorkbenchBlockEntity extends BlockEntity implements WorldlyContaine
 			return new int[0];
 
 		PartFabricationRecipe recipe = GetAllRecipes().get(recipeIndex);
-		if(recipe == null)
-			return new int[0];
-
-		int[] matching = new int[recipe.getIngredients().size()];
-		for (int i = 0; i < recipe.getIngredients().size(); i++)
-		{
-			Ingredient ingredient = recipe.getIngredients().get(i);
-			matching[i] = CountInputMatching(ingredient);
-		}
-		return matching;
+		return recipe == null ? new int[0] : recipe.GetMatchingOfEachIngredient(PartCraftingInputContainer);
 	}
 
 	public int[] GetRequiredOfEachIngredientForRecipe(int recipeIndex)
@@ -719,18 +710,7 @@ public class WorkbenchBlockEntity extends BlockEntity implements WorldlyContaine
 			return new int[0];
 
 		PartFabricationRecipe recipe = GetAllRecipes().get(recipeIndex);
-		if(recipe == null)
-			return new int[0];
-
-		int[] required = new int[recipe.getIngredients().size()];
-		for (int i = 0; i < recipe.getIngredients().size(); i++)
-		{
-			Ingredient ingredient = recipe.getIngredients().get(i);
-			if(ingredient instanceof StackedIngredient stacked)
-				required[i] = stacked.Count;
-			else required[i] = 1;
-		}
-		return required;
+		return recipe == null ? new int[0] : recipe.GetRequiredOfEachIngredient();
 	}
 
 	public int GetOutputSlotToCraftPart()
