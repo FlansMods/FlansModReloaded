@@ -1,8 +1,7 @@
 package com.flansmod.common.crafting.menus;
 
 import com.flansmod.common.FlansMod;
-import com.flansmod.common.crafting.AttachmentSlot;
-import com.flansmod.common.crafting.RestrictedSlot;
+import com.flansmod.common.crafting.slots.RestrictedSlot;
 import com.flansmod.common.crafting.WorkbenchBlockEntity;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.Container;

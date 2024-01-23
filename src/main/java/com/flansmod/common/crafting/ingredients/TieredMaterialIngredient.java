@@ -1,4 +1,4 @@
-package com.flansmod.common.crafting;
+package com.flansmod.common.crafting.ingredients;
 
 import com.flansmod.common.FlansMod;
 import com.flansmod.common.types.crafting.MaterialDefinition;
@@ -10,13 +10,11 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.GsonHelper;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
-import net.minecraftforge.common.crafting.AbstractIngredient;
 import net.minecraftforge.common.crafting.IIngredientSerializer;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public class TieredMaterialIngredient extends StackedIngredient

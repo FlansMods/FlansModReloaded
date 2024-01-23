@@ -1,8 +1,8 @@
 package com.flansmod.common.crafting.menus;
 
 import com.flansmod.common.FlansMod;
-import com.flansmod.common.crafting.AttachmentSlot;
-import com.flansmod.common.crafting.RestrictedSlot;
+import com.flansmod.common.crafting.slots.AttachmentSlot;
+import com.flansmod.common.crafting.slots.RestrictedSlot;
 import com.flansmod.common.crafting.WorkbenchBlockEntity;
 import com.flansmod.common.item.GunItem;
 import com.flansmod.common.types.attachments.EAttachmentType;

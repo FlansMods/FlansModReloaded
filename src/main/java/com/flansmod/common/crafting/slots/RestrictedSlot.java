@@ -1,4 +1,4 @@
-package com.flansmod.common.crafting;
+package com.flansmod.common.crafting.slots;
 
 import net.minecraft.world.Container;
 import net.minecraft.world.inventory.Slot;

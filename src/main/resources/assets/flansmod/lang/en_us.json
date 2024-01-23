@@ -201,5 +201,6 @@
   "key.flansmod.look_at": "Look At Weapon",
   "key.flansmod.manual_reload": "Reload Weapon",
   "key.flansmod.mode_toggle": "Toggle Weapon Mode",
-  "tooltip.crafted_from_nothing": "§6This weapon was not crafted, so has no extra abilities"
+  "tooltip.crafted_from_nothing": "§6This weapon was not crafted, so has no extra abilities",
+  "jei.part_fabrication.title": "Part Fabrication"
 }

@@ -1,9 +1,8 @@
 package com.flansmod.common.crafting.menus;
 
 import com.flansmod.common.FlansMod;
-import com.flansmod.common.crafting.RestrictedSlot;
+import com.flansmod.common.crafting.slots.RestrictedSlot;
 import com.flansmod.common.crafting.WorkbenchBlockEntity;
-import com.flansmod.common.crafting.menus.WorkbenchMenu;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.Container;
 import net.minecraft.world.entity.player.Inventory;
@@ -31,16 +30,12 @@ public class WorkbenchMenuPartCrafting extends WorkbenchMenu
 	public static final int BUTTON_SELECT_PART_RECIPE_0				= 0x20; // many part recipes
 	public static final int BUTTON_SELECT_PART_RECIPE_MAX			= 0xff;
 
-
-
 	// Containers
 	public final Container PartCraftingInputContainer;
 	public final Container PartCraftingOutputContainer;
 	// Slots
 	protected RestrictedSlot[] PartCraftingInputSlots;
 	protected RestrictedSlot[] PartCraftingOutputSlots;
-
-	public int SelectedPartRecipeIndex = NO_RECIPE_SELECTED;
 
 	public WorkbenchMenuPartCrafting(int containerID,
 									 @Nonnull Inventory inventory,
@@ -79,8 +74,7 @@ public class WorkbenchMenuPartCrafting extends WorkbenchMenu
 		}
 		if(BUTTON_SELECT_PART_RECIPE_0 <= buttonID && buttonID <= BUTTON_SELECT_PART_RECIPE_MAX)
 		{
-			SelectedPartRecipeIndex = buttonID - BUTTON_SELECT_PART_RECIPE_0;
-			BlockEntity.SelectPartCraftingRecipe(SelectedPartRecipeIndex);
+			BlockEntity.SelectPartCraftingRecipe(buttonID - BUTTON_SELECT_PART_RECIPE_0);
 			return true;
 		}
 		if(BUTTON_QUEUE_CANCEL_0 <= buttonID && buttonID <= BUTTON_QUEUE_CANCEL_MAX)
@@ -150,14 +144,10 @@ public class WorkbenchMenuPartCrafting extends WorkbenchMenu
 		return ItemStack.EMPTY;
 	}
 
-
-
 	public void CraftParts(int count)
 	{
 		BlockEntity.QueueCrafting(count);
 	}
-
-
 }
 
 

@@ -1,9 +1,5 @@
-package com.flansmod.common.crafting;
+package com.flansmod.common.crafting.ingredients;
 
-import com.flansmod.common.FlansMod;
-import com.flansmod.common.types.crafting.MaterialDefinition;
-import com.flansmod.common.types.elements.MaterialSourceDefinition;
-import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;

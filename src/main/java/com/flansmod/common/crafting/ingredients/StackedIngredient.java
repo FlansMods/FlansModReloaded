@@ -1,4 +1,4 @@
-package com.flansmod.common.crafting;
+package com.flansmod.common.crafting.ingredients;
 
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;

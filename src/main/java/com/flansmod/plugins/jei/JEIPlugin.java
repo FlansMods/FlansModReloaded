@@ -1,7 +1,7 @@
 package com.flansmod.plugins.jei;
 
 import com.flansmod.common.FlansMod;
-import com.flansmod.common.crafting.PartFabricationRecipe;
+import com.flansmod.common.crafting.recipes.PartFabricationRecipe;
 import com.flansmod.common.types.crafting.WorkbenchDefinition;
 import mezz.jei.api.IModPlugin;
 import mezz.jei.api.JeiPlugin;

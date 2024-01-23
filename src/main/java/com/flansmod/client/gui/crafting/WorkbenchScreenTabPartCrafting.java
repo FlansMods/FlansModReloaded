@@ -1,14 +1,13 @@
 package com.flansmod.client.gui.crafting;
 
-import com.flansmod.client.gui.FMScreen;
 import com.flansmod.common.FlansMod;
-import com.flansmod.common.crafting.PartFabricationRecipe;
-import com.flansmod.common.crafting.TieredMaterialIngredient;
+import com.flansmod.common.crafting.recipes.PartFabricationRecipe;
 import com.flansmod.common.crafting.WorkbenchBlockEntity;
-import com.flansmod.common.crafting.menus.WorkbenchMenuModification;
 import com.flansmod.common.crafting.menus.WorkbenchMenuPartCrafting;
 import com.flansmod.common.item.PartItem;
 import com.flansmod.common.types.crafting.EMaterialType;
+import com.flansmod.common.types.crafting.MaterialDefinition;
+import com.flansmod.plugins.jei.PartFabricationDrawable;
 import com.flansmod.util.Maths;
 import com.mojang.datafixers.util.Pair;
 import net.minecraft.client.gui.GuiGraphics;
@@ -204,7 +203,7 @@ public class WorkbenchScreenTabPartCrafting extends WorkbenchScreenTab<Workbench
 		int craftingSelection = SelectedPartIndex;
 		if(craftingSelection != -1)
 		{
-			List<PartFabricationRecipe> recipes = Workbench.BlockEntity.GetAllRecipes();
+			List<PartFabricationRecipe> recipes = Workbench.BlockEntity.GetAllPartRecipes();
 			PartFabricationRecipe recipe = recipes.get(craftingSelection);
 			if (recipe != null)
 			{
@@ -254,7 +253,7 @@ public class WorkbenchScreenTabPartCrafting extends WorkbenchScreenTab<Workbench
 			int queueSelection = Workbench.WorkbenchData.get(WorkbenchBlockEntity.DATA_CRAFT_SELECTION_0 + i);
 			if (queueSelection != -1)
 			{
-				List<PartFabricationRecipe> recipes = Workbench.BlockEntity.GetAllRecipes();
+				List<PartFabricationRecipe> recipes = Workbench.BlockEntity.GetAllPartRecipes();
 				PartFabricationRecipe recipe = recipes.get(queueSelection);
 				if (recipe != null)
 				{
@@ -345,7 +344,7 @@ public class WorkbenchScreenTabPartCrafting extends WorkbenchScreenTab<Workbench
 		int craftingSelection = SelectedPartIndex;
 		if(craftingSelection != -1)
 		{
-			List<PartFabricationRecipe> recipes = Workbench.BlockEntity.GetAllRecipes();
+			List<PartFabricationRecipe> recipes = Workbench.BlockEntity.GetAllPartRecipes();
 			PartFabricationRecipe recipe = recipes.get(craftingSelection);
 			if(recipe != null)
 			{
@@ -406,7 +405,7 @@ public class WorkbenchScreenTabPartCrafting extends WorkbenchScreenTab<Workbench
 			int queueSelection = Workbench.WorkbenchData.get(WorkbenchBlockEntity.DATA_CRAFT_SELECTION_0 + i);
 			if (queueSelection != -1)
 			{
-				List<PartFabricationRecipe> recipes = Workbench.BlockEntity.GetAllRecipes();
+				List<PartFabricationRecipe> recipes = Workbench.BlockEntity.GetAllPartRecipes();
 				PartFabricationRecipe recipe = recipes.get(queueSelection);
 				if (recipe != null)
 				{
@@ -520,9 +519,9 @@ public class WorkbenchScreenTabPartCrafting extends WorkbenchScreenTab<Workbench
 		graphics.drawString(font, Component.translatable("workbench.output"), PART_CRAFTING_OUTPUT_SLOTS_X, PART_CRAFTING_OUTPUT_SLOTS_Y - 11, 0x404040, false);
 
 		// Render info about the selected part
-		if(SelectedPartIndex >= 0 && SelectedPartIndex < Workbench.BlockEntity.GetAllRecipes().size())
+		if(SelectedPartIndex >= 0 && SelectedPartIndex < Workbench.BlockEntity.GetAllPartRecipes().size())
 		{
-			ItemStack selectedPart = Workbench.BlockEntity.GetAllRecipes().get(SelectedPartIndex).getResultItem(RegistryAccess.EMPTY);
+			ItemStack selectedPart = Workbench.BlockEntity.GetAllPartRecipes().get(SelectedPartIndex).getResultItem(RegistryAccess.EMPTY);
 			List<FormattedCharSequence> wordWrap = font.split(selectedPart.getHoverName(), 151);
 			graphics.drawString(font, wordWrap.get(0), 104, 70, 0xffffff, false);
 		}
@@ -531,7 +530,7 @@ public class WorkbenchScreenTabPartCrafting extends WorkbenchScreenTab<Workbench
 		//int craftingSelection = Workbench.WorkbenchData.get(WorkbenchBlockEntity.DATA_CRAFT_SELECTION);
 		if(craftingSelection != -1)
 		{
-			List<PartFabricationRecipe> recipes = Workbench.BlockEntity.GetAllRecipes();
+			List<PartFabricationRecipe> recipes = Workbench.BlockEntity.GetAllPartRecipes();
 			PartFabricationRecipe recipe = recipes.get(craftingSelection);
 			if (recipe != null)
 			{
@@ -560,7 +559,7 @@ public class WorkbenchScreenTabPartCrafting extends WorkbenchScreenTab<Workbench
 			int queueSelection = Workbench.WorkbenchData.get(WorkbenchBlockEntity.DATA_CRAFT_SELECTION_0 + i);
 			if (queueSelection != -1)
 			{
-				List<PartFabricationRecipe> recipes = Workbench.BlockEntity.GetAllRecipes();
+				List<PartFabricationRecipe> recipes = Workbench.BlockEntity.GetAllPartRecipes();
 				PartFabricationRecipe recipe = recipes.get(queueSelection);
 				if (recipe != null)
 				{
@@ -607,23 +606,26 @@ public class WorkbenchScreenTabPartCrafting extends WorkbenchScreenTab<Workbench
 	private void UpdatePartCraftingFilters()
 	{
 		FilteredPartsList.clear();
-		List<PartFabricationRecipe> allRecipes = Workbench.BlockEntity.GetAllRecipes();
+		List<PartFabricationRecipe> allRecipes = Workbench.BlockEntity.GetAllPartRecipes();
 
 		for(int i = 0; i < allRecipes.size(); i++)
 		{
-			// Apply filters
-			if(TierFilters.size() > 0)
+			PartFabricationRecipe recipe = allRecipes.get(i);
+			if(recipe.getResultItem(RegistryAccess.EMPTY).getItem() instanceof PartItem partItem)
 			{
-				if(allRecipes.get(i).getResultItem(RegistryAccess.EMPTY).getItem() instanceof PartItem partItem)
+				MaterialDefinition material = partItem.Def().GetMaterial();
+
+				// Apply filters
+				if(TierFilters.size() > 0)
 				{
-					if(!TierFilters.contains(partItem.Def().materialTier))
+					if(!TierFilters.contains(material.craftingTier))
 						continue;
 				}
-			}
 
-			//if(MaterialFilters.size() > 0)
-			//	if(!MaterialFilters.contains(PartDefinition.GetPartMaterial(stack)))
-			//		continue;
+				//if(MaterialFilters.size() > 0)
+				//	if(!MaterialFilters.contains(PartDefinition.GetPartMaterial(stack)))
+				//		continue;
+			}
 
 			if(OnlyCraftableFilter)
 			{

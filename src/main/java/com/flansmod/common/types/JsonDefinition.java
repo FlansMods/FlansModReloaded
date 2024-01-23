@@ -1,10 +1,13 @@
 package com.flansmod.common.types;
 
+import com.flansmod.common.FlansMod;
 import com.google.gson.JsonElement;
 import net.minecraft.resources.ResourceLocation;
 
 public abstract class JsonDefinition
 {
+	public static ResourceLocation InvalidLocation = new ResourceLocation(FlansMod.MODID, "null");
+
 	public String GetLocationString() { return Location.toString(); }
 	public ResourceLocation GetLocation() { return Location; }
 	public boolean IsValid() { return !Location.getPath().contains("null"); }

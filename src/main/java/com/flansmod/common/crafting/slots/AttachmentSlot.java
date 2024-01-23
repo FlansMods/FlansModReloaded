@@ -1,10 +1,9 @@
-package com.flansmod.common.crafting;
+package com.flansmod.common.crafting.slots;
 
 import com.flansmod.common.item.AttachmentItem;
 import com.flansmod.common.item.FlanItem;
 import com.flansmod.common.types.attachments.EAttachmentType;
 import net.minecraft.world.Container;
-import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 
 import javax.annotation.Nonnull;

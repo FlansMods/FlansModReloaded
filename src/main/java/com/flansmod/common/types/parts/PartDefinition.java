@@ -6,6 +6,7 @@ import com.flansmod.common.types.JsonDefinition;
 import com.flansmod.common.types.JsonField;
 import com.flansmod.common.types.abilities.elements.AbilityProviderDefinition;
 import com.flansmod.common.types.crafting.EMaterialType;
+import com.flansmod.common.types.crafting.MaterialDefinition;
 import com.flansmod.common.types.crafting.elements.IngredientDefinition;
 import com.flansmod.common.types.crafting.elements.RecipePartDefinition;
 import com.flansmod.common.types.crafting.elements.TieredIngredientDefinition;
@@ -16,6 +17,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 public class PartDefinition extends JsonDefinition
 {
@@ -52,21 +54,36 @@ public class PartDefinition extends JsonDefinition
 	public EngineDefinition engine = new EngineDefinition();
 
 	@JsonField
-	public int materialTier = 0;
-	@JsonField
-	public EMaterialType materialType = EMaterialType.Misc;
+	public ResourceLocation material = InvalidLocation;
+	//@JsonField
+	//public int materialTier = 0;
+	//@JsonField
+	//public EMaterialType materialType = EMaterialType.Misc;
 
-	public static int GetPartTier(ItemStack stack)
+	@Nullable
+	private MaterialDefinition CachedMaterial = null;
+	@Nonnull
+	public MaterialDefinition GetMaterial()
 	{
-		if(stack.getItem() instanceof PartItem partItem)
-			return partItem.Def().materialTier;
-		return 0;
+		if(CachedMaterial == null)
+			CachedMaterial = FlansMod.MATERIALS.Get(material);
+		return CachedMaterial;
 	}
 
-	public static EMaterialType GetPartMaterial(ItemStack stack)
+	@Nonnull
+	public static MaterialDefinition GetMaterialOfPart(ItemStack stack)
 	{
 		if(stack.getItem() instanceof PartItem partItem)
-			return partItem.Def().materialType;
-		return EMaterialType.Misc;
+			return partItem.Def().GetMaterial();
+		return MaterialDefinition.INVALID;
+	}
+	public static int GetPartTier(ItemStack stack)
+	{
+		return GetMaterialOfPart(stack).craftingTier;
+	}
+	@Nonnull
+	public static EMaterialType GetPartMaterial(ItemStack stack)
+	{
+		return GetMaterialOfPart(stack).materialType;
 	}
 }

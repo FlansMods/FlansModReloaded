@@ -1,13 +1,10 @@
 package com.flansmod.packs.basics.common;
 
 import com.flansmod.common.FlansMod;
-import com.flansmod.common.crafting.RestrictedSlot;
-import com.flansmod.common.crafting.WorkbenchBlockEntity;
-import com.flansmod.common.types.crafting.WorkbenchDefinition;
+import com.flansmod.common.crafting.slots.RestrictedSlot;
 import com.flansmod.packs.basics.BasicPartsMod;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.world.Container;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;

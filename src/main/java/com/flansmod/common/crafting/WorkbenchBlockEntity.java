@@ -3,12 +3,16 @@ package com.flansmod.common.crafting;
 import com.flansmod.common.FlansMod;
 import com.flansmod.common.actions.Actions;
 import com.flansmod.common.actions.contexts.GunContext;
-import com.flansmod.common.actions.contexts.ContextCache;
+import com.flansmod.common.crafting.ingredients.StackedIngredient;
+import com.flansmod.common.crafting.ingredients.TieredMaterialIngredient;
 import com.flansmod.common.crafting.menus.*;
+import com.flansmod.common.crafting.recipes.GunFabricationRecipe;
+import com.flansmod.common.crafting.recipes.PartFabricationRecipe;
 import com.flansmod.common.item.FlanItem;
 import com.flansmod.common.item.GunItem;
 import com.flansmod.common.types.crafting.EWorkbenchInventoryType;
 import com.flansmod.common.types.crafting.WorkbenchDefinition;
+import com.flansmod.common.types.crafting.elements.TieredIngredientDefinition;
 import com.flansmod.common.types.crafting.elements.WorkbenchIOSettingDefinition;
 import com.flansmod.common.types.crafting.elements.WorkbenchSideDefinition;
 import com.flansmod.common.types.elements.MaterialSourceDefinition;
@@ -97,7 +101,7 @@ public class WorkbenchBlockEntity extends BlockEntity implements WorldlyContaine
 
 	public static final int NUM_DATA_MEMBERS = DATA_CRAFT_SELECTION_MAX + 1;
 
-	public static final int CRAFTING_NO_PART = -1;
+	public static final int CRAFTING_NOTHING = -1;
 
 	public int LitTime = 0;
 	public int LitDuration = 0;
@@ -105,9 +109,10 @@ public class WorkbenchBlockEntity extends BlockEntity implements WorldlyContaine
 	public int CraftTime = 0;
 	public int CraftDuration = 0;
 
-	public int PlayerSelectedCraftingPart = CRAFTING_NO_PART;
+	public int PlayerSelectedCraftingGun = CRAFTING_NOTHING;
+	public int PlayerSelectedCraftingPart = CRAFTING_NOTHING;
 	public int[] CraftQueueCount = new int[NUM_CRAFTING_QUEUE_SLOTS];
-	public int[] CraftingPart = new int[] { CRAFTING_NO_PART, CRAFTING_NO_PART, CRAFTING_NO_PART, CRAFTING_NO_PART }; // new int[NUM_CRAFTING_QUEUE_SLOTS];
+	public int[] CraftingPart = new int[] {CRAFTING_NOTHING, CRAFTING_NOTHING, CRAFTING_NOTHING, CRAFTING_NOTHING}; // new int[NUM_CRAFTING_QUEUE_SLOTS];
 
 	public final ContainerData DataAccess = new ContainerData()
 	{
@@ -216,7 +221,7 @@ public class WorkbenchBlockEntity extends BlockEntity implements WorldlyContaine
 			GunCraftingInputContainer = new RestrictedContainer(
 				this,
 				INTERACT_RANGE,
-				Def.gunCrafting.GetMaxInputSlots(),
+				Def.gunCrafting.maxSlots,
 				64,
 				(stack) -> true);
 			GunCraftingOutputContainer = new RestrictedContainer(
@@ -519,7 +524,7 @@ public class WorkbenchBlockEntity extends BlockEntity implements WorldlyContaine
 			CraftQueueCount[i] = tags.getInt("craft_queue_"+i);
 			CraftingPart[i] = tags.getInt("craft_selection_"+i);
 			if(CraftQueueCount[i] == 0)
-				CraftingPart[i] = CRAFTING_NO_PART;
+				CraftingPart[i] = CRAFTING_NOTHING;
 		}
 	}
 
@@ -617,7 +622,7 @@ public class WorkbenchBlockEntity extends BlockEntity implements WorldlyContaine
 						workbench.CraftingPart[i] = workbench.CraftingPart[i+1];
 					}
 					workbench.CraftQueueCount[NUM_CRAFTING_QUEUE_SLOTS - 1] = 0;
-					workbench.CraftingPart[NUM_CRAFTING_QUEUE_SLOTS - 1] = CRAFTING_NO_PART;
+					workbench.CraftingPart[NUM_CRAFTING_QUEUE_SLOTS - 1] = CRAFTING_NOTHING;
 				}
 
 				// Then, if there's something to craft in slot 0, start crafting one
@@ -641,37 +646,199 @@ public class WorkbenchBlockEntity extends BlockEntity implements WorldlyContaine
 		}
 	}
 
-	public boolean RecipeCanBeCraftedInThisWorkbench(ItemStack output)
+	// ----------------------------------------------------------------------------------------------
+	// --------------------------- GUN CRAFTING -----------------------------------------------------
+	// ----------------------------------------------------------------------------------------------
+	public boolean GunRecipeCanBeCraftedInThisWorkbench(@Nonnull ItemStack output)
 	{
-		for(ItemStack stack : Def.partCrafting.GetAllOutputs())
-			if(ItemStack.isSameItem(stack, output))
-				return true;
+		if(Def.gunCrafting.isActive)
+			for(ItemStack stack : Def.gunCrafting.GetAllOutputs())
+				if(ItemStack.isSameItem(stack, output))
+					return true;
 		return false;
 	}
-
+	@Nullable
+	public GunFabricationRecipe GetSelectedGunRecipe()
+	{
+		if(PlayerSelectedCraftingGun == CRAFTING_NOTHING || PlayerSelectedCraftingGun >= GetAllGunRecipes().size())
+			return null;
+		return GetAllGunRecipes().get(PlayerSelectedCraftingGun);
+	}
 	@Nonnull
-	public List<PartFabricationRecipe> GetAllRecipes()
+	public List<GunFabricationRecipe> GetAllGunRecipes()
+	{
+		return level == null ? new ArrayList<>() : Def.gunCrafting.GetAllRecipes(level);
+	}
+	public void SelectGunCraftingRecipe(int recipeIndex)
+	{
+		if(0 <= recipeIndex && recipeIndex < GetAllGunRecipes().size())
+			PlayerSelectedCraftingGun = recipeIndex;
+		else
+			PlayerSelectedCraftingGun = CRAFTING_NOTHING;
+	}
+	public boolean MatchesGunRecipe(int recipeIndex)
+	{
+		if(recipeIndex == CRAFTING_NOTHING || recipeIndex >= GetAllGunRecipes().size())
+			return false;
+
+		return GetAllGunRecipes().get(recipeIndex).matches(this, getLevel());
+	}
+	public void AutoFillGunCraftingInputSlot(@Nonnull Player player, int ingredientIndex)
+	{
+		GunFabricationRecipe currentRecipe = GetSelectedGunRecipe();
+		if(currentRecipe != null)
+		{
+			if(0 <= ingredientIndex && ingredientIndex < currentRecipe.InputIngredients.size())
+			{
+				// Get the existing stack
+				ItemStack stackInSlot = GunCraftingInputContainer.getItem(ingredientIndex);
+
+				// See if we can auto-populate for this specific ingredient
+				Ingredient ingredient = currentRecipe.InputIngredients.get(ingredientIndex);
+				boolean creative = player.isCreative();
+				if(creative)
+				{
+					ItemStack[] possibleItems = ingredient.getItems();
+					if(possibleItems.length > 0)
+					{
+						int existingIndex = -1;
+						for (int i = 0; i < possibleItems.length; i++)
+						{
+							if (ItemStack.isSameItemSameTags(stackInSlot, possibleItems[i]))
+							{
+								existingIndex = i;
+							}
+						}
+						GunCraftingInputContainer.setItem(ingredientIndex, possibleItems[existingIndex + 1]);
+					}
+				}
+				else // Non-creative
+				{
+					int foundMatch = -1;
+					for(int i = 0; i < player.getInventory().getContainerSize(); i++)
+					{
+						if(ingredient.test(player.getInventory().getItem(i)))
+						{
+							foundMatch = i;
+							break;
+						}
+					}
+
+					if(foundMatch != -1)
+					{
+						// We are adding to an empty slot, just place it
+						if(stackInSlot.isEmpty())
+						{
+							GunCraftingInputContainer.setItem(ingredientIndex, player.getInventory().getItem(foundMatch).copyWithCount(1));
+							player.getInventory().removeItem(foundMatch, 1);
+						}
+						else // There was already something there, only swap if there is space on the player
+						{
+							if(player.getInventory().add(stackInSlot.copy()))
+							{
+								GunCraftingInputContainer.setItem(ingredientIndex, player.getInventory().getItem(foundMatch));
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+	@Nonnull
+	public List<GunFabricationRecipe> GetMatchingGunRecipes()
+	{
+		List<GunFabricationRecipe> matching = new ArrayList<>();
+		for(int i = 0; i < GetAllGunRecipes().size(); i++)
+			if(MatchesGunRecipe(i))
+				matching.add(GetAllGunRecipes().get(i));
+		return matching;
+	}
+	public boolean IsGunCraftingSlotValid(int ingredientIndex)
+	{
+		if(ingredientIndex < 0)
+			return false;
+
+		GunFabricationRecipe recipe = GetSelectedGunRecipe();
+		if(recipe == null)
+			return false;
+
+		if(ingredientIndex >= recipe.InputIngredients.size() || ingredientIndex >= GunCraftingInputContainer.getContainerSize())
+			return false;
+
+		return recipe.InputIngredients.get(ingredientIndex).test(GunCraftingInputContainer.getItem(ingredientIndex));
+	}
+	public boolean IsGunCraftingFullyValid()
+	{
+		GunFabricationRecipe recipe = GetSelectedGunRecipe();
+		if(recipe == null)
+			return false;
+
+		for(int i = 0; i < recipe.InputIngredients.size(); i++)
+		{
+			if(!IsGunCraftingSlotValid(i))
+				return false;
+		}
+
+		return true;
+	}
+	public void ConsumeGunCraftingInputs()
+	{
+		GunFabricationRecipe recipe = GetSelectedGunRecipe();
+		if(recipe != null)
+		{
+			for (int i = 0; i < recipe.InputIngredients.size(); i++)
+			{
+				ItemStack stack = GunCraftingInputContainer.getItem(i);
+				stack.setCount(stack.getCount() - 1);
+			}
+		}
+	}
+	public void UpdateGunCraftingOutputSlot()
+	{
+		if(IsGunCraftingFullyValid())
+		{
+			GunFabricationRecipe recipe = GetSelectedGunRecipe();
+			if(recipe != null)
+				GunCraftingOutputContainer.setItem(0, recipe.Result.copy());
+			else
+				FlansMod.LOGGER.error("We think gun crafting is valid, but no recipe selection exists");
+		}
+		else
+			GunCraftingOutputContainer.setItem(0, ItemStack.EMPTY);
+	}
+
+	// ----------------------------------------------------------------------------------------------
+	// --------------------------- PART CRAFTING ----------------------------------------------------
+	// ----------------------------------------------------------------------------------------------
+	public boolean PartRecipeCanBeCraftedInThisWorkbench(@Nonnull ItemStack output)
+	{
+		if(Def.partCrafting.isActive)
+			for(ItemStack stack : Def.partCrafting.GetAllOutputs())
+				if(ItemStack.isSameItem(stack, output))
+					return true;
+		return false;
+	}
+	@Nonnull
+	public List<PartFabricationRecipe> GetAllPartRecipes()
 	{
 		return Def.partCrafting.GetAllRecipes(level);
 	}
-
-	public void SelectPartCraftingRecipe( int index)
+	public void SelectPartCraftingRecipe(int index)
 	{
-		if(0 <= index && index < GetAllRecipes().size())
+		if(0 <= index && index < GetAllPartRecipes().size())
 			PlayerSelectedCraftingPart = index;
 		else
-			PlayerSelectedCraftingPart = CRAFTING_NO_PART;
+			PlayerSelectedCraftingPart = CRAFTING_NOTHING;
 	}
-
 	public int GetMaxPartsCraftableFromInput(int recipeIndex)
 	{
-		if(recipeIndex == CRAFTING_NO_PART)
+		if(recipeIndex == CRAFTING_NOTHING)
 			return 0;
 
-		if(recipeIndex >= GetAllRecipes().size())
+		if(recipeIndex >= GetAllPartRecipes().size())
 			return 0;
 
-		PartFabricationRecipe recipe = GetAllRecipes().get(recipeIndex);
+		PartFabricationRecipe recipe = GetAllPartRecipes().get(recipeIndex);
 		if(recipe == null)
 			return 0;
 
@@ -697,31 +864,31 @@ public class WorkbenchBlockEntity extends BlockEntity implements WorldlyContaine
 
 	public int[] GetQuantityOfEachIngredientForRecipe(int recipeIndex)
 	{
-		if(recipeIndex == CRAFTING_NO_PART || recipeIndex >= GetAllRecipes().size())
+		if(recipeIndex == CRAFTING_NOTHING || recipeIndex >= GetAllPartRecipes().size())
 			return new int[0];
 
-		PartFabricationRecipe recipe = GetAllRecipes().get(recipeIndex);
+		PartFabricationRecipe recipe = GetAllPartRecipes().get(recipeIndex);
 		return recipe == null ? new int[0] : recipe.GetMatchingOfEachIngredient(PartCraftingInputContainer);
 	}
 
 	public int[] GetRequiredOfEachIngredientForRecipe(int recipeIndex)
 	{
-		if(recipeIndex == CRAFTING_NO_PART || recipeIndex >= GetAllRecipes().size())
+		if(recipeIndex == CRAFTING_NOTHING || recipeIndex >= GetAllPartRecipes().size())
 			return new int[0];
 
-		PartFabricationRecipe recipe = GetAllRecipes().get(recipeIndex);
+		PartFabricationRecipe recipe = GetAllPartRecipes().get(recipeIndex);
 		return recipe == null ? new int[0] : recipe.GetRequiredOfEachIngredient();
 	}
 
 	public int GetOutputSlotToCraftPart()
 	{
-		if(CraftingPart[0] == CRAFTING_NO_PART)
+		if(CraftingPart[0] == CRAFTING_NOTHING)
 			return Inventory.NOT_FOUND_INDEX;
 
-		if(CraftingPart[0] >= GetAllRecipes().size())
+		if(CraftingPart[0] >= GetAllPartRecipes().size())
 			return Inventory.NOT_FOUND_INDEX;
 
-		PartFabricationRecipe recipe = GetAllRecipes().get(CraftingPart[0]);
+		PartFabricationRecipe recipe = GetAllPartRecipes().get(CraftingPart[0]);
 		if(recipe == null)
 			return 0;
 
@@ -749,7 +916,7 @@ public class WorkbenchBlockEntity extends BlockEntity implements WorldlyContaine
 	{
 		for(int i = 0; i < NUM_CRAFTING_QUEUE_SLOTS; i++)
 		{
-			if (CraftingPart[i] == PlayerSelectedCraftingPart || CraftingPart[i] == CRAFTING_NO_PART)
+			if (CraftingPart[i] == PlayerSelectedCraftingPart || CraftingPart[i] == CRAFTING_NOTHING)
 			{
 				CraftingPart[i] = PlayerSelectedCraftingPart;
 				if (count == -1)
@@ -777,7 +944,7 @@ public class WorkbenchBlockEntity extends BlockEntity implements WorldlyContaine
 					CraftQueueCount[i] = CraftQueueCount[i + 1];
 					CraftingPart[i] = CraftingPart[i + 1];
 				}
-				CraftingPart[NUM_CRAFTING_QUEUE_SLOTS - 1] = CRAFTING_NO_PART;
+				CraftingPart[NUM_CRAFTING_QUEUE_SLOTS - 1] = CRAFTING_NOTHING;
 				CraftQueueCount[NUM_CRAFTING_QUEUE_SLOTS - 1] = 0;
 			}
 		}
@@ -881,7 +1048,7 @@ public class WorkbenchBlockEntity extends BlockEntity implements WorldlyContaine
 		int outputSlot = GetOutputSlotToCraftPart();
 		if(outputSlot != Inventory.NOT_FOUND_INDEX)
 		{
-			PartFabricationRecipe recipe = GetAllRecipes().get(CraftingPart[0]);
+			PartFabricationRecipe recipe = GetAllPartRecipes().get(CraftingPart[0]);
 			for(Ingredient ingredient : recipe.getIngredients())
 			{
 				ConsumeIngredient(ingredient);

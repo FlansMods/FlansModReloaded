@@ -2,15 +2,10 @@ package com.flansmod.common.crafting.menus;
 
 import com.flansmod.common.FlansMod;
 import com.flansmod.common.crafting.*;
-import com.flansmod.common.item.FlanItem;
-import com.flansmod.common.item.GunItem;
-import com.flansmod.common.types.attachments.EAttachmentType;
+import com.flansmod.common.crafting.slots.RestrictedSlot;
 import com.flansmod.common.types.crafting.WorkbenchDefinition;
-import com.flansmod.common.types.crafting.elements.*;
-import com.mojang.datafixers.util.Either;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.world.Container;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
@@ -21,24 +16,22 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntity;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import java.util.ArrayList;
-import java.util.List;
 
 public abstract class WorkbenchMenu extends AbstractContainerMenu
 {
+	@Nonnull
 	public final WorkbenchDefinition Def;
+	@Nonnull
 	public final ContainerData WorkbenchData;
+	@Nonnull
 	public final WorkbenchBlockEntity BlockEntity;
-
-	public static final int NO_RECIPE_SELECTED = -1;
 
 	private Slot[] InventorySlots;
 
 	public int ScrollIndex = 0;
 
 
-	public WorkbenchMenu(MenuType<? extends WorkbenchMenu> menuType,
+	public WorkbenchMenu(@Nonnull MenuType<? extends WorkbenchMenu> menuType,
 						 int containerID,
 						 @Nonnull Inventory inventory,
 						 @Nonnull WorkbenchBlockEntity workbench)
@@ -49,7 +42,10 @@ public abstract class WorkbenchMenu extends AbstractContainerMenu
 		WorkbenchData = workbench.DataAccess;
 	}
 
-	public WorkbenchMenu(MenuType<? extends WorkbenchMenu> menuType, int containerID, Inventory inventory, FriendlyByteBuf data)
+	public WorkbenchMenu(@Nonnull MenuType<? extends WorkbenchMenu> menuType,
+						 int containerID,
+						 @Nonnull Inventory inventory,
+						 @Nonnull FriendlyByteBuf data)
 	{
 		super(menuType, containerID);
 
@@ -89,7 +85,8 @@ public abstract class WorkbenchMenu extends AbstractContainerMenu
 		}
 	}
 
-	protected ItemStack QuickStackIntoInventory(Player player, Slot slot)
+	@Nonnull
+	protected ItemStack QuickStackIntoInventory(@Nonnull Player player, @Nonnull Slot slot)
 	{
 		if(player.getInventory().add(slot.getItem()))
 		{
@@ -100,6 +97,6 @@ public abstract class WorkbenchMenu extends AbstractContainerMenu
 	}
 
 	@Override
-	public boolean stillValid(Player player) { return true; } //return GunContainer != null && GunContainer.stillValid(player); }
+	public boolean stillValid(@Nonnull Player player) { return true; } //return GunContainer != null && GunContainer.stillValid(player); }
 
 }

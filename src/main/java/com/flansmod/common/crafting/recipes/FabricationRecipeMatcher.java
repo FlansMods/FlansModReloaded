@@ -1,4 +1,4 @@
-package com.flansmod.common.crafting;
+package com.flansmod.common.crafting.recipes;
 
 import com.flansmod.common.types.crafting.EMaterialType;
 import com.flansmod.common.types.crafting.elements.GunCraftingEntryDefinition;

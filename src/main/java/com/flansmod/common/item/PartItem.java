@@ -3,6 +3,7 @@ package com.flansmod.common.item;
 import com.flansmod.common.FlansMod;
 import com.flansmod.common.types.abilities.AbilityDefinition;
 import com.flansmod.common.types.abilities.elements.AbilityProviderDefinition;
+import com.flansmod.common.types.crafting.MaterialDefinition;
 import com.flansmod.common.types.parts.PartDefinition;
 import com.flansmod.util.Maths;
 import com.flansmod.util.MinecraftHelpers;
@@ -29,25 +30,26 @@ public class PartItem extends FlanItem
 	}
 
 	@Override
-	public void appendHoverText(ItemStack stack,
+	public void appendHoverText(@Nonnull ItemStack stack,
 								@Nullable Level level,
-								@NotNull List<Component> tooltips,
-								TooltipFlag flags)
+								@Nonnull List<Component> tooltips,
+								@Nonnull TooltipFlag flags)
 	{
 		super.appendHoverText(stack, level, tooltips, flags);
 
-		if(Def().materialTier != 0)
+		MaterialDefinition material = Def().GetMaterial();
+		if(material.IsValid())
 		{
-			Component colourCode = Component.translatable("tooltip.tier_colour."+ Def().materialTier);
-			switch(Def().materialType)
+			Component colourCode = Component.translatable("tooltip.tier_colour."+ material.craftingTier);
+			switch(material.materialType)
 			{
-				case Misc -> { tooltips.add(Component.translatable("tooltip.format.part_misc_tier", colourCode, Def().materialTier)); }
-				case Wood -> { tooltips.add(Component.translatable("tooltip.format.part_wood_tier", colourCode, Def().materialTier)); }
-				case Glass -> { tooltips.add(Component.translatable("tooltip.format.part_glass_tier", colourCode, Def().materialTier)); }
-				case Metal -> { tooltips.add(Component.translatable("tooltip.format.part_metal_tier", colourCode, Def().materialTier)); }
-				case Composite -> { tooltips.add(Component.translatable("tooltip.format.part_composite_tier", colourCode, Def().materialTier)); }
-				case Electronic -> { tooltips.add(Component.translatable("tooltip.format.part_electronic_tier", colourCode, Def().materialTier)); }
-				case Fabric -> { tooltips.add(Component.translatable("tooltip.format.part_fabric_tier", colourCode, Def().materialTier)); }
+				case Misc -> { tooltips.add(Component.translatable("tooltip.format.part_misc_tier", colourCode, material.craftingTier)); }
+				case Wood -> { tooltips.add(Component.translatable("tooltip.format.part_wood_tier", colourCode, material.craftingTier)); }
+				case Glass -> { tooltips.add(Component.translatable("tooltip.format.part_glass_tier", colourCode, material.craftingTier)); }
+				case Metal -> { tooltips.add(Component.translatable("tooltip.format.part_metal_tier", colourCode, material.craftingTier)); }
+				case Composite -> { tooltips.add(Component.translatable("tooltip.format.part_composite_tier", colourCode, material.craftingTier)); }
+				case Electronic -> { tooltips.add(Component.translatable("tooltip.format.part_electronic_tier", colourCode, material.craftingTier)); }
+				case Fabric -> { tooltips.add(Component.translatable("tooltip.format.part_fabric_tier", colourCode, material.craftingTier)); }
 			}
 		}
 

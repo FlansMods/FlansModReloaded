@@ -1,6 +1,9 @@
-package com.flansmod.common.crafting;
+package com.flansmod.common.crafting.recipes;
 
 import com.flansmod.common.FlansMod;
+import com.flansmod.common.crafting.WorkbenchBlockEntity;
+import com.flansmod.common.crafting.ingredients.StackedIngredient;
+import com.flansmod.common.crafting.ingredients.TieredMaterialIngredient;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import net.minecraft.core.NonNullList;
@@ -8,7 +11,6 @@ import net.minecraft.core.RegistryAccess;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.util.FormattedCharSequence;
 import net.minecraft.util.GsonHelper;
 import net.minecraft.world.Container;
 import net.minecraft.world.item.ItemStack;
@@ -22,10 +24,15 @@ import java.util.List;
 
 public class PartFabricationRecipe implements Recipe<WorkbenchBlockEntity>
 {
+	@Nonnull
 	public final RecipeType<?> Type;
+	@Nonnull
 	public final ResourceLocation Loc;
+	@Nonnull
 	public final String Group;
+	@Nonnull
 	public final NonNullList<Ingredient> InputIngredients;
+	@Nonnull
 	public final ItemStack Result;
 	public final int CraftTime;
 
@@ -50,11 +57,11 @@ public class PartFabricationRecipe implements Recipe<WorkbenchBlockEntity>
 	public NonNullList<Ingredient> getIngredients() { return InputIngredients; }
 
 
-	public PartFabricationRecipe(RecipeType<?> type,
-								 ResourceLocation loc,
-								 String group,
-								 Ingredient[] inputIngredients,
-								 ItemStack result,
+	public PartFabricationRecipe(@Nonnull RecipeType<?> type,
+								 @Nonnull ResourceLocation loc,
+								 @Nonnull String group,
+								 @Nonnull Ingredient[] inputIngredients,
+								 @Nonnull ItemStack result,
 								 int craftTime)
 	{
 		Type = type;
@@ -146,7 +153,7 @@ public class PartFabricationRecipe implements Recipe<WorkbenchBlockEntity>
 	public boolean matches(WorkbenchBlockEntity workbench, @Nonnull Level level)
 	{
 		// Is this recipe available in this particular workbench?
-		if(!workbench.RecipeCanBeCraftedInThisWorkbench(Result))
+		if(!workbench.PartRecipeCanBeCraftedInThisWorkbench(Result))
 			return false;
 
 		int[] amountsMatched = new int[InputIngredients.size()];

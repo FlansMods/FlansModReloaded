@@ -1,7 +1,7 @@
 package com.flansmod.common.types.crafting.elements;
 
 import com.flansmod.common.FlansMod;
-import com.flansmod.common.crafting.PartFabricationRecipe;
+import com.flansmod.common.crafting.recipes.PartFabricationRecipe;
 import com.flansmod.common.types.JsonField;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.core.registries.Registries;
@@ -13,8 +13,8 @@ import net.minecraft.world.level.Level;
 import net.minecraftforge.registries.ForgeRegistries;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 
@@ -39,6 +39,7 @@ public class PartCraftingDefinition
 	@JsonField
 	public TieredIngredientDefinition[] partsByTier = new TieredIngredientDefinition[0];
 
+	@Nullable
 	private List<ItemStack> Matches = null;
 	@Nonnull
 	public List<ItemStack> GetAllOutputs()

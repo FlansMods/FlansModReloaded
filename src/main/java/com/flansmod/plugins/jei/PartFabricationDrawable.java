@@ -1,15 +1,11 @@
 package com.flansmod.plugins.jei;
 
-import com.flansmod.client.gui.crafting.WorkbenchScreenTabPartCrafting;
-import com.flansmod.common.crafting.PartFabricationRecipe;
-import com.flansmod.common.crafting.TieredMaterialIngredient;
-import com.flansmod.util.Maths;
-import com.mojang.blaze3d.vertex.PoseStack;
+import com.flansmod.common.crafting.recipes.PartFabricationRecipe;
+import com.flansmod.common.crafting.ingredients.TieredMaterialIngredient;
 import mezz.jei.api.gui.ingredient.IRecipeSlotsView;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
 

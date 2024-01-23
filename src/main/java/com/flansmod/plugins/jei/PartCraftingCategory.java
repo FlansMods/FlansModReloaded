@@ -1,6 +1,6 @@
 package com.flansmod.plugins.jei;
 
-import com.flansmod.common.crafting.PartFabricationRecipe;
+import com.flansmod.common.crafting.recipes.PartFabricationRecipe;
 import mezz.jei.api.gui.builder.IRecipeLayoutBuilder;
 import mezz.jei.api.gui.drawable.IDrawable;
 import mezz.jei.api.gui.ingredient.IRecipeSlotsView;

@@ -4,7 +4,11 @@ import com.flansmod.client.FlansModClient;
 import com.flansmod.common.actions.contexts.*;
 import com.flansmod.common.actions.ServerActionManager;
 import com.flansmod.common.crafting.*;
+import com.flansmod.common.crafting.ingredients.StackedVanillaIngredient;
+import com.flansmod.common.crafting.ingredients.TieredMaterialIngredient;
 import com.flansmod.common.crafting.menus.*;
+import com.flansmod.common.crafting.recipes.GunFabricationRecipe;
+import com.flansmod.common.crafting.recipes.PartFabricationRecipe;
 import com.flansmod.common.entity.NpcRelationshipCapabilityAttacher;
 import com.flansmod.common.gunshots.Raytracer;
 import com.flansmod.common.item.*;
@@ -25,7 +29,6 @@ import com.flansmod.common.types.magazines.MagazineDefinitions;
 import com.flansmod.common.types.npc.NpcDefinitions;
 import com.flansmod.common.types.parts.PartDefinitions;
 import com.flansmod.common.worldgen.loot.LootPopulator;
-import com.flansmod.util.MinecraftHelpers;
 import com.flansmod.util.Transform;
 import com.mojang.logging.LogUtils;
 import com.mojang.serialization.Codec;
@@ -129,6 +132,8 @@ public class FlansMod
     // Recipes
     public static final RegistryObject<RecipeType<PartFabricationRecipe>> PART_FABRICATION_RECIPE_TYPE = RECIPE_TYPES.register("part_fabrication", () -> RecipeType.simple(new ResourceLocation(MODID, "part_fabrication")));
     public static final RegistryObject<RecipeSerializer<PartFabricationRecipe>> PART_FABRICATION_RECIPE_SERIALIZER = RECIPE_SERIALIZERS.register("part_fabrication", PartFabricationRecipe.Serializer::new);
+    public static final RegistryObject<RecipeType<GunFabricationRecipe>> GUN_FABRICATION_RECIPE_TYPE = RECIPE_TYPES.register("gun_fabrication", () -> RecipeType.simple(new ResourceLocation(MODID, "gun_fabrication")));
+    public static final RegistryObject<RecipeSerializer<GunFabricationRecipe>> GUN_FABRICATION_RECIPE_SERIALIZER = RECIPE_SERIALIZERS.register("gun_fabrication", GunFabricationRecipe.Serializer::new);
 
     // Loot Modifiers
     public static final RegistryObject<Codec<LootPopulator>> LOOT_POPULATOR =               LOOT_MODIFIERS.register("loot_populator", LootPopulator.CODEC);
