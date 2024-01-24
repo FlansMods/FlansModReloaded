@@ -26,6 +26,5 @@
         "batterySlots": 1,
         "FECapacity": 10000
     },
-    "materialTier": 1,
-    "materialType": "Electronic"
+    "material": "flansbasicparts:redstone"
 }

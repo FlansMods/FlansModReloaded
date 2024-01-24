@@ -15,7 +15,7 @@
         "speed": 3.0,
         "bulletCount": 1,
         "spinSpeed": 360.0,
-        "breaksMaterials": [],
+        "breaksBlockTags": [],
         "penetrationPower": 0.0,
         "impact": {
             "decal": "",

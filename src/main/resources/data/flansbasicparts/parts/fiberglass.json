@@ -25,6 +25,5 @@
         "batterySlots": 0,
         "FECapacity": 0
     },
-    "materialTier": 1,
-    "materialType": "Composite"
+    "material": "flansbasicparts:fiberglass"
 }

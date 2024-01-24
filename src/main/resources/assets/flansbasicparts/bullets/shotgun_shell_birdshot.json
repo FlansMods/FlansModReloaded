@@ -15,9 +15,7 @@
         "speed": 0.0,
         "bulletCount": 6,
         "spinSpeed": 360.0,
-        "breaksMaterials": [
-            "minecraft:glass"
-        ],
+        "breaksBlockTags": [],
         "penetrationPower": 1.0,
         "impact": {
             "decal": "flansmod:effects/bullet_decal",

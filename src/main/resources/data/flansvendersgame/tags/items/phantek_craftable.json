@@ -1,0 +1,13 @@
+{
+  "replace": "false",
+  "values": [
+    "flansvendersgame:phantek_90",
+    "flansvendersgame:phantek_auto_12",
+    "flansvendersgame:phantek_battlemage",
+    "flansvendersgame:phantek_eye",
+    "flansvendersgame:phantek_fury",
+    "flansvendersgame:phantek_lock",
+    "flansvendersgame:phantek_mamba",
+    "flansvendersgame:phantek_seeker"
+  ]
+}

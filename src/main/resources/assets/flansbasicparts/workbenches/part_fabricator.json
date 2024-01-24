@@ -3,7 +3,9 @@
     "bannerTextureLocation": "",
     "gunCrafting": {
         "isActive": false,
-        "pages": [],
+        "craftsByName": [],
+        "craftsByTag": [],
+        "maxSlots": 8,
         "FECostPerCraft": 0
     },
     "partCrafting": {
@@ -23,11 +25,8 @@
         "partsByTier": [
             {
                 "tag": "flansmod:upper_receiver",
-                "allowedTiers": [
-                    1,
-                    2,
-                    3
-                ],
+                "minMaterialTier": 1,
+                "maxMaterialTier": 5,
                 "allowedMaterials": [
                     "Misc",
                     "Wood",
@@ -40,11 +39,8 @@
             },
             {
                 "tag": "flansmod:lower_receiver",
-                "allowedTiers": [
-                    1,
-                    2,
-                    3
-                ],
+                "minMaterialTier": 1,
+                "maxMaterialTier": 5,
                 "allowedMaterials": [
                     "Misc",
                     "Wood",
@@ -57,11 +53,8 @@
             },
             {
                 "tag": "flansmod:barrel",
-                "allowedTiers": [
-                    1,
-                    2,
-                    3
-                ],
+                "minMaterialTier": 1,
+                "maxMaterialTier": 5,
                 "allowedMaterials": [
                     "Misc",
                     "Wood",
@@ -74,11 +67,8 @@
             },
             {
                 "tag": "flansmod:stock",
-                "allowedTiers": [
-                    1,
-                    2,
-                    3
-                ],
+                "minMaterialTier": 1,
+                "maxMaterialTier": 5,
                 "allowedMaterials": [
                     "Misc",
                     "Wood",
@@ -91,11 +81,8 @@
             },
             {
                 "tag": "flansmod:grip",
-                "allowedTiers": [
-                    1,
-                    2,
-                    3
-                ],
+                "minMaterialTier": 1,
+                "maxMaterialTier": 5,
                 "allowedMaterials": [
                     "Misc",
                     "Wood",
@@ -108,11 +95,8 @@
             },
             {
                 "tag": "flansmod:circuitry",
-                "allowedTiers": [
-                    1,
-                    2,
-                    3
-                ],
+                "minMaterialTier": 1,
+                "maxMaterialTier": 5,
                 "allowedMaterials": [
                     "Misc",
                     "Wood",
@@ -125,11 +109,8 @@
             },
             {
                 "tag": "flansmod:engine",
-                "allowedTiers": [
-                    1,
-                    2,
-                    3
-                ],
+                "minMaterialTier": 1,
+                "maxMaterialTier": 5,
                 "allowedMaterials": [
                     "Misc",
                     "Wood",
@@ -142,11 +123,8 @@
             },
             {
                 "tag": "flansmod:structural_parts",
-                "allowedTiers": [
-                    1,
-                    2,
-                    3
-                ],
+                "minMaterialTier": 1,
+                "maxMaterialTier": 5,
                 "allowedMaterials": [
                     "Misc",
                     "Wood",
@@ -159,11 +137,8 @@
             },
             {
                 "tag": "flansmod:mechanical_parts",
-                "allowedTiers": [
-                    1,
-                    2,
-                    3
-                ],
+                "minMaterialTier": 1,
+                "maxMaterialTier": 5,
                 "allowedMaterials": [
                     "Misc",
                     "Wood",
@@ -176,11 +151,8 @@
             },
             {
                 "tag": "flansmod:propeller",
-                "allowedTiers": [
-                    1,
-                    2,
-                    3
-                ],
+                "minMaterialTier": 1,
+                "maxMaterialTier": 5,
                 "allowedMaterials": [
                     "Misc",
                     "Wood",
@@ -193,11 +165,8 @@
             },
             {
                 "tag": "flansmod:armour",
-                "allowedTiers": [
-                    1,
-                    2,
-                    3
-                ],
+                "minMaterialTier": 1,
+                "maxMaterialTier": 5,
                 "allowedMaterials": [
                     "Misc",
                     "Wood",
@@ -210,11 +179,8 @@
             },
             {
                 "tag": "flansmod:seat",
-                "allowedTiers": [
-                    1,
-                    2,
-                    3
-                ],
+                "minMaterialTier": 1,
+                "maxMaterialTier": 5,
                 "allowedMaterials": [
                     "Misc",
                     "Wood",
@@ -227,11 +193,8 @@
             },
             {
                 "tag": "flansmod:wheel",
-                "allowedTiers": [
-                    1,
-                    2,
-                    3
-                ],
+                "minMaterialTier": 1,
+                "maxMaterialTier": 5,
                 "allowedMaterials": [
                     "Misc",
                     "Wood",
@@ -244,11 +207,8 @@
             },
             {
                 "tag": "flansmod:canvas",
-                "allowedTiers": [
-                    1,
-                    2,
-                    3
-                ],
+                "minMaterialTier": 1,
+                "maxMaterialTier": 5,
                 "allowedMaterials": [
                     "Misc",
                     "Wood",
@@ -261,11 +221,8 @@
             },
             {
                 "tag": "flansmod:clothing",
-                "allowedTiers": [
-                    1,
-                    2,
-                    3
-                ],
+                "minMaterialTier": 1,
+                "maxMaterialTier": 5,
                 "allowedMaterials": [
                     "Misc",
                     "Wood",

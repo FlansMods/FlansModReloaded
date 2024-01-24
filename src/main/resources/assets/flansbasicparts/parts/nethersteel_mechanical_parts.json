@@ -31,6 +31,5 @@
         "batterySlots": 0,
         "FECapacity": 0
     },
-    "materialTier": 3,
-    "materialType": "Metal"
+    "material": "flansbasicparts:nethersteel"
 }

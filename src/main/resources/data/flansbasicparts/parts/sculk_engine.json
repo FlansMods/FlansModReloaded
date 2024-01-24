@@ -26,6 +26,5 @@
         "batterySlots": 3,
         "FECapacity": 1000000
     },
-    "materialTier": 3,
-    "materialType": "Electronic"
+    "material": "flansbasicparts:sculk"
 }

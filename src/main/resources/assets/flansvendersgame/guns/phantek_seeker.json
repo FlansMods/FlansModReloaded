@@ -1,7 +1,10 @@
 {
     "itemSettings": {
         "maxStackSize": 1,
-        "tags": []
+        "tags": [
+            "flansmod:gun",
+            "flansvendersgame:phantek_craftable"
+        ]
     },
     "paints": {
         "paintjobs": [

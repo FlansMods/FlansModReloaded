@@ -25,6 +25,5 @@
         "batterySlots": 0,
         "FECapacity": 0
     },
-    "materialTier": 3,
-    "materialType": "Fabric"
+    "material": "flansbasicparts:kevlar"
 }

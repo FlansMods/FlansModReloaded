@@ -1,7 +1,10 @@
 {
     "itemSettings": {
         "maxStackSize": 64,
-        "tags": []
+        "tags": [
+            "flansmod:gun",
+            "flansvendersgame:fc_craftable"
+        ]
     },
     "paints": {
         "paintjobs": [

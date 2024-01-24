@@ -15,9 +15,7 @@
         "speed": 3.0,
         "bulletCount": 1,
         "spinSpeed": 360.0,
-        "breaksMaterials": [
-            "minecraft:glass"
-        ],
+        "breaksBlockTags": [],
         "penetrationPower": 4.0,
         "impact": {
             "decal": "",

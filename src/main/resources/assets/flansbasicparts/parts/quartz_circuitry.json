@@ -26,6 +26,5 @@
         "batterySlots": 0,
         "FECapacity": 0
     },
-    "materialTier": 2,
-    "materialType": "Electronic"
+    "material": "flansbasicparts:quartz"
 }

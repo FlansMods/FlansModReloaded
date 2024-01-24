@@ -55,10 +55,6 @@ public class PartDefinition extends JsonDefinition
 
 	@JsonField
 	public ResourceLocation material = InvalidLocation;
-	//@JsonField
-	//public int materialTier = 0;
-	//@JsonField
-	//public EMaterialType materialType = EMaterialType.Misc;
 
 	@Nullable
 	private MaterialDefinition CachedMaterial = null;
