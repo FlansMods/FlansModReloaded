@@ -1,6 +1,16 @@
 {
   "replace": "false",
   "values": [
+    "flansbasicparts:aluminium_grip",
+    "flansbasicparts:carbon_fiber_grip",
+    "flansbasicparts:dense_wood_grip",
+    "flansbasicparts:fiberglass_grip",
+    "flansbasicparts:hard_wood_grip",
+    "flansbasicparts:iron_grip",
+    "flansbasicparts:nethersteel_grip",
+    "flansbasicparts:phantex_grip",
+    "flansbasicparts:soft_wood_grip",
+    "flansbasicparts:steel_grip",
     "flansvendersgame:hm_micro_laser",
     "flansvendersgame:phantek_phaseraser_laser",
     "flansvendersgame:take_your_life_in_your_hands"

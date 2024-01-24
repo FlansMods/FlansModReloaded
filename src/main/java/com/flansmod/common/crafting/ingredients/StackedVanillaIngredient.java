@@ -37,6 +37,8 @@ public class StackedVanillaIngredient extends StackedIngredient
 		return true;
 	}
 	@Override
+	public boolean isEmpty() { return getItems().length == 0; }
+	@Override
 	@Nonnull
 	public ItemStack[] getItems()
 	{

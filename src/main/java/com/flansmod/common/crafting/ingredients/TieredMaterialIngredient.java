@@ -6,6 +6,7 @@ import com.flansmod.common.types.elements.MaterialSourceDefinition;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.GsonHelper;
 import net.minecraft.world.item.ItemStack;
@@ -17,7 +18,7 @@ import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class TieredMaterialIngredient extends StackedIngredient
+public class TieredMaterialIngredient extends StackedIngredient implements IExtraIngredientTooltip
 {
 	public MaterialDefinition MaterialType() { return FlansMod.MATERIALS.Get(MaterialLocation); }
 
@@ -35,7 +36,8 @@ public class TieredMaterialIngredient extends StackedIngredient
 	{
 		return true;
 	}
-
+	@Override
+	public boolean isEmpty() { return getItems().length == 0; }
 	@Override
 	@Nonnull
 	public ItemStack[] getItems()
@@ -60,6 +62,28 @@ public class TieredMaterialIngredient extends StackedIngredient
 		}
 
 		return MatchingStacks;
+	}
+
+	@Override
+	public void GenerateTooltip(@Nonnull List<Component> lines, boolean advanced)
+	{
+		GenerateTooltip(lines, 0, advanced);
+	}
+
+	public void GenerateTooltip(@Nonnull List<Component> lines, int numMatching, boolean advanced)
+	{
+		int maxProduce = Count > 0 ? numMatching / Count : 999;
+
+		String materialName = "material." + MaterialType().Location.getNamespace() + "." + MaterialType().Location.getPath();
+		lines.add(Component.translatable("crafting.match_single", Component.translatable(materialName)));
+
+		String matchingString = MaterialType().GenerateString(numMatching);
+		String requiredString = MaterialType().GenerateString(Count);
+
+		String resetColorCode = "\u00A7f";
+		String colorCode = numMatching < Count ? "\u00A74" : resetColorCode;
+
+		lines.add(Component.literal(colorCode + matchingString + resetColorCode + " / " + requiredString  + " (Max: " + maxProduce + ")"));
 	}
 
 	@Override

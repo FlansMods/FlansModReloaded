@@ -58,7 +58,7 @@ public enum EMaterialType
 
 	public static EMaterialType parse(String value)
 	{
-		return switch (value)
+		return switch (value.toLowerCase())
 		{
 			case "wood" -> Wood;
 			case "glass" -> Glass;
@@ -76,7 +76,7 @@ public enum EMaterialType
 		MatchResult result = REGEX.matcher(tag).toMatchResult();
 		if(result.groupCount() > 2)
 		{
-			return switch (result.group(1))
+			return switch (result.group(1).toLowerCase())
 			{
 				case "wood" -> Wood;
 				case "glass" -> Glass;

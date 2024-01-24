@@ -2,7 +2,7 @@ package com.flansmod.common.types.crafting;
 
 public enum ERecipePart
 {
-	misc,
+	generic,
 
 	upper_receiver,
 	lower_receiver,

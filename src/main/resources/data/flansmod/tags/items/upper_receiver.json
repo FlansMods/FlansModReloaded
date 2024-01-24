@@ -1,0 +1,12 @@
+{
+  "replace": "false",
+  "values": [
+    "flansbasicparts:aluminium_upper_receiver",
+    "flansbasicparts:carbon_fiber_upper_receiver",
+    "flansbasicparts:fiberglass_upper_receiver",
+    "flansbasicparts:iron_upper_receiver",
+    "flansbasicparts:nethersteel_upper_receiver",
+    "flansbasicparts:phantex_upper_receiver",
+    "flansbasicparts:steel_upper_receiver"
+  ]
+}

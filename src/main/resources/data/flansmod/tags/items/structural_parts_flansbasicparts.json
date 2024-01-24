@@ -1,0 +1,15 @@
+{
+  "replace": "false",
+  "values": [
+    "flansbasicparts:aluminium_structural_parts",
+    "flansbasicparts:carbon_fiber_structural_parts",
+    "flansbasicparts:dense_wood_structural_parts",
+    "flansbasicparts:fiberglass_structural_parts",
+    "flansbasicparts:hard_wood_structural_parts",
+    "flansbasicparts:iron_structural_parts",
+    "flansbasicparts:nethersteel_structural_parts",
+    "flansbasicparts:phantex_structural_parts",
+    "flansbasicparts:soft_wood_structural_parts",
+    "flansbasicparts:steel_structural_parts"
+  ]
+}

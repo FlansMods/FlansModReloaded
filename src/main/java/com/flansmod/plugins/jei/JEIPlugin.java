@@ -1,6 +1,7 @@
 package com.flansmod.plugins.jei;
 
 import com.flansmod.common.FlansMod;
+import com.flansmod.common.crafting.recipes.GunFabricationRecipe;
 import com.flansmod.common.crafting.recipes.PartFabricationRecipe;
 import com.flansmod.common.types.crafting.WorkbenchDefinition;
 import mezz.jei.api.IModPlugin;
@@ -29,20 +30,28 @@ public class JEIPlugin implements IModPlugin
 
 	private static final RecipeType<PartFabricationRecipe> PART_FABRICATION_RECIPE_TYPE = RecipeType.create(FlansMod.MODID, "part_fabrication", PartFabricationRecipe.class);
 	private static final PartCraftingCategory PART_CRAFTING_CATEGORY = new PartCraftingCategory(PART_FABRICATION_RECIPE_TYPE);
+	private static final RecipeType<GunFabricationRecipe> GUN_FABRICATION_RECIPE_TYPE = RecipeType.create(FlansMod.MODID, "gun_fabrication", GunFabricationRecipe.class);
+	private static final GunCraftingCategory GUN_CRAFTING_CATEGORY = new GunCraftingCategory(GUN_FABRICATION_RECIPE_TYPE);
 
 	@Override
 	public void registerCategories(@Nonnull IRecipeCategoryRegistration registration)
 	{
 		registration.addRecipeCategories(PART_CRAFTING_CATEGORY);
+		registration.addRecipeCategories(GUN_CRAFTING_CATEGORY);
 	}
 	@Override
 	public void registerRecipes(@Nonnull IRecipeRegistration registration)
 	{
 		ClientLevel world = Minecraft.getInstance().level;
 		if (world != null)
- 			registration.addRecipes(
+		{
+			registration.addRecipes(
 				PART_FABRICATION_RECIPE_TYPE,
 				world.getRecipeManager().getAllRecipesFor(FlansMod.PART_FABRICATION_RECIPE_TYPE.get()));
+			registration.addRecipes(
+				GUN_FABRICATION_RECIPE_TYPE,
+				world.getRecipeManager().getAllRecipesFor(FlansMod.GUN_FABRICATION_RECIPE_TYPE.get()));
+		}
 	}
 	@Override
 	public void registerRecipeCatalysts(@Nonnull IRecipeCatalystRegistration registration)
@@ -55,6 +64,8 @@ public class JEIPlugin implements IModPlugin
 			{
 				if(workbenchDefinition.partCrafting.isActive)
 					registration.addRecipeCatalyst(new ItemStack(workbenchItem), PART_FABRICATION_RECIPE_TYPE);
+				if(workbenchDefinition.gunCrafting.isActive)
+					registration.addRecipeCatalyst(new ItemStack(workbenchItem), GUN_FABRICATION_RECIPE_TYPE);
 			}
 		}
 	}

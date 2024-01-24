@@ -1,0 +1,32 @@
+{
+  "type": "flansmod:gun_fabrication",
+  "category": "equipment",
+  "ingredients": [
+	{
+		"type": "flansmod:tiered_part",
+		"materials": [ "Metal", "Composite" ],
+		"tag": "flansmod:upper_receiver",
+		"min": 1,
+		"max": 99
+	},
+	{
+		"type": "flansmod:tiered_part",
+		"materials": [ "Metal", "Composite" ],
+		"tag": "flansmod:lower_receiver",
+		"min": 1,
+		"max": 99
+	},
+	{
+		"type": "flansmod:tiered_part",
+		"materials": [ "Metal", "Composite" ],
+		"tag": "flansmod:barrel",
+		"min": 1,
+		"max": 99
+	}
+  ],
+  "result": {
+    "item": "flansvendersgame:hm_pocket"
+  },
+  "craft_time": 300,
+  "show_notification": true
+}

@@ -1,0 +1,12 @@
+{
+  "replace": "false",
+  "values": [
+    "flansbasicparts:aluminium_armour",
+    "flansbasicparts:dense_wood_armour",
+    "flansbasicparts:hard_wood_armour",
+    "flansbasicparts:iron_armour",
+    "flansbasicparts:nethersteel_armour",
+    "flansbasicparts:soft_wood_armour",
+    "flansbasicparts:steel_armour"
+  ]
+}

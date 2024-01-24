@@ -4,6 +4,7 @@ import com.flansmod.common.FlansMod;
 import com.flansmod.common.types.crafting.EMaterialType;
 import com.flansmod.common.types.crafting.MaterialDefinition;
 import com.flansmod.common.types.parts.PartDefinition;
+import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import net.minecraft.network.FriendlyByteBuf;
@@ -23,10 +24,10 @@ import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class TieredPartIngredient extends AbstractIngredient
+public class TieredPartIngredient extends AbstractIngredient implements IExtraIngredientTooltip
 {
 	@Nonnull
-	public final EMaterialType MaterialType;
+	public final EMaterialType[] MaterialTypes;
 	public final int MaterialTierMin;
 	public final int MaterialTierMax;
 	@Nonnull
@@ -40,57 +41,68 @@ public class TieredPartIngredient extends AbstractIngredient
 	@Nullable
 	private List<PartDefinition> CachedPartMatches = null;
 
-	public TieredPartIngredient(@Nonnull ResourceLocation matLoc, @Nonnull String matchTag)
+	public boolean IsMatchingMaterialType(EMaterialType matType)
 	{
-		super();
-		MaterialDefinition matDef = FlansMod.MATERIALS.Get(matLoc);
-		MaterialType = matDef.materialType;
-		MaterialTierMin = matDef.craftingTier;
-		MaterialTierMax = Integer.MAX_VALUE;
-		MatchTag = matchTag;
+		for (EMaterialType materialType : MaterialTypes)
+			if (materialType == matType)
+				return true;
+		return false;
 	}
-	public TieredPartIngredient(@Nonnull EMaterialType materialType,
+
+	public static int MaterialsToFlags(EMaterialType[] materialTypes) {
+		int flags = 0;
+		for (EMaterialType materialType : materialTypes)
+			flags |= (1 << materialType.ordinal());
+		return flags;
+	}
+	public static EMaterialType[] MaterialsFromFlags(int flags) {
+		List<EMaterialType> materialTypes = new ArrayList<>();
+		for (EMaterialType materialType : EMaterialType.values())
+			if((flags & (1 << materialType.ordinal())) != 0)
+				materialTypes.add(materialType);
+		return materialTypes.toArray(new EMaterialType[0]);
+	}
+
+	public TieredPartIngredient(@Nonnull EMaterialType[] materialTypes,
 								int tierMin,
 								int tierMax,
 								@Nonnull String matchTag)
 	{
-		MaterialType = materialType;
+		MaterialTypes = materialTypes;
 		MaterialTierMin = tierMin;
 		MaterialTierMax = tierMax;
 		MatchTag = matchTag;
 	}
 
-	@Nonnull
-	public List<Component> GenerateTooltip(boolean advanced)
+	@Override
+	public void GenerateTooltip(@Nonnull List<Component> lines, boolean advanced)
 	{
-		List<Component> lines = new ArrayList<>();
-
 		// --- Match Tag ---
 		if(!MatchTag.isEmpty())
 			lines.add(Component.translatable("crafting.with_tag", MatchTag));
 
 		// --- Match Materials ---
-		//if(MaterialType.length == 0)
-		//	lines.add(Component.translatable("crafting.match_any_material"));
-		//else if(allowedMaterials.length == 1)
-			lines.add(Component.translatable("crafting.match_single", MaterialType.ToComponent()));
-		//else
-		//{
-		//	Object[] varargs = new Object[allowedMaterials.length];
-		//	for(int n = 0; n < allowedMaterials.length; n++)
-		//		varargs[n] = allowedMaterials[n].ToComponent();
-		//	lines.add(Component.translatable("crafting.match_multiple." + allowedMaterials.length, varargs));
-		//}
+		if(MaterialTypes.length == 0)
+			lines.add(Component.translatable("crafting.match_any_material"));
+		else if(MaterialTypes.length == 1)
+			lines.add(Component.translatable("crafting.match_single", MaterialTypes[0].ToComponent()));
+		else
+		{
+			Object[] varargs = new Object[MaterialTypes.length];
+			for(int n = 0; n < MaterialTypes.length; n++)
+				varargs[n] = MaterialTypes[n] != null ? MaterialTypes[n].ToComponent() : Component.empty();
+			lines.add(Component.translatable("crafting.match_multiple." + MaterialTypes.length, varargs));
+		}
 
 		// --- Match Tiers ---
 		if(MaterialTierMin == MaterialTierMax)
 			lines.add(Component.translatable("crafting.match_single_tier", MaterialTierMin));
+		else if(MaterialTierMax >= 99)
+			lines.add(Component.translatable("crafting.match_tiers_above", MaterialTierMin));
 		else if(MaterialTierMin == 1)
 			lines.add(Component.translatable("crafting.match_tiers_below", MaterialTierMax));
 		else
 			lines.add(Component.translatable("crafting.match_tiers_between", MaterialTierMin, MaterialTierMax));
-
-		return lines;
 	}
 
 	@Nonnull
@@ -102,7 +114,7 @@ public class TieredPartIngredient extends AbstractIngredient
 				mat.IsValid()
 					&& mat.craftingTier >= MaterialTierMin
 					&& mat.craftingTier <= MaterialTierMax
-					&& mat.materialType == MaterialType);
+					&& IsMatchingMaterialType(mat.materialType));
 		}
 		return CachedMaterialMatches;
 	}
@@ -118,6 +130,8 @@ public class TieredPartIngredient extends AbstractIngredient
 		}
 		return CachedPartMatches;
 	}
+	@Override
+	public boolean isEmpty() { return getItems().length == 0; }
 	@Override
 	@Nonnull
 	public ItemStack[] getItems()
@@ -137,7 +151,7 @@ public class TieredPartIngredient extends AbstractIngredient
 						MaterialDefinition matDef = FlansMod.MATERIALS.Get(part.material);
 						if (matDef.IsValid())
 						{
-							if (matDef.materialType == MaterialType
+							if (IsMatchingMaterialType(matDef.materialType)
 								&& matDef.craftingTier >= MaterialTierMin
 								&& matDef.craftingTier <= MaterialTierMax)
 							{
@@ -147,7 +161,7 @@ public class TieredPartIngredient extends AbstractIngredient
 					}
 				}
 			}
-			CachedMatchingStacks = matching.toArray(CachedMatchingStacks);
+			CachedMatchingStacks = matching.toArray(new ItemStack[0]);
 		}
 		return CachedMatchingStacks;
 	}
@@ -160,7 +174,10 @@ public class TieredPartIngredient extends AbstractIngredient
 	public JsonElement toJson()
 	{
 		JsonObject json = new JsonObject();
-		json.addProperty("material", MaterialType.toString());
+		JsonArray jMatArray = new JsonArray();
+		for(EMaterialType materialType : MaterialTypes)
+			jMatArray.add(materialType.toString());
+		json.add("materials", jMatArray);
 		json.addProperty("min", MaterialTierMin);
 		json.addProperty("max", MaterialTierMax);
 		json.addProperty("tag", MatchTag);
@@ -182,17 +199,22 @@ public class TieredPartIngredient extends AbstractIngredient
 		@Nonnull
 		public TieredPartIngredient parse(@Nonnull JsonObject json)
 		{
-			EMaterialType materialType = EMaterialType.parse( GsonHelper.getAsString(json, "material", ""));
+			JsonArray array = GsonHelper.getAsJsonArray(json, "materials");
+
+			EMaterialType[] materialTypes = new EMaterialType[array.size()];
+			for(int i = 0; i < array.size(); i++)
+				materialTypes[i] = EMaterialType.parse(array.get(i).getAsString());
+
 			String tag = GsonHelper.getAsString(json, "tag", "flansmod:generic");
 			int min = GsonHelper.getAsInt(json, "min", 1);
 			int max = GsonHelper.getAsInt(json, "max", Integer.MAX_VALUE);
-			return new TieredPartIngredient(materialType, min, max, tag);
+			return new TieredPartIngredient(materialTypes, min, max, tag);
 		}
 
 		@Override
 		public void write(FriendlyByteBuf buffer, TieredPartIngredient ingredient)
 		{
-			buffer.writeInt(ingredient.MaterialType.ordinal());
+			buffer.writeInt(MaterialsToFlags(ingredient.MaterialTypes));
 			buffer.writeInt(ingredient.MaterialTierMin);
 			buffer.writeInt(ingredient.MaterialTierMax);
 			buffer.writeUtf(ingredient.MatchTag);
@@ -202,11 +224,12 @@ public class TieredPartIngredient extends AbstractIngredient
 		@Nonnull
 		public TieredPartIngredient parse(FriendlyByteBuf buffer)
 		{
-			EMaterialType materialType = EMaterialType.values()[buffer.readInt()];
+			int materialFlags = buffer.readInt();
+			EMaterialType[] materialTypes = MaterialsFromFlags(materialFlags);
 			int min = buffer.readInt();
 			int max = buffer.readInt();
 			String tag = buffer.readUtf();
-			return new TieredPartIngredient(materialType, min, max, tag);
+			return new TieredPartIngredient(materialTypes, min, max, tag);
 		}
 	}
 }

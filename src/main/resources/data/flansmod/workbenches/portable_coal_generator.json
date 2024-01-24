@@ -3,7 +3,9 @@
     "bannerTextureLocation": "",
     "gunCrafting": {
         "isActive": false,
-        "pages": [],
+        "craftsByName": [],
+        "craftsByTag": [],
+        "maxSlots": 8,
         "FECostPerCraft": 0
     },
     "partCrafting": {

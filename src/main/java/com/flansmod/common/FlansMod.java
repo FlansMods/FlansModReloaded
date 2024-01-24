@@ -6,6 +6,7 @@ import com.flansmod.common.actions.ServerActionManager;
 import com.flansmod.common.crafting.*;
 import com.flansmod.common.crafting.ingredients.StackedVanillaIngredient;
 import com.flansmod.common.crafting.ingredients.TieredMaterialIngredient;
+import com.flansmod.common.crafting.ingredients.TieredPartIngredient;
 import com.flansmod.common.crafting.menus.*;
 import com.flansmod.common.crafting.recipes.GunFabricationRecipe;
 import com.flansmod.common.crafting.recipes.PartFabricationRecipe;
@@ -349,6 +350,9 @@ public class FlansMod
             CraftingHelper.register(
                 new ResourceLocation(MODID, "stacked_vanilla"),
                 StackedVanillaIngredient.Serializer.INSTANCE);
+            CraftingHelper.register(
+                new ResourceLocation(MODID, "tiered_part"),
+                TieredPartIngredient.Serializer.INSTANCE);
         }
     }
 

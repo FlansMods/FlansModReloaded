@@ -2,6 +2,8 @@ package com.flansmod.common.crafting.recipes;
 
 import com.flansmod.common.FlansMod;
 import com.flansmod.common.crafting.WorkbenchBlockEntity;
+import com.flansmod.common.crafting.ingredients.IExtraIngredientTooltip;
+import com.flansmod.common.crafting.ingredients.TieredPartIngredient;
 import com.flansmod.common.item.FlanItem;
 import com.flansmod.common.item.PartItem;
 import com.flansmod.common.types.crafting.ERecipePart;
@@ -11,6 +13,7 @@ import net.minecraft.client.player.Input;
 import net.minecraft.core.NonNullList;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.GsonHelper;
 import net.minecraft.world.item.ItemStack;
@@ -99,10 +102,29 @@ public class GunFabricationRecipe implements Recipe<WorkbenchBlockEntity>
 	}
 
 	@Nonnull
+	public List<Component> GenerateTooltip(int ingredientIndex)
+	{
+		List<Component> lines = new ArrayList<>();
+		Ingredient ingredient = InputIngredients.get(ingredientIndex);
+		if(ingredient instanceof IExtraIngredientTooltip extraTooltip)
+		{
+			extraTooltip.GenerateTooltip(lines, false);
+		}
+		return lines;
+	}
+
+	@Nonnull
+	public ItemStack GetResult(@Nonnull List<ItemStack> craftingInputs)
+	{
+		ItemStack output = Result.copy();
+		FlanItem.SetCraftingInputs(output, craftingInputs);
+		return output;
+	}
+
+	@Nonnull
 	@Override
 	public ItemStack assemble(@Nonnull WorkbenchBlockEntity workbench, @Nonnull RegistryAccess registryAccess)
 	{
-		ItemStack output = Result.copy();
 		List<ItemStack> craftingInputs = new ArrayList<>();
 		for(int slot = 0; slot < workbench.GunCraftingInputContainer.getContainerSize(); slot++)
 		{
@@ -110,8 +132,8 @@ public class GunFabricationRecipe implements Recipe<WorkbenchBlockEntity>
 			if(inputStack.getItem() instanceof PartItem part)
 				craftingInputs.add(inputStack);
 		}
-		FlanItem.SetCraftingInputs(output, craftingInputs);
-		return output;
+
+		return GetResult(craftingInputs);
 	}
 
 	@Override

@@ -2,6 +2,7 @@ package com.flansmod.common.crafting.recipes;
 
 import com.flansmod.common.FlansMod;
 import com.flansmod.common.crafting.WorkbenchBlockEntity;
+import com.flansmod.common.crafting.ingredients.IExtraIngredientTooltip;
 import com.flansmod.common.crafting.ingredients.StackedIngredient;
 import com.flansmod.common.crafting.ingredients.TieredMaterialIngredient;
 import com.google.gson.JsonArray;
@@ -119,16 +120,11 @@ public class PartFabricationRecipe implements Recipe<WorkbenchBlockEntity>
 		Ingredient ingredient = InputIngredients.get(ingredientIndex);
 		if (ingredient instanceof TieredMaterialIngredient tiered)
 		{
-			String materialName = "material." + tiered.MaterialType().Location.getNamespace() + "." + tiered.MaterialType().Location.getPath();
-			lines.add(Component.translatable("crafting.match_single", Component.translatable(materialName)));
-
-			String matchingString = tiered.MaterialType().GenerateString(numMatching);
-			String requiredString = tiered.MaterialType().GenerateString(numRequired);
-
-			String resetColorCode = "\u00A7f";
-			String colorCode = numMatching < numRequired ? "\u00A74" : resetColorCode;
-
-			lines.add(Component.literal(colorCode + matchingString + resetColorCode + " / " + requiredString  + " (Max: " + maxProduce + ")"));
+			tiered.GenerateTooltip(lines, numMatching, false);
+		}
+		else if(ingredient instanceof IExtraIngredientTooltip extraTooltip)
+		{
+			extraTooltip.GenerateTooltip(lines, false);
 		}
 		else
 		{

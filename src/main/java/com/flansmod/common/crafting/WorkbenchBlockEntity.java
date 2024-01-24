@@ -23,6 +23,7 @@ import com.flansmod.util.Maths;
 import com.mojang.datafixers.util.Pair;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.RegistryAccess;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
@@ -675,6 +676,8 @@ public class WorkbenchBlockEntity extends BlockEntity implements WorldlyContaine
 			PlayerSelectedCraftingGun = recipeIndex;
 		else
 			PlayerSelectedCraftingGun = CRAFTING_NOTHING;
+
+		UpdateGunCraftingOutputSlot();
 	}
 	public boolean MatchesGunRecipe(int recipeIndex)
 	{
@@ -709,7 +712,8 @@ public class WorkbenchBlockEntity extends BlockEntity implements WorldlyContaine
 								existingIndex = i;
 							}
 						}
-						GunCraftingInputContainer.setItem(ingredientIndex, possibleItems[existingIndex + 1]);
+						GunCraftingInputContainer.setItem(ingredientIndex, possibleItems[(existingIndex + 1) % possibleItems.length].copy());
+						UpdateGunCraftingOutputSlot();
 					}
 				}
 				else // Non-creative
@@ -737,6 +741,7 @@ public class WorkbenchBlockEntity extends BlockEntity implements WorldlyContaine
 							if(player.getInventory().add(stackInSlot.copy()))
 							{
 								GunCraftingInputContainer.setItem(ingredientIndex, player.getInventory().getItem(foundMatch));
+								UpdateGunCraftingOutputSlot();
 							}
 						}
 					}
@@ -799,7 +804,11 @@ public class WorkbenchBlockEntity extends BlockEntity implements WorldlyContaine
 		{
 			GunFabricationRecipe recipe = GetSelectedGunRecipe();
 			if(recipe != null)
-				GunCraftingOutputContainer.setItem(0, recipe.Result.copy());
+			{
+				ItemStack output = recipe.assemble(this, RegistryAccess.EMPTY);
+				GunCraftingOutputContainer.setItem(0, output);
+
+			}
 			else
 				FlansMod.LOGGER.error("We think gun crafting is valid, but no recipe selection exists");
 		}

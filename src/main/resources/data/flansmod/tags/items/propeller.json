@@ -1,0 +1,15 @@
+{
+  "replace": "false",
+  "values": [
+    "flansbasicparts:aluminium_propeller",
+    "flansbasicparts:carbon_fiber_propeller",
+    "flansbasicparts:dense_wood_propeller",
+    "flansbasicparts:fiberglass_propeller",
+    "flansbasicparts:hard_wood_propeller",
+    "flansbasicparts:iron_propeller",
+    "flansbasicparts:nethersteel_propeller",
+    "flansbasicparts:phantex_propeller",
+    "flansbasicparts:soft_wood_propeller",
+    "flansbasicparts:steel_propeller"
+  ]
+}

@@ -10,7 +10,7 @@
         "maxStackSize": 64,
         "tags": [
             "flansmod:part",
-            "flansmod:electronic_parts"
+            "flansmod:circuitry"
         ]
     },
     "modifiers": [],

@@ -22,8 +22,10 @@ import java.util.List;
 
 public class WorkbenchMenuGunCrafting extends WorkbenchMenu
 {
-	public static final int GUN_CRAFTING_NUM_SLOTS_X = 4;
-	public static final int GUN_CRAFTING_NUM_SLOTS_Y = 2;
+	public static final int GUN_RECIPE_VIEWER_X_ORIGIN = 4;
+	public static final int GUN_RECIPE_VIEWER_Y_ORIGIN = 64;
+	public static final int GUN_RECIPE_VIEWER_COLUMNS = 6;
+	public static final int GUN_RECIPE_VIEWER_ROWS = 1;
 
 	public static final int BUTTON_SELECT_GUN_RECIPE_0 				= 0x0;	// 128 gun recipes
 	public static final int BUTTON_SELECT_GUN_RECIPE_MAX 			= 0x7f;
@@ -95,7 +97,7 @@ public class WorkbenchMenuGunCrafting extends WorkbenchMenu
 		super.CreateSlots(playerInventory, inventorySlotOffsetX);
 		if(GunCraftingOutputContainer.getContainerSize() > 0)
 		{
-			addSlot(GunCraftingOutputSlot = new GunCraftingOutputSlot(this, GunCraftingOutputContainer, 0, 150, 77));
+			addSlot(GunCraftingOutputSlot = new GunCraftingOutputSlot(this, GunCraftingOutputContainer, 0, 151, 73));
 		}
 		GunCraftingInputSlots = new GunCraftingInputSlot[GunCraftingInputContainer.getContainerSize()];
 		if(GunCraftingInputContainer.getContainerSize() > 0)
@@ -128,8 +130,8 @@ public class WorkbenchMenuGunCrafting extends WorkbenchMenu
 				this,
 				GunCraftingInputContainer,
 				i,
-				active ? 50 + 20 * (i % GUN_CRAFTING_NUM_SLOTS_X) : -1000,
-				active ? 56 + 30 * (i / GUN_CRAFTING_NUM_SLOTS_X) : -1000);
+				active ? GUN_RECIPE_VIEWER_X_ORIGIN + 3 + 22 * (i % GUN_RECIPE_VIEWER_COLUMNS) : -1000,
+				active ? GUN_RECIPE_VIEWER_Y_ORIGIN + 8 + 30 * (i / GUN_RECIPE_VIEWER_COLUMNS) : -1000);
 
 			replacementSlot.index = GunCraftingInputSlots[i].index;
 			GunCraftingInputSlots[i].SetActive(false);

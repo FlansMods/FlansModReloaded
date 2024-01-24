@@ -7,6 +7,7 @@ import com.flansmod.util.Maths;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.phys.Vec3;
 import org.joml.Vector3f;
 
@@ -89,6 +90,13 @@ public class DefinitionParser
 			catch(Exception e) { FlansMod.LOGGER.error("Failed to parse JsonNode " + jNode + " into " + ref + " as Vector3f due to exception: " + e); throw e; }
 		});
 		Parsers.put(VecWithOverride.class, VecWithOverride::ParseFunc);
+		Parsers.put(ResourceLocation.class, (ref, jNode, annot) -> {
+			try
+			{
+				return new ResourceLocation(jNode.getAsString());
+			}
+			catch(Exception e) { FlansMod.LOGGER.error("Failed to parse JsonNode " + jNode + " into " + ref + " as ResourceLocation due to exception: " + e); throw e; }
+		});
 
 	}
 	private static FieldParseMethod GetParserFor(Field field) { return GetParserFor(field.getType()); }

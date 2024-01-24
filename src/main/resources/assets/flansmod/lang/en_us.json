@@ -129,6 +129,7 @@
   "crafting.match_tiers_between": "Is between Tier %d and %d",
   "crafting.match_mixed_tiers": "Is a Tier in {%s}",
   "crafting.match_tiers_above": "At least Tier %d",
+  "crafting.match_tiers_below": "At Most Tier %d",
   "crafting.match_any_material": "Is any material",
   "crafting.match_single": "Is %s",
   "crafting.match_multiple.2": "Is either %s or %s",
@@ -202,5 +203,8 @@
   "key.flansmod.manual_reload": "Reload Weapon",
   "key.flansmod.mode_toggle": "Toggle Weapon Mode",
   "tooltip.crafted_from_nothing": "§6This weapon was not crafted, so has no extra abilities",
-  "jei.part_fabrication.title": "Part Fabrication"
+  "jei.part_fabrication.title": "Part Fabrication",
+  "jei.gun_fabrication.title": "Gun Fabrication",
+  "crafting.auto_cycle_parts_creative": "Cycle Matching Parts (Creative-Mode)",
+  "tooltip.gun_fab.craftable": "§6%s (Craftable)"
 }

@@ -42,7 +42,9 @@ public class PartCraftingCategory extends FlansCraftingCategory<PartFabricationR
 		return IconDrawable;
 	}
 	@Override
-	public void setRecipe(@Nonnull IRecipeLayoutBuilder builder, @Nonnull PartFabricationRecipe recipe, @Nonnull IFocusGroup focuses)
+	public void setRecipe(@Nonnull IRecipeLayoutBuilder builder,
+						  @Nonnull PartFabricationRecipe recipe,
+						  @Nonnull IFocusGroup focuses)
 	{
 		for(int i = 0; i < recipe.InputIngredients.size(); i++)
 		{

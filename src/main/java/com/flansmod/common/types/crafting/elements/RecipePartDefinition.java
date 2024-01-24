@@ -6,7 +6,7 @@ import com.flansmod.common.types.crafting.ERecipePart;
 public class RecipePartDefinition
 {
 	@JsonField
-	public ERecipePart part = ERecipePart.misc;
+	public ERecipePart part = ERecipePart.generic;
 	@JsonField
 	public TieredIngredientDefinition[] tieredIngredients = new TieredIngredientDefinition[0];
 	@JsonField

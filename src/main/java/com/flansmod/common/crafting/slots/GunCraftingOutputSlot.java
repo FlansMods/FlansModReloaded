@@ -36,6 +36,6 @@ public class GunCraftingOutputSlot extends RestrictedSlot
 	@Override
 	public boolean mayPlace(@Nonnull ItemStack stack)
 	{
-		return false;
+		return stack.isEmpty();
 	}
 }
