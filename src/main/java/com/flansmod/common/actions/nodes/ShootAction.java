@@ -443,9 +443,16 @@ public class ShootAction extends ActionInstance
 					// Create a bullet trail render
 					if(Group.Context.Gun.GetShooter().IsLocalPlayerOwner())
 					{
+						FlansModClient.SpawnLocalMuzzleParticles(shot.origin,gunshotContext,gunshotContext.ActionGroup.Gun.Def.particleCount);
 						FlansModClient.SHOT_RENDERER.AddLocalPlayerTrail(shot.origin, shot.Endpoint(), gunshotContext);
 					}
-					else FlansModClient.SHOT_RENDERER.AddTrail(shot.origin, shot.Endpoint());
+					else {
+						FlansModClient.SpawnMuzzleParticles(shot.origin,gunshotContext,gunshotContext.ActionGroup.Gun.Def.particleCount);
+						FlansModClient.SHOT_RENDERER.AddTrail(shot.origin, shot.Endpoint());
+					}
+
+					Vec3 vel = new Vec3(shot.origin.x()-shot.Endpoint().x(),shot.origin.y()-shot.Endpoint().y(),shot.origin.z()-shot.Endpoint().z());
+					vel.normalize();
 
 					for (HitResult hit : shot.hits)
 					{

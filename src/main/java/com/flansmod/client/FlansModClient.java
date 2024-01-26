@@ -14,7 +14,12 @@ import com.flansmod.client.render.bullets.ShotRenderer;
 import com.flansmod.client.render.decals.LaserRenderer;
 import com.flansmod.common.FlansMod;
 import com.flansmod.common.actions.contexts.ContextCache;
+import com.flansmod.common.actions.contexts.GunContextPlayer;
+import com.flansmod.common.actions.contexts.GunshotContext;
+import com.flansmod.common.actions.contexts.ShooterContext;
 import com.flansmod.util.Maths;
+import com.flansmod.util.MinecraftHelpers;
+import com.flansmod.util.Transform;
 import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import net.minecraft.Util;
 import net.minecraft.client.Camera;
@@ -26,8 +31,10 @@ import net.minecraft.client.renderer.ItemModelShaper;
 import net.minecraft.client.renderer.ShaderInstance;
 import net.minecraft.client.renderer.entity.EntityRenderers;
 import net.minecraft.client.resources.model.ModelResourceLocation;
+import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.InteractionHand;
+import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.event.ModelEvent;
@@ -241,6 +248,45 @@ public class FlansModClient
 		{
 			FlansMod.LOGGER.error("Failed to SetMissTime due to " + e);
 		}
+	}
+
+	public static void SpawnLocalMuzzleParticles(Vec3 origin, GunshotContext gunshotContext,int count){
+		if(Minecraft.getInstance().player != null && gunshotContext.ActionGroup.Gun instanceof GunContextPlayer playerGunContext) {
+			Transform shootOrigin = FirstPersonManager.GetWorldSpaceAPTransform(gunshotContext.ActionGroup.Gun, MinecraftHelpers.GetFirstPersonTransformType(playerGunContext.GetHand()), "shoot_origin");
+			for (int i = 0; i < gunshotContext.ActionGroup.Gun.Def.particleCount; i++) {
+				if (playerGunContext.GetShooter() != ShooterContext.INVALID) {
+					Vec3 look = playerGunContext.GetShooter().Entity().getLookAngle();
+					if(count > 1)
+						Minecraft.getInstance().level.addParticle(ParticleTypes.POOF, shootOrigin.PositionVec3().x() + look.x * 0.1f, shootOrigin.PositionVec3().y() + look.y * 0.1f, shootOrigin.PositionVec3().z() + look.z * 0.1f, (look.x() * 0.3) + random( count), (look.y() * 0.3) + random( count), (look.z() * 0.3) + random( count));
+					else {
+						Minecraft.getInstance().level.addParticle(ParticleTypes.SMOKE, shootOrigin.PositionVec3().x() + look.x * 0.1f, shootOrigin.PositionVec3().y() + look.y * 0.1f, shootOrigin.PositionVec3().z() + look.z * 0.1f, (look.x() * 0.3) + random( count), (look.y() * 0.3) + random( count), (look.z() * 0.3) + random( count));
+					}
+					if (i == 1) {
+						Minecraft.getInstance().level.addParticle(ParticleTypes.FLAME, shootOrigin.PositionVec3().x(), shootOrigin.PositionVec3().y(), shootOrigin.PositionVec3().z(), look.x, look.y, look.z);
+					}
+				}
+			}
+		}
+	}
+
+	public static void SpawnMuzzleParticles(Vec3 origin, GunshotContext gunshotContext, int count){
+		for (int i = 0; i < count; i++) {
+			if (gunshotContext.ActionGroup.Gun.GetShooter() != ShooterContext.INVALID) {
+				Vec3 look = gunshotContext.ActionGroup.Gun.GetShooter().Entity().getLookAngle();
+				if(count > 1)
+					Minecraft.getInstance().level.addParticle(ParticleTypes.POOF, origin.x() + look.x * 0.1f, origin.y() + look.y * 0.1f, origin.z() + look.z * 0.1f, (look.x() * 0.3) + random( count), (look.y() * 0.3) + random( count), (look.z() * 0.3) + random( count));
+				else {
+					Minecraft.getInstance().level.addParticle(ParticleTypes.SMOKE, origin.x() + look.x * 0.1f, origin.y() + look.y * 0.1f, origin.z() + look.z * 0.1f, (look.x() * 0.3) + random( count), (look.y() * 0.3) + random( count), (look.z() * 0.3) + random( count));
+				}				if (i == 1) {
+					Minecraft.getInstance().level.addParticle(ParticleTypes.FLAME, origin.x(), origin.y(), origin.z(), look.x, look.y, look.z);
+				}
+			}
+		}
+	}
+
+
+	private static float random(int count){
+		return (((float)Math.random() * 0.6f)-0.3f)*(float)count/20f;
 	}
 
 }

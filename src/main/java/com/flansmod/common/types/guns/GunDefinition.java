@@ -59,7 +59,8 @@ public class GunDefinition extends JsonDefinition
 	public String[] modelParts = new String[0];
 	@JsonField
 	public String animationSet = "";
-
+	@JsonField
+	public int particleCount = 1;
 
 	 //
 	@Override
