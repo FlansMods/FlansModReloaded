@@ -139,7 +139,7 @@
         }
     },
     "textures": {
-        "hm_snap_stock": "flansvendersgame:skins/hm_snap_stock"
+        "default": "flansvendersgame:skins/hm_snap_stock"
     },
     "icons": {
         "default": "flansvendersgame:item/hm_snap_stock"

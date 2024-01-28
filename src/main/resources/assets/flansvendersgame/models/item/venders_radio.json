@@ -139,7 +139,7 @@
         }
     },
     "textures": {
-        "venders_radio": "flansvendersgame:skins/venders_radio"
+        "default": "flansvendersgame:skins/venders_radio"
     },
     "icons": {
         "default": "flansvendersgame:item/venders_radio"

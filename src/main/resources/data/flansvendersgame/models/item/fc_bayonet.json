@@ -139,7 +139,7 @@
         }
     },
     "textures": {
-        "fc_bayonet": "flansvendersgame:skins/fc_bayonet"
+        "default": "flansvendersgame:skins/fc_bayonet"
     },
     "icons": {
         "default": "flansvendersgame:item/fc_bayonet"

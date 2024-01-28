@@ -2,7 +2,7 @@
     "loader": "flansmod:turborig",
     "display": {},
     "textures": {
-        "fc_diamond_sights": "flansvendersgame:skins/fc_diamond_sights"
+        "default": "flansvendersgame:skins/fc_diamond_sights"
     },
     "icons": {
         "default": "flansvendersgame:item/fc_diamond_sights"

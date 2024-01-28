@@ -139,7 +139,7 @@
         }
     },
     "textures": {
-        "fc_telescopic_sight": "flansvendersgame:skins/fc_telescopic_sight"
+        "default": "flansvendersgame:skins/fc_telescopic_sight"
     },
     "icons": {
         "default": "flansvendersgame:item/fc_telescopic_sight"

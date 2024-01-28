@@ -2,7 +2,7 @@
     "loader": "flansmod:turborig",
     "display": {},
     "textures": {
-        "phantek_phaseraser_laser": "flansvendersgame:skins/phantek_phaseraser_laser"
+        "default": "flansvendersgame:skins/phantek_phaseraser_laser"
     },
     "icons": {
         "default": "flansvendersgame:item/phantek_phaseraser_laser"

@@ -561,6 +561,5 @@
         "hideDefaultMesh": true
     },
     "modelParts": [],
-    "animationSet": "flansmod:rifle_priming_handle_magazine_fed",
-    "particleCount": 2
+    "animationSet": "flansmod:rifle_priming_handle_magazine_fed"
 }

@@ -2,7 +2,7 @@
     "loader": "flansmod:turborig",
     "display": {},
     "textures": {
-        "phantek_impact_stock": "flansvendersgame:skins/phantek_impact_stock"
+        "default": "flansvendersgame:skins/phantek_impact_stock"
     },
     "icons": {
         "default": "flansvendersgame:item/phantek_impact_stock"

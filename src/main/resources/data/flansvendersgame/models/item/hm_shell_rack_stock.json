@@ -2,7 +2,7 @@
     "loader": "flansmod:turborig",
     "display": {},
     "textures": {
-        "hm_shell_rack_stock": "flansvendersgame:skins/hm_shell_rack_stock"
+        "default": "flansvendersgame:skins/hm_shell_rack_stock"
     },
     "icons": {
         "default": "flansvendersgame:item/hm_shell_rack_stock"

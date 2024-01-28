@@ -2,7 +2,7 @@
     "loader": "flansmod:turborig",
     "display": {},
     "textures": {
-        "fc_aged_oak_stock": "flansvendersgame:skins/fc_aged_oak_stock"
+        "default": "flansvendersgame:skins/fc_aged_oak_stock"
     },
     "icons": {
         "default": "flansvendersgame:item/fc_aged_oak_stock"
