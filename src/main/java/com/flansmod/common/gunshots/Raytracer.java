@@ -1,43 +1,46 @@
 package com.flansmod.common.gunshots;
 
-import com.flansmod.client.FlansModClient;
 import com.flansmod.client.render.debug.DebugRenderer;
 import com.flansmod.common.FlansMod;
-import com.flansmod.util.Transform;
-import net.minecraft.core.BlockPos;
-import net.minecraft.core.Position;
-import net.minecraft.core.SectionPos;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.entity.projectile.ProjectileUtil;
 import net.minecraft.world.level.ClipContext;
-import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.phys.*;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.TickEvent;
-import net.minecraftforge.eventbus.api.IEventBus;
-import org.joml.Vector3f;
 import org.joml.Vector4f;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.*;
 
 public class Raytracer
 {
     private static final int NUM_SNAPSHOTS_TO_KEEP = 100;
-    private static HashMap<LevelAccessor, Raytracer> raytracers = new HashMap<>();
-    public static Raytracer ForLevel(LevelAccessor level) { return raytracers.get(level); }
+    private static final HashMap<LevelAccessor, Raytracer> Raytracers = new HashMap<>();
 
-
-    private LevelAccessor world;
-    private HashMap<Player, PlayerMovementHistory> playerMoves = new HashMap<Player, PlayerMovementHistory>();
-
-    public Raytracer(LevelAccessor w)
+    @Nonnull
+    public static Raytracer ForLevel(@Nonnull LevelAccessor level)
     {
-        world = w;
-        raytracers.put(w, this);
+        if(!Raytracers.containsKey(level))
+        {
+            Raytracer newInstance = new Raytracer(level);
+            newInstance.hook();
+            Raytracers.put(level, newInstance);
+        }
+        return Raytracers.get(level);
+    }
+    @Nonnull
+    private final LevelAccessor World;
+    @Nonnull
+    private final HashMap<Player, PlayerMovementHistory> PlayerMovementHistories = new HashMap<Player, PlayerMovementHistory>();
+
+    public Raytracer(@Nonnull LevelAccessor w)
+    {
+        World = w;
+        Raytracers.put(w, this);
     }
 
     public void hook()
@@ -46,15 +49,15 @@ public class Raytracer
         MinecraftForge.EVENT_BUS.addListener(this::clientTick);
     }
 
-    public void commonTick(TickEvent.LevelTickEvent event)
+    public void commonTick(@Nonnull TickEvent.LevelTickEvent event)
     {
-        for(Player player : world.players())
+        for (Player player : World.players())
         {
-            PlayerMovementHistory moves = playerMoves.get(player);
-            if(moves == null)
+            PlayerMovementHistory moves = PlayerMovementHistories.get(player);
+            if (moves == null)
             {
-               moves = new PlayerMovementHistory(NUM_SNAPSHOTS_TO_KEEP);
-               playerMoves.put(player, moves);
+                moves = new PlayerMovementHistory(NUM_SNAPSHOTS_TO_KEEP);
+                PlayerMovementHistories.put(player, moves);
             }
 
             PlayerSnapshot nextSnapshot = moves.GetNextSnapshotForWriting();
@@ -67,7 +70,7 @@ public class Raytracer
     {
         if(FlansMod.DEBUG)
         {
-            for(var kvp : playerMoves.entrySet())
+            for(var kvp : PlayerMovementHistories.entrySet())
             {
                 kvp.getValue().debugRender();
             }
@@ -77,7 +80,7 @@ public class Raytracer
     @Nonnull
     public PlayerSnapshot GetSnapshot(Player player, int nTicksAgo)
     {
-        PlayerMovementHistory movementHistory = playerMoves.get(player);
+        PlayerMovementHistory movementHistory = PlayerMovementHistories.get(player);
         if (movementHistory != null)
         {
             return movementHistory.GetSnapshotNTicksAgo(nTicksAgo);
@@ -183,7 +186,7 @@ public class Raytracer
             ClipContext.Fluid.NONE,
             null
         );
-        BlockHitResult blockHit = world.clip(clipContext);
+        BlockHitResult blockHit = World.clip(clipContext);
         if(blockHit.getType() != HitResult.Type.MISS)
         {
             outResults.add(blockHit);
@@ -195,12 +198,12 @@ public class Raytracer
         // This vanilla AABB check is going to be disgustingly slow if we shoot diagonally on all axes
         // TODO: Optimise into several AABBs in this case?
         AABB bounds = new AABB(startPoint, endPoint);
-        for(Entity checkEnt : world.getEntities(null, bounds))
+        for(Entity checkEnt : World.getEntities(null, bounds))
         {
             if(checkEnt instanceof Player checkPlayer)
             {
                 // Do player snapshot check
-                PlayerMovementHistory history = playerMoves.get(checkPlayer);
+                PlayerMovementHistory history = PlayerMovementHistories.get(checkPlayer);
                 if(history != null)
                 {
                     history.GetSnapshotNTicksAgo(0).Raycast(startPoint, endPoint, outResults);

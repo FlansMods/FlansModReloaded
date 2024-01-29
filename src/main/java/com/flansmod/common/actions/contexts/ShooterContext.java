@@ -86,7 +86,7 @@ public abstract class ShooterContext
 	@Nonnull
 	public static ShooterContext server(@Nonnull Entity shooter, @Nullable Entity owner) { return FlansMod.CONTEXT_CACHE.GetShooter(shooter, owner); }
 	@Nonnull
-	public static ShooterContext server(@Nonnull UUID shooterID, @Nonnull UUID ownerID) { return FlansMod.CONTEXT_CACHE.GetShooter(shooterID, ownerID); }
+	public static ShooterContext server(@Nonnull UUID shooterID, @Nonnull UUID ownerID) { return FlansMod.CONTEXT_CACHE.GetShooter(shooterID, ownerID, null); }
 
 	@OnlyIn(Dist.CLIENT)
 	@Nonnull
@@ -96,7 +96,7 @@ public abstract class ShooterContext
 	public static ShooterContext client(@Nonnull Entity shooter, @Nullable Entity owner) { return FlansModClient.CONTEXT_CACHE.GetShooter(shooter, owner); }
 	@OnlyIn(Dist.CLIENT)
 	@Nonnull
-	public static ShooterContext client(@Nonnull UUID shooterID, @Nonnull UUID ownerID) { return FlansModClient.CONTEXT_CACHE.GetShooter(shooterID, ownerID); }
+	public static ShooterContext client(@Nonnull UUID shooterID, @Nonnull UUID ownerID) { return FlansModClient.CONTEXT_CACHE.GetShooter(shooterID, ownerID, null); }
 
 
 	// ---------------------------------------------------------------------------------------------------

@@ -63,6 +63,7 @@ import net.minecraftforge.common.extensions.IForgeMenuType;
 import net.minecraftforge.common.loot.IGlobalLootModifier;
 import net.minecraftforge.event.AddReloadListenerEvent;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
+import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.level.LevelEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -76,6 +77,7 @@ import net.minecraftforge.registries.RegisterEvent;
 import net.minecraftforge.registries.RegistryObject;
 import org.slf4j.Logger;
 
+import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
@@ -334,13 +336,26 @@ public class FlansMod
     }
 
     @SubscribeEvent
-    public void OnLevelLoad(LevelEvent.Load event)
+    public void OnLevelLoad(@Nonnull LevelEvent.Load event)
     {
-        new Raytracer(event.getLevel()).hook();
-        CONTEXT_CACHE.OnLevelLoaded();
+        if(!event.getLevel().isClientSide())
+            new Raytracer(event.getLevel()).hook();
     }
 
-    private void OnRegsiterEvent(RegisterEvent event)
+    @SubscribeEvent
+    public void OnLevelUnload(@Nonnull LevelEvent.Unload event)
+    {
+        if(!event.getLevel().isClientSide())
+            CONTEXT_CACHE.OnLevelUnloaded(ACTIONS_SERVER);
+    }
+
+    @SubscribeEvent
+    public void OnPlayerTravel(@Nonnull PlayerEvent.PlayerChangedDimensionEvent event)
+    {
+        CONTEXT_CACHE.ClearPlayer(event.getEntity().getUUID(), ACTIONS_SERVER);
+    }
+
+    private void OnRegsiterEvent(@Nonnull RegisterEvent event)
     {
         if(event.getRegistryKey().equals(ForgeRegistries.Keys.RECIPE_SERIALIZERS))
         {

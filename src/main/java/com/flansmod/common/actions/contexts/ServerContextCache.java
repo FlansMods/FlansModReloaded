@@ -52,4 +52,10 @@ public class ServerContextCache extends ContextCache
 		}
 		return null;
 	}
+
+	@Override
+	public boolean SidedValidation(@Nonnull ShooterContext shooter)
+	{
+		return true;
+	}
 }

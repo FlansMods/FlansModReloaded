@@ -12,6 +12,7 @@ import com.mojang.datafixers.util.Pair;
 import net.minecraft.world.level.Level;
 
 import javax.annotation.Nonnull;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
@@ -26,6 +27,17 @@ public abstract class ActionManager
 	{
 		IsClient = client;
 	}
+
+	public void Clear()
+	{
+		ActionStacks.clear();
+	}
+	public void ClearGun(@Nonnull UUID gunID)
+	{
+		ActionStacks.remove(gunID);
+	}
+
+
 	@Nonnull
 	public ActionStack GetActionStack(GunContext context)
 	{

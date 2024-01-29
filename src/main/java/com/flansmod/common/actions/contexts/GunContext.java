@@ -39,7 +39,7 @@ public abstract class GunContext
 		@Override
 		public void OnItemStackChanged(ItemStack stack) {}
 		@Override
-		public boolean UpdateFromItemStack() { return false; }
+		public boolean UpdateStackFromInventory() { return false; }
 		@Override
 		public DamageSource CreateDamageSource() { return null; }
 		@Override
@@ -264,7 +264,7 @@ public abstract class GunContext
 	// Abstractions
 	// --------------------------------------------------------------------------
 	public abstract void OnItemStackChanged(ItemStack stack);
-	public abstract boolean UpdateFromItemStack();
+	public abstract boolean UpdateStackFromInventory();
 	public abstract DamageSource CreateDamageSource();
 	@Nonnull
 	public abstract ShooterContext GetShooter();
@@ -303,7 +303,7 @@ public abstract class GunContext
 	}
 	public boolean IsValid()
 	{
-		if(UpdateFromItemStack())
+		if(UpdateStackFromInventory())
 			return false;
 		if(Stack.isEmpty())
 			return false;

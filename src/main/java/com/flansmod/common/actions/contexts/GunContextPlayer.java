@@ -23,12 +23,18 @@ public class GunContextPlayer extends GunContextLiving
 	{
 		ItemStack stackInSlot = Player.getInventory().getItem(InventorySlot);
 		Player.getInventory().setItem(InventorySlot, stack);
+		Player.getInventory().setChanged();
 	}
 	@Override
-	public boolean UpdateFromItemStack()
+	public boolean UpdateStackFromInventory()
 	{
 		ItemStack currentStack = Player.getInventory().getItem(InventorySlot);
-		Stack = currentStack.copy();
+		if(!ItemStack.isSameItemSameTags(currentStack, Stack))
+		{
+			Stack = currentStack.copy();
+			return true;
+		}
+
 		return false;
 	}
 	@Override

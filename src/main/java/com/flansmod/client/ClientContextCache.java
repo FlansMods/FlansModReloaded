@@ -1,6 +1,7 @@
 package com.flansmod.client;
 
 import com.flansmod.common.actions.contexts.*;
+import com.flansmod.util.MinecraftHelpers;
 import net.minecraft.client.Minecraft;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
@@ -47,5 +48,15 @@ public class ClientContextCache extends ContextCache
 			}
 		}
 		return null;
+	}
+
+	@Override
+	public boolean SidedValidation(@Nonnull ShooterContext shooter)
+	{
+		// On a client, we do not want contexts that are outside the current level!
+		if(shooter.Level() != MinecraftHelpers.Client_GetCurrentLevel())
+			return false;
+
+		return true;
 	}
 }

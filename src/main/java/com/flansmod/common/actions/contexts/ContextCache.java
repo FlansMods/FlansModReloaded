@@ -1,7 +1,7 @@
 package com.flansmod.common.actions.contexts;
 
-import com.flansmod.client.FlansModClient;
 import com.flansmod.common.FlansMod;
+import com.flansmod.common.actions.ActionManager;
 import com.flansmod.common.item.FlanItem;
 import net.minecraft.world.Container;
 import net.minecraft.world.InteractionHand;
@@ -13,7 +13,9 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.UUID;
 
 public abstract class ContextCache
@@ -27,11 +29,30 @@ public abstract class ContextCache
 		Side = side;
 	}
 
-	public void OnLevelLoaded()
+	public void OnLevelUnloaded(@Nonnull ActionManager actionManager)
 	{
+		actionManager.Clear();
 		ShooterContexts.clear();
 		GunContextCache.clear();
 	}
+
+	public void ClearPlayer(@Nonnull UUID playerID, @Nonnull ActionManager actionManager)
+	{
+		ShooterContexts.remove(playerID);
+
+		List<UUID> gunsToClear = new ArrayList<>();
+		for(var kvp : GunContextCache.entrySet())
+			if(kvp.getValue().GetShooter().OwnerUUID().equals(playerID))
+				gunsToClear.add(kvp.getKey());
+
+		for(UUID gunID : gunsToClear)
+		{
+			actionManager.ClearGun(gunID);
+			GunContextCache.remove(gunID);
+		}
+	}
+
+	public abstract boolean SidedValidation(@Nonnull ShooterContext shooter);
 
 	// ---------------------------------------------------------------------------------------------------
 	// SHOOTER CONTEXT CACHE
@@ -39,29 +60,27 @@ public abstract class ContextCache
 	@Nonnull
 	public ShooterContext GetShooter(@Nonnull Entity shooter)
 	{
-		return GetShooter(shooter.getUUID(), shooter.getUUID());
+		return GetShooter(shooter.getUUID(), shooter.getUUID(), shooter.level());
 	}
 	@Nonnull
 	public ShooterContext GetShooter(@Nonnull Entity shooter, @Nullable Entity owner)
 	{
-		return GetShooter(shooter.getUUID(), owner != null ? owner.getUUID() : ShooterContext.InvalidID);
+		return GetShooter(shooter.getUUID(), owner != null ? owner.getUUID() : ShooterContext.InvalidID, shooter.level());
 	}
 	@Nonnull
-	public ShooterContext GetShooter(@Nonnull UUID shooterID, @Nonnull UUID ownerID)
+	public ShooterContext GetShooter(@Nonnull UUID shooterID, @Nonnull UUID ownerID, @Nullable Level checkLevel)
 	{
 		ShooterContext existing = TryGetExistingShooter(shooterID, ownerID);
 		if(existing != null)
 			if(existing.EntityUUID().equals(shooterID))
 				if(existing.OwnerUUID().equals(ownerID))
-					return existing;
+					if(checkLevel == null || checkLevel == existing.Level())
+						if(SidedValidation(existing))
+							return existing;
 
-		return CreateShooterContext(shooterID, ownerID);
-	}
-
-	@Nullable
-	private ShooterContext TryGetExistingShooter(@Nonnull UUID shooterID)
-	{
-		return TryGetExistingShooter(shooterID, shooterID);
+		ShooterContext newContext = CreateShooterContext(shooterID, ownerID);
+		ShooterContexts.put(shooterID, newContext);
+		return newContext;
 	}
 	@Nullable
 	private ShooterContext TryGetExistingShooter(@Nonnull UUID shooterID, @Nonnull UUID ownerID)
@@ -228,7 +247,7 @@ public abstract class ContextCache
 	}
 	// Or you are looking at something that can shoot
 	@Nonnull
-	public GunContext Create(ShooterContext shooter, UUID gunID)
+	public GunContext Create(@Nonnull ShooterContext shooter, @Nonnull UUID gunID)
 	{
 		if(gunID != FlanItem.InvalidGunUUID)
 		{
@@ -236,9 +255,10 @@ public abstract class ContextCache
 			GunContext existingContext = GetContextIfStillValid(gunID);
 			if (existingContext != null)
 			{
-				if(existingContext.GetShooter().IsValid())
+				// Check for context EQUALITY, this should not be different...
+				if(existingContext.GetShooter() == shooter)
 				{
-					if(existingContext.GetShooter().EntityUUID().equals(shooter.EntityUUID()))
+					if(!existingContext.UpdateStackFromInventory())
 						return existingContext;
 				}
 			}

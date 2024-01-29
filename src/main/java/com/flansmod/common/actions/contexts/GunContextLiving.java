@@ -40,10 +40,14 @@ public class GunContextLiving extends GunContextInventoryItem
 		ShooterContext.Shooter.setItemInHand(Hand, stack);
 	}
 	@Override
-	public boolean UpdateFromItemStack()
+	public boolean UpdateStackFromInventory()
 	{
 		ItemStack currentStack = Hand == InteractionHand.MAIN_HAND ? ShooterContext.Shooter.getMainHandItem() : ShooterContext.Shooter.getOffhandItem();
-		Stack = currentStack.copy();
+		if(!ItemStack.isSameItemSameTags(currentStack, Stack))
+		{
+			Stack = currentStack.copy();
+			return true;
+		}
 		return false;
 	}
 	@Override

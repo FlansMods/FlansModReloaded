@@ -17,6 +17,7 @@ import com.flansmod.common.actions.contexts.ContextCache;
 import com.flansmod.common.actions.contexts.GunContextPlayer;
 import com.flansmod.common.actions.contexts.GunshotContext;
 import com.flansmod.common.actions.contexts.ShooterContext;
+import com.flansmod.common.gunshots.Raytracer;
 import com.flansmod.util.Maths;
 import com.flansmod.util.MinecraftHelpers;
 import com.flansmod.util.Transform;
@@ -42,6 +43,8 @@ import net.minecraftforge.client.event.RegisterClientReloadListenersEvent;
 import net.minecraftforge.client.event.RegisterShadersEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.TickEvent;
+import net.minecraftforge.event.entity.player.PlayerEvent;
+import net.minecraftforge.event.level.LevelEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -50,6 +53,7 @@ import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.fml.util.ObfuscationReflectionHelper;
 import org.jetbrains.annotations.NotNull;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -109,6 +113,18 @@ public class FlansModClient
 		EntityRenderers.register(FlansMod.ENT_TYPE_BULLET.get(), BulletEntityRenderer::new);
 
 		MinecraftForge.EVENT_BUS.addListener(FlansModClient::RenderTick);
+		MinecraftForge.EVENT_BUS.addListener(FlansModClient::OnLevelLoad);
+	}
+
+	public static void OnLevelLoad(LevelEvent.Load event)
+	{
+		if(event.getLevel().isClientSide())
+			new Raytracer(event.getLevel()).hook();
+	}
+	public static void OnLevelUnload(LevelEvent.Unload event)
+	{
+		if(event.getLevel().isClientSide())
+			CONTEXT_CACHE.OnLevelUnloaded(ACTIONS_CLIENT);
 	}
 
 	@SubscribeEvent

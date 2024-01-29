@@ -22,9 +22,14 @@ public class GunContextInventoryItem extends GunContextItem
 		Inv.setItem(Slot, stack);
 	}
 	@Override
-	public boolean UpdateFromItemStack()
+	public boolean UpdateStackFromInventory()
 	{
-		Stack = Inv.getItem(Slot).copy();
+		ItemStack stackInSlot = Inv.getItem(Slot).copy();
+		if(!ItemStack.isSameItemSameTags(stackInSlot, Stack))
+		{
+			Stack = stackInSlot.copy();
+			return true;
+		}
 		return false;
 	}
 	@Override

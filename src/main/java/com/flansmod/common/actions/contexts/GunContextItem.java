@@ -19,7 +19,7 @@ public class GunContextItem extends GunContext
 	@Override
 	public void OnItemStackChanged(ItemStack stack) { }
 	@Override
-	public boolean UpdateFromItemStack() { return false; }
+	public boolean UpdateStackFromInventory() { return false; }
 	@Override
 	public DamageSource CreateDamageSource() { return null; }
 	@Override
