@@ -238,7 +238,8 @@ public class ShootAction extends ActionInstance
 			{
 				GunshotContext shotContext = GunshotContext.CreateFrom(Group.Context, bulletItem.Def());
 				// Multiplier from https://github.com/FlansMods/FlansMod/blob/71ba7ed065d906d48f34ca471bbd0172b5192f6b/src/main/java/com/flansmod/common/guns/ShotHandler.java#L93
-				float bulletSpread = 0.0025f * shotContext.Spread();
+				// 0.0025 for the calculation, then 500x for the vector scale after
+				float bulletSpread = 1.25f * shotContext.Spread();
 				for (int i = 0; i < shotContext.BulletCount(); i++)
 				{
 					TransformStack transformStack = new TransformStack();
