@@ -4,28 +4,25 @@
   "ingredients": [
 	{
 		"type": "flansmod:tiered_material",
-		"material": "flansbasicparts:fiberglass",
-		"count": 45
+		"material": "flansbasicparts:phantex",
+		"count": 72
+	},
+	{
+		"type": "flansmod:tiered_material",
+		"material": "flansbasicparts:quartz",
+		"count": 5
 	},
 	{
 		"type": "flansmod:stacked_vanilla",
 		"items": 
 		[ 
-			"flansbasicparts:redstone_circuitry" 
+			"minecraft:diamond" 
 		],
-		"count": 4
-	},
-	{
-		"type": "flansmod:stacked_vanilla",
-		"items": 
-		[ 
-			"minecraft:glass_pane" 
-		],
-		"count": 1
+		"count": 3
 	}
   ],
   "result": {
-    "item": "flansvendersgame:hm_red_dot"
+    "item": "flansvendersgame:phantek_phaseraser_laser"
   },
   "craft_time": 300,
   "show_notification": true

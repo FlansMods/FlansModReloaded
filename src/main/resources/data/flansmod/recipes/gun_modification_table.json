@@ -1,0 +1,27 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "building",
+  "key": {
+    "G": {
+      "item": "minecraft:grindstone"
+    },
+	"A": {
+      "item": "minecraft:anvil"
+    },
+	"C": {
+	  "item": "minecraft:chain"
+	},
+	"I": {
+      "item": "minecraft:iron_ingot"
+    }
+  },
+  "pattern": [
+    " I ",
+    "CIC",
+    "GAG"
+  ],
+  "result": {
+    "item": "flansmod:gun_modification_table"
+  },
+  "show_notification": true
+}

@@ -1,0 +1,21 @@
+{
+  "type": "flansmod:part_fabrication",
+  "category": "equipment",
+  "ingredients": [
+	{
+		"type": "flansmod:tiered_material",
+		"material": "flansbasicparts:fiberglass",
+		"count": 36
+	},
+	{
+		"type": "flansmod:tiered_material",
+		"material": "flansbasicparts:iron",
+		"count": 36
+	}
+  ],
+  "result": {
+    "item": "flansvendersgame:hm_precision_barrel"
+  },
+  "craft_time": 300,
+  "show_notification": true
+}

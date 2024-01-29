@@ -21,7 +21,7 @@ import javax.annotation.Nonnull;
 
 @SuppressWarnings("unused")
 @JeiPlugin
-public class JEIPlugin implements IModPlugin
+public class FlansModJEIPlugin implements IModPlugin
 {
 	private static final ResourceLocation ID = new ResourceLocation(FlansMod.MODID, "jei_plugin");
 	@Override

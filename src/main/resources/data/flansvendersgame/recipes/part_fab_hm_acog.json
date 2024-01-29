@@ -5,7 +5,7 @@
 	{
 		"type": "flansmod:tiered_material",
 		"material": "flansbasicparts:fiberglass",
-		"count": 45
+		"count": 108
 	},
 	{
 		"type": "flansmod:stacked_vanilla",
@@ -13,7 +13,7 @@
 		[ 
 			"flansbasicparts:redstone_circuitry" 
 		],
-		"count": 4
+		"count": 1
 	},
 	{
 		"type": "flansmod:stacked_vanilla",
@@ -21,11 +21,11 @@
 		[ 
 			"minecraft:glass_pane" 
 		],
-		"count": 1
+		"count": 2
 	}
   ],
   "result": {
-    "item": "flansvendersgame:hm_red_dot"
+    "item": "flansvendersgame:hm_acog"
   },
   "craft_time": 300,
   "show_notification": true

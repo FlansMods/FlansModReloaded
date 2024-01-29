@@ -68,8 +68,14 @@ public class DistillationRecipe implements Recipe<DistillationTowerBlockEntity>
 		DistillationTime = distillationTime;
 	}
 
+	@Nonnull
+	public Ingredient GetInputIngredient() { return InputIngredient; }
+	@Nonnull
+	public ItemStack GetResultItem() { return Result; }
+	public int GetFractionDepth() { return DistillationFractionDepth; }
+
 	@Override
-	public boolean matches(DistillationTowerBlockEntity distiller, Level level)
+	public boolean matches(@Nonnull DistillationTowerBlockEntity distiller, @Nonnull Level level)
 	{
 		// This block will output the matching recipe if the top of its stack contains the source ingredient
 		// AND it is at the right depth to be drained off

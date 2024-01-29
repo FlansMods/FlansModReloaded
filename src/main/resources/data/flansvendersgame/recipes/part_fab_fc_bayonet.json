@@ -1,0 +1,21 @@
+{
+  "type": "flansmod:part_fabrication",
+  "category": "equipment",
+  "ingredients": [
+	{
+		"type": "flansmod:tiered_material",
+		"material": "flansbasicparts:nethersteel",
+		"count": 18
+	},
+	{
+		"type": "flansmod:tiered_material",
+		"material": "flansbasicparts:dense_wood",
+		"count": 4
+	}
+  ],
+  "result": {
+    "item": "flansvendersgame:fc_bayonet"
+  },
+  "craft_time": 300,
+  "show_notification": true
+}

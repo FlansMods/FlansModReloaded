@@ -4,7 +4,7 @@
   "ingredients": [
 	{
 		"type": "flansmod:tiered_material",
-		"material": "flansbasicparts:fiberglass",
+		"material": "flansbasicparts:steel",
 		"count": 45
 	},
 	{
@@ -13,7 +13,7 @@
 		[ 
 			"flansbasicparts:redstone_circuitry" 
 		],
-		"count": 4
+		"count": 3
 	},
 	{
 		"type": "flansmod:stacked_vanilla",
@@ -21,11 +21,11 @@
 		[ 
 			"minecraft:glass_pane" 
 		],
-		"count": 1
+		"count": 2
 	}
   ],
   "result": {
-    "item": "flansvendersgame:hm_red_dot"
+    "item": "flansvendersgame:fc_telescopic_sight"
   },
   "craft_time": 300,
   "show_notification": true

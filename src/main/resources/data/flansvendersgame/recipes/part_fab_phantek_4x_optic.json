@@ -14,6 +14,14 @@
 			"flansbasicparts:quartz_circuitry" 
 		],
 		"count": 2
+	},
+	{
+		"type": "flansmod:stacked_vanilla",
+		"items": 
+		[ 
+			"minecraft:glass_pane" 
+		],
+		"count": 2
 	}
   ],
   "result": {
