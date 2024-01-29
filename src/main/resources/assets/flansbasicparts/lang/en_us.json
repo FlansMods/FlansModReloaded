@@ -255,5 +255,6 @@
   "block.flansbasicparts.kevlar_block": "Kevlar Block",
   "block.flansbasicparts.distillation_tower": "Fractional Distillation Stack",
   "block.flansbasicparts.distillation_tower_top": "Fractional Distillation Cap",
-  "menu.title.flansmod.distillation_tower_menu": "Distillation Tower"
+  "menu.title.flansmod.distillation_tower_menu": "Distillation Tower",
+  "jei.distillation.title": "Distillation Tower"
 }

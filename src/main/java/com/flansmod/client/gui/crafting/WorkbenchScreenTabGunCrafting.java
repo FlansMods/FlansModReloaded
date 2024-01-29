@@ -397,6 +397,13 @@ public class WorkbenchScreenTabGunCrafting extends WorkbenchScreenTab<WorkbenchM
 						if(ingredient instanceof TieredPartIngredient tiered)
 						{
 							graphics.blit(GUN_FABRICATION_BG, slotX, slotY, 257+22*tiered.MaterialTierMin, 95, 22, 47, FAB_W, FAB_H);
+
+							PartBackgroundType backgroundType = PartBackgroundType.GetFromTag(tiered.MatchTag);
+							if(backgroundType != PartBackgroundType.Unknown)
+							{
+								graphics.blit(GUN_FABRICATION_BG, slotX + 3, slotY + 8, backgroundType.texX, backgroundType.texY, 16, 16, FAB_W, FAB_H);
+							}
+
 							DrawMaterialTypeBox(tiered, EMaterialType.Wood, graphics, slotX+3, slotY+26, 259, 145, xMouse, yMouse);
 							DrawMaterialTypeBox(tiered, EMaterialType.Glass, graphics, slotX+9, slotY+26, 265, 145, xMouse, yMouse);
 							DrawMaterialTypeBox(tiered, EMaterialType.Metal, graphics, slotX+15, slotY+26, 271, 145, xMouse, yMouse);
