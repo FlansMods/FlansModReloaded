@@ -6,15 +6,20 @@ import com.flansmod.util.MinecraftHelpers;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.Level;
+import net.minecraftforge.registries.ForgeRegistries;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
 public class GunshotCollection
 {
+	public static final ResourceKey<Level> InvalidDimensionKey = ResourceKey.create(Registries.DIMENSION, new ResourceLocation("null"));
+
 	// Raw data is reference-free for networking
 	public ResourceKey<Level> OwnerDimension;
 	public int OwnerEntityID;
@@ -37,6 +42,8 @@ public class GunshotCollection
 	public GunshotCollection()
 	{
 		Shots = new ArrayList<>(8);
+		ShooterDimension = InvalidDimensionKey;
+		OwnerDimension = InvalidDimensionKey;
 	}
 
 	public GunshotCollection CopySubset(int triggerMin, int triggerMax)
@@ -146,9 +153,11 @@ public class GunshotCollection
 		return null;
 	}
 
-	public static void Encode(GunshotCollection shotCollection, FriendlyByteBuf buf)
+	public static void Encode(@Nullable GunshotCollection shotCollection, @Nonnull FriendlyByteBuf buf)
 	{
-		if(shotCollection == null)
+		if(shotCollection == null
+		|| shotCollection.OwnerDimension.location().getPath().equals("null")
+		|| shotCollection.ShooterDimension.location().getPath().equals("null"))
 		{
 			buf.writeInt(-1);
 		}
@@ -171,7 +180,7 @@ public class GunshotCollection
 		}
 	}
 
-	public static void Decode(GunshotCollection shotCollection, FriendlyByteBuf buf)
+	public static void Decode(@Nonnull GunshotCollection shotCollection, @Nonnull FriendlyByteBuf buf)
 	{
 		int numShots = buf.readInt();
 		if(numShots >= 0)

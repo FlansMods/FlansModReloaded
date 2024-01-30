@@ -22,56 +22,66 @@ public class Gunshot
 	public Vec3 origin = Vec3.ZERO;
 	public Vec3 trajectory = Vec3.ZERO;
 	public HitResult[] hits = NO_HITS;
+
 	public int fromShotIndex = 0;
-
+	// The index of bullet that was consumed from the mag
+	public int fromBulletIndex = 0;
+	@Nonnull
 	public Vec3 Endpoint() { return new Vec3(origin.x + trajectory.x, origin.y + trajectory.y, origin.z + trajectory.z); }
-
+	@Nonnull
 	public Gunshot FromShot(int index)
 	{
 		fromShotIndex = index;
 		return this;
 	}
-
+	@Nonnull
+	public Gunshot FromBulletIndex(int index)
+	{
+		fromBulletIndex = index;
+		return this;
+	}
+	@Nonnull
 	public Gunshot WithOrigin(double x, double y, double z)
 	{
 		origin = new Vec3(x, y, z);
 		return this;
 	}
-
+	@Nonnull
 	public Gunshot WithOrigin(Vec3 o)
 	{
 		origin = o;
 		return this;
 	}
-
+	@Nonnull
 	public Gunshot WithTrajectory(double x, double y, double z)
 	{
 		trajectory = new Vec3(x, y, z);
 		return this;
 	}
-
+	@Nonnull
 	public Gunshot WithTrajectory(Vec3 t)
 	{
 		trajectory = t;
 		return this;
 	}
-
+	@Nonnull
 	public Gunshot WithHits(HitResult[] results)
 	{
 		hits = results;
 		return this;
 	}
-
+	@Nonnull
 	public Gunshot WithBullet(BulletDefinition bullet)
 	{
 		bulletDef = bullet;
 		return this;
 	}
 
-	public static void Encode(Gunshot gunshot, FriendlyByteBuf buf)
+	public static void Encode(@Nonnull Gunshot gunshot, @Nonnull FriendlyByteBuf buf)
 	{
 		buf.writeInt(gunshot.bulletDef.hashCode());
 		buf.writeInt(gunshot.fromShotIndex);
+		buf.writeInt(gunshot.fromBulletIndex);
 
 		buf.writeDouble(gunshot.origin.x);
 		buf.writeDouble(gunshot.origin.y);
@@ -122,10 +132,11 @@ public class Gunshot
 	}
 
 	@Nonnull
-	public static Gunshot Decode(FriendlyByteBuf buf)
+	public static Gunshot Decode(@Nonnull FriendlyByteBuf buf)
 	{
 		int bulletHash = buf.readInt();
 		int fromShotIndex = buf.readInt();
+		int fromBulletIndex = buf.readInt();
 		BulletDefinition bulletDef = FlansMod.BULLETS.ByHash(bulletHash);
 
 		double x = buf.readDouble();
@@ -175,6 +186,7 @@ public class Gunshot
 		return new Gunshot()
 			.WithOrigin(x, y, z)
 			.FromShot(fromShotIndex)
+			.FromBulletIndex(fromBulletIndex)
 			.WithTrajectory(dx, dy, dz)
 			.WithHits(hits)
 			.WithBullet(bulletDef);

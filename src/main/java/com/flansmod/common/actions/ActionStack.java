@@ -449,8 +449,13 @@ public class ActionStack
 		}
 		// Start the instance
 		ActionGroupInstance groupInstance = TryGetGroupInstance(groupContext);
-		if(groupInstance == null )
-			return EActionResult.TryNextAction;
+		if(groupInstance == null || !groupInstance.HasStarted())
+		{
+			if(held)
+				return Client_TryStartGroupInstance(groupContext);
+			else
+				return EActionResult.TryNextAction;
+		}
 
 		EActionResult result = TryUpdateInputHeld(groupContext, held);
 		// Send a message to the server about these actions if required
@@ -515,6 +520,7 @@ public class ActionStack
 					action.OnTriggerServer(triggerIndex);
 					actionIndex++;
 				}
+				groupInstance.TriggerCount++;
 
 				// When we get a release message, we may need to do a bit of catchup in missed triggers
 				if (msg.Data.GetPressType() == EPressType.Release)
@@ -524,10 +530,10 @@ public class ActionStack
 					int expectedTriggerCount = Maths.Floor(numTicks / groupContext.RepeatDelayTicks()) + 1;
 					int serverTriggerCount = groupInstance.GetTriggerCount();
 
-					if (expectedTriggerCount > serverTriggerCount)
+					if (expectedTriggerCount > serverTriggerCount + 1)
 					{
 						FlansMod.LOGGER.info("Client expected to trigger " + expectedTriggerCount + " repeat(s), but server only triggered " + serverTriggerCount + " repeat(s)");
-					} else if (expectedTriggerCount < serverTriggerCount)
+					} else if (expectedTriggerCount < serverTriggerCount - 1)
 					{
 						FlansMod.LOGGER.info("Client expected to trigger " + expectedTriggerCount + " repeat(s), but server triggered " + serverTriggerCount + " many repeat(s)");
 					}

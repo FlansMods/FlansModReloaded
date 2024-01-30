@@ -17,6 +17,7 @@ import com.flansmod.common.types.guns.elements.ESpreadPattern;
 import com.flansmod.util.Maths;
 import com.flansmod.util.Transform;
 import com.flansmod.util.TransformStack;
+import com.mojang.datafixers.util.Pair;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.particle.ParticleEngine;
@@ -131,8 +132,8 @@ public class ShootAction extends ActionInstance
 			return EActionResult.TryNextAction;
 		if(Group.Context.Gun.GetActionStack().IsReloading())
 			return EActionResult.TryNextAction;
-		if(Group.Context.Gun.GetActionStack().GetShotCooldown() > 0.0f)
-			return EActionResult.Wait; // We don't want to trigger a reload, just wait
+		//if(Group.Context.Gun.GetActionStack().GetShotCooldown() > 0.0f)
+		//	return EActionResult.Wait; // We don't want to trigger a reload, just wait
 		if(!Group.Context.CanShoot(0))
 			return EActionResult.TryNextAction;
 
@@ -224,17 +225,17 @@ public class ShootAction extends ActionInstance
 		int requestedShotsFired = 1; //context.ActionStack().TryShootMultiple(stats.TimeToNextShot());
 
 		// We want to shoot {shotsFired} many, but check against and now consume ammo durability
-		List<ItemStack> shotsFired = new ArrayList<>();
+		List<Pair<ItemStack, Integer>> shotsFired = new ArrayList<>();
 		for(int i = 0; i < requestedShotsFired; i++)
 		{
-			ItemStack bulletCheck = Group.Context.ConsumeOneBullet(0);
-			if(!bulletCheck.isEmpty())
+			Pair<ItemStack, Integer> bulletCheck = Group.Context.ConsumeOneBullet(0);
+			if(!bulletCheck.getFirst().isEmpty())
 				shotsFired.add(bulletCheck);
 		}
 
 		for(int j = 0; j < shotsFired.size(); j++)
 		{
-			if(shotsFired.get(j).getItem() instanceof BulletItem bulletItem)
+			if(shotsFired.get(j).getFirst().getItem() instanceof BulletItem bulletItem)
 			{
 				GunshotContext shotContext = GunshotContext.CreateFrom(Group.Context, bulletItem.Def());
 				// Multiplier from https://github.com/FlansMods/FlansMod/blob/71ba7ed065d906d48f34ca471bbd0172b5192f6b/src/main/java/com/flansmod/common/guns/ShotHandler.java#L93
@@ -272,6 +273,7 @@ public class ShootAction extends ActionInstance
 						hits.toArray(hitArray);
 						shots.AddShot(new Gunshot()
 							.FromShot(repeatIndex)
+							.FromBulletIndex(shotsFired.get(j).getSecond())
 							.WithOrigin(randomizedDirection.PositionVec3())
 							.WithTrajectory(randomizedDirection.ForwardVec3().scale(RAYCAST_LENGTH))
 							.WithHits(hitArray)
@@ -282,6 +284,7 @@ public class ShootAction extends ActionInstance
 						// Non-hitscan: The server will simulate the entity, so we just say where it should be going and leave them to it
 						shots.AddShot(new Gunshot()
 							.FromShot(repeatIndex)
+							.FromBulletIndex(shotsFired.get(j).getSecond())
 							.WithOrigin(randomizedDirection.PositionVec3())
 							.WithTrajectory(randomizedDirection.ForwardVec3().scale(shotContext.Speed()))
 							.WithBullet(shotContext.Bullet));
@@ -364,21 +367,53 @@ public class ShootAction extends ActionInstance
 		Level level = Group.Context.Gun.GetLevel();
 		// Process shots that were added for this re-trigger in particular
 		GunshotCollection shotCollection = Results.get(triggerIndex);
+
 		if(shotCollection != null)
 		{
-			ItemStack bulletFound = Group.Context.ConsumeOneBullet(0);
-			if(bulletFound.isEmpty())
-				FlansMod.LOGGER.warn("Server did not find a bullet to consume for this shot");
-			BulletDefinition bulletDefFound = bulletFound.getItem() instanceof BulletItem bulletItem ? bulletItem.Def() : BulletDefinition.INVALID;
+			//ItemStack bulletFound = Group.Context.GetBulletAtIndex(0, shotCollection.Shots.get());
+			//if(bulletFound.isEmpty())
+			//	FlansMod.LOGGER.warn("Server did not find a bullet to consume for this shot");
+			//BulletDefinition bulletDefFound = bulletFound.getItem() instanceof BulletItem bulletItem ? bulletItem.Def() : BulletDefinition.INVALID;
 
+			// We need to consume the correct bullets from the mag, so note which ones they are
+			// Different "FromShot" indices indicate separate bullets, possibly with the same BulletDef
+			HashMap<Integer, BulletDefinition> bulletsToConsume = new HashMap<>();
+			for(Gunshot shot : shotCollection.Shots)
+			{
+				if (!bulletsToConsume.containsKey(shot.fromBulletIndex))
+					bulletsToConsume.put(shot.fromBulletIndex, shot.bulletDef);
+			}
+
+			// Now check that the bullets they asked for really exist and the types match
+			for(var kvp : bulletsToConsume.entrySet())
+			{
+				int bulletIndex = kvp.getKey();
+				BulletDefinition bulletDef = kvp.getValue();
+				ItemStack bulletStackAtIndex = Group.Context.GetBulletAtIndex(0, bulletIndex);
+				if(bulletStackAtIndex.getItem() instanceof BulletItem bulletItem)
+				{
+					if(bulletItem.Def() == bulletDef)
+					{
+						Group.Context.ConsumeBulletAtIndex(0, bulletIndex);
+					}
+					else
+					{
+						FlansMod.LOGGER.warn("Player claimed they had bullet type " + bulletDef + " at slot " + bulletIndex + " but we found " + bulletItem.Def());
+						Group.Context.ConsumeBulletAtIndex(0, bulletIndex);
+					}
+				}
+				else
+				{
+					FlansMod.LOGGER.warn("Player tried to shoot bullet type " + bulletDef + " in slot " + bulletIndex + " but server found it to be empty");
+				}
+			}
+
+			// Okay, so now we can fire those shots
 			for(Gunshot shot : shotCollection.Shots)
 			{
 				GunshotContext gunshotContext = GunshotContext.CreateFrom(Group.Context, shot.bulletDef);
 				if(gunshotContext.IsValid())
 				{
-					if(gunshotContext.Bullet != bulletDefFound)
-						FlansMod.LOGGER.warn("Server found a different bullet to the one this shot is claimed to come from");
-
 					if(gunshotContext.Bullet.shootStats.hitscan)
 					{
 						// Hitscan weapons we resolve the hits instantly
@@ -392,6 +427,8 @@ public class ShootAction extends ActionInstance
 				}
 				else FlansMod.LOGGER.error("Invalid shot with bullet " + shot.bulletDef);
 			}
+
+
 		}
 
 		float loudness = Group.Context.Loudness();

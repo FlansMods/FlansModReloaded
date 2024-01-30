@@ -35,7 +35,7 @@ public class ActionGroupInstance
 	protected int Duration = 0;
 	protected long StartedTick = -1000L;
 	protected int TriggerCount = 0;
-	protected int NetSyncedTriggers = NO_NET_SYNC;
+	protected int NetSyncedTriggers = 0;
 
 	// "Minigun" Charge-up / cool-down mode
 	protected float Charge = 0.0f;
@@ -340,7 +340,7 @@ public class ActionGroupInstance
 	public int GetRequiredNetSyncMin()
 	{
 		if(NetSyncedTriggers < TriggerCount)
-			return NetSyncedTriggers + 1;
+			return NetSyncedTriggers;
 		return NO_NET_SYNC;
 	}
 	public int GetRequiredNetSyncMax()
@@ -351,7 +351,7 @@ public class ActionGroupInstance
 	}
 	public boolean NeedsNetSync()
 	{
-		return NetSyncedTriggers != TriggerCount - 1;
+		return NetSyncedTriggers != TriggerCount;
 	}
 	public void OnPerformedNetSync(int triggerMin, int triggerMax)
 	{
@@ -359,7 +359,7 @@ public class ActionGroupInstance
 		{
 			FlansMod.LOGGER.warn("Action was NetSynced, but not for the required range");
 		}
-		NetSyncedTriggers = triggerMax;
+		NetSyncedTriggers = triggerMax + 1;
 	}
 
 	public boolean PropogateToServer()

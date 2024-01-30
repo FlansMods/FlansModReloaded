@@ -13,6 +13,8 @@ import com.flansmod.common.types.magazines.EAmmoConsumeMode;
 import com.flansmod.common.types.magazines.EAmmoLoadMode;
 import com.flansmod.common.types.magazines.MagazineDefinition;
 import com.flansmod.util.Maths;
+import com.flansmod.util.MinecraftHelpers;
+import com.mojang.datafixers.util.Pair;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.Container;
 import net.minecraft.world.entity.player.Inventory;
@@ -260,8 +262,9 @@ public class ActionGroupContext
 		return 0;
 	}
 	@Nonnull
-	protected ItemStack ConsumeBulletAtIndex(int magIndex, int bulletIndex)
+	public ItemStack ConsumeBulletAtIndex(int magIndex, int bulletIndex)
 	{
+		//FlansMod.LOGGER.info("Consuming bullet " + bulletIndex + " on " + MinecraftHelpers.GetLogicalSide());
 		MagazineDefinition magDef = GetMagazineType(magIndex);
 		if(0 <= bulletIndex && bulletIndex < magDef.numRounds)
 		{
@@ -276,7 +279,7 @@ public class ActionGroupContext
 		return ItemStack.EMPTY;
 	}
 	@Nonnull
-	public ItemStack ConsumeOneBullet(int magIndex)
+	public Pair<ItemStack, Integer> ConsumeOneBullet(int magIndex)
 	{
 		int indexToFire = GetNextIndexToFire(magIndex);
 		switch(indexToFire)
@@ -290,10 +293,10 @@ public class ActionGroupContext
 				// No-op
 			}
 			default -> {
-				return ConsumeBulletAtIndex(magIndex, indexToFire);
+				return Pair.of(ConsumeBulletAtIndex(magIndex, indexToFire), indexToFire);
 			}
 		}
-		return ItemStack.EMPTY;
+		return Pair.of(ItemStack.EMPTY, ActionGroupContext.INVALID_FIRE_INDEX);
 	}
 	@Nonnull
 	public ItemStack LoadOneBulletIntoSlot(int magIndex, int bulletIndex, ItemStack bulletStack)

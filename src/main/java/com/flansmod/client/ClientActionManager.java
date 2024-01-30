@@ -75,7 +75,7 @@ public class ClientActionManager extends ActionManager
 
 			ActionStack actionStack = gunContext.GetActionStack();
 			GunInputContext inputContext = GunInputContext.CreateFrom(gunContext, inputType);
-			IterateActiveActionGroups(inputContext, actionStack::Client_TryUpdateGroupInstanceHeld);
+			IteratePossibleActionGroups(inputContext, actionStack::Client_TryUpdateGroupInstanceHeld);
 		}
 	}
 
