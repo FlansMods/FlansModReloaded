@@ -185,9 +185,11 @@ public abstract class FlanItemModelRenderer extends BlockEntityWithoutLevelRende
                 PoseStack poseStack = transformStack.Top().ToNewPoseStack();
                 poseStack.scale(-1f, 1f, 1f);
                 Lighting.setupForFlatItems();
+                VertexConsumer buff = buffers.getBuffer(RenderType.cutout());
+                buff.color(1,1,1,1); //Probably not needed
                 Minecraft.getInstance().getBlockRenderer().getModelRenderer().renderModel(
                     poseStack.last(),
-                    buffers.getBuffer(Sheets.cutoutBlockSheet()),
+                    buff,
                     null,
                     iconModel,
                     1f, 1f, 1f,
