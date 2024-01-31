@@ -192,6 +192,7 @@ public abstract class ShooterContext
 		for(int i = 0; i < ids.length; i++)
 		{
 			contexts[i] = GunContext.of(this, ids[i]);
+			contexts[i].UpdateFromItemStack();
 		}
 		return contexts;
 	}

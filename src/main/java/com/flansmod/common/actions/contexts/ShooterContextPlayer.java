@@ -60,7 +60,9 @@ public class ShooterContextPlayer extends ShooterContextLiving
 	{
 		GunContext[] contexts = new GunContext[2];
 		contexts[0] = GunContext.of(this, Player.getInventory().selected);
+		contexts[0].UpdateFromItemStack();
 		contexts[1] = GunContext.of(this, Inventory.SLOT_OFFHAND);
+		contexts[1].UpdateFromItemStack();
 		return contexts;
 	}
 

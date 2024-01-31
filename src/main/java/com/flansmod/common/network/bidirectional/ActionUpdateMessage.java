@@ -191,4 +191,19 @@ public class ActionUpdateMessage extends FlansModMessage
 			Triggers.put(triggerIndex, triggerInfo);
 		}
 	}
+
+	@Override
+	public String toString()
+	{
+		return "ActionUpdate (" +
+			PressType +
+			") @" +
+			StartTick +
+			"L - GunID:'" +
+			Context.GunID +
+			"', Slot: " +
+			Context.InventorySlotIndex +
+			", #Triggers=" +
+			Triggers.size();
+	}
 }
