@@ -6,7 +6,10 @@ import com.flansmod.common.gunshots.ModifierStack;
 import com.flansmod.common.item.FlanItem;
 import com.flansmod.common.types.elements.ModifierDefinition;
 import com.flansmod.util.Transform;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.Container;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
@@ -16,10 +19,12 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.awt.*;
 import java.util.*;
 
 public abstract class ShooterContext
 {
+	public static ResourceKey<Level> DimensionUnknown = ResourceKey.create(Registries.DIMENSION, new ResourceLocation(FlansMod.MODID, "null"));
 	public static final UUID InvalidID = new UUID(0L, 0L);
 	public static final ShooterContext INVALID = new ShooterContext()
 	{
@@ -102,6 +107,7 @@ public abstract class ShooterContext
 	// ---------------------------------------------------------------------------------------------------
 	private final HashMap<ModifierDefinition, Float> ModifierCache;
 	private int ModifierHash;
+	private boolean IsCurrent;
 	protected void AddModifierToCache(ModifierDefinition modDef, float multiplier)
 	{
 		ModifierCache.put(modDef, ModifierCache.getOrDefault(modDef, 0.0f) + multiplier);
@@ -111,6 +117,7 @@ public abstract class ShooterContext
 	{
 		ModifierCache = new HashMap<>();
 		ModifierHash = 0;
+		IsCurrent = true;
 	}
 
 	public boolean IsLocalPlayerOwner()
@@ -119,6 +126,12 @@ public abstract class ShooterContext
 	}
 	@Nonnull
 	public EContextSide GetSide() { return EContextSide.of(Entity()); }
+	@Nonnull
+	public ResourceKey<Level> Dimension()
+	{
+		Level level = Level();
+		return level != null ? level.dimension() : DimensionUnknown;
+	}
 	@Nullable
 	public Level Level()
 	{
@@ -128,7 +141,7 @@ public abstract class ShooterContext
 	public UUID EntityUUID() { return Entity() != null ? Entity().getUUID() : InvalidID; }
 	@Nonnull
 	public UUID OwnerUUID() { return Owner() != null ? Owner().getUUID() : InvalidID; }
-
+	public void MarkAsOld() { IsCurrent = false; }
 
 	@Nonnull
 	public Map<ModifierDefinition, Float> GetModifiers()

@@ -54,6 +54,16 @@ public class ShooterContextPlayer extends ShooterContextLiving
 		return GunContext.INVALID;
 	}
 
+	@Nonnull
+	@Override
+	public GunContext[] GetAllGunContexts(boolean client)
+	{
+		GunContext[] contexts = new GunContext[2];
+		contexts[0] = GunContext.of(this, Player.getInventory().selected);
+		contexts[1] = GunContext.of(this, Inventory.SLOT_OFFHAND);
+		return contexts;
+	}
+
 	// ---------------------------------------------------------
 	//   Container interface
 	// ---------------------------------------------------------
@@ -79,4 +89,9 @@ public class ShooterContextPlayer extends ShooterContextLiving
 	@Override
 	public void clearContent() { Player.getInventory().clearContent(); }
 
+	@Override
+	public String toString()
+	{
+		return "Player:'"+Player.getName().getString()+"'['"+Dimension().location().getPath() + "']";
+	}
 }

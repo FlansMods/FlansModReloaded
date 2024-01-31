@@ -40,16 +40,11 @@ public class GunContextLiving extends GunContextInventoryItem
 		ShooterContext.Shooter.setItemInHand(Hand, stack);
 	}
 	@Override
-	public boolean UpdateStackFromInventory()
-	{
-		ItemStack currentStack = Hand == InteractionHand.MAIN_HAND ? ShooterContext.Shooter.getMainHandItem() : ShooterContext.Shooter.getOffhandItem();
-		if(!ItemStack.isSameItemSameTags(currentStack, Stack))
-		{
-			Stack = currentStack.copy();
-			return true;
-		}
-		return false;
-	}
+	@Nonnull
+	public EItemStackLinkage CheckItemStackLink() { return ShooterContext.IsValid() ? EItemStackLinkage.Connected : EItemStackLinkage.LostConnection; }
+	@Override
+	@Nonnull
+	public ItemStack GetLinkedItemStack() { return Hand == InteractionHand.MAIN_HAND ? ShooterContext.Shooter.getMainHandItem() : ShooterContext.Shooter.getOffhandItem(); }
 	@Override
 	public Container GetAttachedInventory() { return ShooterContext.GetAttachedInventory(); }
 	@Override
@@ -83,6 +78,6 @@ public class GunContextLiving extends GunContextInventoryItem
 	@Override
 	public String toString()
 	{
-		return "GunContextLiving:" + GetItemStack().toString() + " held by " + ShooterContext.Shooter;
+		return GetShooter() + " holding [" + GetItemStack().toString() + "] " + (Hand == InteractionHand.MAIN_HAND ? "(Main)" : "(Off)");
 	}
 }

@@ -15,48 +15,20 @@ public class ClientContextCache extends ContextCache
 {
 	public ClientContextCache() { super(EContextSide.Client); }
 
-	@Nonnull
-	@Override
-	protected ShooterContext CreateShooterContext(@Nonnull UUID shooterID, @Nonnull UUID ownerID)
-	{
-		ShooterContext resolved = ResolveInternal(shooterID, ownerID);
-		return resolved != null ? resolved : new ShooterContextUnresolvedEntity(ownerID, shooterID, Side);
-	}
-
-	@Nonnull
-	@Override
-	protected ShooterContext TryResolve(@Nonnull ShooterContextUnresolvedEntity unresolvedContext)
-	{
-		ShooterContext resolved = ResolveInternal(unresolvedContext.EntityUUID, unresolvedContext.OwnerUUID);
-		return resolved != null ? resolved : unresolvedContext;
-	}
-
 	@Nullable
-	private ShooterContext ResolveInternal(@Nonnull UUID shooterID, @Nonnull UUID ownerID)
+	@Override
+	protected Entity TryFindEntity(@Nonnull UUID entityID)
 	{
 		if(Minecraft.getInstance().level != null)
 		{
 			for (Entity entity : Minecraft.getInstance().level.entitiesForRendering())
 			{
-				if(entity.getUUID().equals(shooterID))
+				if (entity.getUUID().equals(entityID))
 				{
-					if (entity instanceof Player player)
-						return new ShooterContextPlayer(player);
-					if (entity instanceof LivingEntity living)
-						return new ShooterContextLiving(living);
+					return entity;
 				}
 			}
 		}
 		return null;
-	}
-
-	@Override
-	public boolean SidedValidation(@Nonnull ShooterContext shooter)
-	{
-		// On a client, we do not want contexts that are outside the current level!
-		if(shooter.Level() != MinecraftHelpers.Client_GetCurrentLevel())
-			return false;
-
-		return true;
 	}
 }

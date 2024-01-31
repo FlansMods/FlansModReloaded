@@ -2,6 +2,7 @@ package com.flansmod.common.actions.contexts;
 
 import com.flansmod.common.actions.ActionStack;
 import net.minecraft.world.Container;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -19,7 +20,11 @@ public class GunContextItem extends GunContext
 	@Override
 	public void OnItemStackChanged(ItemStack stack) { }
 	@Override
-	public boolean UpdateStackFromInventory() { return false; }
+	@Nonnull
+	public EItemStackLinkage CheckItemStackLink() { return EItemStackLinkage.NotConnected; }
+	@Override
+	@Nonnull
+	public ItemStack GetLinkedItemStack() { return ItemStack.EMPTY; }
 	@Override
 	public DamageSource CreateDamageSource() { return null; }
 	@Override
@@ -59,4 +64,9 @@ public class GunContextItem extends GunContext
 	public int HashModifierSources() { return 0x404; }
 	@Override
 	public void RecalculateModifierCache() {}
+	@Override
+	public String toString()
+	{
+		return "Item ["+Stack+"]";
+	}
 }

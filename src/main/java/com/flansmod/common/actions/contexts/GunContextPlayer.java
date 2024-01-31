@@ -5,6 +5,8 @@ import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 
+import javax.annotation.Nonnull;
+
 public class GunContextPlayer extends GunContextLiving
 {
 	private final Player Player;
@@ -26,17 +28,11 @@ public class GunContextPlayer extends GunContextLiving
 		Player.getInventory().setChanged();
 	}
 	@Override
-	public boolean UpdateStackFromInventory()
-	{
-		ItemStack currentStack = Player.getInventory().getItem(InventorySlot);
-		if(!ItemStack.isSameItemSameTags(currentStack, Stack))
-		{
-			Stack = currentStack.copy();
-			return true;
-		}
-
-		return false;
-	}
+	@Nonnull
+	public EItemStackLinkage CheckItemStackLink() { return Player.isAlive() ? EItemStackLinkage.Connected : EItemStackLinkage.LostConnection; }
+	@Override
+	@Nonnull
+	public ItemStack GetLinkedItemStack() { return Player.getInventory().getItem(InventorySlot); }
 	@Override
 	public Inventory GetAttachedInventory()
 	{
@@ -47,6 +43,6 @@ public class GunContextPlayer extends GunContextLiving
 	@Override
 	public String toString()
 	{
-		return "GunContextPlayer:" + GetItemStack().toString() + " held by " + Player + " in slot " + InventorySlot;
+		return GetShooter() +" holding [" + GetItemStack().toString() + "] (Slot " + InventorySlot + ")";
 	}
 }

@@ -210,4 +210,11 @@ public class ShooterContextLiving extends ShooterContext implements Container
 	public boolean stillValid(@Nonnull Player player) { return true; }
 	@Override
 	public void clearContent() {}
+
+
+	@Override
+	public String toString()
+	{
+		return "Living:'"+Shooter.getName().getString()+"'['"+Dimension().location().getPath() + "']";
+	}
 }

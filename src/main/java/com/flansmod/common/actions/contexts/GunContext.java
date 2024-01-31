@@ -39,7 +39,11 @@ public abstract class GunContext
 		@Override
 		public void OnItemStackChanged(ItemStack stack) {}
 		@Override
-		public boolean UpdateStackFromInventory() { return false; }
+		@Nonnull
+		public EItemStackLinkage CheckItemStackLink() { return EItemStackLinkage.NotConnected; }
+		@Override
+		@Nonnull
+		public ItemStack GetLinkedItemStack() { return ItemStack.EMPTY; }
 		@Override
 		public DamageSource CreateDamageSource() { return null; }
 		@Override
@@ -263,8 +267,29 @@ public abstract class GunContext
 	// --------------------------------------------------------------------------
 	// Abstractions
 	// --------------------------------------------------------------------------
+	public enum EItemStackLinkage
+	{
+		NotConnected,
+		LostConnection,
+		Connected,
+	}
+
+	public enum EItemStackValidity
+	{
+		Invalid_Error,
+		Invalid_DifferentItem,
+		Invalid_GunIDChange,
+		Valid_NoChanges,
+		Valid_TagChanges;
+
+		public boolean IsValid() { return this == Valid_NoChanges || this == Valid_TagChanges; }
+	}
+
 	public abstract void OnItemStackChanged(ItemStack stack);
-	public abstract boolean UpdateStackFromInventory();
+	@Nonnull
+	public abstract EItemStackLinkage CheckItemStackLink();
+	@Nonnull
+	public abstract ItemStack GetLinkedItemStack();
 	public abstract DamageSource CreateDamageSource();
 	@Nonnull
 	public abstract ShooterContext GetShooter();
@@ -301,10 +326,51 @@ public abstract class GunContext
 	{
 		return GetShooter().GetShootOrigin();
 	}
+
+	// Return: Any changes?
+	public boolean IsLinkedToItemStack()
+	{
+		return CheckItemStackLink() == EItemStackLinkage.Connected;
+	}
+	@Nonnull
+	public static EItemStackValidity CompareGunStacks(@Nonnull ItemStack a, @Nonnull ItemStack b)
+	{
+		if(a.getItem() != b.getItem())
+			return EItemStackValidity.Invalid_DifferentItem;
+		if(!FlanItem.GetGunID(a).equals(FlanItem.GetGunID(b)))
+			return EItemStackValidity.Invalid_GunIDChange;
+		if(!ItemStack.isSameItemSameTags(a, b))
+			return EItemStackValidity.Valid_TagChanges;
+		return EItemStackValidity.Valid_NoChanges;
+	}
+	@Nonnull
+	public EItemStackValidity ValidateLinkedItemStack()
+	{
+		if(IsLinkedToItemStack())
+		{
+			return CompareGunStacks(GetLinkedItemStack(), Stack);
+		}
+		return EItemStackValidity.Invalid_Error;
+	}
+	public void UpdateFromItemStack()
+	{
+		if(IsLinkedToItemStack())
+		{
+			EItemStackValidity validity = ValidateLinkedItemStack();
+			if(validity.IsValid())
+			{
+				Stack = GetLinkedItemStack().copy();
+			}
+		}
+	}
 	public boolean IsValid()
 	{
-		if(UpdateStackFromInventory())
-			return false;
+		if(IsLinkedToItemStack())
+		{
+			if (!ValidateLinkedItemStack().IsValid())
+				return false;
+		}
+
 		if(Stack.isEmpty())
 			return false;
 		return Def.IsValid();

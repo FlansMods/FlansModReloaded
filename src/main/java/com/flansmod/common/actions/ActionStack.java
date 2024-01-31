@@ -520,7 +520,7 @@ public class ActionStack
 					action.OnTriggerServer(triggerIndex);
 					actionIndex++;
 				}
-				groupInstance.TriggerCount++;
+				groupInstance.TriggerCount = Maths.Max(triggerIndex, groupInstance.TriggerCount);
 
 				// When we get a release message, we may need to do a bit of catchup in missed triggers
 				if (msg.Data.GetPressType() == EPressType.Release)

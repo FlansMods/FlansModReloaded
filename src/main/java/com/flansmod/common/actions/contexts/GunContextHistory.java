@@ -1,0 +1,118 @@
+package com.flansmod.common.actions.contexts;
+
+import com.flansmod.common.item.FlanItem;
+import com.flansmod.util.MinecraftHelpers;
+import net.minecraft.world.Container;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraftforge.common.util.NonNullSupplier;
+
+import javax.annotation.Nonnull;
+import java.util.UUID;
+import java.util.function.Function;
+
+public class GunContextHistory extends ContextHistory<GunContext>
+{
+	public static final GunContextHistory INVALID = new GunContextHistory(GunContext.INVALID.GetUUID()) {
+		@Override
+		@Nonnull
+		public GunContext GetOrCreate(@Nonnull Function<GunContext, Boolean> validatorFunc,
+									  @Nonnull NonNullSupplier<GunContext> creatorFunc,
+									  @Nonnull NonNullSupplier<Long> timeFunc)
+		{
+			return GunContext.INVALID;
+		}
+	};
+
+	public GunContextHistory(@Nonnull UUID id)
+	{
+		super(id);
+	}
+
+	@Nonnull
+	public GunContext ContextualizeWith(@Nonnull ShooterContext shooter, int slotIndex)
+	{
+		return GetOrCreate(
+			(check) -> check.GetShooter().OwnerUUID().equals(shooter.OwnerUUID())
+				&& check.GetShooter().EntityUUID().equals(shooter.EntityUUID())
+				&& check.GetShooter().Dimension().equals(shooter.Dimension())
+				&& check.GetInventorySlotIndex() == slotIndex,
+			() -> shooter.CreateContext(ID),
+			MinecraftHelpers::GetTick);
+	}
+
+	@Nonnull
+	public GunContext ContextualizeWith(@Nonnull ShooterContext shooter)
+	{
+		return GetOrCreate(
+			(check) -> check.GetShooter().OwnerUUID().equals(shooter.OwnerUUID())
+					&& check.GetShooter().EntityUUID().equals(shooter.EntityUUID())
+					&& check.GetShooter().Dimension().equals(shooter.Dimension())
+					&& IsStillValid(check, shooter),
+			() -> shooter.CreateContext(ID),
+			MinecraftHelpers::GetTick);
+	}
+
+	@Nonnull
+	public GunContext ContextualizeWith(@Nonnull BlockEntity blockEntity, @Nonnull Container container, int slot)
+	{
+		return GetOrCreate(
+			(check) -> {
+				return check instanceof GunContextTileEntity teContext
+					&& teContext.TileEntity == blockEntity
+					&& check.GetAttachedInventory() == container
+					&& check.GetInventorySlotIndex() == slot;
+			},
+			() -> new GunContextTileEntity(blockEntity, container, slot),
+			MinecraftHelpers::GetTick);
+	}
+
+	@Nonnull
+	public GunContext ContextualizeWith(@Nonnull Container container, int slot)
+	{
+		return GetOrCreate(
+			(check) -> {
+				return check.GetAttachedInventory() == container
+					&& check.GetInventorySlotIndex() == slot;
+			},
+			() -> new GunContextInventoryItem(container, slot),
+			MinecraftHelpers::GetTick);
+	}
+
+	@Nonnull
+	public GunContext ContextualizeWith(@Nonnull ItemStack stack)
+	{
+		return GetOrCreate(
+			(check) -> FlanItem.GetGunID(check.Stack).equals(ID),
+			() -> new GunContextItem(stack),
+			MinecraftHelpers::GetTick);
+	}
+
+	@Nonnull
+	public GunContext WithoutContext()
+	{
+		GunContext mostRecent = GetMostRecentContext();
+		return mostRecent == null ? GunContext.INVALID : mostRecent;
+	}
+
+	@Override
+	protected void MarkContextAsOld(@Nonnull GunContext oldContext)
+	{
+
+	}
+
+	private boolean IsStillValid(@Nonnull GunContext gun, @Nonnull ShooterContext in)
+	{
+		int expectedSlot = gun.GetInventorySlotIndex();
+		Container inContainer = in.GetAttachedInventory();
+		if(inContainer != null)
+		{
+			if(0 <= expectedSlot && expectedSlot < inContainer.getContainerSize())
+			{
+				ItemStack foundStack = inContainer.getItem(expectedSlot);
+				return GunContext.CompareGunStacks(foundStack, gun.Stack).IsValid();
+			}
+		}
+		return false;
+	}
+}

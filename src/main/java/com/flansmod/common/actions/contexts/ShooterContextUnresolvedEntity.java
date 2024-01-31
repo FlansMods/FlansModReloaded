@@ -3,6 +3,7 @@ package com.flansmod.common.actions.contexts;
 import com.flansmod.common.item.FlanItem;
 import com.flansmod.util.Transform;
 import net.minecraft.world.Container;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.Entity;
 
 import javax.annotation.Nonnull;
@@ -67,4 +68,10 @@ public class ShooterContextUnresolvedEntity extends ShooterContext
 	public int HashModifierSources() { return 0; }
 	@Override
 	public void RecalculateModifierCache() {}
+
+	@Override
+	public String toString()
+	{
+		return "Shooter ("+EntityUUID+")" + (OwnerUUID.equals(EntityUUID) ? "" : " | Owner ("+OwnerUUID+")");
+	}
 }

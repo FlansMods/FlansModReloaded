@@ -22,26 +22,27 @@ public class GunContextInventoryItem extends GunContextItem
 		Inv.setItem(Slot, stack);
 	}
 	@Override
-	public boolean UpdateStackFromInventory()
+	@Nonnull
+	public EItemStackLinkage CheckItemStackLink()
 	{
-		ItemStack stackInSlot = Inv.getItem(Slot).copy();
-		if(!ItemStack.isSameItemSameTags(stackInSlot, Stack))
-		{
-			Stack = stackInSlot.copy();
-			return true;
-		}
-		return false;
+		return EItemStackLinkage.Connected;
+	}
+	@Override
+	@Nonnull
+	public ItemStack GetLinkedItemStack()
+	{
+		return Inv.getItem(Slot);
 	}
 	@Override
 	public Container GetAttachedInventory() { return Inv; }
-	@Override
-	public String toString()
-	{
-		return "Gun:" + GetItemStack().toString() + " in slot " + Slot + " in inventory " + Inv;
-	}
 	// There are no modifiers to apply right now
 	@Override
 	public int HashModifierSources() { return 0; }
 	@Override
 	public void RecalculateModifierCache() {}
+	@Override
+	public String toString()
+	{
+		return "Container: '"+Inv+"'/"+Slot+" -> Item ["+Stack+"]";
+	}
 }

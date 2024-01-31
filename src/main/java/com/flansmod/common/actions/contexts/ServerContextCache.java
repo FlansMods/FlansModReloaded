@@ -1,6 +1,7 @@
 package com.flansmod.common.actions.contexts;
 
 import com.flansmod.util.MinecraftHelpers;
+import net.minecraft.client.Minecraft;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
@@ -15,47 +16,25 @@ public class ServerContextCache extends ContextCache
 {
 	public ServerContextCache() { super(EContextSide.Server); }
 
-	@Nonnull
-	@Override
-	protected ShooterContext CreateShooterContext(@Nonnull UUID shooterID, @Nonnull UUID ownerID)
-	{
-		ShooterContext resolved = ResolveInternal(shooterID, ownerID);
-		return resolved != null ? resolved : new ShooterContextUnresolvedEntity(ownerID, shooterID, Side);
-	}
-
-	@Nonnull
-	@Override
-	protected ShooterContext TryResolve(@Nonnull ShooterContextUnresolvedEntity unresolvedContext)
-	{
-		ShooterContext resolved = ResolveInternal(unresolvedContext.EntityUUID, unresolvedContext.OwnerUUID);
-		return resolved != null ? resolved : unresolvedContext;
-	}
-
 	@Nullable
-	private ShooterContext ResolveInternal(@Nonnull UUID shooterID, @Nonnull UUID ownerID)
+	@Override
+	protected Entity TryFindEntity(@Nonnull UUID entityID)
 	{
 		MinecraftServer server = MinecraftHelpers.GetServer();
 		if(server != null && server.isRunning())
 		{
 			for(ServerPlayer player : server.getPlayerList().getPlayers())
 			{
-				if(player.getUUID().equals(shooterID))
-					return new ShooterContextPlayer(player);
+				if(player.getUUID().equals(entityID))
+					return player;
 			}
 			for(ServerLevel level : server.getAllLevels())
 			{
-				Entity shooter = level.getEntity(shooterID);
+				Entity shooter = level.getEntity(entityID);
 				if(shooter != null)
-					if(shooter instanceof LivingEntity living)
-						return new ShooterContextLiving(living);
+					return shooter;
 			}
 		}
 		return null;
-	}
-
-	@Override
-	public boolean SidedValidation(@Nonnull ShooterContext shooter)
-	{
-		return true;
 	}
 }
