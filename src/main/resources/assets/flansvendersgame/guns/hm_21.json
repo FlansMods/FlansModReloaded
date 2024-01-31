@@ -630,7 +630,7 @@
                 "0",
                 "45"
             ],
-            "defaultValue": "off"
+            "defaultValue": "0"
         }
     ],
     "loopingSounds": [],

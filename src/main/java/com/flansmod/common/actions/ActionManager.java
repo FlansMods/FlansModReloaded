@@ -8,6 +8,7 @@ import com.flansmod.common.actions.contexts.GunInputContext;
 import com.flansmod.common.item.FlanItem;
 import com.flansmod.common.network.FlansModPacketHandler;
 import com.flansmod.common.network.bidirectional.ActionUpdateMessage;
+import com.flansmod.common.types.guns.elements.ERepeatMode;
 import com.mojang.datafixers.util.Pair;
 import net.minecraft.world.level.Level;
 
@@ -113,6 +114,29 @@ public abstract class ActionManager
 			if(!keepEvaluating)
 				return;
 		}
+	}
+
+	// Needs a better name, but this should pass "Still holding" to anything we are holding
+	// And then pass "holding" to any full-auto groups that are waiting, so they can start asap
+	protected void IterateActionGroupsThatRespondToHeld(@Nonnull GunInputContext inputContext,
+														@Nonnull Function<ActionGroupContext, EActionResult> func)
+	{
+		// First, do active AGs
+		IterateActiveActionGroups(inputContext, func);
+
+		// Now do a custom two-layer iterate, where we only allow FullAuto AGs to be updated
+		IteratePossibleActionGroups(inputContext, (possibleActionGroup) -> {
+			EActionResult baseResult = func.apply(possibleActionGroup);
+			if(baseResult == EActionResult.CanProcess)
+			{
+				if(possibleActionGroup.RepeatMode() == ERepeatMode.FullAuto || possibleActionGroup.RepeatMode() == ERepeatMode.Minigun)
+				{
+					return EActionResult.CanProcess;
+				}
+				else return EActionResult.TryNextAction;
+			}
+			return baseResult;
+		});
 	}
 
 	protected void IterateActiveActionGroups(GunInputContext inputContext, Function<ActionGroupContext, EActionResult> func)

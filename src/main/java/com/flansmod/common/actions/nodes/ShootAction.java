@@ -145,6 +145,8 @@ public class ShootAction extends ActionInstance
 	{
 		if(!Group.Context.CanShoot(0))
 			return false;
+		if(Group.Context.IsReloadInProgress())
+			return false;
 
 		return true;
 	}

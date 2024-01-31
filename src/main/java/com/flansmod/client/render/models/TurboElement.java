@@ -82,7 +82,10 @@ public class TurboElement
 		if(applyRotation)
 		{
 			// TODO: Check order
-			Quaternionf rotation = new Quaternionf().rotateZYX(eulerRotations.z * Maths.DegToRadF, eulerRotations.y * Maths.DegToRadF, eulerRotations.x * Maths.DegToRadF);
+			Quaternionf rotation = new Quaternionf()
+				.rotateY(eulerRotations.y * Maths.DegToRadF)
+				.rotateX(eulerRotations.x * Maths.DegToRadF)
+				.rotateZ(eulerRotations.z * Maths.DegToRadF);
 			return new Vector3f[] {
 				new Vector3f(vertices[indices[0]]).rotate(rotation).add(rotationOrigin),
 				new Vector3f(vertices[indices[1]]).rotate(rotation).add(rotationOrigin),

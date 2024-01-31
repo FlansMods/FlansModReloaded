@@ -407,6 +407,7 @@ public class ActionGroupInstance
 	// -----------------------------------------------------------------------------------------------------------------
 	//  STATS
 	// -----------------------------------------------------------------------------------------------------------------
+	@Nonnull
 	public ERepeatMode RepeatMode() { return Context.RepeatMode(); }
 	public int RepeatCount() { return Context.RepeatCount(); }
 	public float RepeatDelaySeconds() { return Context.RepeatDelaySeconds(); }

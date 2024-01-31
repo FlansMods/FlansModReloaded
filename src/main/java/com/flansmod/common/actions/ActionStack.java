@@ -449,7 +449,7 @@ public class ActionStack
 		}
 		// Start the instance
 		ActionGroupInstance groupInstance = TryGetGroupInstance(groupContext);
-		if(groupInstance == null || !groupInstance.HasStarted())
+		if(groupInstance == null || (!groupInstance.HasStarted() && groupInstance.RepeatMode() == ERepeatMode.FullAuto))
 		{
 			if(held)
 				return Client_TryStartGroupInstance(groupContext);

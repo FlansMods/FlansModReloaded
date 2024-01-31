@@ -66,7 +66,7 @@ public class VendersGameMod
 	public static final RegistryObject<Item> GUN_FC_FAR = 						FlansMod.Gun(ITEMS, MODID, "fc_far");
 	public static final RegistryObject<Item> GUN_FC_49 = 						FlansMod.Gun(ITEMS, MODID, "fc_49");
 	public static final RegistryObject<Item> GUN_FC_56 = 						FlansMod.Gun(ITEMS, MODID, "fc_56");
-	public static final RegistryObject<Item> GUN_FC_BLOWPIPE = 						FlansMod.Gun(ITEMS, MODID, "fc_blowpipe");
+	//public static final RegistryObject<Item> GUN_FC_BLOWPIPE = 						FlansMod.Gun(ITEMS, MODID, "fc_blowpipe");
 
 	public static final RegistryObject<Block> WORKBENCH_BLOCK_FC = 				FlansMod.Workbench_Block(BLOCKS, MODID, "fc_workbench");
 	public static final RegistryObject<Item> WORKBENCH_ITEM_FC = 				FlansMod.Workbench_Item(ITEMS, MODID, "fc_workbench", WORKBENCH_BLOCK_FC);
@@ -117,7 +117,6 @@ public class VendersGameMod
 	public static final RegistryObject<Item> GUN_PHANTEK_LOCK = 				FlansMod.Gun(ITEMS, MODID, "phantek_lock");
 	//public static final RegistryObject<Item> GUN_PHANTEK_SEEKER = 				FlansMod.Gun(ITEMS, MODID, "phantek_seeker");
 	public static final RegistryObject<Item> GUN_PHANTEK_BATTLEMAGE =			FlansMod.Gun(ITEMS, MODID, "phantek_battlemage");
-	public static final RegistryObject<Item> GUN_PHANTEK_MAMBA =			FlansMod.Gun(ITEMS, MODID, "phantek_mamba");
 
 	public static final RegistryObject<Block> WORKBENCH_BLOCK_PHANTEK = 		FlansMod.Workbench_Block(BLOCKS, MODID, "phantek_workbench");
 	public static final RegistryObject<Item> WORKBENCH_ITEM_PHANTEK = 			FlansMod.Workbench_Item(ITEMS, MODID, "phantek_workbench", WORKBENCH_BLOCK_PHANTEK);
