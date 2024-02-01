@@ -152,6 +152,8 @@ public abstract class FlanItem extends Item implements IForgeItem
     @Nonnull
     public static UUID GetGunID(@Nonnull ItemStack stack)
     {
+        if(stack.isEmpty())
+            return InvalidGunUUID;
         if(stack.getTag() == null || !stack.getTag().contains("id"))
             return InvalidGunUUID;
         if(stack.getTag().get("id").getType() != IntArrayTag.TYPE){ //Fix crashing when installed alongside tetra

@@ -89,7 +89,7 @@ public class ShooterContextLiving extends ShooterContext implements Container
 	}
 
 	@Override
-	public boolean IsValid() { return Shooter.isAlive(); }
+	public boolean IsValid() { return !Shooter.isRemoved(); }
 	@Override
 	public boolean IsCreative() { return false; }
 	@Override

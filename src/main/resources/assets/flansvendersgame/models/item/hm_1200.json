@@ -140,11 +140,13 @@
     },
     "textures": {
         "default": "flansvendersgame:skins/hm_1200",
-        "hm_1200_wood": "flansvendersgame:skins/hm_1200_wood"
+        "hm_1200_wood": "flansvendersgame:skins/hm_1200_wood",
+        "hm_1200_electric": "flansvendersgame:skins/hm_1200_electric"
     },
     "icons": {
         "default": "flansvendersgame:item/hm_1200",
-        "hm_1200_wood": "flansvendersgame:item/hm_1200_wood"
+        "hm_1200_wood": "flansvendersgame:item/hm_1200_wood",
+        "hm_1200_electric": "flansvendersgame:item/hm_1200_electric"
     },
     "animations": {},
     "parts": {

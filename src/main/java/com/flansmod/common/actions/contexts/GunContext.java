@@ -125,6 +125,11 @@ public abstract class GunContext
 		}
 	}
 	@Nonnull
+	public static GunContext of(@Nonnull ItemEntity itemEntity)
+	{
+		return itemEntity.level().isClientSide ? client(itemEntity) : server(itemEntity);
+	}
+	@Nonnull
 	public static GunContext of(@Nonnull Container container, int slotIndex, boolean isClient)
 	{
 		return isClient ? client(container, slotIndex) : server(container, slotIndex);
@@ -159,6 +164,8 @@ public abstract class GunContext
 	private static GunContext client(@Nonnull ShooterContext shooter, @Nonnull UUID gunID) { return FlansModClient.CONTEXT_CACHE.Create(shooter, gunID); }
 	@Nonnull
 	private static GunContext client(@Nonnull ShooterContextLiving living, @Nonnull InteractionHand hand) { return FlansModClient.CONTEXT_CACHE.Create(living, hand); }
+	@Nonnull
+	private static GunContext client(@Nonnull ItemEntity itemEntity) { return FlansModClient.CONTEXT_CACHE.Create(itemEntity); }
 
 	// -----------------------------------------------------------------------------------------------------------------
 	// Server specific - same applies
@@ -177,6 +184,8 @@ public abstract class GunContext
 	private static GunContext server(@Nonnull ShooterContext shooter, @Nonnull UUID gunID) { return FlansMod.CONTEXT_CACHE.Create(shooter, gunID); }
 	@Nonnull
 	private static GunContext server(@Nonnull ShooterContextLiving living, @Nonnull InteractionHand hand) { return FlansMod.CONTEXT_CACHE.Create(living, hand); }
+	@Nonnull
+	private static GunContext server(@Nonnull ItemEntity itemEntity) { return FlansMod.CONTEXT_CACHE.Create(itemEntity); }
 
 	// -----------------------------------------------------------------------------------------------------------------
 	// Side unknown, these are generally low quality contexts, so should only be used in limited situations,

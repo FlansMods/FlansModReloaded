@@ -12,6 +12,11 @@
                 "textureName": "hm_1200_wood",
                 "paintBucketsRequired": 1,
                 "entitlementKey": ""
+            },
+            {
+                "textureName": "hm_1200_electric",
+                "paintBucketsRequired": 1,
+                "entitlementKey": ""
             }
         ]
     },

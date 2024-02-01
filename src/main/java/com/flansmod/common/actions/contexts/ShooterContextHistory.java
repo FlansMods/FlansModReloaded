@@ -98,6 +98,16 @@ public class ShooterContextHistory extends ContextHistory<ShooterContext>
 	}
 
 	@Override
+	protected boolean BasicValidation(@Nonnull ShooterContext check)
+	{
+		return check.IsValid();
+	}
+
+	@Override
+	@Nonnull
+	protected ShooterContext GetInvalidContext(){ return ShooterContext.INVALID; }
+
+	@Override
 	protected void MarkContextAsOld(@Nonnull ShooterContext oldContext)
 	{
 		oldContext.MarkAsOld();

@@ -35,31 +35,44 @@ public abstract class ContextHistory<T>
 		return null;
 	}
 
+	// This function will do its best to return a valid context. These are the possibilities in order:
+	//  1. The most recent context is valid and matches your criteria, you will receive this context
+	//  2. Your critera were not matched, but your creatorFunc made a valid context, that has been stored and returned
+	//  3. Sorry, but your new context was not valid, so we don't store it and return an invalid context
 	@Nonnull
 	public T GetOrCreate(@Nonnull Function<T, Boolean> validatorFunc, @Nonnull NonNullSupplier<T> creatorFunc, @Nonnull NonNullSupplier<Long> timeFunc)
 	{
 		//T match = GetMostRecentValidContext(validatorFunc);
 		// If our most recent context is not valid, we should push another context onto the stack
 		T match = GetMostRecentContext();
-		if(match == null || !validatorFunc.apply(match))
+		if(match == null || !BasicValidation(match) || !validatorFunc.apply(match))
 		{
 			match = creatorFunc.get();
-			History.add(new ContextEntry<>(match, timeFunc.get()));
-
-			if(History.size() == 1)
+			if(!BasicValidation(match) || !validatorFunc.apply(match))
 			{
-				FlansMod.LOGGER.info("Context["+ID+"] seen for the first time as '" + match + "'");
+				// We couldn't find an old context, but our new one is not valid either.
+				return GetInvalidContext();
 			}
 			else
 			{
-				ContextEntry<T> previous = History.get(History.size() - 2);
-				MarkContextAsOld(previous.Context);
-				FlansMod.LOGGER.info("Context["+ID+"] updated from '" + previous.Context + "' to '" + match + "'");
-				if(History.size() > 100)
+				// We made a new valid context, add it to the history.
+				History.add(new ContextEntry<>(match, timeFunc.get()));
+
+				if (History.size() == 1)
 				{
-					FlansMod.LOGGER.error("ContextHistory of ["+ID+"] is overflowing?");
-					History.remove(0);
+					FlansMod.LOGGER.info("Context[" + ID + "] seen for the first time as '" + match + "'");
+				} else
+				{
+					ContextEntry<T> previous = History.get(History.size() - 2);
+					MarkContextAsOld(previous.Context);
+					FlansMod.LOGGER.info("Context[" + ID + "] updated from '" + previous.Context + "' to '" + match + "'");
+					if (History.size() > 100)
+					{
+						FlansMod.LOGGER.error("ContextHistory of [" + ID + "] is overflowing?");
+						History.remove(0);
+					}
 				}
+
 			}
 		}
 		return match;
@@ -71,7 +84,12 @@ public abstract class ContextHistory<T>
 		return History.isEmpty() ? null : History.get(History.size() - 1).Context;
 	}
 
+	@Nonnull
+	protected abstract T GetInvalidContext();
+
 	protected abstract void MarkContextAsOld(@Nonnull T oldContext);
+
+	protected abstract boolean BasicValidation(@Nonnull T check);
 
 	@Override
 	public String toString()

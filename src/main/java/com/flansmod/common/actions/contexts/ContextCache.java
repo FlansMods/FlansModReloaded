@@ -5,6 +5,7 @@ import com.flansmod.common.item.FlanItem;
 import net.minecraft.world.Container;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
@@ -170,6 +171,17 @@ public abstract class ContextCache
 	}
 
 	@Nonnull
+	public GunContext Create(@Nonnull ItemEntity itemEntity)
+	{
+		UUID gunID = FlanItem.GetGunID(itemEntity.getItem());
+		if(gunID != FlanItem.InvalidGunUUID)
+		{
+			return HistoryOfGun(gunID).ContextualizeWith(itemEntity);
+		}
+		return GunContext.INVALID;
+	}
+
+	@Nonnull
 	public GunContext Create(@Nonnull ShooterContext shooter, @Nonnull InteractionHand hand)
 	{
 		if(!VerifyCallingFromCorrectSide(shooter))
@@ -191,7 +203,8 @@ public abstract class ContextCache
 		if(VerifyCallingFromCorrectSide(shooter))
 		{
 			UUID gunID = shooter.GetGunIDForSlot(gunSlotIndex);
-			return HistoryOfGun(gunID).ContextualizeWith(shooter, gunSlotIndex);
+			if(gunID != FlanItem.InvalidGunUUID)
+				return HistoryOfGun(gunID).ContextualizeWith(shooter, gunSlotIndex);
 		}
 		return GunContext.INVALID;
 	}

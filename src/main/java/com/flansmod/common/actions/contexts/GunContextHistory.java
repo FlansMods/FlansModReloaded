@@ -3,6 +3,7 @@ package com.flansmod.common.actions.contexts;
 import com.flansmod.common.item.FlanItem;
 import com.flansmod.util.MinecraftHelpers;
 import net.minecraft.world.Container;
+import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraftforge.common.util.NonNullSupplier;
@@ -33,10 +34,8 @@ public class GunContextHistory extends ContextHistory<GunContext>
 	public GunContext ContextualizeWith(@Nonnull ShooterContext shooter, int slotIndex)
 	{
 		return GetOrCreate(
-			(check) -> check.GetShooter().OwnerUUID().equals(shooter.OwnerUUID())
-				&& check.GetShooter().EntityUUID().equals(shooter.EntityUUID())
-				&& check.GetShooter().Dimension().equals(shooter.Dimension())
-				&& check.GetInventorySlotIndex() == slotIndex,
+			(check) -> check.GetShooter() == shooter
+					&& check.GetInventorySlotIndex() == slotIndex,
 			() -> shooter.CreateContext(ID),
 			MinecraftHelpers::GetTick);
 	}
@@ -45,11 +44,19 @@ public class GunContextHistory extends ContextHistory<GunContext>
 	public GunContext ContextualizeWith(@Nonnull ShooterContext shooter)
 	{
 		return GetOrCreate(
-			(check) -> check.GetShooter().OwnerUUID().equals(shooter.OwnerUUID())
-					&& check.GetShooter().EntityUUID().equals(shooter.EntityUUID())
-					&& check.GetShooter().Dimension().equals(shooter.Dimension())
-					&& IsStillValid(check, shooter),
+			(check) -> check.GetShooter() == shooter
+					&& IsGunStillPresentIn(check, shooter),
 			() -> shooter.CreateContext(ID),
+			MinecraftHelpers::GetTick);
+	}
+
+	@Nonnull
+	public GunContext ContextualizeWith(@Nonnull ItemEntity itemEntity)
+	{
+		return GetOrCreate(
+			(check) -> check instanceof GunContextItemEntity checkItemEntity
+					&& checkItemEntity.Holder == itemEntity,
+			() -> new GunContextItemEntity(itemEntity),
 			MinecraftHelpers::GetTick);
 	}
 
@@ -96,12 +103,22 @@ public class GunContextHistory extends ContextHistory<GunContext>
 	}
 
 	@Override
+	protected boolean BasicValidation(@Nonnull GunContext check)
+	{
+		return check.IsValid();
+	}
+
+	@Override
 	protected void MarkContextAsOld(@Nonnull GunContext oldContext)
 	{
 
 	}
 
-	private boolean IsStillValid(@Nonnull GunContext gun, @Nonnull ShooterContext in)
+	@Override
+	@Nonnull
+	protected GunContext GetInvalidContext(){ return GunContext.INVALID; }
+
+	private boolean IsGunStillPresentIn(@Nonnull GunContext gun, @Nonnull ShooterContext in)
 	{
 		int expectedSlot = gun.GetInventorySlotIndex();
 		Container inContainer = in.GetAttachedInventory();
