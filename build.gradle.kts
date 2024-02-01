@@ -12,6 +12,8 @@ import org.eclipse.jgit.revwalk.RevObject
 import org.eclipse.jgit.revwalk.RevTag
 import org.eclipse.jgit.revwalk.RevWalk
 import java.util.*
+import java.util.zip.ZipOutputStream
+import javax.xml.stream.events.Namespace
 
 buildscript {
     repositories {
@@ -153,7 +155,7 @@ tasks.withType<Jar> {
 
     archiveBaseName.set("flansmod-all")
 
-    version = mcVersion
+    archiveVersion.set(mcVersion)
 
     // replace stuff in mcmod.info, nothing else
     filesMatching("/mcmod.info") {
@@ -194,6 +196,12 @@ val devTask: Jar = tasks.create("dev", Jar::class.java) {
     from(sourceSets["main"].output)
 }
 
+
+
+
+
+
+
 fun modTask(taskName: String, srcTask: Task, classfier: String): Jar {
     return tasks.create(taskName, Jar::class.java) {
         dependsOn(srcTask)
@@ -202,31 +210,37 @@ fun modTask(taskName: String, srcTask: Task, classfier: String): Jar {
             include("**/assets/flansmod/")
             include("**/assets/forge/")
             include("**/assets/minecraft")
-            include("**/data/flansmod/")
-            include("**/data/forge/")
             include("**/com/flansmod/common/")
             include("**/com/flansmod/client/")
             include("**/com/flansmod/util/")
             include("**/META-INF/flansmod.toml")
             include("**/flansmod.mcmeta")
             include("**/flansmod.png")
-            include("**/data/**/tags/**/*_flansmod.json")
+
+            // Special handling: Don't include dev tags, include (and rename) the partial tag files
+            include("**/data/flansmod/")
+            exclude("**/data/flansmod/tags/")
+            include("**/data/**/tags/partial_tags/flansmod/**/*.json")
+
+            // Special handling: Same for loot_modifiers
+            include("**/data/forge/")
+            exclude("**/data/forge/loot_modifiers/")
+            include("**/data/forge/partial_loot_modifiers/flansmod/")
         }
         rename { name ->
             if (name == "flansmod.toml")
                 "mods.toml"
             else if(name == "flansmod.mcmeta")
                 "pack.mcmeta"
-            else if(name.endsWith("_flansmod.json"))
-            {
-                val newName = name.substring(0, name.lastIndexOf('_'))
-                "$newName.json"
-            }
+            else if(name.contains("/partial_tags/flansmod/"))
+                name.replace("/partial_tags/flansmod/", "/tags/")
+            else if(name.contains("/partial_loot_modifiers/flansmod/"))
+                name.replace("/partial_loot_modifiers/flansmod/", "/loot_modifiers/")
             else name
         }
         includeEmptyDirs = false
         archiveClassifier.set(classfier)
-        version = "$mcVersion-$modVersion"
+        archiveVersion.set("$mcVersion-$modVersion")
         archiveBaseName.set("flansmod")
         destinationDirectory.set(file("$projectDir/build/output"))
         group = "flansmod build"
@@ -240,42 +254,184 @@ fun repackTask(taskName: String, modID: String, modNamespace: String, srcTask: T
         {
 
             include("**/assets/$modID/")
-            include("**/data/$modID/")
             include("**/com/flansmod/packs/$modNamespace/")
             include("**/META-INF/$modID.toml")
             include("**/$modID.mcmeta")
             include("**/$modID.png")
-            include("**/data/**/tags/**/*_$modID.json")
+
+            // We don't want our "compiled" tags, these contain every modded tag in our workspace and are for dev use
+            include("**/data/$modID/")
+            exclude("**/data/$modID/tags/")
+            include("**/data/**/partial_tags/$modID/**/*_.json")
+
+            // Same applies to loot modifiers, if we have any
+            include("**/data/forge/partial_loot_modifiers/$modID/")
         }
         rename { name ->
             if (name == "$modID.toml")
                 "mods.toml"
             else if (name == "$modID.mcmeta")
                 "pack.mcmeta"
-            else if(name.endsWith("_$modID.json"))
-            {
-                val newName = name.substring(0, name.lastIndexOf('_'))
-                "$newName.json"
-            }
+            else if(name.contains("/partial_tags/$modID/"))
+                name.replace("/partial_tags/$modID/", "/tags/")
+            else if(name.contains("/partial_loot_modifiers/$modID/"))
+                name.replace("/partial_loot_modifiers/$modID/", "/loot_modifiers/")
             else name
         }
         includeEmptyDirs = false
         archiveClassifier.set(classfier)
-        version = "$mcVersion-$modVersion"
+        archiveVersion.set("$mcVersion-$modVersion")
         archiveBaseName.set(modID)
         destinationDirectory.set(file("$projectDir/build/output"))
         group = "flansmod build"
     }
 }
 
-val modSourceTask: Jar = modTask("BuildSourceFlansMod", sourceTask, "sources")
-val modDevTask: Jar = modTask("BuildJarFlansMod", reobfTask, "")
 
-val basicsSourceTask: Jar = repackTask("BuildSourceBasicParts", "flansbasicparts", "basics", sourceTask, "sources")
-val basicsDevTask: Jar = repackTask("BuildJarBasicParts", "flansbasicparts", "basics", reobfTask, "")
+val cleanTask: Delete = tasks.create("CleanExpandedFolder", Delete::class.java) {
+    delete(
+            fileTree("$projectDir/build/expanded"),
+            fileTree("$projectDir/build/pack"))
+    group = "flansmod internal"
+}
+fun expandJarTask(srcTask: Task, completeFolder: File): Copy {
 
-val vendersSourceTask: Jar = repackTask("BuildSourceVendersGame", "flansvendersgame", "vendersgame", sourceTask, "sources")
-val vendersDevTask: Jar = repackTask("BuildJarVendersGame", "flansvendersgame", "vendersgame", reobfTask, "")
+    return tasks.create("Expand_${srcTask.name}", Copy::class.java) {
+        dependsOn(cleanTask)
+        dependsOn(srcTask)
+        from(zipTree(srcTask.outputs.files.singleFile))
+        {
+
+        }
+        includeEmptyDirs = false
+        destinationDir = completeFolder
+        group = "flansmod internal"
+    }
+}
+fun gatherFilesForPackTask(modID: String, modNamespace: String, classifier:String, expandTask: Task, expandedDir: File, outputDir:File): Copy {
+    return tasks.create("GatherFiles_${modID}_${classifier}", Copy::class.java) {
+        dependsOn(expandTask)
+        into("")
+        {
+            from(fileTree(expandedDir))
+            {
+                include("**/assets/$modID/")
+                include("**/data/$modID/")
+                include("**/com/flansmod/packs/$modNamespace/")
+                include("**/$modID.mcmeta")
+                include("**/$modID.png")
+                include("**/META-INF/$modID.toml")
+
+                exclude("**/data/$modID/tags/")
+                exclude("**/data/$modID/loot_modifiers/")
+                exclude("**/data/$modID/partial_data/")
+            }
+        }
+        into("data")
+        {
+            from(fileTree(file("$expandedDir/data/$modID/partial_data/")))
+            {
+            }
+        }
+        destinationDir = outputDir
+        includeEmptyDirs = false
+        group = "flansmod internal"
+    }
+}
+fun jarPackTask(modID: String, modNamespace: String, classifier:String, expandTask: Task, expandedDir: File): Jar {
+    var suffix: String = classifier
+    if(classifier == "dev")
+        suffix = ""
+    return tasks.create("BuildJar_${modID}_${classifier}", Jar::class.java) {
+        val filteredDir:File = file("$projectDir/build/pack/$modID/$classifier")
+        val gatherTask: Copy = gatherFilesForPackTask(modID, modNamespace, classifier, expandTask, expandedDir, filteredDir)
+        dependsOn(gatherTask)
+        from(fileTree(filteredDir))
+        {
+
+        }
+        includeEmptyDirs = false
+        archiveClassifier.set(suffix)
+        archiveVersion.set("$mcVersion-$modVersion")
+        archiveBaseName.set(modID)
+        destinationDirectory.set(file("$projectDir/build/output"))
+        group = "flansmod internal"
+    }
+}
+fun gatherFilesForModTask(classifier:String, expandTask: Task, expandedDir: File, outputDir:File): Copy {
+    return tasks.create("GatherFiles_flansmod_${classifier}", Copy::class.java) {
+        dependsOn(expandTask)
+        into("")
+        {
+            from(fileTree(expandedDir))
+            {
+                include("**/assets/flansmod/")
+                include("**/assets/minecraft/")
+                include("**/data/flansmod/")
+                include("**/com/flansmod/")
+                include("**/flansmod.mcmeta")
+                include("**/flansmod.png")
+                include("**/META-INF/flansmod.toml")
+
+                exclude("**/com/flansmod/packs")
+                exclude("**/data/flansmod/tags/")
+                exclude("**/data/flansmod/partial_data/")
+                exclude("**/data/flansmod/loot_modifiers/")
+            }
+        }
+        into("data")
+        {
+            from(fileTree(file("$expandedDir/data/flansmod/partial_data/")))
+            {
+            }
+        }
+        destinationDir = outputDir
+        includeEmptyDirs = false
+        group = "flansmod internal"
+    }
+}
+fun jarModTask(classifier:String, expandTask: Task, expandedDir: File): Jar {
+
+    var suffix: String = classifier
+    if(classifier == "dev")
+        suffix = ""
+    return tasks.create("BuildJar_flansmod_${classifier}", Jar::class.java) {
+        val filteredDir:File = file("$projectDir/build/pack/flansmod/$classifier/")
+        val gatherTask: Copy = gatherFilesForModTask(classifier, expandTask, expandedDir, filteredDir)
+        dependsOn(gatherTask)
+        from(fileTree(filteredDir))
+        {
+
+        }
+        includeEmptyDirs = false
+        archiveClassifier.set(suffix)
+        archiveVersion.set("$mcVersion-$modVersion")
+        archiveBaseName.set("flansmod")
+        destinationDirectory.set(file("$projectDir/build/output"))
+        group = "flansmod internal"
+    }
+}
+
+
+
+val expandedSourceDir = file("$projectDir/build/expanded/sources")
+val expandedDevDir = file("$projectDir/build/expanded/dev")
+val expandSourceTask: Copy = expandJarTask(sourceTask, expandedSourceDir)
+val expandDevTask: Copy = expandJarTask(reobfTask, expandedDevDir)
+
+fun CreateAllPackTasks(modID: String, modNamespace: String): Pair<Jar, Jar>
+{
+    return Pair(jarPackTask(modID, modNamespace, "sources", expandSourceTask, expandedSourceDir),
+                jarPackTask(modID, modNamespace, "dev", expandDevTask, expandedDevDir))
+}
+
+
+
+val basicsTasks = CreateAllPackTasks("flansbasicparts", "basics")
+val vendersTasks = CreateAllPackTasks("flansvendersgame", "vendersgame")
+
+val modSourceTask: Jar = jarModTask("sources", expandSourceTask, expandedSourceDir)
+val modDevTask: Jar = jarModTask("dev", expandDevTask, expandedDevDir)
 
 artifacts {
     add("archives", reobfTask)
@@ -283,10 +439,10 @@ artifacts {
 
     archives(modSourceTask.outputs.files.singleFile) { builtBy(modSourceTask) }
     archives(modDevTask.outputs.files.singleFile) { builtBy(modDevTask) }
-    archives(vendersSourceTask.outputs.files.singleFile) { builtBy(vendersSourceTask) }
-    archives(vendersDevTask.outputs.files.singleFile) { builtBy(vendersDevTask) }
-    archives(basicsSourceTask.outputs.files.singleFile) { builtBy(basicsSourceTask) }
-    archives(basicsDevTask.outputs.files.singleFile) { builtBy(basicsDevTask) }
+    archives(basicsTasks.first.outputs.files.singleFile) { builtBy(basicsTasks.first) }
+    archives(basicsTasks.second.outputs.files.singleFile) { builtBy(basicsTasks.second) }
+    archives(vendersTasks.first.outputs.files.singleFile) { builtBy(vendersTasks.first) }
+    archives(vendersTasks.second.outputs.files.singleFile) { builtBy(vendersTasks.second) }
 }
 
 // -------------------------------- GIT HUB -----------------------------------
@@ -451,7 +607,7 @@ fun createCurseForgeUploadTask(curseForgeID: String, main: Jar, src: Jar): Curse
             addGameVersion(mcVersion)
             changelog = file("CHANGELOG.md")
             changelogType = "markdown"
-            releaseType = "alpha"
+            releaseType = "beta"
 
             mainArtifact(main)
             //addArtifact(src) // Don't add sources, it is confusing people
@@ -474,8 +630,8 @@ fun createCurseForgeUploadTask(curseForgeID: String, main: Jar, src: Jar): Curse
 //}
 
 val modUploadTask            = createCurseForgeUploadTask(modCurseForgeID, modDevTask, modSourceTask)
-val basicPartsUploadTask     = createCurseForgeUploadTask(basicsCurseForgeID, basicsDevTask, basicsSourceTask)
-val vendersUploadTask        = createCurseForgeUploadTask(vendersCurseForgeID, vendersDevTask, vendersSourceTask)
+val basicPartsUploadTask     = createCurseForgeUploadTask(basicsCurseForgeID, basicsTasks.first, basicsTasks.second)
+val vendersUploadTask        = createCurseForgeUploadTask(vendersCurseForgeID, vendersTasks.first, vendersTasks.second)
 
 afterEvaluate {
     if(modUploadTask?.uploadTask != null)
@@ -508,13 +664,13 @@ afterEvaluate {
     }
 
     tasks.create("BuildAllPackJars") {
-        dependsOn(vendersDevTask)
-        dependsOn(basicsDevTask)
+        dependsOn(vendersTasks.first)
+        dependsOn(basicsTasks.first)
         group = "flansmod build"
     }
     tasks.create("BuildAllPackSources") {
-        dependsOn(vendersSourceTask)
-        dependsOn(basicsSourceTask)
+        dependsOn(vendersTasks.second)
+        dependsOn(basicsTasks.second)
         group = "flansmod build"
     }
     tasks.create("BuildAllJars") {

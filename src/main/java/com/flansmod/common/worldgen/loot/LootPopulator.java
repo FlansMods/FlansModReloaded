@@ -1,6 +1,5 @@
 package com.flansmod.common.worldgen.loot;
 
-import com.flansmod.packs.vendersgame.VendersGameMod;
 import com.google.common.base.Suppliers;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;

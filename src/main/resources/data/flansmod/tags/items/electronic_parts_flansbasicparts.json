@@ -1,8 +1,0 @@
-{
-  "replace": "false",
-  "values": [
-    "flansbasicparts:quartz_circuitry",
-    "flansbasicparts:redstone_circuitry",
-    "flansbasicparts:sculk_circuitry"
-  ]
-}
