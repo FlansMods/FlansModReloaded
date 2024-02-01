@@ -3,6 +3,7 @@ package com.flansmod.packs.basics.plugins.jei;
 import com.flansmod.common.crafting.ingredients.TieredPartIngredient;
 import com.flansmod.common.crafting.recipes.GunFabricationRecipe;
 import com.flansmod.common.types.crafting.EMaterialType;
+import com.flansmod.packs.basics.BasicPartsMod;
 import com.flansmod.packs.basics.common.DistillationRecipe;
 import com.flansmod.plugins.jei.FlansDrawable;
 import com.flansmod.util.Maths;
@@ -11,6 +12,7 @@ import mezz.jei.api.gui.ingredient.IRecipeSlotsView;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
 
 import javax.annotation.Nonnull;
@@ -68,7 +70,7 @@ public class DistillationDrawable
 		@Override
 		public void draw(@Nonnull GuiGraphics graphics, int xOffset, int yOffset)
 		{
-			graphics.blit(TEXTURE, xOffset, yOffset, 16, 200, WIDTH, HEIGHT, TEXTURE_W, TEXTURE_H);
+			graphics.renderItem(new ItemStack(BasicPartsMod.DISTILLATION_TOWER_ITEM.get()), xOffset, yOffset);
 		}
 	}
 

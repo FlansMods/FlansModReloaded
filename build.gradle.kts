@@ -65,11 +65,11 @@ val modCurseForgeID = config["flansmod.curseforge"] as String
 val basicsCurseForgeID = config["basicparts.curseforge"] as String
 val vendersCurseForgeID = config["vendersgame.curseforge"] as String
 
-val mcVersion = config["minecraft_version"] as String
-val mcFullVersion = "$mcVersion-${config["forge_version"]}"
+val mcVersion = config["minecraft.version"] as String
+val mcFullVersion = "$mcVersion-${config["forge.version"]}"
 val majorVersion = config["flansmod.version.major"] as String
 val minorVersion = config["flansmod.version.minor"] as String
-val jeiVersion = config["jei_version"] as String
+val jeiVersion = config["jei.version"] as String
 val modVersionNoBuild = "$majorVersion.$minorVersion"
 
 val git: Git = Git.open(projectDir)
