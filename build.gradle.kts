@@ -326,6 +326,13 @@ fun gatherFilesForPackTask(modID: String, modNamespace: String, classifier:Strin
                 exclude("**/data/$modID/loot_modifiers/")
                 exclude("**/data/$modID/partial_data/")
             }
+            rename { name ->
+                if (name == "$modID.toml")
+                    "mods.toml"
+                else if (name == "$modID.mcmeta")
+                    "pack.mcmeta"
+                else name
+            }
         }
         into("data")
         {
@@ -377,6 +384,13 @@ fun gatherFilesForModTask(classifier:String, expandTask: Task, expandedDir: File
                 exclude("**/data/flansmod/tags/")
                 exclude("**/data/flansmod/partial_data/")
                 exclude("**/data/flansmod/loot_modifiers/")
+            }
+            rename { name ->
+                if (name == "flansmod.toml")
+                    "mods.toml"
+                else if (name == "flansmod.mcmeta")
+                    "pack.mcmeta"
+                else name
             }
         }
         into("data")
@@ -630,8 +644,8 @@ fun createCurseForgeUploadTask(curseForgeID: String, main: Jar, src: Jar): Curse
 //}
 
 val modUploadTask            = createCurseForgeUploadTask(modCurseForgeID, modDevTask, modSourceTask)
-val basicPartsUploadTask     = createCurseForgeUploadTask(basicsCurseForgeID, basicsTasks.first, basicsTasks.second)
-val vendersUploadTask        = createCurseForgeUploadTask(vendersCurseForgeID, vendersTasks.first, vendersTasks.second)
+val basicPartsUploadTask     = createCurseForgeUploadTask(basicsCurseForgeID, basicsTasks.second, basicsTasks.first)
+val vendersUploadTask        = createCurseForgeUploadTask(vendersCurseForgeID, vendersTasks.second, vendersTasks.first)
 
 afterEvaluate {
     if(modUploadTask?.uploadTask != null)
