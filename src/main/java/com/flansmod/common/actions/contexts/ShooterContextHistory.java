@@ -78,9 +78,7 @@ public class ShooterContextHistory extends ContextHistory<ShooterContext>
 	public ShooterContext ContextualizeWith(@Nonnull LivingEntity livingShooter)
 	{
 		return GetOrCreate(
-			(check) -> check.EntityUUID().equals(livingShooter.getUUID())
-					&& check.Dimension().equals(livingShooter.level().dimension())
-					&& check instanceof ShooterContextLiving,
+			(check) -> check.Entity() == livingShooter,
 			() -> new ShooterContextLiving(livingShooter),
 			MinecraftHelpers::GetTick);
 	}
@@ -89,10 +87,7 @@ public class ShooterContextHistory extends ContextHistory<ShooterContext>
 	public ShooterContext ContextualizeWith(@Nonnull Player playerShooter)
 	{
 		return GetOrCreate(
-			(check) -> check.EntityUUID().equals(playerShooter.getUUID())
-				&& check.OwnerUUID().equals(playerShooter.getUUID())
-				&& check.Dimension().equals(playerShooter.level().dimension())
-				&& check instanceof ShooterContextPlayer,
+			(check) -> check.Entity() == playerShooter,
 			() -> new ShooterContextPlayer(playerShooter),
 			MinecraftHelpers::GetTick);
 	}

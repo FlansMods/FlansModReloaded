@@ -31,9 +31,9 @@ public abstract class ContextCache
 
 	public void OnLevelUnloaded(@Nonnull ActionManager actionManager)
 	{
-		//actionManager.Clear();
-		//ShooterContexts.clear();
-		//GunContextCache.clear();
+		actionManager.Clear();
+		ShooterContexts.clear();
+		GunContextCache.clear();
 	}
 
 	public void ClearPlayer(@Nonnull UUID playerID, @Nonnull ActionManager actionManager)
