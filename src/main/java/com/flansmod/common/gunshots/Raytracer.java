@@ -51,7 +51,8 @@ public class Raytracer
 
     public void commonTick(@Nonnull TickEvent.LevelTickEvent event)
     {
-        for (Player player : World.players())
+        List<Player> playerList = new ArrayList<>(World.players());
+        for (Player player : playerList)
         {
             PlayerMovementHistory moves = PlayerMovementHistories.get(player);
             if (moves == null)
