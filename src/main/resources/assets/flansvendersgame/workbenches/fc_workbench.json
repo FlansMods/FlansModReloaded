@@ -52,7 +52,7 @@
     "itemSettings": {
         "maxStackSize": 64,
         "tags": [
-            "minecraft:mineable/pickaxe"
+            "minecraft:blocks/mineable/pickaxe"
         ]
     },
     "sides": []

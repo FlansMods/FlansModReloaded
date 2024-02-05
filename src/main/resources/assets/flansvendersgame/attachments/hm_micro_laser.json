@@ -2,8 +2,8 @@
     "itemSettings": {
         "maxStackSize": 1,
         "tags": [
-            "flansmod:attach_to_any",
-            "flansmod:grip"
+            "flansmod:items/attach_to_any",
+            "flansmod:items/grip"
         ]
     },
     "attachmentType": "Grip",

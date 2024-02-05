@@ -9,8 +9,8 @@
     "itemSettings": {
         "maxStackSize": 64,
         "tags": [
-            "flansmod:part",
-            "flansmod:sparkplug"
+            "flansmod:items/part",
+            "flansmod:items/sparkplug"
         ]
     },
     "modifiers": [],

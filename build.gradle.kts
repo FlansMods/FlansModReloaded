@@ -678,13 +678,13 @@ afterEvaluate {
     }
 
     tasks.create("BuildAllPackJars") {
-        dependsOn(vendersTasks.first)
-        dependsOn(basicsTasks.first)
+        dependsOn(vendersTasks.second)
+        dependsOn(basicsTasks.second)
         group = "flansmod build"
     }
     tasks.create("BuildAllPackSources") {
-        dependsOn(vendersTasks.second)
-        dependsOn(basicsTasks.second)
+        dependsOn(vendersTasks.first)
+        dependsOn(basicsTasks.first)
         group = "flansmod build"
     }
     tasks.create("BuildAllJars") {

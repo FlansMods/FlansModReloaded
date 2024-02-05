@@ -9,8 +9,8 @@
     "itemSettings": {
         "maxStackSize": 64,
         "tags": [
-            "flansmod:part",
-            "flansmod:armour"
+            "flansmod:items/part",
+            "flansmod:items/armour"
         ]
     },
     "modifiers": [],

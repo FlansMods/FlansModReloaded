@@ -9,8 +9,8 @@
     "itemSettings": {
         "maxStackSize": 64,
         "tags": [
-            "flansmod:part",
-            "forge:ingots/nethersteel"
+            "flansmod:items/part",
+            "forge:items/ingots/nethersteel"
         ]
     },
     "modifiers": [],

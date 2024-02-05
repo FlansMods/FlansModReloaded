@@ -2,7 +2,7 @@
     "itemSettings": {
         "maxStackSize": 1,
         "tags": [
-            "flansmod:gun"
+            "flansmod:items/gun"
         ]
     },
     "paints": {

@@ -9,8 +9,8 @@
     "itemSettings": {
         "maxStackSize": 64,
         "tags": [
-            "flansmod:part",
-            "flansmod:circuitry"
+            "flansmod:items/part",
+            "flansmod:items/circuitry"
         ]
     },
     "modifiers": [],

@@ -9,8 +9,8 @@
     "itemSettings": {
         "maxStackSize": 64,
         "tags": [
-            "flansmod:part",
-            "flansmod:wheel"
+            "flansmod:items/part",
+            "flansmod:items/wheel"
         ]
     },
     "modifiers": [],
