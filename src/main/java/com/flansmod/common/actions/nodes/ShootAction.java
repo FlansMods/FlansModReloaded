@@ -370,8 +370,9 @@ public class ShootAction extends ActionInstance
 		// Process shots that were added for this re-trigger in particular
 		GunshotCollection shotCollection = Results.get(triggerIndex);
 
-		if(shotCollection != null)
+		if(shotCollection != null && !shotCollection.Processed)
 		{
+			shotCollection.Processed = true;
 			//ItemStack bulletFound = Group.Context.GetBulletAtIndex(0, shotCollection.Shots.get());
 			//if(bulletFound.isEmpty())
 			//	FlansMod.LOGGER.warn("Server did not find a bullet to consume for this shot");

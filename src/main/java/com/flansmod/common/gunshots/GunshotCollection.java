@@ -29,6 +29,7 @@ public class GunshotCollection
 	public int GunHash;
 	public int GroupPathHash;
 	public int FiredTick;
+	public boolean Processed = false;
 	public List<Gunshot> Shots = new ArrayList<>(2);
 
 	// Accessors

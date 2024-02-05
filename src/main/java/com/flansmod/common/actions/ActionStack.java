@@ -509,6 +509,11 @@ public class ActionStack
 			{
 				int triggerIndex = kvp.getKey();
 				// TODO: Verify that this triggerIndex is valid. Rate limit to the gun fire rate for example
+
+				// Quick catch. Don't let players put the server in a big loop
+				if(triggerIndex >= groupInstance.TriggerCount + 30)
+					continue;
+
 				int actionIndex = 0;
 				for (ActionInstance action : groupInstance.GetActions())
 				{
@@ -517,10 +522,17 @@ public class ActionStack
 
 					ActionInstance.NetData netData = msg.Data.GetNetData(triggerIndex, actionIndex);
 					action.UpdateFromNetData(netData, triggerIndex);
-					action.OnTriggerServer(triggerIndex);
 					actionIndex++;
 				}
-				groupInstance.TriggerCount = Maths.Max(triggerIndex, groupInstance.TriggerCount);
+
+				while(groupInstance.TriggerCount <= triggerIndex)
+				{
+					for (ActionInstance action : groupInstance.GetActions())
+					{
+						action.OnTriggerServer(triggerIndex);
+					}
+					groupInstance.TriggerCount++;
+				}
 
 				// When we get a release message, we may need to do a bit of catchup in missed triggers
 				if (msg.Data.GetPressType() == EPressType.Release)
