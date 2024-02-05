@@ -120,5 +120,6 @@
         "hideDefaultMesh": true
     },
     "modelParts": [],
-    "animationSet": "flansmod:radio"
+    "animationSet": "flansmod:radio",
+    "particleCount": 1
 }

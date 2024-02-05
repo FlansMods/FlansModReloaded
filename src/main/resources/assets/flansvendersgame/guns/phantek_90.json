@@ -566,5 +566,6 @@
         "hideDefaultMesh": true
     },
     "modelParts": [],
-    "animationSet": "flansmod:p90"
+    "animationSet": "flansmod:p90",
+    "particleCount": 1
 }

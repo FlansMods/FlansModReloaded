@@ -1,8 +1,6 @@
 {
   "replace": "false",
   "values": [
-    "flansbasicparts:nethersteel_ingot",
-    "flansbasicparts:nethersteel_nugget",
     "flansbasicparts:nethersteel_sheet"
   ]
 }

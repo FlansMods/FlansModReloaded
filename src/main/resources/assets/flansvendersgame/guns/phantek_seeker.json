@@ -501,5 +501,6 @@
         "hideDefaultMesh": true
     },
     "modelParts": [],
-    "animationSet": "flansmod:end_loaded"
+    "animationSet": "flansmod:end_loaded",
+    "particleCount": 1
 }

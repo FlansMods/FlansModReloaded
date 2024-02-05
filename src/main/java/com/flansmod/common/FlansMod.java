@@ -54,6 +54,7 @@ import net.minecraft.world.item.*;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraftforge.api.distmarker.Dist;
@@ -282,7 +283,7 @@ public class FlansMod
     public static RegistryObject<Block> Workbench_Block(DeferredRegister<Block> blockRegister, String modID, String name)
     {
         ResourceLocation loc = new ResourceLocation(modID, name);
-        return blockRegister.register(name, () -> new WorkbenchBlock(loc, BlockBehaviour.Properties.of().dynamicShape()));
+        return blockRegister.register(name, () -> new WorkbenchBlock(loc, BlockBehaviour.Properties.copy(Blocks.IRON_BLOCK).dynamicShape()));
     }
 
     public static RegistryObject<Item> Workbench_Item(DeferredRegister<Item> itemRegister, String modID, String name, RegistryObject<Block> block)

@@ -576,5 +576,6 @@
         "hideDefaultMesh": false
     },
     "modelParts": [],
-    "animationSet": "flansmod:pistol_slide_magazine_fed"
+    "animationSet": "flansmod:pistol_slide_magazine_fed",
+    "particleCount": 1
 }

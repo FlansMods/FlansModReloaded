@@ -1,0 +1,11 @@
+{
+  "replace": "false",
+  "values": [
+    "flansvendersgame:fc_diamond_sights",
+    "flansvendersgame:fc_telescopic_sight",
+    "flansvendersgame:hm_acog",
+    "flansvendersgame:hm_pinpoint_sight",
+    "flansvendersgame:hm_red_dot",
+    "flansvendersgame:phantek_4x_optic"
+  ]
+}

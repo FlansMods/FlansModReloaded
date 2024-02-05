@@ -1,0 +1,11 @@
+{
+  "replace": "false",
+  "values": [
+    "flansvendersgame:dragons_breath_infuser",
+    "flansvendersgame:fc_aged_oak_stock",
+    "flansvendersgame:hm_shell_rack_stock",
+    "flansvendersgame:hm_snap_stock",
+    "flansvendersgame:phantek_impact_stock",
+    "flansvendersgame:phantek_shotgun_silencer"
+  ]
+}

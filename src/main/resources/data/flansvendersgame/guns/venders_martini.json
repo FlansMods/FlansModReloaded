@@ -544,5 +544,6 @@
         "hideDefaultMesh": true
     },
     "modelParts": [],
-    "animationSet": "flansmod:martini_action"
+    "animationSet": "flansmod:martini_action",
+    "particleCount": 1
 }

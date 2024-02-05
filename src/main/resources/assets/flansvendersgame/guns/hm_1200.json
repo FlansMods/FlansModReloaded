@@ -576,5 +576,6 @@
         "hideDefaultMesh": true
     },
     "modelParts": [],
-    "animationSet": "flansmod:shotgun_pump_individually_fed"
+    "animationSet": "flansmod:shotgun_pump_individually_fed",
+    "particleCount": 1
 }

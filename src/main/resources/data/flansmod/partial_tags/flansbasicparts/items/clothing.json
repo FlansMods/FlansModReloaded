@@ -1,0 +1,9 @@
+{
+  "replace": "false",
+  "values": [
+    "flansbasicparts:kevlar_clothing",
+    "flansbasicparts:leather_clothing",
+    "flansbasicparts:polyester_clothing",
+    "flansbasicparts:wool_clothing"
+  ]
+}

@@ -4,6 +4,7 @@ import com.flansmod.common.FlansMod;
 import com.flansmod.common.types.JsonDefinition;
 import com.flansmod.common.types.JsonField;
 import com.flansmod.common.types.crafting.elements.*;
+import com.flansmod.common.types.elements.ItemDefinition;
 import com.flansmod.common.types.parts.PartDefinition;
 import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
@@ -41,6 +42,9 @@ public class WorkbenchDefinition extends JsonDefinition
 	public ArmourCraftingDefinition armourCrafting = new ArmourCraftingDefinition();
 	@JsonField
 	public ItemHoldingDefinition itemHolding = new ItemHoldingDefinition();
+
+	@JsonField
+	public ItemDefinition itemSettings = new ItemDefinition();
 
 	@JsonField
 	public WorkbenchSideDefinition[] sides = new WorkbenchSideDefinition[0];

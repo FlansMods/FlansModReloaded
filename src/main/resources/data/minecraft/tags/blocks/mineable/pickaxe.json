@@ -1,0 +1,10 @@
+{
+  "replace": "false",
+  "values": [
+    "flansbasicparts:bullet_fabricator",
+    "flansbasicparts:part_fabricator",
+    "flansvendersgame:fc_workbench",
+    "flansvendersgame:hm_workbench",
+    "flansvendersgame:phantek_workbench"
+  ]
+}

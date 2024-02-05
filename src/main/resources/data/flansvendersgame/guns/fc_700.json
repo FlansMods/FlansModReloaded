@@ -609,5 +609,6 @@
         "hideDefaultMesh": true
     },
     "modelParts": [],
-    "animationSet": "flansmod:bolt_action_magazine_fed"
+    "animationSet": "flansmod:bolt_action_magazine_fed",
+    "particleCount": 1
 }

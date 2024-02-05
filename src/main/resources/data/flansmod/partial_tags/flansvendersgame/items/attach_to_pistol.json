@@ -1,0 +1,12 @@
+{
+  "replace": "false",
+  "values": [
+    "flansvendersgame:fc_aged_oak_stock",
+    "flansvendersgame:fc_deluxe_compensator",
+    "flansvendersgame:hm_pocket_silencer",
+    "flansvendersgame:hm_precision_barrel",
+    "flansvendersgame:hm_snap_stock",
+    "flansvendersgame:phantek_impact_stock",
+    "flansvendersgame:phantek_silencer"
+  ]
+}

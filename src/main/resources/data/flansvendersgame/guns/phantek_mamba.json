@@ -597,5 +597,6 @@
         "hideDefaultMesh": true
     },
     "modelParts": [],
-    "animationSet": "flansmod:ar_bullpup"
+    "animationSet": "flansmod:ar_bullpup",
+    "particleCount": 1
 }

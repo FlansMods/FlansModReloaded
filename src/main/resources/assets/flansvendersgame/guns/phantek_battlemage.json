@@ -556,5 +556,6 @@
         "hideDefaultMesh": true
     },
     "modelParts": [],
-    "animationSet": "flansmod:g11"
+    "animationSet": "flansmod:g11",
+    "particleCount": 1
 }

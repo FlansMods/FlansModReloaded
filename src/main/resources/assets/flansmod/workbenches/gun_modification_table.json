@@ -47,5 +47,9 @@
         "allow": "",
         "maxStackSize": 64
     },
+    "itemSettings": {
+        "maxStackSize": 64,
+        "tags": []
+    },
     "sides": []
 }

@@ -1,0 +1,14 @@
+{
+  "replace": "false",
+  "values": [
+    "flansbasicparts:aluminium_mechanical_parts",
+    "flansbasicparts:carbon_fiber_mechanical_parts",
+    "flansbasicparts:dense_wood_mechanical_parts",
+    "flansbasicparts:hard_wood_mechanical_parts",
+    "flansbasicparts:iron_mechanical_parts",
+    "flansbasicparts:nethersteel_mechanical_parts",
+    "flansbasicparts:phantex_mechanical_parts",
+    "flansbasicparts:soft_wood_mechanical_parts",
+    "flansbasicparts:steel_mechanical_parts"
+  ]
+}

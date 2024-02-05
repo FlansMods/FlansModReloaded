@@ -590,5 +590,6 @@
         "hideDefaultMesh": true
     },
     "modelParts": [],
-    "animationSet": "flansmod:break_action_individually_fed"
+    "animationSet": "flansmod:break_action_individually_fed",
+    "particleCount": 1
 }

@@ -1,0 +1,8 @@
+{
+  "replace": "false",
+  "values": [
+    "flansbasicparts:fire_mode_auto",
+    "flansbasicparts:fire_mode_burst",
+    "flansbasicparts:fire_mode_single"
+  ]
+}

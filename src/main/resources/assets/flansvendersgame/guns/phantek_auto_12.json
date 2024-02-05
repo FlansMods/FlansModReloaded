@@ -561,5 +561,6 @@
         "hideDefaultMesh": true
     },
     "modelParts": [],
-    "animationSet": "flansmod:rifle_magazine_fed_linear"
+    "animationSet": "flansmod:rifle_magazine_fed_linear",
+    "particleCount": 1
 }

@@ -1,0 +1,28 @@
+{
+  "replace": "false",
+  "values": [
+    "flansbasicparts:artillery_shell",
+    "flansbasicparts:artillery_shell_ap",
+    "flansbasicparts:artillery_shell_ex",
+    "flansbasicparts:artillery_shell_incendiary",
+    "flansbasicparts:pistol_bullet",
+    "flansbasicparts:pistol_bullet_ap",
+    "flansbasicparts:pistol_bullet_ex",
+    "flansbasicparts:pistol_bullet_incendiary",
+    "flansbasicparts:projectile_grenade_ex",
+    "flansbasicparts:projectile_grenade_impact",
+    "flansbasicparts:projectile_grenade_incendiary",
+    "flansbasicparts:projectile_grenade_sticky",
+    "flansbasicparts:rifle_bullet",
+    "flansbasicparts:rifle_bullet_ap",
+    "flansbasicparts:rifle_bullet_ex",
+    "flansbasicparts:rifle_bullet_incendiary",
+    "flansbasicparts:shotgun_shell_ap",
+    "flansbasicparts:shotgun_shell_birdshot",
+    "flansbasicparts:shotgun_shell_buckshot",
+    "flansbasicparts:shotgun_shell_ex",
+    "flansbasicparts:shotgun_shell_flechette",
+    "flansbasicparts:shotgun_shell_flechette_poisoned",
+    "flansbasicparts:shotgun_shell_incendiary"
+  ]
+}

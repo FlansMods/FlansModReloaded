@@ -586,5 +586,6 @@
         "hideDefaultMesh": true
     },
     "modelParts": [],
-    "animationSet": "flansvendersgame:recoilless_rifle"
+    "animationSet": "flansvendersgame:recoilless_rifle",
+    "particleCount": 1
 }
