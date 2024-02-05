@@ -33,21 +33,27 @@ public class GunContextHistory extends ContextHistory<GunContext>
 	@Nonnull
 	public GunContext ContextualizeWith(@Nonnull ShooterContext shooter, int slotIndex)
 	{
-		return GetOrCreate(
+		GunContext gunContext = GetOrCreate(
 			(check) -> check.GetShooter() == shooter
 					&& check.GetInventorySlotIndex() == slotIndex,
 			() -> shooter.CreateContext(ID),
 			MinecraftHelpers::GetTick);
+
+		gunContext.UpdateFromItemStack();
+		return gunContext;
 	}
 
 	@Nonnull
 	public GunContext ContextualizeWith(@Nonnull ShooterContext shooter)
 	{
-		return GetOrCreate(
+		GunContext gunContext = GetOrCreate(
 			(check) -> check.GetShooter() == shooter
 					&& IsGunStillPresentIn(check, shooter),
 			() -> shooter.CreateContext(ID),
 			MinecraftHelpers::GetTick);
+
+		gunContext.UpdateFromItemStack();
+		return gunContext;
 	}
 
 	@Nonnull
@@ -77,12 +83,13 @@ public class GunContextHistory extends ContextHistory<GunContext>
 	@Nonnull
 	public GunContext ContextualizeWith(@Nonnull Container container, int slot)
 	{
+		final int slotIndex = slot;
 		return GetOrCreate(
 			(check) -> {
 				return check.GetAttachedInventory() == container
-					&& check.GetInventorySlotIndex() == slot;
+					&& check.GetInventorySlotIndex() == slotIndex;
 			},
-			() -> new GunContextInventoryItem(container, slot),
+			() -> new GunContextInventoryItem(container, slotIndex),
 			MinecraftHelpers::GetTick);
 	}
 

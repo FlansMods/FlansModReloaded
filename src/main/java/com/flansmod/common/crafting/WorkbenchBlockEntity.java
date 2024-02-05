@@ -1152,20 +1152,23 @@ public class WorkbenchBlockEntity extends BlockEntity implements WorldlyContaine
 	{
 		if(CanPaintGun(player, gunContainer, paintCanContainer, skinIndex))
 		{
-			if (gunContainer.getContainerSize() > 0 && !gunContainer.getItem(0).isEmpty() && gunContainer.getItem(0).getItem() instanceof FlanItem flanItem)
+			if (gunContainer.getContainerSize() > 0 && !gunContainer.getItem(0).isEmpty() && gunContainer.getItem(0).getItem() instanceof FlanItem)
 			{
-				ItemStack gunStack = gunContainer.getItem(0);
-				PaintableDefinition paintableDefinition = flanItem.GetPaintDef();
-				if (paintableDefinition.IsValid())
+				GunContext gunContext = GunContext.of(gunContainer, 0, player.level().isClientSide);
+				if(gunContext.IsValid())
 				{
-					if (skinIndex == 0)
+					PaintableDefinition paintableDefinition = gunContext.Def.paints;
+					if (paintableDefinition.IsValid())
 					{
-						flanItem.SetPaintjobName(gunStack, "default");
-					} else
-					{
-						PaintjobDefinition paintjobDefinition = paintableDefinition.paintjobs[skinIndex - 1];
-						paintCanContainer.getItem(0).setCount(paintCanContainer.getItem(0).getCount() - paintjobDefinition.paintBucketsRequired);
-						flanItem.SetPaintjobName(gunStack, paintjobDefinition.textureName);
+						if (skinIndex == 0)
+						{
+							gunContext.SetPaintjobName("default");
+						} else
+						{
+							PaintjobDefinition paintjobDefinition = paintableDefinition.paintjobs[skinIndex - 1];
+							paintCanContainer.getItem(0).setCount(paintCanContainer.getItem(0).getCount() - paintjobDefinition.paintBucketsRequired);
+							gunContext.SetPaintjobName(paintjobDefinition.textureName);
+						}
 					}
 				}
 			}
@@ -1231,7 +1234,6 @@ public class WorkbenchBlockEntity extends BlockEntity implements WorldlyContaine
 		{
 			if (gunContainer.getContainerSize() > 0 && !gunContainer.getItem(0).isEmpty() && gunContainer.getItem(0).getItem() instanceof GunItem gunItem)
 			{
-				ItemStack gunStack = gunContainer.getItem(0);
 				GunContext gunContext = GunContext.of(gunContainer, 0, player.level().isClientSide);
 				if(gunContext.IsValid())
 				{

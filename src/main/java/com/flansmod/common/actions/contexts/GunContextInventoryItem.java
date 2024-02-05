@@ -35,6 +35,8 @@ public class GunContextInventoryItem extends GunContextItem
 	}
 	@Override
 	public Container GetAttachedInventory() { return Inv; }
+	@Override
+	public int GetInventorySlotIndex() { return Slot; }
 	// There are no modifiers to apply right now
 	@Override
 	public int HashModifierSources() { return 0; }
