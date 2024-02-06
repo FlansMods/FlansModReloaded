@@ -6,8 +6,10 @@ import com.flansmod.common.FlansMod;
 import com.flansmod.common.actions.ActionGroupInstance;
 import com.flansmod.common.actions.ActionInstance;
 import com.flansmod.common.actions.EActionResult;
+import com.flansmod.common.actions.contexts.EContextSide;
 import com.flansmod.common.actions.contexts.GunContext;
 import com.flansmod.common.actions.contexts.GunshotContext;
+import com.flansmod.common.actions.contexts.ShooterContext;
 import com.flansmod.common.gunshots.*;
 import com.flansmod.common.item.BulletItem;
 import com.flansmod.common.projectiles.BulletEntity;
@@ -147,6 +149,15 @@ public class ShootAction extends ActionInstance
 			return false;
 		if(Group.Context.IsReloadInProgress())
 			return false;
+
+		// Do not auto-retrigger player shots. We would rather let them tell us where they (claim to) shoot
+		ShooterContext shooter = Group.Context.Gun.GetShooter();
+		if(shooter.IsValid() && shooter.GetSide() == EContextSide.Server)
+		{
+			if(shooter.IsPlayerOwner())
+				return false;
+		}
+
 
 		return true;
 	}

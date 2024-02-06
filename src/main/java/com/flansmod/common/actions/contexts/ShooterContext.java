@@ -119,7 +119,10 @@ public abstract class ShooterContext
 		ModifierHash = 0;
 		IsCurrent = true;
 	}
-
+	public boolean IsPlayerOwner()
+	{
+		return Owner() != null && Owner() instanceof Player player;
+	}
 	public boolean IsLocalPlayerOwner()
 	{
 		return Owner() != null && Owner() instanceof Player player && player.isLocalPlayer();
