@@ -2,9 +2,9 @@
     "itemSettings": {
         "maxStackSize": 1,
         "tags": [
-            "flansmod:items/attach_to_any",
-            "flansmod:items/grip_attach",
-            "flansbasicparts:items/add_to_part_fab"
+            "flansmod:attach_to_any",
+            "flansmod:grip_attach",
+            "flansbasicparts:add_to_part_fab"
         ]
     },
     "attachmentType": "Grip",

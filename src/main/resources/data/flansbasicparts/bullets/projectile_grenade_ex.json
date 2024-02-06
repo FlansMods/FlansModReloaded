@@ -2,8 +2,8 @@
     "itemSettings": {
         "maxStackSize": 64,
         "tags": [
-            "flansmod:items/bullet",
-            "flansmod:items/launchable_grenade"
+            "flansmod:bullet",
+            "flansmod:launchable_grenade"
         ]
     },
     "roundsPerItem": 1,

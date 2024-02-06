@@ -9,8 +9,8 @@
     "itemSettings": {
         "maxStackSize": 64,
         "tags": [
-            "flansmod:items/part",
-            "forge:items/nuggets/aluminum"
+            "flansmod:part",
+            "forge:nuggets/aluminum"
         ]
     },
     "modifiers": [],

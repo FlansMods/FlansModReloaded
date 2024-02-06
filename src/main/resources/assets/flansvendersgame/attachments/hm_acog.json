@@ -2,8 +2,8 @@
     "itemSettings": {
         "maxStackSize": 1,
         "tags": [
-            "flansmod:items/attach_to_any",
-            "flansmod:items/sights_attach"
+            "flansmod:attach_to_any",
+            "flansmod:sights_attach"
         ]
     },
     "attachmentType": "Sights",

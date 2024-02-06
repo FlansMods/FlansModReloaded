@@ -2,8 +2,8 @@
     "itemSettings": {
         "maxStackSize": 64,
         "tags": [
-            "flansmod:items/bullet",
-            "flansmod:items/artillery_shell"
+            "flansmod:bullet",
+            "flansmod:artillery_shell"
         ]
     },
     "roundsPerItem": 1,

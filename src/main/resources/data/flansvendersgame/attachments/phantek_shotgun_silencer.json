@@ -2,9 +2,9 @@
     "itemSettings": {
         "maxStackSize": 1,
         "tags": [
-            "flansmod:items/attach_to_shotgun",
-            "flansmod:items/barrel_attach",
-            "flansbasicparts:items/add_to_part_fab"
+            "flansmod:attach_to_shotgun",
+            "flansmod:barrel_attach",
+            "flansbasicparts:add_to_part_fab"
         ]
     },
     "attachmentType": "Barrel",

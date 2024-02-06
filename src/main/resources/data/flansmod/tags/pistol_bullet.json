@@ -1,9 +1,0 @@
-{
-  "replace": "false",
-  "values": [
-    "flansbasicparts:pistol_bullet",
-    "flansbasicparts:pistol_bullet_ap",
-    "flansbasicparts:pistol_bullet_ex",
-    "flansbasicparts:pistol_bullet_incendiary"
-  ]
-}

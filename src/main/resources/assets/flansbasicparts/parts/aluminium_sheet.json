@@ -9,8 +9,8 @@
     "itemSettings": {
         "maxStackSize": 64,
         "tags": [
-            "flansmod:items/part",
-            "forge:items/plates/aluminum"
+            "flansmod:part",
+            "forge:plates/aluminum"
         ]
     },
     "modifiers": [],
