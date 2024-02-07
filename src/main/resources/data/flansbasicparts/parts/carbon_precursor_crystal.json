@@ -25,5 +25,5 @@
         "batterySlots": 0,
         "FECapacity": 0
     },
-    "material": "minecraft:null"
+    "material": ":"
 }

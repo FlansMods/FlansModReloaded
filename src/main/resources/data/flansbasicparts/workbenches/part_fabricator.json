@@ -1,10 +1,13 @@
 {
     "titleString": "workbench",
-    "bannerTextureLocation": "",
+    "bannerTextureLocation": "minecraft:null",
     "gunCrafting": {
         "isActive": false,
-        "craftsByName": [],
-        "craftsByTag": [],
+        "craftableGuns": {
+            "itemIDFilters": [],
+            "itemTagFilters": [],
+            "materialFilters": []
+        },
         "maxSlots": 8,
         "FECostPerCraft": 0
     },
@@ -14,226 +17,41 @@
         "outputSlots": 16,
         "timePerCraft": 1.0,
         "FECostPerCraft": 0.0,
-        "partsByName": [
-            "flansbasicparts:fire_mode_auto",
-            "flansbasicparts:fire_mode_single",
-            "flansbasicparts:fire_mode_burst"
-        ],
-        "partsByTag": [
-            "flansbasicparts:add_to_part_fab"
-        ],
-        "partsByTier": [
-            {
-                "tag": "flansmod:upper_receiver",
-                "minMaterialTier": 1,
-                "maxMaterialTier": 5,
-                "allowedMaterials": [
-                    "Misc",
-                    "Wood",
-                    "Glass",
-                    "Metal",
-                    "Composite",
-                    "Electronic",
-                    "Fabric"
-                ]
-            },
-            {
-                "tag": "flansmod:lower_receiver",
-                "minMaterialTier": 1,
-                "maxMaterialTier": 5,
-                "allowedMaterials": [
-                    "Misc",
-                    "Wood",
-                    "Glass",
-                    "Metal",
-                    "Composite",
-                    "Electronic",
-                    "Fabric"
-                ]
-            },
-            {
-                "tag": "flansmod:barrel",
-                "minMaterialTier": 1,
-                "maxMaterialTier": 5,
-                "allowedMaterials": [
-                    "Misc",
-                    "Wood",
-                    "Glass",
-                    "Metal",
-                    "Composite",
-                    "Electronic",
-                    "Fabric"
-                ]
-            },
-            {
-                "tag": "flansmod:stock",
-                "minMaterialTier": 1,
-                "maxMaterialTier": 5,
-                "allowedMaterials": [
-                    "Misc",
-                    "Wood",
-                    "Glass",
-                    "Metal",
-                    "Composite",
-                    "Electronic",
-                    "Fabric"
-                ]
-            },
-            {
-                "tag": "flansmod:grip",
-                "minMaterialTier": 1,
-                "maxMaterialTier": 5,
-                "allowedMaterials": [
-                    "Misc",
-                    "Wood",
-                    "Glass",
-                    "Metal",
-                    "Composite",
-                    "Electronic",
-                    "Fabric"
-                ]
-            },
-            {
-                "tag": "flansmod:circuitry",
-                "minMaterialTier": 1,
-                "maxMaterialTier": 5,
-                "allowedMaterials": [
-                    "Misc",
-                    "Wood",
-                    "Glass",
-                    "Metal",
-                    "Composite",
-                    "Electronic",
-                    "Fabric"
-                ]
-            },
-            {
-                "tag": "flansmod:engine",
-                "minMaterialTier": 1,
-                "maxMaterialTier": 5,
-                "allowedMaterials": [
-                    "Misc",
-                    "Wood",
-                    "Glass",
-                    "Metal",
-                    "Composite",
-                    "Electronic",
-                    "Fabric"
-                ]
-            },
-            {
-                "tag": "flansmod:structural_parts",
-                "minMaterialTier": 1,
-                "maxMaterialTier": 5,
-                "allowedMaterials": [
-                    "Misc",
-                    "Wood",
-                    "Glass",
-                    "Metal",
-                    "Composite",
-                    "Electronic",
-                    "Fabric"
-                ]
-            },
-            {
-                "tag": "flansmod:mechanical_parts",
-                "minMaterialTier": 1,
-                "maxMaterialTier": 5,
-                "allowedMaterials": [
-                    "Misc",
-                    "Wood",
-                    "Glass",
-                    "Metal",
-                    "Composite",
-                    "Electronic",
-                    "Fabric"
-                ]
-            },
-            {
-                "tag": "flansmod:propeller",
-                "minMaterialTier": 1,
-                "maxMaterialTier": 5,
-                "allowedMaterials": [
-                    "Misc",
-                    "Wood",
-                    "Glass",
-                    "Metal",
-                    "Composite",
-                    "Electronic",
-                    "Fabric"
-                ]
-            },
-            {
-                "tag": "flansmod:armour",
-                "minMaterialTier": 1,
-                "maxMaterialTier": 5,
-                "allowedMaterials": [
-                    "Misc",
-                    "Wood",
-                    "Glass",
-                    "Metal",
-                    "Composite",
-                    "Electronic",
-                    "Fabric"
-                ]
-            },
-            {
-                "tag": "flansmod:seat",
-                "minMaterialTier": 1,
-                "maxMaterialTier": 5,
-                "allowedMaterials": [
-                    "Misc",
-                    "Wood",
-                    "Glass",
-                    "Metal",
-                    "Composite",
-                    "Electronic",
-                    "Fabric"
-                ]
-            },
-            {
-                "tag": "flansmod:wheel",
-                "minMaterialTier": 1,
-                "maxMaterialTier": 5,
-                "allowedMaterials": [
-                    "Misc",
-                    "Wood",
-                    "Glass",
-                    "Metal",
-                    "Composite",
-                    "Electronic",
-                    "Fabric"
-                ]
-            },
-            {
-                "tag": "flansmod:canvas",
-                "minMaterialTier": 1,
-                "maxMaterialTier": 5,
-                "allowedMaterials": [
-                    "Misc",
-                    "Wood",
-                    "Glass",
-                    "Metal",
-                    "Composite",
-                    "Electronic",
-                    "Fabric"
-                ]
-            },
-            {
-                "tag": "flansmod:clothing",
-                "minMaterialTier": 1,
-                "maxMaterialTier": 5,
-                "allowedMaterials": [
-                    "Misc",
-                    "Wood",
-                    "Glass",
-                    "Metal",
-                    "Composite",
-                    "Electronic",
-                    "Fabric"
-                ]
-            }
-        ]
+        "craftableParts": {
+            "itemIDFilters": [
+                {
+                    "filterType": "Allow",
+                    "matchResourceLocations": [
+                        "flansbasicparts:fire_mode_auto",
+                        "flansbasicparts:fire_mode_single",
+                        "flansbasicparts:fire_mode_burst"
+                    ]
+                }
+            ],
+            "itemTagFilters": [
+                {
+                    "filterType": "Allow",
+                    "matchResourceLocations": [
+                        "flansbasicparts:add_to_part_fab"
+                    ]
+                }
+            ],
+            "materialFilters": [
+                {
+                    "filterType": "Allow",
+                    "materialTypes": [
+                        "Wood",
+                        "Glass",
+                        "Metal",
+                        "Composite",
+                        "Electronic",
+                        "Fabric"
+                    ],
+                    "minTier": 1,
+                    "maxTier": 5
+                }
+            ]
+        }
     },
     "gunModifying": {
         "isActive": false,
@@ -256,7 +74,11 @@
     },
     "armourCrafting": {
         "isActive": false,
-        "pages": [],
+        "craftableArmour": {
+            "itemIDFilters": [],
+            "itemTagFilters": [],
+            "materialFilters": []
+        },
         "FECostPerCraft": 0
     },
     "itemHolding": {

@@ -8,9 +8,9 @@
     "upgradeCost": 0,
     "numRounds": 4,
     "allRoundsMustBeIdentical": false,
-    "matchBulletNames": [],
-    "requiredBulletTags": [
-        "flansmod:rifle_bullet"
-    ],
-    "disallowedBulletTags": []
+    "matchingBullets": {
+        "itemIDFilters": [],
+        "itemTagFilters": [],
+        "materialFilters": []
+    }
 }

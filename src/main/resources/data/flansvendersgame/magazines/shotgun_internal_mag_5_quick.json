@@ -19,9 +19,16 @@
     "upgradeCost": 2,
     "numRounds": 5,
     "allRoundsMustBeIdentical": false,
-    "matchBulletNames": [],
-    "requiredBulletTags": [
-        "flansmod:shotgun_shell"
-    ],
-    "disallowedBulletTags": []
+    "matchingBullets": {
+        "itemIDFilters": [],
+        "itemTagFilters": [
+            {
+                "filterType": "Allow",
+                "matchResourceLocations": [
+                    "flansmod:shotgun_shell"
+                ]
+            }
+        ],
+        "materialFilters": []
+    }
 }

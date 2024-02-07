@@ -1,8 +1,8 @@
 package com.flansmod.common.types.elements;
 
+import com.flansmod.common.types.JsonDefinition;
 import com.flansmod.common.types.JsonField;
-import com.flansmod.common.types.crafting.elements.IngredientDefinition;
-import com.flansmod.common.types.crafting.elements.RecipePartDefinition;
+import net.minecraft.resources.ResourceLocation;
 
 import javax.annotation.Nonnull;
 
@@ -11,13 +11,13 @@ public class ItemDefinition
 	@JsonField
 	public int maxStackSize = 64;
 	@JsonField
-	public String[] tags = new String[0];
+	public ResourceLocation[] tags = new ResourceLocation[0];
 
-	public boolean Matches(@Nonnull String match)
+	public boolean Matches(@Nonnull ResourceLocation match)
 	{
-		if(match.isEmpty())
+		if(!JsonDefinition.IsValidLocation(match))
 			return true;
-		for(String tag : tags)
+		for(ResourceLocation tag : tags)
 			if(tag.equals(match))
 				return true;
 		return false;

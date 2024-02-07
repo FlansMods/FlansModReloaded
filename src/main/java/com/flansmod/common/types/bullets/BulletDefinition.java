@@ -8,6 +8,8 @@ import com.flansmod.common.types.elements.ItemDefinition;
 import com.flansmod.common.types.guns.elements.ShotDefinition;
 import net.minecraft.resources.ResourceLocation;
 
+import javax.annotation.Nonnull;
+
 public class BulletDefinition extends JsonDefinition
 {
 	public static final BulletDefinition INVALID = new BulletDefinition(new ResourceLocation(FlansMod.MODID, "bullets/null"));
@@ -17,9 +19,9 @@ public class BulletDefinition extends JsonDefinition
 	@Override
 	public String GetTypeName() { return TYPE; }
 
-	public boolean HasTag(String tag)
+	public boolean HasTag(@Nonnull ResourceLocation tag)
 	{
-		for (String s : itemSettings.tags)
+		for (ResourceLocation s : itemSettings.tags)
 			if (s.equals(tag))
 				return true;
 		return false;

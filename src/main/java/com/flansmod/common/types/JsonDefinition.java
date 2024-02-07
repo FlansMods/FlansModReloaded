@@ -4,9 +4,12 @@ import com.flansmod.common.FlansMod;
 import com.google.gson.JsonElement;
 import net.minecraft.resources.ResourceLocation;
 
+import javax.annotation.Nonnull;
+
 public abstract class JsonDefinition
 {
 	public static ResourceLocation InvalidLocation = new ResourceLocation(FlansMod.MODID, "null");
+	public static boolean IsValidLocation(@Nonnull ResourceLocation loc) { return !loc.equals(InvalidLocation); }
 
 	public String GetLocationString() { return Location.toString(); }
 	public ResourceLocation GetLocation() { return Location; }

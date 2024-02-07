@@ -8,9 +8,16 @@
     "upgradeCost": 0,
     "numRounds": 1,
     "allRoundsMustBeIdentical": true,
-    "matchBulletNames": [],
-    "requiredBulletTags": [
-        "flansmod:rocket"
-    ],
-    "disallowedBulletTags": []
+    "matchingBullets": {
+        "itemIDFilters": [],
+        "itemTagFilters": [
+            {
+                "filterType": "Allow",
+                "matchResourceLocations": [
+                    "flansmod:rocket"
+                ]
+            }
+        ],
+        "materialFilters": []
+    }
 }

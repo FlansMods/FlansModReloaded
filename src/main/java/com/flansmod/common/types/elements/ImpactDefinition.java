@@ -1,12 +1,16 @@
 package com.flansmod.common.types.elements;
 
+import com.flansmod.common.types.JsonDefinition;
 import com.flansmod.common.types.JsonField;
 import com.flansmod.common.types.guns.elements.ActionDefinition;
+import net.minecraft.resources.ResourceLocation;
+
+import static com.flansmod.common.types.JsonDefinition.InvalidLocation;
 
 public class ImpactDefinition
 {
 	@JsonField
-	public String decal = "";
+	public ResourceLocation decal = InvalidLocation;
 
 	@JsonField
 	public float damageToTarget = 1.0f;

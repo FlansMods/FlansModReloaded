@@ -3,17 +3,12 @@ package com.flansmod.common.types.crafting.elements;
 import com.flansmod.common.FlansMod;
 import com.flansmod.common.crafting.recipes.GunFabricationRecipe;
 import com.flansmod.common.types.JsonField;
+import com.flansmod.common.types.elements.ItemCollectionDefinition;
 import net.minecraft.core.RegistryAccess;
-import net.minecraft.core.registries.Registries;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.tags.TagKey;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.registries.ForgeRegistries;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -23,9 +18,7 @@ public class GunCraftingDefinition
 	@JsonField
 	public boolean isActive = false;
 	@JsonField
-	public String[] craftsByName = new String[0];
-	@JsonField
-	public String[] craftsByTag = new String[0];
+	public ItemCollectionDefinition craftableGuns = new ItemCollectionDefinition();
 	@JsonField
 	public int maxSlots = 8;
 	@JsonField
@@ -33,40 +26,13 @@ public class GunCraftingDefinition
 
 	// -----------
 	// Caching
-	@Nullable
-	private List<ItemStack> Matches = null;
 	@Nonnull
 	private final HashMap<Level, List<GunFabricationRecipe>> RecipeCaches = new HashMap<>();
 
 	@Nonnull
 	public List<ItemStack> GetAllOutputs()
 	{
-		if (Matches == null)
-		{
-			Matches = new ArrayList<>();
-			// Check for items by name or tag first
-			List<ResourceLocation> matchResLocs = new ArrayList<>(craftsByName.length);
-			List<TagKey<Item>> matchTagKeys = new ArrayList<>();
-			for(String name : craftsByName)
-				matchResLocs.add(new ResourceLocation(name));
-			for(String tag : craftsByTag)
-				matchTagKeys.add(TagKey.create(Registries.ITEM, new ResourceLocation(tag)));
-			for(Item item : ForgeRegistries.ITEMS.getValues())
-			{
-				if(matchResLocs.contains(item.builtInRegistryHolder().key().location()))
-					Matches.add(new ItemStack(item));
-				else
-				{
-					for (TagKey<Item> tag : matchTagKeys)
-						if (item.builtInRegistryHolder().is(tag))
-						{
-							Matches.add(new ItemStack(item));
-							break;
-						}
-				}
-			}
-		}
-		return Matches;
+		return craftableGuns.GetItemMatches();
 	}
 	@Nonnull
 	public List<GunFabricationRecipe> GetAllRecipes(@Nonnull Level level)

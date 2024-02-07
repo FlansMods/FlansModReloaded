@@ -13,6 +13,7 @@ import com.flansmod.common.actions.contexts.ShooterContext;
 import com.flansmod.common.gunshots.*;
 import com.flansmod.common.item.BulletItem;
 import com.flansmod.common.projectiles.BulletEntity;
+import com.flansmod.common.types.JsonDefinition;
 import com.flansmod.common.types.bullets.BulletDefinition;
 import com.flansmod.common.types.guns.elements.ActionDefinition;
 import com.flansmod.common.types.guns.elements.ESpreadPattern;
@@ -584,10 +585,10 @@ public class ShootAction extends ActionInstance
 								ClientLevel level = Minecraft.getInstance().level;
 								BlockHitResult blockHit = (BlockHitResult) hit;
 								if (shootActionDef != null && gunshotContext.Bullet.shootStats.impact.decal != null
-									&& gunshotContext.Bullet.shootStats.impact.decal.length() > 0)
+									&& JsonDefinition.IsValidLocation(gunshotContext.Bullet.shootStats.impact.decal))
 								{
 									FlansModClient.DECAL_RENDERER.AddDecal(
-										ResourceLocation.tryParse(gunshotContext.Bullet.shootStats.impact.decal + ".png").withPrefix("textures/"),
+										gunshotContext.Bullet.shootStats.impact.decal.withPrefix("textures/").withSuffix(".png"),
 										blockHit.getLocation(),
 										blockHit.getDirection(),
 										level.random.nextFloat() * 360.0f,

@@ -12,7 +12,6 @@ import com.flansmod.common.item.FlanItem;
 import com.flansmod.common.item.GunItem;
 import com.flansmod.common.types.crafting.EWorkbenchInventoryType;
 import com.flansmod.common.types.crafting.WorkbenchDefinition;
-import com.flansmod.common.types.crafting.elements.TieredIngredientDefinition;
 import com.flansmod.common.types.crafting.elements.WorkbenchIOSettingDefinition;
 import com.flansmod.common.types.crafting.elements.WorkbenchSideDefinition;
 import com.flansmod.common.types.elements.MaterialSourceDefinition;

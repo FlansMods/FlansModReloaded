@@ -1,6 +1,7 @@
 package com.flansmod.common.crafting.ingredients;
 
 import com.flansmod.common.FlansMod;
+import com.flansmod.common.types.JsonDefinition;
 import com.flansmod.common.types.crafting.EMaterialType;
 import com.flansmod.common.types.crafting.MaterialDefinition;
 import com.flansmod.common.types.parts.PartDefinition;
@@ -31,7 +32,7 @@ public class TieredPartIngredient extends AbstractIngredient implements IExtraIn
 	public final int MaterialTierMin;
 	public final int MaterialTierMax;
 	@Nonnull
-	public final String MatchTag;
+	public final ResourceLocation MatchTag;
 
 	// Matching stack cache
 	@Nullable
@@ -66,7 +67,7 @@ public class TieredPartIngredient extends AbstractIngredient implements IExtraIn
 	public TieredPartIngredient(@Nonnull EMaterialType[] materialTypes,
 								int tierMin,
 								int tierMax,
-								@Nonnull String matchTag)
+								@Nonnull ResourceLocation matchTag)
 	{
 		MaterialTypes = materialTypes;
 		MaterialTierMin = tierMin;
@@ -78,7 +79,7 @@ public class TieredPartIngredient extends AbstractIngredient implements IExtraIn
 	public void GenerateTooltip(@Nonnull List<Component> lines, boolean advanced)
 	{
 		// --- Match Tag ---
-		if(!MatchTag.isEmpty())
+		if(JsonDefinition.IsValidLocation(MatchTag))
 			lines.add(Component.translatable("crafting.with_tag", MatchTag));
 
 		// --- Match Materials ---
@@ -139,7 +140,7 @@ public class TieredPartIngredient extends AbstractIngredient implements IExtraIn
 		if (CachedMatchingStacks == null)
 		{
 			List<ItemStack> matching = new ArrayList<>();
-			TagKey<Item> matchTagKey = TagKey.create(ForgeRegistries.ITEMS.getRegistryKey(), new ResourceLocation(MatchTag));
+			TagKey<Item> matchTagKey = TagKey.create(ForgeRegistries.ITEMS.getRegistryKey(), MatchTag);
 			for(ResourceLocation partID : FlansMod.PARTS.getIds())
 			{
 				Item partItem = ForgeRegistries.ITEMS.getValue(partID);
@@ -180,7 +181,7 @@ public class TieredPartIngredient extends AbstractIngredient implements IExtraIn
 		json.add("materials", jMatArray);
 		json.addProperty("min", MaterialTierMin);
 		json.addProperty("max", MaterialTierMax);
-		json.addProperty("tag", MatchTag);
+		json.addProperty("tag", MatchTag.toString());
 		return json;
 	}
 
@@ -208,7 +209,7 @@ public class TieredPartIngredient extends AbstractIngredient implements IExtraIn
 			String tag = GsonHelper.getAsString(json, "tag", "flansmod:generic");
 			int min = GsonHelper.getAsInt(json, "min", 1);
 			int max = GsonHelper.getAsInt(json, "max", Integer.MAX_VALUE);
-			return new TieredPartIngredient(materialTypes, min, max, tag);
+			return new TieredPartIngredient(materialTypes, min, max, new ResourceLocation(tag));
 		}
 
 		@Override
@@ -217,7 +218,7 @@ public class TieredPartIngredient extends AbstractIngredient implements IExtraIn
 			buffer.writeInt(MaterialsToFlags(ingredient.MaterialTypes));
 			buffer.writeInt(ingredient.MaterialTierMin);
 			buffer.writeInt(ingredient.MaterialTierMax);
-			buffer.writeUtf(ingredient.MatchTag);
+			buffer.writeResourceLocation(ingredient.MatchTag);
 		}
 
 		@Override
@@ -228,7 +229,7 @@ public class TieredPartIngredient extends AbstractIngredient implements IExtraIn
 			EMaterialType[] materialTypes = MaterialsFromFlags(materialFlags);
 			int min = buffer.readInt();
 			int max = buffer.readInt();
-			String tag = buffer.readUtf();
+			ResourceLocation tag = buffer.readResourceLocation();
 			return new TieredPartIngredient(materialTypes, min, max, tag);
 		}
 	}

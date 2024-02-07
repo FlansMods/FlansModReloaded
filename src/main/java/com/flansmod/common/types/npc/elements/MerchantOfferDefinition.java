@@ -1,8 +1,6 @@
 package com.flansmod.common.types.npc.elements;
 
 import com.flansmod.common.types.JsonField;
-import com.flansmod.common.types.crafting.elements.IngredientDefinition;
-import com.flansmod.common.types.crafting.elements.RecipePartDefinition;
 import com.flansmod.common.types.elements.ItemStackDefinition;
 
 public class MerchantOfferDefinition

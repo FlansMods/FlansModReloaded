@@ -18,7 +18,7 @@
         "breaksBlockTags": [],
         "penetrationPower": 0.0,
         "impact": {
-            "decal": "",
+            "decal": "minecraft:null",
             "damageToTarget": 1.0,
             "multiplierVsPlayers": 1.0,
             "multiplierVsVehicles": 10.0,

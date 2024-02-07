@@ -28,7 +28,7 @@ public class WorkbenchDefinition extends JsonDefinition
 	@JsonField
 	public String titleString = "workbench";
 	@JsonField
-	public String bannerTextureLocation = "";
+	public ResourceLocation bannerTextureLocation = InvalidLocation;
 
 	@JsonField
 	public GunCraftingDefinition gunCrafting = new GunCraftingDefinition();

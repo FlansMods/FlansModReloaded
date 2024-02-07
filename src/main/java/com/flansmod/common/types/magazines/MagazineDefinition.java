@@ -3,10 +3,12 @@ package com.flansmod.common.types.magazines;
 import com.flansmod.common.FlansMod;
 import com.flansmod.common.types.JsonDefinition;
 import com.flansmod.common.types.JsonField;
+import com.flansmod.common.types.elements.ItemCollectionDefinition;
 import com.flansmod.common.types.elements.ModifierDefinition;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.ItemStack;
 
-import java.util.ArrayList;
+import javax.annotation.Nonnull;
 import java.util.List;
 
 public class MagazineDefinition extends JsonDefinition
@@ -22,51 +24,6 @@ public class MagazineDefinition extends JsonDefinition
 		super(resLoc);
 	}
 
-	private List<JsonDefinition> MatchingBulletReferences = null;
-	public List<JsonDefinition> GetMatchingBullets()
-	{
-		if(MatchingBulletReferences == null)
-		{
-			MatchingBulletReferences = new ArrayList<>(matchBulletNames.length);
-			FlansMod.BULLETS.RunOnMatches(
-				(bullet) -> {
-					// First check for exact name matches. These do not also need to pass tag checks
-					for (String matchBulletName : matchBulletNames)
-					{
-						if(bullet.Location.equals(matchBulletName))
-							return true;
-					}
-					// Then check the tags of this bullet
-					for (final String tag : requiredBulletTags)
-					{
-						if(!bullet.HasTag(tag))
-							return false;
-					}
-					for(final String tag : disallowedBulletTags)
-					{
-						if(bullet.HasTag(tag))
-							return false;
-					}
-					return true;
-				},
-				(bullet) ->
-				{
-					if (!MatchingBulletReferences.contains(bullet))
-						MatchingBulletReferences.add(bullet);
-				});
-
-		}
-		return MatchingBulletReferences;
-	}
-
-	public boolean HasTag(String tag)
-	{
-		for (String s : tags)
-			if (s.equals(tag))
-				return true;
-		return false;
-	}
-
 	@JsonField
 	public String[] tags = new String[0];
 	@JsonField
@@ -78,16 +35,25 @@ public class MagazineDefinition extends JsonDefinition
 	@JsonField(Docs = "The number of Magazine Upgrade items needed to swap to this mag")
 	public int upgradeCost = 0;
 
-
 	// Bullet matching settings
 	@JsonField(Min = 0, Max = 32000)
 	public int numRounds = 0;
 	@JsonField(Docs = "A performance optimisation, recommended if the mag size is 100 or more")
 	public boolean allRoundsMustBeIdentical = true;
+
 	@JsonField
-	public String[] matchBulletNames = new String[0];
-	@JsonField
-	public String[] requiredBulletTags = new String[0];
-	@JsonField
-	public String[] disallowedBulletTags = new String[0];
+	public ItemCollectionDefinition matchingBullets = new ItemCollectionDefinition();
+
+	@Nonnull
+	public List<JsonDefinition> GetMatchingBullets()
+	{
+		return matchingBullets.GetDefinitionMatches();
+	}
+	public boolean HasTag(String tag)
+	{
+		for (String s : tags)
+			if (s.equals(tag))
+				return true;
+		return false;
+	}
 }

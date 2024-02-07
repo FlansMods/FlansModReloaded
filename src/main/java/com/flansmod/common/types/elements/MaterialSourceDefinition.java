@@ -2,10 +2,7 @@ package com.flansmod.common.types.elements;
 
 import com.flansmod.common.types.JsonField;
 import com.flansmod.common.types.crafting.EMaterialIconType;
-import com.flansmod.common.types.crafting.EMaterialType;
-import com.flansmod.common.types.crafting.elements.TieredIngredientDefinition;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;

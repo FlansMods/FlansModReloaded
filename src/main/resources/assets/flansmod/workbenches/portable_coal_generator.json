@@ -1,10 +1,13 @@
 {
     "titleString": "workbench",
-    "bannerTextureLocation": "",
+    "bannerTextureLocation": "minecraft:null",
     "gunCrafting": {
         "isActive": false,
-        "craftsByName": [],
-        "craftsByTag": [],
+        "craftableGuns": {
+            "itemIDFilters": [],
+            "itemTagFilters": [],
+            "materialFilters": []
+        },
         "maxSlots": 8,
         "FECostPerCraft": 0
     },
@@ -14,9 +17,11 @@
         "outputSlots": 8,
         "timePerCraft": 1.0,
         "FECostPerCraft": 0.0,
-        "partsByName": [],
-        "partsByTag": [],
-        "partsByTier": []
+        "craftableParts": {
+            "itemIDFilters": [],
+            "itemTagFilters": [],
+            "materialFilters": []
+        }
     },
     "gunModifying": {
         "isActive": false,
@@ -39,7 +44,11 @@
     },
     "armourCrafting": {
         "isActive": false,
-        "pages": [],
+        "craftableArmour": {
+            "itemIDFilters": [],
+            "itemTagFilters": [],
+            "materialFilters": []
+        },
         "FECostPerCraft": 0
     },
     "itemHolding": {

@@ -1,10 +1,49 @@
 {
     "titleString": "workbench",
-    "bannerTextureLocation": "",
+    "bannerTextureLocation": "minecraft:null",
     "gunCrafting": {
         "isActive": false,
-        "craftsByName": [],
-        "craftsByTag": [],
+        "craftableGuns": {
+            "itemIDFilters": [
+                {
+                    "filterType": "Allow",
+                    "matchResourceLocations": [
+                        "flansbasicparts:pistol_bullet",
+                        "flansbasicparts:pistol_bullet_ap",
+                        "flansbasicparts:pistol_bullet_ex",
+                        "flansbasicparts:pistol_bullet_incendiary",
+                        "flansbasicparts:rifle_bullet",
+                        "flansbasicparts:rifle_bullet_ap",
+                        "flansbasicparts:rifle_bullet_ex",
+                        "flansbasicparts:rifle_bullet_incendiary",
+                        "flansbasicparts:artillery_shell",
+                        "flansbasicparts:artillery_shell_ap",
+                        "flansbasicparts:artillery_shell_ex",
+                        "flansbasicparts:artillery_shell_incendiary",
+                        "flansbasicparts:shotgun_shell_birdshot",
+                        "flansbasicparts:shotgun_shell_buckshot",
+                        "flansbasicparts:shotgun_shell_ap",
+                        "flansbasicparts:shotgun_shell_ex",
+                        "flansbasicparts:shotgun_shell_flechette",
+                        "flansbasicparts:shotgun_shell_flechette_poisoned",
+                        "flansbasicparts:shotgun_shell_incendiary",
+                        "flansbasicparts:projectile_grenade_ex",
+                        "flansbasicparts:projectile_grenade_impact",
+                        "flansbasicparts:projectile_grenade_incendiary",
+                        "flansbasicparts:projectile_grenade_sticky"
+                    ]
+                }
+            ],
+            "itemTagFilters": [
+                {
+                    "filterType": "Allow",
+                    "matchResourceLocations": [
+                        "flansbasicparts:add_to_bullet_fab"
+                    ]
+                }
+            ],
+            "materialFilters": []
+        },
         "maxSlots": 8,
         "FECostPerCraft": 0
     },
@@ -14,35 +53,47 @@
         "outputSlots": 8,
         "timePerCraft": 1.0,
         "FECostPerCraft": 0.0,
-        "partsByName": [
-            "flansbasicparts:rifle_bullet",
-            "flansbasicparts:rifle_bullet_ap",
-            "flansbasicparts:rifle_bullet_ex",
-            "flansbasicparts:rifle_bullet_incendiary",
-            "flansbasicparts:pistol_bullet",
-            "flansbasicparts:pistol_bullet_ap",
-            "flansbasicparts:pistol_bullet_ex",
-            "flansbasicparts:pistol_bullet_incendiary",
-            "flansbasicparts:artillery_shell",
-            "flansbasicparts:artillery_shell_ap",
-            "flansbasicparts:artillery_shell_ex",
-            "flansbasicparts:artillery_shell_incendiary",
-            "flansbasicparts:shotgun_shell_ap",
-            "flansbasicparts:shotgun_shell_birdshot",
-            "flansbasicparts:shotgun_shell_buckshot",
-            "flansbasicparts:shotgun_shell_ex",
-            "flansbasicparts:shotgun_shell_flechette",
-            "flansbasicparts:shotgun_shell_flechette_poisoned",
-            "flansbasicparts:shotgun_shell_incendiary",
-            "flansbasicparts:projectile_grenade_ex",
-            "flansbasicparts:projectile_grenade_impact",
-            "flansbasicparts:projectile_grenade_incendiary",
-            "flansbasicparts:projectile_grenade_sticky"
-        ],
-        "partsByTag": [
-            "flansbasicparts:add_to_bullet_fab"
-        ],
-        "partsByTier": []
+        "craftableParts": {
+            "itemIDFilters": [
+                {
+                    "filterType": "Allow",
+                    "matchResourceLocations": [
+                        "flansbasicparts:rifle_bullet",
+                        "flansbasicparts:rifle_bullet_ap",
+                        "flansbasicparts:rifle_bullet_ex",
+                        "flansbasicparts:rifle_bullet_incendiary",
+                        "flansbasicparts:pistol_bullet",
+                        "flansbasicparts:pistol_bullet_ap",
+                        "flansbasicparts:pistol_bullet_ex",
+                        "flansbasicparts:pistol_bullet_incendiary",
+                        "flansbasicparts:artillery_shell",
+                        "flansbasicparts:artillery_shell_ap",
+                        "flansbasicparts:artillery_shell_ex",
+                        "flansbasicparts:artillery_shell_incendiary",
+                        "flansbasicparts:shotgun_shell_ap",
+                        "flansbasicparts:shotgun_shell_birdshot",
+                        "flansbasicparts:shotgun_shell_buckshot",
+                        "flansbasicparts:shotgun_shell_ex",
+                        "flansbasicparts:shotgun_shell_flechette",
+                        "flansbasicparts:shotgun_shell_flechette_poisoned",
+                        "flansbasicparts:shotgun_shell_incendiary",
+                        "flansbasicparts:projectile_grenade_ex",
+                        "flansbasicparts:projectile_grenade_impact",
+                        "flansbasicparts:projectile_grenade_incendiary",
+                        "flansbasicparts:projectile_grenade_sticky"
+                    ]
+                }
+            ],
+            "itemTagFilters": [
+                {
+                    "filterType": "Allow",
+                    "matchResourceLocations": [
+                        "flansbasicparts:add_to_bullet_fab"
+                    ]
+                }
+            ],
+            "materialFilters": []
+        }
     },
     "gunModifying": {
         "isActive": false,
@@ -65,7 +116,11 @@
     },
     "armourCrafting": {
         "isActive": false,
-        "pages": [],
+        "craftableArmour": {
+            "itemIDFilters": [],
+            "itemTagFilters": [],
+            "materialFilters": []
+        },
         "FECostPerCraft": 0
     },
     "itemHolding": {

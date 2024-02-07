@@ -9,6 +9,8 @@ import com.flansmod.common.crafting.menus.WorkbenchMenu;
 import com.flansmod.common.crafting.menus.WorkbenchMenuModification;
 import com.flansmod.common.item.FlanItem;
 import com.flansmod.common.item.GunItem;
+import com.flansmod.common.types.elements.EFilterType;
+import com.flansmod.common.types.elements.LocationFilterDefinition;
 import com.flansmod.common.types.elements.ModifierDefinition;
 import com.flansmod.common.types.elements.PaintableDefinition;
 import com.flansmod.common.types.guns.GunDefinition;
@@ -258,17 +260,19 @@ public class WorkbenchScreenTabModification extends WorkbenchScreenTab<Workbench
 									List<FormattedCharSequence> lines = new ArrayList<>();
 									lines.add(Component.translatable("magazine." + matchingMags.get(i).Location.getNamespace() + "." + matchingMags.get(i).Location.getPath()).getVisualOrderText());
 									lines.add(Component.translatable("magazine.num_rounds", matchingMags.get(i).numRounds).getVisualOrderText());
-									for(String tag : matchingMags.get(i).matchBulletNames)
+									for(LocationFilterDefinition idFilter : matchingMags.get(i).matchingBullets.itemIDFilters)
 									{
-										lines.add(Component.translatable("magazine.match_bullet_name", tag).getVisualOrderText());
+										if(idFilter.filterType == EFilterType.Allow)
+											for(ResourceLocation resLoc : idFilter.matchResourceLocations)
+												lines.add(Component.translatable("magazine.match_bullet_name", resLoc).getVisualOrderText());
 									}
-									for(String tag : matchingMags.get(i).requiredBulletTags)
+									for(LocationFilterDefinition tagFilter : matchingMags.get(i).matchingBullets.itemTagFilters)
 									{
-										lines.add(Component.translatable("magazine.required_bullet_tag", tag).getVisualOrderText());
-									}
-									for(String tag : matchingMags.get(i).disallowedBulletTags)
-									{
-										lines.add(Component.translatable("magazine.disallowed_bullet_tag", tag).getVisualOrderText());
+										for(ResourceLocation resLoc : tagFilter.matchResourceLocations)
+										{
+											String line = tagFilter.filterType == EFilterType.Allow ? "magazine.required_bullet_tag" : "magazine.disallowed_bullet_tag";
+											lines.add(Component.translatable(line, resLoc.toString()).getVisualOrderText());
+										}
 									}
 									int magCost = WorkbenchBlockEntity.GetMagUpgradeCost(Workbench.GunContainer, index);
 									if(magCost == 1)

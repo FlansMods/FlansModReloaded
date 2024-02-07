@@ -25,5 +25,5 @@
         "batterySlots": 0,
         "FECapacity": 0
     },
-    "material": "flansbasicparts:carbon_fiber"
+    "material": ":"
 }

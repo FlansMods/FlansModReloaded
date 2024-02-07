@@ -2,16 +2,10 @@ package com.flansmod.common.crafting.slots;
 
 import com.flansmod.common.crafting.menus.WorkbenchMenuGunCrafting;
 import com.flansmod.common.crafting.recipes.GunFabricationRecipe;
-import com.flansmod.common.types.crafting.elements.GunCraftingEntryDefinition;
-import com.flansmod.common.types.crafting.elements.IngredientDefinition;
-import com.flansmod.common.types.crafting.elements.RecipePartDefinition;
-import com.flansmod.common.types.crafting.elements.TieredIngredientDefinition;
-import com.mojang.datafixers.util.Either;
 import net.minecraft.world.Container;
 import net.minecraft.world.item.ItemStack;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
 public class GunCraftingInputSlot extends RestrictedSlot
 {

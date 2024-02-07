@@ -58,9 +58,9 @@ public class PartItem extends FlanItem
 			//tooltips.add(Component.translatable("tooltip.format.only_compatible_with_2", Def().compatibilityTags[0], ));
 		}
 
-		for(String tag : Def().itemSettings.tags)
+		for(ResourceLocation tag : Def().itemSettings.tags)
 		{
-			switch(tag)
+			switch(tag.toString())
 			{
 				case "flansmod:engine":
 				{

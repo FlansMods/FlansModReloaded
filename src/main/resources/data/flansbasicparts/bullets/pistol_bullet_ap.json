@@ -18,7 +18,7 @@
         "breaksBlockTags": [],
         "penetrationPower": 3.0,
         "impact": {
-            "decal": "flansmod:effects/bullet_decal",
+            "decal": "minecraft:null",
             "damageToTarget": 0.75,
             "multiplierVsPlayers": 1.0,
             "multiplierVsVehicles": 1.0,

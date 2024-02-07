@@ -8,9 +8,16 @@
     "upgradeCost": 0,
     "numRounds": 1,
     "allRoundsMustBeIdentical": false,
-    "matchBulletNames": [],
-    "requiredBulletTags": [
-        "flansmod:artillery_shell"
-    ],
-    "disallowedBulletTags": []
+    "matchingBullets": {
+        "itemIDFilters": [],
+        "itemTagFilters": [
+            {
+                "filterType": "Allow",
+                "matchResourceLocations": [
+                    "flansmod:artillery_shell"
+                ]
+            }
+        ],
+        "materialFilters": []
+    }
 }

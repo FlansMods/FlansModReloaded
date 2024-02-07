@@ -8,9 +8,16 @@
     "upgradeCost": 1,
     "numRounds": 17,
     "allRoundsMustBeIdentical": false,
-    "matchBulletNames": [],
-    "requiredBulletTags": [
-        "flansmod:pistol_bullet"
-    ],
-    "disallowedBulletTags": []
+    "matchingBullets": {
+        "itemIDFilters": [],
+        "itemTagFilters": [
+            {
+                "filterType": "Allow",
+                "matchResourceLocations": [
+                    "flansmod:pistol_bullet"
+                ]
+            }
+        ],
+        "materialFilters": []
+    }
 }

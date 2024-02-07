@@ -63,9 +63,9 @@ public class WorkbenchScreenTabGunCrafting extends WorkbenchScreenTab<WorkbenchM
 		Propeller(10, 1),
 		MechanicalParts(11, 1);
 
-		public static PartBackgroundType GetFromTag(String tag)
+		public static PartBackgroundType GetFromTag(ResourceLocation tag)
 		{
-			switch(tag)
+			switch(tag.toString())
 			{
 				case "flansmod:barrel": return Barrel;
 				case "flansmod:upper_receiver": return UpperReceiver;
