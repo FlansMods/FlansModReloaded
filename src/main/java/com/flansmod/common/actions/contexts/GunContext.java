@@ -45,6 +45,7 @@ public abstract class GunContext
 		@Nonnull
 		public ItemStack GetLinkedItemStack() { return ItemStack.EMPTY; }
 		@Override
+		@Nullable
 		public DamageSource CreateDamageSource() { return null; }
 		@Override
 		@Nonnull

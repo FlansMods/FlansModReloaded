@@ -48,6 +48,7 @@ public class GunContextLiving extends GunContextInventoryItem
 	@Override
 	public Container GetAttachedInventory() { return ShooterContext.GetAttachedInventory(); }
 	@Override
+	@Nullable
 	public DamageSource CreateDamageSource()
 	{
 		return ShooterContext.Level().damageSources().mobProjectile(ShooterContext.Shooter, (ShooterContext.Owner() instanceof LivingEntity lv) ? lv : null);

@@ -8,6 +8,7 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.Objects;
 
 public class GunContextItem extends GunContext
@@ -26,6 +27,7 @@ public class GunContextItem extends GunContext
 	@Nonnull
 	public ItemStack GetLinkedItemStack() { return ItemStack.EMPTY; }
 	@Override
+	@Nullable
 	public DamageSource CreateDamageSource() { return null; }
 	@Override
 	@Nonnull

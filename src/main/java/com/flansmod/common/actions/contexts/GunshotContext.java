@@ -9,6 +9,7 @@ import com.flansmod.util.Maths;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.Entity;
@@ -166,23 +167,27 @@ public class GunshotContext
 		// Damage can be applied to anything living, with special multipliers if it was a player
 		float damage = isTarget ? ImpactDamage() : SplashDamage();
 		damage *= splashMultiplier;
-		if (entity instanceof Player player)
+		DamageSource dmgSource = ActionGroup.Gun.CreateDamageSource();
+		if(dmgSource != null)
 		{
-			damage *= MultiplierVsPlayers();
-			damage *= hitArea.DamageMultiplier();
+			if (entity instanceof Player player)
+			{
+				damage *= MultiplierVsPlayers();
+				damage *= hitArea.DamageMultiplier();
 
-			// TODO: Shield item damage multipliers
+				// TODO: Shield item damage multipliers
 
-			player.hurt(ActionGroup.Gun.CreateDamageSource(), damage);
-			// We override the immortality cooldown when firing bullets, as it is too slow
-			player.hurtTime = 0;
-			player.hurtDuration = 0;
-		} else if (entity instanceof LivingEntity living)
-		{
-			living.hurt(ActionGroup.Gun.CreateDamageSource(), damage);
-			living.hurtTime = 0;
-			living.hurtDuration = 0;
-			living.invulnerableTime = 0;
+				player.hurt(dmgSource, damage);
+				// We override the immortality cooldown when firing bullets, as it is too slow
+				player.hurtTime = 0;
+				player.hurtDuration = 0;
+			} else if (entity instanceof LivingEntity living)
+			{
+				living.hurt(dmgSource, damage);
+				living.hurtTime = 0;
+				living.hurtDuration = 0;
+				living.invulnerableTime = 0;
+			}
 		}
 
 		// Also apply this code to all living entities
