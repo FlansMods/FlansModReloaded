@@ -3,7 +3,9 @@ package com.flansmod.common.actions.nodes;
 import com.flansmod.common.FlansMod;
 import com.flansmod.common.actions.ActionGroupInstance;
 import com.flansmod.common.actions.ActionInstance;
+import com.flansmod.common.actions.contexts.TriggerContext;
 import com.flansmod.common.gunshots.Raytracer;
+import com.flansmod.common.types.abilities.elements.EAbilityTrigger;
 import com.flansmod.common.types.guns.elements.ActionDefinition;
 import com.flansmod.common.types.elements.ModifierDefinition;
 import com.flansmod.util.Transform;
@@ -16,9 +18,9 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 
-public class DeleteEntityAction extends ActionInstance
+public class RaycastAction extends ActionInstance
 {
-	public DeleteEntityAction(@NotNull ActionGroupInstance group, @NotNull ActionDefinition def)
+	public RaycastAction(@NotNull ActionGroupInstance group, @NotNull ActionDefinition def)
 	{
 		super(group, def);
 	}
@@ -36,30 +38,20 @@ public class DeleteEntityAction extends ActionInstance
 		Vec3 origin = ray.PositionVec3();
 		Vec3 direction = ray.ForwardVec3();
 		float reach = Reach();
-		String checkTag = EntityTag();
 		Level level = Group.Context.Gun.GetLevel();
 		if(level != null)
 		{
 			Raytracer raytracer = Raytracer.ForLevel(level);
-			if(raytracer != null)
+			List<HitResult> hits = new ArrayList<>();
+			raytracer.CastBullet(Group.Context.Gun.GetShooter().Entity(), origin, direction.normalize().scale(reach), 0.0f, 0.0f, hits);
+			if(hits.size() > 0)
 			{
-				List<HitResult> hits = new ArrayList<>();
-				raytracer.CastBullet(Group.Context.Gun.GetShooter().Entity(), origin, direction.normalize().scale(reach), 0.0f, 0.0f, hits);
-				if(hits.size() > 0)
-				{
-					if(hits.get(0).getType() == HitResult.Type.ENTITY)
-					{
-						EntityHitResult entityHit = (EntityHitResult)hits.get(0);
-						if(checkTag.isEmpty() || entityHit.getEntity().getTags().contains(checkTag))
-							entityHit.getEntity().kill();
-					}
-				}
+				Group.Context.Gun.GetActionStack().EvaluateTrigger(
+					EAbilityTrigger.RaycastAction,
+					Group.Context,
+					TriggerContext.hit(Group.Context.Gun.GetShooter(), hits.get(0)));
 			}
-			else FlansMod.LOGGER.warn("DeleteEntityAction[" + Def + "]: Could not find raytracer for level " + level);
 		}
-		else FlansMod.LOGGER.warn("DeleteEntityAction[" + Def + "]: Could not find level");
+		else FlansMod.LOGGER.warn("RaycastAction[" + Def + "]: Could not find level");
 	}
-
-	public String EntityTag() { return Group.Context.ModifyString(ModifierDefinition.KEY_ENTITY_ID, ""); }
-
 }

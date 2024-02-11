@@ -2,6 +2,7 @@ package com.flansmod.common.actions.contexts;
 
 import com.flansmod.common.FlansMod;
 import com.flansmod.common.gunshots.*;
+import com.flansmod.common.types.abilities.elements.EAbilityTrigger;
 import com.flansmod.common.types.bullets.BulletDefinition;
 import com.flansmod.common.types.elements.ModifierDefinition;
 import com.flansmod.common.types.guns.elements.ESpreadPattern;
@@ -20,6 +21,9 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.*;
 import net.minecraftforge.registries.ForgeRegistries;
+
+import java.util.ArrayList;
+import java.util.List;
 
 
 public class GunshotContext
@@ -58,14 +62,25 @@ public class GunshotContext
 			Entity targetEntity = null;
 
 			HitResult toProcess = hit;
-			if(hit instanceof UnresolvedEntityHitResult unresolved)
+			if (hit instanceof UnresolvedEntityHitResult unresolved)
 			{
 				Entity entity = level.getEntity(unresolved.EntityID());
-				if(entity != null)
+				if (entity != null)
 				{
 					toProcess = new EntityHitResult(entity);
 				}
 			}
+
+			// Calculate who we are going to splash
+			List<Entity> splashedEntities;
+			Vec3 center = toProcess.getLocation();
+			float splashRadius = SplashDamageRadius();
+			if (splashRadius > 0.0f)
+			{
+				Vec3 halfExtents = new Vec3(splashRadius, splashRadius, splashRadius);
+				splashedEntities = level.getEntities(targetEntity, new AABB(center.subtract(halfExtents), center.add(halfExtents)));
+			}
+			else splashedEntities = new ArrayList<>();
 
 			// Apply damage etc
 			switch (toProcess.getType())
@@ -78,8 +93,16 @@ public class GunshotContext
 						if (Bullet.shootStats.BreaksBlock(stateHit))
 						{
 							level.destroyBlock(blockHit.getBlockPos(), true, ActionGroup.Gun.GetShooter().Entity());
+							ActionGroup.Gun.GetActionStack().EvaluateTrigger(
+								EAbilityTrigger.ShotAndBrokeBlock,
+								ActionGroup,
+								TriggerContext.hitWithSplash(ActionGroup, toProcess, splashedEntities));
 						}
 					}
+					ActionGroup.Gun.GetActionStack().EvaluateTrigger(
+						EAbilityTrigger.ShotBlock,
+						ActionGroup,
+						TriggerContext.hitWithSplash(ActionGroup, toProcess, splashedEntities));
 				}
 				case ENTITY -> {
 					EPlayerHitArea hitArea = EPlayerHitArea.BODY;
@@ -97,24 +120,20 @@ public class GunshotContext
 					}
 
 					ApplyDamageToEntity(targetEntity, hitArea, shotData.trajectory, 1.0f, true);
+					ActionGroup.Gun.GetActionStack().EvaluateTrigger(
+						hitArea == EPlayerHitArea.HEAD ? EAbilityTrigger.ShotHeadshot : EAbilityTrigger.ShotEntity,
+						ActionGroup,
+						TriggerContext.hitWithSplash(ActionGroup, toProcess, splashedEntities));
 				}
 			}
 
-			ActionGroup.Gun.GetActionStack().CheckAbilities_Hit(ActionGroup.Gun, toProcess);
-
-			float splashRadius = SplashDamageRadius();
-			if(splashRadius > 0.0f)
+			for(Entity splashEntity : splashedEntities)
 			{
-				Vec3 center = toProcess.getLocation();
-				Vec3 halfExtents = new Vec3(splashRadius, splashRadius, splashRadius);
-				for(Entity splashEntity : level.getEntities(targetEntity, new AABB(center.subtract(halfExtents), center.add(halfExtents))))
+				double distance = Maths.Sqrt(splashEntity.distanceToSqr(center));
+				if(distance <= splashRadius)
 				{
-					double distance = Maths.Sqrt(splashEntity.distanceToSqr(center));
-					if(distance <= splashRadius)
-					{
-						float splashMultiplier = (float) Maths.Lerp(1.0f, 1.0f - SplashDamageFalloff(), distance / splashRadius);
-						ApplyDamageToEntity(splashEntity, EPlayerHitArea.BODY, shotData.trajectory, splashMultiplier, false);
-					}
+					float splashMultiplier = (float) Maths.Lerp(1.0f, 1.0f - SplashDamageFalloff(), distance / splashRadius);
+					ApplyDamageToEntity(splashEntity, EPlayerHitArea.BODY, shotData.trajectory, splashMultiplier, false);
 				}
 			}
 

@@ -4,7 +4,7 @@ import com.flansmod.common.FlansMod;
 import com.flansmod.common.item.PartItem;
 import com.flansmod.common.types.JsonDefinition;
 import com.flansmod.common.types.JsonField;
-import com.flansmod.common.types.abilities.elements.AbilityProviderDefinition;
+import com.flansmod.common.types.abilities.elements.CraftingTraitProviderDefinition;
 import com.flansmod.common.types.crafting.EMaterialType;
 import com.flansmod.common.types.crafting.MaterialDefinition;
 import com.flansmod.common.types.elements.ItemDefinition;
@@ -44,7 +44,7 @@ public class PartDefinition extends JsonDefinition
 	@JsonField
 	public ModifierDefinition[] modifiers = new ModifierDefinition[0];
 	@JsonField
-	public AbilityProviderDefinition[] abilities = new AbilityProviderDefinition[0];
+	public CraftingTraitProviderDefinition[] abilities = new CraftingTraitProviderDefinition[0];
 
 	// Engine properties
 	@JsonField

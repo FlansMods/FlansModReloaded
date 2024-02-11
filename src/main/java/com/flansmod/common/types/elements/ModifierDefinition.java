@@ -22,6 +22,7 @@ public class ModifierDefinition
 	public static final String STAT_SHOT_SPREAD_PATTERN = "spread_pattern";
 
 	public static final String STAT_IMPACT_DAMAGE = "impact_damage";
+	public static final String STAT_INSTANT_DAMAGE = "instant_damage";
 	public static final String STAT_IMPACT_POTION_EFFECT_ON_TARGET = "potion_effect_on_target";
 	public static final String STAT_IMPACT_KNOCKBACK = "knockback";
 	public static final String STAT_IMPACT_MULTIPLIER_VS_PLAYERS = "multiplier_vs_players";
@@ -59,6 +60,11 @@ public class ModifierDefinition
 	public static final String KEY_MODE = "mode";
 	public static final String KEY_SET_VALUE = "set_value";
 	public static final String KEY_EYE_LINE_NAME = "eye_line_name";
+	public static final String KEY_MOB_EFFECT_ID = "mob_effect_id";
+	public static final String STAT_POTION_MULTIPLIER = "potion_multiplier";
+	public static final String STAT_POTION_DURATION = "potion_duration";
+	public static final String STAT_ATTRIBUTE_MULTIPLIER = "attribute_multiplier";
+
 
 	public static final String STAT_LASER_ORIGIN = "laser_origin";
 	public static final String STAT_LASER_RED = "laser_red";

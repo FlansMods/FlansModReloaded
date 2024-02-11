@@ -6,14 +6,12 @@ import com.flansmod.common.FlansMod;
 import com.flansmod.common.actions.ActionGroupInstance;
 import com.flansmod.common.actions.ActionInstance;
 import com.flansmod.common.actions.EActionResult;
-import com.flansmod.common.actions.contexts.EContextSide;
-import com.flansmod.common.actions.contexts.GunContext;
-import com.flansmod.common.actions.contexts.GunshotContext;
-import com.flansmod.common.actions.contexts.ShooterContext;
+import com.flansmod.common.actions.contexts.*;
 import com.flansmod.common.gunshots.*;
 import com.flansmod.common.item.BulletItem;
 import com.flansmod.common.projectiles.BulletEntity;
 import com.flansmod.common.types.JsonDefinition;
+import com.flansmod.common.types.abilities.elements.EAbilityTrigger;
 import com.flansmod.common.types.bullets.BulletDefinition;
 import com.flansmod.common.types.guns.elements.ActionDefinition;
 import com.flansmod.common.types.guns.elements.ESpreadPattern;
@@ -407,6 +405,17 @@ public class ShootAction extends ActionInstance
 				ItemStack bulletStackAtIndex = Group.Context.GetBulletAtIndex(0, bulletIndex);
 				if(bulletStackAtIndex.getItem() instanceof BulletItem bulletItem)
 				{
+					// Trigger any abilities
+					int bulletCount = Group.Context.GetNumBulletsInMag(0);
+					int magSize = Group.Context.GetMagazineSize(0);
+					EAbilityTrigger consumeTrigger = EAbilityTrigger.BulletConsumed;
+					if(bulletCount == 1)
+						consumeTrigger = EAbilityTrigger.LastBulletConsumed;
+					if(bulletCount == magSize)
+						consumeTrigger = EAbilityTrigger.FirstBulletConsumed;
+					Group.Context.Gun.GetActionStack().EvaluateTrigger(consumeTrigger, Group.Context.Gun, TriggerContext.self(Group.Context));
+
+
 					if(bulletItem.Def() == bulletDef)
 					{
 						Group.Context.ConsumeBulletAtIndex(0, bulletIndex);

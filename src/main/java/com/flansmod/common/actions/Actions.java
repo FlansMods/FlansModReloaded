@@ -1,5 +1,6 @@
 package com.flansmod.common.actions;
 
+import com.flansmod.common.abilities.*;
 import com.flansmod.common.actions.nodes.*;
 import com.flansmod.common.types.guns.elements.ActionDefinition;
 
@@ -18,15 +19,9 @@ public class Actions
 			case Scope				-> { return new ScopeAction(group, def); }
 			case AimDownSights 		-> { return new AimDownSightAction(group, def); }
 			case PlaySound  		-> { return new PlaySoundAction(group, def); }
-			case PlaceBlock 		-> { return new PlaceBlockAction(group, def); }
-			case BreakBlock 		-> { return new BreakBlockAction(group, def); }
 			case CookGrenade 		-> { return new CookGrenadeAction(group, def); }
-			case Heal				-> { return new HealAction(group, def); }
-			case SpawnEntity		-> { return new SpawnEntityAction(group, def); }
-			case SummonNpc 			-> { return new SummonNpcAction(group, def); }
-			case DeleteEntity 		-> { return new DeleteEntityAction(group, def); }
+			case Raycast 			-> { return new RaycastAction(group, def); }
 			case Drop 				-> { return new DropAction(group, def); }
-			case Feed				-> { return new FeedAction(group, def); }
 			case Axe, Pickaxe, Hoe, Shovel, Shear, Flatten, Strip, Till, Shield -> {
 				// These are handled with vanilla logic
 				return null;
@@ -35,6 +30,15 @@ public class Actions
 			case Laser 				-> { return new LaserAction(group, def); }
 			case SwitchMode			-> { return new SwitchModeAction(group, def); }
 			default					-> { return null; }
+
+
+			// MOVED TO ABILITIES
+			// case BreakBlock 		-> { return new BreakBlockAbility(group, def); }
+			// case SpawnEntity		-> { return new SpawnEntityAction(group, def); }
+			// case Heal				-> { return new AbilityEffectHeal(group, def); }
+			// case SummonNpc 			-> { return new SummonNpcAction(group, def); }
+			// case Feed				-> { return new FeedAction(group, def); }
+			// case PlaceBlock 		-> { return new AbilityEffectPlaceBlock(group, def); }
 		}
 		// TODO: Add a registration event for other mods
 	}

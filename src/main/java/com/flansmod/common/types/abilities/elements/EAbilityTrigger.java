@@ -1,5 +1,9 @@
 package com.flansmod.common.types.abilities.elements;
 
+import com.flansmod.common.types.guns.elements.EReloadStage;
+
+import javax.annotation.Nonnull;
+
 public enum EAbilityTrigger
 {
 	AlwaysOn,
@@ -20,10 +24,30 @@ public enum EAbilityTrigger
 	EndActionGroup,
 	SwitchMode,
 
-	AddToInventory,
-	RemoveFromInventory,
+	AddToInventory,		// Not in yet
+	RemoveFromInventory,// Not in yet
 	Equip,
 	Unequip,
 
+	BulletConsumed,
+	FirstBulletConsumed,
+	LastBulletConsumed,
 
+	RaycastAction,
+
+
+
+	;
+
+
+	public static EAbilityTrigger FromReloadStage(@Nonnull EReloadStage stage)
+	{
+		return switch(stage)
+		{
+			case Start -> ReloadStart;
+			case Eject -> ReloadEject;
+			case LoadOne -> ReloadLoadOne;
+			case End ->ReloadEnd;
+		};
+	}
 }

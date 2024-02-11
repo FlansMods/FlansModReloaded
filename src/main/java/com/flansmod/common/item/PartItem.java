@@ -1,8 +1,8 @@
 package com.flansmod.common.item;
 
 import com.flansmod.common.FlansMod;
-import com.flansmod.common.types.abilities.AbilityDefinition;
-import com.flansmod.common.types.abilities.elements.AbilityProviderDefinition;
+import com.flansmod.common.types.abilities.CraftingTraitDefinition;
+import com.flansmod.common.types.abilities.elements.CraftingTraitProviderDefinition;
 import com.flansmod.common.types.crafting.MaterialDefinition;
 import com.flansmod.common.types.parts.PartDefinition;
 import com.flansmod.util.Maths;
@@ -12,11 +12,9 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
-import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -103,9 +101,9 @@ public class PartItem extends FlanItem
 	}
 
 	@Override
-	protected void CollectAbilities(@Nonnull ItemStack stack, @Nonnull Map<AbilityDefinition, Integer> abilityMap)
+	protected void CollectAbilities(@Nonnull ItemStack stack, @Nonnull Map<CraftingTraitDefinition, Integer> abilityMap)
 	{
-		for(AbilityProviderDefinition provider : Def().abilities)
+		for(CraftingTraitProviderDefinition provider : Def().abilities)
 			abilityMap.put(provider.GetAbility(), provider.level);
 	}
 }

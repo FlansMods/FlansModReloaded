@@ -6,26 +6,22 @@ import com.flansmod.common.actions.contexts.ActionGroupContext;
 import com.flansmod.common.actions.contexts.GunContext;
 import com.flansmod.common.types.JsonDefinition;
 import com.flansmod.common.types.JsonField;
-import com.flansmod.common.types.abilities.elements.EAbilityEffect;
-import com.flansmod.common.types.abilities.elements.EAbilityTarget;
-import com.flansmod.common.types.abilities.elements.EAbilityTrigger;
-import com.flansmod.common.types.elements.ModifierDefinition;
-import com.flansmod.common.types.guns.elements.ActionDefinition;
-import com.flansmod.common.types.guns.elements.ActionGroupDefinition;
+import com.flansmod.common.types.abilities.elements.*;
+import com.flansmod.common.types.guns.elements.AbilityDefinition;
 import com.flansmod.util.Maths;
 import net.minecraft.resources.ResourceLocation;
 
 import javax.annotation.Nonnull;
 
-public class AbilityDefinition extends JsonDefinition
+public class CraftingTraitDefinition extends JsonDefinition
 {
-	public static final AbilityDefinition INVALID = new AbilityDefinition(new ResourceLocation(FlansMod.MODID, "abilities/null"));
-	public static final String TYPE = "ability";
-	public static final String FOLDER = "abilities";
+	public static final CraftingTraitDefinition INVALID = new CraftingTraitDefinition(new ResourceLocation(FlansMod.MODID, "traits/null"));
+	public static final String TYPE = "trait";
+	public static final String FOLDER = "traits";
 	@Override
 	public String GetTypeName() { return TYPE; }
 
-	public AbilityDefinition(ResourceLocation resLoc)
+	public CraftingTraitDefinition(ResourceLocation resLoc)
 	{
 		super(resLoc);
 	}
@@ -35,23 +31,9 @@ public class AbilityDefinition extends JsonDefinition
 
 	// --
 	@JsonField
-	public EAbilityTrigger startTrigger = EAbilityTrigger.Instant;
-	@JsonField
-	public EAbilityTrigger endTrigger = EAbilityTrigger.Instant;
-	@JsonField
-	public String[] triggerConditions = new String[0];
+	public AbilityDefinition[] abilities = new AbilityDefinition[0];
 
-	// -- Targeting --
-	@JsonField
-	public EAbilityTarget targetType = EAbilityTarget.Shooter;
 
-	// -- Effect --
-	@JsonField
-	public EAbilityEffect effectType = EAbilityEffect.Nothing;
-	@JsonField
-	public String[] effectParameters = new String[0];
-	@JsonField(Docs = "The modifiers to add when the effect is active")
-	public ModifierDefinition[] modifiers = new ModifierDefinition[0];
 
 	public float CalculateIntensity(int level, @Nonnull GunContext gunContext)
 	{

@@ -3,20 +3,25 @@ package com.flansmod.common.actions;
 import com.flansmod.client.render.FirstPersonManager;
 import com.flansmod.common.FlansMod;
 import com.flansmod.common.abilities.Abilities;
-import com.flansmod.common.abilities.ApplyModifierAbility;
+import com.flansmod.common.abilities.AbilityStack;
+import com.flansmod.common.abilities.AbilityInstanceApplyModifier;
 import com.flansmod.common.actions.contexts.ActionGroupContext;
 import com.flansmod.common.actions.contexts.GunContext;
+import com.flansmod.common.actions.contexts.TargetsContext;
+import com.flansmod.common.actions.contexts.TriggerContext;
 import com.flansmod.common.gunshots.EPressType;
 import com.flansmod.common.network.FlansModPacketHandler;
 import com.flansmod.common.network.bidirectional.ActionUpdateMessage;
 import com.flansmod.common.abilities.AbilityInstance;
+import com.flansmod.common.types.abilities.elements.AbilityEffectDefinition;
+import com.flansmod.common.types.abilities.elements.AbilityStackingDefinition;
 import com.flansmod.common.types.abilities.elements.EAbilityTrigger;
+import com.flansmod.common.types.elements.ModifierDefinition;
 import com.flansmod.common.types.guns.elements.*;
 import com.flansmod.common.types.magazines.EAmmoLoadMode;
 import com.flansmod.util.Maths;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -24,7 +29,10 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.function.Consumer;
 
 /**
  * There should be one ActionStack per gun, per shooter
@@ -40,11 +48,19 @@ public class ActionStack
 		@Override
 		public void OnTick(Level level, GunContext gunContext) {}
 		@Override
+		public void EvaluateTrigger(@Nonnull EAbilityTrigger triggerType,
+									@Nonnull GunContext gunContext,
+									@Nullable ActionGroupContext actionGroupContext,
+									@Nonnull TriggerContext triggerContext)
+		{}
+		@Override
 		public boolean IsValid() { return false; }
 	};
 
 	private final List<ActionGroupInstance> ActiveActionGroups = new ArrayList<>();
-	private final List<AbilityInstance> ActiveAbilities = new ArrayList<>();
+	private final Map<String, AbilityStack> AbilityStacks = new HashMap<>();
+
+	//private final List<AbilityInstance> InstancedAbilities = new ArrayList<>();
 	private float ShotCooldown = 0.0f;
 	private boolean cancelActionRequested = false;
 	public final boolean IsClient;
@@ -150,11 +166,11 @@ public class ActionStack
 				groupInstance.OnStartServer(doInitialTrigger);
 
 			OnActionGroupStarted(groupContext);
-			CheckAbilities_ActionGroupStarted(groupContext);
+			EvaluateTrigger(EAbilityTrigger.StartActionGroup, groupContext, TriggerContext.self(groupContext));
 			if(reload != null)
 			{
 				EReloadStage stage = reload.GetStage(groupContext.GroupPath);
-				CheckAbilities_ReloadStage(groupContext, stage);
+				EvaluateTrigger(EAbilityTrigger.FromReloadStage(stage), groupContext, TriggerContext.self(groupContext));
 			}
 		}
 		return result;
@@ -175,15 +191,15 @@ public class ActionStack
 	{
 		StopActionGroup(context);
 	}
-	public void UpdateEquipped(GunContext context, boolean isEquipped)
+	public void UpdateEquipped(@Nonnull GunContext gunContext, boolean isEquipped)
 	{
 		if(isEquipped && !IsEquipped)
 		{
-			CheckAbilities_Equip(context, true);
+			EvaluateTrigger(EAbilityTrigger.Equip, gunContext, TriggerContext.self(gunContext));
 		}
 		else if(!isEquipped && IsEquipped)
 		{
-			CheckAbilities_Equip(context, false);
+			EvaluateTrigger(EAbilityTrigger.Unequip, gunContext, TriggerContext.self(gunContext));
 		}
 		IsEquipped = isEquipped;
 	}
@@ -227,7 +243,7 @@ public class ActionStack
 
 			if(stillFinished)
 			{
-				CheckAbilities_ActionGroupEnded(groupContext);
+				EvaluateTrigger(EAbilityTrigger.EndActionGroup, groupContext, TriggerContext.self(groupContext));
 
 				if (IsClient)
 					groupInstance.OnFinishClient();
@@ -371,7 +387,7 @@ public class ActionStack
 	// -------------------------------------------------------------------------------------------------
 	// Tick
 	// -------------------------------------------------------------------------------------------------
-	public void OnTick(Level level, GunContext gunContext)
+	public void OnTick(@Nullable Level level, @Nonnull GunContext gunContext)
 	{
 		if(level == null)
 		{
@@ -386,19 +402,19 @@ public class ActionStack
 		TickAbilities();
 	}
 
-	protected void DebugLog(String string)
+	protected void DebugLog(@Nonnull String string)
 	{
 		//FlansMod.LOGGER.info("[" + MinecraftHelpers.GetTick() +
 		//	(IsClient ? "|Client]" : "|Server]")
 		//	+ string);
 	}
 
-	public void Clear(GunContext gunContext)
+	public void Clear(@Nonnull GunContext gunContext)
 	{
 		for(ActionGroupInstance actionGroup : ActiveActionGroups)
 			actionGroup.SetFinished();
-		for(AbilityInstance ability : ActiveAbilities)
-			ability.End(gunContext);
+		for(AbilityInstance ability : InstancedAbilities)
+			ability.End(gunContext, TriggerContext.self(gunContext));
 	}
 
 	// -------------------------------------------------------------------------------------------------
@@ -637,14 +653,14 @@ public class ActionStack
 	// -------------------------------------------------------------------------------------------------
 	public void CheckInitTriggers(@Nonnull GunContext gunContext)
 	{
-		if(ActiveAbilities.isEmpty())
+		if(InstancedAbilities.isEmpty())
 		{
-			for (var kvp : gunContext.GetAbilities().entrySet())
+			for (var kvp : gunContext.GetTraits().entrySet())
 			{
 				AbilityInstance instance = Abilities.InstanceAbility(kvp.getKey(), kvp.getValue());
 				if(instance != null)
 				{
-					ActiveAbilities.add(instance);
+					InstancedAbilities.add(instance);
 					if(instance.Def.startTrigger == EAbilityTrigger.AlwaysOn)
 						instance.Trigger(gunContext, null);
 				}
@@ -654,63 +670,105 @@ public class ActionStack
 		}
 	}
 
-	public List<ApplyModifierAbility> GetActiveModifierAbilities()
+	public List<AbilityStack> GetActiveStacks()
 	{
-		List<ApplyModifierAbility> list = new ArrayList<>();
-		for(AbilityInstance ability : ActiveAbilities)
-			if(ability instanceof ApplyModifierAbility applyModAbility)
+		List<AbilityInstanceApplyModifier> list = new ArrayList<>();
+		for(AbilityInstance ability : InstancedAbilities)
+			if(ability instanceof AbilityInstanceApplyModifier applyModAbility)
 				if(applyModAbility.IsActive)
 					list.add(applyModAbility);
 		return list;
 	}
 
-	private void TickAbilities()
+	public void ForEachActiveAbilityModifier(@Nonnull Consumer<ModifierDefinition> func)
 	{
-		for(AbilityInstance ability : ActiveAbilities)
-			ability.Tick();
+		for(var kvp : AbilityStacks.entrySet())
+			if(kvp.getValue().IsActive())
+				for(ModifierDefinition mod : kvp.getKey()..Mod)
+				func.accept(stacks);
+	}
+	public void ForEachNonZeroStack(@Nonnull Consumer<AbilityStack> func)
+	{
+		for(AbilityStack stacks : AbilityStacks.values())
+			if(stacks.IsActive())
+				func.accept(stacks);
 	}
 
-	public void CheckAbilities_Equip(@Nonnull GunContext gun, boolean equip)
+	private void TickAbilities()
 	{
-		CheckInitTriggers(gun);
-		for(AbilityInstance instance : ActiveAbilities)
-			instance.OnEquip(gun, equip);
+		for(AbilityStack stacks : AbilityStacks.values())
+			stacks.Tick();
 	}
-	public void CheckAbilities_Hit(@Nonnull GunContext gun, @Nonnull HitResult hit)
+
+	@Nonnull
+	public AbilityStack GetOrCreateStacks(@Nonnull AbilityStackingDefinition stackingDef)
 	{
-		CheckInitTriggers(gun);
-		for(AbilityInstance instance : ActiveAbilities)
-			instance.OnHit(gun, hit);
+		if(AbilityStacks.containsKey(stackingDef.stackingKey))
+			return AbilityStacks.get(stackingDef.stackingKey);
+
+		AbilityStack stack = new AbilityStack(stackingDef);
+		AbilityStacks.put(stackingDef.stackingKey, stack);
+		return stack;
 	}
-	public void CheckAbilities_ReloadStage(@Nonnull ActionGroupContext actionGroup, @Nonnull EReloadStage stage)
+
+	public void EvaluateTrigger(@Nonnull EAbilityTrigger triggerType, @Nonnull ActionGroupContext actionGroupContext, @Nonnull TriggerContext triggerContext)
 	{
-		CheckInitTriggers(actionGroup.Gun);
-		for(AbilityInstance instance : ActiveAbilities)
-			instance.OnReloadStage(actionGroup, stage);
+		EvaluateTrigger(triggerType, actionGroupContext.Gun, actionGroupContext, triggerContext);
 	}
-	public void CheckAbilities_ActionGroupStarted(@Nonnull ActionGroupContext actionGroup)
+	public void EvaluateTrigger(@Nonnull EAbilityTrigger triggerType, @Nonnull GunContext gunContext, @Nonnull TriggerContext triggerContext)
 	{
-		CheckInitTriggers(actionGroup.Gun);
-		for(AbilityInstance instance : ActiveAbilities)
-			instance.OnActionGroupStarted(actionGroup);
+		EvaluateTrigger(triggerType, gunContext, null, triggerContext);
 	}
-	public void CheckAbilities_ActionGroupTriggered(@Nonnull ActionGroupContext actionGroup)
+
+	// So there should be rules about don't trigger yourself... but for now, I'm just gonna cap it.
+	private static int LOOP_CHECK = 0;
+	private static final int LOOP_MAX = 4;
+	public void EvaluateTrigger(@Nonnull EAbilityTrigger triggerType,
+								@Nonnull GunContext gunContext,
+								@Nullable ActionGroupContext actionGroupContext,
+								@Nonnull TriggerContext triggerContext)
 	{
-		CheckInitTriggers(actionGroup.Gun);
-		for(AbilityInstance instance : ActiveAbilities)
-			instance.OnActionGroupTriggered(actionGroup);
-	}
-	public void CheckAbilities_ActionGroupEnded(@Nonnull ActionGroupContext actionGroup)
-	{
-		CheckInitTriggers(actionGroup.Gun);
-		for(AbilityInstance instance : ActiveAbilities)
-			instance.OnActionGroupEnded(actionGroup);
-	}
-	public void CheckAbilities_ModeSwitch(@Nonnull GunContext gun, @Nonnull String modeSelected)
-	{
-		CheckInitTriggers(gun);
-		for(AbilityInstance instance : ActiveAbilities)
-			instance.OnModeSwitch(gun, modeSelected);
+		// ------ LOOOOPs are bad --------
+		LOOP_CHECK++;
+		if(LOOP_CHECK >= LOOP_MAX)
+			return;
+		// -------------------------------
+
+		// Do setup tasks
+		CheckInitTriggers(gunContext);
+
+		// e.g. OnHit -> SpawnProjectile for cluster munitions
+		gunContext.ForEachAbility((ability, tier) ->
+		{
+			// Is this ability valid? Basic checks
+			if(ability.IsValid())
+			{
+				// Is this ability triggered by this event?
+				if(ability.MatchTrigger(triggerType, triggerContext))
+				{
+					// If so, which targets does it want from us?
+					TargetsContext targetsContext = ability.MatchTargets(triggerContext);
+					if(!targetsContext.IsEmpty())
+					{
+						// Now, run all the effects!
+						// Stackable abilities store a little extra data
+						AbilityStack stacks = null;
+						if(ability.IsStackable())
+						{
+							stacks = GetOrCreateStacks(ability.stacking);
+							stacks.AddStack();
+						}
+
+						for(AbilityEffectDefinition effectDef : ability.effects)
+						{
+							effectDef.GetEffectProcessor().Trigger(gunContext, targetsContext, stacks, tier);
+						}
+					}
+				}
+			}
+		 });
+
+		LOOP_CHECK--;
 	}
 }
 

@@ -3,9 +3,9 @@ package com.flansmod.common.types.bullets;
 import com.flansmod.common.FlansMod;
 import com.flansmod.common.types.JsonDefinition;
 import com.flansmod.common.types.JsonField;
-import com.flansmod.common.types.guns.elements.ActionDefinition;
 import com.flansmod.common.types.elements.ItemDefinition;
 import com.flansmod.common.types.guns.elements.ShotDefinition;
+import com.flansmod.common.types.guns.elements.AbilityDefinition;
 import net.minecraft.resources.ResourceLocation;
 
 import javax.annotation.Nonnull;
@@ -44,10 +44,6 @@ public class BulletDefinition extends JsonDefinition
 	public ShotDefinition shootStats = new ShotDefinition();
 
 	@JsonField
-	public ActionDefinition[] onShootActions = new ActionDefinition[0];
-	@JsonField
-	public ActionDefinition[] onClipEmptyActions = new ActionDefinition[0];
-	@JsonField
-	public ActionDefinition[] onReloadActions = new ActionDefinition[0];
+	public AbilityDefinition[] triggeredEffects = new AbilityDefinition[0];
 
 }

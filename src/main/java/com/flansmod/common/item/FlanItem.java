@@ -2,8 +2,8 @@ package com.flansmod.common.item;
 
 import com.flansmod.common.FlansMod;
 import com.flansmod.common.types.JsonDefinition;
-import com.flansmod.common.types.abilities.AbilityDefinition;
-import com.flansmod.common.types.abilities.elements.AbilityProviderDefinition;
+import com.flansmod.common.types.abilities.CraftingTraitDefinition;
+import com.flansmod.common.types.abilities.elements.CraftingTraitProviderDefinition;
 import com.flansmod.common.types.attachments.AttachmentDefinition;
 import com.flansmod.common.types.attachments.EAttachmentType;
 import com.flansmod.common.types.guns.elements.AttachmentSettingsDefinition;
@@ -18,7 +18,6 @@ import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.IntArrayTag;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
@@ -26,7 +25,6 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.common.extensions.IForgeItem;
-import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -102,7 +100,7 @@ public abstract class FlanItem extends Item implements IForgeItem
             }
         }
 
-        for(var kvp : GetAbilities(stack).entrySet())
+        for(var kvp : GetTraits(stack).entrySet())
         {
             Component abilityString = (kvp.getKey().maxLevel == 1)
              ? (Component.translatable("tooltip.ability_without_level",
@@ -334,19 +332,19 @@ public abstract class FlanItem extends Item implements IForgeItem
         }
         stack.getOrCreateTag().put("parts", craftingTags);
     }
-    protected void CollectAbilities(@Nonnull ItemStack stack, @Nonnull Map<AbilityDefinition, Integer> abilityMap)
+    protected void CollectAbilities(@Nonnull ItemStack stack, @Nonnull Map<CraftingTraitDefinition, Integer> abilityMap)
     {
 
     }
     @Nonnull
-    public static Map<AbilityDefinition, Integer> GetAbilities(@Nonnull ItemStack stack)
+    public static Map<CraftingTraitDefinition, Integer> GetTraits(@Nonnull ItemStack stack)
     {
-        Map<AbilityDefinition, Integer> abilityMap = new HashMap<>();
+        Map<CraftingTraitDefinition, Integer> abilityMap = new HashMap<>();
         for(PartDefinition part : GetCraftingInputs(stack))
         {
-            for(AbilityProviderDefinition abilityProvider : part.abilities)
+            for(CraftingTraitProviderDefinition abilityProvider : part.abilities)
             {
-                AbilityDefinition ability = abilityProvider.GetAbility();
+                CraftingTraitDefinition ability = abilityProvider.GetAbility();
                 if(ability.IsValid())
                 {
                     int newLevel = abilityMap.getOrDefault(ability, 0) + abilityProvider.level;
@@ -357,9 +355,9 @@ public abstract class FlanItem extends Item implements IForgeItem
         }
         for(AttachmentDefinition attachment : GetAttachmentDefinitions(stack))
         {
-            for(AbilityProviderDefinition abilityProvider : attachment.abilities)
+            for(CraftingTraitProviderDefinition abilityProvider : attachment.abilities)
             {
-                AbilityDefinition ability = abilityProvider.GetAbility();
+                CraftingTraitDefinition ability = abilityProvider.GetAbility();
                 if(ability.IsValid())
                 {
                     int newLevel = abilityMap.getOrDefault(ability, 0) + abilityProvider.level;

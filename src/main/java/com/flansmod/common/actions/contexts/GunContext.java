@@ -2,11 +2,12 @@ package com.flansmod.common.actions.contexts;
 
 import com.flansmod.client.FlansModClient;
 import com.flansmod.common.FlansMod;
-import com.flansmod.common.abilities.ApplyModifierAbility;
+import com.flansmod.common.abilities.AbilityInstanceApplyModifier;
 import com.flansmod.common.actions.*;
 import com.flansmod.common.gunshots.*;
 import com.flansmod.common.item.*;
-import com.flansmod.common.types.abilities.AbilityDefinition;
+import com.flansmod.common.types.abilities.CraftingTraitDefinition;
+import com.flansmod.common.types.abilities.elements.EAbilityTrigger;
 import com.flansmod.common.types.attachments.AttachmentDefinition;
 import com.flansmod.common.types.attachments.EAttachmentType;
 import com.flansmod.common.types.guns.elements.*;
@@ -31,6 +32,7 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.*;
+import java.util.function.BiConsumer;
 
 public abstract class GunContext
 {
@@ -424,12 +426,35 @@ public abstract class GunContext
 		}
 		return ModifierCache;
 	}
-	public void Apply(ModifierStack modStack)
+	public void Apply(@Nonnull ModifierStack modStack)
 	{
 		GetShooter().Apply(modStack);
 
 		for(var kvp : GetModifiers().entrySet())
 			modStack.Modify(kvp.getKey(), kvp.getValue());
+	}
+	public float ModifyFloat(String key, float baseValue)
+	{
+		ModifierStack stack = new ModifierStack(key, "");
+		Apply(stack);
+		return stack.ApplyTo(baseValue);
+	}
+	public boolean ModifyBoolean(String key, boolean baseValue)
+	{
+		ModifierStack stack = new ModifierStack(key, "");
+		Apply(stack);
+		return stack.ApplyTo(baseValue);
+	}
+	public String ModifyString(String key, String defaultValue)
+	{
+		ModifierStack stack = new ModifierStack(key, "");
+		Apply(stack);
+		return stack.ApplyTo(defaultValue);
+	}
+	public <T extends Enum<T>> Enum<T> ModifyEnum(String key, T defaultValue, Class<T> clazz)
+	{
+		String modified = ModifyString(key, defaultValue.toString());
+		return Enum.valueOf(clazz, modified);
 	}
 
 	// --------------------------------------------------------------------------
@@ -727,12 +752,12 @@ public abstract class GunContext
 	}
 
 	// -----------------------------------------------------------------------------------------------------------------
-	// Abilities
+	// Traits & Abilities
 	// -----------------------------------------------------------------------------------------------------------------
 	@Nonnull
-	public Map<AbilityDefinition, Integer> GetAbilities()
+	public Map<CraftingTraitDefinition, Integer> GetTraits()
 	{
-		return FlanItem.GetAbilities(GetItemStack());
+		return FlanItem.GetTraits(GetItemStack());
 	}
 
 	public int HashAbilityModifiers()
@@ -741,7 +766,7 @@ public abstract class GunContext
 		ActionStack stack = GetActionStack();
 		if(stack.IsValid())
 		{
-			for(ApplyModifierAbility modAbility : stack.GetActiveModifierAbilities())
+			for(AbilityInstanceApplyModifier modAbility : stack.GetActiveModifierAbilities())
 			{
 				hash ^= modAbility.hashCode();
 			}
@@ -753,9 +778,22 @@ public abstract class GunContext
 	{
 		ActionStack stack = GetActionStack();
 		if(stack.IsValid())
-			for(ApplyModifierAbility modAbility : stack.GetActiveModifierAbilities())
+			for(AbilityInstanceApplyModifier modAbility : stack.GetActiveModifierAbilities())
 				for(ModifierDefinition modDef : modAbility.GetModifiers())
 					AddModifierToCache(modDef, modAbility.GetIntensity(this));
+	}
+	public void ForEachAbility(@Nonnull BiConsumer<AbilityDefinition, Integer> func)
+	{
+		// Apply static abilities (at level 1, they never level up)
+		for(AbilityDefinition staticDef : Def.staticAbilities)
+			func.accept(staticDef, 1);
+
+		// And apply traits inherited from crafting inputs (accumulating levels)
+		for(var kvp : GetTraits().entrySet())
+		{
+			for(AbilityDefinition traitAbility : kvp.getKey().abilities)
+				func.accept(traitAbility, kvp.getValue());
+		}
 	}
 
 	// -----------------------------------------------------------------------------------------------------------------
@@ -796,6 +834,7 @@ public abstract class GunContext
 		ItemStack stack = GetItemStack();
 		FlanItem.SetModeValue(stack, modeKey, modeValue);
 		SetItemStack(stack);
+		GetActionStack().EvaluateTrigger(EAbilityTrigger.SwitchMode, this, TriggerContext.self(this));
 	}
 
 	// -----------------------------------------------------------------------------------------------------------------

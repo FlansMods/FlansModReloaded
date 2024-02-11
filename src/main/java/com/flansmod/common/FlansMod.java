@@ -15,9 +15,9 @@ import com.flansmod.common.gunshots.Raytracer;
 import com.flansmod.common.item.*;
 import com.flansmod.common.network.FlansModPacketHandler;
 import com.flansmod.common.projectiles.BulletEntity;
-import com.flansmod.common.types.abilities.AbilityDefinition;
-import com.flansmod.common.types.abilities.AbilityDefinitions;
-import com.flansmod.common.types.abilities.elements.AbilityProviderDefinition;
+import com.flansmod.common.types.abilities.CraftingTraitDefinition;
+import com.flansmod.common.types.abilities.CraftingTraitDefinitions;
+import com.flansmod.common.types.abilities.elements.CraftingTraitProviderDefinition;
 import com.flansmod.common.types.abilities.elements.EAbilityEffect;
 import com.flansmod.common.types.attachments.AttachmentDefinitions;
 import com.flansmod.common.types.attachments.EAttachmentType;
@@ -243,7 +243,7 @@ public class FlansMod
     public static final MaterialDefinitions MATERIALS = new MaterialDefinitions();
     public static final MagazineDefinitions MAGAZINES = new MagazineDefinitions();
     public static final NpcDefinitions NPCS = new NpcDefinitions();
-    public static final AbilityDefinitions ABILITIES = new AbilityDefinitions();
+    public static final CraftingTraitDefinitions TRAITS = new CraftingTraitDefinitions();
 
     // Server handlers
     public static final ServerActionManager ACTIONS_SERVER = new ServerActionManager();
@@ -403,9 +403,9 @@ public class FlansMod
                                 ItemStack attachmentStack = gunContext.GetAttachmentStack(attachmentType, i);
                                 if(attachmentStack.getItem() instanceof AttachmentItem attachmentItem)
                                 {
-                                    for(AbilityProviderDefinition abilityProvider : attachmentItem.Def().abilities)
+                                    for(CraftingTraitProviderDefinition abilityProvider : attachmentItem.Def().abilities)
                                     {
-                                        AbilityDefinition abilityDef = abilityProvider.GetAbility();
+                                        CraftingTraitDefinition abilityDef = abilityProvider.GetAbility();
                                         if(abilityDef.effectType == EAbilityEffect.TotemOfUndying)
                                         {
                                             if(net.minecraftforge.common.ForgeHooks.onLivingUseTotem(player, damageSource, attachmentStack, gunContextPlayer.GetHand()))
@@ -446,6 +446,6 @@ public class FlansMod
         registerFunc.accept(MATERIALS);
         registerFunc.accept(MAGAZINES);
         registerFunc.accept(NPCS);
-        registerFunc.accept(ABILITIES);
+        registerFunc.accept(TRAITS);
     }
 }

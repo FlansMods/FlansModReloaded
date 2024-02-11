@@ -38,6 +38,8 @@ public class GunDefinition extends JsonDefinition
 	public ActionGroupDefinition[] actionGroups = new ActionGroupDefinition[0];
 	@JsonField(Docs = "Defines which magazine options there are")
 	public MagazineSlotSettingsDefinition[] magazines = new MagazineSlotSettingsDefinition[0];
+	@JsonField(Docs = "These are triggered actions that fire when certain conditions are met")
+	public AbilityDefinition[] staticAbilities = new AbilityDefinition[0];
 	@JsonField
 	public ReloadDefinition[] reloads = new ReloadDefinition[0];
 	@JsonField

@@ -1,7 +1,7 @@
 package com.flansmod.common.effects;
 
 import com.flansmod.common.FlansMod;
-import com.flansmod.common.types.abilities.AbilityDefinition;
+import com.flansmod.common.types.abilities.CraftingTraitDefinition;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectCategory;
@@ -12,7 +12,7 @@ public abstract class FlansMobEffect extends MobEffect
 {
 	@Nonnull
 	public final ResourceLocation AbilityLocation;
-	public AbilityDefinition Def() { return FlansMod.ABILITIES.Get(AbilityLocation); };
+	public CraftingTraitDefinition Def() { return FlansMod.TRAITS.Get(AbilityLocation); };
 
 	protected FlansMobEffect(@Nonnull ResourceLocation abilityLoc, @Nonnull MobEffectCategory category, int colour)
 	{

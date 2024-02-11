@@ -11,18 +11,18 @@ public enum EActionType
 	Scope,				// Implemented
 	CookGrenade,		// Implemented, untested
 	Drop,				// Implemented, untested
-	Repair,				// TODO: Waiting on vehicles existing
-	Heal,				// Implemented, untested
-	Feed,				// Implemented, untested
-	ApplyPotionEffect,	// TODO:
-	Interact,			// TODO:
-	BreakBlock,			// Implemented, untested
-	PlaceBlock,			// Implemented, untested
-	CollectFluid,		// TODO:
-	PlaceFluid,			// TODO:
-	SpawnEntity,		// Implemented, untested
-	DeleteEntity,		// Implemented, untested
-	SummonNpc,			// Implemented, untested
+	Raycast,			// > Use this to pick a target for arbitrary abilities <
+	Heal,				// OLD - Moved to Abilities
+	Feed,				// OLD - Moved to Abilities
+	ApplyPotionEffect,	// OLD - Moved to Abilities
+	Interact,			// OLD - Moved to Abilities
+	BreakBlock,			// OLD - Moved to Abilities
+	PlaceBlock,			// OLD - Moved to Abilities
+	CollectFluid,		// OLD - Moved to Abilities
+	PlaceFluid,			// OLD - Moved to Abilities
+	Repair,				// OLD - Moved to Abilities
+	DeleteEntity,		// OLD - Moved to Abilities
+	SummonNpc,			// OLD - Moved to Abilities
 
 	Melee,				// Vanilla, untested
 	Shield,				// Vanilla, untested
@@ -36,6 +36,6 @@ public enum EActionType
 	Flatten,			// Vanilla, untested
 
 	AttachEffect,		// TODO:
-	Laser,
-	SwitchMode,
+	Laser,				// Implemented. You need this on your gun to render a laser effect
+	SwitchMode,			// Implemented. Changes a mode on your gun
 }

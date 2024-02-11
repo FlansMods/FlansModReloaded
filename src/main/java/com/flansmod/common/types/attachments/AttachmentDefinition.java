@@ -4,7 +4,7 @@ import com.flansmod.common.FlansMod;
 import com.flansmod.common.actions.contexts.GunInputContext;
 import com.flansmod.common.types.JsonDefinition;
 import com.flansmod.common.types.JsonField;
-import com.flansmod.common.types.abilities.elements.AbilityProviderDefinition;
+import com.flansmod.common.types.abilities.elements.CraftingTraitProviderDefinition;
 import com.flansmod.common.types.elements.*;
 import com.flansmod.common.types.guns.elements.ActionGroupDefinition;
 import com.flansmod.common.types.guns.elements.ERepeatMode;
@@ -77,7 +77,7 @@ public class AttachmentDefinition extends JsonDefinition
 	@JsonField
 	public ReloadDefinition[] reloadOverrides = new ReloadDefinition[0];
 	@JsonField
-	public AbilityProviderDefinition[] abilities = new AbilityProviderDefinition[0];
+	public CraftingTraitProviderDefinition[] abilities = new CraftingTraitProviderDefinition[0];
 
 	@JsonField
 	public ERepeatMode modeOverride = ERepeatMode.FullAuto;
