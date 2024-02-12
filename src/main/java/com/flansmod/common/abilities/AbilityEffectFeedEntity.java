@@ -17,15 +17,11 @@ import javax.annotation.Nullable;
 
 public class AbilityEffectFeedEntity implements IAbilityEffect
 {
-	@Nullable
-	private final TagKey<EntityType<? extends Entity>> CheckTag;
 	private final float BaseFeedAmount;
 	private final float BaseFeedSaturation;
 
 	public AbilityEffectFeedEntity(@Nonnull AbilityEffectDefinition def)
 	{
-		String tagPath = def.ModifyString(ModifierDefinition.KEY_ENTITY_TAG, "");
-		CheckTag = !tagPath.isEmpty() ? TagKey.create(ForgeRegistries.ENTITY_TYPES.getRegistryKey(), new ResourceLocation(tagPath)) : null;
 		BaseFeedAmount = def.ModifyFloat(ModifierDefinition.STAT_FEED_AMOUNT, 1.0f);
 		BaseFeedSaturation = def.ModifyFloat(ModifierDefinition.STAT_FEED_SATURATION, 1.0f);
 	}
@@ -37,8 +33,7 @@ public class AbilityEffectFeedEntity implements IAbilityEffect
 		{
 			if (entity instanceof Player player)
 			{
-				if(CheckTag == null || entity.getType().is(CheckTag))
-					player.getFoodData().eat(FeedAmount(gun, stacks, tier), FeedSaturation(gun, stacks, tier));
+				player.getFoodData().eat(FeedAmount(gun, stacks, tier), FeedSaturation(gun, stacks, tier));
 			}
 		});
 	}

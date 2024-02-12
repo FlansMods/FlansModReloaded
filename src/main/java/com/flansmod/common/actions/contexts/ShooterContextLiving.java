@@ -2,7 +2,9 @@ package com.flansmod.common.actions.contexts;
 
 import com.flansmod.common.effects.FlansMobEffect;
 import com.flansmod.common.item.FlanItem;
+import com.flansmod.common.types.abilities.elements.AbilityEffectDefinition;
 import com.flansmod.common.types.elements.ModifierDefinition;
+import com.flansmod.common.types.guns.elements.AbilityDefinition;
 import com.flansmod.util.Transform;
 import net.minecraft.world.Container;
 import net.minecraft.world.InteractionHand;
@@ -159,8 +161,10 @@ public class ShooterContextLiving extends ShooterContext implements Container
 	{
 		for(MobEffectInstance effect : Shooter.getActiveEffects())
 			if(effect.getEffect() instanceof FlansMobEffect flansEffect)
-				for(ModifierDefinition modifier : flansEffect.Def().modifiers)
-					AddModifierToCache(modifier, effect.getAmplifier() + 1);
+				for(AbilityDefinition abilityDef : flansEffect.Def().abilities)
+					for(AbilityEffectDefinition effectDef : abilityDef.effects)
+						for(ModifierDefinition modifierDef : effectDef.modifiers)
+							AddModifierToCache(modifierDef, effect.getAmplifier() + 1);
 	}
 
 	@Override

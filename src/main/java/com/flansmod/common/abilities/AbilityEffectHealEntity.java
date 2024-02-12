@@ -16,14 +16,10 @@ import javax.annotation.Nullable;
 
 public class AbilityEffectHealEntity implements IAbilityEffect
 {
-	@Nullable
-	private final TagKey<EntityType<? extends Entity>> CheckTag;
 	private final float BaseHealAmount;
 
 	public AbilityEffectHealEntity(@Nonnull AbilityEffectDefinition def)
 	{
-		String tagPath = def.ModifyString(ModifierDefinition.KEY_ENTITY_TAG, "");
-		CheckTag = !tagPath.isEmpty() ? TagKey.create(ForgeRegistries.ENTITY_TYPES.getRegistryKey(), new ResourceLocation(tagPath)) : null;
 		BaseHealAmount = def.ModifyFloat(ModifierDefinition.STAT_HEAL_AMOUNT, 1.0f);
 	}
 
@@ -34,8 +30,7 @@ public class AbilityEffectHealEntity implements IAbilityEffect
 		{
 			if(entity instanceof LivingEntity living)
 			{
-				if(CheckTag == null || entity.getType().is(CheckTag))
-					living.heal(HealAmount(gun, stacks, tier));
+				living.heal(HealAmount(gun, stacks, tier));
 			}
 		});
 	}

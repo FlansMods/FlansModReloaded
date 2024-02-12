@@ -15,7 +15,7 @@ import javax.annotation.Nullable;
 public class AbilityInstanceApplyModifier implements IAbilityEffect
 {
 	@Nonnull
-	private final AbilityEffectDefinition Def;
+	public final AbilityEffectDefinition Def;
 
 	public AbilityInstanceApplyModifier(@Nonnull AbilityEffectDefinition def)
 	{

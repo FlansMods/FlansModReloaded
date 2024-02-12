@@ -33,6 +33,8 @@ public class AbilityTargetDefinition
 		if(targetType != checkTargetType)
 			return false;
 
+
+
 		return true;
 	}
 

@@ -17,6 +17,7 @@ import com.flansmod.common.network.FlansModPacketHandler;
 import com.flansmod.common.projectiles.BulletEntity;
 import com.flansmod.common.types.abilities.CraftingTraitDefinition;
 import com.flansmod.common.types.abilities.CraftingTraitDefinitions;
+import com.flansmod.common.types.abilities.elements.AbilityEffectDefinition;
 import com.flansmod.common.types.abilities.elements.CraftingTraitProviderDefinition;
 import com.flansmod.common.types.abilities.elements.EAbilityEffect;
 import com.flansmod.common.types.attachments.AttachmentDefinitions;
@@ -26,6 +27,7 @@ import com.flansmod.common.types.crafting.WorkbenchDefinitions;
 import com.flansmod.common.types.grenades.GrenadeDefinitions;
 import com.flansmod.common.types.guns.GunDefinitions;
 import com.flansmod.common.types.bullets.BulletDefinitions;
+import com.flansmod.common.types.guns.elements.AbilityDefinition;
 import com.flansmod.common.types.magazines.MagazineDefinitions;
 import com.flansmod.common.types.npc.NpcDefinitions;
 import com.flansmod.common.types.parts.PartDefinitions;
@@ -405,25 +407,31 @@ public class FlansMod
                                 {
                                     for(CraftingTraitProviderDefinition abilityProvider : attachmentItem.Def().abilities)
                                     {
-                                        CraftingTraitDefinition abilityDef = abilityProvider.GetAbility();
-                                        if(abilityDef.effectType == EAbilityEffect.TotemOfUndying)
+                                        CraftingTraitDefinition traitDef = abilityProvider.GetAbility();
+                                        for(AbilityDefinition abilityDef : traitDef.abilities)
                                         {
-                                            if(net.minecraftforge.common.ForgeHooks.onLivingUseTotem(player, damageSource, attachmentStack, gunContextPlayer.GetHand()))
+                                            for (AbilityEffectDefinition effectDef : abilityDef.effects)
                                             {
-                                                gunContext.SetAttachmentStack(attachmentType, i, ItemStack.EMPTY);
+                                                if (effectDef.effectType == EAbilityEffect.TotemOfUndying)
+                                                {
+                                                    if (net.minecraftforge.common.ForgeHooks.onLivingUseTotem(player, damageSource, attachmentStack, gunContextPlayer.GetHand()))
+                                                    {
+                                                        gunContext.SetAttachmentStack(attachmentType, i, ItemStack.EMPTY);
 
-                                                player.awardStat(Stats.ITEM_USED.get(attachmentStack.getItem()), 1);
-                                                CriteriaTriggers.USED_TOTEM.trigger(player, attachmentStack);
+                                                        player.awardStat(Stats.ITEM_USED.get(attachmentStack.getItem()), 1);
+                                                        CriteriaTriggers.USED_TOTEM.trigger(player, attachmentStack);
 
-                                                player.setHealth(1.0f);
-                                                player.removeAllEffects();
-                                                player.addEffect(new MobEffectInstance(MobEffects.REGENERATION, 900, 1));
-                                                player.addEffect(new MobEffectInstance(MobEffects.ABSORPTION, 100, 1));
-                                                player.addEffect(new MobEffectInstance(MobEffects.FIRE_RESISTANCE, 800, 0));
-                                                player.level().broadcastEntityEvent(player, (byte)35);
+                                                        player.setHealth(1.0f);
+                                                        player.removeAllEffects();
+                                                        player.addEffect(new MobEffectInstance(MobEffects.REGENERATION, 900, 1));
+                                                        player.addEffect(new MobEffectInstance(MobEffects.ABSORPTION, 100, 1));
+                                                        player.addEffect(new MobEffectInstance(MobEffects.FIRE_RESISTANCE, 800, 0));
+                                                        player.level().broadcastEntityEvent(player, (byte) 35);
 
-                                                deathEvent.setCanceled(true);
-                                                return;
+                                                        deathEvent.setCanceled(true);
+                                                        return;
+                                                    }
+                                                }
                                             }
                                         }
                                     }

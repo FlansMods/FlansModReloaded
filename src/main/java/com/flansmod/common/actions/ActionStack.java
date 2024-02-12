@@ -2,9 +2,7 @@ package com.flansmod.common.actions;
 
 import com.flansmod.client.render.FirstPersonManager;
 import com.flansmod.common.FlansMod;
-import com.flansmod.common.abilities.Abilities;
 import com.flansmod.common.abilities.AbilityStack;
-import com.flansmod.common.abilities.AbilityInstanceApplyModifier;
 import com.flansmod.common.actions.contexts.ActionGroupContext;
 import com.flansmod.common.actions.contexts.GunContext;
 import com.flansmod.common.actions.contexts.TargetsContext;
@@ -12,11 +10,9 @@ import com.flansmod.common.actions.contexts.TriggerContext;
 import com.flansmod.common.gunshots.EPressType;
 import com.flansmod.common.network.FlansModPacketHandler;
 import com.flansmod.common.network.bidirectional.ActionUpdateMessage;
-import com.flansmod.common.abilities.AbilityInstance;
 import com.flansmod.common.types.abilities.elements.AbilityEffectDefinition;
 import com.flansmod.common.types.abilities.elements.AbilityStackingDefinition;
 import com.flansmod.common.types.abilities.elements.EAbilityTrigger;
-import com.flansmod.common.types.elements.ModifierDefinition;
 import com.flansmod.common.types.guns.elements.*;
 import com.flansmod.common.types.magazines.EAmmoLoadMode;
 import com.flansmod.util.Maths;
@@ -413,8 +409,11 @@ public class ActionStack
 	{
 		for(ActionGroupInstance actionGroup : ActiveActionGroups)
 			actionGroup.SetFinished();
-		for(AbilityInstance ability : InstancedAbilities)
-			ability.End(gunContext, TriggerContext.self(gunContext));
+		ActiveActionGroups.clear();
+
+		for(AbilityStack stacks : AbilityStacks.values())
+			stacks.DecayAll();
+		AbilityStacks.clear();
 	}
 
 	// -------------------------------------------------------------------------------------------------
@@ -651,42 +650,7 @@ public class ActionStack
 	// -------------------------------------------------------------------------------------------------
 	// ABILTIES
 	// -------------------------------------------------------------------------------------------------
-	public void CheckInitTriggers(@Nonnull GunContext gunContext)
-	{
-		if(InstancedAbilities.isEmpty())
-		{
-			for (var kvp : gunContext.GetTraits().entrySet())
-			{
-				AbilityInstance instance = Abilities.InstanceAbility(kvp.getKey(), kvp.getValue());
-				if(instance != null)
-				{
-					InstancedAbilities.add(instance);
-					if(instance.Def.startTrigger == EAbilityTrigger.AlwaysOn)
-						instance.Trigger(gunContext, null);
-				}
-				else
-					FlansMod.LOGGER.warn("Could not spawn AbilityInstance " + kvp.getKey());
-			}
-		}
-	}
 
-	public List<AbilityStack> GetActiveStacks()
-	{
-		List<AbilityInstanceApplyModifier> list = new ArrayList<>();
-		for(AbilityInstance ability : InstancedAbilities)
-			if(ability instanceof AbilityInstanceApplyModifier applyModAbility)
-				if(applyModAbility.IsActive)
-					list.add(applyModAbility);
-		return list;
-	}
-
-	public void ForEachActiveAbilityModifier(@Nonnull Consumer<ModifierDefinition> func)
-	{
-		for(var kvp : AbilityStacks.entrySet())
-			if(kvp.getValue().IsActive())
-				for(ModifierDefinition mod : kvp.getKey()..Mod)
-				func.accept(stacks);
-	}
 	public void ForEachNonZeroStack(@Nonnull Consumer<AbilityStack> func)
 	{
 		for(AbilityStack stacks : AbilityStacks.values())
@@ -698,6 +662,26 @@ public class ActionStack
 	{
 		for(AbilityStack stacks : AbilityStacks.values())
 			stacks.Tick();
+	}
+
+	@Nullable
+	public AbilityStack GetStacks(@Nonnull AbilityStackingDefinition stackingDef)
+	{
+		if(AbilityStacks.containsKey(stackingDef.stackingKey))
+			return AbilityStacks.get(stackingDef.stackingKey);
+		return null;
+	}
+	public float GetIntensityOfStack(@Nonnull AbilityStackingDefinition stackingDef)
+	{
+		if(AbilityStacks.containsKey(stackingDef.stackingKey))
+			return AbilityStacks.get(stackingDef.stackingKey).GetIntensity();
+		return 0.0f;
+	}
+	public int GetDurationTicksOfStack(@Nonnull AbilityStackingDefinition stackingDef)
+	{
+		if(AbilityStacks.containsKey(stackingDef.stackingKey))
+			return AbilityStacks.get(stackingDef.stackingKey).GetDurationTicks();
+		return 0;
 	}
 
 	@Nonnull
@@ -733,9 +717,6 @@ public class ActionStack
 		if(LOOP_CHECK >= LOOP_MAX)
 			return;
 		// -------------------------------
-
-		// Do setup tasks
-		CheckInitTriggers(gunContext);
 
 		// e.g. OnHit -> SpawnProjectile for cluster munitions
 		gunContext.ForEachAbility((ability, tier) ->

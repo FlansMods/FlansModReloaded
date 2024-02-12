@@ -3,10 +3,14 @@ package com.flansmod.common.actions.contexts;
 import com.flansmod.client.FlansModClient;
 import com.flansmod.common.FlansMod;
 import com.flansmod.common.abilities.AbilityInstanceApplyModifier;
+import com.flansmod.common.abilities.AbilityStack;
+import com.flansmod.common.abilities.IAbilityEffect;
 import com.flansmod.common.actions.*;
 import com.flansmod.common.gunshots.*;
 import com.flansmod.common.item.*;
 import com.flansmod.common.types.abilities.CraftingTraitDefinition;
+import com.flansmod.common.types.abilities.elements.AbilityEffectDefinition;
+import com.flansmod.common.types.abilities.elements.EAbilityEffect;
 import com.flansmod.common.types.abilities.elements.EAbilityTrigger;
 import com.flansmod.common.types.attachments.AttachmentDefinition;
 import com.flansmod.common.types.attachments.EAttachmentType;
@@ -33,6 +37,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.*;
 import java.util.function.BiConsumer;
+import java.util.function.Consumer;
 
 public abstract class GunContext
 {
@@ -763,24 +768,60 @@ public abstract class GunContext
 	public int HashAbilityModifiers()
 	{
 		int hash = 0;
-		ActionStack stack = GetActionStack();
-		if(stack.IsValid())
+		for(var kvp : GetActiveModifierAbilities().entrySet())
 		{
-			for(AbilityInstanceApplyModifier modAbility : stack.GetActiveModifierAbilities())
-			{
-				hash ^= modAbility.hashCode();
-			}
+			hash ^= kvp.getValue().GetStackCount() << 3;
+			hash ^= kvp.getKey().hashCode();
 		}
 		return hash;
 	}
 
 	public void RecalculateAbilityModifierCache()
 	{
-		ActionStack stack = GetActionStack();
-		if(stack.IsValid())
-			for(AbilityInstanceApplyModifier modAbility : stack.GetActiveModifierAbilities())
-				for(ModifierDefinition modDef : modAbility.GetModifiers())
-					AddModifierToCache(modDef, modAbility.GetIntensity(this));
+		for(var kvp : GetActiveModifierAbilities().entrySet())
+			for(ModifierDefinition modDef : kvp.getKey().Def.modifiers)
+				AddModifierToCache(modDef, kvp.getValue().GetIntensity());
+	}
+
+	@Nonnull
+	public Map<AbilityInstanceApplyModifier, AbilityStack> GetActiveModifierAbilities()
+	{
+		Map<AbilityInstanceApplyModifier, AbilityStack> map = new HashMap<>();
+		ForEachActiveModifierAbility(map::put);
+		return map;
+	}
+	public void ForEachActiveModifierAbility(@Nonnull BiConsumer<AbilityInstanceApplyModifier, AbilityStack> func)
+	{
+		ActionStack actionStack = GetActionStack();
+		if(actionStack.IsValid())
+			ForEachAbility((abilityDef, tier) -> {
+				if(abilityDef.IsStackable())
+				{
+					AbilityStack stacks = actionStack.GetStacks(abilityDef.stacking);
+					if(stacks != null && stacks.IsActive())
+					{
+						for(AbilityEffectDefinition effectDef : abilityDef.effects)
+						{
+							if(effectDef.effectType == EAbilityEffect.ApplyModifier)
+							{
+								IAbilityEffect abilityEffect = effectDef.GetEffectProcessor();
+								if(abilityEffect instanceof AbilityInstanceApplyModifier modifierAbility)
+									func.accept(modifierAbility, stacks);
+								else
+									FlansMod.LOGGER.error("Ability was of type ApplyModifier, but had some other processor attached");
+							}
+						}
+					}
+				}
+			});
+	}
+
+	@Nonnull
+	public Map<AbilityDefinition, Integer> GetAbilities()
+	{
+		Map<AbilityDefinition, Integer> map = new HashMap<>();
+		ForEachAbility(map::put);
+		return map;
 	}
 	public void ForEachAbility(@Nonnull BiConsumer<AbilityDefinition, Integer> func)
 	{

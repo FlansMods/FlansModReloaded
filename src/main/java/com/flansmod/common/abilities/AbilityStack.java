@@ -23,6 +23,7 @@ public class AbilityStack
 	public float GetDurationSeconds() { return Def.GetDurationSeconds(StackCount); }
 	public int GetDurationTicks() { return Def.GetDurationTicks(StackCount); }
 	public boolean IsActive() { return StackCount > 0; }
+	public int GetStackCount() { return StackCount; }
 
 	public void AddStack()
 	{
@@ -47,5 +48,11 @@ public class AbilityStack
 			StackCount = 0;
 		else
 			StackCount--;
+	}
+
+	public void DecayAll()
+	{
+		TicksSinceStackedOrDecayed = 0;
+		StackCount = 0;
 	}
 }
