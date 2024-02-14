@@ -1,7 +1,9 @@
 package com.flansmod.common.abilities;
 
 import com.flansmod.common.actions.contexts.GunContext;
+import com.flansmod.common.actions.contexts.StatCalculationContext;
 import com.flansmod.common.actions.contexts.TargetsContext;
+import com.flansmod.common.gunshots.FloatModifier;
 import com.flansmod.common.types.abilities.elements.AbilityEffectDefinition;
 import com.flansmod.common.types.elements.ModifierDefinition;
 import net.minecraft.resources.ResourceLocation;
@@ -16,11 +18,11 @@ import javax.annotation.Nullable;
 
 public class AbilityEffectHealEntity implements IAbilityEffect
 {
-	private final float BaseHealAmount;
+	private final ModifierDefinition[] BaseHealAmounts;
 
 	public AbilityEffectHealEntity(@Nonnull AbilityEffectDefinition def)
 	{
-		BaseHealAmount = def.ModifyFloat(ModifierDefinition.STAT_HEAL_AMOUNT, 1.0f);
+		BaseHealAmounts = def.MatchModifiers(ModifierDefinition.STAT_HEAL_AMOUNT);
 	}
 
 	@Override
@@ -42,9 +44,8 @@ public class AbilityEffectHealEntity implements IAbilityEffect
 
 	public float HealAmount(@Nonnull GunContext gun, @Nullable AbilityStack stacks, int tier)
 	{
-		float healAmount = gun.ModifyFloat(ModifierDefinition.STAT_HEAL_AMOUNT, BaseHealAmount);
-		if(stacks != null)
-			healAmount *= stacks.GetIntensity();
-		return healAmount;
+		FloatModifier baseDamage = FloatModifier.of(StatCalculationContext.of(gun, stacks), BaseHealAmounts);
+		FloatModifier gunModifier = gun.GetFloatModifier(ModifierDefinition.STAT_HEAL_AMOUNT);
+		return FloatModifier.of(baseDamage, gunModifier).GetValue();
 	}
 }

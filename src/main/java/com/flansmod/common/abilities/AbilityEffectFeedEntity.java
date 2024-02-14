@@ -1,7 +1,9 @@
 package com.flansmod.common.abilities;
 
 import com.flansmod.common.actions.contexts.GunContext;
+import com.flansmod.common.actions.contexts.StatCalculationContext;
 import com.flansmod.common.actions.contexts.TargetsContext;
+import com.flansmod.common.gunshots.FloatModifier;
 import com.flansmod.common.types.abilities.elements.AbilityEffectDefinition;
 import com.flansmod.common.types.elements.ModifierDefinition;
 import com.flansmod.util.Maths;
@@ -17,13 +19,13 @@ import javax.annotation.Nullable;
 
 public class AbilityEffectFeedEntity implements IAbilityEffect
 {
-	private final float BaseFeedAmount;
-	private final float BaseFeedSaturation;
+	private final ModifierDefinition[] BaseFeedAmounts;
+	private final ModifierDefinition[] BaseFeedSaturations;
 
 	public AbilityEffectFeedEntity(@Nonnull AbilityEffectDefinition def)
 	{
-		BaseFeedAmount = def.ModifyFloat(ModifierDefinition.STAT_FEED_AMOUNT, 1.0f);
-		BaseFeedSaturation = def.ModifyFloat(ModifierDefinition.STAT_FEED_SATURATION, 1.0f);
+		BaseFeedAmounts = def.MatchModifiers(ModifierDefinition.STAT_FEED_AMOUNT);
+		BaseFeedSaturations = def.MatchModifiers(ModifierDefinition.STAT_FEED_SATURATION);
 	}
 
 	@Override
@@ -33,7 +35,7 @@ public class AbilityEffectFeedEntity implements IAbilityEffect
 		{
 			if (entity instanceof Player player)
 			{
-				player.getFoodData().eat(FeedAmount(gun, stacks, tier), FeedSaturation(gun, stacks, tier));
+				player.getFoodData().eat(FeedAmount(gun, stacks), FeedSaturation(gun, stacks));
 			}
 		});
 	}
@@ -43,18 +45,16 @@ public class AbilityEffectFeedEntity implements IAbilityEffect
 
 	}
 
-	public int FeedAmount(@Nonnull GunContext gun, @Nullable AbilityStack stacks, int tier)
+	public int FeedAmount(@Nonnull GunContext gun, @Nullable AbilityStack stacks)
 	{
-		float amount = gun.ModifyFloat(ModifierDefinition.STAT_FEED_AMOUNT, BaseFeedAmount);
-		if(stacks != null)
-			amount *= stacks.GetIntensity();
-		return Maths.Ceil(amount);
+		FloatModifier baseDamage = FloatModifier.of(StatCalculationContext.of(gun, stacks), BaseFeedAmounts);
+		FloatModifier gunModifier = gun.GetFloatModifier(ModifierDefinition.STAT_FEED_AMOUNT);
+		return Maths.Ceil(FloatModifier.of(baseDamage, gunModifier).GetValue());
 	}
-	public float FeedSaturation(@Nonnull GunContext gun, @Nullable AbilityStack stacks, int tier)
+	public float FeedSaturation(@Nonnull GunContext gun, @Nullable AbilityStack stacks)
 	{
-		float amount = gun.ModifyFloat(ModifierDefinition.STAT_FEED_SATURATION, BaseFeedSaturation);
-		if(stacks != null)
-			amount *= stacks.GetIntensity();
-		return amount;
+		FloatModifier baseDamage = FloatModifier.of(StatCalculationContext.of(gun, stacks), BaseFeedSaturations);
+		FloatModifier gunModifier = gun.GetFloatModifier(ModifierDefinition.STAT_FEED_SATURATION);
+		return FloatModifier.of(baseDamage, gunModifier).GetValue();
 	}
 }

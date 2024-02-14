@@ -3,33 +3,26 @@ package com.flansmod.client.gui.crafting;
 import com.flansmod.common.FlansMod;
 import com.flansmod.common.actions.Actions;
 import com.flansmod.common.actions.contexts.GunContext;
-import com.flansmod.common.actions.contexts.ContextCache;
 import com.flansmod.common.crafting.ingredients.IExtraIngredientTooltip;
 import com.flansmod.common.crafting.ingredients.TieredPartIngredient;
 import com.flansmod.common.crafting.menus.WorkbenchMenuGunCrafting;
 import com.flansmod.common.crafting.recipes.GunFabricationRecipe;
-import com.flansmod.common.crafting.recipes.PartFabricationRecipe;
-import com.flansmod.common.gunshots.ModifierStack;
+import com.flansmod.common.gunshots.FloatModifier;
 import com.flansmod.common.types.crafting.EMaterialType;
-import com.flansmod.common.types.crafting.elements.*;
 import com.flansmod.common.types.elements.ModifierDefinition;
 import com.flansmod.util.Maths;
-import com.flansmod.util.MinecraftHelpers;
 import com.mojang.datafixers.util.Pair;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.util.FormattedCharSequence;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.Ingredient;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -316,30 +309,29 @@ public class WorkbenchScreenTabGunCrafting extends WorkbenchScreenTab<WorkbenchM
 			{
 				int statBoxX = xOrigin + GUN_STATS_X_ORIGIN;
 				int statBoxY = yOrigin + GUN_STATS_Y_ORIGIN + 10;
-				if(RenderTooltipForStatComparison(graphics, ModifierDefinition.STAT_SHOT_SPREAD, 1.0f, context, xMouse, yMouse, statBoxX, statBoxY))
+				if(RenderTooltipForStatComparison(graphics, ModifierDefinition.STAT_SHOT_SPREAD, context, xMouse, yMouse, statBoxX, statBoxY))
 					return true;
-				if(RenderTooltipForStatComparison(graphics, ModifierDefinition.STAT_IMPACT_DAMAGE, 1.0f, context, xMouse, yMouse, statBoxX, statBoxY + 10))
+				if(RenderTooltipForStatComparison(graphics, ModifierDefinition.STAT_IMPACT_DAMAGE, context, xMouse, yMouse, statBoxX, statBoxY + 10))
 					return true;
-				if(RenderTooltipForStatComparison(graphics, ModifierDefinition.STAT_SHOT_SPEED, 1.0f, context, xMouse, yMouse, statBoxX + 32, statBoxY))
+				if(RenderTooltipForStatComparison(graphics, ModifierDefinition.STAT_SHOT_SPEED, context, xMouse, yMouse, statBoxX + 32, statBoxY))
 					return true;
-				if(RenderTooltipForStatComparison(graphics, ModifierDefinition.STAT_IMPACT_KNOCKBACK, 1.0f, context, xMouse, yMouse, statBoxX + 32, statBoxY + 10))
+				if(RenderTooltipForStatComparison(graphics, ModifierDefinition.STAT_IMPACT_KNOCKBACK, context, xMouse, yMouse, statBoxX + 32, statBoxY + 10))
 					return true;
-				if(RenderTooltipForStatComparison(graphics, ModifierDefinition.STAT_SHOT_BULLET_COUNT, 1.0f, context, xMouse, yMouse, statBoxX + 64, statBoxY))
+				if(RenderTooltipForStatComparison(graphics, ModifierDefinition.STAT_SHOT_BULLET_COUNT, context, xMouse, yMouse, statBoxX + 64, statBoxY))
 					return true;
-				if(RenderTooltipForStatComparison(graphics, ModifierDefinition.STAT_SHOT_VERTICAL_RECOIL, 1.0f, context, xMouse, yMouse, statBoxX + 64, statBoxY + 10))
+				if(RenderTooltipForStatComparison(graphics, ModifierDefinition.STAT_SHOT_VERTICAL_RECOIL, context, xMouse, yMouse, statBoxX + 64, statBoxY + 10))
 					return true;
 			}
 		}
 
 		return false;
 	}
-	private boolean RenderTooltipForStatComparison(@Nonnull GuiGraphics graphics, String stat, float baseValue, GunContext context, int xMouse, int yMouse, int boxX, int boxY)
+	private boolean RenderTooltipForStatComparison(@Nonnull GuiGraphics graphics, @Nonnull String stat, @Nonnull GunContext context, int xMouse, int yMouse, int boxX, int boxY)
 	{
 		if (InBox(xMouse, yMouse, boxX, 30, boxY, 9))
 		{
-			ModifierStack modStack = new ModifierStack(stat, Actions.DefaultPrimaryActionKey);
-			context.Apply(modStack);
-			graphics.renderTooltip(font, Component.translatable("tooltip.format." + stat + ".advanced", modStack.ApplyTo(baseValue)), xMouse, yMouse);
+			float value = context.GetFloat(stat); // TODO: Specific actions Actions.DefaultPrimaryActionKey
+			graphics.renderTooltip(font, Component.translatable("tooltip.format." + stat + ".advanced", value), xMouse, yMouse);
 			return true;
 		}
 		return false;

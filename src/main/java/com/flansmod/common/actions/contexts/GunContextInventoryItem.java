@@ -1,9 +1,11 @@
 package com.flansmod.common.actions.contexts;
 
+import com.flansmod.common.types.elements.ModifierDefinition;
 import net.minecraft.world.Container;
 import net.minecraft.world.item.ItemStack;
 
 import javax.annotation.Nonnull;
+import java.util.function.BiConsumer;
 
 public class GunContextInventoryItem extends GunContextItem
 {
@@ -41,7 +43,7 @@ public class GunContextInventoryItem extends GunContextItem
 	@Override
 	public int HashModifierSources() { return 0; }
 	@Override
-	public void RecalculateModifierCache() {}
+	public void RecalculateModifierCache(BiConsumer<ModifierDefinition, StatCalculationContext> consumer) {}
 	@Override
 	public String toString()
 	{

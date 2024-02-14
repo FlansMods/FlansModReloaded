@@ -1,8 +1,13 @@
 package com.flansmod.common.types.elements;
 
 import com.flansmod.common.types.JsonField;
+import com.flansmod.common.types.abilities.elements.StatAccumulatorDefinition;
 import com.flansmod.util.Maths;
 import net.minecraft.network.chat.Component;
+
+import javax.annotation.Nonnull;
+import java.util.ArrayList;
+import java.util.List;
 
 public class ModifierDefinition
 {
@@ -73,68 +78,56 @@ public class ModifierDefinition
 	public static final String MODAL_FIXED_LASER_DIRECTION = "fixed_laser_direction";
 
 	@JsonField
-	public String Stat = "";
+	public String stat = "";
 	@JsonField
-	public String Filter = "";
-	@JsonField(Docs = "Additive modifiers are applied first")
-	public float Add = 0.0f;
-	@JsonField(Docs = "All multiplys are applied after all adds, so notably a 0x multiplier will always 0 the stat")
-	public float Multiply = 1.0f;
-	@JsonField(Docs = "For non-numeric values, such as enums, this is a simple override")
-	public String SetValue = "";
+	public String[] matchGroupPaths = new String[0];
 	@JsonField
-	public String[] ApplyFilters = new String[0];
+	public StatAccumulatorDefinition[] accumulators = new StatAccumulatorDefinition[0];
+	@JsonField
+	public String setValue = "";
 
-
-	public boolean AppliesTo(String groupPath)
+	public boolean AppliesTo(@Nonnull String groupPath)
 	{
-		if(ApplyFilters.length == 0)
+		if(matchGroupPaths.length == 0)
 			return true;
-		for(String filter : ApplyFilters)
+		for(String filter : matchGroupPaths)
 			if(groupPath.contains(filter))
 				return true;
 		return false;
 	}
-	public boolean AppliesTo(String stat, String groupPath)
+	public boolean AppliesTo(@Nonnull String check, @Nonnull String groupPath)
 	{
-		return Stat.equals(stat)
-			&& AppliesTo(groupPath);
+		return stat.equals(check) && AppliesTo(groupPath);
 	}
-	public Component GetModifierString()
+	@Nonnull
+	public List<Component> GetModifierStrings()
 	{
-		Component statName = Component.translatable("modifier.stat_name." + Stat);
-		if(Add != 0.0f && Multiply != 1.0f)
+		List<Component> componentList = new ArrayList<>();
+		Component statName = Component.translatable("modifier.stat_name." + stat);
+
+		for(StatAccumulatorDefinition accumulator : accumulators)
 		{
-			return Component.translatable("modifier.unknown");
-		}
-		else if(Add != 0.0f)
-		{
-			if(Add > 0.0f)
-				return Component.translatable("modifier.increase_stat", PrintIntOrFloat(Add), statName);
-			else
-				return Component.translatable("modifier.decrease_stat", PrintIntOrFloat(-Add), statName);
-		}
-		else if(Multiply != 1.0f)
-		{
-			if(Multiply > 1.0f)
+			Component valueComponent = switch(accumulator.operation)
 			{
-				float percentIncrease = (Multiply - 1.0f) * 100.0f;
-				return Component.translatable("modifier.increase_stat_percent", PrintIntOrFloat(percentIncrease), statName);
-			}
-			else
+				case Constant -> Component.literal(PrintIntOrFloat(accumulator.value));
+				case Add -> Component.literal("+ " + PrintIntOrFloat(accumulator.value));
+				case Multiply -> Component.literal("x "+PrintIntOrFloat(100.0f * (1.0f + accumulator.value))+"%");
+				case Exponent -> Component.literal("^ "+PrintIntOrFloat(1.0f + accumulator.value)+"");
+			};
+
+			Component sourceComponent = switch(accumulator.multiplyPer)
 			{
-				float percentDecrease = (1.0f - Multiply) * 100.0f;
-				return Component.translatable("modifier.decrease_stat_percent", PrintIntOrFloat(percentDecrease), statName);
-			}
+				case One -> Component.translatable("modifier.scalar.one", statName, valueComponent);
+				case PerStacks -> Component.translatable("modifier.scalar.stacks", statName, valueComponent);
+				case PerLevel -> Component.translatable("modifier.scalar.level", statName, valueComponent);
+				case PerAttachment -> Component.translatable("modifier.scalar.attachment", statName, valueComponent);
+				case PerMagFullness -> Component.translatable("modifier.scalar.mag_full", statName, valueComponent);
+				case PerMagEmptiness -> Component.translatable("modifier.scalar.mag_empty", statName, valueComponent);
+			};
+
+			componentList.add(sourceComponent);
 		}
-		else if(!SetValue.isEmpty())
-		{
-			return Component.translatable("modifier.override_value", statName, SetValue);
-		}
-		else
-		{
-			return Component.translatable("modifier.unknown");
-		}
+		return componentList;
 	}
 	private String PrintIntOrFloat(float value)
 	{

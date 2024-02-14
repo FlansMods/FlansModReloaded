@@ -50,7 +50,7 @@ public class PartDefinition extends JsonDefinition
 	@JsonField
 	public EngineDefinition engine = new EngineDefinition();
 
-	@JsonField
+	@JsonField(AssetPathHint = "materials/")
 	public ResourceLocation material = InvalidLocation;
 
 	@Nullable

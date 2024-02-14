@@ -2,7 +2,7 @@ package com.flansmod.common.actions.contexts;
 
 import com.flansmod.client.FlansModClient;
 import com.flansmod.common.FlansMod;
-import com.flansmod.common.gunshots.ModifierStack;
+import com.flansmod.common.gunshots.FloatModifier;
 import com.flansmod.common.item.FlanItem;
 import com.flansmod.common.types.elements.ModifierDefinition;
 import com.flansmod.util.Transform;
@@ -19,8 +19,8 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.awt.*;
 import java.util.*;
+import java.util.function.BiConsumer;
 
 public abstract class ShooterContext
 {
@@ -56,7 +56,7 @@ public abstract class ShooterContext
 		@Override
 		public int HashModifierSources() { return 0; }
 		@Override
-		public void RecalculateModifierCache() {}
+		public void RecalculateModifierCache(BiConsumer<ModifierDefinition, StatCalculationContext> consumer) {}
 	};
 
 	@Nonnull
@@ -105,18 +105,15 @@ public abstract class ShooterContext
 
 
 	// ---------------------------------------------------------------------------------------------------
-	private final HashMap<ModifierDefinition, Float> ModifierCache;
-	private int ModifierHash;
 	private boolean IsCurrent;
-	protected void AddModifierToCache(ModifierDefinition modDef, float multiplier)
-	{
-		ModifierCache.put(modDef, ModifierCache.getOrDefault(modDef, 0.0f) + multiplier);
-	}
 
 	public ShooterContext()
 	{
-		ModifierCache = new HashMap<>();
-		ModifierHash = 0;
+		ModCache = new ModifierCacheCollection(
+			this::HashModifierSources,
+			(cache) -> {
+				RecalculateModifierCache(cache::ApplyModifier);
+			});
 		IsCurrent = true;
 	}
 	public boolean IsPlayerOwner()
@@ -146,23 +143,32 @@ public abstract class ShooterContext
 	public UUID OwnerUUID() { return Owner() != null ? Owner().getUUID() : InvalidID; }
 	public void MarkAsOld() { IsCurrent = false; }
 
+	// ---------------------------------------------------------------------------------------------------
+	// MODIFIER CACHE
+	// ---------------------------------------------------------------------------------------------------
+	private final ModifierCacheCollection ModCache;
+
 	@Nonnull
-	public Map<ModifierDefinition, Float> GetModifiers()
-	{
-		int updatedModifierHash = HashModifierSources();
-		if(updatedModifierHash != ModifierHash)
-		{
-			ModifierCache.clear();
-			RecalculateModifierCache();
-			ModifierHash = updatedModifierHash;
-		}
-		return ModifierCache;
-	}
-	public void Apply(@Nonnull ModifierStack modStack)
-	{
-		for(var kvp : GetModifiers().entrySet())
-			modStack.Modify(kvp.getKey(), kvp.getValue());
-	}
+	public FloatModifier GetFloatModifier(@Nonnull String stat) { return ModCache.GetFloatModifier(stat); }
+	@Nonnull
+	public FloatModifier GetFloatModifier(@Nonnull String stat, @Nonnull String actionGroupPath) { return ModCache.GetFloatModifier(stat, actionGroupPath); }
+	@Nullable
+	public String GetModifiedString(@Nonnull String stat) { return ModCache.GetModifiedString(stat); }
+	@Nullable
+	public String GetModifiedString(@Nonnull String stat, @Nonnull String actionGroupPath) { return ModCache.GetModifiedString(stat, actionGroupPath); }
+
+
+
+	public float GetFloat(@Nonnull String stat) { return GetFloatModifier(stat).GetValue(); }
+	public float ModifyFloat(@Nonnull String stat, float baseValue) { return GetFloatModifier(stat).ModifyValue(baseValue); }
+	@Nonnull
+	public String GetString(@Nonnull String stat) { return Optional.ofNullable(GetModifiedString(stat)).orElse(""); }
+	@Nonnull
+	public String ModifyString(@Nonnull String stat, @Nonnull String defaultValue) { return Optional.ofNullable(GetModifiedString(stat)).orElse(defaultValue); }
+
+
+	// ---------------------------------------------------------------------------------------------------
+
 
 	public void Save(@Nonnull CompoundTag tags)
 	{
@@ -217,7 +223,7 @@ public abstract class ShooterContext
 	public abstract boolean IsValid();
 	public abstract boolean IsCreative();
 	public abstract int HashModifierSources();
-	public abstract void RecalculateModifierCache();
+	public abstract void RecalculateModifierCache(@Nonnull BiConsumer<ModifierDefinition, StatCalculationContext> consumer);
 
 	@Override
 	public String toString()

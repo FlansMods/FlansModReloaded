@@ -32,5 +32,5 @@ public class LaserAction extends ActionInstance
 	public float Green() { return Group.Context.ModifyFloat(ModifierDefinition.STAT_LASER_GREEN, 1.0f); }
 	public float Blue() { return Group.Context.ModifyFloat(ModifierDefinition.STAT_LASER_BLUE, 1.0f); }
 	public String LaserOrigin() { return Group.Context.ModifyString(ModifierDefinition.STAT_LASER_ORIGIN, "laser_origin"); }
-	public boolean FixedLaserDirection() { return Group.Context.ModifyBoolean(ModifierDefinition.MODAL_FIXED_LASER_DIRECTION, false); }
+	public boolean FixedLaserDirection() { return Group.Context.GetBoolean(ModifierDefinition.MODAL_FIXED_LASER_DIRECTION); }
 }

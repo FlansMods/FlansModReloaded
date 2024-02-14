@@ -1,7 +1,9 @@
 package com.flansmod.common.abilities;
 
 import com.flansmod.common.actions.contexts.GunContext;
+import com.flansmod.common.actions.contexts.StatCalculationContext;
 import com.flansmod.common.actions.contexts.TargetsContext;
+import com.flansmod.common.gunshots.FloatModifier;
 import com.flansmod.common.types.abilities.elements.AbilityEffectDefinition;
 import com.flansmod.common.types.elements.ModifierDefinition;
 import net.minecraft.world.level.Level;
@@ -11,11 +13,11 @@ import javax.annotation.Nullable;
 
 public class AbilityEffectBreakBlock implements IAbilityEffect
 {
-	public final float HarvestLevel;
+	private final ModifierDefinition[] BaseHarvestLevels;
 
 	public AbilityEffectBreakBlock(@Nonnull AbilityEffectDefinition def)
 	{
-		HarvestLevel = def.ModifyFloat(ModifierDefinition.STAT_TOOL_HARVEST_LEVEL, 1.0f);
+		BaseHarvestLevels = def.MatchModifiers(ModifierDefinition.STAT_TOOL_HARVEST_LEVEL);
 	}
 
 	@Override
@@ -43,11 +45,8 @@ public class AbilityEffectBreakBlock implements IAbilityEffect
 
 	public float ToolLevel(@Nonnull GunContext gun, @Nullable AbilityStack stacks)
 	{
-		float toolLevel = gun.ModifyFloat(ModifierDefinition.STAT_TOOL_HARVEST_LEVEL, 1.0f);
-		if(stacks != null)
-		{
-			toolLevel *= stacks.GetIntensity();
-		}
-		return toolLevel;
+		FloatModifier baseMultiplier = FloatModifier.of(StatCalculationContext.of(gun, stacks), BaseHarvestLevels);
+		FloatModifier gunMultiplier = gun.GetFloatModifier(ModifierDefinition.STAT_TOOL_HARVEST_LEVEL);
+		return FloatModifier.of(baseMultiplier, gunMultiplier).GetValue();
 	}
 }

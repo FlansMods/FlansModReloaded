@@ -1,13 +1,14 @@
 package com.flansmod.common.actions.contexts;
 
 import com.flansmod.common.item.FlanItem;
+import com.flansmod.common.types.elements.ModifierDefinition;
 import com.flansmod.util.Transform;
 import net.minecraft.world.Container;
-import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.Entity;
 
 import javax.annotation.Nonnull;
 import java.util.UUID;
+import java.util.function.BiConsumer;
 
 public class ShooterContextUnresolvedEntity extends ShooterContext
 {
@@ -67,7 +68,7 @@ public class ShooterContextUnresolvedEntity extends ShooterContext
 	@Override
 	public int HashModifierSources() { return 0; }
 	@Override
-	public void RecalculateModifierCache() {}
+	public void RecalculateModifierCache(@Nonnull BiConsumer<ModifierDefinition, StatCalculationContext> consumer) {}
 
 	@Override
 	public String toString()

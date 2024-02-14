@@ -1,6 +1,7 @@
 package com.flansmod.common.actions.contexts;
 
 import com.flansmod.common.actions.ActionStack;
+import com.flansmod.common.types.elements.ModifierDefinition;
 import net.minecraft.world.Container;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.item.ItemEntity;
@@ -8,6 +9,7 @@ import net.minecraft.world.item.ItemStack;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.function.BiConsumer;
 
 public class GunContextItemEntity extends GunContext
 {
@@ -42,7 +44,7 @@ public class GunContextItemEntity extends GunContext
 	@Override
 	public int HashModifierSources() { return 0; }
 	@Override
-	public void RecalculateModifierCache() {}
+	public void RecalculateModifierCache(BiConsumer<ModifierDefinition, StatCalculationContext> consumer) {}
 	@Nonnull
 	@Override
 	public ActionStack GetActionStack() { return ActionStack.Invalid; }

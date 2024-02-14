@@ -17,6 +17,7 @@ import net.minecraft.world.item.ItemStack;
 
 import javax.annotation.Nonnull;
 import java.util.UUID;
+import java.util.function.BiConsumer;
 
 public class ShooterContextLiving extends ShooterContext implements Container
 {
@@ -142,13 +143,13 @@ public class ShooterContextLiving extends ShooterContext implements Container
 		return hash;
 	}
 	@Override
-	public void RecalculateModifierCache()
+	public void RecalculateModifierCache(@Nonnull BiConsumer<ModifierDefinition, StatCalculationContext> consumer)
 	{
 		CacheSlot(EquipmentSlot.HEAD);
 		CacheSlot(EquipmentSlot.CHEST);
 		CacheSlot(EquipmentSlot.LEGS);
 		CacheSlot(EquipmentSlot.FEET);
-		CacheMobEffects();
+		CacheMobEffects(consumer);
 	}
 	private void CacheSlot(EquipmentSlot slot)
 	{
@@ -157,14 +158,14 @@ public class ShooterContextLiving extends ShooterContext implements Container
 			// TODO: Cache armour stats
 		}
 	}
-	private void CacheMobEffects()
+	private void CacheMobEffects(@Nonnull BiConsumer<ModifierDefinition, StatCalculationContext> consumer)
 	{
 		for(MobEffectInstance effect : Shooter.getActiveEffects())
 			if(effect.getEffect() instanceof FlansMobEffect flansEffect)
 				for(AbilityDefinition abilityDef : flansEffect.Def().abilities)
 					for(AbilityEffectDefinition effectDef : abilityDef.effects)
 						for(ModifierDefinition modifierDef : effectDef.modifiers)
-							AddModifierToCache(modifierDef, effect.getAmplifier() + 1);
+							consumer.accept(modifierDef, StatCalculationContext.of(effect.getAmplifier() + 1, 0, GunContext.INVALID));
 	}
 
 	@Override

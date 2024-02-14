@@ -19,7 +19,7 @@ public class AbilityTargetDefinition
 	// TODO: Use ItemCollectionDefinition, but for Entity/Block
 	@JsonField
 	public ResourceLocation[] matchIDs = new ResourceLocation[0];
-	@JsonField
+	@JsonField(AssetPathHint = "tags/")
 	public ResourceLocation[] matchTags = new ResourceLocation[0];
 
 

@@ -10,7 +10,7 @@ public class ItemDefinition
 {
 	@JsonField
 	public int maxStackSize = 64;
-	@JsonField
+	@JsonField(AssetPathHint = "tags/items/")
 	public ResourceLocation[] tags = new ResourceLocation[0];
 
 	public boolean Matches(@Nonnull ResourceLocation match)

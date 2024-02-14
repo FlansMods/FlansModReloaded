@@ -282,7 +282,8 @@ public class WorkbenchScreenTabModification extends WorkbenchScreenTab<Workbench
 
 									for(ModifierDefinition modifier : matchingMags.get(i).modifiers)
 									{
-										lines.add(modifier.GetModifierString().getVisualOrderText());
+										for(Component modString : modifier.GetModifierStrings())
+											lines.add(modString.getVisualOrderText());
 									}
 
 									graphics.renderTooltip(font, lines, xMouse, yMouse);

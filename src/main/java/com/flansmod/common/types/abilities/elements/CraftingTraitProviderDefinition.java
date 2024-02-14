@@ -8,7 +8,7 @@ import static com.flansmod.common.types.JsonDefinition.InvalidLocation;
 
 public class CraftingTraitProviderDefinition
 {
-	@JsonField
+	@JsonField(AssetPathHint = "traits/")
 	public ResourceLocation trait = InvalidLocation;
 	@JsonField
 	public int level = 1;

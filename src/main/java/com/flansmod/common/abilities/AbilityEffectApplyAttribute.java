@@ -1,7 +1,9 @@
 package com.flansmod.common.abilities;
 
 import com.flansmod.common.actions.contexts.GunContext;
+import com.flansmod.common.actions.contexts.StatCalculationContext;
 import com.flansmod.common.actions.contexts.TargetsContext;
+import com.flansmod.common.gunshots.FloatModifier;
 import com.flansmod.common.types.abilities.elements.AbilityEffectDefinition;
 import com.flansmod.common.types.elements.ModifierDefinition;
 import net.minecraft.resources.ResourceLocation;
@@ -19,12 +21,13 @@ public class AbilityEffectApplyAttribute implements IAbilityEffect
 {
 	public final Attribute Attrib;
 	public final UUID IdentifyingKey;
-	public final float BaseMultiplier;
+	private final ModifierDefinition[] BaseMultipliers;
+
 
 	public AbilityEffectApplyAttribute(@Nonnull AbilityEffectDefinition def)
 	{
 		Attrib = ForgeRegistries.ATTRIBUTES.getValue(new ResourceLocation(def.ModifyString(ModifierDefinition.KEY_MOB_EFFECT_ID, "")));
-		BaseMultiplier = def.ModifyFloat(ModifierDefinition.STAT_ATTRIBUTE_MULTIPLIER, 1.0f);
+		BaseMultipliers = def.MatchModifiers(ModifierDefinition.STAT_ATTRIBUTE_MULTIPLIER);
 		IdentifyingKey = UUID.randomUUID();
 	}
 
@@ -64,12 +67,9 @@ public class AbilityEffectApplyAttribute implements IAbilityEffect
 
 	private float AttributeMultiplier(@Nonnull GunContext gun, @Nullable AbilityStack stacks)
 	{
-		float intensity = gun.ModifyFloat(ModifierDefinition.STAT_ATTRIBUTE_MULTIPLIER, BaseMultiplier);
-		if(stacks != null)
-		{
-			intensity *= stacks.GetIntensity();
-		}
-		return intensity;
+		FloatModifier baseMultiplier = FloatModifier.of(StatCalculationContext.of(gun, stacks), BaseMultipliers);
+		FloatModifier gunMultiplier = gun.GetFloatModifier(ModifierDefinition.STAT_ATTRIBUTE_MULTIPLIER);
+		return FloatModifier.of(baseMultiplier, gunMultiplier).GetValue();
 	}
 
 }

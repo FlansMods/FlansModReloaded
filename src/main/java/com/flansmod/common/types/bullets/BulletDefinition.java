@@ -4,6 +4,8 @@ import com.flansmod.common.FlansMod;
 import com.flansmod.common.types.JsonDefinition;
 import com.flansmod.common.types.JsonField;
 import com.flansmod.common.types.elements.ItemDefinition;
+import com.flansmod.common.types.guns.elements.ActionDefinition;
+import com.flansmod.common.types.guns.elements.ActionGroupDefinition;
 import com.flansmod.common.types.guns.elements.ShotDefinition;
 import com.flansmod.common.types.guns.elements.AbilityDefinition;
 import net.minecraft.resources.ResourceLocation;
@@ -44,6 +46,8 @@ public class BulletDefinition extends JsonDefinition
 	public ShotDefinition shootStats = new ShotDefinition();
 
 	@JsonField
-	public AbilityDefinition[] triggeredEffects = new AbilityDefinition[0];
+	public AbilityDefinition[] triggers = new AbilityDefinition[0];
+	@JsonField(Docs = "These action groups can be triggered at the point of impact")
+	public ActionGroupDefinition[] actionGroups = new ActionGroupDefinition[0];
 
 }

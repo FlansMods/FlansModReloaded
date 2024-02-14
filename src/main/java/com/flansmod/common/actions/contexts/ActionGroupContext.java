@@ -2,7 +2,7 @@ package com.flansmod.common.actions.contexts;
 
 import com.flansmod.common.FlansMod;
 import com.flansmod.common.types.guns.elements.EActionType;
-import com.flansmod.common.gunshots.ModifierStack;
+import com.flansmod.common.gunshots.FloatModifier;
 import com.flansmod.common.item.BulletItem;
 import com.flansmod.common.item.GunItem;
 import com.flansmod.common.types.attachments.AttachmentDefinition;
@@ -13,7 +13,6 @@ import com.flansmod.common.types.magazines.EAmmoConsumeMode;
 import com.flansmod.common.types.magazines.EAmmoLoadMode;
 import com.flansmod.common.types.magazines.MagazineDefinition;
 import com.flansmod.util.Maths;
-import com.flansmod.util.MinecraftHelpers;
 import com.mojang.datafixers.util.Pair;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.Container;
@@ -23,8 +22,10 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 public class ActionGroupContext
 {
@@ -68,6 +69,13 @@ public class ActionGroupContext
 		Gun = gun;
 		GroupPath = groupPath;
 		Def = CacheGroupDef();
+		ModCache = new ModifierCacheCollection(
+			() -> 1,
+			(cache) -> {
+				for(ActionDefinition actionDef : Def.actions)
+					for(ModifierDefinition modDef : actionDef.modifiers)
+						cache.ApplyModifier(modDef, StatCalculationContext.of(gun));
+			});
 	}
 
 	@Nonnull
@@ -236,6 +244,14 @@ public class ActionGroupContext
 		// Re-assign the remaining bullets to the mag
 		CompactStacks(magIndex, resultingBulletsInMag);
 		Gun.ExpelItems(expelBullets);
+	}
+
+	public float GetMagFullnessRatio(int magIndex)
+	{
+		int magSize = GetMagazineSize(magIndex);
+		int bulletCount = GetNumBulletsInMag(magIndex);
+
+		return magSize == 0 ? 0.0f : bulletCount / (float)magSize;
 	}
 
 	// --------------------------------------------------------------------------
@@ -614,47 +630,51 @@ public class ActionGroupContext
 	// --------------------------------------------------------------------------
 	// STAT CACHE
 	// --------------------------------------------------------------------------
-	public void Apply(ModifierStack modStack)
-	{
-		Gun.Apply(modStack);
+	private final ModifierCacheCollection ModCache;
 
-		// No need to maintain a separate cache, this is just reading from the definition
-		for(ActionDefinition def : Def.actions)
-			for(ModifierDefinition mod : def.modifiers)
-				modStack.Modify(mod, 1.0f);
-	}
-	public float ModifyFloat(String key, float baseValue)
+	@Nonnull
+	public FloatModifier GetFloatModifier(@Nonnull String stat) { return ModCache.GetFloatModifier(stat, GroupPath); }
+	@Nullable
+	public String GetModifiedString(@Nonnull String stat) { return ModCache.GetModifiedString(stat, GroupPath); }
+
+
+	// Compose the gun modifiers and the shooter modifiers
+	public float GetFloat(@Nonnull String stat)
 	{
-		ModifierStack stack = new ModifierStack(key, GroupPath);
-		Apply(stack);
-		return stack.ApplyTo(baseValue);
+		return FloatModifier.of(GetFloatModifier(stat), Gun.GetFloatModifier(stat, GroupPath), Gun.GetShooter().GetFloatModifier(stat, GroupPath)).GetValue();
 	}
-	public boolean ModifyBoolean(String key, boolean baseValue)
+	public float ModifyFloat(@Nonnull String stat, float baseValue)
 	{
-		ModifierStack stack = new ModifierStack(key, GroupPath);
-		Apply(stack);
-		return stack.ApplyTo(baseValue);
+		return FloatModifier.of(GetFloatModifier(stat), Gun.GetFloatModifier(stat, GroupPath), Gun.GetShooter().GetFloatModifier(stat, GroupPath)).ModifyValue(baseValue);
 	}
-	public String ModifyString(String key, String defaultValue)
+	// If the gun sets this, return that override. Then check the shooter
+	@Nonnull
+	public String GetString(@Nonnull String stat)
 	{
-		ModifierStack stack = new ModifierStack(key, GroupPath);
-		Apply(stack);
-		return stack.ApplyTo(defaultValue);
+		return Optional.ofNullable(GetModifiedString(stat)).orElse(Gun.GetString(stat));
 	}
-	public <T extends Enum<T>> Enum<T> ModifyEnum(String key, T defaultValue, Class<T> clazz)
+	@Nonnull
+	public String ModifyString(@Nonnull String stat, @Nonnull String defaultValue)
 	{
-		String modified = ModifyString(key, defaultValue.toString());
-		return Enum.valueOf(clazz, modified);
+		return Optional.ofNullable(GetModifiedString(stat)).orElse(Gun.ModifyString(stat, defaultValue));
 	}
+	@Nonnull
+	public <T extends Enum<T>> Enum<T> ModifyEnum(@Nonnull String stat, @Nonnull T defaultValue, @Nonnull Class<T> clazz)
+	{
+		return Enum.valueOf(clazz, ModifyString(stat, defaultValue.toString()));
+	}
+	public boolean GetBoolean(@Nonnull String stat) { return Boolean.parseBoolean(GetString(stat)); }
+
 	public ERepeatMode RepeatMode() { return (ERepeatMode) ModifyEnum(ModifierDefinition.STAT_GROUP_REPEAT_MODE, Def.repeatMode, ERepeatMode.class); }
 	public float RepeatDelaySeconds() { return ModifyFloat(ModifierDefinition.STAT_GROUP_REPEAT_DELAY, Def.repeatDelay); }
-	public float RepeatDelayTicks() { return RepeatDelaySeconds() * 20.0f; }
 	public int RepeatCount() { return Maths.Ceil(ModifyFloat(ModifierDefinition.STAT_GROUP_REPEAT_COUNT, Def.repeatCount)); }
 	public float SpinUpDuration() { return ModifyFloat(ModifierDefinition.STAT_GROUP_SPIN_UP_DURATION, Def.spinUpDuration); }
-	public int RoundsPerMinute() { return RepeatDelaySeconds() <= 0.00001f ? 0 : Maths.Ceil(60.0f / RepeatDelaySeconds()); }
 	public float Loudness() { return ModifyFloat(ModifierDefinition.STAT_GROUP_LOUDNESS, Def.loudness); }
-	public float Volume() { return ModifyFloat(ModifierDefinition.STAT_GROUP_LOUDNESS, 1.0f); }
-	public float Pitch() { return ModifyFloat(ModifierDefinition.STAT_SOUND_PITCH, 1.0f); }
+	public float Volume() { return GetFloat(ModifierDefinition.STAT_GROUP_LOUDNESS); }
+	public float Pitch() { return GetFloat(ModifierDefinition.STAT_SOUND_PITCH); }
+
+	public float RepeatDelayTicks() { return RepeatDelaySeconds() * 20.0f; }
+	public int RoundsPerMinute() { return RepeatDelaySeconds() <= 0.00001f ? 0 : Maths.Ceil(60.0f / RepeatDelaySeconds()); }
 
 	@Override
 	public String toString()

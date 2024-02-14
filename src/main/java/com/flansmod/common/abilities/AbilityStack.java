@@ -1,5 +1,7 @@
 package com.flansmod.common.abilities;
 
+import com.flansmod.common.actions.contexts.GunContext;
+import com.flansmod.common.actions.contexts.StatCalculationContext;
 import com.flansmod.common.types.abilities.elements.AbilityStackingDefinition;
 import com.flansmod.util.Maths;
 
@@ -8,22 +10,34 @@ import javax.annotation.Nonnull;
 public class AbilityStack
 {
 	@Nonnull
-	private final AbilityStackingDefinition Def;
+	public final AbilityStackingDefinition Def;
+	public final int Level;
 	private int StackCount;
 	private int TicksSinceStackedOrDecayed;
 
-	public AbilityStack(@Nonnull AbilityStackingDefinition def)
+	public AbilityStack(@Nonnull AbilityStackingDefinition def, int level)
 	{
 		Def = def;
+		Level = level;
 		StackCount = 0;
 		TicksSinceStackedOrDecayed = 0;
 	}
 
-	public float GetIntensity() { return Def.GetIntensity(StackCount); }
-	public float GetDurationSeconds() { return Def.GetDurationSeconds(StackCount); }
-	public int GetDurationTicks() { return Def.GetDurationTicks(StackCount); }
 	public boolean IsActive() { return StackCount > 0; }
 	public int GetStackCount() { return StackCount; }
+
+	public float GetIntensity(@Nonnull GunContext gunContext)
+	{
+		return Def.GetIntensity(StatCalculationContext.of(Level, StackCount, gunContext));
+	}
+	public float GetDecayTimeSeconds(@Nonnull GunContext gunContext)
+	{
+		return Def.GetDecayTimeSeconds(StatCalculationContext.of(Level, StackCount, gunContext));
+	}
+	public int GetDecayTimeTicks(@Nonnull GunContext gunContext)
+	{
+		return Def.GetDecayTimeTicks(StatCalculationContext.of(Level, StackCount, gunContext));
+	}
 
 	public void AddStack()
 	{
@@ -32,10 +46,10 @@ public class AbilityStack
 		StackCount = Maths.Clamp(StackCount, 0, Def.maxStacks);
 	}
 
-	public void Tick()
+	public void Tick(@Nonnull GunContext gunContext)
 	{
 		TicksSinceStackedOrDecayed++;
-		if(StackCount > 0 && TicksSinceStackedOrDecayed >= Def.GetDecayTimeTicks())
+		if(StackCount > 0 && TicksSinceStackedOrDecayed >= GetDecayTimeTicks(gunContext))
 		{
 			Decay();
 		}
@@ -55,4 +69,7 @@ public class AbilityStack
 		TicksSinceStackedOrDecayed = 0;
 		StackCount = 0;
 	}
+
+
+
 }

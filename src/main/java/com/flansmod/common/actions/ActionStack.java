@@ -395,7 +395,7 @@ public class ActionStack
 			ShotCooldown = 0.0f;
 
 		TickActions();
-		TickAbilities();
+		TickAbilities(gunContext);
 	}
 
 	protected void DebugLog(@Nonnull String string)
@@ -658,10 +658,10 @@ public class ActionStack
 				func.accept(stacks);
 	}
 
-	private void TickAbilities()
+	private void TickAbilities(@Nonnull GunContext gunContext)
 	{
 		for(AbilityStack stacks : AbilityStacks.values())
-			stacks.Tick();
+			stacks.Tick(gunContext);
 	}
 
 	@Nullable
@@ -671,26 +671,13 @@ public class ActionStack
 			return AbilityStacks.get(stackingDef.stackingKey);
 		return null;
 	}
-	public float GetIntensityOfStack(@Nonnull AbilityStackingDefinition stackingDef)
-	{
-		if(AbilityStacks.containsKey(stackingDef.stackingKey))
-			return AbilityStacks.get(stackingDef.stackingKey).GetIntensity();
-		return 0.0f;
-	}
-	public int GetDurationTicksOfStack(@Nonnull AbilityStackingDefinition stackingDef)
-	{
-		if(AbilityStacks.containsKey(stackingDef.stackingKey))
-			return AbilityStacks.get(stackingDef.stackingKey).GetDurationTicks();
-		return 0;
-	}
-
 	@Nonnull
-	public AbilityStack GetOrCreateStacks(@Nonnull AbilityStackingDefinition stackingDef)
+	public AbilityStack GetOrCreateStacks(@Nonnull AbilityStackingDefinition stackingDef, int tier)
 	{
 		if(AbilityStacks.containsKey(stackingDef.stackingKey))
 			return AbilityStacks.get(stackingDef.stackingKey);
 
-		AbilityStack stack = new AbilityStack(stackingDef);
+		AbilityStack stack = new AbilityStack(stackingDef, tier);
 		AbilityStacks.put(stackingDef.stackingKey, stack);
 		return stack;
 	}
@@ -736,7 +723,7 @@ public class ActionStack
 						AbilityStack stacks = null;
 						if(ability.IsStackable())
 						{
-							stacks = GetOrCreateStacks(ability.stacking);
+							stacks = GetOrCreateStacks(ability.stacking, tier);
 							stacks.AddStack();
 						}
 

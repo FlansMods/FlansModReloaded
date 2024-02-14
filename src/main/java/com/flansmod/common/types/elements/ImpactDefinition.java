@@ -9,7 +9,7 @@ import static com.flansmod.common.types.JsonDefinition.InvalidLocation;
 
 public class ImpactDefinition
 {
-	@JsonField
+	@JsonField(AssetPathHint = "textures/")
 	public ResourceLocation decal = InvalidLocation;
 
 	@JsonField

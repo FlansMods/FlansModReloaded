@@ -1,19 +1,18 @@
 package com.flansmod.common.actions.contexts;
 
-import com.flansmod.common.FlansMod;
 import com.flansmod.common.actions.ActionManager;
 import com.flansmod.common.actions.ActionStack;
-import net.minecraft.core.registries.Registries;
+import com.flansmod.common.types.elements.ModifierDefinition;
 import net.minecraft.world.Container;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.damagesource.DamageSource;
-import net.minecraft.world.damagesource.DamageSources;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.function.BiConsumer;
 
 public class GunContextLiving extends GunContextInventoryItem
 {
@@ -72,7 +71,7 @@ public class GunContextLiving extends GunContextInventoryItem
 	@Override
 	public int HashModifierSources() { return 0; }
 	@Override
-	public void RecalculateModifierCache() {}
+	public void RecalculateModifierCache(BiConsumer<ModifierDefinition, StatCalculationContext> consumer) {}
 	@Override
 	@Nullable
 	public Level GetLevel() { return ShooterContext.Level(); }

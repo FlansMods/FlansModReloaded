@@ -22,6 +22,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.*;
 import net.minecraftforge.registries.ForgeRegistries;
 
+import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -250,27 +251,11 @@ public class GunshotContext
 	// --------------------------------------------------------------------------
 	// STAT CACHE
 	// --------------------------------------------------------------------------
-	public void Apply(ModifierStack modStack)
-	{
-		ActionGroup.Apply(modStack);
-	}
-	public float ModifyFloat(String key, float baseValue)
-	{
-		ModifierStack stack = new ModifierStack(key, ActionGroup.GroupPath);
-		Apply(stack);
-		return stack.ApplyTo(baseValue);
-	}
-	public String ModifyString(String key, String defaultValue)
-	{
-		ModifierStack stack = new ModifierStack(key, ActionGroup.GroupPath);
-		Apply(stack);
-		return stack.ApplyTo(defaultValue);
-	}
-	public <T extends Enum<T>> Enum<T> ModifyEnum(String key, T defaultValue, Class<T> clazz)
-	{
-		String modified = ModifyString(key, defaultValue.toString());
-		return Enum.valueOf(clazz, modified);
-	}
+	public float ModifyFloat(@Nonnull String stat, float defaultValue) { return ActionGroup.ModifyFloat(stat, defaultValue); }
+	@Nonnull
+	public String ModifyString(@Nonnull String stat, @Nonnull String defaultValue)  { return ActionGroup.ModifyString(stat, defaultValue); }
+	@Nonnull
+	public <T extends Enum<T>> Enum<T> ModifyEnum(@Nonnull String stat, @Nonnull T defaultValue, @Nonnull Class<T> clazz) { return ActionGroup.ModifyEnum(stat, defaultValue, clazz); }
 
 	// Shot settings
 	public float VerticalRecoil() 			{ return ModifyFloat(ModifierDefinition.STAT_SHOT_VERTICAL_RECOIL, Bullet.shootStats.verticalRecoil); }

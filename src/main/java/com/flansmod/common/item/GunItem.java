@@ -13,6 +13,7 @@ import com.flansmod.common.types.guns.elements.ERepeatMode;
 import com.flansmod.common.types.guns.GunDefinition;
 import com.flansmod.common.types.guns.elements.ReloadDefinition;
 import com.flansmod.common.types.magazines.MagazineDefinition;
+import com.flansmod.util.Maths;
 import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.Multimap;
 import com.mojang.blaze3d.platform.InputConstants;
@@ -346,7 +347,7 @@ public class GunItem extends FlanItem
         GunContext gunContext = ContextCache.CreateWithoutCaching(stack);
         for (ActionDefinition actionDef : gunContext.GetPotentialPrimaryActions())
         {
-            int harvestLevel = actionDef.ToolLevel(Actions.DefaultPrimaryActionKey);
+            int harvestLevel = Maths.Ceil(gunContext.GetFloat(ModifierDefinition.STAT_TOOL_HARVEST_LEVEL));
             switch (actionDef.actionType)
             {
                 case Melee -> { return blockState.is(Blocks.COBWEB); }

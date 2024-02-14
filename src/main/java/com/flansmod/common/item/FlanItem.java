@@ -94,7 +94,8 @@ public abstract class FlanItem extends Item implements IForgeItem
                     ));
                     for (ModifierDefinition modDef : craftedFrom.modifiers)
                     {
-                        tooltips.add(Component.translatable("tooltip.crafted_from.modifier_format", modDef.GetModifierString()));
+                        for(Component modString : modDef.GetModifierStrings())
+                            tooltips.add(Component.translatable("tooltip.crafted_from.modifier_format", modString));
                     }
                 }
             }

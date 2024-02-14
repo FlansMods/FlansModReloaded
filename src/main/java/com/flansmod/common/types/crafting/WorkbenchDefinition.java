@@ -27,7 +27,7 @@ public class WorkbenchDefinition extends JsonDefinition
 
 	@JsonField
 	public String titleString = "workbench";
-	@JsonField
+	@JsonField(AssetPathHint = "textures/gui/")
 	public ResourceLocation bannerTextureLocation = InvalidLocation;
 
 	@JsonField

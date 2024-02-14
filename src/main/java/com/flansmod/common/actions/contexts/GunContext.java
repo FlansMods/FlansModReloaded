@@ -32,12 +32,13 @@ import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraftforge.fml.common.Mod;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.*;
 import java.util.function.BiConsumer;
-import java.util.function.Consumer;
+import java.util.function.Function;
 
 public abstract class GunContext
 {
@@ -69,7 +70,7 @@ public abstract class GunContext
 		@Override
 		public int HashModifierSources() { return 0; }
 		@Override
-		public void RecalculateModifierCache() { }
+		public void RecalculateModifierCache(@Nonnull BiConsumer<ModifierDefinition, StatCalculationContext> consumer) { }
 	};
 
 	// -----------------------------------------------------------------------------------------------
@@ -273,10 +274,46 @@ public abstract class GunContext
 		}
 		return GetActionGroupContext(newKey);
 	}
+
+	// ---------------------------------------------------------------------------------------------------
+	// MODIFIER CACHE
+	// ---------------------------------------------------------------------------------------------------
+	private final ModifierCacheCollection ModCache;
+
+	@Nonnull
+	public FloatModifier GetFloatModifier(@Nonnull String stat) { return ModCache.GetFloatModifier(stat); }
+	@Nonnull
+	public FloatModifier GetFloatModifier(@Nonnull String stat, @Nonnull String actionGroupPath) { return ModCache.GetFloatModifier(stat, actionGroupPath); }
+	@Nullable
+	public String GetModifiedString(@Nonnull String stat) { return ModCache.GetModifiedString(stat); }
+	@Nullable
+	public String GetModifiedString(@Nonnull String stat, @Nonnull String actionGroupPath) { return ModCache.GetModifiedString(stat, actionGroupPath); }
+
+
+	// Compose the gun modifiers and the shooter modifiers
+	public float GetFloat(@Nonnull String stat)
+	{
+		return FloatModifier.of(GetFloatModifier(stat), GetShooter().GetFloatModifier(stat)).GetValue();
+	}
+	public float ModifyFloat(@Nonnull String stat, float baseValue)
+	{
+		return FloatModifier.of(GetFloatModifier(stat), GetShooter().GetFloatModifier(stat)).ModifyValue(baseValue);
+	}
+	// If the gun sets this, return that override. Then check the shooter
+	@Nonnull
+	public String GetString(@Nonnull String stat)
+	{
+		return Optional.ofNullable(GetModifiedString(stat)).orElse(GetShooter().GetString(stat));
+	}
+	@Nonnull
+	public String ModifyString(@Nonnull String stat, @Nonnull String defaultValue)
+	{
+		return Optional.ofNullable(GetModifiedString(stat)).orElse(GetShooter().ModifyString(stat, defaultValue));
+	}
+
 	// ---------------------------------------------------------------------------------------------------
 
-	private final HashMap<ModifierDefinition, Float> ModifierCache;
-	private int ModifierHash;
+
 	public ItemStack Stack;
 	@Nonnull
 	public final GunDefinition Def;
@@ -315,7 +352,7 @@ public abstract class GunContext
 	// Not necessarily valid to ask for a hand, but in cases where it is valid, use this
 	public int GetInventorySlotIndex() { return Inventory.NOT_FOUND_INDEX; }
 	public abstract int HashModifierSources();
-	public abstract void RecalculateModifierCache();
+	public abstract void RecalculateModifierCache(@Nonnull BiConsumer<ModifierDefinition, StatCalculationContext> consumer);
 	@Nonnull
 	public abstract ActionStack GetActionStack();
 	public abstract boolean CanPerformActions();
@@ -327,12 +364,6 @@ public abstract class GunContext
 	// --------------------------------------------------------------------------
 	// Helpers
 	// --------------------------------------------------------------------------
-
-	protected void AddModifierToCache(ModifierDefinition modDef, float multiplier)
-	{
-		ModifierCache.put(modDef, ModifierCache.getOrDefault(modDef, 0.0f) + multiplier);
-	}
-
 	public ItemStack GetItemStack() { return Stack; }
 	public void SetItemStack(ItemStack stack)
 	{
@@ -400,9 +431,15 @@ public abstract class GunContext
 	protected GunContext(@Nonnull ItemStack stackAtTimeOfCreation)
 	{
 		Stack = stackAtTimeOfCreation.copy();
-		ModifierCache = new HashMap<>();
-		ModifierHash = 0;
 		Def = CacheGunDefinition();
+		ModCache = new ModifierCacheCollection(
+			() -> HashModifierSources() ^ HashAttachmentModifiers() ^ HashAbilityModifiers(),
+			(cache) ->
+			{
+				RecalculateAttachmentModifierCache(cache::ApplyModifier);
+				RecalculateAbilityModifierCache(cache::ApplyModifier);
+				RecalculateModifierCache(cache::ApplyModifier);
+			});
 	}
 	/// Public accessors of accumulated stats
 	// Make sure we process attachments when getting stats and results about the gun
@@ -412,54 +449,6 @@ public abstract class GunContext
 		if(GetItemStack().getItem() instanceof GunItem gunItem)
 			return gunItem.Def();
 		return GunDefinition.INVALID;
-	}
-
-	// --------------------------------------------------------------------------
-	// Stat Cache
-	// --------------------------------------------------------------------------
-	@Nonnull
-	public Map<ModifierDefinition, Float> GetModifiers()
-	{
-		int updatedModifierHash = HashModifierSources() ^ HashAttachmentModifiers() ^ HashAbilityModifiers();
-		if(updatedModifierHash != ModifierHash)
-		{
-			ModifierCache.clear();
-			RecalculateAttachmentModifierCache();
-			RecalculateAbilityModifierCache();
-			RecalculateModifierCache();
-			ModifierHash = updatedModifierHash;
-		}
-		return ModifierCache;
-	}
-	public void Apply(@Nonnull ModifierStack modStack)
-	{
-		GetShooter().Apply(modStack);
-
-		for(var kvp : GetModifiers().entrySet())
-			modStack.Modify(kvp.getKey(), kvp.getValue());
-	}
-	public float ModifyFloat(String key, float baseValue)
-	{
-		ModifierStack stack = new ModifierStack(key, "");
-		Apply(stack);
-		return stack.ApplyTo(baseValue);
-	}
-	public boolean ModifyBoolean(String key, boolean baseValue)
-	{
-		ModifierStack stack = new ModifierStack(key, "");
-		Apply(stack);
-		return stack.ApplyTo(baseValue);
-	}
-	public String ModifyString(String key, String defaultValue)
-	{
-		ModifierStack stack = new ModifierStack(key, "");
-		Apply(stack);
-		return stack.ApplyTo(defaultValue);
-	}
-	public <T extends Enum<T>> Enum<T> ModifyEnum(String key, T defaultValue, Class<T> clazz)
-	{
-		String modified = ModifyString(key, defaultValue.toString());
-		return Enum.valueOf(clazz, modified);
 	}
 
 	// --------------------------------------------------------------------------
@@ -748,12 +737,12 @@ public abstract class GunContext
 			}
 		return hash;
 	}
-	private void RecalculateAttachmentModifierCache()
+	private void RecalculateAttachmentModifierCache(@Nonnull BiConsumer<ModifierDefinition, StatCalculationContext> func)
 	{
 		for(ItemStack stack : GetAttachmentStacks())
 			if(stack.getItem() instanceof AttachmentItem attachmentItem)
 				for(ModifierDefinition modDef : attachmentItem.Def().modifiers)
-					AddModifierToCache(modDef, 1.0f);
+					func.accept(modDef, StatCalculationContext.of(this));
 	}
 
 	// -----------------------------------------------------------------------------------------------------------------
@@ -776,11 +765,11 @@ public abstract class GunContext
 		return hash;
 	}
 
-	public void RecalculateAbilityModifierCache()
+	public void RecalculateAbilityModifierCache(@Nonnull BiConsumer<ModifierDefinition, StatCalculationContext> func)
 	{
 		for(var kvp : GetActiveModifierAbilities().entrySet())
 			for(ModifierDefinition modDef : kvp.getKey().Def.modifiers)
-				AddModifierToCache(modDef, kvp.getValue().GetIntensity());
+				func.accept(modDef, StatCalculationContext.of(kvp.getValue().Level, kvp.getValue().GetStackCount(), this));
 	}
 
 	@Nonnull

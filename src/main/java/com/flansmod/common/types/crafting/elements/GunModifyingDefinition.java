@@ -8,9 +8,9 @@ public class GunModifyingDefinition
 	@JsonField
 	public boolean isActive = false;
 
-	@JsonField(Docs = "Disallows certain mods, but only if size > 0")
+	@JsonField(Docs = "Disallows certain mods, but only if size > 0", AssetPathHint = "attachments/")
 	public ResourceLocation[] disallowedMods = new ResourceLocation[0];
-	@JsonField(Docs = "Allows only certain mods if set. If size == 0, nothing will be applied")
+	@JsonField(Docs = "Allows only certain mods if set. If size == 0, nothing will be applied", AssetPathHint = "attachments/")
 	public ResourceLocation[] allowedMods = new ResourceLocation[0];
 
 	@JsonField
