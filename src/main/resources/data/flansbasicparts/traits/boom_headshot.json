@@ -1,0 +1,54 @@
+{
+    "maxLevel": 5,
+    "abilities": [
+        {
+            "startTriggers": [
+                {
+                    "triggerType": "ShotHeadshot",
+                    "triggerConditions": []
+                }
+            ],
+            "endTriggers": [],
+            "targets": [
+                {
+                    "targetType": "Shooter",
+                    "matchIDs": [],
+                    "matchTags": []
+                }
+            ],
+            "effects": [
+                {
+                    "effectType": "ApplyMobEffect",
+                    "modifiers": [
+                        {
+                            "stat": "duration",
+                            "matchGroupPaths": [
+                                "reload"
+                            ],
+                            "accumulators": [
+                                {
+                                    "operation": "IndependentPercentage",
+                                    "value": -75.0,
+                                    "multiplyPer": []
+                                }
+                            ],
+                            "setValue": ""
+                        },
+                        {
+                            "stat": "mob_effect_id",
+                            "matchGroupPaths": [],
+                            "accumulators": [],
+                            "setValue": "flansbasicparts:boom_headshot"
+                        }
+                    ]
+                }
+            ],
+            "stacking": {
+                "stackingKey": "boom_headshot",
+                "maxStacks": 1,
+                "decayAllAtOnce": true,
+                "decayTime": 0.0
+            }
+        }
+    ]
+}

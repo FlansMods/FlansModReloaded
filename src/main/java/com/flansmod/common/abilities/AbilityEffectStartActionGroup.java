@@ -19,7 +19,7 @@ public class AbilityEffectStartActionGroup implements IAbilityEffect
 	}
 
 	@Override
-	public void Trigger(@Nonnull GunContext gun, @Nonnull TargetsContext targets, @Nullable AbilityStack stacks, int tier)
+	public void Trigger(@Nonnull GunContext gun, @Nonnull TargetsContext targets, @Nullable AbilityStack stacks)
 	{
 		ActionGroupContext actionGroup = gun.GetActionGroupContext(ActionGroupPath);
 		if (actionGroup.IsValid())

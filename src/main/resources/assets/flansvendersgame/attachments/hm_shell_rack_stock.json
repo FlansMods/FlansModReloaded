@@ -10,12 +10,10 @@
     "attachmentType": "Stock",
     "modifiers": [
         {
-            "Stat": "magazine_size",
-            "Filter": "",
-            "Add": 3.0,
-            "Multiply": 1.0,
-            "SetValue": "",
-            "ApplyFilters": []
+            "stat": "",
+            "matchGroupPaths": [],
+            "accumulators": [],
+            "setValue": ""
         }
     ],
     "mechaEffects": [],

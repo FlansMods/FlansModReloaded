@@ -181,67 +181,51 @@
                     "itemStack": "",
                     "modifiers": [
                         {
-                            "Stat": "vertical_recoil",
-                            "Filter": "",
-                            "Add": 0.0,
-                            "Multiply": 6.0,
-                            "SetValue": "",
-                            "ApplyFilters": []
+                            "stat": "",
+                            "matchGroupPaths": [],
+                            "accumulators": [],
+                            "setValue": ""
                         },
                         {
-                            "Stat": "spread",
-                            "Filter": "",
-                            "Add": 0.0,
-                            "Multiply": 50.0,
-                            "SetValue": "",
-                            "ApplyFilters": []
+                            "stat": "",
+                            "matchGroupPaths": [],
+                            "accumulators": [],
+                            "setValue": ""
                         },
                         {
-                            "Stat": "speed",
-                            "Filter": "",
-                            "Add": 0.0,
-                            "Multiply": 0.0,
-                            "SetValue": "",
-                            "ApplyFilters": []
+                            "stat": "",
+                            "matchGroupPaths": [],
+                            "accumulators": [],
+                            "setValue": ""
                         },
                         {
-                            "Stat": "bullet_count",
-                            "Filter": "",
-                            "Add": 0.0,
-                            "Multiply": 1.0,
-                            "SetValue": "",
-                            "ApplyFilters": []
+                            "stat": "",
+                            "matchGroupPaths": [],
+                            "accumulators": [],
+                            "setValue": ""
                         },
                         {
-                            "Stat": "impact_damage",
-                            "Filter": "",
-                            "Add": 0.0,
-                            "Multiply": 10.0,
-                            "SetValue": "",
-                            "ApplyFilters": []
+                            "stat": "",
+                            "matchGroupPaths": [],
+                            "accumulators": [],
+                            "setValue": ""
                         },
                         {
-                            "Stat": "knockback",
-                            "Filter": "",
-                            "Add": 0.0,
-                            "Multiply": 0.0,
-                            "SetValue": "",
-                            "ApplyFilters": []
+                            "stat": "",
+                            "matchGroupPaths": [],
+                            "accumulators": [],
+                            "setValue": ""
                         }
                     ],
-                    "fovFactor": 1.0,
                     "scopeOverlay": "",
-                    "anim": "",
-                    "toolLevel": 1.0,
-                    "harvestSpeed": 1.0,
-                    "reach": 5.0
+                    "anim": ""
                 },
                 {
                     "actionType": "PlaySound",
                     "duration": 0.0,
                     "sounds": [
                         {
-                            "sound": "flansmod:gunshot_kapow",
+                            "sound": "minecraft:null",
                             "length": 0.0,
                             "minPitchMultiplier": 0.8333333,
                             "maxPitchMultiplier": 1.25,
@@ -253,12 +237,8 @@
                     ],
                     "itemStack": "",
                     "modifiers": [],
-                    "fovFactor": 1.25,
                     "scopeOverlay": "",
-                    "anim": "",
-                    "toolLevel": 1.0,
-                    "harvestSpeed": 1.0,
-                    "reach": 1.0
+                    "anim": ""
                 },
                 {
                     "actionType": "Animation",
@@ -266,12 +246,8 @@
                     "sounds": [],
                     "itemStack": "",
                     "modifiers": [],
-                    "fovFactor": 1.25,
                     "scopeOverlay": "",
-                    "anim": "shoot",
-                    "toolLevel": 1.0,
-                    "harvestSpeed": 1.0,
-                    "reach": 1.0
+                    "anim": "shoot"
                 }
             ]
         },
@@ -294,12 +270,8 @@
                     "sounds": [],
                     "itemStack": "",
                     "modifiers": [],
-                    "fovFactor": 1.25,
                     "scopeOverlay": "",
-                    "anim": "",
-                    "toolLevel": 1.0,
-                    "harvestSpeed": 1.0,
-                    "reach": 1.0
+                    "anim": ""
                 }
             ]
         },
@@ -322,12 +294,8 @@
                     "sounds": [],
                     "itemStack": "",
                     "modifiers": [],
-                    "fovFactor": 1.25,
                     "scopeOverlay": "",
-                    "anim": "look_at",
-                    "toolLevel": 1.0,
-                    "harvestSpeed": 1.0,
-                    "reach": 1.0
+                    "anim": "look_at"
                 }
             ]
         },
@@ -350,12 +318,8 @@
                     "sounds": [],
                     "itemStack": "",
                     "modifiers": [],
-                    "fovFactor": 1.25,
                     "scopeOverlay": "",
-                    "anim": "reload_start",
-                    "toolLevel": 1.0,
-                    "harvestSpeed": 1.0,
-                    "reach": 1.0
+                    "anim": "reload_start"
                 }
             ]
         },
@@ -378,19 +342,15 @@
                     "sounds": [],
                     "itemStack": "",
                     "modifiers": [],
-                    "fovFactor": 1.25,
                     "scopeOverlay": "",
-                    "anim": "reload_eject",
-                    "toolLevel": 1.0,
-                    "harvestSpeed": 1.0,
-                    "reach": 1.0
+                    "anim": "reload_eject"
                 },
                 {
                     "actionType": "PlaySound",
                     "duration": 0.375,
                     "sounds": [
                         {
-                            "sound": "flansmod:magazine_unload_chunky",
+                            "sound": "minecraft:null",
                             "length": 1.0,
                             "minPitchMultiplier": 1.0,
                             "maxPitchMultiplier": 1.0,
@@ -402,12 +362,8 @@
                     ],
                     "itemStack": "",
                     "modifiers": [],
-                    "fovFactor": 1.25,
                     "scopeOverlay": "",
-                    "anim": "",
-                    "toolLevel": 1.0,
-                    "harvestSpeed": 1.0,
-                    "reach": 1.0
+                    "anim": ""
                 }
             ]
         },
@@ -430,19 +386,15 @@
                     "sounds": [],
                     "itemStack": "",
                     "modifiers": [],
-                    "fovFactor": 1.25,
                     "scopeOverlay": "",
-                    "anim": "reload_load_one",
-                    "toolLevel": 1.0,
-                    "harvestSpeed": 1.0,
-                    "reach": 1.0
+                    "anim": "reload_load_one"
                 },
                 {
                     "actionType": "PlaySound",
                     "duration": 0.375,
                     "sounds": [
                         {
-                            "sound": "flansmod:magazine_load_chunky",
+                            "sound": "minecraft:null",
                             "length": 1.0,
                             "minPitchMultiplier": 1.0,
                             "maxPitchMultiplier": 1.0,
@@ -454,12 +406,8 @@
                     ],
                     "itemStack": "",
                     "modifiers": [],
-                    "fovFactor": 1.25,
                     "scopeOverlay": "",
-                    "anim": "",
-                    "toolLevel": 1.0,
-                    "harvestSpeed": 1.0,
-                    "reach": 1.0
+                    "anim": ""
                 }
             ]
         },
@@ -482,12 +430,8 @@
                     "sounds": [],
                     "itemStack": "",
                     "modifiers": [],
-                    "fovFactor": 1.25,
                     "scopeOverlay": "",
-                    "anim": "reload_end",
-                    "toolLevel": 1.0,
-                    "harvestSpeed": 1.0,
-                    "reach": 1.0
+                    "anim": "reload_end"
                 }
             ]
         }
@@ -502,6 +446,7 @@
             "baseCostToSwap": 0
         }
     ],
+    "staticAbilities": [],
     "reloads": [
         {
             "key": "primary_fire",

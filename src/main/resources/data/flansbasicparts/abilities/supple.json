@@ -1,38 +1,69 @@
 {
     "maxLevel": 5,
-    "startTrigger": "AlwaysOn",
-    "endTrigger": "AlwaysOn",
-    "triggerConditions": [],
-    "targetType": "Shooter",
-    "effectType": "ApplyModifier",
-    "effectParameters": [],
-    "modifiers": [
+    "abilities": [
         {
-            "Stat": "vertical_recoil",
-            "Filter": "",
-            "Add": 0.0,
-            "Multiply": 0.85,
-            "SetValue": "",
-            "ApplyFilters": []
-        },
-        {
-            "Stat": "horizontal_recoil",
-            "Filter": "",
-            "Add": 0.0,
-            "Multiply": 0.85,
-            "SetValue": "",
-            "ApplyFilters": []
+            "startTriggers": [
+                {
+                    "triggerType": "AlwaysOn",
+                    "triggerConditions": []
+                }
+            ],
+            "endTriggers": [],
+            "targets": [
+                {
+                    "targetType": "Shooter",
+                    "matchIDs": [],
+                    "matchTags": []
+                }
+            ],
+            "effects": [
+                {
+                    "effectType": "ApplyModifier",
+                    "modifiers": [
+                        {
+                            "stat": "horizontal_recoil",
+                            "matchGroupPaths": [],
+                            "accumulators": [
+                                {
+                                    "operation": "IndependentPercentage",
+                                    "value": -15.0,
+                                    "multiplyPer": [
+                                        "PerLevel"
+                                    ]
+                                }
+                            ],
+                            "setValue": ""
+                        },
+                        {
+                            "stat": "vertical_recoil",
+                            "matchGroupPaths": [],
+                            "accumulators": [
+                                {
+                                    "operation": "IndependentPercentage",
+                                    "value": -15.0,
+                                    "multiplyPer": [
+                                        "PerLevel"
+                                    ]
+                                }
+                            ],
+                            "setValue": ""
+                        }
+                    ]
+                }
+            ],
+            "stacking": {
+                "stackingKey": "",
+                "maxStacks": 0,
+                "decayAllAtOnce": false,
+                "decayTime": {
+                    "baseValue": 0.0,
+                    "additional": []
+                },
+                "intensity": {
+                    "baseValue": 0.0,
+                    "additional": []
+                }
+            }
         }
-    ],
-    "baseIntensity": 1.0,
-    "addIntensityPerLevel": 1.0,
-    "mulIntensityPerAttachment": 0.0,
-    "mulIntensityForFullMag": 0.0,
-    "invertMagFullness": false,
-    "baseDuration": 1.0,
-    "extraDurationPerLevel": 1.0,
-    "stackAmount": false,
-    "maxAmount": 1.0,
-    "stackDuration": false,
-    "maxDuration": 1.0
+    ]
 }

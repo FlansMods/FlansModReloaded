@@ -14,12 +14,7 @@
         ]
     },
     "modifiers": [],
-    "abilities": [
-        {
-            "ability": "flansbasicparts:fresh_mags",
-            "level": 1
-        }
-    ],
+    "traits": [],
     "engine": {
         "maxAcceleration": 1.0,
         "maxDeceleration": 1.0,
@@ -31,5 +26,5 @@
         "batterySlots": 0,
         "FECapacity": 0
     },
-    "material": "flansbasicparts:carbon_fiber"
+    "material": "flansbasicparts:materials/carbon_fiber"
 }

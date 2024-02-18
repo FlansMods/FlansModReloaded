@@ -1,34 +1,69 @@
 {
     "maxLevel": 5,
-    "startTrigger": "ShotEntity",
-    "endTrigger": "Instant",
-    "triggerConditions": [],
-    "targetType": "Shooter",
-    "effectType": "ApplyMobEffect",
-    "effectParameters": [
-        "flansbasicparts:boom_headshot"
-    ],
-    "modifiers": [
+    "abilities": [
         {
-            "Stat": "duration",
-            "Filter": "",
-            "Add": 0.0,
-            "Multiply": 0.25,
-            "SetValue": "",
-            "ApplyFilters": [
-                "reload_primary"
-            ]
+            "startTriggers": [
+                {
+                    "triggerType": "ShotHeadshot",
+                    "triggerConditions": []
+                }
+            ],
+            "endTriggers": [],
+            "targets": [
+                {
+                    "targetType": "Shooter",
+                    "matchIDs": [],
+                    "matchTags": []
+                }
+            ],
+            "effects": [
+                {
+                    "effectType": "ApplyMobEffect",
+                    "modifiers": [
+                        {
+                            "stat": "duration",
+                            "matchGroupPaths": [
+                                "reload"
+                            ],
+                            "accumulators": [
+                                {
+                                    "operation": "IndependentPercentage",
+                                    "value": -75.0,
+                                    "multiplyPer": []
+                                }
+                            ],
+                            "setValue": ""
+                        },
+                        {
+                            "stat": "mob_effect_id",
+                            "matchGroupPaths": [],
+                            "accumulators": [],
+                            "setValue": "flansbasicparts:boom_headshot"
+                        }
+                    ]
+                }
+            ],
+            "stacking": {
+                "stackingKey": "boom_headshot",
+                "maxStacks": 1,
+                "decayAllAtOnce": true,
+                "decayTime": {
+                    "baseValue": 0.0,
+                    "additional": [
+                        {
+                            "operation": "BaseAdd",
+                            "value": 2.0,
+                            "multiplyPer": [
+                                "PerLevel"
+                            ]
+                        }
+                    ]
+                },
+                "intensity": {
+                    "baseValue": 0.0,
+                    "additional": []
+                }
+            }
         }
-    ],
-    "baseIntensity": 1.0,
-    "addIntensityPerLevel": 0.0,
-    "mulIntensityPerAttachment": 0.0,
-    "mulIntensityForFullMag": 0.0,
-    "invertMagFullness": false,
-    "baseDuration": 2.0,
-    "extraDurationPerLevel": 2.0,
-    "stackAmount": false,
-    "maxAmount": 1.0,
-    "stackDuration": false,
-    "maxDuration": 1.0
+    ]
 }

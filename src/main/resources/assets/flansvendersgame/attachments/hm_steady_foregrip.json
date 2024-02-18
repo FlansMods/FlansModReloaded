@@ -10,28 +10,22 @@
     "attachmentType": "Grip",
     "modifiers": [
         {
-            "Stat": "spread",
-            "Filter": "",
-            "Add": 0.0,
-            "Multiply": 0.8,
-            "SetValue": "",
-            "ApplyFilters": []
+            "stat": "",
+            "matchGroupPaths": [],
+            "accumulators": [],
+            "setValue": ""
         },
         {
-            "Stat": "vertical_recoil",
-            "Filter": "",
-            "Add": 0.0,
-            "Multiply": 0.5,
-            "SetValue": "",
-            "ApplyFilters": []
+            "stat": "",
+            "matchGroupPaths": [],
+            "accumulators": [],
+            "setValue": ""
         },
         {
-            "Stat": "horizontal_recoil",
-            "Filter": "",
-            "Add": 0.0,
-            "Multiply": 0.5,
-            "SetValue": "",
-            "ApplyFilters": []
+            "stat": "",
+            "matchGroupPaths": [],
+            "accumulators": [],
+            "setValue": ""
         }
     ],
     "mechaEffects": [],

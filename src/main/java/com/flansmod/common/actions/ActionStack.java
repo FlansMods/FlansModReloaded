@@ -729,7 +729,7 @@ public class ActionStack
 
 						for(AbilityEffectDefinition effectDef : ability.effects)
 						{
-							effectDef.GetEffectProcessor().Trigger(gunContext, targetsContext, stacks, tier);
+							effectDef.GetEffectProcessor().Trigger(gunContext, targetsContext, stacks);
 						}
 					}
 				}

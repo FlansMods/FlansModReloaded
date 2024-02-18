@@ -6,7 +6,7 @@ import com.flansmod.common.abilities.AbilityInstanceApplyModifier;
 import com.flansmod.common.abilities.AbilityStack;
 import com.flansmod.common.abilities.IAbilityEffect;
 import com.flansmod.common.actions.*;
-import com.flansmod.common.gunshots.*;
+import com.flansmod.common.actions.stats.*;
 import com.flansmod.common.item.*;
 import com.flansmod.common.types.abilities.CraftingTraitDefinition;
 import com.flansmod.common.types.abilities.elements.AbilityEffectDefinition;
@@ -21,6 +21,7 @@ import com.flansmod.common.types.parts.PartDefinition;
 import com.flansmod.common.types.vehicles.EPlayerInput;
 import com.flansmod.util.MinecraftHelpers;
 import com.flansmod.util.Transform;
+import com.flansmod.util.formulae.FloatAccumulation;
 import com.mojang.datafixers.util.Pair;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.Container;
@@ -32,15 +33,13 @@ import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraftforge.fml.common.Mod;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.*;
 import java.util.function.BiConsumer;
-import java.util.function.Function;
 
-public abstract class GunContext
+public abstract class GunContext implements IStatCalculatorContext
 {
 	public static final GunContext INVALID = new GunContext(ItemStack.EMPTY)
 	{
@@ -68,9 +67,7 @@ public abstract class GunContext
 		@Override
 		public boolean CanPerformActions() { return false; }
 		@Override
-		public int HashModifierSources() { return 0; }
-		@Override
-		public void RecalculateModifierCache(@Nonnull BiConsumer<ModifierDefinition, StatCalculationContext> consumer) { }
+		public void BakeModifiers(@Nonnull IModifierBaker baker) { }
 	};
 
 	// -----------------------------------------------------------------------------------------------
@@ -275,45 +272,6 @@ public abstract class GunContext
 		return GetActionGroupContext(newKey);
 	}
 
-	// ---------------------------------------------------------------------------------------------------
-	// MODIFIER CACHE
-	// ---------------------------------------------------------------------------------------------------
-	private final ModifierCacheCollection ModCache;
-
-	@Nonnull
-	public FloatModifier GetFloatModifier(@Nonnull String stat) { return ModCache.GetFloatModifier(stat); }
-	@Nonnull
-	public FloatModifier GetFloatModifier(@Nonnull String stat, @Nonnull String actionGroupPath) { return ModCache.GetFloatModifier(stat, actionGroupPath); }
-	@Nullable
-	public String GetModifiedString(@Nonnull String stat) { return ModCache.GetModifiedString(stat); }
-	@Nullable
-	public String GetModifiedString(@Nonnull String stat, @Nonnull String actionGroupPath) { return ModCache.GetModifiedString(stat, actionGroupPath); }
-
-
-	// Compose the gun modifiers and the shooter modifiers
-	public float GetFloat(@Nonnull String stat)
-	{
-		return FloatModifier.of(GetFloatModifier(stat), GetShooter().GetFloatModifier(stat)).GetValue();
-	}
-	public float ModifyFloat(@Nonnull String stat, float baseValue)
-	{
-		return FloatModifier.of(GetFloatModifier(stat), GetShooter().GetFloatModifier(stat)).ModifyValue(baseValue);
-	}
-	// If the gun sets this, return that override. Then check the shooter
-	@Nonnull
-	public String GetString(@Nonnull String stat)
-	{
-		return Optional.ofNullable(GetModifiedString(stat)).orElse(GetShooter().GetString(stat));
-	}
-	@Nonnull
-	public String ModifyString(@Nonnull String stat, @Nonnull String defaultValue)
-	{
-		return Optional.ofNullable(GetModifiedString(stat)).orElse(GetShooter().ModifyString(stat, defaultValue));
-	}
-
-	// ---------------------------------------------------------------------------------------------------
-
-
 	public ItemStack Stack;
 	@Nonnull
 	public final GunDefinition Def;
@@ -351,8 +309,7 @@ public abstract class GunContext
 	public abstract boolean CanPerformTwoHandedAction();
 	// Not necessarily valid to ask for a hand, but in cases where it is valid, use this
 	public int GetInventorySlotIndex() { return Inventory.NOT_FOUND_INDEX; }
-	public abstract int HashModifierSources();
-	public abstract void RecalculateModifierCache(@Nonnull BiConsumer<ModifierDefinition, StatCalculationContext> consumer);
+	public abstract void BakeModifiers(@Nonnull IModifierBaker baker);
 	@Nonnull
 	public abstract ActionStack GetActionStack();
 	public abstract boolean CanPerformActions();
@@ -432,14 +389,7 @@ public abstract class GunContext
 	{
 		Stack = stackAtTimeOfCreation.copy();
 		Def = CacheGunDefinition();
-		ModCache = new ModifierCacheCollection(
-			() -> HashModifierSources() ^ HashAttachmentModifiers() ^ HashAbilityModifiers(),
-			(cache) ->
-			{
-				RecalculateAttachmentModifierCache(cache::ApplyModifier);
-				RecalculateAbilityModifierCache(cache::ApplyModifier);
-				RecalculateModifierCache(cache::ApplyModifier);
-			});
+		ModCache = new ModifierCache(this::BakeAllModifiers);
 	}
 	/// Public accessors of accumulated stats
 	// Make sure we process attachments when getting stats and results about the gun
@@ -692,10 +642,7 @@ public abstract class GunContext
 		}
 		return defs;
 	}
-	public int GetNumAttachments()
-	{
-		return GetAttachmentStacks().size();
-	}
+
 	public int GetNumAttachmentStacks(EAttachmentType attachType)
 	{
 		return Def.GetAttachmentSettings(attachType).numAttachmentSlots;
@@ -725,25 +672,93 @@ public abstract class GunContext
 	{
 		return FlanItem.GetAttachmentStacks(GetItemStack());
 	}
+	// ---------------------------------------------------------------------------------------------------
+	// MODIFIERS
+	// ---------------------------------------------------------------------------------------------------
+	private final ModifierCache ModCache;
 
-	private int HashAttachmentModifiers()
+	// Modifiers should be baked once per frame for a good balance of accuracy and performance
+	public void BakeAllModifiers(@Nonnull IModifierBaker baker)
 	{
-		int hash = 0xa77ac4;
-		for(ItemStack stack : GetAttachmentStacks())
-		 	if(stack.getItem() instanceof FlanItem flanItem)
-			{
-				int defHash = flanItem.Def().hashCode();
-				hash ^= (defHash << 16) | (defHash >> 16);
-			}
-		return hash;
+		BakeModifiers(baker);
+		BakeAttachmentModifiers(baker);
+		BakeAbilityModifiers(baker);
 	}
-	private void RecalculateAttachmentModifierCache(@Nonnull BiConsumer<ModifierDefinition, StatCalculationContext> func)
+	private void BakeAttachmentModifiers(@Nonnull IModifierBaker baker)
 	{
 		for(ItemStack stack : GetAttachmentStacks())
 			if(stack.getItem() instanceof AttachmentItem attachmentItem)
 				for(ModifierDefinition modDef : attachmentItem.Def().modifiers)
-					func.accept(modDef, StatCalculationContext.of(this));
+					baker.Bake(modDef);
 	}
+	private void BakeAbilityModifiers(@Nonnull IModifierBaker baker)
+	{
+		for(var kvp : GetActiveModifierAbilities().entrySet())
+			for(ModifierDefinition modDef : kvp.getKey().Def.modifiers)
+				baker.Bake(modDef, kvp.getValue().Level, kvp.getValue().GetStackCount());
+	}
+
+
+	@Override
+	public int GetNumAttachments()
+	{
+		return GetAttachmentStacks().size();
+	}
+
+	@Nonnull
+	public StatAccumulator GetModifierFormula(@Nonnull String stat) { return ModCache.GetModifierFormula(stat); }
+	@Nonnull
+	public Optional<String> GetStringOverride(@Nonnull String stat) { return ModCache.GetStringOverride(stat); }
+
+	@Nonnull
+	public FloatAccumulation ModifyFloat(@Nonnull String stat)
+	{
+		return FloatAccumulation.compose(
+			GetModifierFormula(stat).Calculate(this),
+			GetShooter().GetModifierFormula(stat).Calculate(this));
+	}
+	@Nonnull
+	public String ModifyString(@Nonnull String stat, @Nonnull String defaultValue)
+	{
+		return GetShooter().GetStringOverride(stat)
+			.orElse(GetStringOverride(stat)
+				.orElse(defaultValue));
+	}
+
+
+	//@Nonnull
+	//public FloatModifier GetFloatModifier(@Nonnull String stat) { return ModCache.GetFloatModifier(stat); }
+	//@Nonnull
+	//public FloatModifier GetFloatModifier(@Nonnull String stat, @Nonnull String actionGroupPath) { return ModCache.GetFloatModifier(stat, actionGroupPath); }
+	//@Nullable
+	//public String GetModifiedString(@Nonnull String stat) { return ModCache.GetModifiedString(stat); }
+	//@Nullable
+	//public String GetModifiedString(@Nonnull String stat, @Nonnull String actionGroupPath) { return ModCache.GetModifiedString(stat, actionGroupPath); }
+//
+//
+	//// Compose the gun modifiers and the shooter modifiers
+	//public float GetFloat(@Nonnull String stat)
+	//{
+	//	return FloatModifier.of(GetFloatModifier(stat), GetShooter().GetFloatModifier(stat)).GetValue();
+	//}
+	//public float ModifyFloat(@Nonnull String stat, float baseValue)
+	//{
+	//	return FloatModifier.of(GetFloatModifier(stat), GetShooter().GetFloatModifier(stat)).ModifyValue(baseValue);
+	//}
+	//// If the gun sets this, return that override. Then check the shooter
+	//@Nonnull
+	//public String GetString(@Nonnull String stat)
+	//{
+	//	return Optional.ofNullable(GetModifiedString(stat)).orElse(GetShooter().GetString(stat));
+	//}
+	//@Nonnull
+	//public String ModifyString(@Nonnull String stat, @Nonnull String defaultValue)
+	//{
+	//	return Optional.ofNullable(GetModifiedString(stat)).orElse(GetShooter().ModifyString(stat, defaultValue));
+	//}
+
+	// ---------------------------------------------------------------------------------------------------
+
 
 	// -----------------------------------------------------------------------------------------------------------------
 	// Traits & Abilities
@@ -752,24 +767,6 @@ public abstract class GunContext
 	public Map<CraftingTraitDefinition, Integer> GetTraits()
 	{
 		return FlanItem.GetTraits(GetItemStack());
-	}
-
-	public int HashAbilityModifiers()
-	{
-		int hash = 0;
-		for(var kvp : GetActiveModifierAbilities().entrySet())
-		{
-			hash ^= kvp.getValue().GetStackCount() << 3;
-			hash ^= kvp.getKey().hashCode();
-		}
-		return hash;
-	}
-
-	public void RecalculateAbilityModifierCache(@Nonnull BiConsumer<ModifierDefinition, StatCalculationContext> func)
-	{
-		for(var kvp : GetActiveModifierAbilities().entrySet())
-			for(ModifierDefinition modDef : kvp.getKey().Def.modifiers)
-				func.accept(modDef, StatCalculationContext.of(kvp.getValue().Level, kvp.getValue().GetStackCount(), this));
 	}
 
 	@Nonnull

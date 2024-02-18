@@ -1,5 +1,7 @@
 package com.flansmod.common.actions.contexts;
 
+import com.flansmod.common.abilities.AbilityStack;
+import com.flansmod.common.actions.stats.IModifierBaker;
 import com.flansmod.common.effects.FlansMobEffect;
 import com.flansmod.common.item.FlanItem;
 import com.flansmod.common.types.abilities.elements.AbilityEffectDefinition;
@@ -17,7 +19,6 @@ import net.minecraft.world.item.ItemStack;
 
 import javax.annotation.Nonnull;
 import java.util.UUID;
-import java.util.function.BiConsumer;
 
 public class ShooterContextLiving extends ShooterContext implements Container
 {
@@ -109,47 +110,13 @@ public class ShooterContextLiving extends ShooterContext implements Container
 	}
 	//
 	@Override
-	public int HashModifierSources()
-	{
-		int hash = 0;
-
-		hash ^= HashSlot(EquipmentSlot.HEAD);
-		hash ^= HashSlot(EquipmentSlot.CHEST);
-		hash ^= HashSlot(EquipmentSlot.LEGS);
-		hash ^= HashSlot(EquipmentSlot.FEET);
-		hash ^= HashMobEffects();
-
-		return hash;
-	}
-	private int HashSlot(EquipmentSlot slot)
-	{
-		if(Shooter.getItemBySlot(EquipmentSlot.HEAD).getItem() instanceof FlanItem flanItem)
-		{
-			int defHash = flanItem.DefinitionLocation.hashCode();
-			return ((defHash << 16) | (defHash >> 16));
-		}
-		return 0;
-	}
-	private int HashMobEffects()
-	{
-		int hash = 0;
-		for(MobEffectInstance effect : Shooter.getActiveEffects())
-		{
-			if(effect.getEffect() instanceof FlansMobEffect flansEffect)
-			{
-				hash ^= effect.hashCode();
-			}
-		}
-		return hash;
-	}
-	@Override
-	public void RecalculateModifierCache(@Nonnull BiConsumer<ModifierDefinition, StatCalculationContext> consumer)
+	public void BakeModifiers(@Nonnull IModifierBaker baker)
 	{
 		CacheSlot(EquipmentSlot.HEAD);
 		CacheSlot(EquipmentSlot.CHEST);
 		CacheSlot(EquipmentSlot.LEGS);
 		CacheSlot(EquipmentSlot.FEET);
-		CacheMobEffects(consumer);
+		BakeMobEffects(baker);
 	}
 	private void CacheSlot(EquipmentSlot slot)
 	{
@@ -158,14 +125,31 @@ public class ShooterContextLiving extends ShooterContext implements Container
 			// TODO: Cache armour stats
 		}
 	}
-	private void CacheMobEffects(@Nonnull BiConsumer<ModifierDefinition, StatCalculationContext> consumer)
+	private void BakeMobEffects(@Nonnull IModifierBaker baker)
 	{
 		for(MobEffectInstance effect : Shooter.getActiveEffects())
 			if(effect.getEffect() instanceof FlansMobEffect flansEffect)
 				for(AbilityDefinition abilityDef : flansEffect.Def().abilities)
 					for(AbilityEffectDefinition effectDef : abilityDef.effects)
 						for(ModifierDefinition modifierDef : effectDef.modifiers)
-							consumer.accept(modifierDef, StatCalculationContext.of(effect.getAmplifier() + 1, 0, GunContext.INVALID));
+						{
+							int traitLevel = 1;
+							int stackCount = 0;
+							if(abilityDef.IsStackable())
+							{
+								for(GunContext gunContext : GetAllGunContexts(GetSide() == EContextSide.Client))
+								{
+									AbilityStack stacks = gunContext.GetActionStack().GetStacks(abilityDef.stacking);
+									if(stacks != null)
+									{
+										traitLevel = stacks.Level;
+										stackCount = stacks.GetStackCount();
+									}
+								}
+							}
+
+							baker.Bake(modifierDef, traitLevel, stackCount);
+						}
 	}
 
 	@Override

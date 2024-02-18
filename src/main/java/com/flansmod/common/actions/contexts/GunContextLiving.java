@@ -2,6 +2,8 @@ package com.flansmod.common.actions.contexts;
 
 import com.flansmod.common.actions.ActionManager;
 import com.flansmod.common.actions.ActionStack;
+import com.flansmod.common.actions.stats.IModifierBaker;
+import com.flansmod.common.actions.stats.StatCalculationContext;
 import com.flansmod.common.types.elements.ModifierDefinition;
 import net.minecraft.world.Container;
 import net.minecraft.world.InteractionHand;
@@ -69,9 +71,7 @@ public class GunContextLiving extends GunContextInventoryItem
 
 	// There are no modifiers to apply right now
 	@Override
-	public int HashModifierSources() { return 0; }
-	@Override
-	public void RecalculateModifierCache(BiConsumer<ModifierDefinition, StatCalculationContext> consumer) {}
+	public void BakeModifiers(@Nonnull IModifierBaker baker) {}
 	@Override
 	@Nullable
 	public Level GetLevel() { return ShooterContext.Level(); }

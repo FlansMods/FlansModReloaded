@@ -1,0 +1,48 @@
+{
+    "maxLevel": 5,
+    "abilities": [
+        {
+            "startTriggers": [
+                {
+                    "triggerType": "AlwaysOn",
+                    "triggerConditions": []
+                }
+            ],
+            "endTriggers": [],
+            "targets": [
+                {
+                    "targetType": "Shooter",
+                    "matchIDs": [],
+                    "matchTags": []
+                }
+            ],
+            "effects": [
+                {
+                    "effectType": "ApplyModifier",
+                    "modifiers": [
+                        {
+                            "stat": "bullet_spread",
+                            "matchGroupPaths": [],
+                            "accumulators": [
+                                {
+                                    "operation": "IndependentPercentage",
+                                    "value": -15.0,
+                                    "multiplyPer": [
+                                        "PerLevel"
+                                    ]
+                                }
+                            ],
+                            "setValue": ""
+                        }
+                    ]
+                }
+            ],
+            "stacking": {
+                "stackingKey": "",
+                "maxStacks": 0,
+                "decayAllAtOnce": false,
+                "decayTime": 0.0
+            }
+        }
+    ]
+}

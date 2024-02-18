@@ -1,32 +1,61 @@
 {
     "maxLevel": 5,
-    "startTrigger": "ReloadEnd",
-    "endTrigger": "Instant",
-    "triggerConditions": [],
-    "targetType": "Shooter",
-    "effectType": "ApplyMobEffect",
-    "effectParameters": [
-        "flansbasicparts:fresh_mags"
-    ],
-    "modifiers": [
+    "abilities": [
         {
-            "Stat": "impact_damage",
-            "Filter": "",
-            "Add": 0.0,
-            "Multiply": 1.3,
-            "SetValue": "",
-            "ApplyFilters": []
+            "startTriggers": [
+                {
+                    "triggerType": "ReloadEnd",
+                    "triggerConditions": []
+                }
+            ],
+            "endTriggers": [],
+            "targets": [
+                {
+                    "targetType": "Shooter",
+                    "matchIDs": [],
+                    "matchTags": []
+                }
+            ],
+            "effects": [
+                {
+                    "effectType": "ApplyMobEffect",
+                    "modifiers": [
+                        {
+                            "stat": "impact_damage",
+                            "matchGroupPaths": [],
+                            "accumulators": [
+                                {
+                                    "operation": "StackablePercentage",
+                                    "value": 30.0,
+                                    "multiplyPer": [
+                                        "PerLevel"
+                                    ]
+                                }
+                            ],
+                            "setValue": ""
+                        },
+                        {
+                            "stat": "mob_effect_id",
+                            "matchGroupPaths": [],
+                            "accumulators": [],
+                            "setValue": "flansbasicparts:fresh_mags"
+                        }
+                    ]
+                }
+            ],
+            "stacking": {
+                "stackingKey": "fresh_mags",
+                "maxStacks": 1,
+                "decayAllAtOnce": true,
+                "decayTime": {
+                    "baseValue": 5.0,
+                    "additional": []
+                },
+                "intensity": {
+                    "baseValue": 0.0,
+                    "additional": []
+                }
+            }
         }
-    ],
-    "baseIntensity": 1.0,
-    "addIntensityPerLevel": 1.0,
-    "mulIntensityPerAttachment": 0.0,
-    "mulIntensityForFullMag": 0.0,
-    "invertMagFullness": false,
-    "baseDuration": 5.0,
-    "extraDurationPerLevel": 0.0,
-    "stackAmount": false,
-    "maxAmount": 1.0,
-    "stackDuration": false,
-    "maxDuration": 1.0
+    ]
 }

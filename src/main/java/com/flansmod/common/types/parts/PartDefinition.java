@@ -44,7 +44,7 @@ public class PartDefinition extends JsonDefinition
 	@JsonField
 	public ModifierDefinition[] modifiers = new ModifierDefinition[0];
 	@JsonField
-	public CraftingTraitProviderDefinition[] abilities = new CraftingTraitProviderDefinition[0];
+	public CraftingTraitProviderDefinition[] traits = new CraftingTraitProviderDefinition[0];
 
 	// Engine properties
 	@JsonField

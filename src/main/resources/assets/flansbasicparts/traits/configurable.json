@@ -1,0 +1,49 @@
+{
+    "maxLevel": 5,
+    "abilities": [
+        {
+            "startTriggers": [
+                {
+                    "triggerType": "AlwaysOn",
+                    "triggerConditions": []
+                }
+            ],
+            "endTriggers": [],
+            "targets": [
+                {
+                    "targetType": "Shooter",
+                    "matchIDs": [],
+                    "matchTags": []
+                }
+            ],
+            "effects": [
+                {
+                    "effectType": "ApplyModifier",
+                    "modifiers": [
+                        {
+                            "stat": "impact_damage",
+                            "matchGroupPaths": [],
+                            "accumulators": [
+                                {
+                                    "operation": "StackablePercentage",
+                                    "value": 5.0,
+                                    "multiplyPer": [
+                                        "PerLevel",
+                                        "PerAttachment"
+                                    ]
+                                }
+                            ],
+                            "setValue": ""
+                        }
+                    ]
+                }
+            ],
+            "stacking": {
+                "stackingKey": "configurable",
+                "maxStacks": 1,
+                "decayAllAtOnce": false,
+                "decayTime": 0.0
+            }
+        }
+    ]
+}

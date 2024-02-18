@@ -11,28 +11,22 @@
     "attachmentType": "Barrel",
     "modifiers": [
         {
-            "Stat": "loudness",
-            "Filter": "",
-            "Add": 0.0,
-            "Multiply": 0.25,
-            "SetValue": "",
-            "ApplyFilters": []
+            "stat": "",
+            "matchGroupPaths": [],
+            "accumulators": [],
+            "setValue": ""
         },
         {
-            "Stat": "pitch",
-            "Filter": "",
-            "Add": 0.0,
-            "Multiply": 4.0,
-            "SetValue": "",
-            "ApplyFilters": []
+            "stat": "",
+            "matchGroupPaths": [],
+            "accumulators": [],
+            "setValue": ""
         },
         {
-            "Stat": "impact_damage",
-            "Filter": "",
-            "Add": 0.0,
-            "Multiply": 0.8,
-            "SetValue": "",
-            "ApplyFilters": []
+            "stat": "",
+            "matchGroupPaths": [],
+            "accumulators": [],
+            "setValue": ""
         }
     ],
     "mechaEffects": [],

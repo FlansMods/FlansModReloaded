@@ -92,6 +92,6 @@ public class CookGrenadeAction extends ActionInstance
 
 	}
 
-	public String OtherActionName() { return Group.Context.ModifyString(ModifierDefinition.KEY_ACTION_KEY, Actions.DefaultPrimaryActionKey); }
-	public float Fuse() { return Group.Context.ModifyFloat(ModifierDefinition.STAT_DURATION, Def.duration);}
+	public String OtherActionName() { return ModifyString(ModifierDefinition.KEY_ACTION_KEY, Actions.DefaultPrimaryActionKey); }
+	public float Fuse() { return ModifyFloat(ModifierDefinition.STAT_DURATION, Def.duration);}
 }

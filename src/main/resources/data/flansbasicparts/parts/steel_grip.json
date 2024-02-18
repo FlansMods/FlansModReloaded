@@ -14,9 +14,9 @@
         ]
     },
     "modifiers": [],
-    "abilities": [
+    "traits": [
         {
-            "ability": "flansbasicparts:shredder",
+            "trait": "flansbasicparts:traits/shredder",
             "level": 1
         }
     ],

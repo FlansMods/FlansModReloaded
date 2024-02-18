@@ -343,7 +343,7 @@ public abstract class FlanItem extends Item implements IForgeItem
         Map<CraftingTraitDefinition, Integer> abilityMap = new HashMap<>();
         for(PartDefinition part : GetCraftingInputs(stack))
         {
-            for(CraftingTraitProviderDefinition abilityProvider : part.abilities)
+            for(CraftingTraitProviderDefinition abilityProvider : part.traits)
             {
                 CraftingTraitDefinition ability = abilityProvider.GetAbility();
                 if(ability.IsValid())

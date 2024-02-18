@@ -11,20 +11,16 @@
     "attachmentType": "Barrel",
     "modifiers": [
         {
-            "Stat": "spread",
-            "Filter": "",
-            "Add": 0.0,
-            "Multiply": 0.8,
-            "SetValue": "",
-            "ApplyFilters": []
+            "stat": "",
+            "matchGroupPaths": [],
+            "accumulators": [],
+            "setValue": ""
         },
         {
-            "Stat": "impact_damage",
-            "Filter": "",
-            "Add": 0.0,
-            "Multiply": 1.5,
-            "SetValue": "",
-            "ApplyFilters": []
+            "stat": "",
+            "matchGroupPaths": [],
+            "accumulators": [],
+            "setValue": ""
         }
     ],
     "mechaEffects": [],

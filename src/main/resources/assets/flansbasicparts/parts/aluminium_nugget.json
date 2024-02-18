@@ -14,7 +14,7 @@
         ]
     },
     "modifiers": [],
-    "abilities": [],
+    "traits": [],
     "engine": {
         "maxAcceleration": 1.0,
         "maxDeceleration": 1.0,
@@ -26,5 +26,5 @@
         "batterySlots": 0,
         "FECapacity": 0
     },
-    "material": ":"
+    "material": "flansbasicparts:materials/aluminium"
 }

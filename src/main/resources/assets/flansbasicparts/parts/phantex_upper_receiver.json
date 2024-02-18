@@ -14,9 +14,9 @@
         ]
     },
     "modifiers": [],
-    "abilities": [
+    "traits": [
         {
-            "ability": "flansbasicparts:boom_headshot",
+            "trait": "flansbasicparts:traits/boom_headshot",
             "level": 1
         }
     ],

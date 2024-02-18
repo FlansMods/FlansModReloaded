@@ -1,0 +1,55 @@
+{
+    "maxLevel": 5,
+    "abilities": [
+        {
+            "startTriggers": [
+                {
+                    "triggerType": "ShotEntity",
+                    "triggerConditions": []
+                }
+            ],
+            "endTriggers": [],
+            "targets": [
+                {
+                    "targetType": "Shooter",
+                    "matchIDs": [],
+                    "matchTags": []
+                }
+            ],
+            "effects": [
+                {
+                    "effectType": "ApplyMobEffect",
+                    "modifiers": [
+                        {
+                            "stat": "impact_damage",
+                            "matchGroupPaths": [],
+                            "accumulators": [
+                                {
+                                    "operation": "StackablePercentage",
+                                    "value": 1.0,
+                                    "multiplyPer": [
+                                        "PerStacks",
+                                        "PerLevel"
+                                    ]
+                                }
+                            ],
+                            "setValue": ""
+                        },
+                        {
+                            "stat": "mob_effect_id",
+                            "matchGroupPaths": [],
+                            "accumulators": [],
+                            "setValue": "flansbasicparts:shredder"
+                        }
+                    ]
+                }
+            ],
+            "stacking": {
+                "stackingKey": "shredder",
+                "maxStacks": 40,
+                "decayAllAtOnce": true,
+                "decayTime": 0.0
+            }
+        }
+    ]
+}

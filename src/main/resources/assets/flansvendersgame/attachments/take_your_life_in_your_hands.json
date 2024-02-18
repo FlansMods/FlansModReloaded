@@ -15,7 +15,7 @@
     "reloadOverrides": [],
     "abilities": [
         {
-            "ability": "flansvendersgame:undying",
+            "trait": "minecraft:null",
             "level": 1
         }
     ],

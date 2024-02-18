@@ -2,10 +2,11 @@ package com.flansmod.common.actions.contexts;
 
 import com.flansmod.client.FlansModClient;
 import com.flansmod.common.FlansMod;
-import com.flansmod.common.gunshots.FloatModifier;
+import com.flansmod.common.actions.stats.*;
 import com.flansmod.common.item.FlanItem;
 import com.flansmod.common.types.elements.ModifierDefinition;
 import com.flansmod.util.Transform;
+import com.flansmod.util.formulae.FloatAccumulation;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceKey;
@@ -54,9 +55,7 @@ public abstract class ShooterContext
 		@Override
 		public Container GetAttachedInventory() { return null; }
 		@Override
-		public int HashModifierSources() { return 0; }
-		@Override
-		public void RecalculateModifierCache(BiConsumer<ModifierDefinition, StatCalculationContext> consumer) {}
+		public void BakeModifiers(@Nonnull IModifierBaker baker) {}
 	};
 
 	@Nonnull
@@ -109,11 +108,7 @@ public abstract class ShooterContext
 
 	public ShooterContext()
 	{
-		ModCache = new ModifierCacheCollection(
-			this::HashModifierSources,
-			(cache) -> {
-				RecalculateModifierCache(cache::ApplyModifier);
-			});
+		ModCache = new ModifierCache(this::BakeModifiers);
 		IsCurrent = true;
 	}
 	public boolean IsPlayerOwner()
@@ -146,29 +141,24 @@ public abstract class ShooterContext
 	// ---------------------------------------------------------------------------------------------------
 	// MODIFIER CACHE
 	// ---------------------------------------------------------------------------------------------------
-	private final ModifierCacheCollection ModCache;
+	private final ModifierCache ModCache;
 
 	@Nonnull
-	public FloatModifier GetFloatModifier(@Nonnull String stat) { return ModCache.GetFloatModifier(stat); }
+	public StatAccumulator GetModifierFormula(@Nonnull String stat) { return ModCache.GetModifierFormula(stat); }
 	@Nonnull
-	public FloatModifier GetFloatModifier(@Nonnull String stat, @Nonnull String actionGroupPath) { return ModCache.GetFloatModifier(stat, actionGroupPath); }
-	@Nullable
-	public String GetModifiedString(@Nonnull String stat) { return ModCache.GetModifiedString(stat); }
-	@Nullable
-	public String GetModifiedString(@Nonnull String stat, @Nonnull String actionGroupPath) { return ModCache.GetModifiedString(stat, actionGroupPath); }
+	public Optional<String> GetStringOverride(@Nonnull String stat) { return ModCache.GetStringOverride(stat); }
 
-
-
-	public float GetFloat(@Nonnull String stat) { return GetFloatModifier(stat).GetValue(); }
-	public float ModifyFloat(@Nonnull String stat, float baseValue) { return GetFloatModifier(stat).ModifyValue(baseValue); }
 	@Nonnull
-	public String GetString(@Nonnull String stat) { return Optional.ofNullable(GetModifiedString(stat)).orElse(""); }
+	public FloatAccumulation ModifyFloat(@Nonnull String stat)
+	{
+		return FloatAccumulation.compose(GetModifierFormula(stat).Calculate(IStatCalculatorContext.Invalid));
+	}
 	@Nonnull
-	public String ModifyString(@Nonnull String stat, @Nonnull String defaultValue) { return Optional.ofNullable(GetModifiedString(stat)).orElse(defaultValue); }
-
-
+	public String ModifyString(@Nonnull String stat, @Nonnull String defaultValue)
+	{
+		return GetStringOverride(stat).orElse(defaultValue);
+	}
 	// ---------------------------------------------------------------------------------------------------
-
 
 	public void Save(@Nonnull CompoundTag tags)
 	{
@@ -222,8 +212,8 @@ public abstract class ShooterContext
 	public abstract Transform GetShootOrigin();
 	public abstract boolean IsValid();
 	public abstract boolean IsCreative();
-	public abstract int HashModifierSources();
-	public abstract void RecalculateModifierCache(@Nonnull BiConsumer<ModifierDefinition, StatCalculationContext> consumer);
+
+	public abstract void BakeModifiers(@Nonnull IModifierBaker baker);
 
 	@Override
 	public String toString()

@@ -14,9 +14,9 @@
         ]
     },
     "modifiers": [],
-    "abilities": [
+    "traits": [
         {
-            "ability": "flansbasicparts:furious",
+            "trait": "flansbasicparts:traits/furious",
             "level": 1
         }
     ],

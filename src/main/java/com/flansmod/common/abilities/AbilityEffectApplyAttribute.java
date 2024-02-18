@@ -1,11 +1,13 @@
 package com.flansmod.common.abilities;
 
 import com.flansmod.common.actions.contexts.GunContext;
-import com.flansmod.common.actions.contexts.StatCalculationContext;
+import com.flansmod.common.actions.stats.StatAccumulator;
+import com.flansmod.common.actions.stats.StatCalculationContext;
 import com.flansmod.common.actions.contexts.TargetsContext;
-import com.flansmod.common.gunshots.FloatModifier;
 import com.flansmod.common.types.abilities.elements.AbilityEffectDefinition;
 import com.flansmod.common.types.elements.ModifierDefinition;
+import com.flansmod.util.formulae.FloatAccumulation;
+import com.flansmod.util.formulae.FloatAccumulator;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.Attribute;
@@ -21,18 +23,20 @@ public class AbilityEffectApplyAttribute implements IAbilityEffect
 {
 	public final Attribute Attrib;
 	public final UUID IdentifyingKey;
-	private final ModifierDefinition[] BaseMultipliers;
 
+	@Nonnull
+	private final StatHolder AttributeMultiplier;
 
 	public AbilityEffectApplyAttribute(@Nonnull AbilityEffectDefinition def)
 	{
-		Attrib = ForgeRegistries.ATTRIBUTES.getValue(new ResourceLocation(def.ModifyString(ModifierDefinition.KEY_MOB_EFFECT_ID, "")));
-		BaseMultipliers = def.MatchModifiers(ModifierDefinition.STAT_ATTRIBUTE_MULTIPLIER);
+		Attrib = ForgeRegistries.ATTRIBUTES.getValue(new ResourceLocation(def.ModifyString(ModifierDefinition.STAT_ATTRIBUTE_ID, "")));
 		IdentifyingKey = UUID.randomUUID();
+
+		AttributeMultiplier = new StatHolder(ModifierDefinition.STAT_ATTRIBUTE_MULTIPLIER, def);
 	}
 
 	@Override
-	public void Trigger(@Nonnull GunContext gun, @Nonnull TargetsContext targets, @Nullable AbilityStack stacks, int tier)
+	public void Trigger(@Nonnull GunContext gun, @Nonnull TargetsContext targets, @Nullable AbilityStack stacks)
 	{
 		targets.ForEachEntity((entity) -> {
 			if(entity instanceof LivingEntity living)
@@ -42,7 +46,7 @@ public class AbilityEffectApplyAttribute implements IAbilityEffect
 				{
 					instance.removeModifier(IdentifyingKey);
 					instance.addTransientModifier(new AttributeModifier(
-						IdentifyingKey, "Flan's Ability Effect", AttributeMultiplier(gun, stacks), AttributeModifier.Operation.ADDITION)
+						IdentifyingKey, "Flan's Ability Effect", AttributeMultiplier.Get(gun, stacks), AttributeModifier.Operation.ADDITION)
 					);
 				}
 			}
@@ -64,12 +68,4 @@ public class AbilityEffectApplyAttribute implements IAbilityEffect
 		//	}
 		//});
 	}
-
-	private float AttributeMultiplier(@Nonnull GunContext gun, @Nullable AbilityStack stacks)
-	{
-		FloatModifier baseMultiplier = FloatModifier.of(StatCalculationContext.of(gun, stacks), BaseMultipliers);
-		FloatModifier gunMultiplier = gun.GetFloatModifier(ModifierDefinition.STAT_ATTRIBUTE_MULTIPLIER);
-		return FloatModifier.of(baseMultiplier, gunMultiplier).GetValue();
-	}
-
 }

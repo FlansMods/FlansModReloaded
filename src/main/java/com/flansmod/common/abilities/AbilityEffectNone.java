@@ -9,7 +9,7 @@ import javax.annotation.Nullable;
 public class AbilityEffectNone implements IAbilityEffect
 {
 	@Override
-	public void Trigger(@Nonnull GunContext gun, @Nonnull TargetsContext targetsContext, @Nullable AbilityStack stacks, int tier) {}
+	public void Trigger(@Nonnull GunContext gun, @Nonnull TargetsContext targetsContext, @Nullable AbilityStack stacks) {}
 	@Override
 	public void End(@Nonnull GunContext gun, @Nullable AbilityStack stacks) {}
 }

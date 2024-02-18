@@ -1,0 +1,54 @@
+{
+    "maxLevel": 5,
+    "abilities": [
+        {
+            "startTriggers": [
+                {
+                    "triggerType": "ReloadEnd",
+                    "triggerConditions": []
+                }
+            ],
+            "endTriggers": [],
+            "targets": [
+                {
+                    "targetType": "Shooter",
+                    "matchIDs": [],
+                    "matchTags": []
+                }
+            ],
+            "effects": [
+                {
+                    "effectType": "ApplyMobEffect",
+                    "modifiers": [
+                        {
+                            "stat": "impact_damage",
+                            "matchGroupPaths": [],
+                            "accumulators": [
+                                {
+                                    "operation": "StackablePercentage",
+                                    "value": 30.0,
+                                    "multiplyPer": [
+                                        "PerLevel"
+                                    ]
+                                }
+                            ],
+                            "setValue": ""
+                        },
+                        {
+                            "stat": "mob_effect_id",
+                            "matchGroupPaths": [],
+                            "accumulators": [],
+                            "setValue": "flansbasicparts:fresh_mags"
+                        }
+                    ]
+                }
+            ],
+            "stacking": {
+                "stackingKey": "fresh_mags",
+                "maxStacks": 1,
+                "decayAllAtOnce": true,
+                "decayTime": 0.0
+            }
+        }
+    ]
+}

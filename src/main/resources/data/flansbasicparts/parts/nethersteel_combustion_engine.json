@@ -14,12 +14,7 @@
         ]
     },
     "modifiers": [],
-    "abilities": [
-        {
-            "ability": "flansbasicparts:furious",
-            "level": 1
-        }
-    ],
+    "traits": [],
     "engine": {
         "maxAcceleration": 2.0,
         "maxDeceleration": 2.0,

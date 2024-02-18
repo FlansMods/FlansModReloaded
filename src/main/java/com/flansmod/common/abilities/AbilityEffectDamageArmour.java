@@ -1,9 +1,8 @@
 package com.flansmod.common.abilities;
 
 import com.flansmod.common.actions.contexts.GunContext;
-import com.flansmod.common.actions.contexts.StatCalculationContext;
+import com.flansmod.common.actions.stats.StatCalculationContext;
 import com.flansmod.common.actions.contexts.TargetsContext;
-import com.flansmod.common.gunshots.FloatModifier;
 import com.flansmod.common.types.abilities.elements.AbilityEffectDefinition;
 import com.flansmod.common.types.elements.ModifierDefinition;
 import net.minecraft.world.entity.LivingEntity;
@@ -14,15 +13,15 @@ import javax.annotation.Nullable;
 
 public class AbilityEffectDamageArmour implements IAbilityEffect
 {
-	private final ModifierDefinition[] BaseDamageMods;
+	private final StatHolder InstantDamage;
 
-	public AbilityEffectDamageArmour(@Nonnull AbilityEffectDefinition effectDef)
+	public AbilityEffectDamageArmour(@Nonnull AbilityEffectDefinition def)
 	{
-		BaseDamageMods = effectDef.MatchModifiers(ModifierDefinition.STAT_INSTANT_DAMAGE);
+		InstantDamage = new StatHolder(ModifierDefinition.STAT_INSTANT_DAMAGE, def);
 	}
 
 	@Override
-	public void Trigger(@Nonnull GunContext gun, @Nonnull TargetsContext targets, @Nullable AbilityStack stacks, int tier)
+	public void Trigger(@Nonnull GunContext gun, @Nonnull TargetsContext targets, @Nullable AbilityStack stacks)
 	{
 		Level level = gun.GetLevel();
 		if(level != null)
@@ -42,12 +41,5 @@ public class AbilityEffectDamageArmour implements IAbilityEffect
 	public void End(@Nonnull GunContext gun, @Nullable AbilityStack stacks)
 	{
 
-	}
-
-	private float DamageAmount(@Nonnull GunContext gun, @Nullable AbilityStack stacks)
-	{
-		FloatModifier baseDamage = FloatModifier.of(StatCalculationContext.of(gun, stacks), BaseDamageMods);
-		FloatModifier gunModifier = gun.GetFloatModifier(ModifierDefinition.STAT_INSTANT_DAMAGE);
-		return FloatModifier.of(baseDamage, gunModifier).GetValue();
 	}
 }

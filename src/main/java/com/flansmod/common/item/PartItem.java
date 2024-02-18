@@ -103,7 +103,7 @@ public class PartItem extends FlanItem
 	@Override
 	protected void CollectAbilities(@Nonnull ItemStack stack, @Nonnull Map<CraftingTraitDefinition, Integer> abilityMap)
 	{
-		for(CraftingTraitProviderDefinition provider : Def().abilities)
+		for(CraftingTraitProviderDefinition provider : Def().traits)
 			abilityMap.put(provider.GetAbility(), provider.level);
 	}
 }

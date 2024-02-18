@@ -1,5 +1,7 @@
 package com.flansmod.common.actions.contexts;
 
+import com.flansmod.common.actions.stats.IModifierBaker;
+import com.flansmod.common.actions.stats.StatCalculationContext;
 import com.flansmod.common.types.elements.ModifierDefinition;
 import net.minecraft.world.Container;
 import net.minecraft.world.item.ItemStack;
@@ -41,9 +43,7 @@ public class GunContextInventoryItem extends GunContextItem
 	public int GetInventorySlotIndex() { return Slot; }
 	// There are no modifiers to apply right now
 	@Override
-	public int HashModifierSources() { return 0; }
-	@Override
-	public void RecalculateModifierCache(BiConsumer<ModifierDefinition, StatCalculationContext> consumer) {}
+	public void BakeModifiers(@Nonnull IModifierBaker baker) {}
 	@Override
 	public String toString()
 	{

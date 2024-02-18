@@ -1,6 +1,7 @@
 package com.flansmod.common.types.elements;
 
 import com.flansmod.common.types.JsonField;
+import com.flansmod.common.types.abilities.elements.EAccumulationSource;
 import com.flansmod.common.types.abilities.elements.StatAccumulatorDefinition;
 import com.flansmod.util.Maths;
 import net.minecraft.network.chat.Component;
@@ -68,8 +69,9 @@ public class ModifierDefinition
 	public static final String KEY_MOB_EFFECT_ID = "mob_effect_id";
 	public static final String STAT_POTION_MULTIPLIER = "potion_multiplier";
 	public static final String STAT_POTION_DURATION = "potion_duration";
+	public static final String STAT_ATTRIBUTE_ID = "attribute_id";
 	public static final String STAT_ATTRIBUTE_MULTIPLIER = "attribute_multiplier";
-
+	public static final String STAT_DECAY_TIME = "decay_time";
 
 	public static final String STAT_LASER_ORIGIN = "laser_origin";
 	public static final String STAT_LASER_RED = "laser_red";
@@ -109,23 +111,24 @@ public class ModifierDefinition
 		{
 			Component valueComponent = switch(accumulator.operation)
 			{
-				case Constant -> Component.literal(PrintIntOrFloat(accumulator.value));
-				case Add -> Component.literal("+ " + PrintIntOrFloat(accumulator.value));
-				case Multiply -> Component.literal("x "+PrintIntOrFloat(100.0f * (1.0f + accumulator.value))+"%");
-				case Exponent -> Component.literal("^ "+PrintIntOrFloat(1.0f + accumulator.value)+"");
+				case BaseAdd -> Component.literal("+ "+PrintIntOrFloat(accumulator.value));
+				case StackablePercentage -> Component.literal("+ "+PrintIntOrFloat(accumulator.value)+"%");
+				case IndependentPercentage -> Component.literal("* "+PrintIntOrFloat(accumulator.value)+"%");
+				case FinalAdd -> Component.literal("+(After %)"+PrintIntOrFloat(accumulator.value));
 			};
 
-			Component sourceComponent = switch(accumulator.multiplyPer)
+			for(EAccumulationSource source : accumulator.multiplyPer)
 			{
-				case One -> Component.translatable("modifier.scalar.one", statName, valueComponent);
-				case PerStacks -> Component.translatable("modifier.scalar.stacks", statName, valueComponent);
-				case PerLevel -> Component.translatable("modifier.scalar.level", statName, valueComponent);
-				case PerAttachment -> Component.translatable("modifier.scalar.attachment", statName, valueComponent);
-				case PerMagFullness -> Component.translatable("modifier.scalar.mag_full", statName, valueComponent);
-				case PerMagEmptiness -> Component.translatable("modifier.scalar.mag_empty", statName, valueComponent);
-			};
-
-			componentList.add(sourceComponent);
+				switch(source)
+				{
+					case PerStacks -> 		valueComponent = Component.translatable("modifier.scalar.stacks", statName, valueComponent);
+					case PerLevel -> 		valueComponent = Component.translatable("modifier.scalar.level", statName, valueComponent);
+					case PerAttachment -> 	valueComponent = Component.translatable("modifier.scalar.attachment", statName, valueComponent);
+					case PerMagFullness -> 	valueComponent = Component.translatable("modifier.scalar.mag_full", statName, valueComponent);
+					case PerMagEmptiness -> valueComponent = Component.translatable("modifier.scalar.mag_empty", statName, valueComponent);
+				}
+			}
+			componentList.add(valueComponent);
 		}
 		return componentList;
 	}

@@ -10,20 +10,16 @@
     "attachmentType": "Grip",
     "modifiers": [
         {
-            "Stat": "vertical_recoil",
-            "Filter": "",
-            "Add": 0.0,
-            "Multiply": 0.5,
-            "SetValue": "",
-            "ApplyFilters": []
+            "stat": "",
+            "matchGroupPaths": [],
+            "accumulators": [],
+            "setValue": ""
         },
         {
-            "Stat": "horizontal_recoil",
-            "Filter": "",
-            "Add": 0.0,
-            "Multiply": 0.0,
-            "SetValue": "",
-            "ApplyFilters": []
+            "stat": "",
+            "matchGroupPaths": [],
+            "accumulators": [],
+            "setValue": ""
         }
     ],
     "mechaEffects": [],

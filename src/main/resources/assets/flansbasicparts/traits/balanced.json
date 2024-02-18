@@ -1,0 +1,46 @@
+{
+    "maxLevel": 1,
+    "abilities": [
+        {
+            "startTriggers": [
+                {
+                    "triggerType": "AlwaysOn",
+                    "triggerConditions": []
+                }
+            ],
+            "endTriggers": [],
+            "targets": [
+                {
+                    "targetType": "Shooter",
+                    "matchIDs": [],
+                    "matchTags": []
+                }
+            ],
+            "effects": [
+                {
+                    "effectType": "ApplyModifier",
+                    "modifiers": [
+                        {
+                            "stat": "dual_wield_penalty",
+                            "matchGroupPaths": [],
+                            "accumulators": [
+                                {
+                                    "operation": "IndependentPercentage",
+                                    "value": -50.0,
+                                    "multiplyPer": []
+                                }
+                            ],
+                            "setValue": ""
+                        }
+                    ]
+                }
+            ],
+            "stacking": {
+                "stackingKey": "",
+                "maxStacks": 0,
+                "decayAllAtOnce": false,
+                "decayTime": 0.0
+            }
+        }
+    ]
+}

@@ -14,9 +14,9 @@
         ]
     },
     "modifiers": [],
-    "abilities": [
+    "traits": [
         {
-            "ability": "flansbasicparts:balanced",
+            "trait": "flansbasicparts:traits/balanced",
             "level": 1
         }
     ],

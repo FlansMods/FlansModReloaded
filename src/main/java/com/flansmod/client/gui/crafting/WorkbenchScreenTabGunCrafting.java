@@ -1,13 +1,11 @@
 package com.flansmod.client.gui.crafting;
 
 import com.flansmod.common.FlansMod;
-import com.flansmod.common.actions.Actions;
 import com.flansmod.common.actions.contexts.GunContext;
 import com.flansmod.common.crafting.ingredients.IExtraIngredientTooltip;
 import com.flansmod.common.crafting.ingredients.TieredPartIngredient;
 import com.flansmod.common.crafting.menus.WorkbenchMenuGunCrafting;
 import com.flansmod.common.crafting.recipes.GunFabricationRecipe;
-import com.flansmod.common.gunshots.FloatModifier;
 import com.flansmod.common.types.crafting.EMaterialType;
 import com.flansmod.common.types.elements.ModifierDefinition;
 import com.flansmod.util.Maths;
@@ -330,7 +328,7 @@ public class WorkbenchScreenTabGunCrafting extends WorkbenchScreenTab<WorkbenchM
 	{
 		if (InBox(xMouse, yMouse, boxX, 30, boxY, 9))
 		{
-			float value = context.GetFloat(stat); // TODO: Specific actions Actions.DefaultPrimaryActionKey
+			float value = context.ModifyFloat(stat).get(); // TODO: Specific actions Actions.DefaultPrimaryActionKey
 			graphics.renderTooltip(font, Component.translatable("tooltip.format." + stat + ".advanced", value), xMouse, yMouse);
 			return true;
 		}

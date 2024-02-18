@@ -4,14 +4,10 @@
     ],
     "modifiers": [
         {
-            "Stat": "duration",
-            "Filter": "",
-            "Add": 0.0,
-            "Multiply": 0.75,
-            "SetValue": "",
-            "ApplyFilters": [
-                "reload_primary"
-            ]
+            "stat": "",
+            "matchGroupPaths": [],
+            "accumulators": [],
+            "setValue": ""
         }
     ],
     "ammoLoadMode": "OneBulletAtATime",

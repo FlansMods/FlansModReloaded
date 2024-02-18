@@ -86,9 +86,16 @@ public abstract class ActionInstance
 
 	public boolean VerifyServer(GunshotCollection shots) { return true; }
 
+
+
 	// These ones are specific to this action
-	public float Duration() { return Group.Context.ModifyFloat(ModifierDefinition.STAT_DURATION, Def.duration); }
-	public float ToolLevel() { return Group.Context.ModifyFloat(ModifierDefinition.STAT_TOOL_HARVEST_LEVEL, Def.toolLevel); }
-	public float HarvestSpeed() { return Group.Context.ModifyFloat(ModifierDefinition.STAT_TOOL_HARVEST_SPEED, Def.harvestSpeed); }
-	public float Reach() { return Group.Context.ModifyFloat(ModifierDefinition.STAT_TOOL_REACH, Def.reach); }
+	public float GetFloat(@Nonnull String stat) { return Group.Context.ModifyFloat(stat).get(); }
+	public float ModifyFloat(@Nonnull String stat, float defaultValue) { return Group.Context.ModifyFloat(stat).apply(defaultValue); }
+	@Nonnull
+	public String ModifyString(@Nonnull String stat, @Nonnull String defaultValue) { return Group.Context.ModifyString(stat, defaultValue); }
+
+	public float Duration() { return ModifyFloat(ModifierDefinition.STAT_DURATION, Def.duration); }
+	public float ToolLevel() { return GetFloat(ModifierDefinition.STAT_TOOL_HARVEST_LEVEL); }
+	public float HarvestSpeed() { return GetFloat(ModifierDefinition.STAT_TOOL_HARVEST_SPEED); }
+	public float Reach() { return GetFloat(ModifierDefinition.STAT_TOOL_REACH); }
 }

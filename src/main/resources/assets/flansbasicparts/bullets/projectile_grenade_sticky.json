@@ -18,7 +18,7 @@
         "breaksBlockTags": [],
         "penetrationPower": 50.0,
         "impact": {
-            "decal": "minecraft:null",
+            "decal": "flansmod:effects/bullet_decal",
             "damageToTarget": 1.0,
             "multiplierVsPlayers": 1.0,
             "multiplierVsVehicles": 100.0,
@@ -46,7 +46,6 @@
         "dragInWater": 0.2,
         "waterParticles": ""
     },
-    "onShootActions": [],
-    "onClipEmptyActions": [],
-    "onReloadActions": []
+    "triggers": [],
+    "actionGroups": []
 }

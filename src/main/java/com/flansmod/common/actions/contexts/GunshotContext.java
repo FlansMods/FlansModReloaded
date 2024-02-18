@@ -251,7 +251,7 @@ public class GunshotContext
 	// --------------------------------------------------------------------------
 	// STAT CACHE
 	// --------------------------------------------------------------------------
-	public float ModifyFloat(@Nonnull String stat, float defaultValue) { return ActionGroup.ModifyFloat(stat, defaultValue); }
+	public float ModifyFloat(@Nonnull String stat, float defaultValue) { return ActionGroup.ModifyFloat(stat).apply(defaultValue); }
 	@Nonnull
 	public String ModifyString(@Nonnull String stat, @Nonnull String defaultValue)  { return ActionGroup.ModifyString(stat, defaultValue); }
 	@Nonnull

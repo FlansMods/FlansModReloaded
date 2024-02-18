@@ -1,8 +1,8 @@
 package com.flansmod.common.actions.contexts;
 
 import com.flansmod.common.FlansMod;
+import com.flansmod.common.actions.stats.*;
 import com.flansmod.common.types.guns.elements.EActionType;
-import com.flansmod.common.gunshots.FloatModifier;
 import com.flansmod.common.item.BulletItem;
 import com.flansmod.common.item.GunItem;
 import com.flansmod.common.types.attachments.AttachmentDefinition;
@@ -13,6 +13,7 @@ import com.flansmod.common.types.magazines.EAmmoConsumeMode;
 import com.flansmod.common.types.magazines.EAmmoLoadMode;
 import com.flansmod.common.types.magazines.MagazineDefinition;
 import com.flansmod.util.Maths;
+import com.flansmod.util.formulae.FloatAccumulation;
 import com.mojang.datafixers.util.Pair;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.Container;
@@ -22,7 +23,6 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -45,6 +45,8 @@ public class ActionGroupContext
 	public final String GroupPath;
 	@Nonnull
 	public final ActionGroupDefinition Def;
+	@Nonnull
+	private final ModifierCache ModCache;
 
 	// Helpers
 	public boolean IsAttachment()
@@ -69,13 +71,7 @@ public class ActionGroupContext
 		Gun = gun;
 		GroupPath = groupPath;
 		Def = CacheGroupDef();
-		ModCache = new ModifierCacheCollection(
-			() -> 1,
-			(cache) -> {
-				for(ActionDefinition actionDef : Def.actions)
-					for(ModifierDefinition modDef : actionDef.modifiers)
-						cache.ApplyModifier(modDef, StatCalculationContext.of(gun));
-			});
+		ModCache = new ModifierCache(this::BakeModifiers);
 	}
 
 	@Nonnull
@@ -630,48 +626,49 @@ public class ActionGroupContext
 	// --------------------------------------------------------------------------
 	// STAT CACHE
 	// --------------------------------------------------------------------------
-	private final ModifierCacheCollection ModCache;
+	public void BakeModifiers(@Nonnull IModifierBaker baker)
+	{
+		for(ActionDefinition actionDef : Def.actions)
+			for(ModifierDefinition modDef : actionDef.modifiers)
+				baker.Bake(modDef);
+	}
 
 	@Nonnull
-	public FloatModifier GetFloatModifier(@Nonnull String stat) { return ModCache.GetFloatModifier(stat, GroupPath); }
-	@Nullable
-	public String GetModifiedString(@Nonnull String stat) { return ModCache.GetModifiedString(stat, GroupPath); }
-
-
-	// Compose the gun modifiers and the shooter modifiers
-	public float GetFloat(@Nonnull String stat)
-	{
-		return FloatModifier.of(GetFloatModifier(stat), Gun.GetFloatModifier(stat, GroupPath), Gun.GetShooter().GetFloatModifier(stat, GroupPath)).GetValue();
-	}
-	public float ModifyFloat(@Nonnull String stat, float baseValue)
-	{
-		return FloatModifier.of(GetFloatModifier(stat), Gun.GetFloatModifier(stat, GroupPath), Gun.GetShooter().GetFloatModifier(stat, GroupPath)).ModifyValue(baseValue);
-	}
-	// If the gun sets this, return that override. Then check the shooter
+	protected StatAccumulator GetModifierFormula(@Nonnull String stat) { return ModCache.GetModifierFormula(stat); }
 	@Nonnull
-	public String GetString(@Nonnull String stat)
+	protected Optional<String> GetStringOverride(@Nonnull String stat) { return ModCache.GetStringOverride(stat); }
+
+	@Nonnull
+	public FloatAccumulation ModifyFloat(@Nonnull String stat)
 	{
-		return Optional.ofNullable(GetModifiedString(stat)).orElse(Gun.GetString(stat));
+		return FloatAccumulation.compose(
+			GetModifierFormula(stat).Calculate(Gun),
+			Gun.GetModifierFormula(stat).Calculate(Gun),
+			Gun.GetShooter().GetModifierFormula(stat).Calculate(Gun));
 	}
 	@Nonnull
 	public String ModifyString(@Nonnull String stat, @Nonnull String defaultValue)
 	{
-		return Optional.ofNullable(GetModifiedString(stat)).orElse(Gun.ModifyString(stat, defaultValue));
+		return Gun.GetShooter().GetStringOverride(stat)
+			.orElse(Gun.GetStringOverride(stat)
+				.orElse(GetStringOverride(stat)
+					.orElse(defaultValue)));
 	}
 	@Nonnull
 	public <T extends Enum<T>> Enum<T> ModifyEnum(@Nonnull String stat, @Nonnull T defaultValue, @Nonnull Class<T> clazz)
 	{
 		return Enum.valueOf(clazz, ModifyString(stat, defaultValue.toString()));
 	}
-	public boolean GetBoolean(@Nonnull String stat) { return Boolean.parseBoolean(GetString(stat)); }
+	public boolean GetBoolean(@Nonnull String stat) { return Boolean.parseBoolean(ModifyString(stat, "false")); }
 
+	@Nonnull
 	public ERepeatMode RepeatMode() { return (ERepeatMode) ModifyEnum(ModifierDefinition.STAT_GROUP_REPEAT_MODE, Def.repeatMode, ERepeatMode.class); }
-	public float RepeatDelaySeconds() { return ModifyFloat(ModifierDefinition.STAT_GROUP_REPEAT_DELAY, Def.repeatDelay); }
-	public int RepeatCount() { return Maths.Ceil(ModifyFloat(ModifierDefinition.STAT_GROUP_REPEAT_COUNT, Def.repeatCount)); }
-	public float SpinUpDuration() { return ModifyFloat(ModifierDefinition.STAT_GROUP_SPIN_UP_DURATION, Def.spinUpDuration); }
-	public float Loudness() { return ModifyFloat(ModifierDefinition.STAT_GROUP_LOUDNESS, Def.loudness); }
-	public float Volume() { return GetFloat(ModifierDefinition.STAT_GROUP_LOUDNESS); }
-	public float Pitch() { return GetFloat(ModifierDefinition.STAT_SOUND_PITCH); }
+	public float RepeatDelaySeconds() { return ModifyFloat(ModifierDefinition.STAT_GROUP_REPEAT_DELAY).apply(Def.repeatDelay); }
+	public int RepeatCount() { return Maths.Ceil(ModifyFloat(ModifierDefinition.STAT_GROUP_REPEAT_COUNT).apply(Def.repeatCount)); }
+	public float SpinUpDuration() { return ModifyFloat(ModifierDefinition.STAT_GROUP_SPIN_UP_DURATION).apply(Def.spinUpDuration); }
+	public float Loudness() { return ModifyFloat(ModifierDefinition.STAT_GROUP_LOUDNESS).apply(Def.loudness); }
+	public float Volume() { return ModifyFloat(ModifierDefinition.STAT_GROUP_LOUDNESS).get(); }
+	public float Pitch() { return ModifyFloat(ModifierDefinition.STAT_SOUND_PITCH).get(); }
 
 	public float RepeatDelayTicks() { return RepeatDelaySeconds() * 20.0f; }
 	public int RoundsPerMinute() { return RepeatDelaySeconds() <= 0.00001f ? 0 : Maths.Ceil(60.0f / RepeatDelaySeconds()); }

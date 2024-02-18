@@ -1,12 +1,8 @@
 package com.flansmod.common.types.guns.elements;
 
-import com.flansmod.common.gunshots.FloatModifier;
 import com.flansmod.common.types.JsonField;
 import com.flansmod.common.types.elements.ModifierDefinition;
 import com.flansmod.common.types.elements.SoundDefinition;
-import com.flansmod.util.Maths;
-
-import javax.annotation.Nonnull;
 
 public class ActionDefinition
 {
@@ -30,19 +26,9 @@ public class ActionDefinition
 
 	// IronSight / Scope Action
 	@JsonField
-	public float fovFactor = 1.25f;
-	@JsonField
 	public String scopeOverlay = "";
 
 	// Animation action specifics
 	@JsonField
 	public String anim = "";
-
-	// Tool specifics
-	@JsonField
-	public float toolLevel = 1.0f;
-	@JsonField
-	public float harvestSpeed = 1.0f;
-	@JsonField
-	public float reach = 1.0f;
 }

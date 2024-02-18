@@ -206,5 +206,11 @@
   "jei.part_fabrication.title": "Part Fabrication",
   "jei.gun_fabrication.title": "Gun Fabrication",
   "crafting.auto_cycle_parts_creative": "Cycle Matching Parts (Creative-Mode)",
-  "tooltip.gun_fab.craftable": "§6%s (Craftable)"
+  "tooltip.gun_fab.craftable": "§6%s (Craftable)",
+  "modifier.scalar.one": "%s %s",
+  "modifier.scalar.stacks": "%s %s per Stack",
+  "modifier.scalar.level": "%s %s per Level",
+  "modifier.scalar.attachment": "%s %s per Attachment",
+  "modifier.scalar.mag_full": "Up to %s %s when magazine is full",
+  "modifier.scalar.mag_empty": "Up to %s %s when magazine is empty"
 }

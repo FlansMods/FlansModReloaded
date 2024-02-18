@@ -14,9 +14,9 @@
         ]
     },
     "modifiers": [],
-    "abilities": [
+    "traits": [
         {
-            "ability": "flansbasicparts:configurable",
+            "trait": "flansbasicparts:traits/configurable",
             "level": 1
         }
     ],
@@ -31,5 +31,5 @@
         "batterySlots": 0,
         "FECapacity": 0
     },
-    "material": "flansbasicparts:aluminium"
+    "material": "flansbasicparts:materials/aluminium"
 }

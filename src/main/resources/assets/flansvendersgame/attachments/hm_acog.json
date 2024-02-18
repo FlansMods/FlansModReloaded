@@ -9,28 +9,22 @@
     "attachmentType": "Sights",
     "modifiers": [
         {
-            "Stat": "spread",
-            "Filter": "",
-            "Add": 0.0,
-            "Multiply": 0.4,
-            "SetValue": "",
-            "ApplyFilters": []
+            "stat": "",
+            "matchGroupPaths": [],
+            "accumulators": [],
+            "setValue": ""
         },
         {
-            "Stat": "vertical_recoil",
-            "Filter": "",
-            "Add": 0.0,
-            "Multiply": 0.8,
-            "SetValue": "",
-            "ApplyFilters": []
+            "stat": "",
+            "matchGroupPaths": [],
+            "accumulators": [],
+            "setValue": ""
         },
         {
-            "Stat": "horizontal_recoil",
-            "Filter": "",
-            "Add": 0.0,
-            "Multiply": 0.8,
-            "SetValue": "",
-            "ApplyFilters": []
+            "stat": "",
+            "matchGroupPaths": [],
+            "accumulators": [],
+            "setValue": ""
         }
     ],
     "mechaEffects": [],
@@ -71,12 +65,8 @@
                     "sounds": [],
                     "itemStack": "",
                     "modifiers": [],
-                    "fovFactor": 4.0,
                     "scopeOverlay": "flansvendersgame:hm_acog",
-                    "anim": "",
-                    "toolLevel": 0.0,
-                    "harvestSpeed": 0.0,
-                    "reach": 0.0
+                    "anim": ""
                 }
             ]
         }

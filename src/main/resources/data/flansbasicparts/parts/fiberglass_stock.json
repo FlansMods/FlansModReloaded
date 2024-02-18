@@ -14,9 +14,9 @@
         ]
     },
     "modifiers": [],
-    "abilities": [
+    "traits": [
         {
-            "ability": "flansbasicparts:lightweight",
+            "trait": "flansbasicparts:traits/lightweight",
             "level": 1
         }
     ],
@@ -31,5 +31,5 @@
         "batterySlots": 0,
         "FECapacity": 0
     },
-    "material": "flansbasicparts:fiberglass"
+    "material": "flansbasicparts:materials/fiberglass"
 }

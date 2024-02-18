@@ -1,23 +1,66 @@
 {
     "maxLevel": 5,
-    "startTrigger": "Equip",
-    "endTrigger": "Unequip",
-    "triggerConditions": [],
-    "targetType": "Shooter",
-    "effectType": "ApplyAttribute",
-    "effectParameters": [
-        "minecraft:generic.armor_toughness"
-    ],
-    "modifiers": [],
-    "baseIntensity": 2.0,
-    "addIntensityPerLevel": 2.0,
-    "mulIntensityPerAttachment": 0.0,
-    "mulIntensityForFullMag": 0.0,
-    "invertMagFullness": false,
-    "baseDuration": 0.0,
-    "extraDurationPerLevel": 0.0,
-    "stackAmount": false,
-    "maxAmount": 1.0,
-    "stackDuration": false,
-    "maxDuration": 1.0
+    "abilities": [
+        {
+            "startTriggers": [
+                {
+                    "triggerType": "Equip",
+                    "triggerConditions": []
+                }
+            ],
+            "endTriggers": [
+                {
+                    "triggerType": "Unequip",
+                    "triggerConditions": []
+                }
+            ],
+            "targets": [
+                {
+                    "targetType": "Shooter",
+                    "matchIDs": [],
+                    "matchTags": []
+                }
+            ],
+            "effects": [
+                {
+                    "effectType": "ApplyAttribute",
+                    "modifiers": [
+                        {
+                            "stat": "attribute_id",
+                            "matchGroupPaths": [],
+                            "accumulators": [],
+                            "setValue": "generic.armor_toughness"
+                        },
+                        {
+                            "stat": "attribute_multiplier",
+                            "matchGroupPaths": [],
+                            "accumulators": [
+                                {
+                                    "operation": "BaseAdd",
+                                    "value": 1.0,
+                                    "multiplyPer": [
+                                        "PerLevel"
+                                    ]
+                                }
+                            ],
+                            "setValue": ""
+                        }
+                    ]
+                }
+            ],
+            "stacking": {
+                "stackingKey": "",
+                "maxStacks": 0,
+                "decayAllAtOnce": false,
+                "decayTime": {
+                    "baseValue": 0.0,
+                    "additional": []
+                },
+                "intensity": {
+                    "baseValue": 0.0,
+                    "additional": []
+                }
+            }
+        }
+    ]
 }

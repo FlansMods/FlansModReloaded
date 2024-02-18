@@ -4,7 +4,6 @@ import com.flansmod.common.types.JsonField;
 import com.flansmod.common.types.elements.ImpactDefinition;
 import com.flansmod.util.MinecraftHelpers;
 import net.minecraft.tags.TagKey;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 

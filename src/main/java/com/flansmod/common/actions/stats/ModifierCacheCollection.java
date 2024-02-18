@@ -1,17 +1,8 @@
-package com.flansmod.common.actions.contexts;
-
-import com.flansmod.common.gunshots.FloatModifier;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.function.Consumer;
-import java.util.function.Function;
-import java.util.function.Supplier;
+package com.flansmod.common.actions.stats;
 
 public class ModifierCacheCollection
 {
+	/*
 	// Keyed per actionGroupPath
 	private static final String MATCH_ANY_GROUP_PATH = "";
 	private final Map<String, ModifierCache> ModifierCaches;
@@ -72,4 +63,6 @@ public class ModifierCacheCollection
 	{
 		return GetStringModificationLookupForActionGroup(actionGroupPath).apply(stat);
 	}
+
+	 */
 }

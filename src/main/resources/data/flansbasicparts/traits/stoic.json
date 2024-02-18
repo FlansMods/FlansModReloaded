@@ -1,0 +1,59 @@
+{
+    "maxLevel": 5,
+    "abilities": [
+        {
+            "startTriggers": [
+                {
+                    "triggerType": "Equip",
+                    "triggerConditions": []
+                }
+            ],
+            "endTriggers": [
+                {
+                    "triggerType": "Unequip",
+                    "triggerConditions": []
+                }
+            ],
+            "targets": [
+                {
+                    "targetType": "Shooter",
+                    "matchIDs": [],
+                    "matchTags": []
+                }
+            ],
+            "effects": [
+                {
+                    "effectType": "ApplyAttribute",
+                    "modifiers": [
+                        {
+                            "stat": "attribute_id",
+                            "matchGroupPaths": [],
+                            "accumulators": [],
+                            "setValue": "generic.armor_toughness"
+                        },
+                        {
+                            "stat": "attribute_multiplier",
+                            "matchGroupPaths": [],
+                            "accumulators": [
+                                {
+                                    "operation": "BaseAdd",
+                                    "value": 1.0,
+                                    "multiplyPer": [
+                                        "PerLevel"
+                                    ]
+                                }
+                            ],
+                            "setValue": ""
+                        }
+                    ]
+                }
+            ],
+            "stacking": {
+                "stackingKey": "",
+                "maxStacks": 0,
+                "decayAllAtOnce": false,
+                "decayTime": 0.0
+            }
+        }
+    ]
+}

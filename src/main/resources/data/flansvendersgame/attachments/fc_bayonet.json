@@ -9,12 +9,10 @@
     "attachmentType": "Barrel",
     "modifiers": [
         {
-            "Stat": "melee_damage",
-            "Filter": "",
-            "Add": 0.0,
-            "Multiply": 0.0,
-            "SetValue": "4",
-            "ApplyFilters": []
+            "stat": "",
+            "matchGroupPaths": [],
+            "accumulators": [],
+            "setValue": ""
         }
     ],
     "mechaEffects": [],
@@ -55,12 +53,8 @@
                     "sounds": [],
                     "itemStack": "",
                     "modifiers": [],
-                    "fovFactor": 1.0,
                     "scopeOverlay": "",
-                    "anim": "",
-                    "toolLevel": 2.0,
-                    "harvestSpeed": 0.0,
-                    "reach": 2.0
+                    "anim": ""
                 },
                 {
                     "actionType": "Animation",
@@ -68,12 +62,8 @@
                     "sounds": [],
                     "itemStack": "",
                     "modifiers": [],
-                    "fovFactor": 1.0,
                     "scopeOverlay": "",
-                    "anim": "melee",
-                    "toolLevel": 0.0,
-                    "harvestSpeed": 0.0,
-                    "reach": 0.0
+                    "anim": "melee"
                 }
             ]
         }

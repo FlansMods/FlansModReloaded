@@ -1,0 +1,59 @@
+{
+    "maxLevel": 5,
+    "abilities": [
+        {
+            "startTriggers": [
+                {
+                    "triggerType": "Equip",
+                    "triggerConditions": []
+                }
+            ],
+            "endTriggers": [
+                {
+                    "triggerType": "Unequip",
+                    "triggerConditions": []
+                }
+            ],
+            "targets": [
+                {
+                    "targetType": "Shooter",
+                    "matchIDs": [],
+                    "matchTags": []
+                }
+            ],
+            "effects": [
+                {
+                    "effectType": "ApplyAttribute",
+                    "modifiers": [
+                        {
+                            "stat": "attribute_id",
+                            "matchGroupPaths": [],
+                            "accumulators": [],
+                            "setValue": "generic.movement_speed"
+                        },
+                        {
+                            "stat": "attribute_multiplier",
+                            "matchGroupPaths": [],
+                            "accumulators": [
+                                {
+                                    "operation": "BaseAdd",
+                                    "value": 0.2,
+                                    "multiplyPer": [
+                                        "PerLevel"
+                                    ]
+                                }
+                            ],
+                            "setValue": ""
+                        }
+                    ]
+                }
+            ],
+            "stacking": {
+                "stackingKey": "",
+                "maxStacks": 0,
+                "decayAllAtOnce": false,
+                "decayTime": 0.0
+            }
+        }
+    ]
+}

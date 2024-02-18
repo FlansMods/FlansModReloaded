@@ -2,7 +2,6 @@ package com.flansmod.common.types.abilities.elements;
 
 import com.flansmod.common.abilities.Abilities;
 import com.flansmod.common.abilities.IAbilityEffect;
-import com.flansmod.common.gunshots.FloatModifier;
 import com.flansmod.common.types.JsonField;
 import com.flansmod.common.types.elements.ModifierDefinition;
 
@@ -10,7 +9,6 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Consumer;
 
 public class AbilityEffectDefinition
 {

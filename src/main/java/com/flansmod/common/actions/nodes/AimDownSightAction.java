@@ -39,7 +39,7 @@ public class AimDownSightAction extends ActionInstance
 	}
 
 
-	public float FOVFactor() { return Group.Context.ModifyFloat(ModifierDefinition.STAT_ZOOM_FOV_FACTOR, Def.fovFactor); }
-	public float EyeLineRoll() { return Group.Context.ModifyFloat(ModifierDefinition.STAT_EYE_LINE_ROLL, 0.0f); }
-	public String EyeLineName() { return Group.Context.ModifyString(ModifierDefinition.KEY_EYE_LINE_NAME, "eye_line"); }
+	public float FOVFactor() { return GetFloat(ModifierDefinition.STAT_ZOOM_FOV_FACTOR); }
+	public float EyeLineRoll() { return GetFloat(ModifierDefinition.STAT_EYE_LINE_ROLL); }
+	public String EyeLineName() { return ModifyString(ModifierDefinition.KEY_EYE_LINE_NAME, "eye_line"); }
 }

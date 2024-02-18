@@ -347,7 +347,7 @@ public class GunItem extends FlanItem
         GunContext gunContext = ContextCache.CreateWithoutCaching(stack);
         for (ActionDefinition actionDef : gunContext.GetPotentialPrimaryActions())
         {
-            int harvestLevel = Maths.Ceil(gunContext.GetFloat(ModifierDefinition.STAT_TOOL_HARVEST_LEVEL));
+            int harvestLevel = Maths.Ceil(gunContext.ModifyFloat(ModifierDefinition.STAT_TOOL_HARVEST_LEVEL).get());
             switch (actionDef.actionType)
             {
                 case Melee -> { return blockState.is(Blocks.COBWEB); }
@@ -429,7 +429,7 @@ public class GunItem extends FlanItem
                 {
                     if(actionDef.actionType == EActionType.Melee)
                     {
-                        float meleeDamage = actionGroupContext.ModifyFloat(ModifierDefinition.STAT_MELEE_DAMAGE, 1.0f);
+                        float meleeDamage = actionGroupContext.ModifyFloat(ModifierDefinition.STAT_MELEE_DAMAGE).get();
                         builder.put(Attributes.ATTACK_DAMAGE,
                             new AttributeModifier(BASE_ATTACK_DAMAGE_UUID, "Gun modifier", meleeDamage, AttributeModifier.Operation.ADDITION));
                     }

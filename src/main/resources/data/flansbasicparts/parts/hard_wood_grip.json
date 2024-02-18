@@ -14,9 +14,9 @@
         ]
     },
     "modifiers": [],
-    "abilities": [
+    "traits": [
         {
-            "ability": "flansbasicparts:stoic",
+            "trait": "flansbasicparts:traits/stoic",
             "level": 1
         }
     ],

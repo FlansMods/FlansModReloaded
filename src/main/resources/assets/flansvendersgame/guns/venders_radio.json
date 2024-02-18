@@ -45,20 +45,14 @@
                     "itemStack": "",
                     "modifiers": [
                         {
-                            "Stat": "entity_id",
-                            "Filter": "",
-                            "Add": 0.0,
-                            "Multiply": 25.0,
-                            "SetValue": "flansvendersgame:vender",
-                            "ApplyFilters": []
+                            "stat": "",
+                            "matchGroupPaths": [],
+                            "accumulators": [],
+                            "setValue": ""
                         }
                     ],
-                    "fovFactor": 1.0,
                     "scopeOverlay": "",
-                    "anim": "",
-                    "toolLevel": 1.0,
-                    "harvestSpeed": 1.0,
-                    "reach": 5.0
+                    "anim": ""
                 },
                 {
                     "actionType": "Animation",
@@ -67,25 +61,20 @@
                     "itemStack": "",
                     "modifiers": [
                         {
-                            "Stat": "entity_id",
-                            "Filter": "",
-                            "Add": 0.0,
-                            "Multiply": 25.0,
-                            "SetValue": "flansvendersgame:vender",
-                            "ApplyFilters": []
+                            "stat": "",
+                            "matchGroupPaths": [],
+                            "accumulators": [],
+                            "setValue": ""
                         }
                     ],
-                    "fovFactor": 1.0,
                     "scopeOverlay": "",
-                    "anim": "speaking",
-                    "toolLevel": 1.0,
-                    "harvestSpeed": 1.0,
-                    "reach": 5.0
+                    "anim": "speaking"
                 }
             ]
         }
     ],
     "magazines": [],
+    "staticAbilities": [],
     "reloads": [],
     "modes": [],
     "loopingSounds": [],

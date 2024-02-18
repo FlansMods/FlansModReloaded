@@ -38,7 +38,7 @@ public class AbilityEffectSpawnEntity implements IAbilityEffect
 	}
 
 	@Override
-	public void Trigger(@Nonnull GunContext gun, @Nonnull TargetsContext targets, @Nullable AbilityStack stacks, int tier)
+	public void Trigger(@Nonnull GunContext gun, @Nonnull TargetsContext targets, @Nullable AbilityStack stacks)
 	{
 		if(EntityType != null)
 		{

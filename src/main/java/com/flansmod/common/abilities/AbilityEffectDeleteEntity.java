@@ -16,7 +16,7 @@ public class AbilityEffectDeleteEntity implements IAbilityEffect
 	}
 
 	@Override
-	public void Trigger(@Nonnull GunContext gun, @Nonnull TargetsContext targets, @Nullable AbilityStack stacks, int tier)
+	public void Trigger(@Nonnull GunContext gun, @Nonnull TargetsContext targets, @Nullable AbilityStack stacks)
 	{
 		targets.ForEachEntity(Entity::kill);
 	}

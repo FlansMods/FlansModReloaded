@@ -14,9 +14,9 @@
         ]
     },
     "modifiers": [],
-    "abilities": [
+    "traits": [
         {
-            "ability": "flansbasicparts:fresh_mags",
+            "trait": "flansbasicparts:traits/fresh_mags",
             "level": 1
         }
     ],
@@ -31,5 +31,5 @@
         "batterySlots": 0,
         "FECapacity": 0
     },
-    "material": "flansbasicparts:carbon_fiber"
+    "material": "flansbasicparts:materials/carbon_fiber"
 }

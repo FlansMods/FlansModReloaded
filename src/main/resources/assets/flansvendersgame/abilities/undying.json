@@ -1,21 +1,33 @@
 {
     "maxLevel": 1,
-    "startTrigger": "AlwaysOn",
-    "endTrigger": "AlwaysOn",
-    "triggerConditions": [],
-    "targetType": "Shooter",
-    "effectType": "TotemOfUndying",
-    "effectParameters": [],
-    "modifiers": [],
-    "baseIntensity": 1.0,
-    "addIntensityPerLevel": 1.0,
-    "mulIntensityPerAttachment": 0.0,
-    "mulIntensityForFullMag": 0.0,
-    "invertMagFullness": false,
-    "baseDuration": 1.0,
-    "extraDurationPerLevel": 1.0,
-    "stackAmount": false,
-    "maxAmount": 1.0,
-    "stackDuration": false,
-    "maxDuration": 1.0
+    "abilities": [
+        {
+            "startTriggers": [
+                {
+                    "triggerType": "AlwaysOn",
+                    "triggerConditions": []
+                }
+            ],
+            "endTriggers": [],
+            "targets": [
+                {
+                    "targetType": "Shooter",
+                    "matchIDs": [],
+                    "matchTags": []
+                }
+            ],
+            "effects": [
+                {
+                    "effectType": "TotemOfUndying",
+                    "modifiers": []
+                }
+            ],
+            "stacking": {
+                "stackingKey": "",
+                "maxStacks": 0,
+                "decayAllAtOnce": false,
+                "decayTime": 0.0
+            }
+        }
+    ]
 }

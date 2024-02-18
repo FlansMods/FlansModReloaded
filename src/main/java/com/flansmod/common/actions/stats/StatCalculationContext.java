@@ -1,7 +1,10 @@
-package com.flansmod.common.actions.contexts;
+package com.flansmod.common.actions.stats;
 
 import com.flansmod.common.abilities.AbilityStack;
 import com.flansmod.common.actions.Actions;
+import com.flansmod.common.actions.contexts.ActionGroupContext;
+import com.flansmod.common.actions.contexts.GunContext;
+import com.flansmod.common.actions.contexts.ShooterContext;
 import net.minecraftforge.common.util.Lazy;
 
 import javax.annotation.Nonnull;
@@ -23,16 +26,24 @@ public class StatCalculationContext
 		MagFullnessRatio = magFullnessRatio;
 	}
 
+	@Nonnull
+	public static StatCalculationContext of(@Nonnull ShooterContext shooter)
+	{
+		return new StatCalculationContext(0, 0, Lazy.of(()->0), Lazy.of(()-> 0.0f));
+	}
+	@Nonnull
 	public static StatCalculationContext of(@Nonnull GunContext gun)
 	{
 		return of(0, 0, gun);
 	}
+	@Nonnull
 	public static StatCalculationContext of(@Nonnull GunContext gun, @Nullable AbilityStack stacks)
 	{
 		if(stacks != null)
 			return of(stacks.Level, stacks.GetStackCount(), gun);
 		else return of(0, 0, gun);
 	}
+	@Nonnull
 	public static StatCalculationContext of(int level, int stackCount, @Nonnull GunContext gun)
 	{
 		return new StatCalculationContext(

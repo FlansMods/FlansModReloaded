@@ -14,9 +14,9 @@
         ]
     },
     "modifiers": [],
-    "abilities": [
+    "traits": [
         {
-            "ability": "flansbasicparts:precise",
+            "trait": "flansbasicparts:traits/precise",
             "level": 1
         }
     ],

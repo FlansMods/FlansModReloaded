@@ -47,36 +47,26 @@
                     "itemStack": "",
                     "modifiers": [
                         {
-                            "Stat": "laser_red",
-                            "Filter": "",
-                            "Add": 1.0,
-                            "Multiply": 0.0,
-                            "SetValue": "",
-                            "ApplyFilters": []
+                            "stat": "",
+                            "matchGroupPaths": [],
+                            "accumulators": [],
+                            "setValue": ""
                         },
                         {
-                            "Stat": "laser_green",
-                            "Filter": "",
-                            "Add": 0.0,
-                            "Multiply": 0.0,
-                            "SetValue": "",
-                            "ApplyFilters": []
+                            "stat": "",
+                            "matchGroupPaths": [],
+                            "accumulators": [],
+                            "setValue": ""
                         },
                         {
-                            "Stat": "laser_blue",
-                            "Filter": "",
-                            "Add": 1.0,
-                            "Multiply": 0.0,
-                            "SetValue": "",
-                            "ApplyFilters": []
+                            "stat": "",
+                            "matchGroupPaths": [],
+                            "accumulators": [],
+                            "setValue": ""
                         }
                     ],
-                    "fovFactor": 0.0,
                     "scopeOverlay": "",
-                    "anim": "",
-                    "toolLevel": 0.0,
-                    "harvestSpeed": 0.0,
-                    "reach": 0.0
+                    "anim": ""
                 }
             ]
         }

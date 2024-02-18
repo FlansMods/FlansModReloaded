@@ -1,8 +1,9 @@
 package com.flansmod.common.abilities;
 
 import com.flansmod.common.actions.contexts.GunContext;
-import com.flansmod.common.actions.contexts.StatCalculationContext;
+import com.flansmod.common.actions.stats.StatCalculationContext;
 import com.flansmod.common.types.abilities.elements.AbilityStackingDefinition;
+import com.flansmod.common.types.elements.ModifierDefinition;
 import com.flansmod.util.Maths;
 
 import javax.annotation.Nonnull;
@@ -26,10 +27,6 @@ public class AbilityStack
 	public boolean IsActive() { return StackCount > 0; }
 	public int GetStackCount() { return StackCount; }
 
-	public float GetIntensity(@Nonnull GunContext gunContext)
-	{
-		return Def.GetIntensity(StatCalculationContext.of(Level, StackCount, gunContext));
-	}
 	public float GetDecayTimeSeconds(@Nonnull GunContext gunContext)
 	{
 		return Def.GetDecayTimeSeconds(StatCalculationContext.of(Level, StackCount, gunContext));
@@ -48,6 +45,7 @@ public class AbilityStack
 
 	public void Tick(@Nonnull GunContext gunContext)
 	{
+		gunContext.ModifyFloat(ModifierDefinition.STAT_DECAY_TIME);
 		TicksSinceStackedOrDecayed++;
 		if(StackCount > 0 && TicksSinceStackedOrDecayed >= GetDecayTimeTicks(gunContext))
 		{

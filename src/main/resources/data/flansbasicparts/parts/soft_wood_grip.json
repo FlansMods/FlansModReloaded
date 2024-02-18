@@ -14,9 +14,9 @@
         ]
     },
     "modifiers": [],
-    "abilities": [
+    "traits": [
         {
-            "ability": "flansbasicparts:supple",
+            "trait": "flansbasicparts:traits/supple",
             "level": 1
         }
     ],
