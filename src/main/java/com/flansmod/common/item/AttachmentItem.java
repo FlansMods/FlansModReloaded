@@ -6,11 +6,13 @@ import com.flansmod.client.render.guns.GunItemRenderer;
 import com.flansmod.common.FlansMod;
 import com.flansmod.common.types.attachments.AttachmentDefinition;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.extensions.common.IClientItemExtensions;
 
+import javax.annotation.Nonnull;
 import java.util.function.Consumer;
 
 public class AttachmentItem extends FlanItem
@@ -22,6 +24,10 @@ public class AttachmentItem extends FlanItem
 	{
 		super(defLoc, properties);
 	}
+	@Override
+	public boolean CanBeCraftedFromParts() { return false; }
+	@Override
+	public boolean ShouldRenderAsIcon(@Nonnull ItemDisplayContext transformType) { return true; }
 
 	@Override
 	@OnlyIn(Dist.CLIENT)

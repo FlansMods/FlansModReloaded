@@ -173,18 +173,31 @@ public abstract class FlanItemModelRenderer extends BlockEntityWithoutLevelRende
                              int overlay)
     {
         TransformStack transformStack = new TransformStack(Transform.FromPoseStack("ItemPose", ms));
-        boolean shouldRenderRig = true;
-        if(transformType == ItemDisplayContext.GUI)
+        boolean shouldRenderIcon = false;
+        if(stack.getItem() instanceof FlanItem flanItem && flanItem.ShouldRenderAsIcon(transformType))
+            shouldRenderIcon = true;
+        if(shouldRenderIcon)
         {
             String skin = FlanItem.GetPaintjobName(stack);
             BakedModel iconModel = BakedRig.GetIconModel(skin);
             if(iconModel != null)
             {
-                shouldRenderRig = false;
-                transformStack.add(Transform.FromScale("\"Scale to GUI size\"", -2.0f));
-                PoseStack poseStack = transformStack.Top().ToNewPoseStack();
-                poseStack.scale(-1f, 1f, 1f);
-                Lighting.setupForFlatItems();
+                PoseStack poseStack = null;
+                switch(transformType)
+                {
+                    case GUI -> {
+                        transformStack.add(Transform.FromScale("\"Scale to GUI size\"", -2.0f));
+                        poseStack = transformStack.Top().ToNewPoseStack();
+                        poseStack.scale(-1f, 1f, 1f);
+                        Lighting.setupForFlatItems();
+                    }
+                    default -> {
+                        poseStack = transformStack.Top().ToNewPoseStack();
+                        poseStack.scale(0.55f, 0.55f, 0.55f);
+                        poseStack.translate(0.4f, 0.5f, 0.5f);
+                    }
+                }
+
                 VertexConsumer buff = buffers.getBuffer(RenderType.cutout());
                 buff.color(1,1,1,1); //Probably not needed
                 Minecraft.getInstance().getBlockRenderer().getModelRenderer().renderModel(
@@ -196,9 +209,11 @@ public abstract class FlanItemModelRenderer extends BlockEntityWithoutLevelRende
                     light,
                     overlay);
             }
+            else
+                shouldRenderIcon = false;
         }
 
-        if(shouldRenderRig)
+        if(!shouldRenderIcon)
         {
             FirstPersonManager.ApplyRootToModel(
                 transformStack,

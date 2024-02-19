@@ -21,6 +21,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
@@ -58,6 +59,13 @@ public abstract class FlanItem extends Item implements IForgeItem
     }
 
 
+    public boolean ShouldRenderAsIcon(@Nonnull ItemDisplayContext transformType)
+    {
+        return transformType == ItemDisplayContext.GUI;
+    }
+
+    public boolean CanBeCraftedFromParts() { return true; }
+
     @Override
     public boolean shouldCauseReequipAnimation(ItemStack oldStack, ItemStack newStack, boolean slotChanged)
     {
@@ -73,29 +81,30 @@ public abstract class FlanItem extends Item implements IForgeItem
         boolean expanded = InputConstants.isKeyDown(Minecraft.getInstance().getWindow().getWindow(), InputConstants.KEY_RSHIFT)
             || InputConstants.isKeyDown(Minecraft.getInstance().getWindow().getWindow(), InputConstants.KEY_LSHIFT);
 
-        if(!expanded)
+        if(CanBeCraftedFromParts())
         {
-            tooltips.add(Component.translatable("tooltip.flansmod.hold_shift_for_more"));
-        }
-        else
-        {
-            PartDefinition[] craftedFromParts = GetCraftingInputs(stack);
-            if(craftedFromParts.length == 0)
+            if (!expanded)
             {
-                tooltips.add(Component.translatable("tooltip.crafted_from_nothing"));
-            }
-            else
+                tooltips.add(Component.translatable("tooltip.flansmod.hold_shift_for_more"));
+            } else
             {
-                for (PartDefinition craftedFrom : craftedFromParts)
+                PartDefinition[] craftedFromParts = GetCraftingInputs(stack);
+                if (craftedFromParts.length == 0)
                 {
-                    tooltips.add(Component.translatable(
-                        "tooltip.crafted_from",
-                        Component.translatable("item." + craftedFrom.GetLocation().getNamespace() + "." + craftedFrom.GetLocation().getPath())
-                    ));
-                    for (ModifierDefinition modDef : craftedFrom.modifiers)
+                    tooltips.add(Component.translatable("tooltip.crafted_from_nothing"));
+                } else
+                {
+                    for (PartDefinition craftedFrom : craftedFromParts)
                     {
-                        for(Component modString : modDef.GetModifierStrings())
-                            tooltips.add(Component.translatable("tooltip.crafted_from.modifier_format", modString));
+                        tooltips.add(Component.translatable(
+                            "tooltip.crafted_from",
+                            Component.translatable("item." + craftedFrom.GetLocation().getNamespace() + "." + craftedFrom.GetLocation().getPath())
+                        ));
+                        for (ModifierDefinition modDef : craftedFrom.modifiers)
+                        {
+                            for (Component modString : modDef.GetModifierStrings())
+                                tooltips.add(Component.translatable("tooltip.crafted_from.modifier_format", modString));
+                        }
                     }
                 }
             }

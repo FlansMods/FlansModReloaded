@@ -9,6 +9,7 @@ import com.flansmod.util.Maths;
 import com.flansmod.util.MinecraftHelpers;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
@@ -26,6 +27,11 @@ public class PartItem extends FlanItem
 	{
 		super(defLoc, props);
 	}
+
+	@Override
+	public boolean ShouldRenderAsIcon(@Nonnull ItemDisplayContext transformType) { return true; }
+	@Override
+	public boolean CanBeCraftedFromParts() { return false; }
 
 	@Override
 	public void appendHoverText(@Nonnull ItemStack stack,
