@@ -47,21 +47,44 @@
                     "itemStack": "",
                     "modifiers": [
                         {
-                            "stat": "",
+                            "stat": "laser_red",
                             "matchGroupPaths": [],
-                            "accumulators": [],
+                            "accumulators": [
+                                {
+                                    "operation": "BaseAdd",
+                                    "value": 1.0,
+                                    "multiplyPer": []
+                                },
+                                {
+                                    "operation": "StackablePercentage",
+                                    "value": -100.0,
+                                    "multiplyPer": []
+                                }
+                            ],
                             "setValue": ""
                         },
                         {
-                            "stat": "",
+                            "stat": "laser_green",
                             "matchGroupPaths": [],
-                            "accumulators": [],
+                            "accumulators": [
+                                {
+                                    "operation": "StackablePercentage",
+                                    "value": -100.0,
+                                    "multiplyPer": []
+                                }
+                            ],
                             "setValue": ""
                         },
                         {
-                            "stat": "",
+                            "stat": "laser_blue",
                             "matchGroupPaths": [],
-                            "accumulators": [],
+                            "accumulators": [
+                                {
+                                    "operation": "StackablePercentage",
+                                    "value": -100.0,
+                                    "multiplyPer": []
+                                }
+                            ],
                             "setValue": ""
                         }
                     ],

@@ -9,10 +9,16 @@
     "attachmentType": "Barrel",
     "modifiers": [
         {
-            "stat": "",
+            "stat": "melee_damage",
             "matchGroupPaths": [],
-            "accumulators": [],
-            "setValue": ""
+            "accumulators": [
+                {
+                    "operation": "StackablePercentage",
+                    "value": -100.0,
+                    "multiplyPer": []
+                }
+            ],
+            "setValue": "4"
         }
     ],
     "mechaEffects": [],
@@ -52,7 +58,20 @@
                     "duration": 1.0,
                     "sounds": [],
                     "itemStack": "",
-                    "modifiers": [],
+                    "modifiers": [
+                        {
+                            "stat": "fov_factor",
+                            "matchGroupPaths": [],
+                            "accumulators": [
+                                {
+                                    "operation": "BaseAdd",
+                                    "value": 1.0,
+                                    "multiplyPer": []
+                                }
+                            ],
+                            "setValue": ""
+                        }
+                    ],
                     "scopeOverlay": "",
                     "anim": ""
                 },
@@ -61,7 +80,20 @@
                     "duration": 1.0,
                     "sounds": [],
                     "itemStack": "",
-                    "modifiers": [],
+                    "modifiers": [
+                        {
+                            "stat": "fov_factor",
+                            "matchGroupPaths": [],
+                            "accumulators": [
+                                {
+                                    "operation": "BaseAdd",
+                                    "value": 1.0,
+                                    "multiplyPer": []
+                                }
+                            ],
+                            "setValue": ""
+                        }
+                    ],
                     "scopeOverlay": "",
                     "anim": "melee"
                 }

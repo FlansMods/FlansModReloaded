@@ -4,9 +4,15 @@
     ],
     "modifiers": [
         {
-            "stat": "",
+            "stat": "impact_damage",
             "matchGroupPaths": [],
-            "accumulators": [],
+            "accumulators": [
+                {
+                    "operation": "StackablePercentage",
+                    "value": 14.9999981,
+                    "multiplyPer": []
+                }
+            ],
             "setValue": ""
         }
     ],

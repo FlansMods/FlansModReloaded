@@ -11,15 +11,27 @@
     "attachmentType": "Barrel",
     "modifiers": [
         {
-            "stat": "",
+            "stat": "spread",
             "matchGroupPaths": [],
-            "accumulators": [],
+            "accumulators": [
+                {
+                    "operation": "StackablePercentage",
+                    "value": -90.0,
+                    "multiplyPer": []
+                }
+            ],
             "setValue": ""
         },
         {
-            "stat": "",
+            "stat": "impact_damage",
             "matchGroupPaths": [],
-            "accumulators": [],
+            "accumulators": [
+                {
+                    "operation": "StackablePercentage",
+                    "value": 20.0000038,
+                    "multiplyPer": []
+                }
+            ],
             "setValue": ""
         }
     ],

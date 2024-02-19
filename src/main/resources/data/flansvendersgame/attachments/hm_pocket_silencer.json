@@ -10,21 +10,43 @@
     "attachmentType": "Barrel",
     "modifiers": [
         {
-            "stat": "",
-            "matchGroupPaths": [],
-            "accumulators": [],
+            "stat": "loudness",
+            "matchGroupPaths": [
+                "primary_fire"
+            ],
+            "accumulators": [
+                {
+                    "operation": "StackablePercentage",
+                    "value": -75.0,
+                    "multiplyPer": []
+                }
+            ],
             "setValue": ""
         },
         {
-            "stat": "",
-            "matchGroupPaths": [],
-            "accumulators": [],
+            "stat": "pitch",
+            "matchGroupPaths": [
+                "primary_fire"
+            ],
+            "accumulators": [
+                {
+                    "operation": "StackablePercentage",
+                    "value": 400.0,
+                    "multiplyPer": []
+                }
+            ],
             "setValue": ""
         },
         {
-            "stat": "",
+            "stat": "impact_damage",
             "matchGroupPaths": [],
-            "accumulators": [],
+            "accumulators": [
+                {
+                    "operation": "StackablePercentage",
+                    "value": -19.9999981,
+                    "multiplyPer": []
+                }
+            ],
             "setValue": ""
         }
     ],

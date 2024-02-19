@@ -10,21 +10,39 @@
     "attachmentType": "Sights",
     "modifiers": [
         {
-            "stat": "",
+            "stat": "spread",
             "matchGroupPaths": [],
-            "accumulators": [],
+            "accumulators": [
+                {
+                    "operation": "StackablePercentage",
+                    "value": -60.0,
+                    "multiplyPer": []
+                }
+            ],
             "setValue": ""
         },
         {
-            "stat": "",
+            "stat": "vertical_recoil",
             "matchGroupPaths": [],
-            "accumulators": [],
+            "accumulators": [
+                {
+                    "operation": "StackablePercentage",
+                    "value": -19.9999981,
+                    "multiplyPer": []
+                }
+            ],
             "setValue": ""
         },
         {
-            "stat": "",
+            "stat": "horizontal_recoil",
             "matchGroupPaths": [],
-            "accumulators": [],
+            "accumulators": [
+                {
+                    "operation": "StackablePercentage",
+                    "value": -19.9999981,
+                    "multiplyPer": []
+                }
+            ],
             "setValue": ""
         }
     ],
@@ -65,7 +83,20 @@
                     "duration": 0.0,
                     "sounds": [],
                     "itemStack": "",
-                    "modifiers": [],
+                    "modifiers": [
+                        {
+                            "stat": "fov_factor",
+                            "matchGroupPaths": [],
+                            "accumulators": [
+                                {
+                                    "operation": "BaseAdd",
+                                    "value": 1.0,
+                                    "multiplyPer": []
+                                }
+                            ],
+                            "setValue": ""
+                        }
+                    ],
                     "scopeOverlay": "flansvendersgame:phantek_4x_scope",
                     "anim": ""
                 }

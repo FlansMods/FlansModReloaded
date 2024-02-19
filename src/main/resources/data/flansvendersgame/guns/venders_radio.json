@@ -45,9 +45,27 @@
                     "itemStack": "",
                     "modifiers": [
                         {
-                            "stat": "",
+                            "stat": "entity_id",
                             "matchGroupPaths": [],
-                            "accumulators": [],
+                            "accumulators": [
+                                {
+                                    "operation": "StackablePercentage",
+                                    "value": 2400.0,
+                                    "multiplyPer": []
+                                }
+                            ],
+                            "setValue": "flansvendersgame:vender"
+                        },
+                        {
+                            "stat": "fov_factor",
+                            "matchGroupPaths": [],
+                            "accumulators": [
+                                {
+                                    "operation": "BaseAdd",
+                                    "value": 1.0,
+                                    "multiplyPer": []
+                                }
+                            ],
                             "setValue": ""
                         }
                     ],
@@ -61,9 +79,27 @@
                     "itemStack": "",
                     "modifiers": [
                         {
-                            "stat": "",
+                            "stat": "entity_id",
                             "matchGroupPaths": [],
-                            "accumulators": [],
+                            "accumulators": [
+                                {
+                                    "operation": "StackablePercentage",
+                                    "value": 2400.0,
+                                    "multiplyPer": []
+                                }
+                            ],
+                            "setValue": "flansvendersgame:vender"
+                        },
+                        {
+                            "stat": "fov_factor",
+                            "matchGroupPaths": [],
+                            "accumulators": [
+                                {
+                                    "operation": "BaseAdd",
+                                    "value": 1.0,
+                                    "multiplyPer": []
+                                }
+                            ],
                             "setValue": ""
                         }
                     ],

@@ -176,39 +176,75 @@
                     "itemStack": "",
                     "modifiers": [
                         {
-                            "stat": "",
+                            "stat": "vertical_recoil",
+                            "matchGroupPaths": [],
+                            "accumulators": [
+                                {
+                                    "operation": "StackablePercentage",
+                                    "value": 400.0,
+                                    "multiplyPer": []
+                                }
+                            ],
+                            "setValue": ""
+                        },
+                        {
+                            "stat": "spread",
                             "matchGroupPaths": [],
                             "accumulators": [],
                             "setValue": ""
                         },
                         {
-                            "stat": "",
+                            "stat": "speed",
+                            "matchGroupPaths": [],
+                            "accumulators": [
+                                {
+                                    "operation": "StackablePercentage",
+                                    "value": -100.0,
+                                    "multiplyPer": []
+                                }
+                            ],
+                            "setValue": ""
+                        },
+                        {
+                            "stat": "bullet_count",
                             "matchGroupPaths": [],
                             "accumulators": [],
                             "setValue": ""
                         },
                         {
-                            "stat": "",
+                            "stat": "impact_damage",
                             "matchGroupPaths": [],
-                            "accumulators": [],
+                            "accumulators": [
+                                {
+                                    "operation": "StackablePercentage",
+                                    "value": 500.0,
+                                    "multiplyPer": []
+                                }
+                            ],
                             "setValue": ""
                         },
                         {
-                            "stat": "",
+                            "stat": "knockback",
                             "matchGroupPaths": [],
-                            "accumulators": [],
+                            "accumulators": [
+                                {
+                                    "operation": "StackablePercentage",
+                                    "value": -100.0,
+                                    "multiplyPer": []
+                                }
+                            ],
                             "setValue": ""
                         },
                         {
-                            "stat": "",
+                            "stat": "fov_factor",
                             "matchGroupPaths": [],
-                            "accumulators": [],
-                            "setValue": ""
-                        },
-                        {
-                            "stat": "",
-                            "matchGroupPaths": [],
-                            "accumulators": [],
+                            "accumulators": [
+                                {
+                                    "operation": "BaseAdd",
+                                    "value": 1.0,
+                                    "multiplyPer": []
+                                }
+                            ],
                             "setValue": ""
                         }
                     ],
@@ -220,7 +256,20 @@
                     "duration": 0.75,
                     "sounds": [],
                     "itemStack": "",
-                    "modifiers": [],
+                    "modifiers": [
+                        {
+                            "stat": "fov_factor",
+                            "matchGroupPaths": [],
+                            "accumulators": [
+                                {
+                                    "operation": "BaseAdd",
+                                    "value": 1.25,
+                                    "multiplyPer": []
+                                }
+                            ],
+                            "setValue": ""
+                        }
+                    ],
                     "scopeOverlay": "",
                     "anim": "shoot"
                 },
@@ -229,7 +278,7 @@
                     "duration": 0.0,
                     "sounds": [
                         {
-                            "sound": "minecraft:null",
+                            "sound": "flansmod:gunshot_slam",
                             "length": 0.0,
                             "minPitchMultiplier": 0.8333333,
                             "maxPitchMultiplier": 1.25,
@@ -240,7 +289,20 @@
                         }
                     ],
                     "itemStack": "",
-                    "modifiers": [],
+                    "modifiers": [
+                        {
+                            "stat": "fov_factor",
+                            "matchGroupPaths": [],
+                            "accumulators": [
+                                {
+                                    "operation": "BaseAdd",
+                                    "value": 1.25,
+                                    "multiplyPer": []
+                                }
+                            ],
+                            "setValue": ""
+                        }
+                    ],
                     "scopeOverlay": "",
                     "anim": ""
                 }
@@ -264,7 +326,20 @@
                     "duration": 0.0,
                     "sounds": [],
                     "itemStack": "",
-                    "modifiers": [],
+                    "modifiers": [
+                        {
+                            "stat": "fov_factor",
+                            "matchGroupPaths": [],
+                            "accumulators": [
+                                {
+                                    "operation": "BaseAdd",
+                                    "value": 6.0,
+                                    "multiplyPer": []
+                                }
+                            ],
+                            "setValue": ""
+                        }
+                    ],
                     "scopeOverlay": "flansvendersgame:phantek_battlemage_default_scope",
                     "anim": ""
                 }
@@ -288,7 +363,20 @@
                     "duration": 2.5,
                     "sounds": [],
                     "itemStack": "",
-                    "modifiers": [],
+                    "modifiers": [
+                        {
+                            "stat": "fov_factor",
+                            "matchGroupPaths": [],
+                            "accumulators": [
+                                {
+                                    "operation": "BaseAdd",
+                                    "value": 1.25,
+                                    "multiplyPer": []
+                                }
+                            ],
+                            "setValue": ""
+                        }
+                    ],
                     "scopeOverlay": "",
                     "anim": "look_at"
                 }
@@ -312,7 +400,20 @@
                     "duration": 1.0,
                     "sounds": [],
                     "itemStack": "",
-                    "modifiers": [],
+                    "modifiers": [
+                        {
+                            "stat": "fov_factor",
+                            "matchGroupPaths": [],
+                            "accumulators": [
+                                {
+                                    "operation": "BaseAdd",
+                                    "value": 1.25,
+                                    "multiplyPer": []
+                                }
+                            ],
+                            "setValue": ""
+                        }
+                    ],
                     "scopeOverlay": "",
                     "anim": "reload_start"
                 }
@@ -336,7 +437,20 @@
                     "duration": 1.0,
                     "sounds": [],
                     "itemStack": "",
-                    "modifiers": [],
+                    "modifiers": [
+                        {
+                            "stat": "fov_factor",
+                            "matchGroupPaths": [],
+                            "accumulators": [
+                                {
+                                    "operation": "BaseAdd",
+                                    "value": 1.25,
+                                    "multiplyPer": []
+                                }
+                            ],
+                            "setValue": ""
+                        }
+                    ],
                     "scopeOverlay": "",
                     "anim": "reload_eject"
                 },
@@ -345,7 +459,7 @@
                     "duration": 0.375,
                     "sounds": [
                         {
-                            "sound": "minecraft:null",
+                            "sound": "flansmod:magazine_unload_chunky",
                             "length": 1.0,
                             "minPitchMultiplier": 1.0,
                             "maxPitchMultiplier": 1.0,
@@ -356,7 +470,20 @@
                         }
                     ],
                     "itemStack": "",
-                    "modifiers": [],
+                    "modifiers": [
+                        {
+                            "stat": "fov_factor",
+                            "matchGroupPaths": [],
+                            "accumulators": [
+                                {
+                                    "operation": "BaseAdd",
+                                    "value": 1.25,
+                                    "multiplyPer": []
+                                }
+                            ],
+                            "setValue": ""
+                        }
+                    ],
                     "scopeOverlay": "",
                     "anim": ""
                 }
@@ -380,7 +507,20 @@
                     "duration": 0.5,
                     "sounds": [],
                     "itemStack": "",
-                    "modifiers": [],
+                    "modifiers": [
+                        {
+                            "stat": "fov_factor",
+                            "matchGroupPaths": [],
+                            "accumulators": [
+                                {
+                                    "operation": "BaseAdd",
+                                    "value": 1.25,
+                                    "multiplyPer": []
+                                }
+                            ],
+                            "setValue": ""
+                        }
+                    ],
                     "scopeOverlay": "",
                     "anim": "reload_load_one"
                 },
@@ -389,7 +529,7 @@
                     "duration": 0.375,
                     "sounds": [
                         {
-                            "sound": "minecraft:null",
+                            "sound": "flansmod:magazine_load_chunky",
                             "length": 1.0,
                             "minPitchMultiplier": 1.0,
                             "maxPitchMultiplier": 1.0,
@@ -400,7 +540,20 @@
                         }
                     ],
                     "itemStack": "",
-                    "modifiers": [],
+                    "modifiers": [
+                        {
+                            "stat": "fov_factor",
+                            "matchGroupPaths": [],
+                            "accumulators": [
+                                {
+                                    "operation": "BaseAdd",
+                                    "value": 1.25,
+                                    "multiplyPer": []
+                                }
+                            ],
+                            "setValue": ""
+                        }
+                    ],
                     "scopeOverlay": "",
                     "anim": ""
                 }
@@ -424,7 +577,20 @@
                     "duration": 1.0,
                     "sounds": [],
                     "itemStack": "",
-                    "modifiers": [],
+                    "modifiers": [
+                        {
+                            "stat": "fov_factor",
+                            "matchGroupPaths": [],
+                            "accumulators": [
+                                {
+                                    "operation": "BaseAdd",
+                                    "value": 1.25,
+                                    "multiplyPer": []
+                                }
+                            ],
+                            "setValue": ""
+                        }
+                    ],
                     "scopeOverlay": "",
                     "anim": "reload_end"
                 }

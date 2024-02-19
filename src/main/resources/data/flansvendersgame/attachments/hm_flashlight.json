@@ -6,15 +6,27 @@
     "attachmentType": "Grip",
     "modifiers": [
         {
-            "stat": "",
+            "stat": "flashlight_strength",
             "matchGroupPaths": [],
-            "accumulators": [],
+            "accumulators": [
+                {
+                    "operation": "BaseAdd",
+                    "value": 12.0,
+                    "multiplyPer": []
+                }
+            ],
             "setValue": ""
         },
         {
-            "stat": "",
+            "stat": "flashlight_range",
             "matchGroupPaths": [],
-            "accumulators": [],
+            "accumulators": [
+                {
+                    "operation": "BaseAdd",
+                    "value": 10.0,
+                    "multiplyPer": []
+                }
+            ],
             "setValue": ""
         }
     ],

@@ -10,9 +10,15 @@
     "attachmentType": "Stock",
     "modifiers": [
         {
-            "stat": "",
+            "stat": "magazine_size",
             "matchGroupPaths": [],
-            "accumulators": [],
+            "accumulators": [
+                {
+                    "operation": "BaseAdd",
+                    "value": 3.0,
+                    "multiplyPer": []
+                }
+            ],
             "setValue": ""
         }
     ],

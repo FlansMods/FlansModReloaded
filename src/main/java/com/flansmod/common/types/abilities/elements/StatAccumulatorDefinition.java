@@ -11,4 +11,13 @@ public class StatAccumulatorDefinition
 	public float value = 0.0f;
 	@JsonField
 	public EAccumulationSource[] multiplyPer = new EAccumulationSource[0];
+
+	public float GetValue()
+	{
+		switch(operation)
+		{
+			case StackablePercentage, IndependentPercentage -> { return value / 100f; }
+		}
+		return value;
+	}
 }

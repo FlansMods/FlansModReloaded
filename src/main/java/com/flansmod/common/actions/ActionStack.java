@@ -540,7 +540,7 @@ public class ActionStack
 					actionIndex++;
 				}
 
-				FlansMod.LOGGER.info("Trying to trigger "+triggerIndex+ " with TriggerCount at "+groupInstance.TriggerCount);
+				//FlansMod.LOGGER.info("Trying to trigger "+triggerIndex+ " with TriggerCount at "+groupInstance.TriggerCount);
 				while(groupInstance.TriggerCount <= triggerIndex)
 				{
 					for (ActionInstance action : groupInstance.GetActions())

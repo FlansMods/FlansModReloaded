@@ -4,9 +4,17 @@
     ],
     "modifiers": [
         {
-            "stat": "",
-            "matchGroupPaths": [],
-            "accumulators": [],
+            "stat": "duration",
+            "matchGroupPaths": [
+                "reload_primary"
+            ],
+            "accumulators": [
+                {
+                    "operation": "StackablePercentage",
+                    "value": -33.9999962,
+                    "multiplyPer": []
+                }
+            ],
             "setValue": ""
         }
     ],

@@ -4,7 +4,7 @@
             "type": "Hello",
             "unlocalisedString": "npc.unknown.chat",
             "audioClip": {
-                "sound": "minecraft:null",
+                "sound": "flansvendersgame:vender_greeting_neutral",
                 "length": 2.0,
                 "minPitchMultiplier": 1.0,
                 "maxPitchMultiplier": 1.0,
@@ -18,7 +18,7 @@
             "type": "Hello",
             "unlocalisedString": "npc.unknown.chat",
             "audioClip": {
-                "sound": "minecraft:null",
+                "sound": "flansvendersgame:vender_greeting_neutral",
                 "length": 2.0,
                 "minPitchMultiplier": 1.0,
                 "maxPitchMultiplier": 1.0,
@@ -32,7 +32,7 @@
             "type": "HelloUnhappy",
             "unlocalisedString": "npc.unknown.chat",
             "audioClip": {
-                "sound": "minecraft:null",
+                "sound": "flansvendersgame:vender_greeting_hostile",
                 "length": 2.0,
                 "minPitchMultiplier": 1.0,
                 "maxPitchMultiplier": 1.0,
@@ -46,7 +46,7 @@
             "type": "HelloHappy",
             "unlocalisedString": "npc.unknown.chat",
             "audioClip": {
-                "sound": "minecraft:null",
+                "sound": "flansvendersgame:vender_greeting_friendly",
                 "length": 2.0,
                 "minPitchMultiplier": 1.0,
                 "maxPitchMultiplier": 1.0,
@@ -60,7 +60,7 @@
             "type": "Chat",
             "unlocalisedString": "npc.unknown.chat",
             "audioClip": {
-                "sound": "minecraft:null",
+                "sound": "flansvendersgame:vender_chat_neutral",
                 "length": 2.0,
                 "minPitchMultiplier": 1.0,
                 "maxPitchMultiplier": 1.0,
@@ -74,7 +74,7 @@
             "type": "Chat",
             "unlocalisedString": "npc.unknown.chat",
             "audioClip": {
-                "sound": "minecraft:null",
+                "sound": "flansvendersgame:vender_chat_neutral",
                 "length": 2.0,
                 "minPitchMultiplier": 1.0,
                 "maxPitchMultiplier": 1.0,
@@ -88,7 +88,7 @@
             "type": "BoughtFromPlayer",
             "unlocalisedString": "npc.unknown.chat",
             "audioClip": {
-                "sound": "minecraft:null",
+                "sound": "flansvendersgame:vender_buy_from_player",
                 "length": 2.0,
                 "minPitchMultiplier": 1.0,
                 "maxPitchMultiplier": 1.0,
@@ -102,7 +102,7 @@
             "type": "BoughtFromPlayer",
             "unlocalisedString": "npc.unknown.chat",
             "audioClip": {
-                "sound": "minecraft:null",
+                "sound": "flansvendersgame:vender_buy_from_player",
                 "length": 2.0,
                 "minPitchMultiplier": 1.0,
                 "maxPitchMultiplier": 1.0,
@@ -116,7 +116,7 @@
             "type": "SoldToPlayer",
             "unlocalisedString": "npc.unknown.chat",
             "audioClip": {
-                "sound": "minecraft:null",
+                "sound": "flansvendersgame:vender_sell_to_player",
                 "length": 2.0,
                 "minPitchMultiplier": 1.0,
                 "maxPitchMultiplier": 1.0,
@@ -130,7 +130,7 @@
             "type": "SoldToPlayer",
             "unlocalisedString": "npc.unknown.chat",
             "audioClip": {
-                "sound": "minecraft:null",
+                "sound": "flansvendersgame:vender_sell_to_player",
                 "length": 2.0,
                 "minPitchMultiplier": 1.0,
                 "maxPitchMultiplier": 1.0,
@@ -144,7 +144,7 @@
             "type": "Goodbye",
             "unlocalisedString": "npc.unknown.chat",
             "audioClip": {
-                "sound": "minecraft:null",
+                "sound": "flansvendersgame:vender_goodbye",
                 "length": 2.0,
                 "minPitchMultiplier": 1.0,
                 "maxPitchMultiplier": 1.0,
@@ -158,7 +158,7 @@
             "type": "Goodbye",
             "unlocalisedString": "npc.unknown.chat",
             "audioClip": {
-                "sound": "minecraft:null",
+                "sound": "flansvendersgame:vender_goodbye",
                 "length": 2.0,
                 "minPitchMultiplier": 1.0,
                 "maxPitchMultiplier": 1.0,
@@ -172,7 +172,7 @@
             "type": "Hurt",
             "unlocalisedString": "npc.unknown.chat",
             "audioClip": {
-                "sound": "minecraft:null",
+                "sound": "flansvendersgame:vender_hurt",
                 "length": 2.0,
                 "minPitchMultiplier": 1.0,
                 "maxPitchMultiplier": 1.0,
@@ -186,7 +186,7 @@
             "type": "Hurt",
             "unlocalisedString": "npc.unknown.chat",
             "audioClip": {
-                "sound": "minecraft:null",
+                "sound": "flansvendersgame:vender_hurt",
                 "length": 2.0,
                 "minPitchMultiplier": 1.0,
                 "maxPitchMultiplier": 1.0,

@@ -4,15 +4,27 @@
     ],
     "modifiers": [
         {
-            "stat": "",
+            "stat": "vertical_recoil",
             "matchGroupPaths": [],
-            "accumulators": [],
+            "accumulators": [
+                {
+                    "operation": "StackablePercentage",
+                    "value": -50.0,
+                    "multiplyPer": []
+                }
+            ],
             "setValue": ""
         },
         {
-            "stat": "",
+            "stat": "horizontal_recoil",
             "matchGroupPaths": [],
-            "accumulators": [],
+            "accumulators": [
+                {
+                    "operation": "StackablePercentage",
+                    "value": -50.0,
+                    "multiplyPer": []
+                }
+            ],
             "setValue": ""
         }
     ],
