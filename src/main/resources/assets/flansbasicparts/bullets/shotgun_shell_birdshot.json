@@ -7,45 +7,72 @@
         ]
     },
     "roundsPerItem": 1,
-    "shootStats": {
-        "verticalRecoil": 1.0,
-        "horizontalRecoil": 0.0,
-        "spread": 3.0,
-        "spreadPattern": "FilledCircle",
-        "speed": 0.0,
-        "bulletCount": 6,
-        "spinSpeed": 360.0,
-        "breaksBlockTags": [],
-        "penetrationPower": 1.0,
-        "impact": {
-            "decal": "flansmod:effects/bullet_decal",
-            "damageToTarget": 0.2,
-            "multiplierVsPlayers": 1.0,
-            "multiplierVsVehicles": 1.0,
-            "knockback": 0.0,
-            "potionEffectOnTarget": "",
-            "splashDamage": 0.0,
-            "splashDamageRadius": 0.0,
-            "splashDamageFalloff": 1.0,
-            "potionEffectOnSplash": "",
-            "setFireToTarget": 0.0,
-            "fireSpreadRadius": 0.0,
-            "fireSpreadAmount": 0.0,
-            "explosionRadius": 0.0,
-            "hitSounds": [],
-            "onImpactActions": []
-        },
-        "hitscan": true,
-        "fuseTime": 0.0,
-        "gravityFactor": 1.0,
-        "sticky": false,
-        "turnRate": 0.5,
-        "dragInAir": 0.01,
-        "trailParticles": "",
-        "secondsBetweenTrailParticles": 0.25,
-        "dragInWater": 0.2,
-        "waterParticles": ""
-    },
+    "hitscans": [
+        {
+            "shotCount": 6,
+            "splashRadius": 0.0,
+            "impacts": [
+                {
+                    "targetType": "ShotEntity",
+                    "impactEffects": [
+                        {
+                            "effectType": "ApplyDamage",
+                            "modifiers": [
+                                {
+                                    "stat": "impact_damage",
+                                    "matchGroupPaths": [],
+                                    "accumulators": [
+                                        {
+                                            "operation": "StackablePercentage",
+                                            "value": -80.0,
+                                            "multiplyPer": []
+                                        }
+                                    ],
+                                    "setValue": ""
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "targetType": "ShotBlock",
+                    "impactEffects": [
+                        {
+                            "effectType": "ApplyDecal",
+                            "modifiers": [
+                                {
+                                    "stat": "decal_texture",
+                                    "matchGroupPaths": [],
+                                    "accumulators": [
+                                        {
+                                            "operation": "StackablePercentage",
+                                            "value": -80.0,
+                                            "multiplyPer": []
+                                        }
+                                    ],
+                                    "setValue": "flansmod:effects/bullet_decal"
+                                },
+                                {
+                                    "stat": "decal_duration",
+                                    "matchGroupPaths": [],
+                                    "accumulators": [
+                                        {
+                                            "operation": "BaseAdd",
+                                            "value": 30.0,
+                                            "multiplyPer": []
+                                        }
+                                    ],
+                                    "setValue": ""
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ],
+            "penetrationPower": 2.0
+        }
+    ],
+    "projectiles": [],
     "triggers": [],
     "actionGroups": []
 }

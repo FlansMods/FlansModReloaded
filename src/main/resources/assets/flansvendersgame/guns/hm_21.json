@@ -305,11 +305,17 @@
                     "accumulators": [
                         {
                             "operation": "BaseAdd",
-                            "value": 1.5,
+                            "value": 4.0,
                             "multiplyPer": []
                         }
                     ],
                     "setValue": ""
+                },
+                {
+                    "stat": "eye_line_name",
+                    "matchGroupPaths": [],
+                    "accumulators": [],
+                    "setValue": "eye_line_0"
                 }
             ]
         },
@@ -347,6 +353,12 @@
                         }
                     ],
                     "setValue": ""
+                },
+                {
+                    "stat": "eye_line_name",
+                    "matchGroupPaths": [],
+                    "accumulators": [],
+                    "setValue": "eye_line_1"
                 }
             ]
         },
@@ -530,7 +542,14 @@
                     "anim": ""
                 }
             ],
-            "modifiers": []
+            "modifiers": [
+                {
+                    "stat": "mode",
+                    "matchGroupPaths": [],
+                    "accumulators": [],
+                    "setValue": "angled_sight"
+                }
+            ]
         }
     ],
     "magazines": [

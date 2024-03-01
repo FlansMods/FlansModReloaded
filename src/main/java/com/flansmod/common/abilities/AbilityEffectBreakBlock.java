@@ -1,6 +1,6 @@
 package com.flansmod.common.abilities;
 
-import com.flansmod.common.actions.contexts.GunContext;
+import com.flansmod.common.actions.contexts.ActionGroupContext;
 import com.flansmod.common.actions.contexts.TriggerContext;
 import com.flansmod.common.actions.contexts.TargetsContext;
 import com.flansmod.common.types.Constants;
@@ -20,18 +20,18 @@ public class AbilityEffectBreakBlock implements IAbilityEffect
 	}
 
 	@Override
-	public void TriggerServer(@Nonnull GunContext gun, @Nonnull TriggerContext trigger, @Nonnull TargetsContext targets, @Nullable AbilityStack stacks)
+	public void TriggerServer(@Nonnull ActionGroupContext actionGroup, @Nonnull TriggerContext trigger, @Nonnull TargetsContext targets, @Nullable AbilityStack stacks)
 	{
-		Level level = gun.GetLevel();
+		Level level = actionGroup.Gun.GetLevel();
 		if(level != null)
 		{
-			float toolLevel = HarvestLevel.Get(gun, stacks);
+			float toolLevel = HarvestLevel.Get(actionGroup, stacks);
 			targets.ForEachBlock((blockPos, blockState) ->
 			{
-				if (blockState.canEntityDestroy(level, blockPos, gun.GetShooter().Owner()))
+				if (blockState.canEntityDestroy(level, blockPos, actionGroup.Gun.GetShooter().Owner()))
 				{
 					if (blockState.getBlock().defaultDestroyTime() <= toolLevel)
-						level.destroyBlock(blockPos, true, gun.GetShooter().Owner());
+						level.destroyBlock(blockPos, true, actionGroup.Gun.GetShooter().Owner());
 				}
 			});
 		}

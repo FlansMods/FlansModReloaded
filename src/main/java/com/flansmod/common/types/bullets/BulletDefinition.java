@@ -3,6 +3,11 @@ package com.flansmod.common.types.bullets;
 import com.flansmod.common.FlansMod;
 import com.flansmod.common.types.JsonDefinition;
 import com.flansmod.common.types.JsonField;
+import com.flansmod.common.types.abilities.elements.AbilityEffectDefinition;
+import com.flansmod.common.types.abilities.elements.EAbilityEffect;
+import com.flansmod.common.types.bullets.elements.HitscanDefinition;
+import com.flansmod.common.types.bullets.elements.ImpactDefinition;
+import com.flansmod.common.types.bullets.elements.ProjectileDefinition;
 import com.flansmod.common.types.elements.ItemDefinition;
 import com.flansmod.common.types.guns.elements.ActionGroupDefinition;
 import com.flansmod.common.types.guns.elements.AbilityDefinition;
@@ -13,6 +18,15 @@ import javax.annotation.Nonnull;
 public class BulletDefinition extends JsonDefinition
 {
 	public static final BulletDefinition INVALID = new BulletDefinition(new ResourceLocation(FlansMod.MODID, "bullets/null"));
+	public static final BulletDefinition STANDARD_TEST_BULLET = new BulletDefinition(new ResourceLocation(FlansMod.MODID, "bullets/test"));
+	static
+	{
+		STANDARD_TEST_BULLET.hitscans = new HitscanDefinition[] { new HitscanDefinition() };
+		STANDARD_TEST_BULLET.hitscans[0].impacts = new ImpactDefinition[] { new ImpactDefinition() };
+		STANDARD_TEST_BULLET.hitscans[0].impacts[0].impactEffects = new AbilityEffectDefinition[] { new AbilityEffectDefinition() };
+		STANDARD_TEST_BULLET.hitscans[0].impacts[0].impactEffects[0].effectType = EAbilityEffect.ApplyDamage;
+	}
+
 	public static final String TYPE = "bullet";
 	public static final String FOLDER = "bullets";
 

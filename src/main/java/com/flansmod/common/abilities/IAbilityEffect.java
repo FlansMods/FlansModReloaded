@@ -1,5 +1,6 @@
 package com.flansmod.common.abilities;
 
+import com.flansmod.common.actions.contexts.ActionGroupContext;
 import com.flansmod.common.actions.contexts.GunContext;
 import com.flansmod.common.actions.contexts.TargetsContext;
 import com.flansmod.common.actions.contexts.TriggerContext;
@@ -24,30 +25,32 @@ public interface IAbilityEffect
 			Base = new StatAccumulator().Stack(def.MatchModifiers(statId));
 		}
 
-		public float Get(@Nonnull GunContext gun, @Nullable AbilityStack stacks)
+		public float Get(@Nonnull ActionGroupContext actionGroup, @Nullable AbilityStack stacks)
 		{
 			// Take our cached accumulator, enter the traitLevel and stackCount
 			if(stacks != null)
 			{
 				return FloatAccumulation.compose(
-					Base.CopyWithLevelAndStacks(stacks.Level, stacks.GetStackCount()).Calculate(gun), gun.ModifyFloat(Stat)).get();
+					Base.CopyWithLevelAndStacks(stacks.Level, stacks.GetStackCount())
+						.Calculate(actionGroup.Gun),
+					actionGroup.ModifyFloat(Stat)).get();
 			}
 			else
 			{
-				return FloatAccumulation.compose(Base.Calculate(gun),
-					gun.ModifyFloat(Stat)).get();
+				return FloatAccumulation.compose(Base.Calculate(actionGroup.Gun),
+					actionGroup.ModifyFloat(Stat)).get();
 			}
 		}
 	}
 
-	default void TriggerClient(@Nonnull GunContext gun,
+	default void TriggerClient(@Nonnull ActionGroupContext gun,
 							   @Nonnull TriggerContext trigger,
 							   @Nonnull TargetsContext targets,
 							   @Nullable AbilityStack stacks)
 	{
 
 	}
-	default void TriggerServer(@Nonnull GunContext gun,
+	default void TriggerServer(@Nonnull ActionGroupContext gun,
 							   @Nonnull TriggerContext trigger,
 							   @Nonnull TargetsContext targets,
 							   @Nullable AbilityStack stacks)

@@ -7,45 +7,47 @@
         ]
     },
     "roundsPerItem": 1,
-    "shootStats": {
-        "verticalRecoil": 1.0,
-        "horizontalRecoil": 0.0,
-        "spread": 1.0,
-        "spreadPattern": "FilledCircle",
-        "speed": 3.0,
-        "bulletCount": 1,
-        "spinSpeed": 360.0,
-        "breaksBlockTags": [],
-        "penetrationPower": 0.0,
-        "impact": {
-            "decal": "flansmod:effects/bullet_decal",
-            "damageToTarget": 1.0,
-            "multiplierVsPlayers": 1.0,
-            "multiplierVsVehicles": 200.0,
-            "knockback": 1.0,
-            "potionEffectOnTarget": "",
-            "splashDamage": 0.0,
-            "splashDamageRadius": 6.0,
-            "splashDamageFalloff": 1.0,
-            "potionEffectOnSplash": "",
-            "setFireToTarget": 0.0,
-            "fireSpreadRadius": 0.0,
-            "fireSpreadAmount": 0.0,
-            "explosionRadius": 3.5,
-            "hitSounds": [],
-            "onImpactActions": []
-        },
-        "hitscan": false,
-        "fuseTime": 0.0,
-        "gravityFactor": 1.0,
-        "sticky": false,
-        "turnRate": 0.5,
-        "dragInAir": 0.01,
-        "trailParticles": "",
-        "secondsBetweenTrailParticles": 0.25,
-        "dragInWater": 0.2,
-        "waterParticles": ""
-    },
+    "hitscans": [],
+    "projectiles": [
+        {
+            "shotCount": 1,
+            "splashRadius": 0.0,
+            "impacts": [
+                {
+                    "targetType": "ShotPosition",
+                    "impactEffects": [
+                        {
+                            "effectType": "Explode",
+                            "modifiers": [
+                                {
+                                    "stat": "explosion_radius",
+                                    "matchGroupPaths": [],
+                                    "accumulators": [
+                                        {
+                                            "operation": "BaseAdd",
+                                            "value": 5.0,
+                                            "multiplyPer": []
+                                        }
+                                    ],
+                                    "setValue": ""
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ],
+            "launchSpeed": 3.0,
+            "gravityFactor": 1.0,
+            "sticky": false,
+            "fuseTime": 8.0,
+            "turnRate": 0.0,
+            "dragInAir": 0.0,
+            "airParticles": "",
+            "dragInWater": 0.0,
+            "waterParticles": "",
+            "timeBetweenTrailParticles": 0.0
+        }
+    ],
     "triggers": [],
     "actionGroups": []
 }

@@ -1,5 +1,6 @@
 package com.flansmod.common.actions.nodes;
 
+import com.flansmod.common.FlansMod;
 import com.flansmod.common.actions.ActionGroupInstance;
 import com.flansmod.common.actions.ActionInstance;
 import com.flansmod.common.actions.ActionStack;
@@ -63,6 +64,8 @@ public class SwitchModeAction extends ActionInstance
 				SelectMode(key, selectMode);
 			}
 		}
+		else
+			FlansMod.LOGGER.error("Could not find mode "+key+" on gun "+Group.Context.Gun);
 	}
 
 	private void SelectMode(String modeKey, String modeValue)

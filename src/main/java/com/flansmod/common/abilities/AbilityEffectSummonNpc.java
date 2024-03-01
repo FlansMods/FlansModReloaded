@@ -1,12 +1,9 @@
 package com.flansmod.common.abilities;
 
-import com.flansmod.common.actions.contexts.GunContext;
-import com.flansmod.common.actions.contexts.TargetsContext;
-import com.flansmod.common.actions.contexts.TriggerContext;
+import com.flansmod.common.actions.contexts.*;
 import com.flansmod.common.entity.INpcRelationshipsCapability;
 import com.flansmod.common.entity.NpcRelationshipsCapability;
 import com.flansmod.common.entity.ShopkeeperEntity;
-import com.flansmod.common.actions.contexts.ShooterContextPlayer;
 import com.flansmod.common.types.Constants;
 import com.flansmod.common.types.abilities.elements.AbilityEffectDefinition;
 import net.minecraft.network.chat.Component;
@@ -68,12 +65,12 @@ public class AbilityEffectSummonNpc implements IAbilityEffect
 	}
 
 	@Override
-	public void TriggerServer(@Nonnull GunContext gun, @Nonnull TriggerContext trigger, @Nonnull TargetsContext targets, @Nullable AbilityStack stacks)
+	public void TriggerServer(@Nonnull ActionGroupContext actionGroup, @Nonnull TriggerContext trigger, @Nonnull TargetsContext targets, @Nullable AbilityStack stacks)
 	{
 		if(EntityType != null)
 		{
-			Level level = gun.GetLevel();
-			if(level != null && gun.GetShooter() instanceof ShooterContextPlayer playerContext)
+			Level level = actionGroup.Gun.GetLevel();
+			if(level != null && actionGroup.Gun.GetShooter() instanceof ShooterContextPlayer playerContext)
 			{
 				if (CanSummonNpc(playerContext.Player))
 				{

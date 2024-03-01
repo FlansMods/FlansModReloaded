@@ -1,4 +1,4 @@
-package com.flansmod.common.types.bullets;
+package com.flansmod.common.types.bullets.elements;
 
 import com.flansmod.common.types.Constants;
 import com.flansmod.common.types.JsonField;

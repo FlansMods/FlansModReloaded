@@ -1,6 +1,6 @@
 package com.flansmod.common.abilities;
 
-import com.flansmod.common.actions.contexts.GunContext;
+import com.flansmod.common.actions.contexts.ActionGroupContext;
 import com.flansmod.common.actions.contexts.TargetsContext;
 import com.flansmod.common.actions.contexts.TriggerContext;
 import com.flansmod.common.types.Constants;
@@ -26,11 +26,11 @@ public class AbilityEffectSpawnEntity implements IAbilityEffect
 	}
 
 	@Override
-	public void TriggerServer(@Nonnull GunContext gun, @Nonnull TriggerContext trigger, @Nonnull TargetsContext targets, @Nullable AbilityStack stacks)
+	public void TriggerServer(@Nonnull ActionGroupContext actionGroup, @Nonnull TriggerContext trigger, @Nonnull TargetsContext targets, @Nullable AbilityStack stacks)
 	{
 		if(EntityType != null)
 		{
-			Level level = gun.GetLevel();
+			Level level = actionGroup.Gun.GetLevel();
 			if (level != null)
 			{
 				targets.ForOnePosition((pos) ->

@@ -33,5 +33,6 @@ public enum EAbilityEffect
 	Knockback,				// Ported from Bullet
 	SetFire,				// Ported from Bullet
 	Explode,				// Ported from Bullet
+	ApplyDecal,				// Ported from Bullet
 
 }

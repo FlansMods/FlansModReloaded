@@ -31,6 +31,7 @@ public class Abilities
 			case Knockback -> { return new AbilityEffectKnockback(def); }
 			case SetFire -> { return new AbilityEffectSetFireToEntity(def); }
 			case Explode -> { return new AbilityEffectExplode(def); }
+			case ApplyDecal -> { return new AbilityEffectApplyDecal(def); }
 
 			// Not working yet
 			case DamageArmour -> { return new AbilityEffectDamageArmour(def); }

@@ -19,6 +19,7 @@ public class Gunshot
 	private static final HitResult[] NO_HITS = new HitResult[0];
 
 	public BulletDefinition bulletDef = BulletDefinition.INVALID;
+	public int fromShotDefIndex = 0;
 	public Vec3 origin = Vec3.ZERO;
 	public Vec3 trajectory = Vec3.ZERO;
 	public HitResult[] hits = NO_HITS;
@@ -32,6 +33,18 @@ public class Gunshot
 	public Gunshot FromShot(int index)
 	{
 		fromShotIndex = index;
+		return this;
+	}
+	@Nonnull
+	public Gunshot FromHitscan(int index)
+	{
+		fromShotDefIndex = index;
+		return this;
+	}
+	@Nonnull
+	public Gunshot FromProjectile(int index)
+	{
+		fromShotDefIndex = 1000 + index;
 		return this;
 	}
 	@Nonnull
@@ -82,6 +95,7 @@ public class Gunshot
 		buf.writeInt(gunshot.bulletDef.hashCode());
 		buf.writeInt(gunshot.fromShotIndex);
 		buf.writeInt(gunshot.fromBulletIndex);
+		buf.writeInt(gunshot.fromShotDefIndex);
 
 		buf.writeDouble(gunshot.origin.x);
 		buf.writeDouble(gunshot.origin.y);
@@ -137,6 +151,7 @@ public class Gunshot
 		int bulletHash = buf.readInt();
 		int fromShotIndex = buf.readInt();
 		int fromBulletIndex = buf.readInt();
+		int fromShotDefIndex = buf.readInt();
 		BulletDefinition bulletDef = FlansMod.BULLETS.ByHash(bulletHash);
 
 		double x = buf.readDouble();
@@ -187,6 +202,7 @@ public class Gunshot
 			.WithOrigin(x, y, z)
 			.FromShot(fromShotIndex)
 			.FromBulletIndex(fromBulletIndex)
+			.FromHitscan(fromShotDefIndex)
 			.WithTrajectory(dx, dy, dz)
 			.WithHits(hits)
 			.WithBullet(bulletDef);

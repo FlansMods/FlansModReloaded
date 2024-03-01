@@ -1,7 +1,6 @@
-package com.flansmod.common.types.bullets;
+package com.flansmod.common.types.bullets.elements;
 
 import com.flansmod.common.types.JsonField;
-import com.flansmod.common.types.bullets.ImpactDefinition;
 import com.flansmod.util.MinecraftHelpers;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.level.block.Block;

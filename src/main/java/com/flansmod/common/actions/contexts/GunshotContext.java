@@ -12,9 +12,9 @@ import com.flansmod.common.types.abilities.elements.EAbilityEffect;
 import com.flansmod.common.types.abilities.elements.EAbilityTarget;
 import com.flansmod.common.types.abilities.elements.EAbilityTrigger;
 import com.flansmod.common.types.bullets.BulletDefinition;
-import com.flansmod.common.types.bullets.HitscanDefinition;
-import com.flansmod.common.types.bullets.ImpactDefinition;
-import com.flansmod.common.types.bullets.ProjectileDefinition;
+import com.flansmod.common.types.bullets.elements.HitscanDefinition;
+import com.flansmod.common.types.bullets.elements.ImpactDefinition;
+import com.flansmod.common.types.bullets.elements.ProjectileDefinition;
 import com.flansmod.util.Maths;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
@@ -50,14 +50,14 @@ public class GunshotContext
 	@Nullable
 	public ProjectileDefinition GetProjectileDef()
 	{
-		if(IsProjectile)
+		if(IsProjectile && DefIndex < Bullet.projectiles.length)
 			return Bullet.projectiles[DefIndex];
 		return null;
 	}
 	@Nullable
 	public HitscanDefinition GetHitscanDef()
 	{
-		if(!IsProjectile)
+		if(!IsProjectile && DefIndex < Bullet.hitscans.length)
 			return Bullet.hitscans[DefIndex];
 		return null;
 	}
@@ -79,7 +79,7 @@ public class GunshotContext
 	@Nonnull
 	public static GunshotContext of(@Nonnull ActionGroupContext actionGroupContext, @Nonnull Gunshot hitscanData)
 	{
-		return new GunshotContext(actionGroupContext, hitscanData.bulletDef, false, hitscanData.fromShotIndex);
+		return new GunshotContext(actionGroupContext, hitscanData.bulletDef, false, hitscanData.fromShotDefIndex);
 	}
 	@Nonnull
 	public static GunshotContext[] forBullet(@Nonnull ActionGroupContext actionGroupContext, @Nonnull BulletDefinition bulletFired)
@@ -185,10 +185,10 @@ public class GunshotContext
 					switch(ActionGroup.Gun.GetShooter().GetSide())
 					{
 						case Client -> {
-							effectDef.GetEffectProcessor().TriggerClient(ActionGroup.Gun, impactContext, targets, null);
+							effectDef.GetEffectProcessor().TriggerClient(ActionGroup, impactContext, targets, null);
 						}
 						case Server -> {
-							effectDef.GetEffectProcessor().TriggerServer(ActionGroup.Gun, impactContext, targets, null);
+							effectDef.GetEffectProcessor().TriggerServer(ActionGroup, impactContext, targets, null);
 						}
 					}
 				}
@@ -294,7 +294,7 @@ public class GunshotContext
 				for(AbilityEffectDefinition effectDef : impact.impactEffects)
 					if(effectDef.effectType == EAbilityEffect.ApplyDamage)
 						if(effectDef.GetEffectProcessor() instanceof AbilityEffectApplyDamage dmgAbility)
-							return dmgAbility.DamageAmount(ActionGroup.Gun, null);
+							return dmgAbility.DamageAmount(ActionGroup, null);
 			}
 		}
 		return 0.0f;

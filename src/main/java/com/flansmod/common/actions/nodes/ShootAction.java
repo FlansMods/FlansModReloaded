@@ -10,13 +10,10 @@ import com.flansmod.common.actions.contexts.*;
 import com.flansmod.common.gunshots.*;
 import com.flansmod.common.item.BulletItem;
 import com.flansmod.common.projectiles.BulletEntity;
-import com.flansmod.common.types.JsonDefinition;
 import com.flansmod.common.types.abilities.elements.EAbilityTarget;
 import com.flansmod.common.types.abilities.elements.EAbilityTrigger;
 import com.flansmod.common.types.bullets.BulletDefinition;
-import com.flansmod.common.types.bullets.HitscanDefinition;
-import com.flansmod.common.types.bullets.ImpactDefinition;
-import com.flansmod.common.types.bullets.ProjectileDefinition;
+import com.flansmod.common.types.bullets.elements.ImpactDefinition;
 import com.flansmod.common.types.guns.elements.ActionDefinition;
 import com.flansmod.common.types.guns.elements.ESpreadPattern;
 import com.flansmod.util.Maths;
@@ -30,7 +27,6 @@ import net.minecraft.commands.arguments.EntityAnchorArgument;
 import net.minecraft.core.Vec3i;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.boss.EnderDragonPart;
@@ -44,7 +40,6 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
-import org.joml.Vector3d;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
@@ -279,6 +274,7 @@ public class ShootAction extends ActionInstance
 							shots.AddShot(new Gunshot()
 								.FromShot(repeatIndex)
 								.FromBulletIndex(shotsFired.get(j).getSecond())
+								.FromProjectile(gunshotContext.DefIndex)
 								.WithOrigin(randomizedDirection.PositionVec3())
 								.WithTrajectory(randomizedDirection.ForwardVec3().scale(gunshotContext.LaunchSpeed()))
 								.WithBullet(gunshotContext.Bullet));
@@ -302,6 +298,7 @@ public class ShootAction extends ActionInstance
 							shots.AddShot(new Gunshot()
 								.FromShot(repeatIndex)
 								.FromBulletIndex(shotsFired.get(j).getSecond())
+								.FromHitscan(gunshotContext.DefIndex)
 								.WithOrigin(randomizedDirection.PositionVec3())
 								.WithTrajectory(randomizedDirection.ForwardVec3().scale(RAYCAST_LENGTH))
 								.WithHits(hitArray)

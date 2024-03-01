@@ -15,7 +15,7 @@
     "reloadOverrides": [],
     "abilities": [
         {
-            "trait": ":",
+            "trait": "minecraft:null",
             "level": 1
         }
     ],

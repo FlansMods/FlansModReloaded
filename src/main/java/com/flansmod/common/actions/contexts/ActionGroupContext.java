@@ -672,8 +672,8 @@ public class ActionGroupContext
 	public int RepeatCount() 				{ return Maths.Ceil(ModifyFloat(STAT_GROUP_REPEAT_COUNT).apply(Def.repeatCount)); }
 	public float SpinUpDuration() 			{ return ModifyFloat(STAT_GROUP_SPIN_UP_DURATION).apply(Def.spinUpDuration); }
 	public float Loudness() 				{ return ModifyFloat(STAT_GROUP_LOUDNESS).apply(Def.loudness); }
-	public float Volume() 					{ return ModifyFloat(STAT_GROUP_LOUDNESS).get(); }
-	public float Pitch() 					{ return ModifyFloat(STAT_SOUND_PITCH).get(); }
+	public float Volume() 					{ return ModifyFloat(STAT_GROUP_LOUDNESS).apply(1.0f); }
+	public float Pitch() 					{ return ModifyFloat(STAT_SOUND_PITCH).apply(1.0f); }
 	public float VerticalRecoil() 			{ return ModifyFloat(STAT_SHOT_VERTICAL_RECOIL).get(); }
 	public float HorizontalRecoil() 		{ return ModifyFloat(STAT_SHOT_HORIZONTAL_RECOIL).get(); }
 	public float Spread() 					{ return ModifyFloat(STAT_SHOT_SPREAD).get(); }

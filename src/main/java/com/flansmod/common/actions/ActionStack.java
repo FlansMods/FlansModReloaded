@@ -730,9 +730,9 @@ public class ActionStack
 						for(AbilityEffectDefinition effectDef : ability.effects)
 						{
 							if(IsClient)
-								effectDef.GetEffectProcessor().TriggerClient(gunContext, triggerContext, targetsContext, stacks);
+								effectDef.GetEffectProcessor().TriggerClient(gunContext.GetActionGroupContext("base"), triggerContext, targetsContext, stacks);
 							else
-								effectDef.GetEffectProcessor().TriggerServer(gunContext, triggerContext, targetsContext, stacks);
+								effectDef.GetEffectProcessor().TriggerServer(gunContext.GetActionGroupContext("base"), triggerContext, targetsContext, stacks);
 						}
 					}
 				}

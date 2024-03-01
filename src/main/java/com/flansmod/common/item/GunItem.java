@@ -87,7 +87,7 @@ public class GunItem extends FlanItem
                     Component.translatable("tooltip.format.fullautorpm", actionContext.RoundsPerMinute());
 
                 // To calculate base "gun stats" without taking the bullet into consideration, assume a bullet with default stats
-                GunshotContext gunshotContext = GunshotContext.hitscan(actionContext, BulletDefinition.INVALID, 0);
+                GunshotContext gunshotContext = GunshotContext.hitscan(actionContext, BulletDefinition.STANDARD_TEST_BULLET, 0);
                 if(expanded)
                 {
                     tooltips.add(Component.translatable("tooltip.format."+ Constants.STAT_IMPACT_DAMAGE + ".advanced", gunshotContext.EstimateImpactDamage(EAbilityTarget.ShotEntity)));

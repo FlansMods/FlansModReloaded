@@ -86,6 +86,7 @@ public class ActionGroupInstance
 	{
 		if(!HasStarted())
 		{
+			Finished = false;
 			Progress = 0;
 			StartedTick = 0L;
 			Level level = Context.Gun.GetLevel();
@@ -141,6 +142,7 @@ public class ActionGroupInstance
 	{
 		if(!HasStarted())
 		{
+			Finished = false;
 			Progress = 0;
 			StartedTick = 0L;
 			Level level = Context.Gun.GetLevel();
@@ -326,10 +328,6 @@ public class ActionGroupInstance
 				int count = Context.Gun.GetActionStack().TryShootMultiple(repeatDelay);
 				for (int i = 0; i < count; i++)
 					triggerFunc.get();
-			}
-			else
-			{
-				SetFinished();
 			}
 		}
 	}
