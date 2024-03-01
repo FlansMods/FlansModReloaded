@@ -24,6 +24,7 @@ import com.flansmod.util.Transform;
 import com.flansmod.util.formulae.FloatAccumulation;
 import com.mojang.datafixers.util.Pair;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.Container;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.damagesource.DamageSource;
@@ -33,6 +34,7 @@ import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.levelgen.LegacyRandomSource;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -330,6 +332,13 @@ public abstract class GunContext implements IStatCalculatorContext
 	public Transform GetShootOrigin()
 	{
 		return GetShooter().GetShootOrigin();
+	}
+	private static final RandomSource BackupRandomGenerator = new LegacyRandomSource(8931145513320L);
+	@Nonnull
+	public RandomSource GetRandom()
+	{
+		Level level = GetLevel();
+		return level != null ? level.random : BackupRandomGenerator;
 	}
 
 	// Return: Any changes?

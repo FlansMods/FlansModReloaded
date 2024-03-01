@@ -6,6 +6,9 @@ import com.flansmod.client.render.guns.GunItemRenderer;
 import com.flansmod.common.FlansMod;
 import com.flansmod.common.actions.*;
 import com.flansmod.common.actions.contexts.*;
+import com.flansmod.common.types.Constants;
+import com.flansmod.common.types.abilities.elements.EAbilityTarget;
+import com.flansmod.common.types.bullets.BulletDefinition;
 import com.flansmod.common.types.guns.elements.ActionDefinition;
 import com.flansmod.common.types.elements.ModifierDefinition;
 import com.flansmod.common.types.guns.elements.EActionType;
@@ -84,21 +87,21 @@ public class GunItem extends FlanItem
                     Component.translatable("tooltip.format.fullautorpm", actionContext.RoundsPerMinute());
 
                 // To calculate base "gun stats" without taking the bullet into consideration, assume a bullet with default stats
-                GunshotContext gunshotContext = GunshotContext.CreateFrom(actionContext);
+                GunshotContext gunshotContext = GunshotContext.hitscan(actionContext, BulletDefinition.INVALID, 0);
                 if(expanded)
                 {
-                    tooltips.add(Component.translatable("tooltip.format."+ ModifierDefinition.STAT_IMPACT_DAMAGE + ".advanced", gunshotContext.ImpactDamage()));
-                    tooltips.add(Component.translatable("tooltip.format."+ ModifierDefinition.STAT_SHOT_VERTICAL_RECOIL + ".advanced", gunshotContext.VerticalRecoil()));
-                    tooltips.add(Component.translatable("tooltip.format."+ ModifierDefinition.STAT_SHOT_SPREAD + ".advanced", gunshotContext.Spread()));
+                    tooltips.add(Component.translatable("tooltip.format."+ Constants.STAT_IMPACT_DAMAGE + ".advanced", gunshotContext.EstimateImpactDamage(EAbilityTarget.ShotEntity)));
+                    tooltips.add(Component.translatable("tooltip.format."+ Constants.STAT_SHOT_VERTICAL_RECOIL + ".advanced", actionContext.VerticalRecoil()));
+                    tooltips.add(Component.translatable("tooltip.format."+ Constants.STAT_SHOT_SPREAD + ".advanced", actionContext.Spread()));
                 }
                 else
                 {
                     tooltips.add(Component.translatable(
                         "tooltip.format.primarystatline",
-                        gunshotContext.ImpactDamage(),
-                        gunshotContext.VerticalRecoil(),
+                        gunshotContext.EstimateImpactDamage(EAbilityTarget.ShotEntity),
                         fireRateString,
-                        gunshotContext.Spread()));
+                        actionContext.VerticalRecoil(),
+                        actionContext.Spread()));
                 }
 
                 if(expanded)
@@ -347,7 +350,7 @@ public class GunItem extends FlanItem
         GunContext gunContext = ContextCache.CreateWithoutCaching(stack);
         for (ActionDefinition actionDef : gunContext.GetPotentialPrimaryActions())
         {
-            int harvestLevel = Maths.Ceil(gunContext.ModifyFloat(ModifierDefinition.STAT_TOOL_HARVEST_LEVEL).get());
+            int harvestLevel = Maths.Ceil(gunContext.ModifyFloat(Constants.STAT_TOOL_HARVEST_LEVEL).get());
             switch (actionDef.actionType)
             {
                 case Melee -> { return blockState.is(Blocks.COBWEB); }
@@ -429,7 +432,7 @@ public class GunItem extends FlanItem
                 {
                     if(actionDef.actionType == EActionType.Melee)
                     {
-                        float meleeDamage = actionGroupContext.ModifyFloat(ModifierDefinition.STAT_MELEE_DAMAGE).get();
+                        float meleeDamage = actionGroupContext.ModifyFloat(Constants.STAT_MELEE_DAMAGE).get();
                         builder.put(Attributes.ATTACK_DAMAGE,
                             new AttributeModifier(BASE_ATTACK_DAMAGE_UUID, "Gun modifier", meleeDamage, AttributeModifier.Operation.ADDITION));
                     }

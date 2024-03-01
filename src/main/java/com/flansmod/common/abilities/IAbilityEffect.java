@@ -2,6 +2,7 @@ package com.flansmod.common.abilities;
 
 import com.flansmod.common.actions.contexts.GunContext;
 import com.flansmod.common.actions.contexts.TargetsContext;
+import com.flansmod.common.actions.contexts.TriggerContext;
 import com.flansmod.common.actions.stats.StatAccumulator;
 import com.flansmod.common.types.abilities.elements.AbilityEffectDefinition;
 import com.flansmod.common.types.elements.ModifierDefinition;
@@ -39,14 +40,32 @@ public interface IAbilityEffect
 		}
 	}
 
+	default void TriggerClient(@Nonnull GunContext gun,
+							   @Nonnull TriggerContext trigger,
+							   @Nonnull TargetsContext targets,
+							   @Nullable AbilityStack stacks)
+	{
 
-	void Trigger(@Nonnull GunContext gun,
-				 @Nonnull TargetsContext targets,
-				 @Nullable AbilityStack stacks);
+	}
+	default void TriggerServer(@Nonnull GunContext gun,
+							   @Nonnull TriggerContext trigger,
+							   @Nonnull TargetsContext targets,
+							   @Nullable AbilityStack stacks)
+	{
 
-	void End(@Nonnull GunContext gun,
-			 @Nullable AbilityStack stacks);
+	}
 
+	default boolean CanBeContinuous() { return false; }
+	default void EndClient(@Nonnull GunContext gun,
+						   @Nullable AbilityStack stacks)
+	{
+
+	}
+	default void EndServer(@Nonnull GunContext gun,
+						   @Nullable AbilityStack stacks)
+	{
+
+	}
 	ModifierDefinition[] NO_MODS = new ModifierDefinition[0];
 	@Nonnull
 	default ModifierDefinition[] GetActiveModifiers() { return NO_MODS; }

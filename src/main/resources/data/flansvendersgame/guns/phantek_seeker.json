@@ -155,13 +155,13 @@
     "actionGroups": [
         {
             "key": "primary_fire",
-            "canActUnderwater": true,
+            "canActUnderwater": false,
             "canActUnderOtherLiquid": false,
             "canBeOverriden": true,
             "twoHanded": true,
             "repeatMode": "SemiAuto",
             "repeatDelay": 0.05,
-            "repeatCount": 3,
+            "repeatCount": 0,
             "spinUpDuration": 1.5,
             "loudness": 150.0,
             "autoCancelIfNotInMode": "",
@@ -171,74 +171,6 @@
                     "duration": 0.05,
                     "sounds": [],
                     "itemStack": "",
-                    "modifiers": [
-                        {
-                            "stat": "vertical_recoil",
-                            "matchGroupPaths": [],
-                            "accumulators": [
-                                {
-                                    "operation": "StackablePercentage",
-                                    "value": 2400.0,
-                                    "multiplyPer": []
-                                }
-                            ],
-                            "setValue": ""
-                        },
-                        {
-                            "stat": "spread",
-                            "matchGroupPaths": [],
-                            "accumulators": [
-                                {
-                                    "operation": "StackablePercentage",
-                                    "value": 1900.0,
-                                    "multiplyPer": []
-                                }
-                            ],
-                            "setValue": ""
-                        },
-                        {
-                            "stat": "speed",
-                            "matchGroupPaths": [],
-                            "accumulators": [],
-                            "setValue": ""
-                        },
-                        {
-                            "stat": "bullet_count",
-                            "matchGroupPaths": [],
-                            "accumulators": [],
-                            "setValue": ""
-                        },
-                        {
-                            "stat": "impact_damage",
-                            "matchGroupPaths": [],
-                            "accumulators": [],
-                            "setValue": ""
-                        },
-                        {
-                            "stat": "knockback",
-                            "matchGroupPaths": [],
-                            "accumulators": [
-                                {
-                                    "operation": "StackablePercentage",
-                                    "value": -100.0,
-                                    "multiplyPer": []
-                                }
-                            ],
-                            "setValue": ""
-                        },
-                        {
-                            "stat": "fov_factor",
-                            "matchGroupPaths": [],
-                            "accumulators": [
-                                {
-                                    "operation": "BaseAdd",
-                                    "value": 1.0,
-                                    "multiplyPer": []
-                                }
-                            ],
-                            "setValue": ""
-                        }
-                    ],
                     "scopeOverlay": "",
                     "anim": ""
                 },
@@ -258,20 +190,6 @@
                         }
                     ],
                     "itemStack": "",
-                    "modifiers": [
-                        {
-                            "stat": "fov_factor",
-                            "matchGroupPaths": [],
-                            "accumulators": [
-                                {
-                                    "operation": "BaseAdd",
-                                    "value": 1.25,
-                                    "multiplyPer": []
-                                }
-                            ],
-                            "setValue": ""
-                        }
-                    ],
                     "scopeOverlay": "",
                     "anim": ""
                 },
@@ -280,34 +198,21 @@
                     "duration": 0.1,
                     "sounds": [],
                     "itemStack": "",
-                    "modifiers": [
-                        {
-                            "stat": "fov_factor",
-                            "matchGroupPaths": [],
-                            "accumulators": [
-                                {
-                                    "operation": "BaseAdd",
-                                    "value": 1.25,
-                                    "multiplyPer": []
-                                }
-                            ],
-                            "setValue": ""
-                        }
-                    ],
                     "scopeOverlay": "",
                     "anim": "shoot"
                 }
-            ]
+            ],
+            "modifiers": []
         },
         {
             "key": "ads",
-            "canActUnderwater": true,
+            "canActUnderwater": false,
             "canActUnderOtherLiquid": false,
             "canBeOverriden": true,
             "twoHanded": true,
             "repeatMode": "Toggle",
             "repeatDelay": 0.05,
-            "repeatCount": 3,
+            "repeatCount": 0,
             "spinUpDuration": 1.5,
             "loudness": 150.0,
             "autoCancelIfNotInMode": "",
@@ -317,28 +222,28 @@
                     "duration": 0.0,
                     "sounds": [],
                     "itemStack": "",
-                    "modifiers": [
-                        {
-                            "stat": "fov_factor",
-                            "matchGroupPaths": [],
-                            "accumulators": [
-                                {
-                                    "operation": "BaseAdd",
-                                    "value": 1.25,
-                                    "multiplyPer": []
-                                }
-                            ],
-                            "setValue": ""
-                        }
-                    ],
                     "scopeOverlay": "",
                     "anim": ""
+                }
+            ],
+            "modifiers": [
+                {
+                    "stat": "fov_factor",
+                    "matchGroupPaths": [],
+                    "accumulators": [
+                        {
+                            "operation": "BaseAdd",
+                            "value": 1.25,
+                            "multiplyPer": []
+                        }
+                    ],
+                    "setValue": ""
                 }
             ]
         },
         {
             "key": "look",
-            "canActUnderwater": true,
+            "canActUnderwater": false,
             "canActUnderOtherLiquid": false,
             "canBeOverriden": false,
             "twoHanded": false,
@@ -354,28 +259,15 @@
                     "duration": 2.5,
                     "sounds": [],
                     "itemStack": "",
-                    "modifiers": [
-                        {
-                            "stat": "fov_factor",
-                            "matchGroupPaths": [],
-                            "accumulators": [
-                                {
-                                    "operation": "BaseAdd",
-                                    "value": 1.25,
-                                    "multiplyPer": []
-                                }
-                            ],
-                            "setValue": ""
-                        }
-                    ],
                     "scopeOverlay": "",
                     "anim": "look_at"
                 }
-            ]
+            ],
+            "modifiers": []
         },
         {
             "key": "reload_primary_start",
-            "canActUnderwater": true,
+            "canActUnderwater": false,
             "canActUnderOtherLiquid": false,
             "canBeOverriden": false,
             "twoHanded": false,
@@ -391,28 +283,15 @@
                     "duration": 1.0,
                     "sounds": [],
                     "itemStack": "",
-                    "modifiers": [
-                        {
-                            "stat": "fov_factor",
-                            "matchGroupPaths": [],
-                            "accumulators": [
-                                {
-                                    "operation": "BaseAdd",
-                                    "value": 1.25,
-                                    "multiplyPer": []
-                                }
-                            ],
-                            "setValue": ""
-                        }
-                    ],
                     "scopeOverlay": "",
                     "anim": "reload_start"
                 }
-            ]
+            ],
+            "modifiers": []
         },
         {
             "key": "reload_primary_load_one",
-            "canActUnderwater": true,
+            "canActUnderwater": false,
             "canActUnderOtherLiquid": false,
             "canBeOverriden": false,
             "twoHanded": false,
@@ -428,20 +307,6 @@
                     "duration": 1.0,
                     "sounds": [],
                     "itemStack": "",
-                    "modifiers": [
-                        {
-                            "stat": "fov_factor",
-                            "matchGroupPaths": [],
-                            "accumulators": [
-                                {
-                                    "operation": "BaseAdd",
-                                    "value": 1.25,
-                                    "multiplyPer": []
-                                }
-                            ],
-                            "setValue": ""
-                        }
-                    ],
                     "scopeOverlay": "",
                     "anim": "reload_load_one"
                 },
@@ -461,28 +326,15 @@
                         }
                     ],
                     "itemStack": "",
-                    "modifiers": [
-                        {
-                            "stat": "fov_factor",
-                            "matchGroupPaths": [],
-                            "accumulators": [
-                                {
-                                    "operation": "BaseAdd",
-                                    "value": 1.25,
-                                    "multiplyPer": []
-                                }
-                            ],
-                            "setValue": ""
-                        }
-                    ],
                     "scopeOverlay": "",
                     "anim": ""
                 }
-            ]
+            ],
+            "modifiers": []
         },
         {
             "key": "reload_primary_end",
-            "canActUnderwater": true,
+            "canActUnderwater": false,
             "canActUnderOtherLiquid": false,
             "canBeOverriden": false,
             "twoHanded": false,
@@ -498,24 +350,11 @@
                     "duration": 1.0,
                     "sounds": [],
                     "itemStack": "",
-                    "modifiers": [
-                        {
-                            "stat": "fov_factor",
-                            "matchGroupPaths": [],
-                            "accumulators": [
-                                {
-                                    "operation": "BaseAdd",
-                                    "value": 1.25,
-                                    "multiplyPer": []
-                                }
-                            ],
-                            "setValue": ""
-                        }
-                    ],
                     "scopeOverlay": "",
                     "anim": "reload_end"
                 }
-            ]
+            ],
+            "modifiers": []
         }
     ],
     "magazines": [

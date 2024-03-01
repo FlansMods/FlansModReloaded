@@ -29,4 +29,9 @@ public enum EAbilityEffect
 	PlaceFluid,
 
 	EndActionGroup,
+
+	Knockback,				// Ported from Bullet
+	SetFire,				// Ported from Bullet
+	Explode,				// Ported from Bullet
+
 }

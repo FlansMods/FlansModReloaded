@@ -47,6 +47,10 @@ public class TriggerContext
 		SplashedEntities = splashes;
 		ActionGroupPath = actionGroupPath;
 	}
+	public static TriggerContext empty()
+	{
+		return new TriggerContext(null, null, null, null, null);
+	}
 	public static TriggerContext self(@Nonnull ActionGroupContext actionGroup)
 	{
 		return new TriggerContext(actionGroup.Gun.GetShooter().Owner(), actionGroup.Gun.GetShooter().Entity(), null, null, actionGroup.GroupPath);

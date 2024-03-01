@@ -2,7 +2,9 @@ package com.flansmod.common.types.abilities.elements;
 
 import com.flansmod.common.actions.contexts.TargetsContext;
 import com.flansmod.common.actions.contexts.TriggerContext;
+import com.flansmod.common.item.FlanItem;
 import com.flansmod.common.types.JsonField;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.Level;
@@ -69,6 +71,27 @@ public class AbilityTargetDefinition
 				if(triggerContext.SplashedEntities != null)
 					for(Entity entity : triggerContext.SplashedEntities)
 						targetsContext.Add(entity);
+			}
+		}
+	}
+
+	@Nonnull
+	public Component GetTooltip(boolean expanded)
+	{
+		//expanded ? "trigger.expanded." : "trigger.icon."
+		String localisationKey = "target.expanded." + targetType.toString().toLowerCase();
+		switch(targetType)
+		{
+			case Owner, Shooter, ShotEntity, SplashedEntities -> {
+				for(ResourceLocation id : matchIDs)
+				{
+					//if(condition.conditionType == ETriggerConditionType.CheckActionGroupPath)
+					//	return Component.translatable(localisationKey, FlanItem.ListOf("action.group_path.", condition.allowedValues));
+				}
+				return Component.translatable(localisationKey, Component.translatable("target.any"));
+			}
+			default -> {
+				return Component.translatable(localisationKey);
 			}
 		}
 	}

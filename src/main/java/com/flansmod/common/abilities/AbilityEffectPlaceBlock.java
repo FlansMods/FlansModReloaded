@@ -2,8 +2,9 @@ package com.flansmod.common.abilities;
 
 import com.flansmod.common.actions.contexts.GunContext;
 import com.flansmod.common.actions.contexts.TargetsContext;
+import com.flansmod.common.actions.contexts.TriggerContext;
+import com.flansmod.common.types.Constants;
 import com.flansmod.common.types.abilities.elements.AbilityEffectDefinition;
-import com.flansmod.common.types.elements.ModifierDefinition;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.Level;
@@ -21,7 +22,7 @@ public class AbilityEffectPlaceBlock implements IAbilityEffect
 
 	public AbilityEffectPlaceBlock(@Nonnull AbilityEffectDefinition def)
 	{
-		String blockID = def.ModifyString(ModifierDefinition.STAT_BLOCK_ID, "");
+		String blockID = def.ModifyString(Constants.STAT_BLOCK_ID, "");
 		if(!blockID.isEmpty())
 		{
 			Block block = ForgeRegistries.BLOCKS.getValue(new ResourceLocation(blockID));
@@ -39,7 +40,7 @@ public class AbilityEffectPlaceBlock implements IAbilityEffect
 	}
 
 	@Override
-	public void Trigger(@Nonnull GunContext gun, @Nonnull TargetsContext targets, @Nullable AbilityStack stacks)
+	public void TriggerServer(@Nonnull GunContext gun, @Nonnull TriggerContext trigger, @Nonnull TargetsContext targets, @Nullable AbilityStack stacks)
 	{
 		if(BlockToPlace != null)
 		{
@@ -57,10 +58,5 @@ public class AbilityEffectPlaceBlock implements IAbilityEffect
 				});
 			}
 		}
-	}
-	@Override
-	public void End(@Nonnull GunContext gun, @Nullable AbilityStack stacks)
-	{
-
 	}
 }

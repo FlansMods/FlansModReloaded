@@ -6,13 +6,7 @@
         {
             "stat": "impact_damage",
             "matchGroupPaths": [],
-            "accumulators": [
-                {
-                    "operation": "StackablePercentage",
-                    "value": 14.9999981,
-                    "multiplyPer": []
-                }
-            ],
+            "accumulators": [],
             "setValue": ""
         }
     ],

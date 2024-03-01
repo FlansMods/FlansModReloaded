@@ -2,6 +2,7 @@ package com.flansmod.common.actions;
 
 import com.flansmod.common.actions.contexts.GunContext;
 import com.flansmod.common.gunshots.*;
+import com.flansmod.common.types.Constants;
 import com.flansmod.common.types.guns.elements.ActionDefinition;
 import com.flansmod.common.types.elements.ModifierDefinition;
 import net.minecraft.network.FriendlyByteBuf;
@@ -94,8 +95,8 @@ public abstract class ActionInstance
 	@Nonnull
 	public String ModifyString(@Nonnull String stat, @Nonnull String defaultValue) { return Group.Context.ModifyString(stat, defaultValue); }
 
-	public float Duration() { return ModifyFloat(ModifierDefinition.STAT_DURATION, Def.duration); }
-	public float ToolLevel() { return GetFloat(ModifierDefinition.STAT_TOOL_HARVEST_LEVEL); }
-	public float HarvestSpeed() { return GetFloat(ModifierDefinition.STAT_TOOL_HARVEST_SPEED); }
-	public float Reach() { return GetFloat(ModifierDefinition.STAT_TOOL_REACH); }
+	public float Duration() { return ModifyFloat(Constants.STAT_DURATION, Def.duration); }
+	public float ToolLevel() { return GetFloat(Constants.STAT_TOOL_HARVEST_LEVEL); }
+	public float HarvestSpeed() { return GetFloat(Constants.STAT_TOOL_HARVEST_SPEED); }
+	public float Reach() { return GetFloat(Constants.STAT_TOOL_REACH); }
 }

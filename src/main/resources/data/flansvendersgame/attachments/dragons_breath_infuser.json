@@ -12,18 +12,7 @@
         {
             "stat": "set_fire_to_target",
             "matchGroupPaths": [],
-            "accumulators": [
-                {
-                    "operation": "BaseAdd",
-                    "value": 2.0,
-                    "multiplyPer": []
-                },
-                {
-                    "operation": "StackablePercentage",
-                    "value": -100.0,
-                    "multiplyPer": []
-                }
-            ],
+            "accumulators": [],
             "setValue": ""
         }
     ],

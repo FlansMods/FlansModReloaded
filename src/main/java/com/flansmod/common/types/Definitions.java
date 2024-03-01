@@ -12,6 +12,7 @@ import net.minecraft.server.packs.resources.SimpleJsonResourceReloadListener;
 import net.minecraft.util.profiling.ProfilerFiller;
 import org.slf4j.Logger;
 
+import javax.annotation.Nonnull;
 import java.util.*;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -46,11 +47,13 @@ public class Definitions<TDefinitionType extends JsonDefinition> extends SimpleJ
 		DefinitionParser.IterativelyCreateParsers(clazz);
 	}
 
+	@Nonnull
 	public TDefinitionType Get(ResourceLocation location)
 	{
 		return tables.getOrDefault(location, INVALID);
 	}
 
+	@Nonnull
 	public TDefinitionType ByHash(int hash)
 	{
 		return hashmap.getOrDefault(hash, INVALID);

@@ -8,25 +8,13 @@
         {
             "stat": "flashlight_strength",
             "matchGroupPaths": [],
-            "accumulators": [
-                {
-                    "operation": "BaseAdd",
-                    "value": 12.0,
-                    "multiplyPer": []
-                }
-            ],
+            "accumulators": [],
             "setValue": ""
         },
         {
             "stat": "flashlight_range",
             "matchGroupPaths": [],
-            "accumulators": [
-                {
-                    "operation": "BaseAdd",
-                    "value": 10.0,
-                    "multiplyPer": []
-                }
-            ],
+            "accumulators": [],
             "setValue": ""
         }
     ],

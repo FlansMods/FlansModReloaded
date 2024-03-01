@@ -5,6 +5,7 @@ import com.flansmod.common.actions.ActionInstance;
 import com.flansmod.common.actions.ActionStack;
 import com.flansmod.common.actions.contexts.ActionGroupContext;
 import com.flansmod.common.actions.contexts.GunInputContext;
+import com.flansmod.common.types.Constants;
 import com.flansmod.common.types.attachments.AttachmentDefinition;
 import com.flansmod.common.types.elements.ModifierDefinition;
 import com.flansmod.common.types.guns.elements.ActionDefinition;
@@ -111,7 +112,7 @@ public class SwitchModeAction extends ActionInstance
 	}
 
 
-	public String ModeKey() { return Group.Context.ModifyString(ModifierDefinition.KEY_MODE, "mode"); }
-	public String SelectValue() { return Group.Context.ModifyString(ModifierDefinition.KEY_SET_VALUE, ""); }
+	public String ModeKey() { return Group.Context.ModifyString(Constants.KEY_MODE, "mode"); }
+	public String SelectValue() { return Group.Context.ModifyString(Constants.KEY_SET_VALUE, ""); }
 	public boolean CycleModes() { return SelectValue().isEmpty(); }
 }

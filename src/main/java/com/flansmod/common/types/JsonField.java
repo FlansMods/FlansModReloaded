@@ -8,6 +8,7 @@ public @interface JsonField
 {
 	String Docs() default "";
 	String AssetPathHint() default "";
+	String ModifiedBy() default "";
 	double Min() default -Double.MAX_VALUE;
 	double Max() default Double.MAX_VALUE;
 }

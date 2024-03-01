@@ -21,18 +21,8 @@ public class AbilityInstanceApplyModifier implements IAbilityEffect
 	{
 		Def = def;
 	}
-
 	@Override
-	public void Trigger(@Nonnull GunContext gun, @Nonnull TargetsContext targets, @Nullable AbilityStack stacks)
-	{
-	}
-
-	@Override
-	public void End(@Nonnull GunContext gun, @Nullable AbilityStack stacks)
-	{
-
-	}
-
+	public boolean CanBeContinuous() { return true; }
 	@Override
 	@Nonnull
 	public ModifierDefinition[] GetActiveModifiers()

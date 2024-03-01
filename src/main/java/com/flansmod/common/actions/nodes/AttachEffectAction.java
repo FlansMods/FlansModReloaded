@@ -2,6 +2,7 @@ package com.flansmod.common.actions.nodes;
 
 import com.flansmod.common.actions.ActionGroupInstance;
 import com.flansmod.common.actions.ActionInstance;
+import com.flansmod.common.types.Constants;
 import com.flansmod.common.types.elements.ModifierDefinition;
 import com.flansmod.common.types.guns.elements.ActionDefinition;
 
@@ -21,5 +22,5 @@ public class AttachEffectAction extends ActionInstance
 	@Override
 	public void OnTriggerServer(int triggerIndex) { }
 
-	public String EffectModelLocation() { return Group.Context.ModifyString(ModifierDefinition.KEY_MODEL_ID, "flansmod:muzzle_flash"); }
+	public String EffectModelLocation() { return Group.Context.ModifyString(Constants.KEY_MODEL_ID, "flansmod:muzzle_flash"); }
 }

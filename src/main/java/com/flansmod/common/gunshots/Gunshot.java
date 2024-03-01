@@ -47,7 +47,7 @@ public class Gunshot
 		return this;
 	}
 	@Nonnull
-	public Gunshot WithOrigin(Vec3 o)
+	public Gunshot WithOrigin(@Nonnull Vec3 o)
 	{
 		origin = o;
 		return this;
@@ -59,19 +59,19 @@ public class Gunshot
 		return this;
 	}
 	@Nonnull
-	public Gunshot WithTrajectory(Vec3 t)
+	public Gunshot WithTrajectory(@Nonnull Vec3 t)
 	{
 		trajectory = t;
 		return this;
 	}
 	@Nonnull
-	public Gunshot WithHits(HitResult[] results)
+	public Gunshot WithHits(@Nonnull HitResult[] results)
 	{
 		hits = results;
 		return this;
 	}
 	@Nonnull
-	public Gunshot WithBullet(BulletDefinition bullet)
+	public Gunshot WithBullet(@Nonnull BulletDefinition bullet)
 	{
 		bulletDef = bullet;
 		return this;

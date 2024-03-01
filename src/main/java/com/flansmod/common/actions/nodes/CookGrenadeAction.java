@@ -2,6 +2,7 @@ package com.flansmod.common.actions.nodes;
 
 import com.flansmod.common.actions.*;
 import com.flansmod.common.actions.contexts.ActionGroupContext;
+import com.flansmod.common.types.Constants;
 import com.flansmod.common.types.guns.elements.ActionDefinition;
 import com.flansmod.common.types.elements.ModifierDefinition;
 import com.flansmod.util.Maths;
@@ -92,6 +93,6 @@ public class CookGrenadeAction extends ActionInstance
 
 	}
 
-	public String OtherActionName() { return ModifyString(ModifierDefinition.KEY_ACTION_KEY, Actions.DefaultPrimaryActionKey); }
-	public float Fuse() { return ModifyFloat(ModifierDefinition.STAT_DURATION, Def.duration);}
+	public String OtherActionName() { return ModifyString(Constants.KEY_ACTION_KEY, Actions.DefaultPrimaryActionKey); }
+	public float Fuse() { return ModifyFloat(Constants.STAT_DURATION, Def.duration);}
 }

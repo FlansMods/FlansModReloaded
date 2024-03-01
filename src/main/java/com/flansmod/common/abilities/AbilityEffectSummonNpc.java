@@ -1,19 +1,14 @@
 package com.flansmod.common.abilities;
 
-import com.flansmod.common.FlansMod;
-import com.flansmod.common.actions.ActionGroupInstance;
-import com.flansmod.common.actions.ActionInstance;
-import com.flansmod.common.actions.EActionResult;
 import com.flansmod.common.actions.contexts.GunContext;
 import com.flansmod.common.actions.contexts.TargetsContext;
+import com.flansmod.common.actions.contexts.TriggerContext;
 import com.flansmod.common.entity.INpcRelationshipsCapability;
 import com.flansmod.common.entity.NpcRelationshipsCapability;
 import com.flansmod.common.entity.ShopkeeperEntity;
 import com.flansmod.common.actions.contexts.ShooterContextPlayer;
+import com.flansmod.common.types.Constants;
 import com.flansmod.common.types.abilities.elements.AbilityEffectDefinition;
-import com.flansmod.common.types.guns.elements.ActionDefinition;
-import com.flansmod.common.types.elements.ModifierDefinition;
-import com.flansmod.common.types.npc.NpcDefinition;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
@@ -25,8 +20,6 @@ import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.registries.ForgeRegistries;
-import org.jetbrains.annotations.NotNull;
-import org.joml.Vector3d;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -40,7 +33,7 @@ public class AbilityEffectSummonNpc implements IAbilityEffect
 
 	public AbilityEffectSummonNpc(@Nonnull AbilityEffectDefinition def)
 	{
-		NpcID = new ResourceLocation(def.ModifyString(ModifierDefinition.KEY_ENTITY_TAG, ""));
+		NpcID = new ResourceLocation(def.ModifyString(Constants.KEY_ENTITY_TAG, ""));
 		EntityType = ForgeRegistries.ENTITY_TYPES.getValue(NpcID);
 	}
 
@@ -75,7 +68,7 @@ public class AbilityEffectSummonNpc implements IAbilityEffect
 	}
 
 	@Override
-	public void Trigger(@Nonnull GunContext gun, @Nonnull TargetsContext targets, @Nullable AbilityStack stacks)
+	public void TriggerServer(@Nonnull GunContext gun, @Nonnull TriggerContext trigger, @Nonnull TargetsContext targets, @Nullable AbilityStack stacks)
 	{
 		if(EntityType != null)
 		{
@@ -114,10 +107,5 @@ public class AbilityEffectSummonNpc implements IAbilityEffect
 				}
 			}
 		}
-	}
-	@Override
-	public void End(@Nonnull GunContext gun, @Nullable AbilityStack stacks)
-	{
-
 	}
 }

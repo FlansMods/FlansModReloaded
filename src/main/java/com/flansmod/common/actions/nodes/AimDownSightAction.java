@@ -2,6 +2,7 @@ package com.flansmod.common.actions.nodes;
 
 import com.flansmod.common.actions.ActionGroupInstance;
 import com.flansmod.common.actions.ActionInstance;
+import com.flansmod.common.types.Constants;
 import com.flansmod.common.types.guns.elements.ActionDefinition;
 import com.flansmod.common.types.elements.ModifierDefinition;
 import com.flansmod.util.Maths;
@@ -39,7 +40,7 @@ public class AimDownSightAction extends ActionInstance
 	}
 
 
-	public float FOVFactor() { return GetFloat(ModifierDefinition.STAT_ZOOM_FOV_FACTOR); }
-	public float EyeLineRoll() { return GetFloat(ModifierDefinition.STAT_EYE_LINE_ROLL); }
-	public String EyeLineName() { return ModifyString(ModifierDefinition.KEY_EYE_LINE_NAME, "eye_line"); }
+	public float FOVFactor() { return GetFloat(Constants.STAT_ZOOM_FOV_FACTOR); }
+	public float EyeLineRoll() { return GetFloat(Constants.STAT_EYE_LINE_ROLL); }
+	public String EyeLineName() { return ModifyString(Constants.KEY_EYE_LINE_NAME, "eye_line"); }
 }

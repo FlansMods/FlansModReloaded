@@ -2,6 +2,7 @@ package com.flansmod.common.abilities;
 
 import com.flansmod.common.actions.contexts.GunContext;
 import com.flansmod.common.actions.stats.StatCalculationContext;
+import com.flansmod.common.types.Constants;
 import com.flansmod.common.types.abilities.elements.AbilityStackingDefinition;
 import com.flansmod.common.types.elements.ModifierDefinition;
 import com.flansmod.util.Maths;
@@ -45,7 +46,7 @@ public class AbilityStack
 
 	public void Tick(@Nonnull GunContext gunContext)
 	{
-		gunContext.ModifyFloat(ModifierDefinition.STAT_DECAY_TIME);
+		gunContext.ModifyFloat(Constants.STAT_DECAY_TIME);
 		TicksSinceStackedOrDecayed++;
 		if(StackCount > 0 && TicksSinceStackedOrDecayed >= GetDecayTimeTicks(gunContext))
 		{

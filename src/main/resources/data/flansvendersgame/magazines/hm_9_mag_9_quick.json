@@ -8,13 +8,7 @@
             "matchGroupPaths": [
                 "reload_primary"
             ],
-            "accumulators": [
-                {
-                    "operation": "StackablePercentage",
-                    "value": -25.0,
-                    "multiplyPer": []
-                }
-            ],
+            "accumulators": [],
             "setValue": ""
         }
     ],

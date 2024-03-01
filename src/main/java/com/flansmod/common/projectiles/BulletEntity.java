@@ -5,7 +5,9 @@ import com.flansmod.common.actions.ActionGroupInstance;
 import com.flansmod.common.actions.ActionStack;
 import com.flansmod.common.gunshots.Gunshot;
 import com.flansmod.common.actions.contexts.GunshotContext;
+import com.flansmod.common.types.JsonDefinition;
 import com.flansmod.common.types.bullets.BulletDefinition;
+import com.flansmod.common.types.bullets.ProjectileDefinition;
 import com.flansmod.util.Maths;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
@@ -37,6 +39,8 @@ public class BulletEntity extends Projectile
 	public GunshotContext Context = GunshotContext.INVALID;
 	@Nonnull
 	public BulletDefinition Def = BulletDefinition.INVALID;
+	@Nullable
+	public ProjectileDefinition ProjectileDef = null;
 	public UUID OwnerUUID;
 
 
@@ -62,10 +66,12 @@ public class BulletEntity extends Projectile
 	{
 		Context = context;
 		Def = context.Bullet;
+		ProjectileDef = context.GetProjectileDef();
 		entityData.set(DATA_BULLET_DEF, Def.hashCode());
-		if(Def.shootStats.fuseTime > 0.0f)
+		float fuseTime = Context.FuseTimeSeconds();
+		if(fuseTime > 0.0f)
 		{
-			FuseRemaining = Maths.Floor(Def.shootStats.fuseTime * 20f);
+			FuseRemaining = Maths.Ceil(fuseTime * 20f);
 			ActionGroupInstance group = context.ActionGroup.Gun.GetOrCreateActionGroup(context.ActionGroup);
 			if(group.GetProgressTicks() > 0)
 			{
@@ -83,6 +89,8 @@ public class BulletEntity extends Projectile
 		RefreshLockOnTarget();
 	}
 
+
+
 	//
 	private void RecalculateFacing(Vec3 motion)
 	{
@@ -91,8 +99,8 @@ public class BulletEntity extends Projectile
 		float pitchDeg = (float)Maths.Atan2(motion.y, xz) * Maths.RadToDegF;
 
 		// Slerp
-		pitchDeg = Maths.LerpDegrees(getXRot(), pitchDeg, Def.shootStats.turnRate);
-		yawDeg = Maths.LerpDegrees(getYRot(), yawDeg, Def.shootStats.turnRate);
+		pitchDeg = Maths.LerpDegrees(getXRot(), pitchDeg, Context.TurnRate());
+		yawDeg = Maths.LerpDegrees(getYRot(), yawDeg, Context.TurnRate());
 
 		setXRot(pitchDeg);
 		setYRot(yawDeg);
@@ -128,19 +136,23 @@ public class BulletEntity extends Projectile
 	{
 		if(isInWater())
 		{
-			if(Def.shootStats.waterParticles != null)
-			{
-				// TODO: Trails
-			}
-			return motion.scale(Maths.Clamp(1.0f - Def.shootStats.dragInWater, 0f, 1f));
+			// TODO: Trails
+			//ResourceLocation waterParticleLoc = Context.WaterParticles();
+			//if(JsonDefinition.IsValidLocation(waterParticleLoc))
+			//{
+			//
+			//}
+			return motion.scale(Maths.Clamp(1.0f - Context.DragInWater(), 0f, 1f));
 		}
 		else
 		{
-			if(Def.shootStats.trailParticles != null)
-			{
-				// TODO: Trails
-			}
-			return motion.scale(Maths.Clamp(1.0f - Def.shootStats.dragInAir, 0f, 1f));
+			// TODO: Trails
+			//ResourceLocation airParticleLoc = Context.AirParticles();
+			//if(JsonDefinition.IsValidLocation(airParticleLoc))
+			//{
+			//
+			//}
+			return motion.scale(Maths.Clamp(1.0f - Context.DragInAir(), 0f, 1f));
 		}
 	}
 
@@ -150,7 +162,7 @@ public class BulletEntity extends Projectile
 			return motion;
 		return new Vec3(
 			motion.x,
-			motion.y - Def.shootStats.gravityFactor * 0.02d,
+			motion.y - Context.GravityFactor() * 0.02d,
 			motion.z);
 	}
 
@@ -158,7 +170,7 @@ public class BulletEntity extends Projectile
 	{
 		if(!level().isClientSide)
 		{
-			if (Def.shootStats.fuseTime > 0.0f)
+			if (Context.FuseTimeSeconds() > 0.0f)
 			{
 				FuseRemaining--;
 				if (FuseRemaining <= 0)
@@ -182,12 +194,12 @@ public class BulletEntity extends Projectile
 			}
 			case BLOCK:
 			{
-				if(Def.shootStats.sticky)
+				if(Context.Sticky())
 				{
 					Stuck = true;
 					return Vec3.ZERO;
 				}
-				else if(Def.shootStats.fuseTime > 0.0f)
+				else if(Context.FuseTimeSeconds() > 0.0f)
 				{
 					// Bounce
 					BlockHitResult blockHitResult = (BlockHitResult) hitResult;
@@ -223,7 +235,7 @@ public class BulletEntity extends Projectile
 		shot.hits = new HitResult[] {
 			hit
 		};
-		Context.Server_ProcessImpact(level(), shot);
+		Context.ProcessShot(shot);
 		kill();
 	}
 

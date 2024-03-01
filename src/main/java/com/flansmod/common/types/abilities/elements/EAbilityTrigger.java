@@ -1,6 +1,7 @@
 package com.flansmod.common.types.abilities.elements;
 
 import com.flansmod.common.types.guns.elements.EReloadStage;
+import net.minecraft.world.phys.HitResult;
 
 import javax.annotation.Nonnull;
 
@@ -38,7 +39,6 @@ public enum EAbilityTrigger
 
 
 	;
-
 
 	public static EAbilityTrigger FromReloadStage(@Nonnull EReloadStage stage)
 	{

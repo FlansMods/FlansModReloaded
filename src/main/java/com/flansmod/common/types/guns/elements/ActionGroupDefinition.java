@@ -1,7 +1,11 @@
 package com.flansmod.common.types.guns.elements;
 
 import com.flansmod.common.types.JsonField;
+import com.flansmod.common.types.elements.ModifierDefinition;
 import com.flansmod.util.Maths;
+import net.minecraft.network.chat.Component;
+
+import javax.annotation.Nonnull;
 
 public class ActionGroupDefinition
 {
@@ -31,6 +35,8 @@ public class ActionGroupDefinition
 
 	@JsonField
 	public ActionDefinition[] actions = new ActionDefinition[0];
+	@JsonField(Docs = "These modifiers will be applied to the above actions if applicable")
+	public ModifierDefinition[] modifiers = new ModifierDefinition[0];
 
 	public static final ActionGroupDefinition INVALID = new ActionGroupDefinition();
 	public boolean IsValid() {return !key.isEmpty() && actions.length > 0; }

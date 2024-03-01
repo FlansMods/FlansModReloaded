@@ -27,6 +27,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import static com.flansmod.common.types.Constants.*;
+
 public class ActionGroupContext
 {
 	public static final ActionGroupContext INVALID = new ActionGroupContext(GunContext.INVALID, "");
@@ -628,8 +630,7 @@ public class ActionGroupContext
 	// --------------------------------------------------------------------------
 	public void BakeModifiers(@Nonnull IModifierBaker baker)
 	{
-		for(ActionDefinition actionDef : Def.actions)
-			for(ModifierDefinition modDef : actionDef.modifiers)
+		for(ModifierDefinition modDef : Def.modifiers)
 				baker.Bake(modDef);
 	}
 
@@ -654,21 +655,29 @@ public class ActionGroupContext
 				.orElse(GetStringOverride(stat)
 					.orElse(defaultValue)));
 	}
+
 	@Nonnull
 	public <T extends Enum<T>> Enum<T> ModifyEnum(@Nonnull String stat, @Nonnull T defaultValue, @Nonnull Class<T> clazz)
 	{
 		return Enum.valueOf(clazz, ModifyString(stat, defaultValue.toString()));
 	}
 	public boolean GetBoolean(@Nonnull String stat) { return Boolean.parseBoolean(ModifyString(stat, "false")); }
+	public boolean ModifyBoolean(@Nonnull String stat, boolean defaultValue) {
+		return Boolean.parseBoolean(ModifyString(stat, Boolean.toString(defaultValue)));
+	}
 
 	@Nonnull
-	public ERepeatMode RepeatMode() { return (ERepeatMode) ModifyEnum(ModifierDefinition.STAT_GROUP_REPEAT_MODE, Def.repeatMode, ERepeatMode.class); }
-	public float RepeatDelaySeconds() { return ModifyFloat(ModifierDefinition.STAT_GROUP_REPEAT_DELAY).apply(Def.repeatDelay); }
-	public int RepeatCount() { return Maths.Ceil(ModifyFloat(ModifierDefinition.STAT_GROUP_REPEAT_COUNT).apply(Def.repeatCount)); }
-	public float SpinUpDuration() { return ModifyFloat(ModifierDefinition.STAT_GROUP_SPIN_UP_DURATION).apply(Def.spinUpDuration); }
-	public float Loudness() { return ModifyFloat(ModifierDefinition.STAT_GROUP_LOUDNESS).apply(Def.loudness); }
-	public float Volume() { return ModifyFloat(ModifierDefinition.STAT_GROUP_LOUDNESS).get(); }
-	public float Pitch() { return ModifyFloat(ModifierDefinition.STAT_SOUND_PITCH).get(); }
+	public ERepeatMode RepeatMode() 		{ return (ERepeatMode) ModifyEnum(STAT_GROUP_REPEAT_MODE, Def.repeatMode, ERepeatMode.class); }
+	public float RepeatDelaySeconds() 		{ return ModifyFloat(STAT_GROUP_REPEAT_DELAY).apply(Def.repeatDelay); }
+	public int RepeatCount() 				{ return Maths.Ceil(ModifyFloat(STAT_GROUP_REPEAT_COUNT).apply(Def.repeatCount)); }
+	public float SpinUpDuration() 			{ return ModifyFloat(STAT_GROUP_SPIN_UP_DURATION).apply(Def.spinUpDuration); }
+	public float Loudness() 				{ return ModifyFloat(STAT_GROUP_LOUDNESS).apply(Def.loudness); }
+	public float Volume() 					{ return ModifyFloat(STAT_GROUP_LOUDNESS).get(); }
+	public float Pitch() 					{ return ModifyFloat(STAT_SOUND_PITCH).get(); }
+	public float VerticalRecoil() 			{ return ModifyFloat(STAT_SHOT_VERTICAL_RECOIL).get(); }
+	public float HorizontalRecoil() 		{ return ModifyFloat(STAT_SHOT_HORIZONTAL_RECOIL).get(); }
+	public float Spread() 					{ return ModifyFloat(STAT_SHOT_SPREAD).get(); }
+	public ESpreadPattern SpreadPattern() 	{ return (ESpreadPattern)ModifyEnum(STAT_SHOT_SPREAD_PATTERN, ESpreadPattern.FilledCircle, ESpreadPattern.class); }
 
 	public float RepeatDelayTicks() { return RepeatDelaySeconds() * 20.0f; }
 	public int RoundsPerMinute() { return RepeatDelaySeconds() <= 0.00001f ? 0 : Maths.Ceil(60.0f / RepeatDelaySeconds()); }

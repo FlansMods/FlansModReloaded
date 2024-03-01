@@ -1,10 +1,10 @@
 package com.flansmod.common.abilities;
 
 import com.flansmod.common.actions.contexts.GunContext;
-import com.flansmod.common.actions.stats.StatCalculationContext;
+import com.flansmod.common.actions.contexts.TriggerContext;
 import com.flansmod.common.actions.contexts.TargetsContext;
+import com.flansmod.common.types.Constants;
 import com.flansmod.common.types.abilities.elements.AbilityEffectDefinition;
-import com.flansmod.common.types.elements.ModifierDefinition;
 import net.minecraft.world.entity.LivingEntity;
 
 import javax.annotation.Nonnull;
@@ -16,11 +16,11 @@ public class AbilityEffectHealEntity implements IAbilityEffect
 
 	public AbilityEffectHealEntity(@Nonnull AbilityEffectDefinition def)
 	{
-		HealAmount = new StatHolder(ModifierDefinition.STAT_HEAL_AMOUNT, def);
+		HealAmount = new StatHolder(Constants.STAT_HEAL_AMOUNT, def);
 	}
 
 	@Override
-	public void Trigger(@Nonnull GunContext gun, @Nonnull TargetsContext targets, @Nullable AbilityStack stacks)
+	public void TriggerServer(@Nonnull GunContext gun, @Nonnull TriggerContext trigger, @Nonnull TargetsContext targets, @Nullable AbilityStack stacks)
 	{
 		targets.ForEachEntity((entity) ->
 		{
@@ -29,10 +29,5 @@ public class AbilityEffectHealEntity implements IAbilityEffect
 				living.heal(HealAmount.Get(gun, stacks));
 			}
 		});
-	}
-	@Override
-	public void End(@Nonnull GunContext gun, @Nullable AbilityStack stacks)
-	{
-
 	}
 }

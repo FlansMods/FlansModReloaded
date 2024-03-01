@@ -1,13 +1,12 @@
 package com.flansmod.common.abilities;
 
 import com.flansmod.common.actions.contexts.GunContext;
-import com.flansmod.common.actions.stats.StatAccumulator;
-import com.flansmod.common.actions.stats.StatCalculationContext;
+import com.flansmod.common.actions.contexts.TriggerContext;
 import com.flansmod.common.actions.contexts.TargetsContext;
+import com.flansmod.common.types.Constants;
 import com.flansmod.common.types.abilities.elements.AbilityEffectDefinition;
-import com.flansmod.common.types.elements.ModifierDefinition;
-import com.flansmod.util.formulae.FloatAccumulation;
-import net.minecraft.world.level.Level;
+import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.entity.LivingEntity;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -15,27 +14,35 @@ import javax.annotation.Nullable;
 public class AbilityEffectApplyDamage implements IAbilityEffect
 {
 	private final StatHolder InstantDamage;
+	private final boolean PreventDamageCooldown;
 
 	public AbilityEffectApplyDamage(@Nonnull AbilityEffectDefinition def)
 	{
-		InstantDamage = new StatHolder(ModifierDefinition.STAT_INSTANT_DAMAGE, def);
+		InstantDamage = new StatHolder(Constants.STAT_INSTANT_DAMAGE, def);
+		PreventDamageCooldown = def.ModifyBoolean(Constants.STAT_PREVENT_DAMAGE_COOLDOWN, true);
 	}
 
 	@Override
-	public void Trigger(@Nonnull GunContext gun, @Nonnull TargetsContext targets, @Nullable AbilityStack stacks)
+	public void TriggerServer(@Nonnull GunContext gun, @Nonnull TriggerContext trigger, @Nonnull TargetsContext targets, @Nullable AbilityStack stacks)
 	{
-		Level level = gun.GetLevel();
-		if(level != null)
-		{
-			targets.ForEachEntity((triggerOn) -> {
-				triggerOn.hurt(level.damageSources().magic(), InstantDamage.Get(gun, stacks));
-			});
-		}
+		DamageSource dmgSource = gun.CreateDamageSource();
+		targets.ForEachEntity((triggerOn) -> {
+
+			// TODO: Headshot multipliers
+
+
+			triggerOn.hurt(dmgSource, DamageAmount(gun, stacks));
+			if(PreventDamageCooldown && triggerOn instanceof LivingEntity living)
+			{
+				living.hurtTime = 0;
+				living.hurtDuration = 0;
+				living.invulnerableTime = 0;
+			}
+		});
 	}
 
-	@Override
-	public void End(@Nonnull GunContext gun, @Nullable AbilityStack stacks)
+	public float DamageAmount(@Nonnull GunContext gun, @Nullable AbilityStack stacks)
 	{
-
+		return InstantDamage.Get(gun, stacks);
 	}
 }

@@ -45,56 +45,46 @@
                     "duration": 0.0,
                     "sounds": [],
                     "itemStack": "",
-                    "modifiers": [
-                        {
-                            "stat": "laser_red",
-                            "matchGroupPaths": [],
-                            "accumulators": [
-                                {
-                                    "operation": "BaseAdd",
-                                    "value": 1.0,
-                                    "multiplyPer": []
-                                },
-                                {
-                                    "operation": "StackablePercentage",
-                                    "value": -100.0,
-                                    "multiplyPer": []
-                                }
-                            ],
-                            "setValue": ""
-                        },
-                        {
-                            "stat": "laser_green",
-                            "matchGroupPaths": [],
-                            "accumulators": [
-                                {
-                                    "operation": "StackablePercentage",
-                                    "value": -100.0,
-                                    "multiplyPer": []
-                                }
-                            ],
-                            "setValue": ""
-                        },
-                        {
-                            "stat": "laser_blue",
-                            "matchGroupPaths": [],
-                            "accumulators": [
-                                {
-                                    "operation": "BaseAdd",
-                                    "value": 1.0,
-                                    "multiplyPer": []
-                                },
-                                {
-                                    "operation": "StackablePercentage",
-                                    "value": -100.0,
-                                    "multiplyPer": []
-                                }
-                            ],
-                            "setValue": ""
-                        }
-                    ],
                     "scopeOverlay": "",
                     "anim": ""
+                }
+            ],
+            "modifiers": [
+                {
+                    "stat": "laser_red",
+                    "matchGroupPaths": [],
+                    "accumulators": [
+                        {
+                            "operation": "BaseAdd",
+                            "value": 1.0,
+                            "multiplyPer": []
+                        }
+                    ],
+                    "setValue": ""
+                },
+                {
+                    "stat": "laser_green",
+                    "matchGroupPaths": [],
+                    "accumulators": [
+                        {
+                            "operation": "BaseAdd",
+                            "value": 0.0,
+                            "multiplyPer": []
+                        }
+                    ],
+                    "setValue": ""
+                },
+                {
+                    "stat": "laser_blue",
+                    "matchGroupPaths": [],
+                    "accumulators": [
+                        {
+                            "operation": "BaseAdd",
+                            "value": 1.0,
+                            "multiplyPer": []
+                        }
+                    ],
+                    "setValue": ""
                 }
             ]
         }

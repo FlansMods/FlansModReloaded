@@ -1,35 +1,41 @@
 package com.flansmod.common.actions.contexts;
 
 import com.flansmod.common.FlansMod;
-import com.flansmod.common.gunshots.*;
+import com.flansmod.common.abilities.AbilityEffectApplyDamage;
+import com.flansmod.common.gunshots.EPlayerHitArea;
+import com.flansmod.common.gunshots.Gunshot;
+import com.flansmod.common.gunshots.PlayerHitResult;
+import com.flansmod.common.gunshots.UnresolvedEntityHitResult;
+import com.flansmod.common.types.JsonDefinition;
+import com.flansmod.common.types.abilities.elements.AbilityEffectDefinition;
+import com.flansmod.common.types.abilities.elements.EAbilityEffect;
+import com.flansmod.common.types.abilities.elements.EAbilityTarget;
 import com.flansmod.common.types.abilities.elements.EAbilityTrigger;
 import com.flansmod.common.types.bullets.BulletDefinition;
-import com.flansmod.common.types.elements.ModifierDefinition;
-import com.flansmod.common.types.guns.elements.ESpreadPattern;
+import com.flansmod.common.types.bullets.HitscanDefinition;
+import com.flansmod.common.types.bullets.ImpactDefinition;
+import com.flansmod.common.types.bullets.ProjectileDefinition;
 import com.flansmod.util.Maths;
-import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.damagesource.DamageSource;
-import net.minecraft.world.effect.MobEffect;
-import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.phys.*;
-import net.minecraftforge.registries.ForgeRegistries;
+import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.EntityHitResult;
+import net.minecraft.world.phys.HitResult;
+import net.minecraft.world.phys.Vec3;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
+
+import static com.flansmod.common.types.Constants.*;
 
 
 public class GunshotContext
 {
-	public static final GunshotContext INVALID = new GunshotContext(ActionGroupContext.INVALID, BulletDefinition.INVALID)
+	public static final GunshotContext INVALID = new GunshotContext(ActionGroupContext.INVALID, BulletDefinition.INVALID, false, 0)
 	{
 		@Override
 		public boolean IsValid() { return false; }
@@ -37,31 +43,109 @@ public class GunshotContext
 
 	public final ActionGroupContext ActionGroup;
 	public final BulletDefinition Bullet;
+	public final boolean IsProjectile;
+	public final int DefIndex;
 
-	public static GunshotContext CreateFrom(ActionGroupContext actionGroupContext)
+
+	@Nullable
+	public ProjectileDefinition GetProjectileDef()
 	{
-		return new GunshotContext(actionGroupContext, BulletDefinition.INVALID);
+		if(IsProjectile)
+			return Bullet.projectiles[DefIndex];
+		return null;
+	}
+	@Nullable
+	public HitscanDefinition GetHitscanDef()
+	{
+		if(!IsProjectile)
+			return Bullet.hitscans[DefIndex];
+		return null;
+	}
+	@Nonnull
+	public static GunshotContext empty(@Nonnull ActionGroupContext actionGroupContext)
+	{
+		return new GunshotContext(actionGroupContext, BulletDefinition.INVALID, false, 0);
+	}
+	@Nonnull
+	public static GunshotContext hitscan(@Nonnull ActionGroupContext actionGroupContext, @Nonnull BulletDefinition bulletFired, int hitscanIndex)
+	{
+		return new GunshotContext(actionGroupContext, bulletFired, false, hitscanIndex);
+	}
+	@Nonnull
+	public static GunshotContext projectile(@Nonnull ActionGroupContext actionGroupContext, @Nonnull BulletDefinition bulletFired, int projectileIndex)
+	{
+		return new GunshotContext(actionGroupContext, bulletFired, true, projectileIndex);
+	}
+	@Nonnull
+	public static GunshotContext of(@Nonnull ActionGroupContext actionGroupContext, @Nonnull Gunshot hitscanData)
+	{
+		return new GunshotContext(actionGroupContext, hitscanData.bulletDef, false, hitscanData.fromShotIndex);
+	}
+	@Nonnull
+	public static GunshotContext[] forBullet(@Nonnull ActionGroupContext actionGroupContext, @Nonnull BulletDefinition bulletFired)
+	{
+		GunshotContext[] gunshots = new GunshotContext[bulletFired.hitscans.length + bulletFired.projectiles.length];
+		for(int i = 0; i < bulletFired.hitscans.length; i++)
+		{
+			gunshots[i] = hitscan(actionGroupContext, bulletFired, i);
+		}
+		for(int j = 0; j < bulletFired.projectiles.length; j++)
+		{
+			gunshots[bulletFired.hitscans.length + j] = projectile(actionGroupContext, bulletFired, j);
+		}
+		return gunshots;
 	}
 
-	public static GunshotContext CreateFrom(ActionGroupContext actionGroupContext, BulletDefinition bulletFired)
-	{
-		return new GunshotContext(actionGroupContext, bulletFired);
-	}
-
-	public GunshotContext(ActionGroupContext actionGroupContext, BulletDefinition bullet)
+	private GunshotContext(@Nonnull ActionGroupContext actionGroupContext, @Nonnull BulletDefinition bullet, boolean isProjectile, int defIndex)
 	{
 		ActionGroup = actionGroupContext;
 		Bullet = bullet;
+		IsProjectile = isProjectile;
+		DefIndex = defIndex;
 	}
 
 	public boolean IsValid() { return ActionGroup.IsValid() && Bullet.IsValid(); }
 
-	public void Server_ProcessImpact(Level level, Gunshot shotData)
+	public boolean IsHitscan() { return !IsProjectile; }
+
+	public void ProcessShot(@Nonnull Gunshot shotData)
 	{
 		for (HitResult hit : shotData.hits)
 		{
-			Entity targetEntity = null;
+			ProcessImpact(hit);
+		}
+	}
 
+	public void ProcessImpact(@Nonnull HitResult hit)
+	{
+		TriggerContext impactContext = GetImpactContext(hit);
+
+		// Apply damage etc
+		ApplyImpactEffects(impactContext);
+
+		// Send a trigger event to the Gun
+		switch (hit.getType())
+		{
+			case BLOCK -> {
+				ActionGroup.Gun.GetActionStack().EvaluateTrigger(EAbilityTrigger.ShotBlock, ActionGroup, impactContext);
+			}
+			case ENTITY -> {
+				if (hit instanceof PlayerHitResult playerHit && playerHit.GetHitbox().area == EPlayerHitArea.HEAD)
+					ActionGroup.Gun.GetActionStack().EvaluateTrigger(EAbilityTrigger.ShotHeadshot, ActionGroup, impactContext);
+				else
+					ActionGroup.Gun.GetActionStack().EvaluateTrigger(EAbilityTrigger.ShotEntity, ActionGroup, impactContext);
+			}
+		}
+	}
+
+	@Nonnull
+	public TriggerContext GetImpactContext(@Nonnull HitResult hit)
+	{
+		Entity targetEntity = null;
+		Level level = ActionGroup.Gun.GetLevel();
+
+		if(level != null)
+		{
 			HitResult toProcess = hit;
 			if (hit instanceof UnresolvedEntityHitResult unresolved)
 			{
@@ -80,171 +164,35 @@ public class GunshotContext
 			{
 				Vec3 halfExtents = new Vec3(splashRadius, splashRadius, splashRadius);
 				splashedEntities = level.getEntities(targetEntity, new AABB(center.subtract(halfExtents), center.add(halfExtents)));
-			}
-			else splashedEntities = new ArrayList<>();
+			} else splashedEntities = new ArrayList<>();
 
-			// Apply damage etc
-			switch (toProcess.getType())
-			{
-				case BLOCK -> {
-					if (Bullet.shootStats.breaksBlockTags.length > 0)
-					{
-						BlockHitResult blockHit = (BlockHitResult) toProcess;
-						BlockState stateHit = level.getBlockState(blockHit.getBlockPos());
-						if (Bullet.shootStats.BreaksBlock(stateHit))
-						{
-							level.destroyBlock(blockHit.getBlockPos(), true, ActionGroup.Gun.GetShooter().Entity());
-							ActionGroup.Gun.GetActionStack().EvaluateTrigger(
-								EAbilityTrigger.ShotAndBrokeBlock,
-								ActionGroup,
-								TriggerContext.hitWithSplash(ActionGroup, toProcess, splashedEntities));
-						}
-					}
-					ActionGroup.Gun.GetActionStack().EvaluateTrigger(
-						EAbilityTrigger.ShotBlock,
-						ActionGroup,
-						TriggerContext.hitWithSplash(ActionGroup, toProcess, splashedEntities));
-				}
-				case ENTITY -> {
-					EPlayerHitArea hitArea = EPlayerHitArea.BODY;
-					if (toProcess instanceof UnresolvedEntityHitResult unresolvedHit)
-					{
-						targetEntity = level.getEntity(unresolvedHit.EntityID());
-						hitArea = unresolvedHit.HitboxArea();
-					} else if (toProcess instanceof PlayerHitResult playerHit)
-					{
-						targetEntity = playerHit.getEntity();
-						hitArea = playerHit.GetHitbox().area;
-					} else if (toProcess instanceof EntityHitResult entityHit)
-					{
-						targetEntity = entityHit.getEntity();
-					}
-
-					ApplyDamageToEntity(targetEntity, hitArea, shotData.trajectory, 1.0f, true);
-					ActionGroup.Gun.GetActionStack().EvaluateTrigger(
-						hitArea == EPlayerHitArea.HEAD ? EAbilityTrigger.ShotHeadshot : EAbilityTrigger.ShotEntity,
-						ActionGroup,
-						TriggerContext.hitWithSplash(ActionGroup, toProcess, splashedEntities));
-				}
-			}
-
-			for(Entity splashEntity : splashedEntities)
-			{
-				double distance = Maths.Sqrt(splashEntity.distanceToSqr(center));
-				if(distance <= splashRadius)
-				{
-					float splashMultiplier = (float) Maths.Lerp(1.0f, 1.0f - SplashDamageFalloff(), distance / splashRadius);
-					ApplyDamageToEntity(splashEntity, EPlayerHitArea.BODY, shotData.trajectory, splashMultiplier, false);
-				}
-			}
-
-			float explosionRadius = ExplosionRadius();
-			if(explosionRadius > 0.0f)
-			{
-				level.explode(null, toProcess.getLocation().x, toProcess.getLocation().y, toProcess.getLocation().z, explosionRadius, Level.ExplosionInteraction.TNT);
-			}
-
-			float fireSpreadRadius = FireSpreadRadius();
-			float fireSpreadAmount = FireSpreadAmount();
-			if(fireSpreadRadius > 0.0f && fireSpreadAmount > 0.0f)
-			{
-				for(int i = Maths.Floor(-fireSpreadRadius); i <= fireSpreadRadius; i++)
-				{
-					for(int j = Maths.Floor(-fireSpreadRadius); j <= fireSpreadRadius; j++)
-					{
-						for(int k = Maths.Floor(-fireSpreadRadius); k <= fireSpreadRadius; k++)
-						{
-							if(level.random.nextFloat() < fireSpreadAmount)
-							{
-								BlockPos pos = BlockPos.containing(toProcess.getLocation().add(i, j, k));
-								if (pos.distToCenterSqr(toProcess.getLocation()) <= fireSpreadRadius * fireSpreadRadius)
-								{
-									if(level.getBlockState(pos).isAir())
-									{
-										if(!level.getBlockState(pos.below()).isAir()
-											|| !level.getBlockState(pos.north()).isAir()
-											|| !level.getBlockState(pos.east()).isAir()
-											|| !level.getBlockState(pos.south()).isAir()
-											|| !level.getBlockState(pos.west()).isAir())
-										{
-											level.setBlockAndUpdate(pos, Blocks.FIRE.defaultBlockState());
-										}
-									}
-								}
-							}
-						}
-					}
-				}
-			}
+			return TriggerContext.hitWithSplash(ActionGroup, toProcess, splashedEntities);
 		}
+		return TriggerContext.empty();
 	}
 
-	public void ApplyDamageToEntity(Entity entity, EPlayerHitArea hitArea, Vec3 impactDirection, float splashMultiplier, boolean isTarget)
+	public void ApplyImpactEffects(@Nonnull TriggerContext impactContext)
 	{
-		if(entity == null)
-			return;
-
-		// Damage can be applied to anything living, with special multipliers if it was a player
-		float damage = isTarget ? ImpactDamage() : SplashDamage();
-		damage *= splashMultiplier;
-		DamageSource dmgSource = ActionGroup.Gun.CreateDamageSource();
-		if(dmgSource != null)
+		// Iterate all impact effects.
+		// Generally one would expect to see at least one effect applied to the hit entity
+		for(ImpactDefinition impact : GetAllImpactEffects())
 		{
-			if (entity instanceof Player player)
+			if(impactContext.CanTriggerFor(impact.targetType))
 			{
-				damage *= MultiplierVsPlayers();
-				damage *= hitArea.DamageMultiplier();
-
-				// TODO: Shield item damage multipliers
-
-				player.hurt(dmgSource, damage);
-				// We override the immortality cooldown when firing bullets, as it is too slow
-				player.hurtTime = 0;
-				player.hurtDuration = 0;
-			} else if (entity instanceof LivingEntity living)
-			{
-				living.hurt(dmgSource, damage);
-				living.hurtTime = 0;
-				living.hurtDuration = 0;
-				living.invulnerableTime = 0;
-			}
-		}
-
-		// Also apply this code to all living entities
-		if(entity instanceof LivingEntity living)
-		{
-			String potionEffect = PotionEffectOnTarget();
-			if(potionEffect.length() > 0)
-			{
-				String[] parts = potionEffect.split(",");
-				if(parts.length > 0)
+				TargetsContext targets = TargetsContext.of(impactContext, impact.targetType);
+				for(AbilityEffectDefinition effectDef : impact.impactEffects)
 				{
-					int strength = parts.length >= 3 ? Integer.parseInt(parts[2]) : 1;
-					int duration = parts.length >= 2 ? Integer.parseInt(parts[1]) : 20;
-					ResourceLocation resLoc = new ResourceLocation(parts[0]);
-					MobEffect effect = ForgeRegistries.MOB_EFFECTS.getValue(resLoc);
-					if(effect != null)
+					switch(ActionGroup.Gun.GetShooter().GetSide())
 					{
-						MobEffectInstance instance = new MobEffectInstance(effect, duration, strength);
-						living.addEffect(instance);
+						case Client -> {
+							effectDef.GetEffectProcessor().TriggerClient(ActionGroup.Gun, impactContext, targets, null);
+						}
+						case Server -> {
+							effectDef.GetEffectProcessor().TriggerServer(ActionGroup.Gun, impactContext, targets, null);
+						}
 					}
 				}
 			}
-		}
-
-		// Fire and similar can be apllied to all entities
-		float setFire = SetFireToTarget();
-		if(setFire > 0.0f)
-			entity.setSecondsOnFire(Maths.Floor(setFire * 20.0f));
-
-		// Knockback
-		float knockback = Knockback();
-		if(knockback > 0.0f)
-		{
-			if(impactDirection.y < 0.0f)
-				impactDirection = new Vec3(impactDirection.x, -impactDirection.y, impactDirection.z);
-			impactDirection = impactDirection.scale(knockback);
-			entity.addDeltaMovement(impactDirection);
 		}
 	}
 
@@ -254,35 +202,129 @@ public class GunshotContext
 	public float ModifyFloat(@Nonnull String stat, float defaultValue) { return ActionGroup.ModifyFloat(stat).apply(defaultValue); }
 	@Nonnull
 	public String ModifyString(@Nonnull String stat, @Nonnull String defaultValue)  { return ActionGroup.ModifyString(stat, defaultValue); }
+	public boolean ModifyBoolean(@Nonnull String stat, boolean defaultValue) { return ActionGroup.ModifyBoolean(stat, defaultValue); }
 	@Nonnull
 	public <T extends Enum<T>> Enum<T> ModifyEnum(@Nonnull String stat, @Nonnull T defaultValue, @Nonnull Class<T> clazz) { return ActionGroup.ModifyEnum(stat, defaultValue, clazz); }
 
-	// Shot settings
-	public float VerticalRecoil() 			{ return ModifyFloat(ModifierDefinition.STAT_SHOT_VERTICAL_RECOIL, Bullet.shootStats.verticalRecoil); }
-	public float HorizontalRecoil() 		{ return ModifyFloat(ModifierDefinition.STAT_SHOT_HORIZONTAL_RECOIL, Bullet.shootStats.horizontalRecoil); }
-	public float Spread() 					{ return ModifyFloat(ModifierDefinition.STAT_SHOT_SPREAD, Bullet.shootStats.spread); }
-	public float Speed() 					{ return ModifyFloat(ModifierDefinition.STAT_SHOT_SPEED, Bullet.shootStats.speed); }
-	public int BulletCount() 				{ return Maths.Ceil(ModifyFloat(ModifierDefinition.STAT_SHOT_BULLET_COUNT, Bullet.shootStats.bulletCount)); }
-	public float PenetrationPower() 		{ return ModifyFloat(ModifierDefinition.STAT_SHOT_PENETRATION_POWER, Bullet.shootStats.penetrationPower); }
-	public ESpreadPattern SpreadPattern() 	{ return (ESpreadPattern)ModifyEnum(ModifierDefinition.STAT_SHOT_SPREAD_PATTERN, Bullet.shootStats.spreadPattern, ESpreadPattern.class); }
+	// ----------------------------------------------------------------------------------------------------
+	// Shared shot settings
+	public int BulletCount() 				{ return Maths.Ceil(ModifyFloat(STAT_SHOOT_SHOT_COUNT, BaseBulletCount())); }
+	private float BaseBulletCount()	{
+		ProjectileDefinition projectileDef = GetProjectileDef();
+		HitscanDefinition hitscanDef = GetHitscanDef();
+		return projectileDef != null ? projectileDef.shotCount : (hitscanDef != null ? hitscanDef.shotCount : 0f);
+	}
+	public float SplashDamageRadius() 		{ return ModifyFloat(STAT_SHOOT_SPLASH_RADIUS, BaseSplashRadius()); }
+	private float BaseSplashRadius()	{
+		ProjectileDefinition projectileDef = GetProjectileDef();
+		HitscanDefinition hitscanDef = GetHitscanDef();
+		return projectileDef != null ? projectileDef.splashRadius : (hitscanDef != null ? hitscanDef.splashRadius : 0f);
+	}
+	// ----------------------------------------------------------------------------------------------------
 
-	// Impact settings
-	public float ImpactDamage() 			{ return ModifyFloat(ModifierDefinition.STAT_IMPACT_DAMAGE, Bullet.shootStats.impact.damageToTarget); }
-	public String PotionEffectOnTarget()	{ return ModifyString(ModifierDefinition.STAT_IMPACT_POTION_EFFECT_ON_TARGET, Bullet.shootStats.impact.potionEffectOnTarget); }
-	public float SetFireToTarget() 			{ return ModifyFloat(ModifierDefinition.STAT_IMPACT_SET_FIRE_TO_TARGET, Bullet.shootStats.impact.setFireToTarget); }
-	public float Knockback() 				{ return ModifyFloat(ModifierDefinition.STAT_IMPACT_KNOCKBACK, Bullet.shootStats.impact.knockback); }
-	public float MultiplierVsPlayers() 		{ return ModifyFloat(ModifierDefinition.STAT_IMPACT_MULTIPLIER_VS_PLAYERS, Bullet.shootStats.impact.multiplierVsPlayers); }
-	public float MultiplierVsVehicles() 	{ return ModifyFloat(ModifierDefinition.STAT_IMPACT_MULTIPLIER_VS_VEHICLES, Bullet.shootStats.impact.multiplierVsVehicles); }
 
-	public float SplashDamage() 			{ return ModifyFloat(ModifierDefinition.STAT_IMPACT_SPLASH_DAMAGE, Bullet.shootStats.impact.splashDamage); }
-	public float SplashDamageRadius() 		{ return ModifyFloat(ModifierDefinition.STAT_IMPACT_SPLASH_DAMAGE_RADIUS, Bullet.shootStats.impact.splashDamageRadius); }
-	public float SplashDamageFalloff() 		{ return ModifyFloat(ModifierDefinition.STAT_IMPACT_SPLASH_DAMAGE_FALLOFF, Bullet.shootStats.impact.splashDamageFalloff); }
-	public String PotionEffectOnSplash()	{ return ModifyString(ModifierDefinition.STAT_IMPACT_POTION_EFFECT_ON_SPLASH, Bullet.shootStats.impact.potionEffectOnSplash); }
+	// ----------------------------------------------------------------------------------------------------
+	// Hitscan Settings
+	public float PenetrationPower() 		{ return ModifyFloat(STAT_SHOT_PENETRATION_POWER, BasePenetrationPower()); }
+	private float BasePenetrationPower() {
+		HitscanDefinition hitscanDef = GetHitscanDef();
+		return hitscanDef != null ? hitscanDef.penetrationPower : 0.0f;
+	}
+	// ----------------------------------------------------------------------------------------------------
 
-	public float FireSpreadRadius() 		{ return ModifyFloat(ModifierDefinition.STAT_IMPACT_FIRE_SPREAD_RADIUS, Bullet.shootStats.impact.fireSpreadRadius); }
-	public float FireSpreadAmount() 		{ return ModifyFloat(ModifierDefinition.STAT_IMPACT_FIRE_SPREAD_AMOUNT, Bullet.shootStats.impact.fireSpreadAmount); }
 
-	public float ExplosionRadius() 			{ return ModifyFloat(ModifierDefinition.STAT_IMPACT_EXPLOSION_RADIUS, Bullet.shootStats.impact.explosionRadius); }
+	// ----------------------------------------------------------------------------------------------------
+	// Projectile Settings
+	public float FuseTimeSeconds()			{ return ModifyFloat(STAT_PROJECTILE_FUSE_TIME, BaseFuseTime()); }
+	public float LaunchSpeed()				{ return ModifyFloat(STAT_PROJECTILE_LAUNCH_SPEED, BaseLaunchSpeed()); }
+	public float GravityFactor()			{ return ModifyFloat(STAT_PROJECTILE_GRAVITY_FACTOR, BaseGravityFactor()); }
+	public boolean Sticky()					{ return ModifyBoolean(STAT_PROJECTILE_STICKY, BaseSticky()); }
+	public float TurnRate()					{ return ModifyFloat(STAT_PROJECTILE_TURN_RATE, BaseTurnRate()); }
+	public float DragInWater()				{ return ModifyFloat(STAT_PROJECTILE_DRAG_IN_WATER, BaseDragInWater()); }
+	public float DragInAir()				{ return ModifyFloat(STAT_PROJECTILE_DRAG_IN_AIR, BaseDragInAir()); }
+
+	private float BaseFuseTime() {
+		ProjectileDefinition projectileDef = GetProjectileDef();
+		return projectileDef != null ? projectileDef.fuseTime : 0.0f;
+	}
+	private float BaseLaunchSpeed()	{
+		ProjectileDefinition projectileDef = GetProjectileDef();
+		return projectileDef != null ? projectileDef.launchSpeed : 0.0f;
+	}
+	private float BaseGravityFactor()	{
+		ProjectileDefinition projectileDef = GetProjectileDef();
+		return projectileDef != null ? projectileDef.launchSpeed : 0.0f;
+	}
+	private boolean BaseSticky() {
+		ProjectileDefinition projectileDef = GetProjectileDef();
+		return projectileDef != null && projectileDef.sticky;
+	}
+	private float BaseTurnRate()	{
+		ProjectileDefinition projectileDef = GetProjectileDef();
+		return projectileDef != null ? projectileDef.turnRate : 0.0f;
+	}
+	private float BaseDragInWater() {
+		ProjectileDefinition projectileDef = GetProjectileDef();
+		return projectileDef != null ? projectileDef.dragInWater : 0.0f;
+	}
+	private float BaseDragInAir() {
+		ProjectileDefinition projectileDef = GetProjectileDef();
+		return projectileDef != null ? projectileDef.dragInAir : 0.0f;
+	}
+	@Nonnull
+	public ResourceLocation WaterParticles() {
+		ProjectileDefinition projectileDef = GetProjectileDef();
+		return projectileDef != null ? new ResourceLocation(projectileDef.waterParticles) : JsonDefinition.InvalidLocation;
+	}
+	@Nonnull
+	public ResourceLocation AirParticles() {
+		ProjectileDefinition projectileDef = GetProjectileDef();
+		return projectileDef != null ? new ResourceLocation(projectileDef.airParticles) : JsonDefinition.InvalidLocation;
+	}
+	// ----------------------------------------------------------------------------------------------------
+
+	// ----------------------------------------------------------------------------------------------------
+	// Impact Settings
+	public float EstimateImpactDamage(@Nonnull EAbilityTarget targetType)
+	{
+		for(ImpactDefinition impact : GetAllImpactEffects())
+		{
+			if(impact.targetType == targetType)
+			{
+				for(AbilityEffectDefinition effectDef : impact.impactEffects)
+					if(effectDef.effectType == EAbilityEffect.ApplyDamage)
+						if(effectDef.GetEffectProcessor() instanceof AbilityEffectApplyDamage dmgAbility)
+							return dmgAbility.DamageAmount(ActionGroup.Gun, null);
+			}
+		}
+		return 0.0f;
+	}
+
+	@Nonnull
+	public List<ImpactDefinition> GetImpactEffects(@Nonnull EAbilityTarget targetType)
+	{
+		List<ImpactDefinition> matches = new ArrayList<>();
+		for(ImpactDefinition impact : GetAllImpactEffects())
+		{
+			if(impact.targetType == targetType)
+				matches.add(impact);
+		}
+		return matches;
+	}
+
+	@Nonnull
+	private ImpactDefinition[] GetAllImpactEffects()
+	{
+		ProjectileDefinition projectile = GetProjectileDef();
+		if (projectile != null)
+			return projectile.impacts;
+		HitscanDefinition hitscanDef = GetHitscanDef();
+		if (hitscanDef != null)
+			return hitscanDef.impacts;
+		return new ImpactDefinition[0];
+	}
+	// ----------------------------------------------------------------------------------------------------
+
 
 	// UTIL
 	public void Save(CompoundTag tags)
@@ -291,14 +333,19 @@ public class GunshotContext
 		ActionGroup.Save(actionGroupTags);
 		tags.put("action", actionGroupTags);
 		tags.putInt("bullet", Bullet.hashCode());
+		tags.putBoolean("proj", IsProjectile);
+		tags.putInt("index", DefIndex);
 	}
 
 	public static GunshotContext Load(CompoundTag tags, boolean client)
 	{
 		BulletDefinition bullet = FlansMod.BULLETS.ByHash(tags.getInt("bullet"));
 		ActionGroupContext actionGroup = ActionGroupContext.Load(tags.getCompound("action"), client);
+		boolean isProj = tags.getBoolean("proj");
+		int defIndex = tags.getInt("index");
+
 		if(actionGroup.IsValid())
-			return new GunshotContext(actionGroup, bullet);
+			return new GunshotContext(actionGroup, bullet, isProj, defIndex);
 
 		// If we don't have a action group context, there's no point making a bullet context
 		return GunshotContext.INVALID;

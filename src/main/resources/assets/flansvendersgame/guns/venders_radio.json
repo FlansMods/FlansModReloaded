@@ -27,13 +27,13 @@
     "actionGroups": [
         {
             "key": "primary_fire",
-            "canActUnderwater": true,
+            "canActUnderwater": false,
             "canActUnderOtherLiquid": false,
             "canBeOverriden": true,
             "twoHanded": false,
             "repeatMode": "SemiAuto",
             "repeatDelay": 0.05,
-            "repeatCount": 3,
+            "repeatCount": 0,
             "spinUpDuration": 1.5,
             "loudness": 150.0,
             "autoCancelIfNotInMode": "",
@@ -43,32 +43,6 @@
                     "duration": 2.0,
                     "sounds": [],
                     "itemStack": "",
-                    "modifiers": [
-                        {
-                            "stat": "entity_id",
-                            "matchGroupPaths": [],
-                            "accumulators": [
-                                {
-                                    "operation": "StackablePercentage",
-                                    "value": 2400.0,
-                                    "multiplyPer": []
-                                }
-                            ],
-                            "setValue": "flansvendersgame:vender"
-                        },
-                        {
-                            "stat": "fov_factor",
-                            "matchGroupPaths": [],
-                            "accumulators": [
-                                {
-                                    "operation": "BaseAdd",
-                                    "value": 1.0,
-                                    "multiplyPer": []
-                                }
-                            ],
-                            "setValue": ""
-                        }
-                    ],
                     "scopeOverlay": "",
                     "anim": ""
                 },
@@ -77,36 +51,11 @@
                     "duration": 2.0,
                     "sounds": [],
                     "itemStack": "",
-                    "modifiers": [
-                        {
-                            "stat": "entity_id",
-                            "matchGroupPaths": [],
-                            "accumulators": [
-                                {
-                                    "operation": "StackablePercentage",
-                                    "value": 2400.0,
-                                    "multiplyPer": []
-                                }
-                            ],
-                            "setValue": "flansvendersgame:vender"
-                        },
-                        {
-                            "stat": "fov_factor",
-                            "matchGroupPaths": [],
-                            "accumulators": [
-                                {
-                                    "operation": "BaseAdd",
-                                    "value": 1.0,
-                                    "multiplyPer": []
-                                }
-                            ],
-                            "setValue": ""
-                        }
-                    ],
                     "scopeOverlay": "",
                     "anim": "speaking"
                 }
-            ]
+            ],
+            "modifiers": []
         }
     ],
     "magazines": [],

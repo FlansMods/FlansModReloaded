@@ -11,8 +11,12 @@ import com.flansmod.common.gunshots.*;
 import com.flansmod.common.item.BulletItem;
 import com.flansmod.common.projectiles.BulletEntity;
 import com.flansmod.common.types.JsonDefinition;
+import com.flansmod.common.types.abilities.elements.EAbilityTarget;
 import com.flansmod.common.types.abilities.elements.EAbilityTrigger;
 import com.flansmod.common.types.bullets.BulletDefinition;
+import com.flansmod.common.types.bullets.HitscanDefinition;
+import com.flansmod.common.types.bullets.ImpactDefinition;
+import com.flansmod.common.types.bullets.ProjectileDefinition;
 import com.flansmod.common.types.guns.elements.ActionDefinition;
 import com.flansmod.common.types.guns.elements.ESpreadPattern;
 import com.flansmod.util.Maths;
@@ -249,57 +253,60 @@ public class ShootAction extends ActionInstance
 		{
 			if(shotsFired.get(j).getFirst().getItem() instanceof BulletItem bulletItem)
 			{
-				GunshotContext shotContext = GunshotContext.CreateFrom(Group.Context, bulletItem.Def());
-				// Multiplier from https://github.com/FlansMods/FlansMod/blob/71ba7ed065d906d48f34ca471bbd0172b5192f6b/src/main/java/com/flansmod/common/guns/ShotHandler.java#L93
-				// 0.0025 for the calculation, then 500x for the vector scale after
-				float bulletSpread = 1.25f * shotContext.Spread();
-				for (int i = 0; i < shotContext.BulletCount(); i++)
+				GunshotContext[] gunshotContexts = GunshotContext.forBullet(Group.Context, bulletItem.Def());
+				for(GunshotContext gunshotContext : gunshotContexts)
 				{
-					TransformStack transformStack = new TransformStack();
-					transformStack.add(Group.Context.Gun.GetShootOrigin());
-					RandomizeVectorDirection(
-						transformStack,
-						Group.Context.Gun.GetShooter().Entity().level().random,
-						bulletSpread,
-						shotContext.SpreadPattern());
-
-					Transform randomizedDirection = transformStack.Top();
-
-					float penetrationPower = shotContext.PenetrationPower();
-
-					if (shotContext.Bullet.shootStats.hitscan)
+					// Multiplier from https://github.com/FlansMods/FlansMod/blob/71ba7ed065d906d48f34ca471bbd0172b5192f6b/src/main/java/com/flansmod/common/guns/ShotHandler.java#L93
+					// 0.0025 for the calculation, then 500x for the vector scale after
+					float bulletSpread = 1.25f * Group.Context.Spread();
+					for (int i = 0; i < gunshotContext.BulletCount(); i++)
 					{
-						// Hitscan: Use the raytracer on client, find our hits and let the server know what they were
-						// Server will verify these results
-						List<HitResult> hits = new ArrayList<HitResult>(8);
-						Raytracer.ForLevel(Group.Context.Gun.GetShooter().Entity().level()).CastBullet(
-							Group.Context.Gun.GetShooter().Entity(),
-							randomizedDirection.PositionVec3(),
-							randomizedDirection.ForwardVec3().scale(RAYCAST_LENGTH),
-							penetrationPower,
-							penetrationPower,
-							hits
-						);
+						TransformStack transformStack = new TransformStack();
+						transformStack.add(Group.Context.Gun.GetShootOrigin());
+						RandomizeVectorDirection(
+							transformStack,
+							Group.Context.Gun.GetShooter().Entity().level().random,
+							bulletSpread,
+							Group.Context.SpreadPattern());
 
-						HitResult[] hitArray = new HitResult[hits.size()];
-						hits.toArray(hitArray);
-						shots.AddShot(new Gunshot()
-							.FromShot(repeatIndex)
-							.FromBulletIndex(shotsFired.get(j).getSecond())
-							.WithOrigin(randomizedDirection.PositionVec3())
-							.WithTrajectory(randomizedDirection.ForwardVec3().scale(RAYCAST_LENGTH))
-							.WithHits(hitArray)
-							.WithBullet(bulletItem.Def()));
-					}
-					else
-					{
-						// Non-hitscan: The server will simulate the entity, so we just say where it should be going and leave them to it
-						shots.AddShot(new Gunshot()
-							.FromShot(repeatIndex)
-							.FromBulletIndex(shotsFired.get(j).getSecond())
-							.WithOrigin(randomizedDirection.PositionVec3())
-							.WithTrajectory(randomizedDirection.ForwardVec3().scale(shotContext.Speed()))
-							.WithBullet(shotContext.Bullet));
+						Transform randomizedDirection = transformStack.Top();
+
+						float penetrationPower = gunshotContext.PenetrationPower();
+
+						if(gunshotContext.IsProjectile)
+						{
+							// Non-hitscan: The server will simulate the entity, so we just say where it should be going and leave them to it
+							shots.AddShot(new Gunshot()
+								.FromShot(repeatIndex)
+								.FromBulletIndex(shotsFired.get(j).getSecond())
+								.WithOrigin(randomizedDirection.PositionVec3())
+								.WithTrajectory(randomizedDirection.ForwardVec3().scale(gunshotContext.LaunchSpeed()))
+								.WithBullet(gunshotContext.Bullet));
+						}
+						else
+						{
+							// Hitscan: Use the raytracer on client, find our hits and let the server know what they were
+							// Server will verify these results
+							List<HitResult> hits = new ArrayList<HitResult>(8);
+							Raytracer.ForLevel(Group.Context.Gun.GetShooter().Entity().level()).CastBullet(
+								Group.Context.Gun.GetShooter().Entity(),
+								randomizedDirection.PositionVec3(),
+								randomizedDirection.ForwardVec3().scale(RAYCAST_LENGTH),
+								penetrationPower,
+								penetrationPower,
+								hits
+							);
+
+							HitResult[] hitArray = new HitResult[hits.size()];
+							hits.toArray(hitArray);
+							shots.AddShot(new Gunshot()
+								.FromShot(repeatIndex)
+								.FromBulletIndex(shotsFired.get(j).getSecond())
+								.WithOrigin(randomizedDirection.PositionVec3())
+								.WithTrajectory(randomizedDirection.ForwardVec3().scale(RAYCAST_LENGTH))
+								.WithHits(hitArray)
+								.WithBullet(gunshotContext.Bullet));
+						}
 					}
 				}
 			}
@@ -435,10 +442,10 @@ public class ShootAction extends ActionInstance
 			// Okay, so now we can fire those shots
 			for(Gunshot shot : shotCollection.Shots)
 			{
-				GunshotContext gunshotContext = GunshotContext.CreateFrom(Group.Context, shot.bulletDef);
+				GunshotContext gunshotContext = GunshotContext.of(Group.Context, shot);
 				if(gunshotContext.IsValid())
 				{
-					if(gunshotContext.Bullet.shootStats.hitscan)
+					if(gunshotContext.IsHitscan())
 					{
 						// Hitscan weapons we resolve the hits instantly
 						ServerProcessImpact(level, shot, gunshotContext);
@@ -465,7 +472,7 @@ public class ShootAction extends ActionInstance
 	{
 		BulletEntity bullet = new BulletEntity(FlansMod.ENT_TYPE_BULLET.get(), level);
 		bullet.InitContext(gunshotContext);
-		bullet.SetVelocity(shot.trajectory.scale(gunshotContext.Speed() / 20d));
+		bullet.SetVelocity(shot.trajectory.scale(gunshotContext.LaunchSpeed() / 20d));
 		bullet.setPos(shot.origin);
 		bullet.lookAt(EntityAnchorArgument.Anchor.FEET, shot.trajectory);
 		level.addFreshEntity(bullet);
@@ -473,7 +480,7 @@ public class ShootAction extends ActionInstance
 
 	private void ServerProcessImpact(Level level, Gunshot shot, GunshotContext gunshotContext)
 	{
-		gunshotContext.Server_ProcessImpact(level, shot);
+		gunshotContext.ProcessShot(shot);
 	}
 
 	@Override
@@ -484,23 +491,24 @@ public class ShootAction extends ActionInstance
 			Calculate(triggerIndex);
 		}
 
-		float verticalRecoil = 0.0f;
-		float horizontalRecoil = 0.0f;
-
 		GunshotCollection shots = Results.get(triggerIndex);
 		if(shots != null)
 		{
 			boolean hitEntity = false;
 			boolean hitMLG = false;
+			float verticalRecoil = 0.0f;
+			float horizontalRecoil = 0.0f;
 			for(Gunshot shot : shots.Shots)
 			{
 				// Create client effects only for bullets that were added in this most recent re-trigger
-				GunshotContext gunshotContext = GunshotContext.CreateFrom(Group.Context, shot.bulletDef);
+				GunshotContext gunshotContext = GunshotContext.of(Group.Context, shot);
 
-				verticalRecoil = Maths.Max(verticalRecoil, gunshotContext.VerticalRecoil());
-				horizontalRecoil = Maths.Max(horizontalRecoil, gunshotContext.HorizontalRecoil());
+				verticalRecoil = Maths.Max(verticalRecoil, Group.Context.VerticalRecoil());
+				horizontalRecoil = Maths.Max(horizontalRecoil, Group.Context.HorizontalRecoil());
 
-				if(gunshotContext.Bullet.shootStats.hitscan)
+//  - HitMarker should be kinda locked in? Persuade me otherwise and I'll make an Effect for it
+
+				if(gunshotContext.IsHitscan())
 				{
 					// Create a bullet trail render
 					if(Group.Context.Gun.GetShooter().IsLocalPlayerOwner())
@@ -527,13 +535,13 @@ public class ShootAction extends ActionInstance
 							hitEntity = true;
 							if (((EntityHitResult) hit).getEntity() instanceof EnderDragon dragon)
 							{
-								float damage = gunshotContext.ImpactDamage();
+								float damage = gunshotContext.EstimateImpactDamage(EAbilityTarget.ShotEntity);
 								damage = damage / 4.0F + Math.min(damage, 1.0F);
 								if (dragon.getHealth() <= damage)
 									hitMLG = true;
 							} else if (((EntityHitResult) hit).getEntity() instanceof EnderDragonPart part)
 							{
-								float damage = gunshotContext.ImpactDamage();
+								float damage = gunshotContext.EstimateImpactDamage(EAbilityTarget.ShotEntity);
 								if (part != part.parentMob.head)
 									damage = damage / 4.0F + Math.min(damage, 1.0F);
 								if (part.parentMob.getHealth() <= damage)
@@ -580,29 +588,25 @@ public class ShootAction extends ActionInstance
 			for (Gunshot shot : shotCollection.Shots)
 			{
 				double t0 = shotCollection.FiredTick;// shot.fromShotIndex * Group.Context.RepeatDelayTicks();
-				GunshotContext gunshotContext = GunshotContext.CreateFrom(Group.Context, shot.bulletDef);
+				GunshotContext gunshotContext = GunshotContext.of(Group.Context, shot);
 				for (HitResult hit : shot.hits)
 				{
 					// Check if this hit should be processed on this frame
 					double t = Maths.CalculateParameter(shot.origin, shot.Endpoint(), hit.getLocation()) * GetDurationPerTriggerTicks() + t0;
 					if (tickBefore <= t && t < tickAfter)
 					{
-						// Create hit particles
+						// Client impacts are processed with a slight visual delay. Should look cool.
+						gunshotContext.ProcessImpact(hit);
+
+						// A handful of bits are yet to be moved into AbilityEffects
+						//  - Hit particles require a lot of info about velocity and so on, so are still custom
 						switch (hit.getType())
 						{
 							case BLOCK -> {
 								ClientLevel level = Minecraft.getInstance().level;
 								BlockHitResult blockHit = (BlockHitResult) hit;
-								if (shootActionDef != null && gunshotContext.Bullet.shootStats.impact.decal != null
-									&& JsonDefinition.IsValidLocation(gunshotContext.Bullet.shootStats.impact.decal))
-								{
-									FlansModClient.DECAL_RENDERER.AddDecal(
-										gunshotContext.Bullet.shootStats.impact.decal.withPrefix("textures/").withSuffix(".png"),
-										blockHit.getLocation(),
-										blockHit.getDirection(),
-										level.random.nextFloat() * 360.0f,
-										1000);
-								}
+								List<ImpactDefinition> impactEffects = gunshotContext.GetImpactEffects(EAbilityTarget.ShotBlock);
+
 
 								Vec3[] motions = new Vec3[3];
 								motions[0] = Maths.Reflect(shot.trajectory.normalize(), blockHit.getDirection());
@@ -651,11 +655,11 @@ public class ShootAction extends ActionInstance
 						}
 
 						// Play a sound, only once per tick to avoid audio overload
-						if (!playedASoundThisTick && gunshotContext.Bullet.shootStats.impact.hitSounds != null)
-						{
-							playedASoundThisTick = true;
-							//Minecraft.getInstance().getSoundManager().play(actionDef.ShootStats.Impact.HitSound);
-						}
+						//if (!playedASoundThisTick && gunshotContext.Bullet.shootStats.impact.hitSounds != null)
+						//{
+						//	playedASoundThisTick = true;
+						//	//Minecraft.getInstance().getSoundManager().play(actionDef.ShootStats.Impact.HitSound);
+						//}
 					}
 				}
 			}

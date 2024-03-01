@@ -21,9 +21,6 @@ public class ActionDefinition
 	@JsonField
 	public String itemStack = "";
 
-	@JsonField(Docs = "These will be applied to this action if applicable")
-	public ModifierDefinition[] modifiers = new ModifierDefinition[0];
-
 	// IronSight / Scope Action
 	@JsonField
 	public String scopeOverlay = "";

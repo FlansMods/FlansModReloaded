@@ -6,25 +6,13 @@
         {
             "stat": "vertical_recoil",
             "matchGroupPaths": [],
-            "accumulators": [
-                {
-                    "operation": "StackablePercentage",
-                    "value": 200.0,
-                    "multiplyPer": []
-                }
-            ],
+            "accumulators": [],
             "setValue": ""
         },
         {
             "stat": "horizontal_recoil",
             "matchGroupPaths": [],
-            "accumulators": [
-                {
-                    "operation": "StackablePercentage",
-                    "value": 200.0,
-                    "multiplyPer": []
-                }
-            ],
+            "accumulators": [],
             "setValue": ""
         }
     ],

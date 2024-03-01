@@ -6,6 +6,7 @@ import com.flansmod.common.crafting.ingredients.IExtraIngredientTooltip;
 import com.flansmod.common.crafting.ingredients.TieredPartIngredient;
 import com.flansmod.common.crafting.menus.WorkbenchMenuGunCrafting;
 import com.flansmod.common.crafting.recipes.GunFabricationRecipe;
+import com.flansmod.common.types.Constants;
 import com.flansmod.common.types.crafting.EMaterialType;
 import com.flansmod.common.types.elements.ModifierDefinition;
 import com.flansmod.util.Maths;
@@ -307,17 +308,17 @@ public class WorkbenchScreenTabGunCrafting extends WorkbenchScreenTab<WorkbenchM
 			{
 				int statBoxX = xOrigin + GUN_STATS_X_ORIGIN;
 				int statBoxY = yOrigin + GUN_STATS_Y_ORIGIN + 10;
-				if(RenderTooltipForStatComparison(graphics, ModifierDefinition.STAT_SHOT_SPREAD, context, xMouse, yMouse, statBoxX, statBoxY))
+				if(RenderTooltipForStatComparison(graphics, Constants.STAT_SHOT_SPREAD, context, xMouse, yMouse, statBoxX, statBoxY))
 					return true;
-				if(RenderTooltipForStatComparison(graphics, ModifierDefinition.STAT_IMPACT_DAMAGE, context, xMouse, yMouse, statBoxX, statBoxY + 10))
+				if(RenderTooltipForStatComparison(graphics, Constants.STAT_IMPACT_DAMAGE, context, xMouse, yMouse, statBoxX, statBoxY + 10))
 					return true;
-				if(RenderTooltipForStatComparison(graphics, ModifierDefinition.STAT_SHOT_SPEED, context, xMouse, yMouse, statBoxX + 32, statBoxY))
+				if(RenderTooltipForStatComparison(graphics, Constants.STAT_SHOT_SPEED, context, xMouse, yMouse, statBoxX + 32, statBoxY))
 					return true;
-				if(RenderTooltipForStatComparison(graphics, ModifierDefinition.STAT_IMPACT_KNOCKBACK, context, xMouse, yMouse, statBoxX + 32, statBoxY + 10))
+				if(RenderTooltipForStatComparison(graphics, Constants.STAT_IMPACT_KNOCKBACK, context, xMouse, yMouse, statBoxX + 32, statBoxY + 10))
 					return true;
-				if(RenderTooltipForStatComparison(graphics, ModifierDefinition.STAT_SHOT_BULLET_COUNT, context, xMouse, yMouse, statBoxX + 64, statBoxY))
+				if(RenderTooltipForStatComparison(graphics, Constants.STAT_SHOT_BULLET_COUNT, context, xMouse, yMouse, statBoxX + 64, statBoxY))
 					return true;
-				if(RenderTooltipForStatComparison(graphics, ModifierDefinition.STAT_SHOT_VERTICAL_RECOIL, context, xMouse, yMouse, statBoxX + 64, statBoxY + 10))
+				if(RenderTooltipForStatComparison(graphics, Constants.STAT_SHOT_VERTICAL_RECOIL, context, xMouse, yMouse, statBoxX + 64, statBoxY + 10))
 					return true;
 			}
 		}

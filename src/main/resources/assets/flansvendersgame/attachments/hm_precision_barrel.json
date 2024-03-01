@@ -15,8 +15,8 @@
             "matchGroupPaths": [],
             "accumulators": [
                 {
-                    "operation": "StackablePercentage",
-                    "value": -90.0,
+                    "operation": "IndependentPercentage",
+                    "value": 10.0,
                     "multiplyPer": []
                 }
             ],
@@ -28,7 +28,7 @@
             "accumulators": [
                 {
                     "operation": "StackablePercentage",
-                    "value": 20.0000038,
+                    "value": 20.0,
                     "multiplyPer": []
                 }
             ],

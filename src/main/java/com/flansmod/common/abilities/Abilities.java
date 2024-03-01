@@ -28,10 +28,13 @@ public class Abilities
 			case FeedEntity -> { return new AbilityEffectFeedEntity(def); }
 
 			case StartActionGroup -> { return new AbilityEffectStartActionGroup(def); }
-
+			case Knockback -> { return new AbilityEffectKnockback(def); }
+			case SetFire -> { return new AbilityEffectSetFireToEntity(def); }
+			case Explode -> { return new AbilityEffectExplode(def); }
 
 			// Not working yet
 			case DamageArmour -> { return new AbilityEffectDamageArmour(def); }
+
 		}
 		return None;
 	}

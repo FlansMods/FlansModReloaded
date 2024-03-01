@@ -112,31 +112,8 @@ public abstract class FlanItem extends Item implements IForgeItem
 
         for(var kvp : GetTraits(stack).entrySet())
         {
-            Component abilityString = (kvp.getKey().maxLevel == 1)
-             ? (Component.translatable("tooltip.ability_without_level",
-                Component.translatable("ability." + kvp.getKey().Location.getNamespace() + "." + kvp.getKey().Location.getPath())))
-             : (Component.translatable("tooltip.ability_with_level",
-                Component.translatable("ability." + kvp.getKey().Location.getNamespace() + "." + kvp.getKey().Location.getPath()),
-                Component.translatable(Maths.ToRomanNumerals(kvp.getValue()))));
-
-            Component abilityColour = Component.translatable("ability." + kvp.getKey().Location.getNamespace() + "." + kvp.getKey().Location.getPath() + ".colour");
-
-
-            if(!expanded)
-            {
-                tooltips.add(Component.literal("\u00A7" + abilityColour.getString() + abilityString.getString()));
-            }
-            else
-            {
-                Component abilityTooltipString = Component.translatable(
-                    "ability."  + kvp.getKey().Location.getNamespace() +"." + kvp.getKey().Location.getPath() + ".tooltip." + kvp.getValue());
-                tooltips.add(Component.literal("\u00A7" + abilityColour.getString() + abilityString.getString() + " - " + abilityTooltipString.getString()));
-
-            }
-
+            tooltips.add(CreateTraitComponent(kvp.getKey(), kvp.getValue(), expanded));
         }
-
-
 
         for (ItemStack attachmentStack : GetAttachmentStacks(stack))
         {
@@ -395,5 +372,57 @@ public abstract class FlanItem extends Item implements IForgeItem
             stack.getOrCreateTag().put("modes", new CompoundTag());
 
         stack.getOrCreateTag().getCompound("modes").putString(modeKey, modeValue);
+    }
+
+    @Nonnull
+    public static Component ListOf(@Nonnull String prefix, @Nonnull String[] strings)
+    {
+        Component commaList = Component.translatable(prefix + strings[0]);
+        for(int i = 1; i < strings.length; i++)
+        {
+            commaList = Component.translatable(
+                i == strings.length - 1 ? "comma_list.append_last" : "comma_list.append_one",
+                commaList,
+                Component.translatable(prefix + strings[i]));
+        }
+        return commaList;
+    }
+    @Nonnull
+    public static Component ListOf(@Nonnull Component[] strings)
+    {
+        Component commaList = strings[0];
+        for(int i = 1; i < strings.length; i++)
+        {
+            commaList = Component.translatable(
+                i == strings.length - 1 ? "comma_list.append_last" : "comma_list.append_one",
+                commaList,
+                strings[i]);
+        }
+        return commaList;
+    }
+
+    @Nonnull
+    public static Component CreateTraitComponent(@Nonnull CraftingTraitDefinition trait, int level, boolean expanded)
+    {
+        Component abilityString = (trait.maxLevel == 1)
+            ? (Component.translatable("tooltip.ability_without_level",
+            Component.translatable("ability." + trait.Location.getNamespace() + "." + trait.Location.getPath())))
+            : (Component.translatable("tooltip.ability_with_level",
+            Component.translatable("ability." + trait.Location.getNamespace() + "." + trait.Location.getPath()),
+            Component.translatable(Maths.ToRomanNumerals(level))));
+
+        Component abilityColour = Component.translatable("ability." + trait.Location.getNamespace() + "." + trait.Location.getPath() + ".colour");
+
+
+        if(!expanded)
+        {
+            return Component.literal("\u00A7" + abilityColour.getString() + abilityString.getString());
+        }
+        else
+        {
+            Component abilityTooltipString = Component.translatable(
+                "ability."  + trait.Location.getNamespace() +"." + trait.Location.getPath() + ".tooltip." + level);
+           return Component.literal("\u00A7" + abilityColour.getString() + abilityString.getString() + " - " + abilityTooltipString.getString());
+        }
     }
 }

@@ -13,8 +13,8 @@
             "matchGroupPaths": [],
             "accumulators": [
                 {
-                    "operation": "StackablePercentage",
-                    "value": -60.0,
+                    "operation": "IndependentPercentage",
+                    "value": 40.0,
                     "multiplyPer": []
                 }
             ],
@@ -25,8 +25,8 @@
             "matchGroupPaths": [],
             "accumulators": [
                 {
-                    "operation": "StackablePercentage",
-                    "value": -19.9999981,
+                    "operation": "IndependentPercentage",
+                    "value": 80.0,
                     "multiplyPer": []
                 }
             ],
@@ -37,8 +37,8 @@
             "matchGroupPaths": [],
             "accumulators": [
                 {
-                    "operation": "StackablePercentage",
-                    "value": -19.9999981,
+                    "operation": "IndependentPercentage",
+                    "value": 80.0,
                     "multiplyPer": []
                 }
             ],
@@ -82,22 +82,22 @@
                     "duration": 0.0,
                     "sounds": [],
                     "itemStack": "",
-                    "modifiers": [
-                        {
-                            "stat": "fov_factor",
-                            "matchGroupPaths": [],
-                            "accumulators": [
-                                {
-                                    "operation": "BaseAdd",
-                                    "value": 6.0,
-                                    "multiplyPer": []
-                                }
-                            ],
-                            "setValue": ""
-                        }
-                    ],
                     "scopeOverlay": "flansvendersgame:phantek_battlemage_default_scope",
                     "anim": ""
+                }
+            ],
+            "modifiers": [
+                {
+                    "stat": "fov_factor",
+                    "matchGroupPaths": [],
+                    "accumulators": [
+                        {
+                            "operation": "BaseAdd",
+                            "value": 4.0,
+                            "multiplyPer": []
+                        }
+                    ],
+                    "setValue": ""
                 }
             ]
         }

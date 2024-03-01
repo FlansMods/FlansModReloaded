@@ -1,10 +1,10 @@
 package com.flansmod.common.abilities;
 
 import com.flansmod.common.actions.contexts.GunContext;
-import com.flansmod.common.actions.stats.StatCalculationContext;
+import com.flansmod.common.actions.contexts.TriggerContext;
 import com.flansmod.common.actions.contexts.TargetsContext;
+import com.flansmod.common.types.Constants;
 import com.flansmod.common.types.abilities.elements.AbilityEffectDefinition;
-import com.flansmod.common.types.elements.ModifierDefinition;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.Level;
 
@@ -17,11 +17,11 @@ public class AbilityEffectDamageArmour implements IAbilityEffect
 
 	public AbilityEffectDamageArmour(@Nonnull AbilityEffectDefinition def)
 	{
-		InstantDamage = new StatHolder(ModifierDefinition.STAT_INSTANT_DAMAGE, def);
+		InstantDamage = new StatHolder(Constants.STAT_INSTANT_DAMAGE, def);
 	}
 
 	@Override
-	public void Trigger(@Nonnull GunContext gun, @Nonnull TargetsContext targets, @Nullable AbilityStack stacks)
+	public void TriggerServer(@Nonnull GunContext gun, @Nonnull TriggerContext trigger, @Nonnull TargetsContext targets, @Nullable AbilityStack stacks)
 	{
 		Level level = gun.GetLevel();
 		if(level != null)
@@ -35,11 +35,5 @@ public class AbilityEffectDamageArmour implements IAbilityEffect
 				}
 			});
 		}
-	}
-
-	@Override
-	public void End(@Nonnull GunContext gun, @Nullable AbilityStack stacks)
-	{
-
 	}
 }

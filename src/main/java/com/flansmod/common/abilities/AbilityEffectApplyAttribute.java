@@ -1,13 +1,10 @@
 package com.flansmod.common.abilities;
 
 import com.flansmod.common.actions.contexts.GunContext;
-import com.flansmod.common.actions.stats.StatAccumulator;
-import com.flansmod.common.actions.stats.StatCalculationContext;
+import com.flansmod.common.actions.contexts.TriggerContext;
 import com.flansmod.common.actions.contexts.TargetsContext;
+import com.flansmod.common.types.Constants;
 import com.flansmod.common.types.abilities.elements.AbilityEffectDefinition;
-import com.flansmod.common.types.elements.ModifierDefinition;
-import com.flansmod.util.formulae.FloatAccumulation;
-import com.flansmod.util.formulae.FloatAccumulator;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.Attribute;
@@ -29,14 +26,14 @@ public class AbilityEffectApplyAttribute implements IAbilityEffect
 
 	public AbilityEffectApplyAttribute(@Nonnull AbilityEffectDefinition def)
 	{
-		Attrib = ForgeRegistries.ATTRIBUTES.getValue(new ResourceLocation(def.ModifyString(ModifierDefinition.STAT_ATTRIBUTE_ID, "")));
+		Attrib = ForgeRegistries.ATTRIBUTES.getValue(new ResourceLocation(def.ModifyString(Constants.STAT_ATTRIBUTE_ID, "")));
 		IdentifyingKey = UUID.randomUUID();
 
-		AttributeMultiplier = new StatHolder(ModifierDefinition.STAT_ATTRIBUTE_MULTIPLIER, def);
+		AttributeMultiplier = new StatHolder(Constants.STAT_ATTRIBUTE_MULTIPLIER, def);
 	}
 
 	@Override
-	public void Trigger(@Nonnull GunContext gun, @Nonnull TargetsContext targets, @Nullable AbilityStack stacks)
+	public void TriggerServer(@Nonnull GunContext gun, @Nonnull TriggerContext trigger, @Nonnull TargetsContext targets, @Nullable AbilityStack stacks)
 	{
 		targets.ForEachEntity((entity) -> {
 			if(entity instanceof LivingEntity living)
@@ -54,7 +51,10 @@ public class AbilityEffectApplyAttribute implements IAbilityEffect
 	}
 
 	@Override
-	public void End(@Nonnull GunContext gun, @Nullable AbilityStack stacks)
+	public boolean CanBeContinuous() { return true; }
+
+	@Override
+	public void EndServer(@Nonnull GunContext gun, @Nullable AbilityStack stacks)
 	{
 		// HOW do we get the entity list back?? TODO
 		//triggerContext.TriggerOnEntities(Def.targetType, (triggerOn) -> {
