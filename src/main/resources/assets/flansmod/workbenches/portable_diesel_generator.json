@@ -58,7 +58,9 @@
     },
     "itemSettings": {
         "maxStackSize": 64,
-        "tags": []
+        "tags": [
+            "minecraft:mineable/pickaxe"
+        ]
     },
     "sides": []
 }

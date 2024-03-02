@@ -3,6 +3,9 @@
   "values": [
     "flansbasicparts:bullet_fabricator",
     "flansbasicparts:part_fabricator",
+    "flansmod:gun_modification_table",
+    "flansmod:portable_coal_generator",
+    "flansmod:portable_diesel_generator",
     "flansvendersgame:fc_workbench",
     "flansvendersgame:hm_workbench",
     "flansvendersgame:phantek_workbench"

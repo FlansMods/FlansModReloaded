@@ -1,0 +1,8 @@
+{
+  "replace": "false",
+  "values": [
+    "flansmod:gun_modification_table",
+    "flansmod:portable_coal_generator",
+    "flansmod:portable_diesel_generator"
+  ]
+}
