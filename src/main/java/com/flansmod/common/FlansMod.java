@@ -51,6 +51,8 @@ import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.MobCategory;
+import net.minecraft.world.entity.ai.attributes.Attribute;
+import net.minecraft.world.entity.ai.attributes.RangedAttribute;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.item.*;
 import net.minecraft.world.item.crafting.RecipeSerializer;
@@ -103,6 +105,7 @@ public class FlansMod
     public static final DeferredRegister<MenuType<?>> MENUS = DeferredRegister.create(ForgeRegistries.MENU_TYPES, MODID);
     public static final DeferredRegister<Codec<? extends IGlobalLootModifier>> LOOT_MODIFIERS = DeferredRegister.create(ForgeRegistries.Keys.GLOBAL_LOOT_MODIFIER_SERIALIZERS, MODID);
     public static final DeferredRegister<CreativeModeTab> CREATIVE_TABS = DeferredRegister.create(Registries.CREATIVE_MODE_TAB, MODID);
+    public static final DeferredRegister<Attribute> ATTRIBUTES = DeferredRegister.create(Registries.ATTRIBUTE, MODID);
 
     // Core mod blocks & items
     public static final RegistryObject<EntityType<BulletEntity>> ENT_TYPE_BULLET = ENTITY_TYPES.register(
@@ -140,6 +143,15 @@ public class FlansMod
     public static final RegistryObject<RecipeSerializer<PartFabricationRecipe>> PART_FABRICATION_RECIPE_SERIALIZER = RECIPE_SERIALIZERS.register("part_fabrication", PartFabricationRecipe.Serializer::new);
     public static final RegistryObject<RecipeType<GunFabricationRecipe>> GUN_FABRICATION_RECIPE_TYPE = RECIPE_TYPES.register("gun_fabrication", () -> RecipeType.simple(new ResourceLocation(MODID, "gun_fabrication")));
     public static final RegistryObject<RecipeSerializer<GunFabricationRecipe>> GUN_FABRICATION_RECIPE_SERIALIZER = RECIPE_SERIALIZERS.register("gun_fabrication", GunFabricationRecipe.Serializer::new);
+
+    // Attributes
+    public static final RegistryObject<RangedAttribute> IMPACT_DAMAGE_MULTIPLIER = ATTRIBUTES.register("impact_damage_multiplier", () -> new RangedAttribute("impact_damage_multiplier", 1d, 0d, 2048d));
+    public static final RegistryObject<RangedAttribute> SPLASH_RADIUS_MULTIPLIER = ATTRIBUTES.register("splash_radius_multiplier", () -> new RangedAttribute("splash_radius_multiplier", 1d, 0d, 2048d));
+    public static final RegistryObject<RangedAttribute> TIME_BETWEEN_SHOTS_MULTIPLIER = ATTRIBUTES.register("time_between_shots_multiplier", () -> new RangedAttribute("time_between_shots_multiplier", 1d, 0.1d, 2048d));
+    public static final RegistryObject<RangedAttribute> SHOT_SPREAD_MULTIPLIER = ATTRIBUTES.register("shot_spread_multiplier", () -> new RangedAttribute("shot_spread_multiplier", 1d, 0d, 2048d));
+    public static final RegistryObject<RangedAttribute> VERTICAL_RECOIL_MULTIPLIER = ATTRIBUTES.register("vertical_recoil_multiplier", () -> new RangedAttribute("vertical_recoil_multiplier", 1d, 0d, 2048d));
+    public static final RegistryObject<RangedAttribute> HORIZONTAL_RECOIL_MULTIPLIER = ATTRIBUTES.register("horizontal_recoil_multiplier", () -> new RangedAttribute("horizontal_recoil_multiplier", 1d, 0d, 2048d));
+
 
     // Loot Modifiers
     public static final RegistryObject<Codec<LootPopulator>> LOOT_POPULATOR =               LOOT_MODIFIERS.register("loot_populator", LootPopulator.CODEC);
@@ -330,6 +342,7 @@ public class FlansMod
         RECIPE_SERIALIZERS.register(modEventBus);
         LOOT_MODIFIERS.register(modEventBus);
         CREATIVE_TABS.register(modEventBus);
+        ATTRIBUTES.register(modEventBus);
 
         Transform.RunTests();
     }

@@ -4,19 +4,26 @@ import com.flansmod.client.FlansModClient;
 import com.flansmod.common.FlansMod;
 import com.flansmod.common.actions.stats.*;
 import com.flansmod.common.item.FlanItem;
+import com.flansmod.common.types.Constants;
 import com.flansmod.common.types.elements.ModifierDefinition;
 import com.flansmod.util.Transform;
 import com.flansmod.util.formulae.FloatAccumulation;
+import com.mojang.datafixers.kinds.Const;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.Container;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.ai.attributes.Attribute;
+import net.minecraft.world.entity.ai.attributes.AttributeInstance;
+import net.minecraft.world.entity.ai.attributes.RangedAttribute;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.registries.RegistryObject;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -148,9 +155,39 @@ public abstract class ShooterContext
 	@Nonnull
 	public Optional<String> GetStringOverride(@Nonnull String stat) { return ModCache.GetStringOverride(stat); }
 
+	// Attribute Modifiers for specific stats
+	private static final HashMap<String, RegistryObject<RangedAttribute>> StatToAttribute = new HashMap<>();
+	static
+	{
+		StatToAttribute.put(Constants.STAT_IMPACT_DAMAGE, FlansMod.IMPACT_DAMAGE_MULTIPLIER);
+		StatToAttribute.put(Constants.STAT_SHOOT_SPLASH_RADIUS, FlansMod.SPLASH_RADIUS_MULTIPLIER);
+		StatToAttribute.put(Constants.STAT_GROUP_REPEAT_DELAY, FlansMod.TIME_BETWEEN_SHOTS_MULTIPLIER);
+		StatToAttribute.put(Constants.STAT_SHOT_SPREAD, FlansMod.SHOT_SPREAD_MULTIPLIER);
+		StatToAttribute.put(Constants.STAT_SHOT_VERTICAL_RECOIL, FlansMod.VERTICAL_RECOIL_MULTIPLIER);
+		StatToAttribute.put(Constants.STAT_SHOT_HORIZONTAL_RECOIL, FlansMod.HORIZONTAL_RECOIL_MULTIPLIER);
+
+
+	}
+
 	@Nonnull
 	public FloatAccumulation ModifyFloat(@Nonnull String stat)
 	{
+		// Apply Attribute modifiers, if they are present
+		if(Owner() instanceof LivingEntity living)
+		{
+			RegistryObject<RangedAttribute> attrib = StatToAttribute.get(stat);
+			if(attrib != null)
+			{
+				AttributeInstance attribMulti = living.getAttribute(attrib.get());
+				if(attribMulti != null)
+				{
+					return FloatAccumulation.compose(
+						GetModifierFormula(stat).Calculate(IStatCalculatorContext.Invalid),
+						FloatAccumulation.of(0f, 0f, (float)attribMulti.getValue(), 0f));
+				}
+			}
+		}
+
 		return FloatAccumulation.compose(GetModifierFormula(stat).Calculate(IStatCalculatorContext.Invalid));
 	}
 	@Nonnull
