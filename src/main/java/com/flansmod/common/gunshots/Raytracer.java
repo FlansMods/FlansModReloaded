@@ -142,17 +142,18 @@ public class Raytracer
                 }
 
                 if(bShouldHit)
+                {
                     outHitList.add(hit);
-                if(!bCanPenetrate)
-                {
-                    testPoint = endPoint;
-                    break;
-                }
-                else // To avoid repeat collisions, we need to move past the exit point of the current hit
-                {
-                    // TODO:
-                    testPoint = endPoint;
-                    break;
+                    if (!bCanPenetrate)
+                    {
+                        testPoint = endPoint;
+                        break;
+                    } else // To avoid repeat collisions, we need to move past the exit point of the current hit
+                    {
+                        // TODO:
+                        testPoint = endPoint;
+                        break;
+                    }
                 }
             }
 

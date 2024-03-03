@@ -6,6 +6,7 @@ import com.flansmod.common.actions.stats.*;
 import com.flansmod.common.item.FlanItem;
 import com.flansmod.common.types.Constants;
 import com.flansmod.common.types.elements.ModifierDefinition;
+import com.flansmod.util.MinecraftHelpers;
 import com.flansmod.util.Transform;
 import com.flansmod.util.formulae.FloatAccumulation;
 import com.mojang.datafixers.kinds.Const;
@@ -107,7 +108,7 @@ public abstract class ShooterContext
 	public static ShooterContext client(@Nonnull Entity shooter, @Nullable Entity owner) { return FlansModClient.CONTEXT_CACHE.GetShooter(shooter, owner); }
 	@OnlyIn(Dist.CLIENT)
 	@Nonnull
-	public static ShooterContext client(@Nonnull UUID shooterID, @Nonnull UUID ownerID) { return FlansModClient.CONTEXT_CACHE.GetShooter(shooterID, ownerID, null); }
+	public static ShooterContext client(@Nonnull UUID shooterID, @Nonnull UUID ownerID) { return FlansModClient.CONTEXT_CACHE.GetShooter(shooterID, ownerID, MinecraftHelpers.Client_GetCurrentLevel()); }
 
 
 	// ---------------------------------------------------------------------------------------------------
@@ -118,6 +119,11 @@ public abstract class ShooterContext
 		ModCache = new ModifierCache(this::BakeModifiers);
 		IsCurrent = true;
 	}
+
+
+
+
+
 	public boolean IsPlayerOwner()
 	{
 		return Owner() != null && Owner() instanceof Player player;

@@ -14,6 +14,7 @@ import net.minecraft.tags.TagKey;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.HumanoidArm;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
@@ -31,6 +32,7 @@ import org.spongepowered.asm.mixin.MixinEnvironment;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.ArrayList;
+import java.util.UUID;
 import java.util.Vector;
 
 public class MinecraftHelpers
@@ -130,6 +132,17 @@ public class MinecraftHelpers
 		return FMLEnvironment.dist == Dist.CLIENT;
 	}
 
+	@Nonnull
+	public static EContextSide GetLogicalSide(@Nonnull Entity entity)
+	{
+		return GetLogicalSide(entity.level());
+	}
+	@Nonnull
+	public static EContextSide GetLogicalSide(@Nonnull Level level)
+	{
+		return level.isClientSide ? EContextSide.Client : EContextSide.Server;
+	}
+	@Nonnull
 	public static EContextSide GetLogicalSide()
 	{
 		MinecraftServer currentServer = ServerLifecycleHooks.getCurrentServer();

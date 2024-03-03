@@ -32,22 +32,19 @@ public class ShooterContextHistory extends ContextHistory<ShooterContext>
 	}
 
 	@Nonnull
-	public ShooterContext ContextualizeWith(@Nonnull UUID ownerUUID, @Nonnull UUID shooterUUID, @Nonnull Function<UUID, Entity> entityResolveFunc)
+	public ShooterContext ContextualizeWith(@Nonnull UUID ownerUUID, @Nonnull UUID shooterUUID, @Nullable Level checkLevel, @Nonnull Function<UUID, Entity> entityResolveFunc)
 	{
-		ShooterContext mostRecentContext = ContextualizeWith(ownerUUID, shooterUUID, (Level)null);
-		if(mostRecentContext instanceof ShooterContextUnresolvedEntity unresolvedContext)
-		{
-			Entity shooter = entityResolveFunc.apply(unresolvedContext.EntityUUID());
-			if(shooter != null)
-			{
-				Entity owner = entityResolveFunc.apply(unresolvedContext.OwnerUUID());
-				if(owner != null)
-					return ContextualizeWith(shooter); // TODO: Better owner handling
-				else
-					return ContextualizeWith(shooter);
-			}
-		}
-		return mostRecentContext;
+		return GetOrCreate(
+			(check) -> check.EntityUUID().equals(shooterUUID)
+					&& check.OwnerUUID().equals(ownerUUID)
+					&& (checkLevel == null || check.Level() == checkLevel),
+			() -> {
+				Entity owner = entityResolveFunc.apply(ownerUUID);
+				Entity shooter = entityResolveFunc.apply(shooterUUID);
+
+				return CreateFor(owner, shooter);
+			},
+			MinecraftHelpers::GetTick);
 	}
 
 	@Nonnull
@@ -90,6 +87,24 @@ public class ShooterContextHistory extends ContextHistory<ShooterContext>
 			(check) -> check.Entity() == playerShooter,
 			() -> new ShooterContextPlayer(playerShooter),
 			MinecraftHelpers::GetTick);
+	}
+
+	@Nonnull
+	private ShooterContext CreateFor(@Nullable Entity owner, @Nonnull Entity shooter)
+	{
+		if(shooter instanceof Player player)
+		{
+			return new ShooterContextPlayer(player);
+		}
+		else if(shooter instanceof LivingEntity living)
+		{
+			return new ShooterContextLiving(living);
+		}
+
+		return new ShooterContextUnresolvedEntity(
+			owner != null ? owner.getUUID() : ShooterContext.InvalidID,
+			shooter.getUUID(),
+			MinecraftHelpers.GetLogicalSide(shooter));
 	}
 
 	@Override

@@ -78,18 +78,18 @@ public abstract class ContextCache
 	@Nonnull
 	public ShooterContext GetShooter(@Nonnull Entity shooter, @Nullable Entity owner)
 	{
-		return GetShooter(shooter.getUUID(), owner != null ? owner.getUUID() : ShooterContext.InvalidID, shooter.level());
+		return GetShooter(shooter.getUUID(), owner != null ? owner.getUUID() : ShooterContext.InvalidID, null);
 	}
 	@Nonnull
 	public ShooterContext GetShooter(@Nonnull UUID shooterID, @Nonnull UUID ownerID, @Nullable Level checkLevel)
 	{
-		return HistoryOfShooter(shooterID).ContextualizeWith(ownerID, shooterID, checkLevel);
+		return HistoryOfShooter(shooterID).ContextualizeWith(ownerID, shooterID, checkLevel, this::TryFindEntity);
 	}
-	@Nonnull
-	private ShooterContext TryGetExistingShooter(@Nonnull UUID shooterID, @Nonnull UUID ownerID)
-	{
-		return HistoryOfShooter(shooterID).ContextualizeWith(ownerID, shooterID, this::TryFindEntity);
-	}
+	//@Nonnull
+	//private ShooterContext TryGetExistingShooter(@Nonnull UUID shooterID, @Nonnull UUID ownerID)
+	//{
+	//	return HistoryOfShooter(shooterID).ContextualizeWith(ownerID, shooterID, this::TryFindEntity);
+	//}
 	@Nullable
 	protected abstract Entity TryFindEntity(@Nonnull UUID entityID);
 

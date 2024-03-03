@@ -178,6 +178,7 @@ public class GunshotCollection
 			buf.writeInt(shotCollection.GroupPathHash);
 			buf.writeInt(shotCollection.FiredTick);
 			buf.writeResourceKey(shotCollection.ShooterDimension);
+			buf.writeResourceKey(shotCollection.OwnerDimension);
 		}
 	}
 
@@ -198,6 +199,7 @@ public class GunshotCollection
 			shotCollection.GroupPathHash = buf.readInt();
 			shotCollection.FiredTick = buf.readInt();
 			shotCollection.ShooterDimension = buf.readResourceKey(Registries.DIMENSION);
+			shotCollection.OwnerDimension = buf.readResourceKey(Registries.DIMENSION);
 		}
 	}
 }
