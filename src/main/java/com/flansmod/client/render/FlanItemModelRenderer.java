@@ -172,7 +172,7 @@ public abstract class FlanItemModelRenderer extends BlockEntityWithoutLevelRende
                              int light,
                              int overlay)
     {
-        TransformStack transformStack = new TransformStack(Transform.FromPoseStack("ItemPose", ms));
+        TransformStack transformStack = new TransformStack(Transform.FromPose(ms));
         boolean shouldRenderIcon = false;
         if(stack.getItem() instanceof FlanItem flanItem && flanItem.ShouldRenderAsIcon(transformType))
             shouldRenderIcon = true;
@@ -186,7 +186,7 @@ public abstract class FlanItemModelRenderer extends BlockEntityWithoutLevelRende
                 switch(transformType)
                 {
                     case GUI -> {
-                        transformStack.add(Transform.FromScale("\"Scale to GUI size\"", -2.0f));
+                        transformStack.add(Transform.FromScale(-2.0f, () -> "\"Scale to GUI size\""));
                         poseStack = transformStack.Top().ToNewPoseStack();
                         poseStack.scale(-1f, 1f, 1f);
                         Lighting.setupForFlatItems();
@@ -354,7 +354,7 @@ public abstract class FlanItemModelRenderer extends BlockEntityWithoutLevelRende
                 }
             }
 
-            Transform resultPose = poses.size() > 0 ? Transform.Interpolate(poses) : Transform.Identity("\"Anim no-op\"");
+            Transform resultPose = poses.size() > 0 ? Transform.Interpolate(poses) : Transform.Identity(() -> "\"Anim no-op\"");
             TurboModel model = UnbakedRig.GetPart(partName);
             if (model != null)
             {
@@ -364,7 +364,7 @@ public abstract class FlanItemModelRenderer extends BlockEntityWithoutLevelRende
             return resultPose;
         }
 
-        return Transform.Identity("\"No Anims\"");
+        return Transform.Identity(() -> "\"No Anims\"");
     }
 
     private void ApplyItemArmTransform(PoseStack poseStack, HumanoidArm arm, float equipProgress)

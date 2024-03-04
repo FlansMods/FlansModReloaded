@@ -43,7 +43,7 @@ public class RenderContext
 	{
 		Buffers = buffers;
 		TransformType = transformType;
-		Transforms = new TransformStack(Transform.FromPoseStack("\"FromPoseStack\"", poses));
+		Transforms = new TransformStack(Transform.FromPose(poses));
 		Light = light;
 		Overlay = overlay;
 	}

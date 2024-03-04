@@ -8,6 +8,7 @@ import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.joml.Quaternionf;
+import org.joml.Vector3d;
 import org.joml.Vector3f;
 import org.joml.Vector4f;
 
@@ -147,8 +148,22 @@ public class TransformStack extends Stack<Transform>
 			Transform t = get(i);
 			poseStack.translate(t.Position.x, t.Position.y, t.Position.z);
 			poseStack.mulPose(t.Orientation);
-			poseStack.scale(t.Scale, t.Scale, t.Scale);
+			poseStack.scale(t.Scale.x, t.Scale.y, t.Scale.z);
 		}
+	}
+
+	public void scale(float x, float y, float z)
+	{
+		// TODO: This is not accurate
+		add(Transform.FromScale(x, () -> "scale[UNIFORM - TODO]"));
+	}
+	public void translate(double x, double y, double z)
+	{
+		add(Transform.FromPos(x, y, z, () -> "translate"));
+	}
+	public void mulPose(@Nonnull Quaternionf rot)
+	{
+		add(Transform.FromPosAndQuat(new Vector3d(), rot, () -> "mulPose"));
 	}
 
 	@OnlyIn(Dist.CLIENT)

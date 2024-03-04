@@ -174,7 +174,7 @@ public class DebugRenderer
 
     public static void RenderLine(Vec3 origin, int ticks, Vector4f col, Vec3 ray)
     {
-        renderItems.add(new DebugRenderLine(Transform.FromPos("\"DebugLine\"", origin), ticks, col, ray));
+        renderItems.add(new DebugRenderLine(Transform.FromPos(origin, () -> "\"DebugLine\""), ticks, col, ray));
     }
 
     public static void RenderAxes(Transform t, int ticks, Vector4f col)

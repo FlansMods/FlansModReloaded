@@ -76,7 +76,7 @@ public class Raytracer
         }
     }
 
-    public void clientTick(TickEvent.ClientTickEvent event)
+    public void clientTick(@Nonnull TickEvent.ClientTickEvent event)
     {
         if(FlansMod.DEBUG)
         {
@@ -88,7 +88,7 @@ public class Raytracer
     }
 
     @Nonnull
-    public PlayerSnapshot GetSnapshot(Player player, int nTicksAgo)
+    public PlayerSnapshot GetSnapshot(@Nonnull Player player, int nTicksAgo)
     {
         PlayerMovementHistory movementHistory = PlayerMovementHistories.get(player);
         if (movementHistory != null)
@@ -98,12 +98,12 @@ public class Raytracer
         return PlayerSnapshot.INVALID;
     }
 
-    public void CastBullet(Entity from,
-                           Vec3 origin,
-                           Vec3 motion,
+    public void CastBullet(@Nonnull Entity from,
+                           @Nonnull Vec3 origin,
+                           @Nonnull Vec3 motion,
                            double penetrationPowerVsBlocks,
                            double penetrationPowerVsEntities,
-                           List<HitResult> outHitList)
+                           @Nonnull List<HitResult> outHitList)
     {
         outHitList.clear();
 
@@ -184,7 +184,7 @@ public class Raytracer
     }
 
     @Nonnull
-    private Vec3 GetHitsUpToNextBlock(Vec3 origin, Vec3 ray, List<HitResult> outResults)
+    private Vec3 GetHitsUpToNextBlock(@Nonnull Vec3 origin, @Nonnull Vec3 ray, @Nonnull List<HitResult> outResults)
     {
         Vec3 startPoint = origin;
         Vec3 endPoint = ray;
@@ -217,7 +217,7 @@ public class Raytracer
                 PlayerMovementHistory history = PlayerMovementHistories.get(checkPlayer);
                 if(history != null)
                 {
-                    history.GetSnapshotNTicksAgo(0).Raycast(startPoint, endPoint, outResults);
+                    history.GetSnapshotNTicksAgo(0).Raycast(checkPlayer, startPoint, endPoint, outResults);
                     continue;
                 }
             }

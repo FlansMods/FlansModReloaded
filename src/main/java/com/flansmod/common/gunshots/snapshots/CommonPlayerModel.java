@@ -2,11 +2,10 @@ package com.flansmod.common.gunshots.snapshots;
 
 import com.flansmod.common.gunshots.EPlayerHitArea;
 import com.flansmod.common.gunshots.PlayerSnapshot;
+import com.flansmod.common.item.GunItem;
 import com.flansmod.util.Transform;
 import com.flansmod.util.TransformStack;
-import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
-import net.minecraft.client.player.AbstractClientPlayer;
 import net.minecraft.core.Direction;
 import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
@@ -107,9 +106,9 @@ public class CommonPlayerModel
 		public Transform GetCenter()
 		{
 			TransformStack stack = new TransformStack();
-			stack.add(Transform.FromPos("AnimPos", x / 16f, y / 16f, z / 16f));
-			stack.add(Transform.FromEulerRadians("AnimRot", -xRot, -yRot, -zRot));
-			stack.add(Transform.FromPos("BoxPos", BoxMin.x / 16f + BoxDims.x / 32f, BoxMin.y / 16f + BoxDims.y / 32f, BoxMin.z / 16f + BoxDims.z / 32f));
+			stack.add(Transform.FromPos(x / 16f, y / 16f, z / 16f));
+			stack.add(Transform.FromEulerRadians(-xRot, -yRot, -zRot));
+			stack.add(Transform.FromPos(BoxMin.x / 16f + BoxDims.x / 32f, BoxMin.y / 16f + BoxDims.y / 32f, BoxMin.z / 16f + BoxDims.z / 32f));
 			return stack.Top();
 		}
 
@@ -190,7 +189,7 @@ public class CommonPlayerModel
 	public void Snap(@Nonnull Player player, @Nonnull PlayerSnapshot snap)
 	{
 		snap.valid = false;
-		PoseStack p_115311_ = new PoseStack();
+		TransformStack poseStack = new TransformStack();
 		float p_115310_ = 0f; // Partial tick
 
 		// Copied from EntityRenderDispatcher::render(E p_114385_, double p_114386_, double p_114387_, double p_114388_, float p_114389_, float p_114390_, PoseStack p_114391_, MultiBufferSource p_114392_, int p_114393_)
@@ -198,15 +197,15 @@ public class CommonPlayerModel
 		double d2 = player.position().x + vec3.x();
 		double d3 = player.position().y + vec3.y();
 		double d0 = player.position().z + vec3.z();
-		p_115311_.pushPose();
-		p_115311_.translate(d2, d3, d0);
+		//p_115311_.pushPose();
+		poseStack.translate(d2, d3, d0);
 
 		// Copied from PlayerRenderer::render(AbstractClientPlayer p_117788_, float p_117789_, float p_117790_, PoseStack p_117791_, MultiBufferSource p_117792_, int p_117793_)
 		setModelProperties(player);
 
 		// -- Copied from: --
 		// LivingEntityRenderer::render(T p_115308_, float p_115309_, float p_115310_, PoseStack p_115311_, MultiBufferSource p_115312_, int p_115313_)
-		p_115311_.pushPose();
+		//p_115311_.pushPose();
 
 		this.attackTime = player.getAttackAnim(p_115310_);
 
@@ -247,18 +246,18 @@ public class CommonPlayerModel
 			Direction direction = player.getBedOrientation();
 			if (direction != null) {
 				float f4 = player.getEyeHeight(Pose.STANDING) - 0.1F;
-				p_115311_.translate((float)(-direction.getStepX()) * f4, 0.0F, (float)(-direction.getStepZ()) * f4);
+				poseStack.translate((float)(-direction.getStepX()) * f4, 0.0F, (float)(-direction.getStepZ()) * f4);
 			}
 		}
 
 		float f7 = this.getBob(player, p_115310_);
 
 		// Renamed to playerSetupRotations to simulate our super.
-		this.playerSetupRotations(player, p_115311_, f7, f, p_115310_);
+		this.playerSetupRotations(player, poseStack, f7, f, p_115310_);
 
-		p_115311_.scale(-1.0F, -1.0F, 1.0F);
-		this.scale(p_115311_);
-		p_115311_.translate(0.0F, -1.501F, 0.0F);
+		poseStack.scale(-1.0F, -1.0F, 1.0F);
+		this.scale(poseStack);
+		poseStack.translate(0.0F, -1.501F, 0.0F);
 		float f8 = 0.0F;
 		float f5 = 0.0F;
 		if (!shouldSit && player.isAlive()) {
@@ -279,27 +278,27 @@ public class CommonPlayerModel
 		// Now use all this good stuff to build a snapshot
 		snap.UpdateHitbox(
 			EPlayerHitArea.HEAD,
-			Transform.Compose(Transform.FromPoseStack("pose", p_115311_), head.GetCenter()),
+			Transform.Compose(poseStack.Top(), head.GetCenter()),
 			head.GetHalfExtents());
 		snap.UpdateHitbox(
 			EPlayerHitArea.BODY,
-			Transform.Compose(Transform.FromPoseStack("pose", p_115311_), body.GetCenter()),
+			Transform.Compose(poseStack.Top(), body.GetCenter()),
 			body.GetHalfExtents());
 		snap.UpdateHitbox(
 			EPlayerHitArea.LEFTLEG,
-			Transform.Compose(Transform.FromPoseStack("pose", p_115311_), leftLeg.GetCenter()),
+			Transform.Compose(poseStack.Top(), leftLeg.GetCenter()),
 			leftLeg.GetHalfExtents());
 		snap.UpdateHitbox(
 			EPlayerHitArea.RIGHTLEG,
-			Transform.Compose(Transform.FromPoseStack("pose", p_115311_), rightLeg.GetCenter()),
+			Transform.Compose(poseStack.Top(), rightLeg.GetCenter()),
 			rightLeg.GetHalfExtents());
 		snap.UpdateHitbox(
 			EPlayerHitArea.LEFTARM,
-			Transform.Compose(Transform.FromPoseStack("pose", p_115311_), leftArm.GetCenter()),
+			Transform.Compose(poseStack.Top(), leftArm.GetCenter()),
 			leftArm.GetHalfExtents());
 		snap.UpdateHitbox(
 			EPlayerHitArea.RIGHTARM,
-			Transform.Compose(Transform.FromPoseStack("pose", p_115311_), rightArm.GetCenter()),
+			Transform.Compose(poseStack.Top(), rightArm.GetCenter()),
 			rightArm.GetHalfExtents());
 
 		snap.valid = true;
@@ -314,13 +313,13 @@ public class CommonPlayerModel
 		this.swimAmount = p_102861_.getSwimAmount(p_102864_);
 	}
 	// Copied from LivingEntityRenderer::setupRotations(...)
-	protected void livingSetupRotations(@Nonnull Player p_115317_, @Nonnull PoseStack p_115318_, float p_115319_, float p_115320_, float p_115321_) {
+	protected void livingSetupRotations(@Nonnull Player p_115317_, @Nonnull TransformStack poseStack, float p_115319_, float p_115320_, float p_115321_) {
 		if (this.isShaking(p_115317_)) {
 			p_115320_ += (float)(Math.cos((double)p_115317_.tickCount * 3.25D) * Math.PI * (double)0.4F);
 		}
 
 		if (!p_115317_.hasPose(Pose.SLEEPING)) {
-			p_115318_.mulPose(Axis.YP.rotationDegrees(180.0F - p_115320_));
+			poseStack.mulPose(Axis.YP.rotationDegrees(180.0F - p_115320_));
 		}
 
 		if (p_115317_.deathTime > 0) {
@@ -330,31 +329,31 @@ public class CommonPlayerModel
 				f = 1.0F;
 			}
 
-			p_115318_.mulPose(Axis.ZP.rotationDegrees(f * this.getFlipDegrees(p_115317_)));
+			poseStack.mulPose(Axis.ZP.rotationDegrees(f * this.getFlipDegrees(p_115317_)));
 		} else if (p_115317_.isAutoSpinAttack()) {
-			p_115318_.mulPose(Axis.XP.rotationDegrees(-90.0F - p_115317_.getXRot()));
-			p_115318_.mulPose(Axis.YP.rotationDegrees(((float)p_115317_.tickCount + p_115321_) * -75.0F));
+			poseStack.mulPose(Axis.XP.rotationDegrees(-90.0F - p_115317_.getXRot()));
+			poseStack.mulPose(Axis.YP.rotationDegrees(((float)p_115317_.tickCount + p_115321_) * -75.0F));
 		} else if (p_115317_.hasPose(Pose.SLEEPING)) {
 			Direction direction = p_115317_.getBedOrientation();
 			float f1 = direction != null ? sleepDirectionToRotation(direction) : p_115320_;
-			p_115318_.mulPose(Axis.YP.rotationDegrees(f1));
-			p_115318_.mulPose(Axis.ZP.rotationDegrees(this.getFlipDegrees(p_115317_)));
-			p_115318_.mulPose(Axis.YP.rotationDegrees(270.0F));
+			poseStack.mulPose(Axis.YP.rotationDegrees(f1));
+			poseStack.mulPose(Axis.ZP.rotationDegrees(this.getFlipDegrees(p_115317_)));
+			poseStack.mulPose(Axis.YP.rotationDegrees(270.0F));
 		} //else if (isEntityUpsideDown(p_115317_)) {
 		//	p_115318_.translate(0.0F, p_115317_.getBbHeight() + 0.1F, 0.0F);
 		//	p_115318_.mulPose(Axis.ZP.rotationDegrees(180.0F));
 		//}
 	}
 	// Copied from PlayerRenderer::setupRotations(AbstractClientPlayer p_117802_, PoseStack p_117803_, float p_117804_, float p_117805_, float p_117806_)
-	protected void playerSetupRotations(@Nonnull Player p_117802_, @Nonnull PoseStack p_117803_, float p_117804_, float p_117805_, float p_117806_) {
+	protected void playerSetupRotations(@Nonnull Player p_117802_, @Nonnull TransformStack poseStack, float p_117804_, float p_117805_, float p_117806_) {
 		float f = p_117802_.getSwimAmount(p_117806_);
 		if (p_117802_.isFallFlying()) {
 			// -- This is "super.setupRotations" --
-			livingSetupRotations(p_117802_, p_117803_, p_117804_, p_117805_, p_117806_);
+			livingSetupRotations(p_117802_, poseStack, p_117804_, p_117805_, p_117806_);
 			float f1 = (float)p_117802_.getFallFlyingTicks() + p_117806_;
 			float f2 = Mth.clamp(f1 * f1 / 100.0F, 0.0F, 1.0F);
 			if (!p_117802_.isAutoSpinAttack()) {
-				p_117803_.mulPose(Axis.XP.rotationDegrees(f2 * (-90.0F - p_117802_.getXRot())));
+				poseStack.mulPose(Axis.XP.rotationDegrees(f2 * (-90.0F - p_117802_.getXRot())));
 			}
 
 			Vec3 vec3 = p_117802_.getViewVector(p_117806_);
@@ -364,20 +363,20 @@ public class CommonPlayerModel
 			if (d0 > 0.0D && d1 > 0.0D) {
 				double d2 = (vec31.x * vec3.x + vec31.z * vec3.z) / Math.sqrt(d0 * d1);
 				double d3 = vec31.x * vec3.z - vec31.z * vec3.x;
-				p_117803_.mulPose(Axis.YP.rotation((float)(Math.signum(d3) * Math.acos(d2))));
+				poseStack.mulPose(Axis.YP.rotation((float)(Math.signum(d3) * Math.acos(d2))));
 			}
 		} else if (f > 0.0F) {
 			// -- This is "super.setupRotations" --
-			livingSetupRotations(p_117802_, p_117803_, p_117804_, p_117805_, p_117806_);
+			livingSetupRotations(p_117802_, poseStack, p_117804_, p_117805_, p_117806_);
 			float f3 = p_117802_.isInWater() || p_117802_.isInFluidType((fluidType, height) -> p_117802_.canSwimInFluidType(fluidType)) ? -90.0F - p_117802_.getXRot() : -90.0F;
 			float f4 = Mth.lerp(f, 0.0F, f3);
-			p_117803_.mulPose(Axis.XP.rotationDegrees(f4));
+			poseStack.mulPose(Axis.XP.rotationDegrees(f4));
 			if (p_117802_.isVisuallySwimming()) {
-				p_117803_.translate(0.0F, -1.0F, 0.3F);
+				poseStack.translate(0.0F, -1.0F, 0.3F);
 			}
 		} else {
 			// -- This is "super.setupRotations" --
-			livingSetupRotations(p_117802_, p_117803_, p_117804_, p_117805_, p_117806_);
+			livingSetupRotations(p_117802_, poseStack, p_117804_, p_117805_, p_117806_);
 		}
 
 	}
@@ -403,9 +402,9 @@ public class CommonPlayerModel
 		return (float)p_115305_.tickCount + p_115306_;
 	}
 	// Copied from PlayerRenderer::scale(AbstractClientPlayer p_117798_, PoseStack p_117799_, float p_117800_)
-	protected void scale(@Nonnull PoseStack p_117799_) {
+	protected void scale(@Nonnull TransformStack poseStack) {
 		float f = 0.9375F;
-		p_117799_.scale(0.9375F, 0.9375F, 0.9375F);
+		poseStack.scale(0.9375F, 0.9375F, 0.9375F);
 	}
 	// Copied from PlayerRenderer::setModelProperties(AbstractClientPlayer p_117819_)
 	private void setModelProperties(@Nonnull Player p_117819_)
@@ -475,7 +474,11 @@ public class CommonPlayerModel
 				}
 			} else if (!p_117795_.swinging && itemstack.getItem() instanceof CrossbowItem && CrossbowItem.isCharged(itemstack)) {
 				return ArmPose.CROSSBOW_HOLD;
+			} else if(itemstack.getItem() instanceof GunItem gun)
+			{
+				return ArmPose.BOW_AND_ARROW;
 			}
+
 			return ArmPose.ITEM;
 		}
 	}

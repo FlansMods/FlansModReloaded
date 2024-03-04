@@ -181,10 +181,7 @@ public class TurboRig implements IUnbakedGeometry<TurboRig>, UnbakedModel
 			bakedAPs.put(apName, new AttachPoint.Baked(
 				apName,
 				bakedAPs.get(ap.AttachTo),
-				Transform.FromPosAndEuler(
-					"\"AP Offset["+apName+"]\"",
-					ap.Offset.mul(1f/16f, new Vector3f()),
-					ap.Euler)));
+				Transform.FromPosAndEuler(ap.Offset.mul(1f/16f, new Vector3f()), ap.Euler, () -> "\"AP Offset["+apName+"]\"")));
 		}
 	}
 
@@ -229,15 +226,15 @@ public class TurboRig implements IUnbakedGeometry<TurboRig>, UnbakedModel
 			return null;
 		}
 
-		public Transform GetTransform(ItemDisplayContext transformType)
+		@Nonnull
+		public Transform GetTransform(@Nonnull ItemDisplayContext transformType)
 		{
-			return Transform.FromItemTransform("\"BakedItemTransform["+transformType+"]\"", Transforms.getTransform(transformType));
+			return Transform.FromItem(Transforms.getTransform(transformType), () -> "\"BakedItemTransform["+transformType+"]\"");
 		}
 
-		public void ApplyTransform(TransformStack transformStack, ItemDisplayContext transformType, boolean bFlip)
+		public void ApplyTransform(@Nonnull TransformStack transformStack, @Nonnull ItemDisplayContext transformType, boolean bFlip)
 		{
 			ItemTransform transform = Transforms.getTransform(transformType);
-			transformStack.add(Transform.FromItemTransform("\"BakedItemTransform["+transformType+"]\"", transform));
 		}
 
 		public TurboModel.Baked GetPart(String part)

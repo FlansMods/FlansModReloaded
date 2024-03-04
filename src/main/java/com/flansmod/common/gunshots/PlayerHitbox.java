@@ -11,6 +11,8 @@ import org.joml.Vector3d;
 import org.joml.Vector3f;
 import org.joml.Vector4f;
 
+import javax.annotation.Nonnull;
+
 public class PlayerHitbox
 {
     // The position and rotation of the centerpoint of this box.
@@ -24,14 +26,14 @@ public class PlayerHitbox
     //public Vec3 d;
     public EPlayerHitArea area;
 
-    public PlayerHitbox(EPlayerHitArea hitArea, Transform trans, Vector3f half)
+    public PlayerHitbox(@Nonnull EPlayerHitArea hitArea, @Nonnull Transform trans, @Nonnull Vector3f half)
     {
         transform = trans;
         halfExtents = half;
         area = hitArea;
     }
 
-    public PlayerHitResult Raycast(Player player, Vec3 origin, Vec3 motion)
+    public boolean Raycast(@Nonnull Vec3 origin, @Nonnull Vec3 motion)
     {
         // Localise
         origin = transform.GlobalToLocalPosition(origin);
@@ -50,7 +52,7 @@ public class PlayerHitbox
                 double intersectZ = origin.z + motion.z * intersectTime;
                 if(-halfExtents.y <= intersectY && intersectY <= halfExtents.y
                 && -halfExtents.z <= intersectZ && intersectZ <= halfExtents.z)
-                    return new PlayerHitResult(player, this);
+                    return true;
             }
             else if(origin.x > halfExtents.x) //Check face +half.x
             {
@@ -59,7 +61,7 @@ public class PlayerHitbox
                 double intersectZ = origin.z + motion.z * intersectTime;
                 if(-halfExtents.y <= intersectY && intersectY <= halfExtents.y
                 && -halfExtents.z <= intersectZ && intersectZ <= halfExtents.z)
-                    return new PlayerHitResult(player, this);
+                    return true;
             }
         }
 
@@ -73,7 +75,7 @@ public class PlayerHitbox
                 double intersectY = origin.y + motion.y * intersectTime;
                 if(-halfExtents.x <= intersectX && intersectX <= halfExtents.x
                 && -halfExtents.y <= intersectY && intersectY <= halfExtents.y)
-                    return new PlayerHitResult(player, this);
+                    return true;
             }
             else if(origin.z > halfExtents.z) //Check face z = +half.z
             {
@@ -82,7 +84,7 @@ public class PlayerHitbox
                 double intersectY = origin.y + motion.y * intersectTime;
                 if(-halfExtents.x <= intersectX && intersectX <= halfExtents.x
                 && -halfExtents.y <= intersectY && intersectY <= halfExtents.y)
-                    return new PlayerHitResult(player, this);
+                    return true;
             }
         }
 
@@ -96,7 +98,7 @@ public class PlayerHitbox
                 double intersectZ = origin.z + motion.z * intersectTime;
                 if(-halfExtents.x <= intersectX && intersectX <= halfExtents.x
                 && -halfExtents.z <= intersectZ && intersectZ <= halfExtents.z)
-                    return new PlayerHitResult(player, this);
+                    return true;
             }
             else if(origin.y > halfExtents.y) // Check face y = +half.y
             {
@@ -105,11 +107,11 @@ public class PlayerHitbox
                 double intersectZ = origin.z + motion.z * intersectTime;
                 if(-halfExtents.x <= intersectX && intersectX <= halfExtents.x
                 && -halfExtents.z <= intersectZ && intersectZ <= halfExtents.z)
-                    return new PlayerHitResult(player, this);
+                    return true;
             }
         }
 
-        return null;
+        return false;
 
     }
 

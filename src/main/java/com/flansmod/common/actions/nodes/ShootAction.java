@@ -368,7 +368,7 @@ public class ShootAction extends ActionInstance
 		float yaw = Maths.AtanF(xComponent);
 		float pitch = Maths.AtanF(yComponent);
 
-		transformStack.add(Transform.FromEuler("{\"Spread\":"+spread+", \"Pattern\":\""+spreadPattern+"\"}", pitch, yaw, 0f));
+		transformStack.add(Transform.FromEuler(pitch, yaw, 0f, () -> "{\"Spread\":"+spread+", \"Pattern\":\""+spreadPattern+"\"}"));
 	}
 
 	@Override
