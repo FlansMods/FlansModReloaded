@@ -2,6 +2,8 @@ package com.flansmod.common.gunshots;
 
 import com.flansmod.client.render.debug.DebugRenderer;
 import com.flansmod.common.FlansMod;
+import com.flansmod.util.MinecraftHelpers;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
@@ -10,7 +12,9 @@ import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.phys.*;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.TickEvent;
+import net.minecraftforge.fml.LogicalSide;
 import org.joml.Vector4f;
+import org.spongepowered.asm.mixin.MixinEnvironment;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -51,19 +55,24 @@ public class Raytracer
 
     public void commonTick(@Nonnull TickEvent.LevelTickEvent event)
     {
-        List<Player> playerList = new ArrayList<>(World.players());
-        for (Player player : playerList)
+        if(event.phase == TickEvent.Phase.START && event.level == World)
         {
-            PlayerMovementHistory moves = PlayerMovementHistories.get(player);
-            if (moves == null)
+            List<Player> playerList = new ArrayList<>(World.players());
+            for (Player player : playerList)
             {
-                moves = new PlayerMovementHistory(NUM_SNAPSHOTS_TO_KEEP);
-                PlayerMovementHistories.put(player, moves);
-            }
+                PlayerMovementHistory moves = PlayerMovementHistories.get(player);
+                if (moves == null)
+                {
+                    moves = new PlayerMovementHistory(NUM_SNAPSHOTS_TO_KEEP);
+                    PlayerMovementHistories.put(player, moves);
+                }
 
-            PlayerSnapshot nextSnapshot = moves.GetNextSnapshotForWriting();
-            nextSnapshot.SnapPlayer(player);
-            moves.FinishedWriting();
+                if (MinecraftHelpers.GetTick() % 20L == (event.side == LogicalSide.CLIENT ? 10L : 0L))
+                    moves.TakeSnapshot(player);
+                //PlayerSnapshot nextSnapshot = moves.GetNextSnapshotForWriting();
+                //nextSnapshot.SnapPlayer(player);
+                //moves.FinishedWriting();
+            }
         }
     }
 
@@ -73,7 +82,7 @@ public class Raytracer
         {
             for(var kvp : PlayerMovementHistories.entrySet())
             {
-                kvp.getValue().debugRender();
+                kvp.getValue().debugRender(!(World instanceof ServerLevel));
             }
         }
     }

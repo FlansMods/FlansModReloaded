@@ -93,7 +93,7 @@ public class PlayerSnapshot
                 yBody += Maths.CosF(player.tickCount * 3.25f) * Maths.PiF * 0.4f;
 
             if (!player.hasPose(Pose.SLEEPING))
-                transformStack.add(Transform.FromEuler("\"PlayerYaw\"", 0f, 180f - yBody, 0f));
+                transformStack.add(Transform.FromEuler("\"PlayerYaw\"", 0f, 180f + yBody, 0f));
 
             if (player.deathTime > 0)
             {
@@ -119,7 +119,7 @@ public class PlayerSnapshot
 
         // Scale(-1, -1, 1)
         // this.Scale(?)
-        transformStack.add(Transform.FromPos("\"UnapplyEyeLine\"", new Vec3(0f, -1.5f, 0f)));
+        transformStack.add(Transform.FromPos("\"UnapplyEyeLine\"", new Vec3(0f, 0f, 0f)));
         float anim8 = 0f, anim5 = 0f;
         if(!shouldSit && player.isAlive())
         {
@@ -131,38 +131,49 @@ public class PlayerSnapshot
         // this.setupAnim (player, anim5, anim8, bob, yNeck, xHead)
         // render
 
-
+        Vector3f bodyHalfSize = new Vector3f(0.25f, 0.35f, 0.15f);
+        Vector3f headHalfSize = new Vector3f(0.25f, 0.25f, 0.25f);
+        Vector3f armHalfSize = new Vector3f(0.15f, 0.25f, 0.15f);
 
         switch(player.getPose())
         {
-            case STANDING:
-        }
+            default -> {
+                transformStack.PushSaveState();
+                {
+                    // Body
 
-        // Body
-        {
-            transformStack.PushSaveState();
-            transformStack.add(Transform.FromEuler("\"BodyYaw\"", 0f, p.yBodyRot, 0f));
-            transformStack.add(Transform.FromPos("\"BodyCenter\"", 0d, 0.7d, 0d));
-            Vector3f bodyHalfSize = new Vector3f(0.25f, 0.7f, 0.15f);
-            UpdateHitbox(EPlayerHitArea.BODY, transformStack.Top(), bodyHalfSize);
-            transformStack.pop();
-            transformStack.pop();
-            transformStack.PopSaveState();
-        }
+                    transformStack.add(Transform.FromPos("\"BodyCenter\"", 0d, 1.05d, 0d));
+                    UpdateHitbox(EPlayerHitArea.BODY, transformStack.Top(), bodyHalfSize);
 
-        // Head
-        {
-            transformStack.PushSaveState();
-            transformStack.add(Transform.FromPos("\"NeckOffset\"", 0d, 1.4d, 0d)); // Then add the neck pivot point
-            transformStack.add(Transform.FromEuler("\"NeckRot\"", p.xRotO, p.yHeadRot, 0.0f)); // Rotate around the neck
-            transformStack.add(Transform.FromPos("\"HeadHalfHeight\"", 0d, 0.25d, 0d)); // Add half a head height
-            Vector3f headHalfSize = new Vector3f(0.25f, 0.25f, 0.25f);
-            UpdateHitbox(EPlayerHitArea.HEAD, transformStack.Top(), headHalfSize);
-            transformStack.PopSaveState();
+                    // Head
+                    transformStack.add(Transform.FromPos("\"NeckOffset\"", 0d, 0.35d, 0d)); // Then add the neck pivot point
+                    transformStack.add(Transform.FromEuler("\"NeckRot\"", p.xRotO, yNeck, 0.0f)); // Rotate around the neck
+                    transformStack.add(Transform.FromPos("\"HeadHalfHeight\"", 0d, 0.25d, 0d)); // Add half a head height
+                    UpdateHitbox(EPlayerHitArea.HEAD, transformStack.Top(), headHalfSize);
+                }
+                transformStack.PopSaveState();
+
+                // LLeg
+                transformStack.add(Transform.FromPos("\"LeftArmPose\"", 0d, 1.05d, 0d));
+                UpdateHitbox(EPlayerHitArea.LEFTARM, transformStack.Top(), armHalfSize);
+            }
+            case CROUCHING -> {
+                // Body
+                transformStack.add(Transform.FromPos("\"CrouchedBody\"", 0d, 0.8d, 0.15d));
+                transformStack.add(Transform.FromEuler("\"CrouchedPose\"", 0.5f * Maths.RadToDegF, 0f, 0f));
+                UpdateHitbox(EPlayerHitArea.BODY, transformStack.Top(), bodyHalfSize);
+
+                // Head
+                transformStack.add(Transform.FromPos("\"NeckOffset\"", 0d, 0.35d, 0d)); // Then add the neck pivot point
+                transformStack.add(Transform.FromEuler("\"ReturnToAngle0\"", -0.5f * Maths.RadToDegF, 0f, 0f));
+                transformStack.add(Transform.FromEuler("\"NeckRot\"", p.xRotO, yNeck, 0.0f)); // Rotate around the neck
+                transformStack.add(Transform.FromPos("\"HeadHalfHeight\"", 0d, 0.25d, 0d)); // Add half a head height
+                UpdateHitbox(EPlayerHitArea.HEAD, transformStack.Top(), headHalfSize);
+            }
         }
     }
 
-    private void UpdateHitbox(EPlayerHitArea area, Transform centerPoint, Vector3f halfExtents)
+    public void UpdateHitbox(EPlayerHitArea area, Transform centerPoint, Vector3f halfExtents)
     {
         hitboxes[area.ordinal()].transform = centerPoint;
         hitboxes[area.ordinal()].halfExtents = halfExtents;

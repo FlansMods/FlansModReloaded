@@ -93,7 +93,7 @@ public class FlansMod
 {
     public static final String MODID = "flansmod";
     public static final Logger LOGGER = LogUtils.getLogger();
-    public static boolean DEBUG = false;
+    public static boolean DEBUG = true;
 
     // Registers
     public static final DeferredRegister<Block> BLOCKS = DeferredRegister.create(ForgeRegistries.BLOCKS, MODID);

@@ -13,6 +13,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
+import java.util.Arrays;
 import java.util.List;
 
 public class Transform
@@ -108,6 +109,12 @@ public class Transform
 
     private Transform(String debugInfo) { this(debugInfo, 1f); }
     private Transform() { this("{}", 1f); }
+    public static Transform Compose(Transform ... transforms)
+    {
+        TransformStack stack = new TransformStack();
+        stack.addAll(Arrays.asList(transforms));
+        return stack.Top();
+    }
     public static Transform Identity(@Nonnull String debugInfo) {
         return new Transform(debugInfo);
     }
@@ -138,6 +145,10 @@ public class Transform
     @Nonnull
     public static Transform FromEuler(@Nonnull String debugInfo, float pitch, float yaw, float roll) {
         return new Transform(debugInfo, FromEuler(pitch, yaw, roll));
+    }
+    @Nonnull
+    public static Transform FromEulerRadians(@Nonnull String debugInfo, float pitch, float yaw, float roll) {
+        return new Transform(debugInfo, FromEulerRadians(pitch, yaw, roll));
     }
     @Nonnull
     public static Transform FromEuler(@Nonnull String debugInfo, @Nonnull Vector3f euler) {
@@ -207,6 +218,14 @@ public class Transform
             .rotateY(-euler.y * Maths.DegToRadF)
             .rotateX(-euler.x * Maths.DegToRadF)
             .rotateZ(-euler.z * Maths.DegToRadF);
+    }
+    @Nonnull
+    private static Quaternionf FromEulerRadians(float pitch, float yaw, float roll)
+    {
+        return new Quaternionf()
+            .rotateY(-yaw)
+            .rotateX(-pitch)
+            .rotateZ(-roll);
     }
     @Nonnull
     private static Quaternionf FromEuler(float pitch, float yaw, float roll)

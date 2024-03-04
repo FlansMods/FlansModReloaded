@@ -2,7 +2,14 @@ package com.flansmod.common.gunshots;
 
 public enum EPlayerHitArea
 {
-    BODY, HEAD, LEFTARM, RIGHTARM, LEFTITEM, RIGHTITEM;
+    BODY,
+    HEAD,
+    LEFTLEG,
+    RIGHTLEG,
+    LEFTARM,
+    RIGHTARM,
+    LEFTITEM,
+    RIGHTITEM;
 
     public static final int NUM_AREAS = EPlayerHitArea.values().length;
 

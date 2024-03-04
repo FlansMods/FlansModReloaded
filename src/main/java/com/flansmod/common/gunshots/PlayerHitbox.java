@@ -120,9 +120,9 @@ public class PlayerHitbox
     {
         Transform renderPos = transform; //.Translate(0.0d, 0.0d, 2.0d);
         
-        DebugRenderer.RenderCube(renderPos, 40, colour, halfExtents);
-        Vector3f quarterExtents = new Vector3f(halfExtents.x * 0.5f, halfExtents.y * 0.5f, halfExtents.z * 0.5f);
-        DebugRenderer.RenderCube(renderPos, 40, colour, quarterExtents);
+        DebugRenderer.RenderCube(renderPos, 1, colour, halfExtents);
+        //Vector3f quarterExtents = new Vector3f(halfExtents.x * 0.5f, halfExtents.y * 0.5f, halfExtents.z * 0.5f);
+        //DebugRenderer.RenderCube(renderPos, 40, colour, quarterExtents);
 
 /*
         //Vector3f boxOrigin = new Vector3f(pos.x + rP.x, pos.y + rP.y, pos.z + rP.z);

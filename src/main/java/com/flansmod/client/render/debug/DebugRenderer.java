@@ -110,12 +110,21 @@ public class DebugRenderer
         }
 
         // v = (z ? 4) + (y ? 2) + (x)
-        private static int[] BoxStrips = new int[] { 5, 1, 7, 3, 2, 4, 1, 5, 4, 7, 6, 2, 4, 0 };
+        private static int[] BoxTriangles = new int[] {
+            0, 1, 3,    0, 3, 2, // Back -z
+            4, 7, 5,    4, 6, 7, // Front +z
+
+            0, 2, 6,    0, 6, 4, // Left -x
+            1, 7, 3,    1, 5, 7, // Right +x
+
+            0, 1, 5,    0, 5, 4, // Bottom -y
+            2, 7, 3,    2, 6, 7, // Top +y
+        };
         @Override
         public void Render(PoseStack poseStack, Tesselator tesselator)
         {
             BufferBuilder buf = tesselator.getBuilder();
-            buf.begin(VertexFormat.Mode.TRIANGLE_STRIP, DefaultVertexFormat.POSITION_COLOR);
+            buf.begin(VertexFormat.Mode.TRIANGLES, DefaultVertexFormat.POSITION_COLOR);
     
             Vector3f[] verts = new Vector3f[8];
             for(int x = 0; x < 2; x++)
@@ -126,9 +135,9 @@ public class DebugRenderer
                         transform.Orientation.transform(verts[z*4 + y*2 + x]);
                     }
 
-            for(int i = 0; i < BoxStrips.length; i++)
+            for(int i = 0; i < BoxTriangles.length; i++)
             {
-                buf.vertex(poseStack.last().pose(), verts[BoxStrips[i]].x, verts[BoxStrips[i]].y, verts[BoxStrips[i]].z)
+                buf.vertex(poseStack.last().pose(), verts[BoxTriangles[i]].x, verts[BoxTriangles[i]].y, verts[BoxTriangles[i]].z)
                         .color(colour.x, colour.y, colour.z, colour.w)
                         .endVertex();
             }

@@ -1,6 +1,10 @@
 package com.flansmod.common.gunshots;
 
+import com.flansmod.common.FlansMod;
+import com.flansmod.common.gunshots.snapshots.CommonPlayerModel;
 import com.flansmod.util.Maths;
+import com.flansmod.util.MinecraftHelpers;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -11,6 +15,7 @@ import java.util.Enumeration;
 
 public class PlayerMovementHistory
 {
+    private CommonPlayerModel PlayerModel;
     private PlayerSnapshot[] snapshotRingBuffer;
     private int mostRecentSnapshot;
     private int snapshotCount;
@@ -24,21 +29,29 @@ public class PlayerMovementHistory
         {
             snapshotRingBuffer[i] = new PlayerSnapshot();
         }
+        PlayerModel = new CommonPlayerModel();
     }
 
     private int GetNextIndex() { return (mostRecentSnapshot + 1) % snapshotCount; }
     private int GetCurrentIndex() { return mostRecentSnapshot; }
     private int GetIndexNTicksAgo(int n) { return Maths.Modulo(mostRecentSnapshot - n, snapshotCount); }
 
-    public PlayerSnapshot GetNextSnapshotForWriting()
+    public void TakeSnapshot(@Nonnull Player player)
     {
-        return snapshotRingBuffer[GetNextIndex()];
-    }
-
-    public void FinishedWriting()
-    {
+        PlayerSnapshot snap = snapshotRingBuffer[GetNextIndex()];
+        PlayerModel.Snap(player, snap);
         mostRecentSnapshot = GetNextIndex();
     }
+
+   //public PlayerSnapshot GetNextSnapshotForWriting()
+   //{
+   //    return snapshotRingBuffer[GetNextIndex()];
+   //}
+
+   //public void FinishedWriting()
+   //{
+   //    mostRecentSnapshot = GetNextIndex();
+   //}
 
     public int GetNumSnapshots() { return snapshotCount; }
 
@@ -54,11 +67,11 @@ public class PlayerMovementHistory
 
     // ---- Debug Render
     @OnlyIn(Dist.CLIENT)
-    public void debugRender()
+    public void debugRender(boolean client)
     {
-        //for(int i = 0; i < GetNumSnapshots(); i++)
+        for(int i = 0; i < GetNumSnapshots(); i++)
         {
-            snapshotRingBuffer[GetCurrentIndex()].debugRender(new Vector4f((float)GetCurrentIndex() / (float)snapshotCount, 1.0f, 0.0f, 0.5f));
+            GetSnapshotNTicksAgo(i).debugRender(new Vector4f((float)i / (float)snapshotCount, client ? 1.0f : 0.0f, client ? 0.0f : 1.0f, 0.5f));
         }
     }
 }
