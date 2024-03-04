@@ -33,11 +33,12 @@ public class PlayerHitbox
         area = hitArea;
     }
 
-    public boolean Raycast(@Nonnull Vec3 origin, @Nonnull Vec3 motion)
+    public boolean Raycast(@Nonnull Vec3 startPos, @Nonnull Vec3 endPos)
     {
         // Localise
-        origin = transform.GlobalToLocalPosition(origin);
-        motion = transform.GlobalToLocalDirection(motion);
+        startPos = transform.GlobalToLocalPosition(startPos);
+        endPos = transform.GlobalToLocalPosition(endPos);
+        Vec3 motion = endPos.subtract(startPos);
 
         // We now have an AABB starting at -halfExtents and with dimensions 2*halfExtents and our ray in the same coordinate system
         // We are looking for a point at which the ray enters the box, so we need only consider faces that the ray can see. Partition the space into 3 areas in each axis
@@ -45,20 +46,20 @@ public class PlayerHitbox
         // X - axis and faces x = -half.x, and x = half.x
         if(motion.x != 0F)
         {
-            if(origin.x < -halfExtents.x) //Check face -half.x
+            if(startPos.x < -halfExtents.x) //Check face -half.x
             {
-                double intersectTime = (-halfExtents.x - origin.x) / motion.x;
-                double intersectY = origin.y + motion.y * intersectTime;
-                double intersectZ = origin.z + motion.z * intersectTime;
+                double intersectTime = (-halfExtents.x - startPos.x) / motion.x;
+                double intersectY = startPos.y + motion.y * intersectTime;
+                double intersectZ = startPos.z + motion.z * intersectTime;
                 if(-halfExtents.y <= intersectY && intersectY <= halfExtents.y
                 && -halfExtents.z <= intersectZ && intersectZ <= halfExtents.z)
                     return true;
             }
-            else if(origin.x > halfExtents.x) //Check face +half.x
+            else if(startPos.x > halfExtents.x) //Check face +half.x
             {
-                double intersectTime = (halfExtents.x - origin.x) / motion.x;
-                double intersectY = origin.y + motion.y * intersectTime;
-                double intersectZ = origin.z + motion.z * intersectTime;
+                double intersectTime = (halfExtents.x - startPos.x) / motion.x;
+                double intersectY = startPos.y + motion.y * intersectTime;
+                double intersectZ = startPos.z + motion.z * intersectTime;
                 if(-halfExtents.y <= intersectY && intersectY <= halfExtents.y
                 && -halfExtents.z <= intersectZ && intersectZ <= halfExtents.z)
                     return true;
@@ -68,20 +69,20 @@ public class PlayerHitbox
         // Z - axis and faces z = -half.z and z = half.z
         if(motion.z != 0F)
         {
-            if(origin.z < -halfExtents.z) // Check face z = -half.z
+            if(startPos.z < -halfExtents.z) // Check face z = -half.z
             {
-                double intersectTime = (-halfExtents.z - origin.z) / motion.z;
-                double intersectX = origin.x + motion.x * intersectTime;
-                double intersectY = origin.y + motion.y * intersectTime;
+                double intersectTime = (-halfExtents.z - startPos.z) / motion.z;
+                double intersectX = startPos.x + motion.x * intersectTime;
+                double intersectY = startPos.y + motion.y * intersectTime;
                 if(-halfExtents.x <= intersectX && intersectX <= halfExtents.x
                 && -halfExtents.y <= intersectY && intersectY <= halfExtents.y)
                     return true;
             }
-            else if(origin.z > halfExtents.z) //Check face z = +half.z
+            else if(startPos.z > halfExtents.z) //Check face z = +half.z
             {
-                double intersectTime = (halfExtents.z - origin.z) / motion.z;
-                double intersectX = origin.x + motion.x * intersectTime;
-                double intersectY = origin.y + motion.y * intersectTime;
+                double intersectTime = (halfExtents.z - startPos.z) / motion.z;
+                double intersectX = startPos.x + motion.x * intersectTime;
+                double intersectY = startPos.y + motion.y * intersectTime;
                 if(-halfExtents.x <= intersectX && intersectX <= halfExtents.x
                 && -halfExtents.y <= intersectY && intersectY <= halfExtents.y)
                     return true;
@@ -91,20 +92,20 @@ public class PlayerHitbox
         // Y - axis and faces y = -half.y and y = +half.y
         if(motion.y != 0F)
         {
-            if(origin.y < -halfExtents.y) // Check face y = -half.y
+            if(startPos.y < -halfExtents.y) // Check face y = -half.y
             {
-                double intersectTime = (-halfExtents.y - origin.y) / motion.y;
-                double intersectX = origin.x + motion.x * intersectTime;
-                double intersectZ = origin.z + motion.z * intersectTime;
+                double intersectTime = (-halfExtents.y - startPos.y) / motion.y;
+                double intersectX = startPos.x + motion.x * intersectTime;
+                double intersectZ = startPos.z + motion.z * intersectTime;
                 if(-halfExtents.x <= intersectX && intersectX <= halfExtents.x
                 && -halfExtents.z <= intersectZ && intersectZ <= halfExtents.z)
                     return true;
             }
-            else if(origin.y > halfExtents.y) // Check face y = +half.y
+            else if(startPos.y > halfExtents.y) // Check face y = +half.y
             {
-                double intersectTime = (halfExtents.y - origin.y) / motion.y;
-                double intersectX = origin.x + motion.x * intersectTime;
-                double intersectZ = origin.z + motion.z * intersectTime;
+                double intersectTime = (halfExtents.y - startPos.y) / motion.y;
+                double intersectX = startPos.x + motion.x * intersectTime;
+                double intersectZ = startPos.z + motion.z * intersectTime;
                 if(-halfExtents.x <= intersectX && intersectX <= halfExtents.x
                 && -halfExtents.z <= intersectZ && intersectZ <= halfExtents.z)
                     return true;

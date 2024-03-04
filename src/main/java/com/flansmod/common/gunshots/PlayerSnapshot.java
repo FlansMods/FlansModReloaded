@@ -26,7 +26,6 @@ public class PlayerSnapshot
     public static final PlayerSnapshot INVALID = new PlayerSnapshot();
 
     public boolean valid;
-    public Vec3 rootPos;
     public final PlayerHitbox[] hitboxes;
 
     public long time;
@@ -35,7 +34,6 @@ public class PlayerSnapshot
     {
         valid = false;
         hitboxes = new PlayerHitbox[EPlayerHitArea.NUM_AREAS];
-        rootPos = Vec3.ZERO;
         for(int i = 0; i < EPlayerHitArea.NUM_AREAS; i++)
         {
             hitboxes[i] = new PlayerHitbox(EPlayerHitArea.values()[i], Transform.IDENTITY, Maths.IdentityPosF());
@@ -48,13 +46,11 @@ public class PlayerSnapshot
         hitboxes[area.ordinal()].halfExtents = halfExtents;
     }
 
-    public void Raycast(@Nonnull Player player, @Nonnull Vec3 origin, @Nonnull Vec3 motion, @Nonnull List<HitResult> results)
+    public void Raycast(@Nonnull Player player, @Nonnull Vec3 startPos, @Nonnull Vec3 endPos, @Nonnull List<HitResult> results)
     {
-        Vec3 localPos = origin.subtract(rootPos);
-
         for(PlayerHitbox hitbox : hitboxes)
         {
-            if(hitbox.Raycast(localPos, motion))
+            if(hitbox.Raycast(startPos, endPos))
             {
                 results.add(new PlayerHitResult(player, hitbox));
             }

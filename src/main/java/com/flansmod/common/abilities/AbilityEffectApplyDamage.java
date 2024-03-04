@@ -4,6 +4,8 @@ import com.flansmod.common.actions.contexts.ActionGroupContext;
 import com.flansmod.common.actions.contexts.GunContext;
 import com.flansmod.common.actions.contexts.TriggerContext;
 import com.flansmod.common.actions.contexts.TargetsContext;
+import com.flansmod.common.gunshots.EPlayerHitArea;
+import com.flansmod.common.gunshots.PlayerHitResult;
 import com.flansmod.common.types.Constants;
 import com.flansmod.common.types.abilities.elements.AbilityEffectDefinition;
 import net.minecraft.world.damagesource.DamageSource;
@@ -27,12 +29,18 @@ public class AbilityEffectApplyDamage implements IAbilityEffect
 	public void TriggerServer(@Nonnull ActionGroupContext actionGroup, @Nonnull TriggerContext trigger, @Nonnull TargetsContext targets, @Nullable AbilityStack stacks)
 	{
 		DamageSource dmgSource = actionGroup.Gun.CreateDamageSource();
-		targets.ForEachEntity((triggerOn) -> {
+		targets.ForEachEntity((triggerOn) ->
+			{
 
-			// TODO: Headshot multipliers
+				// TODO: Headshot multipliers
+				float headshotMulti = 1.0f;
+				if (trigger.Hit instanceof PlayerHitResult playerHit)
+				{
+					if(playerHit.GetHitbox().area == EPlayerHitArea.HEAD)
+						headshotMulti = 1.4f;
+				}
 
-
-			triggerOn.hurt(dmgSource, DamageAmount(actionGroup, stacks));
+			triggerOn.hurt(dmgSource, headshotMulti * DamageAmount(actionGroup, stacks));
 			if(PreventDamageCooldown && triggerOn instanceof LivingEntity living)
 			{
 				living.hurtTime = 0;
