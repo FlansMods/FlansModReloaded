@@ -56,7 +56,11 @@ public class PartFabricationRecipe implements Recipe<WorkbenchBlockEntity>
 	@Nonnull
 	@Override
 	public NonNullList<Ingredient> getIngredients() { return InputIngredients; }
-
+	@Override
+	public boolean isIncomplete()
+	{
+		return InputIngredients.size() == 0;
+	}
 
 	public PartFabricationRecipe(@Nonnull RecipeType<?> type,
 								 @Nonnull ResourceLocation loc,
@@ -226,6 +230,15 @@ public class PartFabricationRecipe implements Recipe<WorkbenchBlockEntity>
 				inputs[i] = Ingredient.fromNetwork(buf);
 			ItemStack output = buf.readItem();
 			int time = buf.readInt();
+
+			StringBuilder sb = new StringBuilder("PartFab from Net: ");
+			sb.append(loc).append(", ").append(group).append(", ").append(count).append(", ");
+			for(Ingredient input : inputs)
+			{
+				sb.append(input.toJson()).append(", ");
+			}
+			FlansMod.LOGGER.info(sb.append(output).append(", ").append(time).toString());
+
 			return new PartFabricationRecipe(
 				FlansMod.PART_FABRICATION_RECIPE_TYPE.get(),
 				loc,

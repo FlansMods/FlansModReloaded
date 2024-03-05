@@ -54,6 +54,7 @@ import net.minecraft.world.entity.MobCategory;
 import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.ai.attributes.RangedAttribute;
 import net.minecraft.world.inventory.MenuType;
+import net.minecraft.world.inventory.RecipeBookType;
 import net.minecraft.world.item.*;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.item.crafting.RecipeType;
@@ -62,6 +63,7 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.client.event.RegisterRecipeBookCategoriesEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.crafting.CraftingHelper;
 import net.minecraftforge.common.extensions.IForgeMenuType;
@@ -93,7 +95,7 @@ public class FlansMod
 {
     public static final String MODID = "flansmod";
     public static final Logger LOGGER = LogUtils.getLogger();
-    public static boolean DEBUG = true;
+    public static boolean DEBUG = false;
 
     // Registers
     public static final DeferredRegister<Block> BLOCKS = DeferredRegister.create(ForgeRegistries.BLOCKS, MODID);
@@ -386,6 +388,14 @@ public class FlansMod
                 TieredPartIngredient.Serializer.INSTANCE);
         }
     }
+
+    @SubscribeEvent
+    public void OnRegisterRecipeBookCategories(@Nonnull RegisterRecipeBookCategoriesEvent event)
+    {
+        
+    }
+
+
 
     @SubscribeEvent
     public void OnReloadResources(AddReloadListenerEvent event)
