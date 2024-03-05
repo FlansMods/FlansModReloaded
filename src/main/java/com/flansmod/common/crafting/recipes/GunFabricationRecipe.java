@@ -60,6 +60,11 @@ public class GunFabricationRecipe implements Recipe<WorkbenchBlockEntity>
 	@Nonnull
 	@Override
 	public NonNullList<Ingredient> getIngredients() { return InputIngredients; }
+	@Override
+	public boolean isIncomplete()
+	{
+		return InputIngredients.size() == 0;
+	}
 
 	public GunFabricationRecipe(@Nonnull RecipeType<?> type,
 								@Nonnull ResourceLocation loc,

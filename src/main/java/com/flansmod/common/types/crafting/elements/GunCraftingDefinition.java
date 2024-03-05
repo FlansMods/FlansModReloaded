@@ -61,8 +61,8 @@ public class GunCraftingDefinition
 					return -1;
 				if(o2 == null)
 					return +1;
-				int hash1 = o1.getResultItem(RegistryAccess.EMPTY).getItem().hashCode();
-				int hash2 = o2.getResultItem(RegistryAccess.EMPTY).getItem().hashCode();
+				int hash1 = o1.Loc.hashCode();
+				int hash2 = o2.Loc.hashCode();
 				if(hash1 < hash2)
 					return -1;
 				else if(hash2 < hash1)

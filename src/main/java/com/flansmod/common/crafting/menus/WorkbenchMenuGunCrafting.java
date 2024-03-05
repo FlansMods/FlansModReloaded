@@ -66,6 +66,9 @@ public class WorkbenchMenuGunCrafting extends WorkbenchMenu
 	@Override
 	public boolean clickMenuButton(@Nonnull Player player, int buttonID)
 	{
+		// Byte should be unsigned
+		if(buttonID < 0)
+			buttonID += 256;
 		if(BUTTON_SET_RECIPE_SCROLL_0 <= buttonID && buttonID <= BUTTON_SET_RECIPE_SCROLL_MAX)
 		{
 			int scrollIndex = buttonID - BUTTON_SET_RECIPE_SCROLL_0;

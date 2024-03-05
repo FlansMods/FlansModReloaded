@@ -10,7 +10,7 @@
         "maxStackSize": 64,
         "tags": [
             "flansmod:part",
-            "forge:plates/aluminum"
+            "forge:plates/steel"
         ]
     },
     "modifiers": [],
