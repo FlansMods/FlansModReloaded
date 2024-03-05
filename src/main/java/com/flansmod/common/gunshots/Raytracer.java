@@ -67,11 +67,7 @@ public class Raytracer
                     PlayerMovementHistories.put(player, moves);
                 }
 
-                if (MinecraftHelpers.GetTick() % 20L == (event.side == LogicalSide.CLIENT ? 10L : 0L))
-                    moves.TakeSnapshot(player);
-                //PlayerSnapshot nextSnapshot = moves.GetNextSnapshotForWriting();
-                //nextSnapshot.SnapPlayer(player);
-                //moves.FinishedWriting();
+                moves.TakeSnapshot(player);
             }
         }
     }
