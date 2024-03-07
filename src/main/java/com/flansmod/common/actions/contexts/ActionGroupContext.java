@@ -679,7 +679,7 @@ public class ActionGroupContext
 	public float Spread() 					{ return ModifyFloat(STAT_SHOT_SPREAD).get(); }
 	public ESpreadPattern SpreadPattern() 	{ return (ESpreadPattern)ModifyEnum(STAT_SHOT_SPREAD_PATTERN, ESpreadPattern.FilledCircle, ESpreadPattern.class); }
 
-	public float RepeatDelayTicks() { return RepeatDelaySeconds() * 20.0f; }
+	public int RepeatDelayTicks() { return Maths.Ceil(RepeatDelaySeconds() * 20.0f); }
 	public int RoundsPerMinute() { return RepeatDelaySeconds() <= 0.00001f ? 0 : Maths.Ceil(60.0f / RepeatDelaySeconds()); }
 
 	@Override

@@ -10,6 +10,10 @@ import org.joml.Vector3f;
 
 public class Maths
 {
+    // Long maths
+    public static long Max(long a, long b) { return a > b ? a : b; }
+    public static long Min(long a, long b) { return a < b ? a : b; }
+
     // Integer maths
     public static int Modulo(int a, int b)
     {

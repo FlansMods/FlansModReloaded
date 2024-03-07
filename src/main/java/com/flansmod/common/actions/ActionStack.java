@@ -209,9 +209,15 @@ public class ActionStack
 			if(actionGroup.HasStarted())
 			{
 				if (IsClient)
+				{
 					actionGroup.OnTickClient();
+					if(!actionGroup.Context.Gun.GetShooter().IsLocalPlayerOwner())
+						actionGroup.CheckTimeout();
+				}
 				else
 					actionGroup.OnTickServer();
+
+
 			}
 			else
 			{
@@ -223,6 +229,8 @@ public class ActionStack
 			{
 				StopActionGroup(actionGroup.Context);
 			}
+
+
 		}
 	}
 	private void StopActionGroup(ActionGroupContext groupContext)
@@ -474,7 +482,7 @@ public class ActionStack
 
 		EActionResult result = TryUpdateInputHeld(groupContext, held);
 		// Send a message to the server about these actions if required
-		if (result == EActionResult.CanProcess && groupInstance.NeedsNetSync())
+		if (result == EActionResult.CanProcess && (groupInstance.NeedsNetSync() || !held))
 		{
 			ActionUpdateMessage updateMsg = new ActionUpdateMessage(groupContext, held ? EPressType.Hold : EPressType.Release, groupInstance.GetStartedTick());
 			updateMsg.AddTriggers(groupInstance, groupInstance.GetRequiredNetSyncMin(), groupInstance.GetRequiredNetSyncMax());

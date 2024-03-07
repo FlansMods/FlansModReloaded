@@ -51,6 +51,8 @@ public class ServerActionManager extends ActionManager
 			return;
 		}
 
+		FlansMod.LOGGER.info("Received server: "+msg.Data.GetPressType()+msg.Data.GetActionGroupContext(false));
+
 		ActionStack actionStack = groupContext.Gun.GetActionStack();
 		actionStack.Server_TryHandleMessage(msg, from);
 	}
