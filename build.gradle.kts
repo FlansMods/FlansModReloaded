@@ -12,6 +12,7 @@ import org.eclipse.jgit.revwalk.RevObject
 import org.eclipse.jgit.revwalk.RevTag
 import org.eclipse.jgit.revwalk.RevWalk
 import java.util.*
+import java.util.Arrays.asList
 import java.util.zip.ZipOutputStream
 import javax.xml.stream.events.Namespace
 
@@ -62,20 +63,54 @@ val config: Properties = file("gradle.properties").inputStream().let {
     return@let prop
 }
 
+val git: Git = Git.open(projectDir)
 val modBaseName = "flansmod"
-val modCurseForgeID = config["flansmod.curseforge"] as String
-val basicsCurseForgeID = config["basicparts.curseforge"] as String
-val vendersCurseForgeID = config["vendersgame.curseforge"] as String
 
+// FML Versioning, different to Forge?
+val fmlRange = config["fml.version.range"] as String
+
+// Forge versioning
+val forgeVersion = config["forge.version"] as String
+val forgeVersionMax = config["forge.version.max"] as String
+val forgeVersionRange = "[$forgeVersion, $forgeVersionMax)"
+
+// Minecraft versioning
 val mcVersion = config["minecraft.version"] as String
+val mcVersionMax = config["minecraft.version.max"] as String
+val mcVersionRange = "[$mcVersion, $mcVersionMax)"
 val mcFullVersion = "$mcVersion-${config["forge.version"]}"
+
+// JEI versioning
+val jeiVersion = config["jei.version"] as String
+val jeiVersionMax = config["jei.version.max"] as String
+val jeiVersionRange = "[$jeiVersion, $jeiVersionMax)"
+
+// Mod versioning
 val majorVersion = config["flansmod.version.major"] as String
 val minorVersion = config["flansmod.version.minor"] as String
-val jeiVersion = config["jei.version"] as String
 val modVersionNoBuild = "$majorVersion.$minorVersion"
-
-val git: Git = Git.open(projectDir)
 val modVersion = "$modVersionNoBuild.${getBuildNumber()}"
+val modCurseForgeID = config["flansmod.curseforge"] as String
+
+val packModVersionMin = config["packs.flansmod.version.min"] as String
+val packModVersionMax = config["packs.flansmod.version.max"] as String
+val packModVersionRange = "[$packModVersionMin, $packModVersionMax)"
+
+// Basic Parts versioning
+val basicsVersionMajor = config["basics.version.major"] as String
+val basicsVersionMinor = config["basics.version.minor"] as String
+val basicsVersionNoBuild = "$basicsVersionMajor.$basicsVersionMinor";
+val basicsVersion = "$basicsVersionNoBuild.${getBuildNumber()}"
+val basicsCurseForgeID = config["basics.curseforge"] as String
+
+// Vender's Game versioning
+val vendersVersionMajor = config["venders.version.major"] as String
+val vendersVersionMinor = config["venders.version.minor"] as String
+val vendersVersionNoBuild = "$vendersVersionMajor.$vendersVersionMinor";
+val vendersVersion = "$vendersVersionNoBuild.${getBuildNumber()}"
+val vendersCurseForgeID = config["venders.curseforge"] as String
+
+
 
 
 // Mojang ships Java 17 to end users in 1.18+, so your mod should target Java 17.
@@ -157,11 +192,20 @@ tasks.withType<Jar> {
 
     archiveVersion.set(mcVersion)
 
-    // replace stuff in mcmod.info, nothing else
-    filesMatching("/mcmod.info") {
-        expand(mapOf(
-                "version" to project.version,
-                "mcversion" to mcVersion
+    // replace stuff in mcmod.info and mods.toml
+    filesMatching(listOf("*/flansmod.toml", "*/flansvendersgame.toml", "*/flansbasicparts.toml"))
+    {
+        expand(
+            mapOf(
+                    "fmlrange" to fmlRange,
+                    "flansmodversion" to modVersionNoBuild,
+                    "flansvendersgameversion" to vendersVersion,
+                    "flansbasicpartsversion" to basicsVersion,
+                    "mcversionrange" to mcVersionRange,
+                    "forgeversionrange" to forgeVersionRange,
+                    "flansmodversionrange" to packModVersionRange,
+                    "jeiversionrange" to jeiVersionRange,
+
         ))
     }
 }
