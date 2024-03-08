@@ -41,6 +41,6 @@ public class ScopeAction extends AimDownSightAction
 	@Override
 	public boolean ShouldRender(GunContext context)
 	{
-		return false;
+		return Magnitude > 0.9f;
 	}
 }

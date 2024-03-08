@@ -82,6 +82,9 @@ public class WorkbenchMenuModification extends WorkbenchMenu
 	@Override
 	public boolean clickMenuButton(@Nonnull Player player, int buttonID)
 	{
+		// Signed byte please
+		if(buttonID < 0)
+			buttonID += 256;
 		if(BUTTON_SELECT_SKIN_0 <= buttonID && buttonID <= BUTTON_SELECT_SKIN_MAX)
 		{
 			int skinIndex = buttonID - BUTTON_SELECT_SKIN_0;
