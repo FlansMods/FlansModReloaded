@@ -624,7 +624,9 @@ public abstract class GunContext implements IStatCalculatorContext
 
 	public void SetPaintjobName(@Nonnull String paint)
 	{
-		FlanItem.SetPaintjobName(GetItemStack(), paint);
+		ItemStack gunStack = GetItemStack();
+		FlanItem.SetPaintjobName(gunStack, paint);
+		SetItemStack(gunStack);
 	}
 
 	// --------------------------------------------------------------------------
