@@ -7,6 +7,7 @@ import com.flansmod.common.gunshots.EPressType;
 import com.flansmod.common.item.FlanItem;
 import com.flansmod.common.item.GunItem;
 import com.flansmod.common.network.bidirectional.ActionUpdateMessage;
+import com.flansmod.common.types.guns.elements.ERepeatMode;
 import com.flansmod.common.types.vehicles.EPlayerInput;
 import com.flansmod.util.Maths;
 import net.minecraft.client.Minecraft;
@@ -115,48 +116,60 @@ public class ClientActionManager extends ActionManager
 
 			// See if we are updating an existing action, or if we need to start fresh
 			ActionGroupInstance groupInstance = actionStack.TryGetGroupInstance(groupContext);
+			EPressType pressTypeToProcess = msg.Data.GetPressType();
 			if(groupInstance == null)
 			{
-				if(msg.Data.GetPressType() != EPressType.Press)
+				if(pressTypeToProcess != EPressType.Press)
+				{
 					FlansMod.LOGGER.warn("Received ActionUpdateMessage with wrong press type for action that was not already running");
+					if(pressTypeToProcess == EPressType.Hold)
+						pressTypeToProcess = EPressType.Press;
+				}
 				groupInstance = actionStack.GetOrCreateGroupInstance(groupContext);
-			}
-
-			if(msg.Data.GetPressType() == EPressType.Press)
 				groupInstance.OnStartClientFromNetwork(msg.Data.GetStartTick());
+			}
 
 			// Now run through all the triggers that are bundled in this message and run any client side effects
-			for(var kvp : msg.Data.GetTriggers())
+			switch(pressTypeToProcess)
 			{
-				int triggerIndex = kvp.getKey();
-				int actionIndex = 0;
-				for(ActionInstance action : groupInstance.GetActions())
+				case Press ->
 				{
-					ActionInstance.NetData netData = msg.Data.GetNetData(triggerIndex, actionIndex);
-					action.UpdateFromNetData(netData, triggerIndex);
-					action.OnTriggerClient(triggerIndex);
-					actionIndex++;
+					for(var kvp : msg.Data.GetTriggers())
+					{
+						int triggerIndex = kvp.getKey();
+						int actionIndex = 0;
+						for(ActionInstance action : groupInstance.GetActions())
+						{
+							ActionInstance.NetData netData = msg.Data.GetNetData(triggerIndex, actionIndex);
+							action.UpdateFromNetData(netData, triggerIndex);
+							action.OnTriggerClient(triggerIndex);
+							actionIndex++;
+						}
+					}
 				}
-			}
-
-			if(msg.Data.GetPressType() == EPressType.Release)
-			{
-				// Check the action stack for this action/gun pairing and see if any of them are waiting for mouse release
-				long numTicks = msg.Data.GetLastTriggerTick() - groupInstance.GetStartedTick();
-				int expectedTriggerCount = Maths.Floor(numTicks / groupContext.RepeatDelayTicks()) + 1;
-				int serverTriggerCount = groupInstance.GetTriggerCount();
-
-				if(expectedTriggerCount > serverTriggerCount)
+				case Release ->
 				{
-					FlansMod.LOGGER.info("Client expected to trigger " + expectedTriggerCount + " repeat(s), but server only triggered " + serverTriggerCount + " repeat(s)");
-				}
-				else if(expectedTriggerCount < serverTriggerCount)
-				{
-					FlansMod.LOGGER.info("Client expected to trigger " + expectedTriggerCount + " repeat(s), but server triggered " + serverTriggerCount + " many repeat(s)");
-				}
-				groupInstance.UpdateInputHeld(false);
+					// Check the action stack for this action/gun pairing and see if any of them are waiting for mouse release
+					switch(groupContext.RepeatMode())
+					{
+						case FullAuto, Minigun -> {
+							long numTicks = msg.Data.GetLastTriggerTick() - groupInstance.GetStartedTick();
+							int expectedTriggerCount = Maths.Floor(numTicks / groupContext.RepeatDelayTicks()) + 1;
+							int serverTriggerCount = groupInstance.GetTriggerCount();
+							if(expectedTriggerCount > serverTriggerCount)
+							{
+								FlansMod.LOGGER.info("Client expected to trigger " + expectedTriggerCount + " repeat(s), but server only triggered " + serverTriggerCount + " repeat(s)");
+							}
+							else if(expectedTriggerCount < serverTriggerCount)
+							{
+								FlansMod.LOGGER.info("Client expected to trigger " + expectedTriggerCount + " repeat(s), but server triggered " + serverTriggerCount + " many repeat(s)");
+							}
+						}
+					}
 
-				groupInstance.OnFinishClient();
+					groupInstance.UpdateInputHeld(false);
+					groupInstance.OnFinishClient();
+				}
 			}
 		}
 	}
