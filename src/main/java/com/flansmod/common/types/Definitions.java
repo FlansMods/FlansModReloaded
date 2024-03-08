@@ -27,58 +27,65 @@ public class Definitions<TDefinitionType extends JsonDefinition> extends SimpleJ
 	private static final ResourceLocation EMPTY = new ResourceLocation("empty");
 	private static final Logger LOGGER = LogUtils.getLogger();
 	private static final Gson GSON = createSerializer().create();
-	private Map<ResourceLocation, TDefinitionType> tables = ImmutableMap.of();
-	private Map<Integer, TDefinitionType> hashmap = new HashMap();
+	private Map<ResourceLocation, TDefinitionType> keyedDefinitions = ImmutableMap.of();
+	private Map<ResourceLocation, TDefinitionType> prefixKeyedDefinitions = ImmutableMap.of();
+	private final Map<Integer, TDefinitionType> hashKeyedDefinitions = new HashMap<>();
 	private final TDefinitionType INVALID;
+	private final String FolderName;
 	public interface Factory<TDefinitionType  extends JsonDefinition>
 	{
-		TDefinitionType Create(ResourceLocation key);
+		TDefinitionType Create(@Nonnull ResourceLocation key);
 	}
 	private final Factory<TDefinitionType> createFunc;
 
-	public Definitions(String folderName,
-					   Class<? extends TDefinitionType> clazz,
-					   TDefinitionType invalid,
-					   Factory<TDefinitionType> createFunctor)
+	public Definitions(@Nonnull String folderName,
+					   @Nonnull Class<? extends TDefinitionType> clazz,
+					   @Nonnull TDefinitionType invalid,
+					   @Nonnull Factory<TDefinitionType> createFunctor)
 	{
 		super(GSON, folderName.toLowerCase());
 		createFunc = createFunctor;
+		FolderName = folderName;
 		INVALID = invalid;
 		DefinitionParser.IterativelyCreateParsers(clazz);
 	}
 
 	@Nonnull
-	public TDefinitionType Get(ResourceLocation location)
+	public TDefinitionType Get(@Nonnull ResourceLocation location)
 	{
-		return tables.getOrDefault(location, INVALID);
+		TDefinitionType def = keyedDefinitions.get(location);
+		if(def != null)
+			return def;
+		return prefixKeyedDefinitions.getOrDefault(location, INVALID);
 	}
 
 	@Nonnull
 	public TDefinitionType ByHash(int hash)
 	{
-		return hashmap.getOrDefault(hash, INVALID);
+		return hashKeyedDefinitions.getOrDefault(hash, INVALID);
 	}
 
-	public void RunOnMatch(String key, Consumer<TDefinitionType> resultFunction)
+	public void RunOnMatch(@Nonnull String key, @Nonnull Consumer<TDefinitionType> resultFunction)
 	{
-		for(var kvp : tables.entrySet())
+		for(var kvp : keyedDefinitions.entrySet())
 		{
 			if(kvp.getKey().getPath().equals(key))
 				resultFunction.accept(kvp.getValue());
 		}
 	}
-	public void RunOnMatches(Function<TDefinitionType, Boolean> matchFunction, Consumer<TDefinitionType> resultFunction)
+	public void RunOnMatches(@Nonnull Function<TDefinitionType, Boolean> matchFunction, @Nonnull Consumer<TDefinitionType> resultFunction)
 	{
-		for(var kvp : tables.entrySet())
+		for(var kvp : keyedDefinitions.entrySet())
 		{
 			if(matchFunction.apply(kvp.getValue()))
 				resultFunction.accept(kvp.getValue());
 		}
 	}
-	public List<TDefinitionType> Find(Function<TDefinitionType, Boolean> matchFunction)
+	@Nonnull
+	public List<TDefinitionType> Find(@Nonnull Function<TDefinitionType, Boolean> matchFunction)
 	{
 		List<TDefinitionType> defs = new ArrayList<>();
-		for(var kvp : tables.entrySet())
+		for(var kvp : keyedDefinitions.entrySet())
 		{
 			if(matchFunction.apply(kvp.getValue()))
 				defs.add(kvp.getValue());
@@ -86,9 +93,10 @@ public class Definitions<TDefinitionType extends JsonDefinition> extends SimpleJ
 		return defs;
 	}
 
-	protected void apply(Map<ResourceLocation, JsonElement> sources, ResourceManager resourceManager, ProfilerFiller p_79216_)
+	protected void apply(@Nonnull Map<ResourceLocation, JsonElement> sources, @Nonnull ResourceManager resourceManager, @Nonnull ProfilerFiller p_79216_)
 	{
 		ImmutableMap.Builder<ResourceLocation, TDefinitionType> builder = ImmutableMap.builder();
+		ImmutableMap.Builder<ResourceLocation, TDefinitionType> builderWithPrefix = ImmutableMap.builder();
 		JsonElement jsonelement = sources.remove(EMPTY);
 		if (jsonelement != null)
 		{
@@ -103,6 +111,7 @@ public class Definitions<TDefinitionType extends JsonDefinition> extends SimpleJ
 				TDefinitionType def = createFunc.Create(key);
 				DefinitionParser.LoadFromJSON(def, value);
 				builder.put(key, def);
+				builderWithPrefix.put(key.withPrefix(FolderName+"/"), def);
 			}
 			catch (Exception exception)
 			{
@@ -111,21 +120,23 @@ public class Definitions<TDefinitionType extends JsonDefinition> extends SimpleJ
 
 		});
 		builder.put(EMPTY, INVALID);
-		ImmutableMap<ResourceLocation, TDefinitionType> immutablemap = builder.build();
-		this.tables = immutablemap;
-		for(var kvp : tables.entrySet())
-		{
-			hashmap.put(kvp.getKey().hashCode(), kvp.getValue());
-		}
-	}
+		builderWithPrefix.put(EMPTY.withPrefix(FolderName+"/"), INVALID);
+		keyedDefinitions = builder.build();
+		prefixKeyedDefinitions = builderWithPrefix.build();
 
-	public JsonElement serialize(TDefinitionType def)
+		for(var kvp : keyedDefinitions.entrySet())
+			hashKeyedDefinitions.put(kvp.getKey().hashCode(), kvp.getValue());
+		for(var kvp : prefixKeyedDefinitions.entrySet())
+			hashKeyedDefinitions.put(kvp.getKey().hashCode(), kvp.getValue());
+	}
+	@Nonnull
+	public JsonElement serialize(@Nonnull TDefinitionType def)
 	{
 		return GSON.toJsonTree(def);
 	}
-
+	@Nonnull
 	public Set<ResourceLocation> getIds()
 	{
-		return this.tables.keySet();
+		return this.keyedDefinitions.keySet();
 	}
 }

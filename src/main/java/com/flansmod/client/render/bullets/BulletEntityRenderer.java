@@ -9,6 +9,7 @@ import com.flansmod.common.projectiles.BulletEntity;
 import com.flansmod.common.types.bullets.BulletDefinition;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
+import com.mojang.math.Axis;
 import net.minecraft.client.model.geom.EntityModelSet;
 import net.minecraft.client.model.geom.ModelLayerLocation;
 import net.minecraft.client.model.geom.ModelPart;
@@ -19,6 +20,7 @@ import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.Mth;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
@@ -53,7 +55,10 @@ public class BulletEntityRenderer extends EntityRenderer<BulletEntity>
 			if(bulletRenderer != null)
 			{
 				pose.pushPose();
-				pose.translate(-0.5f, -0.5f, -0.5f);
+				pose.translate(0f, bullet.getBbHeight() * 0.5f, 0f);
+				pose.mulPose(Axis.YP.rotationDegrees(Mth.lerp(partialTick, bullet.yRotO, bullet.getYRot()) - 90.0F));
+				pose.mulPose(Axis.ZP.rotationDegrees(Mth.lerp(partialTick, bullet.xRotO, bullet.getXRot())));
+
 				bulletRenderer.RenderDirect(
 					bullet,
 					new ItemStack(item),

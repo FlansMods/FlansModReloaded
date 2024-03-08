@@ -110,6 +110,9 @@ val vendersVersionNoBuild = "$vendersVersionMajor.$vendersVersionMinor";
 val vendersVersion = "$vendersVersionNoBuild.${getBuildNumber()}"
 val vendersCurseForgeID = config["venders.curseforge"] as String
 
+// Curse
+val curseForgeReleaseType = config["curseforge.releasetype"] as String
+
 
 
 
@@ -665,7 +668,7 @@ fun createCurseForgeUploadTask(curseForgeID: String, main: Jar, src: Jar): Curse
             addGameVersion(mcVersion)
             changelog = file("CHANGELOG.md")
             changelogType = "markdown"
-            releaseType = "beta"
+            releaseType = curseForgeReleaseType
 
             mainArtifact(main)
             //addArtifact(src) // Don't add sources, it is confusing people

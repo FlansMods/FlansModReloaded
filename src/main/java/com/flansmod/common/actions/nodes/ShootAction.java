@@ -439,24 +439,25 @@ public class ShootAction extends ActionInstance
 			// Okay, so now we can fire those shots
 			for(Gunshot shot : shotCollection.Shots)
 			{
-				GunshotContext gunshotContext = GunshotContext.of(Group.Context, shot);
-				if(gunshotContext.IsValid())
+				if(shot.IsProjectile())
 				{
-					if(gunshotContext.IsHitscan())
-					{
-						// Hitscan weapons we resolve the hits instantly
-						ServerProcessImpact(level, shot, gunshotContext);
-					}
+					GunshotContext projectileContext = GunshotContext.projectile(Group.Context, shot.bulletDef, shot.ProjectileIndex());
+					// Projectiles, a bullet entity will need to be spawned
+					if(projectileContext.IsValid())
+						ServerSpawnBullet(level, shot, projectileContext);
 					else
-					{
-						// Otherwise, a bullet entity will need to be spawned
-						ServerSpawnBullet(level, shot, gunshotContext);
-					}
+						FlansMod.LOGGER.error("Invalid projectile shot with bullet " + shot.bulletDef);
 				}
-				else FlansMod.LOGGER.error("Invalid shot with bullet " + shot.bulletDef);
+				else
+				{
+					GunshotContext hitscanContext = GunshotContext.hitscan(Group.Context, shot.bulletDef, shot.HitscanIndex());
+					// Hitscan weapons we resolve the hits instantly
+					if(hitscanContext.IsValid())
+						ServerProcessImpact(level, shot, hitscanContext);
+					else
+						FlansMod.LOGGER.error("Invalid hitscan shot with bullet " + shot.bulletDef);
+				}
 			}
-
-
 		}
 
 		float loudness = Group.Context.Loudness();

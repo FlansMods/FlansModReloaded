@@ -17,6 +17,7 @@ import javax.annotation.Nonnull;
 public class Gunshot
 {
 	private static final HitResult[] NO_HITS = new HitResult[0];
+	private static final int PROJECTILE_OFFSET = 16000;
 
 	public BulletDefinition bulletDef = BulletDefinition.INVALID;
 	public int fromShotDefIndex = 0;
@@ -27,6 +28,13 @@ public class Gunshot
 	public int fromShotIndex = 0;
 	// The index of bullet that was consumed from the mag
 	public int fromBulletIndex = 0;
+
+	public boolean IsProjectile() {
+		return fromShotDefIndex >= PROJECTILE_OFFSET;
+	}
+	public int HitscanIndex() { return fromShotDefIndex; }
+	public int ProjectileIndex() { return fromShotDefIndex - PROJECTILE_OFFSET; }
+
 	@Nonnull
 	public Vec3 Endpoint() { return new Vec3(origin.x + trajectory.x, origin.y + trajectory.y, origin.z + trajectory.z); }
 	@Nonnull
@@ -44,7 +52,7 @@ public class Gunshot
 	@Nonnull
 	public Gunshot FromProjectile(int index)
 	{
-		fromShotDefIndex = 1000 + index;
+		fromShotDefIndex = PROJECTILE_OFFSET + index;
 		return this;
 	}
 	@Nonnull

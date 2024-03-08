@@ -331,6 +331,7 @@ public class FlansMod
         modEventBus.addListener(this::CommonInit);
         ACTIONS_SERVER.HookServer(modEventBus);
         FlansModPacketHandler.RegisterMessages();
+        ContextSerializers.RegisterSerializers();
         modEventBus.addListener(this::OnRegsiterEvent);
 
         new NpcRelationshipCapabilityAttacher();

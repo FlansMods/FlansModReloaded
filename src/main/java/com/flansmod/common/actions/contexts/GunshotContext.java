@@ -62,6 +62,11 @@ public class GunshotContext
 		return null;
 	}
 	@Nonnull
+	public static GunshotContext of(@Nonnull GunshotContext other)
+	{
+		return new GunshotContext(other.ActionGroup, other.Bullet, other.IsProjectile, other.DefIndex);
+	}
+	@Nonnull
 	public static GunshotContext empty(@Nonnull ActionGroupContext actionGroupContext)
 	{
 		return new GunshotContext(actionGroupContext, BulletDefinition.INVALID, false, 0);

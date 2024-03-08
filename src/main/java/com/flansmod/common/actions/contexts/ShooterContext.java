@@ -94,6 +94,11 @@ public abstract class ShooterContext
 		return isClient ? client(shooterID, ownerID) : server(shooterID, ownerID);
 	}
 	@Nonnull
+	public static ShooterContext of(@Nonnull UUID shooterID, @Nonnull UUID ownerID)
+	{
+		return MinecraftHelpers.IsClient() ? client(shooterID, ownerID) : server(shooterID, ownerID);
+	}
+	@Nonnull
 	public static ShooterContext server(@Nonnull Entity shooter) { return FlansMod.CONTEXT_CACHE.GetShooter(shooter); }
 	@Nonnull
 	public static ShooterContext server(@Nonnull Entity shooter, @Nullable Entity owner) { return FlansMod.CONTEXT_CACHE.GetShooter(shooter, owner); }
