@@ -16,6 +16,7 @@ import com.flansmod.common.types.magazines.EAmmoLoadMode;
 import com.flansmod.common.types.magazines.MagazineDefinition;
 import com.flansmod.util.MinecraftHelpers;
 
+import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.item.ItemStack;
@@ -42,12 +43,15 @@ public class GunItemRenderer extends FlanItemModelRenderer
             : GunContext.of(stack, EContextSide.Client);
         if(gunContext.IsValid())
         {
-            // If there is a valid action stack applicable to this gun, scan it for animation actions
             ActionStack actionStack = gunContext.GetActionStack();
-            for(ActionGroupInstance group : actionStack.GetActiveActionGroups())
-                for (ActionInstance action : group.GetActions())
-                    if (!action.ShouldRender(gunContext))
-                        return;
+            // If there is a valid action stack applicable to this gun, scan it for animation actions
+            if(heldByEntity instanceof LocalPlayer)
+            {
+                for (ActionGroupInstance group : actionStack.GetActiveActionGroups())
+                    for (ActionInstance action : group.GetActions())
+                        if (!action.ShouldRender(gunContext))
+                            return;
+            }
 
             // Find our animation set
             FlanimationDefinition animationSet = FlansModClient.ANIMATIONS.Get(new ResourceLocation(gunContext.CacheGunDefinition().animationSet));
