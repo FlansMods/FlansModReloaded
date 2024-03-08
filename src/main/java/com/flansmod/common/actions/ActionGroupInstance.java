@@ -410,23 +410,24 @@ public class ActionGroupInstance
 	{
 		if(HasStarted())
 		{
-			if (HasReceivedNetSync())
+			switch (RepeatMode())
 			{
-				switch (RepeatMode())
-				{
-					case Minigun, FullAuto -> {
+				case Minigun, FullAuto -> {
+					if (HasReceivedNetSync())
+					{
 						if (GetTicksSinceLastNetSync() > FullAutoTimeout())
 						{
 							FlansMod.LOGGER.warn(Context + " timed out [" + MinecraftHelpers.GetTick() + "] after " + FullAutoTimeout() + " ticks because it stopped receiving NetSyncs");
 							SetFinished();
 						}
 					}
+					else if (GetTicksSinceStart() >= TIMEOUT_AFTER_NO_NETSYNC)
+					{
+
+						FlansMod.LOGGER.warn(Context+" timed out ["+MinecraftHelpers.GetTick()+"] after "+TIMEOUT_AFTER_NO_NETSYNC+" ticks because it was never given a NetSync");
+						SetFinished();
+					}
 				}
-			}
-			else if (GetTicksSinceStart() >= TIMEOUT_AFTER_NO_NETSYNC)
-			{
-				FlansMod.LOGGER.warn(Context+" timed out ["+MinecraftHelpers.GetTick()+"] after "+TIMEOUT_AFTER_NO_NETSYNC+" ticks because it was never given a NetSync");
-				SetFinished();
 			}
 		}
 	}

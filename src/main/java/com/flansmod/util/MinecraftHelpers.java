@@ -168,6 +168,15 @@ public class MinecraftHelpers
 			Minecraft.getInstance().options.mainHand().get() :
 			Minecraft.getInstance().options.mainHand().get().getOpposite();
 	}
+	@OnlyIn(Dist.CLIENT)
+	@Nonnull
+	public static HumanoidArm GetArm(@Nonnull ItemDisplayContext hand)
+	{
+		return switch(hand) {
+			case FIRST_PERSON_LEFT_HAND, THIRD_PERSON_LEFT_HAND -> HumanoidArm.LEFT;
+			default -> HumanoidArm.RIGHT;
+		};
+	}
 
 	@OnlyIn(Dist.CLIENT)
 	@Nonnull

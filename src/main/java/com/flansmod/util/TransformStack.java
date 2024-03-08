@@ -152,11 +152,7 @@ public class TransformStack extends Stack<Transform>
 		}
 	}
 
-	public void scale(float x, float y, float z)
-	{
-		// TODO: This is not accurate
-		add(Transform.FromScale(x, () -> "scale[UNIFORM - TODO]"));
-	}
+	public void scale(float x, float y, float z) { add(Transform.FromScale(new Vector3f(x, y, z), () -> "scale")); }
 	public void translate(double x, double y, double z)
 	{
 		add(Transform.FromPos(x, y, z, () -> "translate"));

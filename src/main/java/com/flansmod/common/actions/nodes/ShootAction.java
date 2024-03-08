@@ -669,7 +669,7 @@ public class ShootAction extends ActionInstance
 		if(Group.Context.Gun.GetShooter().Entity() instanceof Player player)
 		{
 			PlayerSnapshot snapshot = Raytracer.ForLevel(player.level()).GetSnapshot(player, nTicksAgo);
-			snapshot.GetMuzzlePosition();
+			// TODO : snapshot.GetMuzzlePosition();
 		}
 		else if(Group.Context.Gun.GetShooter().Entity() instanceof LivingEntity living)
 		{

@@ -119,11 +119,12 @@ public class PlayerHitbox
     // ----------------------------------------------------------
     // Debug Rendering
     @OnlyIn(Dist.CLIENT)
-    public void debugRender(Vector4f colour)
+    public void debugRender(@Nonnull Vec3 withOffset, @Nonnull Vector4f colour)
     {
-        Transform renderPos = transform; //.Translate(0.0d, 0.0d, 2.0d);
-        
+        Transform renderPos = Transform.Compose(Transform.FromPos(withOffset), transform); //.Translate(0.0d, 0.0d, 2.0d);
+
         DebugRenderer.RenderCube(renderPos, 1, colour, halfExtents);
+        DebugRenderer.RenderAxes(renderPos, 1, new Vector4f(1f, 1f, 1f, 1f));
         //Vector3f quarterExtents = new Vector3f(halfExtents.x * 0.5f, halfExtents.y * 0.5f, halfExtents.z * 0.5f);
         //DebugRenderer.RenderCube(renderPos, 40, colour, quarterExtents);
 

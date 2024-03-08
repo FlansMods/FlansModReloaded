@@ -186,7 +186,9 @@ public abstract class FlanItemModelRenderer extends BlockEntityWithoutLevelRende
                 switch(transformType)
                 {
                     case GUI -> {
-                        transformStack.add(Transform.FromScale(-2.0f, () -> "\"Scale to GUI size\""));
+                        transformStack.add(Transform.FromEuler(0f, 0f, 180f));
+                        transformStack.add(Transform.FromPos(1d, 0d, 0d));
+                        //transformStack.add(Transform.FromScale(new Vector3f(-2.0f, -2.0f, 2.0f), () -> "\"Scale to GUI size\""));
                         poseStack = transformStack.Top().ToNewPoseStack();
                         poseStack.scale(-1f, 1f, 1f);
                         Lighting.setupForFlatItems();

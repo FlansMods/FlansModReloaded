@@ -18,6 +18,8 @@ import org.joml.Quaternionf;
 import org.joml.Vector4f;
 import org.lwjgl.system.linux.Stat;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -37,7 +39,11 @@ public class DecalRenderer
 		MinecraftForge.EVENT_BUS.addListener(this::ClientTick);
 	}
 
-	public void AddDecal(ResourceLocation texture, Vec3 position, Direction direction, float yaw, int lifetime)
+	public void AddDecal(@Nonnull ResourceLocation texture,
+						 @Nonnull Vec3 position,
+						 @Nonnull Direction direction,
+						 float yaw,
+						 int lifetime)
 	{
 		AddDecal(texture,
 			position,
@@ -48,7 +54,11 @@ public class DecalRenderer
 			lifetime);
 	}
 
-	public void AddDecal(ResourceLocation texture, Vec3 position, Vec3 normal, float yaw, int lifetime)
+	public void AddDecal(@Nonnull ResourceLocation texture,
+						 @Nonnull Vec3 position,
+						 @Nonnull Vec3 normal,
+						 float yaw,
+						 int lifetime)
 	{
 		if(!DecalsByTexture.containsKey(texture))
 			DecalsByTexture.put(texture, new DecalLayerInfo());
@@ -56,14 +66,25 @@ public class DecalRenderer
 		DecalsByTexture.get(texture).AddDecal(position, normal, yaw, lifetime);
 	}
 
-	public void AddOrUpdateDecal(ResourceLocation texture, UUID uuid, Vec3 position, Vec3 normal, float yaw, int lifetime)
+	public void AddOrUpdateDecal(@Nonnull ResourceLocation texture,
+								 @Nullable UUID uuid,
+								 @Nonnull Vec3 position,
+								 @Nonnull Vec3 normal,
+								 float yaw,
+								 int lifetime)
 	{
 		if(!DecalsByTexture.containsKey(texture))
 			DecalsByTexture.put(texture, new DecalLayerInfo());
 
 		DecalsByTexture.get(texture).AddOrUpdateDecal(uuid, position, normal, yaw, lifetime);
 	}
-	public void AddOrUpdateDecal(ResourceLocation texture, UUID uuid, Vec3 position, Vec3 normal, Vector4f colour, float yaw, int lifetime)
+	public void AddOrUpdateDecal(@Nonnull ResourceLocation texture,
+								 @Nullable UUID uuid,
+								 @Nonnull Vec3 position,
+								 @Nonnull Vec3 normal,
+								 @Nonnull Vector4f colour,
+								 float yaw,
+								 int lifetime)
 	{
 		if(!DecalsByTexture.containsKey(texture))
 			DecalsByTexture.put(texture, new DecalLayerInfo());
@@ -71,15 +92,14 @@ public class DecalRenderer
 		DecalsByTexture.get(texture).AddOrUpdateDecal(uuid, position, normal, colour, yaw, lifetime);
 	}
 
-	public void ClientTick(TickEvent.ClientTickEvent event)
+	public void ClientTick(@Nonnull TickEvent.ClientTickEvent event)
 	{
-		for(var list : DecalsByTexture.values())
-		{
-			list.ClientTick();
-		}
+		if(event.phase == TickEvent.Phase.START)
+			for(var list : DecalsByTexture.values())
+				list.ClientTick();
 	}
 
-	public void RenderTick(RenderLevelStageEvent event)
+	public void RenderTick(@Nonnull RenderLevelStageEvent event)
 	{
 		if (event.getStage() == RenderLevelStageEvent.Stage.AFTER_PARTICLES)
 		{
@@ -109,7 +129,7 @@ public class DecalRenderer
 			return StaticDecals.size() + DynamicDecals.size() > 0;
 		}
 
-		public void AddDecal(Vec3 position, Vec3 normal, float yaw, int lifetime)
+		public void AddDecal(@Nonnull Vec3 position, @Nonnull Vec3 normal, float yaw, int lifetime)
 		{
 			if(StaticDecals.size() >= MAX_DECALS_PER_TEXTURE)
 			{
@@ -118,13 +138,19 @@ public class DecalRenderer
 			StaticDecals.add(new DecalInfo(position, normal, yaw, lifetime));
 		}
 
-		public void AddOrUpdateDecal(UUID uuid, Vec3 position, Vec3 normal, float yaw, int lifetime)
+		public void AddOrUpdateDecal(@Nullable UUID uuid, @Nonnull Vec3 position, @Nonnull Vec3 normal, float yaw, int lifetime)
 		{
-			DynamicDecals.put(uuid, new DecalInfo(position, normal, yaw, lifetime));
+			if(uuid != null)
+				DynamicDecals.put(uuid, new DecalInfo(position, normal, yaw, lifetime));
+			else
+				StaticDecals.add(new DecalInfo(position, normal, yaw, lifetime));
 		}
-		public void AddOrUpdateDecal(UUID uuid, Vec3 position, Vec3 normal, Vector4f colour, float yaw, int lifetime)
+		public void AddOrUpdateDecal(@Nullable UUID uuid, @Nonnull Vec3 position, @Nonnull Vec3 normal, @Nonnull Vector4f colour, float yaw, int lifetime)
 		{
-			DynamicDecals.put(uuid, new DecalInfo(position, normal, colour, yaw, lifetime));
+			if(uuid != null)
+				DynamicDecals.put(uuid, new DecalInfo(position, normal, colour, yaw, lifetime));
+			else
+				StaticDecals.add(new DecalInfo(position, normal, colour, yaw, lifetime));
 		}
 
 		public void ClientTick()
@@ -146,7 +172,7 @@ public class DecalRenderer
 				DynamicDecals.remove(remove);
 		}
 
-		public void RenderTick(Tesselator tesselator, PoseStack poseStack, Vec3 pos, float partialTick)
+		public void RenderTick(@Nonnull Tesselator tesselator, @Nonnull PoseStack poseStack, @Nonnull Vec3 pos, float partialTick)
 		{
 			RenderSystem.enableBlend();
 			RenderSystem.blendFunc(GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
@@ -160,14 +186,17 @@ public class DecalRenderer
 
 	public static class DecalInfo
 	{
+		@Nonnull
 		private final Vec3 Position;
+		@Nonnull
 		private final Vec3 Normal;
+		@Nonnull
 		private final Vector4f Colour;
 		private final float Yaw;
 		private final int Lifetime;
 		private int TicksExisted = 0;
 
-		public DecalInfo(Vec3 pos, Vec3 norm, Vector4f colour, float yaw, int life)
+		public DecalInfo(@Nonnull Vec3 pos, @Nonnull Vec3 norm, @Nonnull Vector4f colour, float yaw, int life)
 		{
 			Position = pos;
 			Normal = norm;
@@ -175,7 +204,7 @@ public class DecalRenderer
 			Yaw = yaw;
 			Lifetime = life;
 		}
-		public DecalInfo(Vec3 pos, Vec3 norm, float yaw, int life)
+		public DecalInfo(@Nonnull Vec3 pos, @Nonnull Vec3 norm, float yaw, int life)
 		{
 			this(pos, norm, new Vector4f(1f, 1f, 1f, 1f), yaw, life);
 		}
@@ -190,7 +219,7 @@ public class DecalRenderer
 			return TicksExisted >= Lifetime;
 		}
 
-		public void Render(Tesselator tesselator, PoseStack poseStack, Vec3 cameraPos, float dt)
+		public void Render(@Nonnull Tesselator tesselator, @Nonnull PoseStack poseStack, @Nonnull Vec3 cameraPos, float dt)
 		{
 			poseStack.pushPose();
 			Vec3 toCamera = Maths.Sub(Position, cameraPos);

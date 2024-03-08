@@ -1,5 +1,6 @@
 package com.flansmod.common.gunshots.snapshots;
 
+import com.flansmod.client.render.debug.DebugRenderer;
 import com.flansmod.common.gunshots.EPlayerHitArea;
 import com.flansmod.common.gunshots.PlayerSnapshot;
 import com.flansmod.common.item.GunItem;
@@ -18,6 +19,7 @@ import net.minecraft.world.item.CrossbowItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.UseAnim;
 import net.minecraft.world.phys.Vec3;
+import org.joml.Quaternionf;
 import org.joml.Vector3f;
 
 import javax.annotation.Nonnull;
@@ -102,13 +104,19 @@ public class CommonPlayerModel
 			this.z = other.z;
 		}
 
+		public void Pose(@Nonnull TransformStack stack)
+		{
+			stack.add(Transform.FromPos(x / 16f, y / 16f, z / 16f));
+			stack.add(Transform.FromPosAndQuat(Vec3.ZERO, (new Quaternionf()).rotationZYX(zRot, yRot, xRot), () -> "ZYX Rot"));
+			stack.add(Transform.FromPos(BoxMin.x / 16f + BoxDims.x / 32f, BoxMin.y / 16f + BoxDims.y / 32f, BoxMin.z / 16f + BoxDims.z / 32f));
+
+		}
+
 		@Nonnull
 		public Transform GetCenter()
 		{
 			TransformStack stack = new TransformStack();
-			stack.add(Transform.FromPos(x / 16f, y / 16f, z / 16f));
-			stack.add(Transform.FromEulerRadians(-xRot, -yRot, -zRot));
-			stack.add(Transform.FromPos(BoxMin.x / 16f + BoxDims.x / 32f, BoxMin.y / 16f + BoxDims.y / 32f, BoxMin.z / 16f + BoxDims.z / 32f));
+			Pose(stack);
 			return stack.Top();
 		}
 
@@ -255,7 +263,8 @@ public class CommonPlayerModel
 		// Renamed to playerSetupRotations to simulate our super.
 		this.playerSetupRotations(player, poseStack, f7, f, p_115310_);
 
-		poseStack.scale(-1.0F, -1.0F, 1.0F);
+		//poseStack.scale(-1.0F, -1.0F, 1.0F);
+		poseStack.mulPose(Axis.ZP.rotationDegrees(180f));
 		this.scale(poseStack);
 		poseStack.translate(0.0F, -1.501F, 0.0F);
 		float f8 = 0.0F;
@@ -276,30 +285,35 @@ public class CommonPlayerModel
 		this.livingSetupAnim(player, f5, f8, f7, f2, f6);
 
 		// Now use all this good stuff to build a snapshot
-		snap.UpdateHitbox(
-			EPlayerHitArea.HEAD,
-			Transform.Compose(poseStack.Top(), head.GetCenter()),
-			head.GetHalfExtents());
-		snap.UpdateHitbox(
-			EPlayerHitArea.BODY,
-			Transform.Compose(poseStack.Top(), body.GetCenter()),
-			body.GetHalfExtents());
-		snap.UpdateHitbox(
-			EPlayerHitArea.LEFTLEG,
-			Transform.Compose(poseStack.Top(), leftLeg.GetCenter()),
-			leftLeg.GetHalfExtents());
-		snap.UpdateHitbox(
-			EPlayerHitArea.RIGHTLEG,
-			Transform.Compose(poseStack.Top(), rightLeg.GetCenter()),
-			rightLeg.GetHalfExtents());
-		snap.UpdateHitbox(
-			EPlayerHitArea.LEFTARM,
-			Transform.Compose(poseStack.Top(), leftArm.GetCenter()),
-			leftArm.GetHalfExtents());
-		snap.UpdateHitbox(
-			EPlayerHitArea.RIGHTARM,
-			Transform.Compose(poseStack.Top(), rightArm.GetCenter()),
-			rightArm.GetHalfExtents());
+		poseStack.PushSaveState();
+		head.Pose(poseStack);
+		snap.UpdateHitbox(EPlayerHitArea.HEAD, poseStack.Top(), head.GetHalfExtents());
+		poseStack.PopSaveState();
+
+		poseStack.PushSaveState();
+		body.Pose(poseStack);
+		snap.UpdateHitbox(EPlayerHitArea.BODY, poseStack.Top(), body.GetHalfExtents());
+		poseStack.PopSaveState();
+
+		poseStack.PushSaveState();
+		leftLeg.Pose(poseStack);
+		snap.UpdateHitbox(EPlayerHitArea.LEFTLEG, poseStack.Top(), leftLeg.GetHalfExtents());
+		poseStack.PopSaveState();
+
+		poseStack.PushSaveState();
+		rightLeg.Pose(poseStack);
+		snap.UpdateHitbox(EPlayerHitArea.RIGHTLEG, poseStack.Top(), rightLeg.GetHalfExtents());
+		poseStack.PopSaveState();
+
+		poseStack.PushSaveState();
+		leftArm.Pose(poseStack);
+		snap.UpdateHitbox(EPlayerHitArea.LEFTARM, poseStack.Top(), leftArm.GetHalfExtents());
+		poseStack.PopSaveState();
+
+		poseStack.PushSaveState();
+		rightArm.Pose(poseStack);
+		snap.UpdateHitbox(EPlayerHitArea.RIGHTARM, poseStack.Top(), rightArm.GetHalfExtents());
+		poseStack.PopSaveState();
 
 		snap.valid = true;
 	}

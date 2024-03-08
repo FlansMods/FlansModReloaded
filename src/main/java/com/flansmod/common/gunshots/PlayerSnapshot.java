@@ -6,6 +6,7 @@ import com.flansmod.util.Transform;
 import com.flansmod.util.TransformStack;
 import com.mojang.math.Transformation;
 import net.minecraft.core.Direction;
+import net.minecraft.world.entity.HumanoidArm;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Pose;
 import net.minecraft.world.entity.player.Player;
@@ -58,22 +59,22 @@ public class PlayerSnapshot
     }
 
     @Nonnull
-    public Transform GetMuzzlePosition()
+    public Transform GetArmTransform(@Nonnull HumanoidArm arm)
     {
-        return hitboxes[EPlayerHitArea.RIGHTARM.ordinal()].transform;
+        return switch(arm) {
+            case RIGHT -> hitboxes[EPlayerHitArea.RIGHTARM.ordinal()].transform;
+            case LEFT -> hitboxes[EPlayerHitArea.LEFTARM.ordinal()].transform;
+        };
     }
 
     // ----------------------------------------------------------
     // Debug Rendering
     @OnlyIn(Dist.CLIENT)
-    public void debugRender(Vector4f colour)
+    public void debugRender(@Nonnull Vec3 withOffset, @Nonnull Vector4f colour)
     {
-        if(!FlansMod.DEBUG)
-            return;
-
         for(PlayerHitbox hitbox : hitboxes)
             if(hitbox != null)
-                hitbox.debugRender(colour);
+                hitbox.debugRender(withOffset, colour);
     }
 
 

@@ -3,11 +3,13 @@ package com.flansmod.common.gunshots;
 import com.flansmod.client.render.debug.DebugRenderer;
 import com.flansmod.common.FlansMod;
 import com.flansmod.util.MinecraftHelpers;
+import net.minecraft.client.Minecraft;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.ClipContext;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.phys.*;
 import net.minecraftforge.common.MinecraftForge;
@@ -74,7 +76,7 @@ public class Raytracer
 
     public void clientTick(@Nonnull TickEvent.ClientTickEvent event)
     {
-        if(FlansMod.DEBUG)
+        if(FlansMod.DEBUG || Minecraft.getInstance().getEntityRenderDispatcher().shouldRenderHitBoxes())
         {
             for(var kvp : PlayerMovementHistories.entrySet())
             {
@@ -94,7 +96,7 @@ public class Raytracer
         return PlayerSnapshot.INVALID;
     }
 
-    public void CastBullet(@Nonnull Entity from,
+    public void CastBullet(@Nullable Entity from,
                            @Nonnull Vec3 origin,
                            @Nonnull Vec3 motion,
                            double penetrationPowerVsBlocks,
@@ -138,7 +140,7 @@ public class Raytracer
                     case BLOCK ->
                     {
                         BlockHitResult blockHit = (BlockHitResult) hit;
-                        if(from.level().isLoaded(blockHit.getBlockPos()))
+                        if(World.isAreaLoaded(blockHit.getBlockPos(), 1))
                         {
                             bCanPenetrate = penetrationPowerVsBlocks >= from.level().getBlockState(blockHit.getBlockPos()).getBlock().defaultDestroyTime();
                         }
@@ -166,7 +168,7 @@ public class Raytracer
             if(numTests > 100)
             {
                 FlansMod.LOGGER.warn("Raytrace exceeded 100 raycasts, something is probably wrong");
-                if(from.level().isClientSide)
+                if(World.isClientSide())
                 {
                     DebugRenderer.RenderLine(
                         origin,
@@ -180,14 +182,15 @@ public class Raytracer
     }
 
     @Nonnull
-    private Vec3 GetHitsUpToNextBlock(@Nonnull Vec3 origin, @Nonnull Vec3 ray, @Nonnull List<HitResult> outResults)
+    private Vec3 GetHitsUpToNextBlock(@Nonnull Vec3 origin,
+                                      @Nonnull Vec3 ray,
+                                      @Nonnull List<HitResult> outResults)
     {
-        Vec3 startPoint = origin;
         Vec3 endPoint = ray;
 
         // Run a vanilla raytrace against the terrain
         ClipContext clipContext = new ClipContext(
-            startPoint,
+            origin,
             endPoint,
             ClipContext.Block.COLLIDER,
             ClipContext.Fluid.NONE,
@@ -204,7 +207,7 @@ public class Raytracer
         // Then find entities between the origin and this block hit (or the full ray)
         // This vanilla AABB check is going to be disgustingly slow if we shoot diagonally on all axes
         // TODO: Optimise into several AABBs in this case?
-        AABB bounds = new AABB(startPoint, endPoint);
+        AABB bounds = new AABB(origin, endPoint);
         for(Entity checkEnt : World.getEntities(null, bounds))
         {
             if(checkEnt instanceof Player checkPlayer)
@@ -213,13 +216,13 @@ public class Raytracer
                 PlayerMovementHistory history = PlayerMovementHistories.get(checkPlayer);
                 if(history != null)
                 {
-                    history.GetSnapshotNTicksAgo(0).Raycast(checkPlayer, startPoint, endPoint, outResults);
+                    history.GetSnapshotNTicksAgo(0).Raycast(checkPlayer, origin, endPoint, outResults);
                     continue;
                 }
             }
 
             // This may still happen for a player, if their movement history was not found for some reason
-            Optional<Vec3> hit = checkEnt.getBoundingBox().clip(startPoint, endPoint);
+            Optional<Vec3> hit = checkEnt.getBoundingBox().clip(origin, endPoint);
             hit.ifPresent(vec3 -> outResults.add(new EntityHitResult(checkEnt, vec3)));
         }
 
@@ -232,9 +235,9 @@ public class Raytracer
     }
     private static class CompareHits implements Comparator<HitResult>
     {
-        private Vec3 origin;
+        private final Vec3 origin;
 
-        public CompareHits(Vec3 ori)
+        public CompareHits(@Nonnull Vec3 ori)
         {
             origin = ori;
         }

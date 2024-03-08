@@ -6,6 +6,7 @@ import com.flansmod.util.Maths;
 import com.flansmod.util.MinecraftHelpers;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.joml.Vector4f;
@@ -69,9 +70,11 @@ public class PlayerMovementHistory
     @OnlyIn(Dist.CLIENT)
     public void debugRender(boolean client)
     {
-        for(int i = 0; i < GetNumSnapshots(); i++)
+       // for(int i = (int)(MinecraftHelpers.GetTick() % 40L); i < GetNumSnapshots(); i += 40)
         {
-            GetSnapshotNTicksAgo(i).debugRender(new Vector4f((float)i / (float)snapshotCount, client ? 1.0f : 0.0f, client ? 0.0f : 1.0f, 0.5f));
+            int i = 40;
+            float decay = (float)i / (float)snapshotCount;
+            GetSnapshotNTicksAgo(i).debugRender(client ? new Vec3(1d, 0d, 0d) : new Vec3(-1d, 0d, 0d), new Vector4f(decay, client ? 1.0f : 0.0f, client ? 0.0f : 1.0f, 1.0f - decay));
         }
     }
 }

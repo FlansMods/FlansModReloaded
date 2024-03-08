@@ -2,14 +2,12 @@ package com.flansmod.client.render.decals;
 
 import com.flansmod.client.FlansModClient;
 import com.flansmod.client.render.FirstPersonManager;
-import com.flansmod.client.render.FlanItemModelRenderer;
 import com.flansmod.common.FlansMod;
 import com.flansmod.common.actions.ActionGroupInstance;
 import com.flansmod.common.actions.ActionInstance;
 import com.flansmod.common.actions.contexts.*;
 import com.flansmod.common.actions.nodes.LaserAction;
 import com.flansmod.common.gunshots.Raytracer;
-import com.flansmod.common.types.attachments.AttachmentDefinition;
 import com.flansmod.common.types.attachments.EAttachmentType;
 import com.flansmod.util.MinecraftHelpers;
 import com.flansmod.util.Transform;
@@ -19,10 +17,10 @@ import com.mojang.blaze3d.vertex.*;
 import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GameRenderer;
-import net.minecraft.client.renderer.block.model.ItemTransforms;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemDisplayContext;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
@@ -34,8 +32,10 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import org.joml.Vector4f;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 public class LaserRenderer
 {
@@ -45,126 +45,162 @@ public class LaserRenderer
 	}
 
 	@SubscribeEvent
-	public void RenderTick(RenderLevelStageEvent event)
+	public void RenderTick(@Nonnull RenderLevelStageEvent event)
 	{
-		if(event.getStage() == RenderLevelStageEvent.Stage.AFTER_PARTICLES)
+		if(event.getStage() != RenderLevelStageEvent.Stage.AFTER_PARTICLES)
+			return;
+		if(Minecraft.getInstance().level == null)
+			return;
+
+		for(Player player : Minecraft.getInstance().level.players())
 		{
-			if (Minecraft.getInstance().player != null)
+			ShooterContext playerContext = ShooterContext.of(player);
+			if (!playerContext.IsValid())
+				continue;
+
+			for (GunContext gunContext : playerContext.GetAllGunContexts(true))
 			{
-				ShooterContext playerContext = ShooterContext.of(Minecraft.getInstance().player);
-				if (playerContext.IsValid())
+				if (!gunContext.IsValid())
+					continue;
+
+				for (ActionGroupInstance actionGroup : gunContext.GetActionStack().GetActiveActionGroups())
 				{
-					for (GunContext gunContext : playerContext.GetAllGunContexts(true))
+					for (ActionInstance actionInstance : actionGroup.GetActions())
 					{
-						if (gunContext.IsValid())
+						if (actionInstance instanceof LaserAction laserAction)
 						{
-							for (ActionGroupInstance actionGroup : gunContext.GetActionStack().GetActiveActionGroups())
+							if (actionGroup.Context.IsAttachment())
 							{
-								for (ActionInstance actionInstance : actionGroup.GetActions())
-								{
-									if (actionInstance instanceof LaserAction laserAction)
-									{
-										if (actionGroup.Context.IsAttachment())
-										{
-											RenderLaserFirstPerson(event.getPoseStack(),
-												event.getCamera(),
-												gunContext,
-												actionGroup.Context.GetAttachmentType(),
-												actionGroup.Context.GetAttachmentIndex(),
-												laserAction.LaserOrigin(),
-												new Vector4f(laserAction.Red(), laserAction.Green(), laserAction.Blue(), 1f));
-										} else
-										{
-											RenderLaserFirstPerson(event.getPoseStack(),
-												event.getCamera(),
-												gunContext,
-												EAttachmentType.Generic,
-												-1,
-												laserAction.LaserOrigin(),
-												new Vector4f(laserAction.Red(), laserAction.Green(), laserAction.Blue(), 1f));
-										}
-									}
-								}
+								RenderLaserFirstPerson(event.getPoseStack(),
+									event.getCamera(),
+									gunContext,
+									actionGroup.Context.GetAttachmentType(),
+									actionGroup.Context.GetAttachmentIndex(),
+									laserAction.LaserOrigin(),
+									new Vector4f(laserAction.Red(), laserAction.Green(), laserAction.Blue(), 1f));
+							} else
+							{
+								RenderLaserFirstPerson(event.getPoseStack(),
+									event.getCamera(),
+									gunContext,
+									EAttachmentType.Generic,
+									-1,
+									laserAction.LaserOrigin(),
+									new Vector4f(laserAction.Red(), laserAction.Green(), laserAction.Blue(), 1f));
 							}
 						}
 					}
 				}
 			}
 		}
-
 	}
 	@SubscribeEvent
-	public void OnRenderFirstPersonHands(RenderHandEvent event)
+	public void OnRenderFirstPersonHands(@Nonnull RenderHandEvent event)
 	{
 
 	}
 
 	private static final ResourceLocation LaserTexture = new ResourceLocation(FlansMod.MODID, "textures/effects/laser_point.png");
-	public void RenderLaserFirstPerson(@Nonnull PoseStack poseStack, @Nonnull Camera camera, @Nonnull GunContext gunContext, @Nonnull EAttachmentType attachType, int attachIndex, @Nonnull String apName, @Nonnull Vector4f colour)
+	public void RenderLaserFirstPerson(@Nonnull PoseStack poseStack,
+									   @Nonnull Camera camera,
+									   @Nonnull GunContext gunContext,
+									   @Nonnull EAttachmentType attachType,
+									   int attachIndex,
+									   @Nonnull String apName,
+									   @Nonnull Vector4f colour)
 	{
 		ItemDisplayContext transformType = ItemDisplayContext.FIRST_PERSON_RIGHT_HAND;
 		if(gunContext instanceof GunContextPlayer playerGunContext)
 			transformType = MinecraftHelpers.GetFirstPersonTransformType(playerGunContext.GetHand());
+
+		if(!Minecraft.getInstance().options.getCameraType().isFirstPerson() || !gunContext.GetShooter().IsLocalPlayerOwner())
+		{
+			if(transformType == ItemDisplayContext.FIRST_PERSON_RIGHT_HAND)
+				transformType = ItemDisplayContext.THIRD_PERSON_RIGHT_HAND;
+			if(transformType == ItemDisplayContext.FIRST_PERSON_LEFT_HAND)
+				transformType = ItemDisplayContext.THIRD_PERSON_LEFT_HAND;
+		}
 
 		Transform origin = FirstPersonManager.GetWorldSpaceAPTransform(
 			gunContext,
 			transformType,
 			ActionGroupContext.CreateGroupPath(attachType, attachIndex, apName));
 
+		RenderLaserFrom(poseStack, camera, origin, Minecraft.getInstance().player, gunContext.GetUUID(), colour);
+	}
+
+	public void RenderLaserThirdPerson(@Nonnull PoseStack poseStack,
+									   @Nonnull Camera camera,
+									   @Nonnull GunContext gunContext,
+									   @Nonnull EAttachmentType attachType,
+									   int attachIndex,
+									   @Nonnull String apName,
+									   @Nonnull Vector4f colour)
+	{
+		if(gunContext.GetShooter().IsValid())
+		{
+
+		}
+	}
+
+	public void RenderLaserFrom(@Nonnull PoseStack poseStack,
+								@Nonnull Camera camera,
+								@Nonnull Transform origin,
+								@Nullable Entity ignoreEntity,
+								@Nullable UUID id,
+								@Nonnull Vector4f colour)
+	{
 		Level level = Minecraft.getInstance().level;
 		if(level != null)
 		{
 			Raytracer raytracer = Raytracer.ForLevel(level);
-			if(raytracer != null)
+			List<HitResult> hits = new ArrayList<>();
+			Vec3 ray = origin.ForwardVec3().scale(100f);
+			raytracer.CastBullet(ignoreEntity,
+				origin.PositionVec3(),
+				ray,
+				0.0f,
+				0.0f,
+				hits);
+			if(hits.size() > 0)
 			{
-				List<HitResult> hits = new ArrayList<>();
-				Vec3 ray = origin.ForwardVec3().scale(100f);
-				raytracer.CastBullet(Minecraft.getInstance().player,
+				Vec3 normal = origin.ForwardVec3().scale(-1f);
+				if(hits.get(0) instanceof BlockHitResult blockHit)
+					normal = new Vec3(blockHit.getDirection().getNormal().getX(),
+						blockHit.getDirection().getNormal().getY(),
+						blockHit.getDirection().getNormal().getZ());
+
+				RenderLaserBeam(poseStack,
+					camera,
 					origin.PositionVec3(),
-					ray,
-					0.0f,
-					0.0f,
-					hits);
-				if(hits.size() > 0)
-				{
-					Vec3 normal = origin.ForwardVec3().scale(-1f);
-					if(hits.get(0) instanceof BlockHitResult blockHit)
-						normal = new Vec3(blockHit.getDirection().getNormal().getX(),
-							blockHit.getDirection().getNormal().getY(),
-							blockHit.getDirection().getNormal().getZ());
+					hits.get(0).getLocation(),
+					colour);
 
-					RenderLaser(poseStack,
-						camera,
-						origin.PositionVec3(),
-						origin.ForwardVec3(),
-						hits.get(0).getLocation(),
-						normal,
-						colour);
-
-					FlansModClient.DECAL_RENDERER.AddOrUpdateDecal(
-						LaserTexture,
-						gunContext.GetUUID(),
-						hits.get(0).getLocation(),
-						normal,
-						colour,
-						0.0f,
-						2);
-				}
-				else
-				{
-					RenderLaser(poseStack,
-						camera,
-						origin.PositionVec3(),
-						origin.ForwardVec3(),
-						origin.PositionVec3().add(ray),
-						origin.ForwardVec3(),
-						colour);
-				}
+				FlansModClient.DECAL_RENDERER.AddOrUpdateDecal(
+					LaserTexture,
+					id,
+					hits.get(0).getLocation(),
+					normal,
+					colour,
+					0.0f,
+					2);
+			}
+			else
+			{
+				RenderLaserBeam(poseStack,
+					camera,
+					origin.PositionVec3(),
+					origin.PositionVec3().add(ray),
+					colour);
 			}
 		}
 	}
 
-	public void RenderLaser(@Nonnull PoseStack poseStack, @Nonnull Camera camera, @Nonnull Vec3 startPos, @Nonnull Vec3 startNormal, Vec3 endPos, Vec3 endNormal, @Nonnull Vector4f colour)
+	public void RenderLaserBeam(@Nonnull PoseStack poseStack,
+								@Nonnull Camera camera,
+								@Nonnull Vec3 startPos,
+								@Nonnull Vec3 endPos,
+								@Nonnull Vector4f colour)
 	{
 		Tesselator tesselator = Tesselator.getInstance();
 		RenderSystem.setShader(GameRenderer::getPositionColorShader);
