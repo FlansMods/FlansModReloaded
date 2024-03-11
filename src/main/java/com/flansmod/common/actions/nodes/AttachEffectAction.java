@@ -43,4 +43,9 @@ public class AttachEffectAction extends ActionInstance
 	public ResourceLocation EffectModelLocation() { return new ResourceLocation(Group.Context.ModifyString(Constants.FLASH_MODEL, "flansmod:effects/muzzle_flash_small")); }
 	@Nonnull
 	public ResourceLocation EffectTextureLocation() { return new ResourceLocation(Group.Context.ModifyString(Constants.FLASH_TEXTURE, "flansmod:textures/skins/muzzle_flash_small.png")); }
+
+
+	@Nonnull
+	public String AnimationEvent() { return Group.Context.ModifyString(Constants.FLASH_ANIMATION_EVENT, ""); }
+	public boolean WaitForAnimationEvent() { return AnimationEvent().length() > 0; }
 }

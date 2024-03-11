@@ -96,4 +96,5 @@ public final class Constants
 	public static final String FLASH_ATTACH_POINT = "flash_attach_point";
 	public static final String FLASH_MODEL = "flash_model";
 	public static final String FLASH_TEXTURE = "flash_texture";
+	public static final String FLASH_ANIMATION_EVENT = "flash_anim_event";
 }
