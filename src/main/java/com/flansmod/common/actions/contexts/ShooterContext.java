@@ -53,7 +53,8 @@ public abstract class ShooterContext
 		@Override
 		public Entity Owner() { return null; }
 		@Override
-		public Transform GetShootOrigin() { return null; }
+		@Nonnull
+		public Transform GetShootOrigin(float deltaTick) { return Transform.IDENTITY; }
 		@Override
 		public boolean IsValid() { return false; }
 		@Override
@@ -257,7 +258,8 @@ public abstract class ShooterContext
 	public abstract Entity Entity();
 	public abstract Entity Owner();
 	public abstract Container GetAttachedInventory();
-	public abstract Transform GetShootOrigin();
+	@Nonnull
+	public abstract Transform GetShootOrigin(float deltaTick); // delta will be 0 on server
 	public abstract boolean IsValid();
 	public abstract boolean IsCreative();
 

@@ -59,7 +59,8 @@ public class ShooterContextUnresolvedEntity extends ShooterContext
 	@Override
 	public Container GetAttachedInventory() { return null; }
 	@Override
-	public Transform GetShootOrigin() { return null; }
+	@Nonnull
+	public Transform GetShootOrigin(float deltaTick) { return Transform.IDENTITY; }
 	@Override
 	public boolean IsValid() { return true; }
 	@Override

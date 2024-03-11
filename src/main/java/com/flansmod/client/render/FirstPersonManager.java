@@ -257,7 +257,7 @@ public class FirstPersonManager
 				}
 			}
 			default -> {
-				transformStack.add(gunContext.GetShootOrigin());
+				transformStack.add(gunContext.GetShootOrigin(dt));
 			}
 		}
 	}

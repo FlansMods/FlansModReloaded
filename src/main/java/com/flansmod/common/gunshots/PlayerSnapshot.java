@@ -15,6 +15,7 @@ import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.joml.Quaternionf;
+import org.joml.Vector3d;
 import org.joml.Vector3f;
 import org.joml.Vector4f;
 
@@ -51,9 +52,10 @@ public class PlayerSnapshot
     {
         for(PlayerHitbox hitbox : hitboxes)
         {
-            if(hitbox.Raycast(startPos, endPos))
+            Vector3d hitLoc = new Vector3d();
+            if(hitbox.Raycast(startPos, endPos, hitLoc))
             {
-                results.add(new PlayerHitResult(player, hitbox));
+                results.add(new PlayerHitResult(player, hitbox, new Vec3(hitLoc.x, hitLoc.y, hitLoc.z)));
             }
         }
     }

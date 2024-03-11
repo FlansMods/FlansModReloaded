@@ -110,6 +110,8 @@ public class LaserRenderer
 									@Nonnull Vector4f colour)
 	{
 		ItemDisplayContext transformType = ItemDisplayContext.FIRST_PERSON_RIGHT_HAND;
+		Transform eyeOrigin = gunContext.GetShootOrigin(Minecraft.getInstance().getPartialTick());
+
 		if(gunContext instanceof GunContextPlayer playerGunContext)
 		{
 			if(!Minecraft.getInstance().options.getCameraType().isFirstPerson() || !gunContext.GetShooter().IsLocalPlayerOwner())
@@ -120,14 +122,21 @@ public class LaserRenderer
 			{
 				transformType = MinecraftHelpers.GetFirstPersonTransformType(playerGunContext.GetHand());
 			}
+
 		}
 
-		Transform origin = FirstPersonManager.GetWorldSpaceAPTransform(
-			gunContext,
-			transformType,
-			ActionGroupContext.CreateGroupPath(attachType, attachIndex, apName));
+		Transform laserOrigin = FirstPersonManager.GetWorldSpaceAPTransform(gunContext, transformType, ActionGroupContext.CreateGroupPath(attachType, attachIndex, apName));
+		if(gunContext instanceof GunContextPlayer playerGunContext)
+		{
+			switch(playerGunContext.GetHand())
+			{
+				case MAIN_HAND -> { laserOrigin = Transform.Compose(laserOrigin, Transform.FromEuler(1f, 1f, 0f)); }
+				case OFF_HAND -> { laserOrigin = Transform.Compose(laserOrigin, Transform.FromEuler(1f, -1f, 0f)); }
+			}
+		}
 
-		RenderLaserFrom(poseStack, camera, origin, Minecraft.getInstance().player, gunContext.GetUUID(), colour);
+
+		RenderLaserFrom(poseStack, camera, eyeOrigin, laserOrigin, gunContext.GetShooter().Entity(), gunContext.GetUUID(), colour);
 	}
 
 	public void RenderLaserThirdPerson(@Nonnull PoseStack poseStack,
@@ -146,7 +155,8 @@ public class LaserRenderer
 
 	public void RenderLaserFrom(@Nonnull PoseStack poseStack,
 								@Nonnull Camera camera,
-								@Nonnull Transform origin,
+								@Nonnull Transform eyeOrigin,
+								@Nonnull Transform laserOrigin,
 								@Nullable Entity ignoreEntity,
 								@Nullable UUID id,
 								@Nonnull Vector4f colour)
@@ -156,44 +166,50 @@ public class LaserRenderer
 		{
 			Raytracer raytracer = Raytracer.ForLevel(level);
 			List<HitResult> hits = new ArrayList<>();
-			Vec3 ray = origin.ForwardVec3().scale(100f);
-			raytracer.CastBullet(ignoreEntity,
-				origin.PositionVec3(),
-				ray,
-				0.0f,
-				0.0f,
-				hits);
-			if(hits.size() > 0)
+
+			// Cast to center screen
+			HitResult castFromEye = raytracer.CastBullet(ignoreEntity, eyeOrigin.PositionVec3(), laserOrigin.ForwardVec3().scale(100d));
+			if(castFromEye != null)
 			{
-				Vec3 normal = origin.ForwardVec3().scale(-1f);
-				if(hits.get(0) instanceof BlockHitResult blockHit)
+				// Then cast from the laser origin to that point, unless it would be completely nonsense
+				Vec3 laserRay = castFromEye.getLocation().subtract(laserOrigin.PositionVec3());
+				Vec3 laserRayDir = laserRay.normalize();
+				double dot = laserOrigin.ForwardVec3().dot(laserRayDir);
+				if (dot > 0.5d)
+				{
+					HitResult castFromLaser = raytracer.CastBullet(ignoreEntity, laserOrigin.PositionVec3(), laserRay.scale(1.02d));
+					if(castFromLaser != null)
+					{
+						Vec3 normal = laserOrigin.ForwardVec3().scale(-1f);
+						if(castFromLaser instanceof BlockHitResult blockHit)
+							normal = new Vec3(blockHit.getDirection().getNormal().getX(),
+								blockHit.getDirection().getNormal().getY(),
+								blockHit.getDirection().getNormal().getZ());
+
+						RenderLaserBeam(poseStack, camera, laserOrigin.PositionVec3(), castFromLaser.getLocation(), colour);
+						FlansModClient.DECAL_RENDERER.AddOrUpdateDecal(LaserTexture, id, castFromLaser.getLocation(),
+							normal, colour, 0.0f, 2);
+						return;
+					}
+				}
+
+
+				Vec3 normal = laserOrigin.ForwardVec3().scale(-1f);
+				if(castFromEye instanceof BlockHitResult blockHit)
 					normal = new Vec3(blockHit.getDirection().getNormal().getX(),
 						blockHit.getDirection().getNormal().getY(),
 						blockHit.getDirection().getNormal().getZ());
-
-				RenderLaserBeam(poseStack,
-					camera,
-					origin.PositionVec3(),
-					hits.get(0).getLocation(),
-					colour);
-
-				FlansModClient.DECAL_RENDERER.AddOrUpdateDecal(
-					LaserTexture,
-					id,
-					hits.get(0).getLocation(),
-					normal,
-					colour,
-					0.0f,
-					2);
+				RenderLaserBeam(poseStack, camera, laserOrigin.PositionVec3(), castFromEye.getLocation(), colour);
+				FlansModClient.DECAL_RENDERER.AddOrUpdateDecal(LaserTexture, id, castFromEye.getLocation(),
+					normal, colour, 0.0f, 2);
+				return;
 			}
-			else
-			{
-				RenderLaserBeam(poseStack,
-					camera,
-					origin.PositionVec3(),
-					origin.PositionVec3().add(ray),
-					colour);
-			}
+
+			RenderLaserBeam(poseStack,
+				camera,
+				laserOrigin.PositionVec3(),
+				laserOrigin.PositionVec3().add(laserOrigin.ForwardVec3().scale(100d)),
+				colour);
 		}
 	}
 

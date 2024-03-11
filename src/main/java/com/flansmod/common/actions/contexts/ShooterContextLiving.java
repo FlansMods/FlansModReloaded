@@ -82,12 +82,13 @@ public class ShooterContextLiving extends ShooterContext implements Container
 	}
 
 	@Override
-	public Transform GetShootOrigin()
+	@Nonnull
+	public Transform GetShootOrigin(float deltaTick)
 	{
 		return Transform.FromPosAndEuler(
-			Shooter.getEyePosition(),
-			Shooter.getXRot(),
-			180f + Shooter.getYRot(),
+			Shooter.getEyePosition(deltaTick),
+			Shooter.getViewXRot(deltaTick),
+			180f + Shooter.getViewYRot(deltaTick),
 			0.0f,
 			() -> "\"ShootOrigin\"");
 	}

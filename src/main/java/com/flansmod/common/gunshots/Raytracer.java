@@ -96,6 +96,20 @@ public class Raytracer
         return PlayerSnapshot.INVALID;
     }
 
+    @Nullable
+    public HitResult CastBullet(@Nullable Entity from,
+                                @Nonnull Vec3 origin,
+                                @Nonnull Vec3 motion)
+    {
+        List<HitResult> hits = new ArrayList<>();
+        CastBullet(from, origin, motion, 0.0f, 0.0f, hits);
+        if(hits.size() > 0)
+        {
+            return hits.get(0);
+        }
+        return null;
+    }
+
     public void CastBullet(@Nullable Entity from,
                            @Nonnull Vec3 origin,
                            @Nonnull Vec3 motion,

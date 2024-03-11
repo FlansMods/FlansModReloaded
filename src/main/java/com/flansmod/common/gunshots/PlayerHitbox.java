@@ -12,6 +12,7 @@ import org.joml.Vector3f;
 import org.joml.Vector4f;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 public class PlayerHitbox
 {
@@ -33,7 +34,7 @@ public class PlayerHitbox
         area = hitArea;
     }
 
-    public boolean Raycast(@Nonnull Vec3 startPos, @Nonnull Vec3 endPos)
+    public boolean Raycast(@Nonnull Vec3 startPos, @Nonnull Vec3 endPos, @Nullable Vector3d outPos)
     {
         // Localise
         startPos = transform.GlobalToLocalPosition(startPos);
@@ -53,7 +54,14 @@ public class PlayerHitbox
                 double intersectZ = startPos.z + motion.z * intersectTime;
                 if(-halfExtents.y <= intersectY && intersectY <= halfExtents.y
                 && -halfExtents.z <= intersectZ && intersectZ <= halfExtents.z)
+                {
+                    if(outPos != null)
+                    {
+                        Vec3 globalIntersect = transform.LocalToGlobalPosition(new Vec3(-halfExtents.x, intersectY, intersectZ));
+                        outPos.set(globalIntersect.x, globalIntersect.y, globalIntersect.z);
+                    }
                     return true;
+                }
             }
             else if(startPos.x > halfExtents.x) //Check face +half.x
             {
@@ -62,7 +70,14 @@ public class PlayerHitbox
                 double intersectZ = startPos.z + motion.z * intersectTime;
                 if(-halfExtents.y <= intersectY && intersectY <= halfExtents.y
                 && -halfExtents.z <= intersectZ && intersectZ <= halfExtents.z)
+                {
+                    if (outPos != null)
+                    {
+                        Vec3 globalIntersect = transform.LocalToGlobalPosition(new Vec3(halfExtents.x, intersectY, intersectZ));
+                        outPos.set(globalIntersect.x, globalIntersect.y, globalIntersect.z);
+                    }
                     return true;
+                }
             }
         }
 
@@ -76,7 +91,14 @@ public class PlayerHitbox
                 double intersectY = startPos.y + motion.y * intersectTime;
                 if(-halfExtents.x <= intersectX && intersectX <= halfExtents.x
                 && -halfExtents.y <= intersectY && intersectY <= halfExtents.y)
+                {
+                    if (outPos != null)
+                    {
+                        Vec3 globalIntersect = transform.LocalToGlobalPosition(new Vec3(intersectX, intersectY, -halfExtents.z));
+                        outPos.set(globalIntersect.x, globalIntersect.y, globalIntersect.z);
+                    }
                     return true;
+                }
             }
             else if(startPos.z > halfExtents.z) //Check face z = +half.z
             {
@@ -85,7 +107,14 @@ public class PlayerHitbox
                 double intersectY = startPos.y + motion.y * intersectTime;
                 if(-halfExtents.x <= intersectX && intersectX <= halfExtents.x
                 && -halfExtents.y <= intersectY && intersectY <= halfExtents.y)
+                {
+                    if (outPos != null)
+                    {
+                        Vec3 globalIntersect = transform.LocalToGlobalPosition(new Vec3(intersectX, intersectY, halfExtents.z));
+                        outPos.set(globalIntersect.x, globalIntersect.y, globalIntersect.z);
+                    }
                     return true;
+                }
             }
         }
 
@@ -99,7 +128,14 @@ public class PlayerHitbox
                 double intersectZ = startPos.z + motion.z * intersectTime;
                 if(-halfExtents.x <= intersectX && intersectX <= halfExtents.x
                 && -halfExtents.z <= intersectZ && intersectZ <= halfExtents.z)
+                {
+                    if (outPos != null)
+                    {
+                        Vec3 globalIntersect = transform.LocalToGlobalPosition(new Vec3(intersectX, -halfExtents.y, intersectZ));
+                        outPos.set(globalIntersect.x, globalIntersect.y, globalIntersect.z);
+                    }
                     return true;
+                }
             }
             else if(startPos.y > halfExtents.y) // Check face y = +half.y
             {
@@ -108,7 +144,14 @@ public class PlayerHitbox
                 double intersectZ = startPos.z + motion.z * intersectTime;
                 if(-halfExtents.x <= intersectX && intersectX <= halfExtents.x
                 && -halfExtents.z <= intersectZ && intersectZ <= halfExtents.z)
+                {
+                    if (outPos != null)
+                    {
+                        Vec3 globalIntersect = transform.LocalToGlobalPosition(new Vec3(intersectX, halfExtents.y, intersectZ));
+                        outPos.set(globalIntersect.x, globalIntersect.y, globalIntersect.z);
+                    }
                     return true;
+                }
             }
         }
 

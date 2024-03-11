@@ -323,16 +323,17 @@ public abstract class GunContext implements IStatCalculatorContext
 	// --------------------------------------------------------------------------
 	// Helpers
 	// --------------------------------------------------------------------------
+	@Nonnull
 	public ItemStack GetItemStack() { return Stack; }
-	public void SetItemStack(ItemStack stack)
+	public void SetItemStack(@Nonnull ItemStack stack)
 	{
 		Stack = stack;
 		OnItemStackChanged(stack);
 	}
-	public Transform GetShootOrigin()
-	{
-		return GetShooter().GetShootOrigin();
-	}
+	@Nonnull
+	public Transform GetShootOrigin() { return GetShooter().GetShootOrigin(0f); }
+	@Nonnull
+	public Transform GetShootOrigin(float deltaTick) { return GetShooter().GetShootOrigin(deltaTick); }
 	private static final RandomSource BackupRandomGenerator = new LegacyRandomSource(8931145513320L);
 	@Nonnull
 	public RandomSource GetRandom()

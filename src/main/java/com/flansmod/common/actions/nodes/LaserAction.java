@@ -5,6 +5,7 @@ import com.flansmod.common.actions.ActionInstance;
 import com.flansmod.common.types.Constants;
 import com.flansmod.common.types.elements.ModifierDefinition;
 import com.flansmod.common.types.guns.elements.ActionDefinition;
+import com.flansmod.util.Maths;
 
 import javax.annotation.Nonnull;
 
@@ -29,9 +30,9 @@ public class LaserAction extends ActionInstance
 
 	}
 
-	public float Red() { return ModifyFloat(Constants.STAT_LASER_RED, 1.0f); }
-	public float Green() { return ModifyFloat(Constants.STAT_LASER_GREEN, 1.0f); }
-	public float Blue() { return ModifyFloat(Constants.STAT_LASER_BLUE, 1.0f); }
+	public float Red() { return Maths.Clamp(GetFloat(Constants.STAT_LASER_RED), 0f, 1f); }
+	public float Green() { return Maths.Clamp(GetFloat(Constants.STAT_LASER_GREEN), 0f, 1f); }
+	public float Blue() { return Maths.Clamp(GetFloat(Constants.STAT_LASER_BLUE), 0f, 1f); }
 	public String LaserOrigin() { return ModifyString(Constants.STAT_LASER_ORIGIN, "laser_origin"); }
 	public boolean FixedLaserDirection() { return Group.Context.GetBoolean(Constants.MODAL_FIXED_LASER_DIRECTION); }
 }
