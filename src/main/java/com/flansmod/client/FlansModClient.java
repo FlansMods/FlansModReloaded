@@ -4,14 +4,16 @@ import com.flansmod.client.gui.crafting.*;
 import com.flansmod.client.render.ClientRenderHooks;
 import com.flansmod.client.input.ClientInputHooks;
 import com.flansmod.client.render.FirstPersonManager;
-import com.flansmod.client.render.FlanModelRegistration;
+import com.flansmod.client.render.effects.EffectRenderer;
+import com.flansmod.client.render.effects.FlashEffectRenderer;
+import com.flansmod.client.render.models.FlansModelRegistry;
 import com.flansmod.client.render.MagazineTextureAtlas;
 import com.flansmod.client.render.animation.FlanimationDefinitions;
 import com.flansmod.client.render.bullets.BulletEntityRenderer;
 import com.flansmod.client.render.debug.DebugRenderer;
-import com.flansmod.client.render.decals.DecalRenderer;
+import com.flansmod.client.render.effects.DecalRenderer;
 import com.flansmod.client.render.bullets.ShotRenderer;
-import com.flansmod.client.render.decals.LaserRenderer;
+import com.flansmod.client.render.effects.LaserRenderer;
 import com.flansmod.common.FlansMod;
 import com.flansmod.common.actions.contexts.ContextCache;
 import com.flansmod.common.actions.contexts.GunContextPlayer;
@@ -43,7 +45,6 @@ import net.minecraftforge.client.event.RegisterClientReloadListenersEvent;
 import net.minecraftforge.client.event.RegisterShadersEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.TickEvent;
-import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.level.LevelEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -51,9 +52,7 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.fml.util.ObfuscationReflectionHelper;
-import org.jetbrains.annotations.NotNull;
 
-import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -64,10 +63,11 @@ public class FlansModClient
 {
 	public static final ShotRenderer SHOT_RENDERER= new ShotRenderer();
 	public static final LaserRenderer LASER_RENDERER = new LaserRenderer();
+	public static final FlashEffectRenderer FLASH_RENDERER = new FlashEffectRenderer();
 	public static final DebugRenderer DEBUG_RENDERER = new DebugRenderer();
 	public static final ClientInputHooks CLIENT_INPUT_HOOKS = new ClientInputHooks();
 	public static final ClientRenderHooks CLIENT_OVERLAY_HOOKS = new ClientRenderHooks();
-	public static final FlanModelRegistration MODEL_REGISTRATION = new FlanModelRegistration();
+	public static final FlansModelRegistry MODEL_REGISTRATION = new FlansModelRegistry();
 	public static final FlanimationDefinitions ANIMATIONS = new FlanimationDefinitions();
 	public static final DecalRenderer DECAL_RENDERER = new DecalRenderer();
 	public static final MagazineTextureAtlas MAGAZINE_ATLAS = new MagazineTextureAtlas();
@@ -91,6 +91,13 @@ public class FlansModClient
 	@Nullable
 	private static ShaderInstance GUN_TRANSPARENT;
 
+
+	static
+	{
+		FlansModelRegistry.PreRegisterRenderer(new ResourceLocation(FlansMod.MODID, "effects/muzzle_flash_small"), new EffectRenderer());
+		FlansModelRegistry.PreRegisterRenderer(new ResourceLocation(FlansMod.MODID, "effects/muzzle_flash_medium"), new EffectRenderer());
+		FlansModelRegistry.PreRegisterRenderer(new ResourceLocation(FlansMod.MODID, "effects/muzzle_flash_large"), new EffectRenderer());
+	}
 
 	@SubscribeEvent
 	public static void ClientInit(final FMLClientSetupEvent event)

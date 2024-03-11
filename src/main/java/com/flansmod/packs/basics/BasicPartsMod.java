@@ -1,6 +1,6 @@
 package com.flansmod.packs.basics;
 
-import com.flansmod.client.render.FlanModelRegistration;
+import com.flansmod.client.render.models.FlansModelRegistry;
 import com.flansmod.common.FlansMod;
 import com.flansmod.common.crafting.WorkbenchBlockEntity;
 import com.flansmod.packs.basics.common.MobEffectBonusDamage;
@@ -380,22 +380,22 @@ public class BasicPartsMod
 	{
 		static
 		{
-			FlanModelRegistration.PreRegisterEntityModel(new ModelResourceLocation(MODID, "entity/artillery_shell", "inventory"));
-			FlanModelRegistration.PreRegisterEntityModel(new ModelResourceLocation(MODID, "entity/artillery_shell_ap", "inventory"));
-			FlanModelRegistration.PreRegisterEntityModel(new ModelResourceLocation(MODID, "entity/artillery_shell_ex", "inventory"));
-			FlanModelRegistration.PreRegisterEntityModel(new ModelResourceLocation(MODID, "entity/artillery_shell_incendiary", "inventory"));
-			FlanModelRegistration.PreRegisterEntityModel(new ModelResourceLocation(MODID, "entity/pistol_bullet", "inventory"));
-			FlanModelRegistration.PreRegisterEntityModel(new ModelResourceLocation(MODID, "entity/pistol_bullet_ap", "inventory"));
-			FlanModelRegistration.PreRegisterEntityModel(new ModelResourceLocation(MODID, "entity/pistol_bullet_ex", "inventory"));
-			FlanModelRegistration.PreRegisterEntityModel(new ModelResourceLocation(MODID, "entity/pistol_bullet_incendiary", "inventory"));
-			FlanModelRegistration.PreRegisterEntityModel(new ModelResourceLocation(MODID, "entity/projectile_grenade_impact", "inventory"));
-			FlanModelRegistration.PreRegisterEntityModel(new ModelResourceLocation(MODID, "entity/projectile_grenade_sticky", "inventory"));
-			FlanModelRegistration.PreRegisterEntityModel(new ModelResourceLocation(MODID, "entity/projectile_grenade_ex", "inventory"));
-			FlanModelRegistration.PreRegisterEntityModel(new ModelResourceLocation(MODID, "entity/projectile_grenade_incendiary", "inventory"));
-			FlanModelRegistration.PreRegisterEntityModel(new ModelResourceLocation(MODID, "entity/rifle_bullet", "inventory"));
-			FlanModelRegistration.PreRegisterEntityModel(new ModelResourceLocation(MODID, "entity/rifle_bullet_ap", "inventory"));
-			FlanModelRegistration.PreRegisterEntityModel(new ModelResourceLocation(MODID, "entity/rifle_bullet_ex", "inventory"));
-			FlanModelRegistration.PreRegisterEntityModel(new ModelResourceLocation(MODID, "entity/rifle_bullet_incendiary", "inventory"));
+			FlansModelRegistry.PreRegisterEntityModel(new ResourceLocation(MODID, "entity/artillery_shell"));
+			FlansModelRegistry.PreRegisterEntityModel(new ResourceLocation(MODID, "entity/artillery_shell_ap"));
+			FlansModelRegistry.PreRegisterEntityModel(new ResourceLocation(MODID, "entity/artillery_shell_ex"));
+			FlansModelRegistry.PreRegisterEntityModel(new ResourceLocation(MODID, "entity/artillery_shell_incendiary"));
+			FlansModelRegistry.PreRegisterEntityModel(new ResourceLocation(MODID, "entity/pistol_bullet"));
+			FlansModelRegistry.PreRegisterEntityModel(new ResourceLocation(MODID, "entity/pistol_bullet_ap"));
+			FlansModelRegistry.PreRegisterEntityModel(new ResourceLocation(MODID, "entity/pistol_bullet_ex"));
+			FlansModelRegistry.PreRegisterEntityModel(new ResourceLocation(MODID, "entity/pistol_bullet_incendiary"));
+			FlansModelRegistry.PreRegisterEntityModel(new ResourceLocation(MODID, "entity/projectile_grenade_impact"));
+			FlansModelRegistry.PreRegisterEntityModel(new ResourceLocation(MODID, "entity/projectile_grenade_sticky"));
+			FlansModelRegistry.PreRegisterEntityModel(new ResourceLocation(MODID, "entity/projectile_grenade_ex"));
+			FlansModelRegistry.PreRegisterEntityModel(new ResourceLocation(MODID, "entity/projectile_grenade_incendiary"));
+			FlansModelRegistry.PreRegisterEntityModel(new ResourceLocation(MODID, "entity/rifle_bullet"));
+			FlansModelRegistry.PreRegisterEntityModel(new ResourceLocation(MODID, "entity/rifle_bullet_ap"));
+			FlansModelRegistry.PreRegisterEntityModel(new ResourceLocation(MODID, "entity/rifle_bullet_ex"));
+			FlansModelRegistry.PreRegisterEntityModel(new ResourceLocation(MODID, "entity/rifle_bullet_incendiary"));
 		}
 
 		@OnlyIn(Dist.CLIENT)

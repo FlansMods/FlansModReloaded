@@ -1,10 +1,9 @@
-package com.flansmod.client.render.decals;
+package com.flansmod.client.render.effects;
 
 import com.flansmod.util.Maths;
 import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.*;
-import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.client.renderer.texture.TextureManager;
@@ -16,7 +15,6 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.TickEvent;
 import org.joml.Quaternionf;
 import org.joml.Vector4f;
-import org.lwjgl.system.linux.Stat;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;

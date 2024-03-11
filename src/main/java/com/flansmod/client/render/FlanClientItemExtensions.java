@@ -1,5 +1,6 @@
 package com.flansmod.client.render;
 
+import com.flansmod.client.render.models.FlansModelRegistry;
 import com.flansmod.common.item.GunItem;
 import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.world.InteractionHand;
@@ -20,7 +21,7 @@ public class FlanClientItemExtensions implements IClientItemExtensions
 
     public static FlanClientItemExtensions create(Item item, FlanItemModelRenderer renderer)
     {
-        FlanModelRegistration.PreRegisterRenderer(item, renderer);
+        FlansModelRegistry.PreRegisterRenderer(item, renderer);
         return new FlanClientItemExtensions(renderer);
     }
 

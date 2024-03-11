@@ -2,6 +2,7 @@ package com.flansmod.client.render;
 
 import com.flansmod.client.FlansModClient;
 import com.flansmod.client.render.animation.FlanimationDefinition;
+import com.flansmod.client.render.models.FlansModelRegistry;
 import com.flansmod.common.FlansMod;
 import com.flansmod.common.actions.ActionGroupInstance;
 import com.flansmod.common.actions.ActionInstance;
@@ -298,7 +299,7 @@ public class FirstPersonManager
 										@Nonnull ItemDisplayContext transformType)
 	{
 		float dt = Minecraft.getInstance().getPartialTick();
-		FlanItemModelRenderer gunRenderer = FlansModClient.MODEL_REGISTRATION.GetModelRenderer(gunContext.Stack);
+		FlanItemModelRenderer gunRenderer = FlansModelRegistry.forItem(gunContext.Stack);
 		if(gunRenderer != null)
 		{
 			Transform defaultPose = gunRenderer.BakedRig.GetTransform(transformType);
@@ -332,7 +333,7 @@ public class FirstPersonManager
 
 	public static void ApplyItemTransforms(@Nonnull TransformStack transformStack, @Nonnull GunContext gunContext)
 	{
-		FlanItemModelRenderer gunRenderer = FlansModClient.MODEL_REGISTRATION.GetModelRenderer(gunContext.Stack);
+		FlanItemModelRenderer gunRenderer = FlansModelRegistry.forItem(gunContext.Stack);
 		if(gunRenderer != null)
 		{
 
@@ -344,7 +345,7 @@ public class FirstPersonManager
 									  @Nonnull String apName,
 									  boolean animated)
 	{
-		FlanItemModelRenderer gunRenderer = FlansModClient.MODEL_REGISTRATION.GetModelRenderer(gunContext.Stack);
+		FlanItemModelRenderer gunRenderer = FlansModelRegistry.forItem(gunContext.Stack);
 		if(gunRenderer != null)
 		{
 			FlanimationDefinition animationSet = animated ? FlansModClient.ANIMATIONS.Get(new ResourceLocation(gunContext.Def.animationSet)) : null;
@@ -366,7 +367,7 @@ public class FirstPersonManager
 				AttachmentDefinition attachDef = gunContext.GetAttachmentDefinition(attachmentType, attachmentIndex);
 				if (attachDef.IsValid())
 				{
-					FlanItemModelRenderer attachmentRenderer = FlansModClient.MODEL_REGISTRATION.GetModelRenderer(attachDef);
+					FlanItemModelRenderer attachmentRenderer = FlansModelRegistry.forItem(attachDef);
 					if (attachmentRenderer != null)
 					{
 						attachmentRenderer.ApplyAPOffsetInternal(transformStack, childAPName, null, null);

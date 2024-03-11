@@ -56,6 +56,7 @@ public class ActionGroupContext
 		return GroupPath.contains("/");
 	}
 
+
 	public boolean IsValid()
 	{
 		return Gun.IsValid() && !GroupPath.isEmpty();
@@ -76,6 +77,13 @@ public class ActionGroupContext
 		ModCache = new ModifierCache(this::BakeModifiers);
 	}
 
+
+	@Nonnull
+	public String GetSibling(@Nonnull String actionGroupOrAP)
+	{
+		return GetSibling(GroupPath, actionGroupOrAP);
+	}
+
 	@Nonnull
 	public static String CreateGroupPath(@Nonnull String actionGroupKey)
 	{
@@ -89,8 +97,23 @@ public class ActionGroupContext
 	@Nonnull
 	public static String CreateGroupPath(@Nonnull EAttachmentType attachmentType, int attachmentIndex, @Nonnull String actionGroupKey)
 	{
-		return attachmentType + "/" + attachmentIndex + "/" + actionGroupKey;
+		if(attachmentIndex >= 0)
+			return attachmentType + "/" + attachmentIndex + "/" + actionGroupKey;
+		else
+			return actionGroupKey;
 	}
+	@Nonnull
+	public static String GetSibling(@Nonnull String fullPath, @Nonnull String actionGroupOrAP)
+	{
+		String[] components = fullPath.split("/");
+		StringBuilder sb = new StringBuilder();
+		for(int i = 0; i < components.length - 1; i++)
+			sb.append(components[i]).append('/');
+		sb.append(actionGroupOrAP);
+		return sb.toString();
+	}
+
+
 	@Nonnull
 	public static EAttachmentType GetAttachmentType(String actionGroupPath)
 	{

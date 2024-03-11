@@ -205,6 +205,17 @@ public class MinecraftHelpers
 			case OFF_HAND -> rightHanded ? ItemDisplayContext.FIRST_PERSON_LEFT_HAND : ItemDisplayContext.FIRST_PERSON_RIGHT_HAND;
 		};
 	}
+	@OnlyIn(Dist.CLIENT)
+	@Nonnull
+	public static ItemDisplayContext GetThirdPersonTransformType(boolean isLocalPlayer, @Nonnull InteractionHand hand)
+	{
+		boolean rightHanded = !isLocalPlayer || Minecraft.getInstance().options.mainHand().get() == HumanoidArm.RIGHT;
+		return switch (hand)
+			{
+				case MAIN_HAND -> rightHanded ? ItemDisplayContext.THIRD_PERSON_RIGHT_HAND : ItemDisplayContext.THIRD_PERSON_LEFT_HAND;
+				case OFF_HAND -> rightHanded ? ItemDisplayContext.THIRD_PERSON_LEFT_HAND : ItemDisplayContext.THIRD_PERSON_RIGHT_HAND;
+			};
+	}
 
 	@OnlyIn(Dist.CLIENT)
 	public static Entity GetCamera() { return Minecraft.getInstance().cameraEntity; }

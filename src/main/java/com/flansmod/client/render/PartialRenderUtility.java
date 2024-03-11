@@ -16,6 +16,8 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.client.extensions.common.IClientItemExtensions;
 import net.minecraftforge.client.model.data.ModelData;
 
+import javax.annotation.Nonnull;
+
 public class PartialRenderUtility
 {
     private static final PartialRenderUtility INSTANCE = new PartialRenderUtility();
@@ -28,8 +30,11 @@ public class PartialRenderUtility
     private MultiBufferSource buffer;
     private int overlay;
 
-    public static PartialRenderUtility of(ItemStack stack, ItemDisplayContext transformType,
-                                              PoseStack ms, MultiBufferSource buffer, int overlay) {
+    public static PartialRenderUtility of(@Nonnull ItemStack stack,
+                                          @Nonnull ItemDisplayContext transformType,
+                                          @Nonnull PoseStack ms,
+                                          @Nonnull MultiBufferSource buffer,
+                                          int overlay) {
         PartialRenderUtility instance = INSTANCE;
         instance.stack = stack;
         instance.transformType = transformType;
@@ -68,7 +73,7 @@ public class PartialRenderUtility
         ms.popPose();
     }
 
-    private void renderBakedItemModel(BakedModel model, int light, PoseStack ms, VertexConsumer buffer)
+    private void renderBakedItemModel(@Nonnull BakedModel model, int light, PoseStack ms, VertexConsumer buffer)
     {
         ItemRenderer ir = Minecraft.getInstance()
                 .getItemRenderer();

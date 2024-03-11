@@ -4,6 +4,7 @@ import com.flansmod.client.FlansModClient;
 import com.flansmod.client.render.FlanItemModelRenderer;
 import com.flansmod.client.render.RenderContext;
 import com.flansmod.client.render.guns.AttachmentItemRenderer;
+import com.flansmod.client.render.models.FlansModelRegistry;
 import com.flansmod.common.FlansMod;
 import com.flansmod.common.projectiles.BulletEntity;
 import com.flansmod.common.types.bullets.BulletDefinition;
@@ -51,7 +52,7 @@ public class BulletEntityRenderer extends EntityRenderer<BulletEntity>
 		Item item = ForgeRegistries.ITEMS.getValue(bullet.Def.Location);
 		if(item != null)
 		{
-			FlanItemModelRenderer bulletRenderer = FlansModClient.MODEL_REGISTRATION.GetModelRenderer(new ItemStack(item));
+			FlanItemModelRenderer bulletRenderer = FlansModelRegistry.forItem(item);
 			if(bulletRenderer != null)
 			{
 				pose.pushPose();

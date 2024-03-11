@@ -13,7 +13,7 @@
                 0.0,
                 0.0
             ],
-            "material": "Cutout",
+            "material": "Emissive",
             "turboelements": [
                 {
                     "verts": [
@@ -60,11 +60,11 @@
                     ],
                     "eulerRotations": [
                         0.0,
-                        0.0,
+                        180.0,
                         0.0
                     ],
                     "rotationOrigin": [
-                        -1.1,
+                        1.1,
                         -1.1,
                         0.0
                     ],
@@ -176,7 +176,7 @@
                     ],
                     "eulerRotations": [
                         0.0,
-                        0.0,
+                        180.0,
                         0.0
                     ],
                     "rotationOrigin": [
@@ -292,11 +292,11 @@
                     ],
                     "eulerRotations": [
                         0.0,
-                        0.0,
+                        180.0,
                         0.0
                     ],
                     "rotationOrigin": [
-                        -1.1,
+                        1.1,
                         0.0,
                         0.0
                     ],

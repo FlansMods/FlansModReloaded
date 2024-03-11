@@ -4,6 +4,7 @@ import com.flansmod.client.FlansModClient;
 import com.flansmod.client.render.FlanItemModelRenderer;
 import com.flansmod.client.render.animation.elements.KeyframeDefinition;
 import com.flansmod.client.render.animation.elements.PoseDefinition;
+import com.flansmod.client.render.models.FlansModelRegistry;
 import com.flansmod.common.FlansMod;
 import com.flansmod.common.types.JsonDefinition;
 import com.flansmod.util.Maths;
@@ -73,9 +74,9 @@ public class PoseCache
 		// Create cache
 		FlansMod.LOGGER.info(">> Creating cache for [model:"+itemID+", anim:"+ animationID+"] <<");
 		Map<String, Map<String, Transform>> cache = new HashMap<>();
-		FlanItemModelRenderer renderer = FlansModClient.MODEL_REGISTRATION.GetModelRenderer(itemID);
+		FlanItemModelRenderer renderer = FlansModelRegistry.forItem(itemID);
 		FlanimationDefinition anim = FlansModClient.ANIMATIONS.Get(animationID);
-		if(renderer == null || anim == null)
+		if(renderer == null)
 		{
 			FlansMod.LOGGER.error(">> Cache creation failed for [model:"+itemID+", anim:"+ animationID+"] <<");
 			return cache;

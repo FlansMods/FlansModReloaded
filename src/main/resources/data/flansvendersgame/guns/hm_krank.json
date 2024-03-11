@@ -208,6 +208,14 @@
                     "itemStack": "",
                     "scopeOverlay": "",
                     "anim": "shoot"
+                },
+                {
+                    "actionType": "AttachEffect",
+                    "duration": 0.05,
+                    "sounds": [],
+                    "itemStack": "",
+                    "scopeOverlay": "",
+                    "anim": "shoot"
                 }
             ],
             "modifiers": [
@@ -246,6 +254,18 @@
                         }
                     ],
                     "setValue": ""
+                },
+                {
+                    "stat": "flash_model",
+                    "matchGroupPaths": [],
+                    "accumulators": [
+                        {
+                            "operation": "BaseAdd",
+                            "value": 3.0,
+                            "multiplyPer": []
+                        }
+                    ],
+                    "setValue": "flansmod:effects/muzzle_flash_medium"
                 }
             ]
         },

@@ -1,4 +1,4 @@
-package com.flansmod.client.render.decals;
+package com.flansmod.client.render.effects;
 
 import com.flansmod.client.FlansModClient;
 import com.flansmod.client.render.FirstPersonManager;
@@ -71,7 +71,7 @@ public class LaserRenderer
 						{
 							if (actionGroup.Context.IsAttachment())
 							{
-								RenderLaserFirstPerson(event.getPoseStack(),
+								RenderLaserOnEntity(event.getPoseStack(),
 									event.getCamera(),
 									gunContext,
 									actionGroup.Context.GetAttachmentType(),
@@ -80,7 +80,7 @@ public class LaserRenderer
 									new Vector4f(laserAction.Red(), laserAction.Green(), laserAction.Blue(), 1f));
 							} else
 							{
-								RenderLaserFirstPerson(event.getPoseStack(),
+								RenderLaserOnEntity(event.getPoseStack(),
 									event.getCamera(),
 									gunContext,
 									EAttachmentType.Generic,
@@ -101,24 +101,25 @@ public class LaserRenderer
 	}
 
 	private static final ResourceLocation LaserTexture = new ResourceLocation(FlansMod.MODID, "textures/effects/laser_point.png");
-	public void RenderLaserFirstPerson(@Nonnull PoseStack poseStack,
-									   @Nonnull Camera camera,
-									   @Nonnull GunContext gunContext,
-									   @Nonnull EAttachmentType attachType,
-									   int attachIndex,
-									   @Nonnull String apName,
-									   @Nonnull Vector4f colour)
+	public void RenderLaserOnEntity(@Nonnull PoseStack poseStack,
+									@Nonnull Camera camera,
+									@Nonnull GunContext gunContext,
+									@Nonnull EAttachmentType attachType,
+									int attachIndex,
+									@Nonnull String apName,
+									@Nonnull Vector4f colour)
 	{
 		ItemDisplayContext transformType = ItemDisplayContext.FIRST_PERSON_RIGHT_HAND;
 		if(gunContext instanceof GunContextPlayer playerGunContext)
-			transformType = MinecraftHelpers.GetFirstPersonTransformType(playerGunContext.GetHand());
-
-		if(!Minecraft.getInstance().options.getCameraType().isFirstPerson() || !gunContext.GetShooter().IsLocalPlayerOwner())
 		{
-			if(transformType == ItemDisplayContext.FIRST_PERSON_RIGHT_HAND)
-				transformType = ItemDisplayContext.THIRD_PERSON_RIGHT_HAND;
-			if(transformType == ItemDisplayContext.FIRST_PERSON_LEFT_HAND)
-				transformType = ItemDisplayContext.THIRD_PERSON_LEFT_HAND;
+			if(!Minecraft.getInstance().options.getCameraType().isFirstPerson() || !gunContext.GetShooter().IsLocalPlayerOwner())
+			{
+				transformType = MinecraftHelpers.GetThirdPersonTransformType(gunContext.GetShooter().IsLocalPlayerOwner(), playerGunContext.GetHand());
+			}
+			else
+			{
+				transformType = MinecraftHelpers.GetFirstPersonTransformType(playerGunContext.GetHand());
+			}
 		}
 
 		Transform origin = FirstPersonManager.GetWorldSpaceAPTransform(

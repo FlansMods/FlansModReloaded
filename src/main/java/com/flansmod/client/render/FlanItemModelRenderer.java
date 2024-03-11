@@ -32,8 +32,10 @@ import com.mojang.blaze3d.vertex.*;
 import net.minecraft.Util;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.*;
+import net.minecraft.client.renderer.block.model.BlockModel;
 import net.minecraft.client.renderer.texture.MissingTextureAtlasSprite;
 import net.minecraft.client.resources.model.BakedModel;
+import net.minecraft.client.resources.model.UnbakedModel;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.HumanoidArm;
@@ -155,14 +157,22 @@ public abstract class FlanItemModelRenderer extends BlockEntityWithoutLevelRende
         Item = flanItem;
         ShouldRenderWhenHeld = shouldRenderWhenHeld;
     }
-    public void OnUnbakedModelLoaded(TurboRig unbaked)
+
+    public void OnUnbakedLoaded(@Nonnull UnbakedModel unbaked)
     {
-        UnbakedRig = unbaked;
+        if(unbaked instanceof BlockModel blockModel)
+            if(blockModel.customData.hasCustomGeometry())
+                if(blockModel.customData.getCustomGeometry() instanceof TurboRig unbakedRig)
+                {
+                    UnbakedRig = unbakedRig;
+                }
     }
-    public void OnBakeComplete(TurboRig.Baked baked)
+    public void OnBakedLoaded(@Nonnull BakedModel baked)
     {
-        BakedRig = baked;
+        if (baked instanceof TurboRig.Baked turboBakedModel)
+            BakedRig = turboBakedModel;
     }
+
     // Entry point for vanilla render calls
     @Override
     public void renderByItem(@Nonnull ItemStack stack,

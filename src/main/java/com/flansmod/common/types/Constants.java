@@ -92,4 +92,8 @@ public final class Constants
 	public static final String STAT_LASER_GREEN = "laser_green";
 	public static final String STAT_LASER_BLUE = "laser_blue";
 	public static final String MODAL_FIXED_LASER_DIRECTION = "fixed_laser_direction";
+
+	public static final String FLASH_ATTACH_POINT = "flash_attach_point";
+	public static final String FLASH_MODEL = "flash_model";
+	public static final String FLASH_TEXTURE = "flash_texture";
 }
