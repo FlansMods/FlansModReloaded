@@ -1,7 +1,9 @@
 package com.flansmod.common.actions.nodes;
 
+import com.flansmod.common.FlansModConfig;
 import com.flansmod.common.actions.ActionGroupInstance;
 import com.flansmod.common.actions.ActionInstance;
+import com.flansmod.common.actions.EActionResult;
 import com.flansmod.common.types.Constants;
 import com.flansmod.common.types.elements.ModifierDefinition;
 import com.flansmod.common.types.guns.elements.ActionDefinition;
@@ -16,6 +18,17 @@ public class LaserAction extends ActionInstance
 	public LaserAction(@Nonnull ActionGroupInstance group, @Nonnull ActionDefinition def)
 	{
 		super(group, def);
+	}
+
+	@Override
+	public EActionResult CanStart()
+	{
+		// Server config hook
+		if(!FlansModConfig.AllowLaserActions.get())
+			return EActionResult.TryNextAction;
+		// ------------------
+
+		return EActionResult.CanProcess;
 	}
 
 	@Override

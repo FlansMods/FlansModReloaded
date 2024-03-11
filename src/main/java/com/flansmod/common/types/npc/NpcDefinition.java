@@ -1,6 +1,7 @@
 package com.flansmod.common.types.npc;
 
 import com.flansmod.common.FlansMod;
+import com.flansmod.common.FlansModConfig;
 import com.flansmod.common.types.JsonDefinition;
 import com.flansmod.common.types.JsonField;
 import com.flansmod.common.types.elements.EDamageSourceType;
@@ -75,9 +76,13 @@ public class NpcDefinition extends JsonDefinition
 		return false;
 	}
 
-	public int CooldownTicks(boolean friendly) {
-		return friendly ? Maths.Ceil(cooldownSecondsFriendly * 20.0f)
-			: Maths.Ceil(cooldownSecondsHostile * 20.0f);
+	public int CooldownTicks(boolean friendly)
+	{
+		// Server config hook
+		double extraCooldown = FlansModConfig.SummonNpcExtraCooldown.get();
+		// ------------------
+
+		return Maths.Ceil((extraCooldown + (friendly ? cooldownSecondsFriendly : cooldownSecondsHostile)) * 20.0f);
 	}
 
 	public boolean Can(ENpcActionType actionType)

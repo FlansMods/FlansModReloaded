@@ -1,5 +1,6 @@
 package com.flansmod.common.abilities;
 
+import com.flansmod.common.FlansModConfig;
 import com.flansmod.common.actions.contexts.ActionGroupContext;
 import com.flansmod.common.actions.contexts.TargetsContext;
 import com.flansmod.common.actions.contexts.TriggerContext;
@@ -22,8 +23,12 @@ public class AbilityEffectSetFireToEntity implements IAbilityEffect
 	@Override
 	public void TriggerServer(@Nonnull ActionGroupContext actionGroup, @Nonnull TriggerContext trigger, @Nonnull TargetsContext targets, @Nullable AbilityStack stacks)
 	{
+		// Server config hook
+		float globalFireMulti = FlansModConfig.GlobalFireDurationMultiplier.get().floatValue();
+		// ------------------
+
 		targets.ForEachEntity((triggerOn) -> {
-			triggerOn.setSecondsOnFire(Maths.Ceil(FireTime.Get(actionGroup, stacks)));
+			triggerOn.setSecondsOnFire(Maths.Ceil(globalFireMulti * FireTime.Get(actionGroup, stacks)));
 		});
 	}
 }

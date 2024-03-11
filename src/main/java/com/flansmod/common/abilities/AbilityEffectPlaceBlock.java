@@ -1,5 +1,6 @@
 package com.flansmod.common.abilities;
 
+import com.flansmod.common.FlansModConfig;
 import com.flansmod.common.actions.contexts.ActionGroupContext;
 import com.flansmod.common.actions.contexts.TargetsContext;
 import com.flansmod.common.actions.contexts.TriggerContext;
@@ -9,6 +10,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.registries.ForgeRegistries;
 
@@ -42,21 +44,29 @@ public class AbilityEffectPlaceBlock implements IAbilityEffect
 	@Override
 	public void TriggerServer(@Nonnull ActionGroupContext actionGroup, @Nonnull TriggerContext trigger, @Nonnull TargetsContext targets, @Nullable AbilityStack stacks)
 	{
-		if(BlockToPlace != null)
+		if(BlockToPlace == null)
+			return;
+
+		// Server config hook
+		if(!FlansModConfig.AllowBulletsCreateFire.get())
 		{
-			Level level = actionGroup.Gun.GetLevel();
-			if (level != null)
+			if(BlockToPlace.is(Blocks.FIRE))
+				return;
+		}
+		// ------------------
+
+		Level level = actionGroup.Gun.GetLevel();
+		if (level != null)
+		{
+			targets.ForEachPosition((pos) ->
 			{
-				targets.ForEachPosition((pos) ->
+				BlockPos blockPos = BlockPos.containing(pos);
+				BlockState existingState = level.getBlockState(blockPos);
+				if (existingState.isAir())
 				{
-					BlockPos blockPos = BlockPos.containing(pos);
-					BlockState existingState = level.getBlockState(blockPos);
-					if (existingState.isAir())
-					{
-						level.setBlockAndUpdate(blockPos, BlockToPlace);
-					}
-				});
-			}
+					level.setBlockAndUpdate(blockPos, BlockToPlace);
+				}
+			});
 		}
 	}
 }

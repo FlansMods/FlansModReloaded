@@ -1,5 +1,6 @@
 package com.flansmod.common.abilities;
 
+import com.flansmod.common.FlansModConfig;
 import com.flansmod.common.actions.contexts.*;
 import com.flansmod.common.entity.INpcRelationshipsCapability;
 import com.flansmod.common.entity.NpcRelationshipsCapability;
@@ -36,6 +37,12 @@ public class AbilityEffectSummonNpc implements IAbilityEffect
 
 	public boolean CanSummonNpc(@Nonnull Player player)
 	{
+		// Server config hook
+		if(!FlansModConfig.AllowSummonNpc.get())
+			return false;
+		double checkRange = FlansModConfig.SummonNpcMinDistance.get();
+		// ------------------
+
 		LazyOptional<INpcRelationshipsCapability> relationshipCap = player.getCapability(NpcRelationshipsCapability.INSTANCE);
 		if(relationshipCap.isPresent() && relationshipCap.resolve().isPresent())
 		{
@@ -48,7 +55,6 @@ public class AbilityEffectSummonNpc implements IAbilityEffect
 		}
 
 		// Check for other matching NPCs in the nearby loaded chunks
-		double checkRange = 400D;
 		for(ShopkeeperEntity nearbyShopkeeper : player.level().getEntitiesOfClass(
 			ShopkeeperEntity.class,
 			new AABB(player.getX() - checkRange, player.getY() - checkRange, player.getZ() - checkRange,

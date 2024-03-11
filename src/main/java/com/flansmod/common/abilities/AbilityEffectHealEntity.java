@@ -1,5 +1,6 @@
 package com.flansmod.common.abilities;
 
+import com.flansmod.common.FlansModConfig;
 import com.flansmod.common.actions.contexts.ActionGroupContext;
 import com.flansmod.common.actions.contexts.TriggerContext;
 import com.flansmod.common.actions.contexts.TargetsContext;
@@ -22,11 +23,15 @@ public class AbilityEffectHealEntity implements IAbilityEffect
 	@Override
 	public void TriggerServer(@Nonnull ActionGroupContext actionGroup, @Nonnull TriggerContext trigger, @Nonnull TargetsContext targets, @Nullable AbilityStack stacks)
 	{
+		// Server config hook
+		float globalHealMulti = FlansModConfig.GlobalHealMultiplier.get().floatValue();
+		// ------------------
+
 		targets.ForEachEntity((entity) ->
 		{
 			if(entity instanceof LivingEntity living)
 			{
-				living.heal(HealAmount.Get(actionGroup, stacks));
+				living.heal(globalHealMulti * HealAmount.Get(actionGroup, stacks));
 			}
 		});
 	}

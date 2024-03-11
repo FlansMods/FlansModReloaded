@@ -1,8 +1,10 @@
 package com.flansmod.common.actions.nodes;
 
 import com.flansmod.common.FlansMod;
+import com.flansmod.common.FlansModConfig;
 import com.flansmod.common.actions.ActionGroupInstance;
 import com.flansmod.common.actions.ActionInstance;
+import com.flansmod.common.actions.EActionResult;
 import com.flansmod.common.actions.contexts.TriggerContext;
 import com.flansmod.common.gunshots.Raytracer;
 import com.flansmod.common.types.abilities.elements.EAbilityTrigger;
@@ -23,6 +25,17 @@ public class RaycastAction extends ActionInstance
 	public RaycastAction(@NotNull ActionGroupInstance group, @NotNull ActionDefinition def)
 	{
 		super(group, def);
+	}
+
+	@Override
+	public EActionResult CanStart()
+	{
+		// Server config hook
+		if(!FlansModConfig.AllowRaycastActions.get())
+			return EActionResult.TryNextAction;
+		// ------------------
+
+		return EActionResult.CanProcess;
 	}
 
 	@Override

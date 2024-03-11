@@ -1,6 +1,7 @@
 package com.flansmod.common.crafting;
 
 import com.flansmod.common.FlansMod;
+import com.flansmod.common.FlansModConfig;
 import com.flansmod.common.actions.Actions;
 import com.flansmod.common.actions.contexts.GunContext;
 import com.flansmod.common.crafting.ingredients.StackedIngredient;
@@ -651,6 +652,11 @@ public class WorkbenchBlockEntity extends BlockEntity implements WorldlyContaine
 	// ----------------------------------------------------------------------------------------------
 	public boolean GunRecipeCanBeCraftedInThisWorkbench(@Nonnull ItemStack output)
 	{
+		// Server config hook
+		if(!FlansModConfig.AllowGunCrafting.get())
+			return false;
+		// ------------------
+
 		if(Def.gunCrafting.isActive)
 			for(ItemStack stack : Def.gunCrafting.GetAllOutputs())
 				if(ItemStack.isSameItem(stack, output))
@@ -773,6 +779,11 @@ public class WorkbenchBlockEntity extends BlockEntity implements WorldlyContaine
 	}
 	public boolean IsGunCraftingFullyValid()
 	{
+		// Server config hook
+		if(!FlansModConfig.AllowGunCrafting.get())
+			return false;
+		// ------------------
+
 		GunFabricationRecipe recipe = GetSelectedGunRecipe();
 		if(recipe == null)
 			return false;
@@ -840,6 +851,11 @@ public class WorkbenchBlockEntity extends BlockEntity implements WorldlyContaine
 	}
 	public int GetMaxPartsCraftableFromInput(int recipeIndex)
 	{
+		// Server config hook
+		if(!FlansModConfig.AllowPartCrafting.get())
+			return 0;
+		// ------------------
+
 		if(recipeIndex == CRAFTING_NOTHING)
 			return 0;
 
@@ -1053,6 +1069,11 @@ public class WorkbenchBlockEntity extends BlockEntity implements WorldlyContaine
 
 	public boolean CraftOnePart()
 	{
+		// Server config hook
+		if(!FlansModConfig.AllowPartCrafting.get())
+			return false;
+		// ------------------
+
 		int outputSlot = GetOutputSlotToCraftPart();
 		if(outputSlot != Inventory.NOT_FOUND_INDEX)
 		{
@@ -1082,6 +1103,10 @@ public class WorkbenchBlockEntity extends BlockEntity implements WorldlyContaine
 
 	public static int GetPaintUpgradeCost(Container gunContainer, int paintIndex)
 	{
+		// Server config hook
+		int additionalCost = FlansModConfig.AdditionalMagazineModifyCost.get();
+		// ------------------
+
 		if (gunContainer.getContainerSize() <= 0)
 			return 0;
 		if(paintIndex == 0)
@@ -1094,7 +1119,7 @@ public class WorkbenchBlockEntity extends BlockEntity implements WorldlyContaine
 			{
 				if (0 <= paintIndex - 1 && paintIndex - 1 < paintableDefinition.paintjobs.length)
 				{
-					return paintableDefinition.paintjobs[paintIndex - 1].paintBucketsRequired;
+					return paintableDefinition.paintjobs[paintIndex - 1].paintBucketsRequired + additionalCost;
 				}
 			}
 		}
@@ -1102,6 +1127,13 @@ public class WorkbenchBlockEntity extends BlockEntity implements WorldlyContaine
 	}
 	public static boolean CanPaintGun(Player player, Container gunContainer, Container paintCanContainer, int skinIndex)
 	{
+		// Server config hook
+		if(!FlansModConfig.AllowPainting.get())
+			return false;
+
+		int additionalCost = FlansModConfig.AdditionalPaintCanCost.get();
+		// ------------------
+
 		// Check some obvious errors
 		if(skinIndex < 0)
 			return false;
@@ -1136,7 +1168,7 @@ public class WorkbenchBlockEntity extends BlockEntity implements WorldlyContaine
 				return true;
 
 			// Now we just need to check the cost
-			int paintCost = paintjobDefinition.paintBucketsRequired;
+			int paintCost = paintjobDefinition.paintBucketsRequired + additionalCost;
 			if (paintCanContainer.getItem(0).getCount() < paintCost)
 				return false;
 
@@ -1176,6 +1208,10 @@ public class WorkbenchBlockEntity extends BlockEntity implements WorldlyContaine
 
 	public static int GetMagUpgradeCost(@Nonnull Container gunContainer, int magIndex)
 	{
+		// Server config hook
+		int additionalCost = FlansModConfig.AdditionalMagazineModifyCost.get();
+		// ------------------
+
 		if (gunContainer.getContainerSize() <= 0)
 			return 0;
 
@@ -1184,14 +1220,21 @@ public class WorkbenchBlockEntity extends BlockEntity implements WorldlyContaine
 			List<MagazineDefinition> mags = gunItem.Def().GetMagazineSettings(Actions.DefaultPrimaryActionKey).GetMatchingMagazines();
 			if (0 <= magIndex && magIndex < mags.size())
 			{
-				return gunItem.Def().GetMagazineSettings(Actions.DefaultPrimaryActionKey).baseCostToSwap + mags.get(magIndex).upgradeCost;
+				return gunItem.Def().GetMagazineSettings(Actions.DefaultPrimaryActionKey).baseCostToSwap + mags.get(magIndex).upgradeCost + additionalCost;
 			}
-			return gunItem.Def().GetMagazineSettings(Actions.DefaultPrimaryActionKey).baseCostToSwap;
+			return gunItem.Def().GetMagazineSettings(Actions.DefaultPrimaryActionKey).baseCostToSwap + additionalCost;
 		}
 		return 0;
 	}
 	public static boolean CanSelectMagazine(@Nonnull Player player, @Nonnull Container gunContainer, @Nonnull Container magUpgradeContainer, int magIndex)
 	{
+		// Server config hook
+		if(!FlansModConfig.AllowMagazineModifying.get())
+			return false;
+
+		int additionalCost = FlansModConfig.AdditionalMagazineModifyCost.get();
+		// ------------------
+
 		// Check some obvious errors
 		if(magIndex < 0)
 			return false;
@@ -1217,7 +1260,9 @@ public class WorkbenchBlockEntity extends BlockEntity implements WorldlyContaine
 				return true;
 
 			// Now we just need to check the cost
-			int magCost = mag.upgradeCost + gunItem.Def().GetMagazineSettings(Actions.DefaultPrimaryActionKey).baseCostToSwap;
+			int magCost = additionalCost
+				+ mag.upgradeCost
+				+ gunItem.Def().GetMagazineSettings(Actions.DefaultPrimaryActionKey).baseCostToSwap;
 			if (magUpgradeContainer.getItem(0).getCount() < magCost)
 				return false;
 

@@ -1,5 +1,7 @@
 package com.flansmod.common.abilities;
 
+import com.flansmod.common.FlansModConfig;
+import com.flansmod.common.actions.EActionResult;
 import com.flansmod.common.actions.contexts.ActionGroupContext;
 import com.flansmod.common.actions.contexts.TargetsContext;
 import com.flansmod.common.actions.contexts.TriggerContext;
@@ -25,6 +27,11 @@ public class AbilityEffectExplode implements IAbilityEffect
 	@Override
 	public void TriggerServer(@Nonnull ActionGroupContext actionGroup, @Nonnull TriggerContext trigger, @Nonnull TargetsContext targets, @Nullable AbilityStack stacks)
 	{
+		// Server config hook
+		if(!FlansModConfig.AllowBulletsCreateExplosions.get())
+			return;
+		// ------------------
+
 		Level level = actionGroup.Gun.GetLevel();
 		if(level != null)
 		{

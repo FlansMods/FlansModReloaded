@@ -1,5 +1,6 @@
 package com.flansmod.common.abilities;
 
+import com.flansmod.common.FlansModConfig;
 import com.flansmod.common.actions.contexts.ActionGroupContext;
 import com.flansmod.common.actions.contexts.GunContext;
 import com.flansmod.common.actions.contexts.TriggerContext;
@@ -28,26 +29,26 @@ public class AbilityEffectApplyDamage implements IAbilityEffect
 	@Override
 	public void TriggerServer(@Nonnull ActionGroupContext actionGroup, @Nonnull TriggerContext trigger, @Nonnull TargetsContext targets, @Nullable AbilityStack stacks)
 	{
+		// Server config hook
+		float globalDmgMulti = FlansModConfig.GlobalDamageMultiplier.get().floatValue();
+		float globalHeadshotMulti = FlansModConfig.GlobalHeadshotMultiplier.get().floatValue();
+		// ------------------
+
 		DamageSource dmgSource = actionGroup.Gun.CreateDamageSource();
 		targets.ForEachEntity((triggerOn) ->
 			{
+				float headshotMulti = (trigger.Hit instanceof PlayerHitResult playerHit && playerHit.GetHitbox().area == EPlayerHitArea.HEAD)
+					? globalHeadshotMulti
+					: 1.0f;
 
-				// TODO: Headshot multipliers
-				float headshotMulti = 1.0f;
-				if (trigger.Hit instanceof PlayerHitResult playerHit)
+				triggerOn.hurt(dmgSource, globalDmgMulti * headshotMulti * DamageAmount(actionGroup, stacks));
+				if(PreventDamageCooldown && triggerOn instanceof LivingEntity living)
 				{
-					if(playerHit.GetHitbox().area == EPlayerHitArea.HEAD)
-						headshotMulti = 1.4f;
+					living.hurtTime = 0;
+					living.hurtDuration = 0;
+					living.invulnerableTime = 0;
 				}
-
-			triggerOn.hurt(dmgSource, headshotMulti * DamageAmount(actionGroup, stacks));
-			if(PreventDamageCooldown && triggerOn instanceof LivingEntity living)
-			{
-				living.hurtTime = 0;
-				living.hurtDuration = 0;
-				living.invulnerableTime = 0;
-			}
-		});
+			});
 	}
 
 	public float DamageAmount(@Nonnull ActionGroupContext actionGroup, @Nullable AbilityStack stacks)

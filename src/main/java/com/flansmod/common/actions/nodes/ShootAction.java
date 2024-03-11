@@ -3,6 +3,7 @@ package com.flansmod.common.actions.nodes;
 import com.flansmod.client.FlansModClient;
 import com.flansmod.client.particle.GunshotHitBlockParticle;
 import com.flansmod.common.FlansMod;
+import com.flansmod.common.FlansModConfig;
 import com.flansmod.common.actions.ActionGroupInstance;
 import com.flansmod.common.actions.ActionInstance;
 import com.flansmod.common.actions.EActionResult;
@@ -126,6 +127,11 @@ public class ShootAction extends ActionInstance
 	@Override
 	public EActionResult CanStart()
 	{
+		// Server config hook
+		if(!FlansModConfig.AllowShootActions.get())
+			return EActionResult.TryNextAction;
+		// ------------------
+
 		if(!Group.Context.Gun.IsValid())
 			return EActionResult.TryNextAction;
 		if(!Group.Context.Gun.GetShooter().IsValid())
