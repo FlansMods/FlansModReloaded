@@ -270,7 +270,7 @@ public abstract class FlanItemModelRenderer extends BlockEntityWithoutLevelRende
 
     // Then a bunch of functions you can call while in the render func
     protected void ApplyAnimations(@Nonnull RenderContext renderContext,
-                                   @Nullable FlanimationDefinition animationSet,
+                                   @Nonnull FlanimationDefinition animationSet,
                                    @Nullable ActionStack actionStack,
                                    @Nonnull String partName)
     {
@@ -278,14 +278,20 @@ public abstract class FlanItemModelRenderer extends BlockEntityWithoutLevelRende
     }
 
     protected void ApplyAnimations(@Nonnull TransformStack transformStack,
-                                   @Nullable FlanimationDefinition animationSet,
+                                   @Nonnull FlanimationDefinition animationSet,
                                    @Nullable ActionStack actionStack,
                                    @Nonnull String partName)
     {
         transformStack.add(GetPose(animationSet, actionStack, partName));
     }
 
-    protected Transform GetPose(FlanimationDefinition animationSet, ActionStack actionStack, String partName)
+    public boolean HasPart(@Nonnull String partName)
+    {
+        return UnbakedRig.GetPart(partName) != null;
+    }
+
+    @Nonnull
+    protected Transform GetPose(@Nonnull FlanimationDefinition animationSet, @Nullable ActionStack actionStack, @Nonnull String partName)
     {
         if(UnbakedRig == null)
             return Transform.Error("Unbaked Rig Missing");

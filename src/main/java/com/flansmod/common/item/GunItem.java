@@ -9,12 +9,9 @@ import com.flansmod.common.actions.contexts.*;
 import com.flansmod.common.types.Constants;
 import com.flansmod.common.types.abilities.elements.EAbilityTarget;
 import com.flansmod.common.types.bullets.BulletDefinition;
-import com.flansmod.common.types.guns.elements.ActionDefinition;
+import com.flansmod.common.types.guns.elements.*;
 import com.flansmod.common.types.elements.ModifierDefinition;
-import com.flansmod.common.types.guns.elements.EActionType;
-import com.flansmod.common.types.guns.elements.ERepeatMode;
 import com.flansmod.common.types.guns.GunDefinition;
-import com.flansmod.common.types.guns.elements.ReloadDefinition;
 import com.flansmod.common.types.magazines.MagazineDefinition;
 import com.flansmod.util.Maths;
 import com.google.common.collect.ImmutableMultimap;
@@ -559,45 +556,26 @@ public class GunItem extends FlanItem
 
 
     @Override
-    public boolean canPerformAction(ItemStack stack, ToolAction toolAction)
+    public boolean canPerformAction(@Nonnull ItemStack stack, @Nonnull ToolAction toolAction)
     {
-        GunContext gunContext = ContextCache.CreateWithoutCaching(stack);
-        if(gunContext.IsValid())
+        // We do not currently support checking for vanilla actions in attachments and other sources.
+        // Only base actions will be returned.
+        // This is because "canPerformAction" is polled very regularly and provides no context with which to cache
+        for (ActionGroupDefinition actionGroup : Def().actionGroups)
         {
-            // If this is a right click action, check secondary
-            if(toolAction == ToolActions.AXE_STRIP
-            || toolAction == ToolActions.SHEARS_HARVEST
-            || toolAction == ToolActions.SHOVEL_FLATTEN
-            || toolAction == ToolActions.HOE_TILL)
+            for(ActionDefinition actionDef : actionGroup.actions)
             {
-                for (ActionDefinition actionDef : gunContext.GetPotentialSecondaryActions())
+                switch(actionDef.actionType)
                 {
-                    switch(actionDef.actionType)
-                    {
-                        case Strip -> { if(toolAction == ToolActions.AXE_STRIP) return true; }
-                        case Shear -> { if(toolAction == ToolActions.SHEARS_HARVEST) return true; }
-                        case Flatten -> { if(toolAction == ToolActions.SHOVEL_FLATTEN) return true; }
-                        case Till -> { if(toolAction == ToolActions.HOE_TILL) return true; }
-                    }
-                }
-            }
-            // If this is a left click action, check primary
-            else if(toolAction == ToolActions.AXE_DIG
-            || toolAction == ToolActions.PICKAXE_DIG
-            || toolAction == ToolActions.SHOVEL_DIG
-            || toolAction == ToolActions.HOE_DIG
-            || toolAction == ToolActions.SHIELD_BLOCK)
-            {
-                for (ActionDefinition actionDef : gunContext.GetPotentialPrimaryActions())
-                {
-                    switch(actionDef.actionType)
-                    {
-                        case Axe -> { if(toolAction == ToolActions.AXE_DIG) return true; }
-                        case Pickaxe -> { if(toolAction == ToolActions.PICKAXE_DIG) return true; }
-                        case Shovel -> { if(toolAction == ToolActions.SHOVEL_DIG) return true; }
-                        case Hoe -> { if(toolAction == ToolActions.HOE_DIG) return true; }
-                        case Shield -> { if(toolAction == ToolActions.SHIELD_BLOCK) return true; }
-                    }
+                    case Strip -> { if(toolAction == ToolActions.AXE_STRIP) return true; }
+                    case Shear -> { if(toolAction == ToolActions.SHEARS_HARVEST) return true; }
+                    case Flatten -> { if(toolAction == ToolActions.SHOVEL_FLATTEN) return true; }
+                    case Till -> { if(toolAction == ToolActions.HOE_TILL) return true; }
+                    case Axe -> { if(toolAction == ToolActions.AXE_DIG) return true; }
+                    case Pickaxe -> { if(toolAction == ToolActions.PICKAXE_DIG) return true; }
+                    case Shovel -> { if(toolAction == ToolActions.SHOVEL_DIG) return true; }
+                    case Hoe -> { if(toolAction == ToolActions.HOE_DIG) return true; }
+                    case Shield -> { if(toolAction == ToolActions.SHIELD_BLOCK) return true; }
                 }
             }
         }

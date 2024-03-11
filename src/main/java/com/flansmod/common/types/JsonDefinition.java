@@ -15,8 +15,9 @@ public abstract class JsonDefinition
 	public ResourceLocation GetLocation() { return Location; }
 	public boolean IsValid() { return !Location.getPath().contains("null"); }
 
-	public ResourceLocation Location;
-	public JsonDefinition(ResourceLocation srcLoc)
+	@Nonnull
+	public final ResourceLocation Location;
+	public JsonDefinition(@Nonnull ResourceLocation srcLoc)
 	{
 		Location = srcLoc;
 	}
@@ -29,5 +30,5 @@ public abstract class JsonDefinition
 		return Location.hashCode();
 	}
 	@Override
-	public String toString() { return GetTypeName() + "@[" + Location.toString() + "]"; }
+	public String toString() { return GetTypeName() + "@["+Location+"]"; }
 }

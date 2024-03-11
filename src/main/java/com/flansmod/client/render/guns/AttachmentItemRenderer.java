@@ -20,6 +20,7 @@ import net.minecraft.world.phys.Vec3;
 import org.joml.Vector3f;
 import org.joml.Vector4f;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 public class AttachmentItemRenderer extends FlanItemModelRenderer
@@ -30,7 +31,7 @@ public class AttachmentItemRenderer extends FlanItemModelRenderer
 	}
 
 	@Override
-	protected void DoRender(Entity heldByEntity, ItemStack stack, RenderContext renderContext)
+	protected void DoRender(Entity heldByEntity, ItemStack stack, @Nonnull RenderContext renderContext)
 	{
 		// Find our skin
 		ResourceLocation skin = GetSkin(stack);

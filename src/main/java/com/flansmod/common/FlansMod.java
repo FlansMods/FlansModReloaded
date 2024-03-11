@@ -20,6 +20,7 @@ import com.flansmod.common.types.abilities.CraftingTraitDefinitions;
 import com.flansmod.common.types.abilities.elements.AbilityEffectDefinition;
 import com.flansmod.common.types.abilities.elements.CraftingTraitProviderDefinition;
 import com.flansmod.common.types.abilities.elements.EAbilityEffect;
+import com.flansmod.common.types.armour.ArmourDefinitions;
 import com.flansmod.common.types.attachments.AttachmentDefinitions;
 import com.flansmod.common.types.attachments.EAttachmentType;
 import com.flansmod.common.types.crafting.MaterialDefinitions;
@@ -262,6 +263,7 @@ public class FlansMod
     public static final MagazineDefinitions MAGAZINES = new MagazineDefinitions();
     public static final NpcDefinitions NPCS = new NpcDefinitions();
     public static final CraftingTraitDefinitions TRAITS = new CraftingTraitDefinitions();
+    public static final ArmourDefinitions ARMOURS = new ArmourDefinitions();
 
     // Server handlers
     public static final ServerActionManager ACTIONS_SERVER = new ServerActionManager();
@@ -316,6 +318,7 @@ public class FlansMod
         return tileEntityTypeRegister.register(name, () -> new WorkbenchBlockEntity.WorkbenchBlockEntityTypeHolder(loc).CreateType());
     }
 
+    @Nonnull
     public static ContextCache GetGunContextCache(boolean client)
     {
         if(client)
@@ -324,6 +327,7 @@ public class FlansMod
         }
         return CONTEXT_CACHE;
     }
+    @Nonnull
     private static ContextCache GetClientGunContextCache() { return FlansModClient.CONTEXT_CACHE; }
 
     public FlansMod()
@@ -483,5 +487,6 @@ public class FlansMod
         registerFunc.accept(MAGAZINES);
         registerFunc.accept(NPCS);
         registerFunc.accept(TRAITS);
+        registerFunc.accept(ARMOURS);
     }
 }

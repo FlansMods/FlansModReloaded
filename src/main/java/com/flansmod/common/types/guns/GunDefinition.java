@@ -20,7 +20,7 @@ public class GunDefinition extends JsonDefinition
 	@Override
 	public String GetTypeName() { return TYPE; }
 
-	public GunDefinition(ResourceLocation resLoc)
+	public GunDefinition(@Nonnull ResourceLocation resLoc)
 	{
 		super(resLoc);
 	}
