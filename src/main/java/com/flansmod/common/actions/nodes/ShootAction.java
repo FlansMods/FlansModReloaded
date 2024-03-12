@@ -517,10 +517,12 @@ public class ShootAction extends ActionInstance
 					// Create a bullet trail render
 					if(Group.Context.Gun.GetShooter().IsLocalPlayerOwner())
 					{
+						//Move this to seperate action
 						FlansModClient.SpawnLocalMuzzleParticles(shot.origin,gunshotContext,gunshotContext.ActionGroup.Gun.Def.particleCount);
 						FlansModClient.SHOT_RENDERER.AddLocalPlayerTrail(shot.origin, shot.Endpoint(), gunshotContext);
 					}
 					else {
+						//Move this to seperate action
 						FlansModClient.SpawnMuzzleParticles(shot.origin,gunshotContext,gunshotContext.ActionGroup.Gun.Def.particleCount);
 						FlansModClient.SHOT_RENDERER.AddTrail(shot.origin, shot.Endpoint());
 					}

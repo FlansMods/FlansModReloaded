@@ -15,10 +15,7 @@ import com.flansmod.client.render.effects.DecalRenderer;
 import com.flansmod.client.render.bullets.ShotRenderer;
 import com.flansmod.client.render.effects.LaserRenderer;
 import com.flansmod.common.FlansMod;
-import com.flansmod.common.actions.contexts.ContextCache;
-import com.flansmod.common.actions.contexts.GunContextPlayer;
-import com.flansmod.common.actions.contexts.GunshotContext;
-import com.flansmod.common.actions.contexts.ShooterContext;
+import com.flansmod.common.actions.contexts.*;
 import com.flansmod.common.gunshots.Raytracer;
 import com.flansmod.util.Maths;
 import com.flansmod.util.MinecraftHelpers;
@@ -37,6 +34,7 @@ import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.InteractionHand;
+import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -273,11 +271,27 @@ public class FlansModClient
 		}
 	}
 
+	//Clean this up later
 	public static void SpawnLocalMuzzleParticles(Vec3 origin, GunshotContext gunshotContext,int count){
 		if(Minecraft.getInstance().player != null && gunshotContext.ActionGroup.Gun instanceof GunContextPlayer playerGunContext) {
-			Transform shootOrigin = FirstPersonManager.GetWorldSpaceAPTransform(gunshotContext.ActionGroup.Gun, MinecraftHelpers.GetFirstPersonTransformType(playerGunContext.GetHand()), "shoot_origin");
+			//Transform shootOrigin = FirstPersonManager.GetWorldSpaceAPTransform(gunshotContext.ActionGroup.Gun, MinecraftHelpers.GetFirstPersonTransformType(playerGunContext.GetHand()), "shoot_origin");
 			for (int i = 0; i < gunshotContext.ActionGroup.Gun.Def.particleCount; i++) {
 				if (playerGunContext.GetShooter() != ShooterContext.INVALID) {
+
+					GunContext gunContext = gunshotContext.ActionGroup.Gun;
+					ItemDisplayContext transformType = ItemDisplayContext.FIRST_PERSON_RIGHT_HAND;
+					Transform eyeOrigin = gunContext.GetShootOrigin(Minecraft.getInstance().getPartialTick());
+
+					if(!Minecraft.getInstance().options.getCameraType().isFirstPerson() || !gunContext.GetShooter().IsLocalPlayerOwner())
+					{
+						transformType = MinecraftHelpers.GetThirdPersonTransformType(gunContext.GetShooter().IsLocalPlayerOwner(), playerGunContext.GetHand());
+					}
+					else
+					{
+						transformType = MinecraftHelpers.GetFirstPersonTransformType(playerGunContext.GetHand());
+					}
+					Transform shootOrigin = FirstPersonManager.GetWorldSpaceAPTransform(gunContext, transformType, ActionGroupContext.CreateGroupPath("shoot_origin"));
+
 					Vec3 look = playerGunContext.GetShooter().Entity().getLookAngle();
 					if(count > 1)
 						Minecraft.getInstance().level.addParticle(ParticleTypes.POOF, shootOrigin.PositionVec3().x() + look.x * 0.1f, shootOrigin.PositionVec3().y() + look.y * 0.1f, shootOrigin.PositionVec3().z() + look.z * 0.1f, (look.x() * 0.3) + random( count), (look.y() * 0.3) + random( count), (look.z() * 0.3) + random( count));
@@ -295,6 +309,24 @@ public class FlansModClient
 	public static void SpawnMuzzleParticles(Vec3 origin, GunshotContext gunshotContext, int count){
 		for (int i = 0; i < count; i++) {
 			if (gunshotContext.ActionGroup.Gun.GetShooter() != ShooterContext.INVALID) {
+
+				GunContext gunContext = gunshotContext.ActionGroup.Gun;
+				ItemDisplayContext transformType = ItemDisplayContext.FIRST_PERSON_RIGHT_HAND;
+				Transform eyeOrigin = gunContext.GetShootOrigin(Minecraft.getInstance().getPartialTick());
+				if(gunContext instanceof GunContextPlayer playerGunContext)
+				{
+					if(!Minecraft.getInstance().options.getCameraType().isFirstPerson() || !gunContext.GetShooter().IsLocalPlayerOwner())
+					{
+						transformType = MinecraftHelpers.GetThirdPersonTransformType(gunContext.GetShooter().IsLocalPlayerOwner(), playerGunContext.GetHand());
+					}
+					else
+					{
+						transformType = MinecraftHelpers.GetFirstPersonTransformType(playerGunContext.GetHand());
+					}
+
+				}
+				Transform laserOrigin = FirstPersonManager.GetWorldSpaceAPTransform(gunContext, transformType, ActionGroupContext.CreateGroupPath("shoot_origin"));
+				origin = laserOrigin.PositionVec3();
 				Vec3 look = gunshotContext.ActionGroup.Gun.GetShooter().Entity().getLookAngle();
 				if(count > 1)
 					Minecraft.getInstance().level.addParticle(ParticleTypes.POOF, origin.x() + look.x * 0.1f, origin.y() + look.y * 0.1f, origin.z() + look.z * 0.1f, (look.x() * 0.3) + random( count), (look.y() * 0.3) + random( count), (look.z() * 0.3) + random( count));
