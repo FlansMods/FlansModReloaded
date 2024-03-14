@@ -45,6 +45,10 @@ public class SoundDefinition
 		return minVolume + random.nextFloat() * (maxVolume - minVolume);
 	}
 
+	public float PickRangedVolume(float distance){
+		return minVolume + ((maxVolume-minVolume)*((1-distance)/(maxRange*16f)));
+	}
+
 	public float PickRandomPitch(RandomSource random)
 	{
 		return minPitchMultiplier + random.nextFloat() * (maxPitchMultiplier - minPitchMultiplier);
