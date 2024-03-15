@@ -46,7 +46,7 @@ public class SoundDefinition
 	}
 
 	public float PickRangedVolume(float distance){
-		return minVolume + ((maxVolume-minVolume)*((1-distance)/(maxRange*16f)));
+		return minVolume + ((maxVolume-minVolume)*(1-((distance)/(maxRange))));
 	}
 
 	public float PickRandomPitch(RandomSource random)
