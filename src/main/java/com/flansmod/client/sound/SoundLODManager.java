@@ -52,7 +52,7 @@ public class SoundLODManager
 					onEntity.position().z,
 					SoundEvent.createFixedRangeEvent(soundToPlay, soundDef.maxRange),
 					SoundSource.HOSTILE,
-					volumeMulti * soundDef.PickRandomVolume(Minecraft.getInstance().level.random),
+					volumeMulti * soundDef.PickRangedVolume((float)distance),
 					pitchMulti * soundDef.PickRandomPitch(Minecraft.getInstance().level.random),
 					true);
 
