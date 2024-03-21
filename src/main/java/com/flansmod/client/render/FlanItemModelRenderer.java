@@ -136,10 +136,10 @@ public abstract class FlanItemModelRenderer extends BlockEntityWithoutLevelRende
             texture = MissingTextureAtlasSprite.getLocation();
         return switch (material)
         {
-            case Solid -> RenderTypeFlanItem.GUN_SOLID.apply(texture);
-            case Cutout -> RenderTypeFlanItem.GUN_CUTOUT.apply(texture);
-            case Emissive -> RenderTypeFlanItem.GUN_EMISSIVE.apply(texture);
-            case Transparent -> RenderTypeFlanItem.GUN_TRANSPARENT.apply(texture);
+            case Solid -> RenderType.entitySolid(texture); //RenderTypeFlanItem.GUN_SOLID.apply(texture);
+            case Cutout -> RenderType.entityCutout(texture); //RenderTypeFlanItem.GUN_CUTOUT.apply(texture);
+            case Emissive -> RenderType.entityTranslucentEmissive(texture);
+            case Transparent -> RenderType.entityTranslucent(texture);
         };
     }
 
