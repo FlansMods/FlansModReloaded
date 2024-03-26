@@ -1,9 +1,6 @@
 package com.flansmod.client.render.animation;
 
-import com.flansmod.client.render.animation.elements.KeyframeDefinition;
-import com.flansmod.client.render.animation.elements.PoseDefinition;
-import com.flansmod.client.render.animation.elements.SequenceDefinition;
-import com.flansmod.client.render.animation.elements.SequenceEntryDefinition;
+import com.flansmod.client.render.animation.elements.*;
 import com.flansmod.common.FlansMod;
 import com.flansmod.common.types.JsonDefinition;
 import com.flansmod.common.types.JsonField;
@@ -20,7 +17,7 @@ public class FlanimationDefinition extends JsonDefinition
 	public static final FlanimationDefinition INVALID = new FlanimationDefinition(new ResourceLocation(FlansMod.MODID, "animations/null"));
 
 
-	public FlanimationDefinition(ResourceLocation srcLoc)
+	public FlanimationDefinition(@Nonnull ResourceLocation srcLoc)
 	{
 		super(srcLoc);
 	}
@@ -28,22 +25,32 @@ public class FlanimationDefinition extends JsonDefinition
 	@Override
 	public String GetTypeName() { return TYPE; }
 	@Nullable
-	public SequenceDefinition GetSequence(String name)
+	public ModalSequenceDefinition GetModalSequence(@Nonnull String modeName)
+	{
+		for (ModalSequenceDefinition modal : modalSequences)
+		{
+			if (modal.modeName.equalsIgnoreCase(modeName))
+				return modal;
+		}
+		return null;
+	}
+	@Nullable
+	public SequenceDefinition GetSequence(@Nonnull String name)
 	{
 		for (SequenceDefinition sequence : sequences)
 		{
-			if (sequence.name.toLowerCase().equals(name.toLowerCase()))
+			if (sequence.name.equalsIgnoreCase(name))
 				return sequence;
 		}
 		return null;
 	}
 	@Nullable
-	public KeyframeDefinition GetKeyframe(SequenceEntryDefinition entry)
+	public KeyframeDefinition GetKeyframe(@Nullable SequenceEntryDefinition entry)
 	{
 		return entry == null ? null : GetKeyframe(entry.frame);
 	}
 	@Nullable
-	public KeyframeDefinition GetKeyframe(String name)
+	public KeyframeDefinition GetKeyframe(@Nonnull String name)
 	{
 		for (KeyframeDefinition keyframe : keyframes)
 		{
@@ -53,12 +60,12 @@ public class FlanimationDefinition extends JsonDefinition
 		return null;
 	}
 	@Nonnull
-	public PoseDefinition GetPoseForPart(KeyframeDefinition keyframe, String partName)
+	public PoseDefinition GetPoseForPart(@Nonnull KeyframeDefinition keyframe, @Nonnull String partName)
 	{
 		return GetPoseForPartOptional(keyframe, partName).orElse(PoseDefinition.Identity());
 	}
 	@Nonnull
-	private Optional<PoseDefinition> GetPoseForPartOptional(KeyframeDefinition keyframe, String partName)
+	private Optional<PoseDefinition> GetPoseForPartOptional(@Nonnull KeyframeDefinition keyframe, @Nonnull String partName)
 	{
 		if(keyframe.HasPoseForPart(partName))
 		{
@@ -84,5 +91,6 @@ public class FlanimationDefinition extends JsonDefinition
 	public KeyframeDefinition[] keyframes = new KeyframeDefinition[0];
 	@JsonField
 	public SequenceDefinition[] sequences = new SequenceDefinition[0];
-
+	@JsonField
+	public ModalSequenceDefinition[] modalSequences = new ModalSequenceDefinition[0];
 }

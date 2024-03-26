@@ -1,21 +1,20 @@
 {
-  "variants": {
-	  "facing=north": {
-		  "model": "flansmod:block/portable_coal_generator",
-		  "y": 90		  
-	  },
-	  "facing=east": {
-		  "model": "flansmod:block/portable_coal_generator",
-		  "y": 180		  
-	  },
-	  "facing=south": {
-		  "model": "flansmod:block/portable_coal_generator",
-		  "y": 270		  
-	  },
-	  "facing=west": {
-		  "model": "flansmod:block/portable_coal_generator",
-		  "y": 0		  
-	  }
-	  
-  }
+    "variants": {
+        "facing=north": {
+            "model": "flansmod:block/portable_coal_generator",
+            "y": 90
+        },
+        "facing=east": {
+            "model": "flansmod:block/portable_coal_generator",
+            "y": 180
+        },
+        "facing=south": {
+            "model": "flansmod:block/portable_coal_generator",
+            "y": 270
+        },
+        "facing=west": {
+            "model": "flansmod:block/portable_coal_generator",
+            "y": 0
+        }
+    }
 }
