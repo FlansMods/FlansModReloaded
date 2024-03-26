@@ -138,7 +138,7 @@ public abstract class FlanItemModelRenderer extends BlockEntityWithoutLevelRende
         {
             case Solid -> RenderType.entitySolid(texture); //RenderTypeFlanItem.GUN_SOLID.apply(texture);
             case Cutout -> RenderType.entityCutout(texture); //RenderTypeFlanItem.GUN_CUTOUT.apply(texture);
-            case Emissive -> RenderType.entityTranslucentEmissive(texture);
+            case Emissive -> RenderType.eyes(texture);
             case Transparent -> RenderType.entityTranslucent(texture);
         };
     }
