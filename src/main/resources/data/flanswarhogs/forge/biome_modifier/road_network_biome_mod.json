@@ -1,0 +1,32 @@
+{
+	"type": "flanswarhogs:add_road_carver",
+	"biomes": "#flanswarhogs:has_structure/road_network",
+	"carver_type": "flanswarhogs:road_carver",
+	"carver_config": {
+		"horizontal_radius_multiplier": 1,
+		"vertical_radius_multiplier": 1,
+		"floor_level": 0,
+		"lava_level": {
+			"above_bottom": 8
+		},
+		"y": {
+			"type": "minecraft:uniform",
+			"max_inclusive": {
+				"absolute": 180
+			},
+			"min_inclusive": {
+				"above_bottom": 8
+			}
+		},
+		"yScale": {
+			"type": "minecraft:uniform",
+			"value": {
+				"max_exclusive": 0.9,
+				"min_inclusive": 0.1
+			}
+		},
+		"probability": 1.0,
+		"noise_parameters": "flanswarhogs:road_regional_noise",
+		"replaceable": "#minecraft:overworld_carver_replaceables"
+	}
+}

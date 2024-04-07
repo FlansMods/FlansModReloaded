@@ -1,0 +1,17 @@
+{
+	"structures": [
+		{
+			"structure": "flanswarhogs:road_network",
+			"weight": 1
+		}
+	],
+	"placement": {
+		"type": "flanswarhogs:voronoi",
+		
+		"salt": 4003102,
+		"CellSize": 4,
+		"SuperCellSize": 4
+		
+	}
+		
+}

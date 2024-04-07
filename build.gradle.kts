@@ -54,7 +54,9 @@ val Project.mixin: MixinExtension
     get() = extensions.getByType()
 mixin.run {
     add(sourceSets.main.get(), "flansmod.refmap.json")
+    add(sourceSets.main.get(), "flanswarhogs.refmap.json")
     config("flansmod.mixins.json")
+    config("flanswarhogs.mixins.json")
 }
 
 val config: Properties = file("gradle.properties").inputStream().let {
@@ -166,6 +168,9 @@ minecraft.runs.create("client") {
         sources.add(sourceSets.main.get())
     }
     mods.create("flansvendersgame") {
+        sources.add(sourceSets.main.get())
+    }
+    mods.create("flanswarhogs") {
         sources.add(sourceSets.main.get())
     }
 }
