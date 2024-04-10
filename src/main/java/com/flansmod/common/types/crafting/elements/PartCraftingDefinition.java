@@ -64,18 +64,13 @@ public class PartCraftingDefinition
 					return -1;
 				if(o2 == null)
 					return +1;
-				int hash1 = o1.getResultItem(RegistryAccess.EMPTY).getItem().hashCode();
-				int hash2 = o2.getResultItem(RegistryAccess.EMPTY).getItem().hashCode();
-				if(hash1 < hash2)
-					return -1;
-				else if(hash2 < hash1)
-					return +1;
-				else
-				{
-					FlansMod.LOGGER.error("Equivalient recipes " + o1 + " " + o2 + "!");
-					return 0;
-				}
+				String hash1 = o1.getResultItem(RegistryAccess.EMPTY).getItem().builtInRegistryHolder().key().location().toString();
+				String hash2 = o2.getResultItem(RegistryAccess.EMPTY).getItem().builtInRegistryHolder().key().location().toString();
+				int outputComparison = hash1.compareTo(hash2);
+				if(outputComparison != 0)
+					return outputComparison;
 
+				return o1.getId().compareTo(o2.getId());
 			});
 			RecipeCaches.put(level, recipeCache);
 		}
