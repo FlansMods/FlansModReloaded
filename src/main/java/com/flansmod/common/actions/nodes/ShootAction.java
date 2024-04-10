@@ -500,6 +500,7 @@ public class ShootAction extends ActionInstance
 		{
 			boolean hitEntity = false;
 			boolean hitMLG = false;
+			boolean hitFatal = false;
 			float verticalRecoil = 0.0f;
 			float horizontalRecoil = 0.0f;
 			for(Gunshot shot : shots.Shots)
@@ -541,19 +542,34 @@ public class ShootAction extends ActionInstance
 								continue;
 
 							hitEntity = true;
+
+
 							if (((EntityHitResult) hit).getEntity() instanceof EnderDragon dragon)
 							{
 								float damage = gunshotContext.EstimateImpactDamage(EAbilityTarget.ShotEntity);
 								damage = damage / 4.0F + Math.min(damage, 1.0F);
 								if (dragon.getHealth() <= damage)
+								{
 									hitMLG = true;
-							} else if (((EntityHitResult) hit).getEntity() instanceof EnderDragonPart part)
+									hitFatal = true;
+								}
+							}
+							else if (((EntityHitResult) hit).getEntity() instanceof EnderDragonPart part)
 							{
 								float damage = gunshotContext.EstimateImpactDamage(EAbilityTarget.ShotEntity);
 								if (part != part.parentMob.head)
 									damage = damage / 4.0F + Math.min(damage, 1.0F);
 								if (part.parentMob.getHealth() <= damage)
+								{
 									hitMLG = true;
+									hitFatal = true;
+								}
+							}
+							else if (((EntityHitResult) hit).getEntity() instanceof LivingEntity living)
+							{
+								float damage = gunshotContext.EstimateImpactDamage(EAbilityTarget.ShotEntity);
+								if(living.getHealth() < damage)
+									hitFatal = true;
 							}
 						}
 					}
@@ -565,7 +581,7 @@ public class ShootAction extends ActionInstance
 				// If this was my shot, and it hit, hit marker me
 				if(hitEntity)
 				{
-					FlansModClient.CLIENT_OVERLAY_HOOKS.ApplyHitMarker(hitMLG ? 100.0f : 10.0f, hitMLG);
+					FlansModClient.CLIENT_OVERLAY_HOOKS.ApplyHitMarker(hitMLG ? 100.0f : 10.0f, hitFatal, hitMLG);
 				}
 
 				if (Group.Context.Gun.GetShooter().Entity() instanceof Player player)

@@ -19,6 +19,7 @@ import com.mojang.blaze3d.vertex.*;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.renderer.GameRenderer;
+import net.minecraft.client.renderer.Rect2i;
 import net.minecraft.client.renderer.block.model.ItemTransforms;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
@@ -209,13 +210,15 @@ public class ClientRenderHooks
 	private static final ResourceLocation HIT_MARKER_TEXTURE = new ResourceLocation(FlansMod.MODID, "textures/gui/hitmarker.png");
 	private static final float HIT_MARKER_SIZE = 9f;
 	private static float HitMarkerDurationRemaining = 0.0f;
+	private static boolean isFatal = false;
 	private static boolean isMLG = false;
-	private static ArrayList<Vec2> MLGPositions = new ArrayList<>();
-	public void ApplyHitMarker(float duration, boolean MLG)
+	private static final ArrayList<Vec2> MLGPositions = new ArrayList<>();
+	public void ApplyHitMarker(float duration, boolean fatal, boolean MLG)
 	{
 		HitMarkerDurationRemaining = Maths.Max(HitMarkerDurationRemaining, duration);
 		MC.getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.GENERIC_HURT, 1.0f));
 		isMLG = MLG;
+		isFatal = fatal;
 	}
 
 	private void UpdateHitMarkers()
@@ -260,14 +263,16 @@ public class ClientRenderHooks
 
 	private void RenderHitMarker(int i, int j, Vec2 pos)
 	{
-		float uvMin = 0f, uvMax = 9f / 16f;
+		float uMin = isFatal ? 16f : 0f;
+		float vMin = 0f;
+
 		float scale = 1f;
 		float x = pos.x * 64.0f, y = pos.y * 64.0f;
 
 		RenderQuad(i*0.5f + x - 0.5f*HIT_MARKER_SIZE*scale, j*0.5f + y - 0.5f*HIT_MARKER_SIZE*scale,
 			HIT_MARKER_SIZE*scale, HIT_MARKER_SIZE*scale,
-			uvMin, uvMin,
-			16, 16);
+			uMin, vMin,
+			32, 16);
 	}
 
 	private void RenderPlayerAmmoOverlay(@Nonnull GuiGraphics graphics)
