@@ -1,0 +1,20 @@
+{
+    "variants": {
+        "facing=north": {
+            "model": "flansworldwars:block/british",
+            "y": 90
+        },
+        "facing=east": {
+            "model": "flansworldwars:block/british",
+            "y": 180
+        },
+        "facing=south": {
+            "model": "flansworldwars:block/british",
+            "y": 270
+        },
+        "facing=west": {
+            "model": "flansworldwars:block/british",
+            "y": 0
+        }
+    }
+}

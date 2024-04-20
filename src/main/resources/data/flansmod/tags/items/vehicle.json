@@ -1,0 +1,32 @@
+{
+  "replace": "false",
+  "values": [
+    "flansworldwars:bf109",
+    "flansworldwars:bofors",
+    "flansworldwars:camel",
+    "flansworldwars:chi_ha",
+    "flansworldwars:chi_nu",
+    "flansworldwars:churchill",
+    "flansworldwars:cromwell",
+    "flansworldwars:crusader",
+    "flansworldwars:fokker",
+    "flansworldwars:fury",
+    "flansworldwars:jeep",
+    "flansworldwars:kubel",
+    "flansworldwars:kv1",
+    "flansworldwars:lancaster",
+    "flansworldwars:m157mm",
+    "flansworldwars:mustang",
+    "flansworldwars:pak40",
+    "flansworldwars:panzer",
+    "flansworldwars:panzer_iil",
+    "flansworldwars:sherman",
+    "flansworldwars:spitfire",
+    "flansworldwars:t34",
+    "flansworldwars:tiger",
+    "flansworldwars:tiger131",
+    "flansworldwars:type4ho_ro",
+    "flansworldwars:yak9",
+    "flansworldwars:zero"
+  ]
+}

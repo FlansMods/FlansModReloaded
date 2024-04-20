@@ -23,6 +23,7 @@
     "flansbasicparts:shotgun_shell_ex",
     "flansbasicparts:shotgun_shell_flechette",
     "flansbasicparts:shotgun_shell_flechette_poisoned",
-    "flansbasicparts:shotgun_shell_incendiary"
+    "flansbasicparts:shotgun_shell_incendiary",
+    "flansworldwars:zf4scope"
   ]
 }

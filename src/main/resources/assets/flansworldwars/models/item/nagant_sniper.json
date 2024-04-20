@@ -1,0 +1,289 @@
+{
+    "loader": "flansmod:turborig",
+    "display": {
+        "fixed": {
+            "translation": [
+                8.0,
+                -7.0,
+                -13.0
+            ],
+            "rotation": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "scale": [
+                1.0,
+                1.0,
+                1.0
+            ]
+        }
+    },
+    "textures": {
+        "default": "flansworldwars:mosin_nagant"
+    },
+    "icons": {
+        "default": "flansworldwars:mosin_nagant_sniper"
+    },
+    "animations": {},
+    "parts": {
+        "sights": {
+            "origin": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "material": "Cutout",
+            "turboelements": [
+                {
+                    "verts": [
+                        [
+                            0.0,
+                            0.0,
+                            0.0
+                        ],
+                        [
+                            4.0,
+                            0.0,
+                            0.0
+                        ],
+                        [
+                            0.0,
+                            1.0,
+                            0.0
+                        ],
+                        [
+                            4.0,
+                            1.0,
+                            0.0
+                        ],
+                        [
+                            0.0,
+                            0.0,
+                            1.0
+                        ],
+                        [
+                            4.0,
+                            0.0,
+                            1.0
+                        ],
+                        [
+                            0.0,
+                            1.0,
+                            1.0
+                        ],
+                        [
+                            4.0,
+                            1.0,
+                            1.0
+                        ]
+                    ],
+                    "eulerRotations": [
+                        0.0,
+                        90.0,
+                        0.0
+                    ],
+                    "rotationOrigin": [
+                        -0.49999994,
+                        6.0,
+                        1.00000024
+                    ],
+                    "faces": {
+                        "north": {
+                            "uv": [
+                                0.546875,
+                                0.5,
+                                0.609375,
+                                0.5625
+                            ],
+                            "rotation": 180,
+                            "texture": "#default"
+                        },
+                        "east": {
+                            "uv": [
+                                0.53125,
+                                0.5,
+                                0.546875,
+                                0.5625
+                            ],
+                            "rotation": 180,
+                            "texture": "#default"
+                        },
+                        "south": {
+                            "uv": [
+                                0.46875,
+                                0.5,
+                                0.53125,
+                                0.5625
+                            ],
+                            "rotation": 180,
+                            "texture": "#default"
+                        },
+                        "west": {
+                            "uv": [
+                                0.453125,
+                                0.5,
+                                0.46875,
+                                0.5625
+                            ],
+                            "rotation": 180,
+                            "texture": "#default"
+                        },
+                        "up": {
+                            "uv": [
+                                0.46875,
+                                0.4375,
+                                0.53125,
+                                0.5
+                            ],
+                            "rotation": 180,
+                            "texture": "#default"
+                        },
+                        "down": {
+                            "uv": [
+                                0.53125,
+                                0.4375,
+                                0.59375,
+                                0.5
+                            ],
+                            "rotation": 270,
+                            "texture": "#default"
+                        }
+                    }
+                },
+                {
+                    "verts": [
+                        [
+                            0.0,
+                            0.0,
+                            0.0
+                        ],
+                        [
+                            1.0,
+                            0.0,
+                            0.0
+                        ],
+                        [
+                            0.0,
+                            1.0,
+                            0.0
+                        ],
+                        [
+                            1.0,
+                            1.0,
+                            0.0
+                        ],
+                        [
+                            0.0,
+                            0.0,
+                            1.0
+                        ],
+                        [
+                            1.0,
+                            0.0,
+                            1.0
+                        ],
+                        [
+                            0.0,
+                            1.0,
+                            1.0
+                        ],
+                        [
+                            1.0,
+                            1.0,
+                            1.0
+                        ]
+                    ],
+                    "eulerRotations": [
+                        0.0,
+                        90.0,
+                        0.0
+                    ],
+                    "rotationOrigin": [
+                        -0.5000003,
+                        5.0,
+                        -1.50000024
+                    ],
+                    "faces": {
+                        "north": {
+                            "uv": [
+                                0.421875,
+                                0.5,
+                                0.4375,
+                                0.5625
+                            ],
+                            "rotation": 180,
+                            "texture": "#default"
+                        },
+                        "east": {
+                            "uv": [
+                                0.40625,
+                                0.5,
+                                0.421875,
+                                0.5625
+                            ],
+                            "rotation": 180,
+                            "texture": "#default"
+                        },
+                        "south": {
+                            "uv": [
+                                0.390625,
+                                0.5,
+                                0.40625,
+                                0.5625
+                            ],
+                            "rotation": 180,
+                            "texture": "#default"
+                        },
+                        "west": {
+                            "uv": [
+                                0.375,
+                                0.5,
+                                0.390625,
+                                0.5625
+                            ],
+                            "rotation": 180,
+                            "texture": "#default"
+                        },
+                        "up": {
+                            "uv": [
+                                0.390625,
+                                0.4375,
+                                0.40625,
+                                0.5
+                            ],
+                            "rotation": 180,
+                            "texture": "#default"
+                        },
+                        "down": {
+                            "uv": [
+                                0.40625,
+                                0.4375,
+                                0.421875,
+                                0.5
+                            ],
+                            "rotation": 270,
+                            "texture": "#default"
+                        }
+                    }
+                }
+            ]
+        }
+    },
+    "attachPoints": [
+        {
+            "name": "sights",
+            "attachTo": "body",
+            "offset": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "euler": [
+                0.0,
+                0.0,
+                0.0
+            ]
+        }
+    ]
+}
