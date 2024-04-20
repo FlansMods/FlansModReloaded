@@ -374,7 +374,8 @@ public abstract class GunContext implements IStatCalculatorContext
 			EItemStackValidity validity = ValidateLinkedItemStack();
 			if(validity.IsValid())
 			{
-				Stack = GetLinkedItemStack().copy();
+				if(!ItemStack.isSameItemSameTags(Stack, GetLinkedItemStack()))
+					Stack = GetLinkedItemStack().copy();
 			}
 		}
 	}
