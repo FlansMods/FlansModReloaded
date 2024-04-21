@@ -7,6 +7,8 @@ import net.minecraft.world.phys.Vec3;
 
 public class SeatDefinition
 {
+	public static final SeatDefinition INVALID = new SeatDefinition();
+
 	@JsonField
 	public String attachedTo = "body";
 	@JsonField
