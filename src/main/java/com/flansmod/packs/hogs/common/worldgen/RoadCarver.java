@@ -279,9 +279,38 @@ public class RoadCarver extends WorldCarver<RoadCarverConfiguration>
 			Vec3 intersectionPoint = new Vec3((regionX + intersectionNoiseX) * REGION_BLOCK_SIZE, 90d, (regionZ + intersectionNoiseZ) * REGION_BLOCK_SIZE);
 			List<RoadPath> roads = new ArrayList<>();
 
+			Vec3 northEndPoint = intersectionPoint;
+			Vec3 eastEndPoint = intersectionPoint;
+			Vec3 southEndPoint = intersectionPoint;
+			Vec3 westEndPoint = intersectionPoint;
+
+			if(numConnected == 4)
+			{
+				boolean roundabout = noise.getValue(7771d * (regionX + 0.5d), 0, -7771d * (regionZ + 0.5d)) > 0d;
+				if(roundabout)
+				{
+					northEndPoint = intersectionPoint.add(new Vec3(0d, 0d, -8d));
+					eastEndPoint = intersectionPoint.add(new Vec3(8d, 0d, 0d));
+					southEndPoint = intersectionPoint.add(new Vec3(0d, 0d, 8d));
+					westEndPoint = intersectionPoint.add(new Vec3(-8d, 0d, 0d));
+
+					roads.add(new RoadPath(List.of(
+						northEndPoint,
+						intersectionPoint.add(new Vec3(5d, 0d, -5d)),
+						eastEndPoint,
+						intersectionPoint.add(new Vec3(5d, 0d, 5d)),
+						southEndPoint,
+						intersectionPoint.add(new Vec3(-5d, 0d, 5d)),
+						westEndPoint,
+						intersectionPoint.add(new Vec3(-5d, 0d, -5d)),
+						northEndPoint
+					)));
+				}
+			}
+
 			if(connectedNorth)
 			{
-				RoadPath path = new RoadPath(new ArrayList<>(List.of(northEntryPoint, northEntryPoint.add(0d, 0d, 8d), intersectionPoint)));
+				RoadPath path = new RoadPath(new ArrayList<>(List.of(northEntryPoint, northEntryPoint.add(0d, 0d, 8d), northEndPoint)));
 				// Path is currently { enter, enter+8, intersect }
 
 				double sample50 = noise.getValue(1000d * (regionX + 0.5d), 	0, 1000d * (regionZ + 0.25d));
@@ -300,7 +329,7 @@ public class RoadCarver extends WorldCarver<RoadCarverConfiguration>
 			}
 			if(connectedEast)
 			{
-				RoadPath path = new RoadPath(new ArrayList<>(List.of(eastEntryPoint, eastEntryPoint.add(-8d, 0d, 0d), intersectionPoint)));
+				RoadPath path = new RoadPath(new ArrayList<>(List.of(eastEntryPoint, eastEntryPoint.add(-8d, 0d, 0d), eastEndPoint)));
 				// Path is currently { enter, enter+8, intersect }
 
 				double sample50 = noise.getValue(1000d * (regionX + 0.75d), 	0, 1000d * (regionZ + 0.5d));
@@ -319,7 +348,7 @@ public class RoadCarver extends WorldCarver<RoadCarverConfiguration>
 			}
 			if(connectedSouth)
 			{
-				RoadPath path = new RoadPath(new ArrayList<>(List.of(southEntryPoint, southEntryPoint.add(0d, 0d, -8d), intersectionPoint)));
+				RoadPath path = new RoadPath(new ArrayList<>(List.of(southEntryPoint, southEntryPoint.add(0d, 0d, -8d), southEndPoint)));
 				// Path is currently { enter, enter+8, intersect }
 
 				double sample50 = noise.getValue(1000d * (regionX + 0.5d), 	0, 1000d * (regionZ + 0.75d));
@@ -338,7 +367,7 @@ public class RoadCarver extends WorldCarver<RoadCarverConfiguration>
 			}
 			if(connectedWest)
 			{
-				RoadPath path = new RoadPath(new ArrayList<>(List.of(westEntryPoint, westEntryPoint.add(8d, 0d, 0d), intersectionPoint)));
+				RoadPath path = new RoadPath(new ArrayList<>(List.of(westEntryPoint, westEntryPoint.add(8d, 0d, 0d), westEndPoint)));
 				// Path is currently { enter, enter+8, intersect }
 
 				double sample50 = noise.getValue(1000d * (regionX + 0.25d), 	0, 1000d * (regionZ + 0.5d));
