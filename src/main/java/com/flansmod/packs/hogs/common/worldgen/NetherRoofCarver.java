@@ -71,7 +71,6 @@ public class NetherRoofCarver extends WorldCarver<NetherRoofCarverConfiguration>
 						if(7d < distance && distance < 10d)
 							chunk.setBlockState(blockPos, Blocks.GREEN_WOOL.defaultBlockState(), false);
 					}
-
 				}
 
 				return true;

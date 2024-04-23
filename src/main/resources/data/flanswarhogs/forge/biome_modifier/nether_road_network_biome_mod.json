@@ -3,8 +3,16 @@
 	"biomes": "#flanswarhogs:has_structure/road_network_nether",
 	"carver_type": "flanswarhogs:road_carver",
 	"carver_config": {
-		"horizontal_radius_multiplier": 1,
-		"vertical_radius_multiplier": 1,
+		"wiggle_magnitude_first": 0.1,
+		"wiggle_magnitude_second": 0.1,
+		"road_inner_radius": 3,
+		"road_outer_radius": 4,
+		"road_inner_block_state": {
+			"Name": "minecraft:basalt"
+		},
+		"road_outer_block_state": {
+			"Name": "minecraft:blackstone"
+		},
 		"floor_level": 0,
 		"lava_level": {
 			"above_bottom": 15

@@ -236,9 +236,6 @@ public class RoadCarver extends WorldCarver<RoadCarverConfiguration>
 	private static final int REGION_CHUNK_SIZE = 8;
 	private static final int REGION_BLOCK_SIZE = 16 * REGION_CHUNK_SIZE;
 
-	private static final double WIGGLE_MAG_FIRST = 0.1d;
-	private static final double WIGGLE_MAG_SECOND = 0.1d;
-
 	private static final double ROAD_WIDTH = 3d;
 	private static final double ROAD_PLUS_BORDER_WIDTH = 4d;
 
@@ -254,6 +251,12 @@ public class RoadCarver extends WorldCarver<RoadCarverConfiguration>
 	{
 		if(chunk.getPos().equals(chunkPos) && config.noiseParameters.unwrapKey().isPresent())
 		{
+			float WIGGLE_MAG_FIRST = config.wiggleMagnitudeFirstOrder.sample(random);
+			float WIGGLE_MAG_SECOND = config.wiggleMagnitudeSecondOrder.sample(random);
+
+			float ROAD_INNER_RADIUS = config.roadInnerRadius;
+			float ROAD_OUTER_RADIUS = config.roadOuterRadius;
+
 			NormalNoise noise = context.randomState().getOrCreateNoise(config.noiseParameters.unwrapKey().get());
 			int regionX = Math.floorDiv(chunkPos.x, REGION_CHUNK_SIZE);
 			int regionZ = Math.floorDiv(chunkPos.z, REGION_CHUNK_SIZE);
@@ -401,13 +404,13 @@ public class RoadCarver extends WorldCarver<RoadCarverConfiguration>
 					}
 
 
-					if(minDist < ROAD_PLUS_BORDER_WIDTH)
+					if(minDist < ROAD_OUTER_RADIUS)
 					{
-						if(minDist < ROAD_WIDTH)
-							chunk.setBlockState(blockPos, Blocks.BLACKSTONE.defaultBlockState(), false);
-						else chunk.setBlockState(blockPos, Blocks.BASALT.defaultBlockState(), false);
+						if(minDist < ROAD_INNER_RADIUS)
+							chunk.setBlockState(blockPos, config.roadOuterBlockState, false);
+						else chunk.setBlockState(blockPos, config.roadInnerBlockState, false);
 
-						int roofHeight = minDist < ROAD_WIDTH ? 6 : 5;
+						int roofHeight = minDist < ROAD_INNER_RADIUS ? 6 : 5;
 
 						for(int j = 1; j < roofHeight + 1; j++)
 						{
