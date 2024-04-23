@@ -47,6 +47,9 @@ public class WarHogsMod
 	public static final RegistryObject<WorldCarver<?>> ROAD_CARVER = CARVERS.register("road_carver", () -> new RoadCarver(RoadCarverConfiguration.CODEC));
 	public static final RegistryObject<Codec<? extends BiomeModifier>> ADD_CARVER_BIOME_MODIFIER_SERIALIZER = BIOME_MODIFIER_SERIALIZERS.register("add_road_carver", () -> AddRoadCarverBiomeModifier.CODEC);
 
+	public static final RegistryObject<WorldCarver<?>> NETHER_ROOF_CARVER = CARVERS.register("nether_roof_carver", () -> new NetherRoofCarver(NetherRoofCarverConfiguration.CODEC));
+	public static final RegistryObject<Codec<? extends BiomeModifier>> ADD_ROOF_CARVER_BIOME_MODIFIER = BIOME_MODIFIER_SERIALIZERS.register("add_nether_roof_carver", () -> AddNetherRoofCarverBiomeModifier.CODEC);
+
 
 
 

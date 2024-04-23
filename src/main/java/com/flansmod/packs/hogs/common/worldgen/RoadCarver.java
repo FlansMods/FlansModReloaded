@@ -13,6 +13,7 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.chunk.CarvingMask;
 import net.minecraft.world.level.chunk.ChunkAccess;
 import net.minecraft.world.level.levelgen.Aquifer;
+import net.minecraft.world.level.levelgen.Column;
 import net.minecraft.world.level.levelgen.carver.CarvingContext;
 import net.minecraft.world.level.levelgen.carver.CaveCarverConfiguration;
 import net.minecraft.world.level.levelgen.carver.WorldCarver;
@@ -22,6 +23,7 @@ import net.minecraft.world.phys.Vec3;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.function.Function;
 
@@ -31,6 +33,8 @@ public class RoadCarver extends WorldCarver<RoadCarverConfiguration>
 	private static final int BLOCK_TO_CHUNK = 16;
 	private static final int CHUNK_TO_URBAN = 16;
 	private static final int URBAN_TO_REGIONAL = 4;
+
+
 	public record RoadMapperLayer(@Nonnull RoadLayer Layer,
 								  int NoiseSampleLevel,
 								  int AbsoluteScaleFromBlock,
@@ -69,6 +73,33 @@ public class RoadCarver extends WorldCarver<RoadCarverConfiguration>
 		public int GetWestConnectionZ(@Nonnull NormalNoise noise, int cellX, int cellZ)
 		{
 			return (int) Math.floor(AbsoluteScaleFromBlock * noise.getValue(cellX, 41, -cellZ));
+		}
+
+		public enum EEdge
+		{
+			North,
+			East,
+			West,
+			South,
+		}
+
+		public boolean IsEdgePresent(@Nonnull NormalNoise noise, int cellX, int cellZ, @Nonnull EEdge edge)
+		{
+			return switch(edge)
+			{
+				case North -> NorthSouthEdgeSample(noise, cellX, cellZ) > ConnectionChance;
+				case South -> NorthSouthEdgeSample(noise, cellX, cellZ + 1) > ConnectionChance;
+				case East -> EastWestEdgeSample(noise, cellX, cellZ) > ConnectionChance;
+				case West -> EastWestEdgeSample(noise, cellX + 1, cellZ) > ConnectionChance;
+			};
+		}
+		private double NorthSouthEdgeSample(@Nonnull NormalNoise noise, int cellX, int cellZ)
+		{
+			return noise.getValue(1433021d - 0.17d * cellX, NoiseSampleLevel, 3939941d + 0.23d * cellZ);
+		}
+		private double EastWestEdgeSample(@Nonnull NormalNoise noise, int cellX, int cellZ)
+		{
+			return noise.getValue(13411d - 0.31d * cellX, NoiseSampleLevel, 55571d + 0.29d * cellZ);
 		}
 	}
 
@@ -141,8 +172,75 @@ public class RoadCarver extends WorldCarver<RoadCarverConfiguration>
 	}
 
 
+	public record RoadPath(@Nonnull List<Vec3> Nodes)
+	{
+		public void Wiggle(int firstIndex, double noiseSample, double magnitude)
+		{
+			int secondIndex = firstIndex + 1;
+			if(secondIndex < Nodes.size())
+			{
+				Vec3 firstNode = Nodes.get(firstIndex);
+				Vec3 secondNode = Nodes.get(secondIndex);
 
+				Vec3 delta = secondNode.subtract(firstNode);
+				Vec3 perp = new Vec3(-delta.z, 0d, delta.x);
 
+				Vec3 newNode = firstNode.add(delta.scale(0.5d)).add(perp.scale(magnitude * noiseSample));
+				Nodes.add(secondIndex, newNode);
+			}
+		}
+
+		public double DistanceFromRoad(@Nonnull Vec3 pos)
+		{
+			pos = new Vec3(pos.x, 0, pos.z);
+			double shortestDistance = Double.MAX_VALUE;
+			for(int i = 0; i < Nodes.size() - 1; i++)
+			{
+				Vec3 from = Nodes.get(i);
+				Vec3 to = Nodes.get(i + 1);
+				Vec3 direction = to.subtract(from);
+
+				double dist = DistanceToLineSegment(from, direction, pos);
+
+				if (dist < shortestDistance)
+				{
+					shortestDistance = dist;
+				}
+			}
+			return shortestDistance;
+		}
+
+		private double DistanceToLineSegment(@Nonnull Vec3 origin, @Nonnull Vec3 direction, @Nonnull Vec3 pos)
+		{
+			// We use xz of a Vec3 for simplicity
+			double lineLengthSq = direction.x * direction.x + direction.z * direction.z;
+
+			// Quick check for zero-length line
+			if(lineLengthSq == 0)
+				return Maths.Sqrt((pos.x - origin.x) * (pos.x - origin.x) + (pos.z - origin.z) * (pos.z - origin.z));
+
+			// Line = origin + t * direction
+			// Line segment is this in the range [0,1]
+			// Project to line to find t, effectively dot(pos - origin, direction)
+			double t = ((pos.x - origin.x) * (direction.x) + (pos.z - origin.z) * (direction.z)) / lineLengthSq;
+			// Clamp to segment
+			double tSegment = Maths.Clamp(t, 0, 1);
+			// Now get distance to that clamped point
+
+			Vec3 tPoint = new Vec3(origin.x + tSegment * direction.x, 0d, origin.z + tSegment * direction.z);
+			return Maths.Sqrt((pos.x - tPoint.x) * (pos.x - tPoint.x) + (pos.z - tPoint.z) * (pos.z - tPoint.z));
+		}
+	}
+
+	private static final double MIN_CONNECTION_DIST_FROM_CORNER = 0.1d;
+	private static final int REGION_CHUNK_SIZE = 8;
+	private static final int REGION_BLOCK_SIZE = 16 * REGION_CHUNK_SIZE;
+
+	private static final double WIGGLE_MAG_FIRST = 0.1d;
+	private static final double WIGGLE_MAG_SECOND = 0.1d;
+
+	private static final double ROAD_WIDTH = 3d;
+	private static final double ROAD_PLUS_BORDER_WIDTH = 4d;
 
 	@Override
 	public boolean carve(@Nonnull CarvingContext context,
@@ -154,52 +252,146 @@ public class RoadCarver extends WorldCarver<RoadCarverConfiguration>
 						 @Nonnull ChunkPos chunkPos,
 						 @Nonnull CarvingMask mask)
 	{
-		if(chunk.getPos().equals(chunkPos))
+		if(chunk.getPos().equals(chunkPos) && config.noiseParameters.unwrapKey().isPresent())
 		{
-			if (config.noiseParameters.unwrapKey().isPresent())
+			NormalNoise noise = context.randomState().getOrCreateNoise(config.noiseParameters.unwrapKey().get());
+			int regionX = Math.floorDiv(chunkPos.x, REGION_CHUNK_SIZE);
+			int regionZ = Math.floorDiv(chunkPos.z, REGION_CHUNK_SIZE);
+
+			double northEdgeNoise = 0.5d + 0.5d * noise.getValue(1000d * (regionX + 0.5d), 	0, 1000d * (regionZ));
+			double southEdgeNoise = 0.5d + 0.5d * noise.getValue(1000d * (regionX + 0.5d), 	0, 1000d * (regionZ + 1));
+			double eastEdgeNoise =  0.5d + 0.5d * noise.getValue(1000d * (regionX + 1), 	0, 1000d * (regionZ + 0.5d));
+			double westEdgeNoise =  0.5d + 0.5d * noise.getValue(1000d * (regionX), 		0, 1000d * (regionZ + 0.5d));
+
+			boolean connectedNorth = MIN_CONNECTION_DIST_FROM_CORNER < northEdgeNoise && northEdgeNoise < (1.0d - MIN_CONNECTION_DIST_FROM_CORNER);
+			boolean connectedEast =  MIN_CONNECTION_DIST_FROM_CORNER < eastEdgeNoise  && eastEdgeNoise  < (1.0d - MIN_CONNECTION_DIST_FROM_CORNER);
+			boolean connectedSouth = MIN_CONNECTION_DIST_FROM_CORNER < southEdgeNoise && southEdgeNoise < (1.0d - MIN_CONNECTION_DIST_FROM_CORNER);
+			boolean connectedWest =  MIN_CONNECTION_DIST_FROM_CORNER < westEdgeNoise  && westEdgeNoise  < (1.0d - MIN_CONNECTION_DIST_FROM_CORNER);
+			int numConnected = (connectedNorth ? 1 : 0) + (connectedEast ? 1 : 0) + (connectedSouth ? 1 : 0) + (connectedWest ? 1 : 0);
+
+			Vec3 northEntryPoint = new Vec3((regionX + northEdgeNoise) * REGION_BLOCK_SIZE, 90d, (regionZ) * REGION_BLOCK_SIZE);
+			Vec3 southEntryPoint = new Vec3((regionX + southEdgeNoise) * REGION_BLOCK_SIZE, 90d, (regionZ + 1) * REGION_BLOCK_SIZE);
+			Vec3 eastEntryPoint =  new Vec3((regionX + 1) * REGION_BLOCK_SIZE, 			    90d, (regionZ + eastEdgeNoise) * REGION_BLOCK_SIZE);
+			Vec3 westEntryPoint =  new Vec3((regionX) * REGION_BLOCK_SIZE, 					90d, (regionZ + westEdgeNoise) * REGION_BLOCK_SIZE);
+
+			double intersectionNoiseX = 0.5d + 0.1d * noise.getValue(-1000d * (regionX + 0.5d), 0, 1000d * (regionZ + 0.5d));
+			double intersectionNoiseZ = 0.5d + 0.1d * noise.getValue(1000d * (regionX + 0.5d), 0, -1000d * (regionZ + 0.5d));
+			Vec3 intersectionPoint = new Vec3((regionX + intersectionNoiseX) * REGION_BLOCK_SIZE, 90d, (regionZ + intersectionNoiseZ) * REGION_BLOCK_SIZE);
+			List<RoadPath> roads = new ArrayList<>();
+
+			if(connectedNorth)
 			{
-				NormalNoise noise = context.randomState().getOrCreateNoise(config.noiseParameters.unwrapKey().get());
+				RoadPath path = new RoadPath(new ArrayList<>(List.of(northEntryPoint, northEntryPoint.add(0d, 0d, 8d), intersectionPoint)));
+				// Path is currently { enter, enter+8, intersect }
 
-				for(int i = MapperLayers.size() - 1; i>=0; i--)
-				{
-					RoadMapperLayer layer = MapperLayers.get(i);
+				double sample50 = noise.getValue(1000d * (regionX + 0.5d), 	0, 1000d * (regionZ + 0.25d));
+				path.Wiggle(1, sample50, WIGGLE_MAG_FIRST);
+				// Path is now { enter, enter+8, <wiggle50>, intersect }
 
-					RoadMappingCell cell = new RoadMappingCell(layer, layer.GetCellOfBlockX(chunkPos.getMinBlockX()), layer.GetCellOfBlockZ(chunkPos.getMinBlockZ()));
+				double sample25 = noise.getValue(1000d * (regionX + 0.5d), 	0, 1000d * (regionZ + 0.125d));
+				path.Wiggle(1, sample25, WIGGLE_MAG_SECOND);
+				// Path is now { enter, enter+8, <wiggle25>, <wiggle50>, intersect }
 
+				double sample75 = noise.getValue(1000d * (regionX + 0.5d), 	0, 1000d * (regionZ + 0.375d));
+				path.Wiggle(3, sample75, WIGGLE_MAG_SECOND);
+				// Path is now { enter, enter+8, <wiggle25>, <wiggle50>, <wiggle75>, intersect }
 
-
-
-				}
-
-
-				double northEdgeNoise = noise.getValue(1000d * (chunkPos.x + 0.5d), 	0, 1000d * (chunkPos.z));
-				double southEdgeNoise = noise.getValue(1000d * (chunkPos.x + 0.5d), 	0, 1000d * (chunkPos.z + 1));
-				double eastEdgeNoise = noise.getValue( 1000d * (chunkPos.x + 1), 		0, 1000d * (chunkPos.z + 0.5d));
-				double westEdgeNoise = noise.getValue( 1000d * (chunkPos.x), 			0, 1000d * (chunkPos.z + 0.5d));
-
-				Vec3 northEntryPoint = new Vec3((chunkPos.x + northEdgeNoise) * 16d, 90d, (chunkPos.z) * 16d);
-				Vec3 southEntryPoint = new Vec3((chunkPos.x + southEdgeNoise) * 16d, 90d, (chunkPos.z + 1) * 16d);
-				Vec3 eastEntryPoint = new Vec3((chunkPos.x + 1) * 16d, 90d, (chunkPos.z + eastEdgeNoise) * 16d);
-				Vec3 westEntryPoint = new Vec3((chunkPos.x) * 16d, 90d, (chunkPos.z + westEdgeNoise) * 16d);
-
-				for (float step = 0.0f; step < 1.0f; step += 0.99f)
-				{
-					chunk.setBlockState(BlockPos.containing(northEntryPoint.lerp(eastEntryPoint, step)), Blocks.IRON_BLOCK.defaultBlockState(), false);
-					chunk.setBlockState(BlockPos.containing(eastEntryPoint.lerp(southEntryPoint, step)), Blocks.IRON_BLOCK.defaultBlockState(), false);
-					chunk.setBlockState(BlockPos.containing(southEntryPoint.lerp(westEntryPoint, step)), Blocks.IRON_BLOCK.defaultBlockState(), false);
-					chunk.setBlockState(BlockPos.containing(westEntryPoint.lerp(northEntryPoint, step)), Blocks.IRON_BLOCK.defaultBlockState(), false);
-				}
-				//for(int i = 1; i < 15; i++)
-				//{
-				//	for(int k = 1; k < 15; k++)
-				//	{
-				//		level.setBlockState(chunkPos.getBlockAt(i, 90, k), Blocks.IRON_BLOCK.defaultBlockState(), false);
-				//	}
-				//}
-				return true;
+				roads.add(path);
 			}
-		}
+			if(connectedEast)
+			{
+				RoadPath path = new RoadPath(new ArrayList<>(List.of(eastEntryPoint, eastEntryPoint.add(-8d, 0d, 0d), intersectionPoint)));
+				// Path is currently { enter, enter+8, intersect }
 
+				double sample50 = noise.getValue(1000d * (regionX + 0.75d), 	0, 1000d * (regionZ + 0.5d));
+				path.Wiggle(1, sample50, WIGGLE_MAG_FIRST);
+				// Path is now { enter, enter+8, <wiggle50>, intersect }
+
+				double sample25 = noise.getValue(1000d * (regionX + 0.875d), 	0, 1000d * (regionZ + 0.5d));
+				path.Wiggle(1, sample25, WIGGLE_MAG_SECOND);
+				// Path is now { enter, enter+8, <wiggle25>, <wiggle50>, intersect }
+
+				double sample75 = noise.getValue(1000d * (regionX + 0.625d), 	0, 1000d * (regionZ + 0.5d));
+				path.Wiggle(3, sample75, WIGGLE_MAG_SECOND);
+				// Path is now { enter, enter+8, <wiggle25>, <wiggle50>, <wiggle75>, intersect }
+
+				roads.add(path);
+			}
+			if(connectedSouth)
+			{
+				RoadPath path = new RoadPath(new ArrayList<>(List.of(southEntryPoint, southEntryPoint.add(0d, 0d, -8d), intersectionPoint)));
+				// Path is currently { enter, enter+8, intersect }
+
+				double sample50 = noise.getValue(1000d * (regionX + 0.5d), 	0, 1000d * (regionZ + 0.75d));
+				path.Wiggle(1, sample50, WIGGLE_MAG_FIRST);
+				// Path is now { enter, enter+8, <wiggle50>, intersect }
+
+				double sample25 = noise.getValue(1000d * (regionX + 0.5d), 	0, 1000d * (regionZ + 0.875d));
+				path.Wiggle(1, sample25, WIGGLE_MAG_SECOND);
+				// Path is now { enter, enter+8, <wiggle25>, <wiggle50>, intersect }
+
+				double sample75 = noise.getValue(1000d * (regionX + 0.5d), 	0, 1000d * (regionZ + 0.625d));
+				path.Wiggle(3, sample75, WIGGLE_MAG_SECOND);
+				// Path is now { enter, enter+8, <wiggle25>, <wiggle50>, <wiggle75>, intersect }
+
+				roads.add(path);
+			}
+			if(connectedWest)
+			{
+				RoadPath path = new RoadPath(new ArrayList<>(List.of(westEntryPoint, westEntryPoint.add(8d, 0d, 0d), intersectionPoint)));
+				// Path is currently { enter, enter+8, intersect }
+
+				double sample50 = noise.getValue(1000d * (regionX + 0.25d), 	0, 1000d * (regionZ + 0.5d));
+				path.Wiggle(1, sample50, WIGGLE_MAG_FIRST);
+				// Path is now { enter, enter+8, <wiggle50>, intersect }
+
+				double sample25 = noise.getValue(1000d * (regionX + 0.125d), 	0, 1000d * (regionZ + 0.5d));
+				path.Wiggle(1, sample25, WIGGLE_MAG_SECOND);
+				// Path is now { enter, enter+8, <wiggle25>, <wiggle50>, intersect }
+
+				double sample75 = noise.getValue(1000d * (regionX + 0.375d), 	0, 1000d * (regionZ + 0.5d));
+				path.Wiggle(3, sample75, WIGGLE_MAG_SECOND);
+				// Path is now { enter, enter+8, <wiggle25>, <wiggle50>, <wiggle75>, intersect }
+
+				roads.add(path);
+			}
+
+			for(int i = 0; i < 16; i++)
+			{
+				for(int k = 0; k < 16; k++)
+				{
+					BlockPos blockPos = chunkPos.getBlockAt(i, 31, k);
+					Vec3 pos = blockPos.getCenter();
+
+					double minDist = Double.MAX_VALUE;
+					for (RoadPath road : roads)
+					{
+						double distToRoad = road.DistanceFromRoad(pos);
+						if (distToRoad < minDist)
+							minDist = distToRoad;
+					}
+
+
+					if(minDist < ROAD_PLUS_BORDER_WIDTH)
+					{
+						if(minDist < ROAD_WIDTH)
+							chunk.setBlockState(blockPos, Blocks.BLACKSTONE.defaultBlockState(), false);
+						else chunk.setBlockState(blockPos, Blocks.BASALT.defaultBlockState(), false);
+
+						int roofHeight = minDist < ROAD_WIDTH ? 6 : 5;
+
+						for(int j = 1; j < roofHeight + 1; j++)
+						{
+							chunk.setBlockState(blockPos.above(j), Blocks.AIR.defaultBlockState(), false);
+						}
+
+					}
+
+
+				}
+			}
+			return true;
+		}
 		return false;
 	}
 

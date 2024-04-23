@@ -1,21 +1,21 @@
 {
 	"type": "flanswarhogs:add_road_carver",
-	"biomes": "#flanswarhogs:has_structure/road_network",
+	"biomes": "#flanswarhogs:has_structure/road_network_nether",
 	"carver_type": "flanswarhogs:road_carver",
 	"carver_config": {
 		"horizontal_radius_multiplier": 1,
 		"vertical_radius_multiplier": 1,
 		"floor_level": 0,
 		"lava_level": {
-			"above_bottom": 8
+			"above_bottom": 15
 		},
 		"y": {
 			"type": "minecraft:uniform",
 			"max_inclusive": {
-				"absolute": 180
+				"above_bottom": 15
 			},
 			"min_inclusive": {
-				"above_bottom": 8
+				"above_bottom": 15
 			}
 		},
 		"yScale": {
