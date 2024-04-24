@@ -21,14 +21,14 @@ public class GunContextLiving extends GunContextInventoryItem
 	protected final ShooterContextLiving ShooterContext;
 	protected final InteractionHand Hand;
 
-	public GunContextLiving(ShooterContextLiving shooterContext, InteractionHand hand)
+	public GunContextLiving(@Nonnull ShooterContextLiving shooterContext, @Nonnull InteractionHand hand)
 	{
 		super(shooterContext.GetAttachedInventory(), hand == InteractionHand.MAIN_HAND ? 0 : 1);
 		ShooterContext = shooterContext;
 		Hand = hand;
 	}
 
-	public GunContextLiving(ShooterContextLiving shooterContext, InteractionHand hand, int slotIndex)
+	public GunContextLiving(@Nonnull ShooterContextLiving shooterContext, @Nonnull InteractionHand hand, int slotIndex)
 	{
 		super(shooterContext.GetAttachedInventory(), slotIndex);
 		ShooterContext = shooterContext;
@@ -36,7 +36,7 @@ public class GunContextLiving extends GunContextInventoryItem
 	}
 
 	@Override
-	public void OnItemStackChanged(ItemStack stack)
+	public void OnItemStackChanged(@Nonnull ItemStack stack)
 	{
 		ShooterContext.Shooter.setItemInHand(Hand, stack);
 	}
@@ -47,6 +47,7 @@ public class GunContextLiving extends GunContextInventoryItem
 	@Nonnull
 	public ItemStack GetLinkedItemStack() { return Hand == InteractionHand.MAIN_HAND ? ShooterContext.Shooter.getMainHandItem() : ShooterContext.Shooter.getOffhandItem(); }
 	@Override
+	@Nullable
 	public Container GetAttachedInventory() { return ShooterContext.GetAttachedInventory(); }
 	@Override
 	@Nullable

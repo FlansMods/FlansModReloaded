@@ -32,6 +32,7 @@ import com.flansmod.common.types.guns.elements.AbilityDefinition;
 import com.flansmod.common.types.magazines.MagazineDefinitions;
 import com.flansmod.common.types.npc.NpcDefinitions;
 import com.flansmod.common.types.parts.PartDefinitions;
+import com.flansmod.common.types.vehicles.VehicleDefinitions;
 import com.flansmod.common.worldgen.loot.LootPopulator;
 import com.flansmod.util.Transform;
 import com.mojang.logging.LogUtils;
@@ -264,6 +265,7 @@ public class FlansMod
     public static final NpcDefinitions NPCS = new NpcDefinitions();
     public static final CraftingTraitDefinitions TRAITS = new CraftingTraitDefinitions();
     public static final ArmourDefinitions ARMOURS = new ArmourDefinitions();
+    public static final VehicleDefinitions VEHICLES = new VehicleDefinitions();
 
     // Server handlers
     public static final ServerActionManager ACTIONS_SERVER = new ServerActionManager();
@@ -488,5 +490,6 @@ public class FlansMod
         registerFunc.accept(NPCS);
         registerFunc.accept(TRAITS);
         registerFunc.accept(ARMOURS);
+        registerFunc.accept(VEHICLES);
     }
 }

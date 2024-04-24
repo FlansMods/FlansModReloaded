@@ -1,14 +1,18 @@
 package com.flansmod.common.actions.contexts;
 
 import com.flansmod.common.entity.vehicle.VehicleEntity;
-import com.flansmod.common.entity.vehicle.VehicleSaveState;
+import com.flansmod.common.entity.vehicle.VehicleInventory;
+import com.flansmod.common.entity.vehicle.VehicleSubContainer;
 import com.flansmod.common.item.FlanItem;
 import com.flansmod.common.types.vehicles.VehicleDefinition;
 import com.flansmod.common.types.vehicles.elements.SeatDefinition;
+import net.minecraft.world.Container;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.item.ItemStack;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.UUID;
 
 public abstract class ShooterContextVehicle extends ShooterContext
@@ -31,7 +35,7 @@ public abstract class ShooterContextVehicle extends ShooterContext
 	@Nonnull
 	public ShooterContextVehicleSeat GetSeat(int seatIndex)
 	{
-
+		return new ShooterContextVehicleSeat(Vehicle, seatIndex);
 	}
 
 	@Override
@@ -42,14 +46,37 @@ public abstract class ShooterContextVehicle extends ShooterContext
 	}
 	@Override
 	@Nonnull
-	public UUID[] GetAllGunIDs()
+	public UUID[] GetAllGunIDs() { return Vehicle.Guns().GetAllGunIDs().toArray(new UUID[0]); }
+	@Nonnull
+	@Override
+	public UUID GetGunIDForSlot(int gunSlotIndex) { return Vehicle.Guns().GetGunIDAtIndex(gunSlotIndex); }
+	@Nonnull
+	@Override
+	public GunContext CreateContext(@Nonnull UUID gunID)
 	{
-		UUID[] gunIDs = new UUID[Vehicle.SaveState.Guns.length];
-		for(int i = 0; i < Vehicle.SaveState.Guns.length; i++)
-			gunIDs[i] = Vehicle.SaveState.Guns[i].GunID;
-
-		return gunIDs;
+		int gunSlotIndex = Vehicle.Guns().GetIndexOfGunID(gunID);
+		if(gunSlotIndex != -1)
+		{
+			return new GunContextVehicle(this, gunSlotIndex);
+		}
+		return GunContext.INVALID;
 	}
+	@Override
+	@Nullable
+	public VehicleInventory GetAttachedInventory()
+	{
+		return Vehicle.Inventory();
+	}
+	public int GunSlotIndex(int gunIndex) { return Vehicle.Inventory().SubIndexToContainer(VehicleSubContainer.EType.Gun, gunIndex); }
+	public int AmmoSlotIndex(int ammoIndex) { return Vehicle.Inventory().SubIndexToContainer(VehicleSubContainer.EType.Ammo, ammoIndex); }
+	public int FuelSlotIndex(int fuelIndex) { return Vehicle.Inventory().SubIndexToContainer(VehicleSubContainer.EType.Fuel, fuelIndex); }
+
+	@Nonnull
+	public ItemStack GetGunStack(int gunIndex)
+	{
+		return ItemStack.EMPTY;
+	}
+
 	@Override
 	public boolean IsValid() { return !Vehicle.isRemoved(); }
 	@Override

@@ -47,7 +47,7 @@ public abstract class ShooterContext
 		public UUID GetGunIDForSlot(int gunSlotIndex) { return FlanItem.InvalidGunUUID; }
 		@Override
 		@Nonnull
-		public GunContext CreateContext(UUID gunID) { return GunContext.INVALID; }
+		public GunContext CreateContext(@Nonnull UUID gunID) { return GunContext.INVALID; }
 		@Override
 		public Entity Entity() { return null; }
 		@Override
@@ -254,7 +254,7 @@ public abstract class ShooterContext
 	@Nonnull
 	public abstract UUID GetGunIDForSlot(int gunSlotIndex);
 	@Nonnull
-	public abstract GunContext CreateContext(UUID gunID);
+	public abstract GunContext CreateContext(@Nonnull UUID gunID);
 	public abstract Entity Entity();
 	public abstract Entity Owner();
 	public abstract Container GetAttachedInventory();
