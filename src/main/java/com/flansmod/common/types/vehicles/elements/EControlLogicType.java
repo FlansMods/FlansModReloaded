@@ -7,4 +7,7 @@ public enum EControlLogicType
 	Car,
 	Tank,
 
+	Turret1Axis,
+	Turret2Axis,
+
 }

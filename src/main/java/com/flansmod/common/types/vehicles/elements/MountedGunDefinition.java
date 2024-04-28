@@ -7,6 +7,8 @@ import net.minecraft.world.phys.Vec3;
 
 public class MountedGunDefinition
 {
+	public static final MountedGunDefinition INVALID = new MountedGunDefinition();
+
 	@JsonField
 	public String name = "default";
 	@JsonField

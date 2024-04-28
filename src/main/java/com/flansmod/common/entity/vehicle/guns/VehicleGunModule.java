@@ -1,7 +1,6 @@
 package com.flansmod.common.entity.vehicle.guns;
 
 import com.flansmod.common.FlansMod;
-import com.flansmod.common.actions.contexts.GunContext;
 import com.flansmod.common.entity.vehicle.IVehicleModule;
 import com.flansmod.common.entity.vehicle.VehicleDefinitionHeirarchy;
 import com.flansmod.common.entity.vehicle.VehicleEntity;
@@ -28,7 +27,10 @@ public class VehicleGunModule implements IVehicleModule
 		GunOrdering.addAll(GunStates.keySet());
 	}
 
-
+	@Nonnull
+	public VehicleGunSaveState GetGunStateAtIndex(int index) {
+		return GunStates.getOrDefault(GunOrdering.get(index), VehicleGunSaveState.INVALID);
+	}
 	@Nonnull
 	public String GetVehiclePartNameOfGunAtIndex(int index) { return GunOrdering.get(index); }
 	@Nonnull
@@ -61,13 +63,13 @@ public class VehicleGunModule implements IVehicleModule
 	}
 
 	@Override
-	public void Load(@Nonnull CompoundTag tags)
+	public void Load(@Nonnull VehicleEntity vehicle, @Nonnull CompoundTag tags)
 	{
 		for(String key : tags.getAllKeys())
 		{
 			if(GunStates.containsKey(key))
 			{
-				GunStates.get(key).Load(tags.getCompound(key));
+				GunStates.get(key).Load(vehicle, tags.getCompound(key));
 			}
 			else FlansMod.LOGGER.warn("Gun key " + key + " was stored in vehicle save data, but this vehicle doesn't have that part");
 		}
@@ -75,12 +77,12 @@ public class VehicleGunModule implements IVehicleModule
 
 	@Nonnull
 	@Override
-	public CompoundTag Save()
+	public CompoundTag Save(@Nonnull VehicleEntity vehicle)
 	{
 		CompoundTag tags = new CompoundTag();
 		for(var kvp : GunStates.entrySet())
 		{
-			tags.put(kvp.getKey(), kvp.getValue().Save());
+			tags.put(kvp.getKey(), kvp.getValue().Save(vehicle));
 		}
 		return tags;
 	}

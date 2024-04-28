@@ -1,7 +1,7 @@
 package com.flansmod.common.entity.vehicle.damage;
 
-import com.flansmod.common.entity.vehicle.IVehicleModule;
 import com.flansmod.common.entity.vehicle.IVehicleSaveNode;
+import com.flansmod.common.entity.vehicle.VehicleEntity;
 import com.flansmod.common.types.vehicles.elements.DamageablePartDefinition;
 import net.minecraft.nbt.CompoundTag;
 
@@ -21,7 +21,7 @@ public class VehiclePartDamageState implements IVehicleSaveNode
 	}
 
 	@Override
-	public void Load(@Nonnull CompoundTag tags)
+	public void Load(@Nonnull VehicleEntity vehicle, @Nonnull CompoundTag tags)
 	{
 		if(tags.contains("hp"))
 			CurrentHealth = tags.getFloat("hp");
@@ -29,7 +29,7 @@ public class VehiclePartDamageState implements IVehicleSaveNode
 
 	@Nonnull
 	@Override
-	public CompoundTag Save()
+	public CompoundTag Save(@Nonnull VehicleEntity vehicle)
 	{
 		CompoundTag tags = new CompoundTag();
 		tags.putFloat("hp", CurrentHealth);

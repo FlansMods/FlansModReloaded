@@ -3,11 +3,14 @@ package com.flansmod.common.types.vehicles;
 import com.flansmod.common.FlansMod;
 import com.flansmod.common.types.JsonDefinition;
 import com.flansmod.common.types.JsonField;
+import com.flansmod.common.types.vehicles.elements.ControlSchemeAxisDefinition;
 import com.flansmod.common.types.vehicles.elements.EControlLogicType;
 import com.flansmod.common.types.vehicles.elements.WheelDefinition;
+import com.mojang.datafixers.util.Pair;
 import net.minecraft.resources.ResourceLocation;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 public class ControlSchemeDefinition extends JsonDefinition
 {
@@ -26,7 +29,17 @@ public class ControlSchemeDefinition extends JsonDefinition
 	@JsonField
 	public EControlLogicType logicType = EControlLogicType.Car;
 
+	@JsonField
+	public ControlSchemeAxisDefinition[] axes = new ControlSchemeAxisDefinition[0];
 
 
+	@Nullable
+	public ControlSchemeAxisDefinition FindMatchingAxis(@Nonnull EDrivingControl pos, @Nonnull EDrivingControl neg)
+	{
+		for(ControlSchemeAxisDefinition axis : axes)
+			if(axis.positive == pos && axis.negative == neg)
+				return axis;
+		return null;
+	}
 
 }

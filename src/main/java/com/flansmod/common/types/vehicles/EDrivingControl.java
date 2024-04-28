@@ -2,6 +2,8 @@ package com.flansmod.common.types.vehicles;
 
 public enum EDrivingControl
 {
+	Unset,
+
 	Accelerate,
 	Decelerate,
 	Brake,

@@ -29,13 +29,13 @@ public class VehicleDamageModule implements IVehicleModule
 	}
 
 	@Override
-	public void Load(@Nonnull CompoundTag tags)
+	public void Load(@Nonnull VehicleEntity vehicle, @Nonnull CompoundTag tags)
 	{
 		for(String key : tags.getAllKeys())
 		{
 			if(DamageStates.containsKey(key))
 			{
-				DamageStates.get(key).Load(tags.getCompound(key));
+				DamageStates.get(key).Load(vehicle, tags.getCompound(key));
 			}
 			else FlansMod.LOGGER.warn("Damage key " + key + " was stored in vehicle save data, but this vehicle doesn't have that part");
 		}
@@ -43,12 +43,12 @@ public class VehicleDamageModule implements IVehicleModule
 
 	@Nonnull
 	@Override
-	public CompoundTag Save()
+	public CompoundTag Save(@Nonnull VehicleEntity vehicle)
 	{
 		CompoundTag tags = new CompoundTag();
 		for(var kvp : DamageStates.entrySet())
 		{
-			tags.put(kvp.getKey(), kvp.getValue().Save());
+			tags.put(kvp.getKey(), kvp.getValue().Save(vehicle));
 		}
 		return tags;
 	}

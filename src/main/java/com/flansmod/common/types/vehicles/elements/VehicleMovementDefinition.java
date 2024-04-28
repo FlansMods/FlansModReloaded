@@ -8,14 +8,8 @@ public class VehicleMovementDefinition
 	public String name = "default";
 	@JsonField
 	public EVehicleMovementType type = EVehicleMovementType.Car;
-	@JsonField
-	public WheelDefinition[] wheels = new WheelDefinition[0];
-	@JsonField
-	public PropellerDefinition[] propellers = new PropellerDefinition[0];
-	@JsonField
-	public LegsDefinition[] legs = new LegsDefinition[0];
-	@JsonField
-	public ArmDefinition[] arms = new ArmDefinition[0];
+
+
 
 	@JsonField
 	public float maxAcceleration = 1.0f;

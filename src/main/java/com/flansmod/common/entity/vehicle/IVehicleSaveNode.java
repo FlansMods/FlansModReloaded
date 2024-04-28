@@ -6,6 +6,6 @@ import javax.annotation.Nonnull;
 
 public interface IVehicleSaveNode
 {
-	void Load(@Nonnull CompoundTag tags);
-	@Nonnull CompoundTag Save();
+	void Load(@Nonnull VehicleEntity vehicle, @Nonnull CompoundTag tags);
+	@Nonnull CompoundTag Save(@Nonnull VehicleEntity vehicle);
 }

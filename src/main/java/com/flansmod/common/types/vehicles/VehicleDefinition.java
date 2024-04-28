@@ -37,11 +37,9 @@ public class VehicleDefinition extends JsonDefinition
 	@JsonField
 	public DamageablePartDefinition[] damageables = new DamageablePartDefinition[0];
 	@JsonField
-	public VehicleMovementDefinition[] movementModes = new VehicleMovementDefinition[0];
+	public VehiclePhysicsDefinition physics = new VehiclePhysicsDefinition();
 
-	// Rest Pose
-	@JsonField
-	public Vec3 restingEulerAngles = Vec3.ZERO;
+
 
 	// Power / Fuel
 	@JsonField

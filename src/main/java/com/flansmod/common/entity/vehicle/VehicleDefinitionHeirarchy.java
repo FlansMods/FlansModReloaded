@@ -109,9 +109,11 @@ public class VehicleDefinitionHeirarchy
 		return t;
 	}
 
-
-
-
+	@Nullable
+	public Node Find(@Nonnull String partName)
+	{
+		return Nodes.get(partName);
+	}
 	public void ForEachSeatPath(@Nonnull Consumer<String> func)
 	{
 		for(var kvp : Nodes.entrySet())

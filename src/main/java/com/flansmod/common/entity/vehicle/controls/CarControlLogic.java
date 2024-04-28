@@ -1,0 +1,83 @@
+package com.flansmod.common.entity.vehicle.controls;
+
+import com.flansmod.common.entity.vehicle.VehicleEntity;
+import com.flansmod.common.entity.vehicle.hierarchy.WheelEntity;
+import com.flansmod.common.entity.vehicle.physics.VehiclePhysicsModule;
+import com.flansmod.common.types.vehicles.ControlSchemeDefinition;
+import com.flansmod.common.types.vehicles.EDrivingControl;
+import com.flansmod.common.types.vehicles.VehicleDefinition;
+import com.flansmod.common.types.vehicles.elements.ControlSchemeAxisDefinition;
+import com.flansmod.common.types.vehicles.elements.EControlLogicHint;
+import com.flansmod.common.types.vehicles.elements.WheelDefinition;
+
+import javax.annotation.Nonnull;
+import java.util.Collection;
+
+public class CarControlLogic extends ControlLogic
+{
+	@Nonnull
+	private final ControlSchemeAxisDefinition AcceleratorAxis;
+	@Nonnull
+	private final ControlSchemeAxisDefinition SteerLeftRightAxis;
+
+	public CarControlLogic(@Nonnull ControlSchemeDefinition def)
+	{
+		super(def);
+
+		AcceleratorAxis = FindAxis(EDrivingControl.Accelerate, EDrivingControl.Decelerate);
+		SteerLeftRightAxis = FindAxis(EDrivingControl.YawLeft, EDrivingControl.YawRight);
+	}
+
+	@Override
+	public boolean CanControl(@Nonnull VehicleDefinition vehicleDef)
+	{
+		int numWheels = vehicleDef.physics.wheels.length;
+		if(numWheels < 3)
+			return false;
+
+		boolean hasSteering = false;
+		boolean hasFront = false;
+		boolean hasRear = false;
+		boolean hasDrive = false;
+		for(WheelDefinition wheelDef : vehicleDef.physics.wheels)
+		{
+			if(wheelDef.IsHintedAs(EControlLogicHint.Steering))
+				hasSteering = true;
+			if(wheelDef.IsHintedAs(EControlLogicHint.Front))
+				hasFront = true;
+			if(wheelDef.IsHintedAs(EControlLogicHint.Rear))
+				hasRear = true;
+			if(wheelDef.IsHintedAs(EControlLogicHint.Drive))
+				hasDrive = true;
+		}
+
+		return hasSteering && hasFront && hasRear && hasDrive;
+	}
+
+	@Override
+	public void TickAuthoritative(@Nonnull VehicleEntity vehicle, @Nonnull VehicleInputState inputs)
+	{
+		float accelerationInput = inputs.TickAxis(AcceleratorAxis);
+		float steeringInput = inputs.TickAxis(SteerLeftRightAxis);
+
+		VehiclePhysicsModule phys = vehicle.Physics();
+
+		Collection<WheelEntity> steeringAtFront = phys.WheelsThatMatch(EControlLogicHint.Front, EControlLogicHint.Steering);
+		Collection<WheelEntity> steeringAtBack = phys.WheelsThatMatch(EControlLogicHint.Rear, EControlLogicHint.Steering);
+		Collection<WheelEntity> driveWheels = phys.WheelsThatMatch(EControlLogicHint.Drive);
+
+		for(WheelEntity wheel : steeringAtFront)
+			wheel.SetYawParameter(steeringInput);
+		for(WheelEntity wheel : steeringAtBack)
+			wheel.SetYawParameter(-steeringInput);
+
+		for(WheelEntity driveWheel : driveWheels)
+			driveWheel.SetTorqueParameter(accelerationInput);
+
+	}
+	@Override
+	public void TickRemote(@Nonnull VehicleEntity vehicle, @Nonnull VehicleInputState inputs)
+	{
+
+	}
+}
