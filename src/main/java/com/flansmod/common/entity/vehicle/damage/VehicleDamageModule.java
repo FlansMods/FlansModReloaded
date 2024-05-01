@@ -2,7 +2,7 @@ package com.flansmod.common.entity.vehicle.damage;
 
 import com.flansmod.common.FlansMod;
 import com.flansmod.common.entity.vehicle.IVehicleModule;
-import com.flansmod.common.entity.vehicle.VehicleDefinitionHeirarchy;
+import com.flansmod.common.entity.vehicle.VehicleDefinitionHierarchy;
 import com.flansmod.common.entity.vehicle.VehicleEntity;
 import net.minecraft.nbt.CompoundTag;
 
@@ -14,7 +14,7 @@ public class VehicleDamageModule implements IVehicleModule
 {
 	public final Map<String, VehiclePartDamageState> DamageStates = new HashMap<>();
 
-	public VehicleDamageModule(@Nonnull VehicleDefinitionHeirarchy heirarchy,
+	public VehicleDamageModule(@Nonnull VehicleDefinitionHierarchy heirarchy,
 							   @Nonnull VehicleEntity vehicle)
 
 	{

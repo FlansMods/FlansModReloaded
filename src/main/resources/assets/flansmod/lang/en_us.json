@@ -1,4 +1,5 @@
 {
+  "item.flansmod.default_car": "Car",
   "block.flansmod.gun_modification_table": "Gun Modification Table",
   "block.flansmod.portable_coal_generator": "Portable Coal Generator",
   "block.flansmod.portable_diesel_generator": "Portable Diesel Generator",

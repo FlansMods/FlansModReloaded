@@ -1,6 +1,7 @@
 package com.flansmod.common.types.vehicles.elements;
 
 import com.flansmod.common.types.JsonField;
+import net.minecraft.world.phys.Vec3;
 
 
 public class DamageablePartDefinition
@@ -12,5 +13,8 @@ public class DamageablePartDefinition
 	@JsonField
 	public float armourToughness = 1;
 
-
+	@JsonField
+	public Vec3 hitboxCenter = Vec3.ZERO;
+	@JsonField
+	public Vec3 hitboxHalfExtents = new Vec3(1f, 1f, 1f);
 }

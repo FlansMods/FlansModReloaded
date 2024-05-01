@@ -279,7 +279,11 @@ public class Transform
     public Vec3 UpVec3() { return LocalToGlobalDirection(new Vec3(0d, 1d, 0d)); }
     @Nonnull
     public Vec3 RightVec3() { return LocalToGlobalDirection(new Vec3(1d, 0d, 0d)); }
-
+    public boolean IsIdentity() {
+        return Position.lengthSquared() <= Maths.Epsilon
+            && Orientation.equals(IDENTITY_QUAT, Maths.EpsilonF)
+            && Maths.Approx(Scale.x, 1f) && Maths.Approx(Scale.y, 1f) && Maths.Approx(Scale.z, 1f);
+    }
 
     // ----------------------------------------------------------------------------------------
     // -------- Transformations i.e. Convert between this space and the parent space ----------

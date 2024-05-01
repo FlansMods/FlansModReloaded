@@ -1,6 +1,8 @@
 package com.flansmod.common.entity.vehicle;
 
 import com.flansmod.common.FlansMod;
+import com.flansmod.common.entity.vehicle.controls.ControlLogic;
+import com.flansmod.common.entity.vehicle.controls.VehicleInputState;
 import com.flansmod.common.entity.vehicle.damage.VehicleDamageModule;
 import com.flansmod.common.entity.vehicle.guns.VehicleGunModule;
 import com.flansmod.common.entity.vehicle.hierarchy.VehicleHierarchyModule;
@@ -8,20 +10,26 @@ import com.flansmod.common.entity.vehicle.hierarchy.WheelEntity;
 import com.flansmod.common.entity.vehicle.physics.VehiclePhysicsModule;
 import com.flansmod.common.entity.vehicle.seats.VehicleSeatsModule;
 import com.flansmod.common.types.LazyDefinition;
+import com.flansmod.common.types.vehicles.ControlSchemeDefinition;
 import com.flansmod.common.types.vehicles.VehicleDefinition;
+import com.flansmod.common.types.vehicles.elements.SeatDefinition;
 import com.flansmod.common.types.vehicles.elements.VehiclePhysicsDefinition;
 import com.flansmod.util.Transform;
+import com.flansmod.util.TransformStack;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.HitResult;
+import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.common.util.Lazy;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class VehicleEntity extends Entity implements ITransformEntity
@@ -49,10 +57,16 @@ public class VehicleEntity extends Entity implements ITransformEntity
 	// Inventory (sort of module-ey)
 	@Nonnull public VehicleInventory Inventory() { return LazyInventory.get(); }
 
-	public VehicleEntity(@Nonnull EntityType<? extends VehicleEntity> type, @Nonnull Level world)
+	// Other misc fields
+	@Nonnull public ResourceLocation SelectedSkin;
+	@Nonnull public final Map<String, VehicleInputState> InputStates = new HashMap<>();
+	@Nonnull public final Map<String, String> ModalStates = new HashMap<>();
+
+	public VehicleEntity(@Nonnull EntityType<? extends Entity> type, @Nonnull ResourceLocation defLoc, @Nonnull Level world)
 	{
 		super(type, world);
-		DefRef = LazyDefinition.of(new ResourceLocation("TODO"), FlansMod.VEHICLES);
+		DefRef = LazyDefinition.of(defLoc, FlansMod.VEHICLES);
+		SelectedSkin = defLoc;
 	}
 
 	public boolean InitFromDefinition()
@@ -64,6 +78,32 @@ public class VehicleEntity extends Entity implements ITransformEntity
 		return true;
 	}
 
+	@Nonnull
+	private VehicleInputState GetInputStateFor(@Nonnull String key)
+	{
+		VehicleInputState inputState = InputStates.get(key);
+		if(inputState == null)
+		{
+			inputState = new VehicleInputState();
+			InputStates.put(key, inputState);
+		}
+		return inputState;
+	}
+	@Nonnull
+	public VehicleInputState GetMiscInputState() { return GetInputStateFor("misc"); }
+	@Nonnull
+	public VehicleInputState GetInputStateFor(@Nonnull ControlSchemeDefinition controlScheme)
+	{
+		return GetInputStateFor(controlScheme.Location.toString());
+	}
+	@Nonnull
+	public VehicleInputState GetInputStateFor(@Nonnull ControlLogic controller)
+	{
+		return GetInputStateFor(controller.Def.Location.toString());
+	}
+
+	public boolean IsAuthority() { return isControlledByLocalInstance(); }
+	public boolean IsValidator() { return !level().isClientSide; }
 
 	// ---------------------------------------------------------------------------------------------------------
 	// Entity overrides
@@ -71,7 +111,6 @@ public class VehicleEntity extends Entity implements ITransformEntity
 	@Override
 	protected void defineSynchedData()
 	{
-
 	}
 
 	@Override
@@ -106,8 +145,11 @@ public class VehicleEntity extends Entity implements ITransformEntity
 	public LivingEntity getControllingPassenger()
 	{
 		int driverSeatIndex = Seats().GetControlSeatIndex();
-		if(Seats().GetPassengerInSeat(driverSeatIndex) instanceof LivingEntity living)
-			return living;
+		if(driverSeatIndex != VehicleSeatsModule.INVALID_SEAT_INDEX)
+		{
+			if (Seats().GetPassengerInSeat(driverSeatIndex) instanceof LivingEntity living)
+				return living;
+		}
 		return null;
 	}
 
@@ -189,4 +231,19 @@ public class VehicleEntity extends Entity implements ITransformEntity
 	@Nullable
 	@Override
 	public ITransformEntity GetParent() { return null; }
+
+	public void Raycast(@Nonnull Vec3 start, @Nonnull Vec3 end, @Nonnull List<HitResult> results)
+	{
+		Hierarchy().Raycast(this, start, end, results, 0f);
+	}
+	public void Raycast(@Nonnull Vec3 start, @Nonnull Vec3 end, @Nonnull List<HitResult> results, float dt)
+	{
+		Hierarchy().Raycast(this, start, end, results, dt);
+	}
+	@Nonnull
+	public ControlSchemeDefinition GetActiveControllerDef()
+	{
+		ControlSchemeDefinition active = Seats().GetMainActiveController(ModalStates);
+		return active != null ? active : ControlSchemeDefinition.INVALID;
+	}
 }

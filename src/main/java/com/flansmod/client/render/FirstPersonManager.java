@@ -302,7 +302,7 @@ public class FirstPersonManager
 		FlanItemModelRenderer gunRenderer = FlansModelRegistry.forItem(gunContext.Stack);
 		if(gunRenderer != null)
 		{
-			Transform defaultPose = gunRenderer.BakedRig.GetTransform(transformType);
+			Transform defaultPose = gunRenderer.TurboRenderer.GetTransform(transformType);
 			switch(transformType)
 			{
 				case FIRST_PERSON_RIGHT_HAND, FIRST_PERSON_LEFT_HAND -> {

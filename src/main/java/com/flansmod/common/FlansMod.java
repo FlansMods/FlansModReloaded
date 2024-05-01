@@ -11,6 +11,7 @@ import com.flansmod.common.crafting.menus.*;
 import com.flansmod.common.crafting.recipes.GunFabricationRecipe;
 import com.flansmod.common.crafting.recipes.PartFabricationRecipe;
 import com.flansmod.common.entity.NpcRelationshipCapabilityAttacher;
+import com.flansmod.common.entity.vehicle.VehicleEntity;
 import com.flansmod.common.gunshots.Raytracer;
 import com.flansmod.common.item.*;
 import com.flansmod.common.network.FlansModPacketHandler;
@@ -32,6 +33,7 @@ import com.flansmod.common.types.guns.elements.AbilityDefinition;
 import com.flansmod.common.types.magazines.MagazineDefinitions;
 import com.flansmod.common.types.npc.NpcDefinitions;
 import com.flansmod.common.types.parts.PartDefinitions;
+import com.flansmod.common.types.vehicles.ControlSchemeDefinitions;
 import com.flansmod.common.types.vehicles.VehicleDefinitions;
 import com.flansmod.common.worldgen.loot.LootPopulator;
 import com.flansmod.util.Transform;
@@ -50,6 +52,7 @@ import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.damagesource.DamageType;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.MobCategory;
@@ -266,6 +269,7 @@ public class FlansMod
     public static final CraftingTraitDefinitions TRAITS = new CraftingTraitDefinitions();
     public static final ArmourDefinitions ARMOURS = new ArmourDefinitions();
     public static final VehicleDefinitions VEHICLES = new VehicleDefinitions();
+    public static final ControlSchemeDefinitions CONTROL_SCHEMES = new ControlSchemeDefinitions();
 
     // Server handlers
     public static final ServerActionManager ACTIONS_SERVER = new ServerActionManager();
@@ -318,6 +322,22 @@ public class FlansMod
     {
         ResourceLocation loc = new ResourceLocation(modID, name);
         return tileEntityTypeRegister.register(name, () -> new WorkbenchBlockEntity.WorkbenchBlockEntityTypeHolder(loc).CreateType());
+    }
+
+    public static RegistryObject<Item> Vehicle_Item(DeferredRegister<Item> itemRegister, String modID, String name)
+    {
+        ResourceLocation loc = new ResourceLocation(modID, name);
+        return itemRegister.register(name, () -> new VehicleItem(loc, new Item.Properties()));
+    }
+
+    public static RegistryObject<EntityType<?>> Vehicle_Entity(DeferredRegister<EntityType<? extends Entity>> entityRegister, String modID, String name)
+    {
+        ResourceLocation loc = new ResourceLocation(modID, name);
+        return entityRegister.register(name, () -> EntityType.Builder.of(
+            (type, world) -> new VehicleEntity(type, loc, world),
+            MobCategory.MISC)
+            .sized(1f, 1f)
+            .build(name));
     }
 
     @Nonnull
@@ -491,5 +511,6 @@ public class FlansMod
         registerFunc.accept(TRAITS);
         registerFunc.accept(ARMOURS);
         registerFunc.accept(VEHICLES);
+        registerFunc.accept(CONTROL_SCHEMES);
     }
 }

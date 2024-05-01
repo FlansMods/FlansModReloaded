@@ -2,6 +2,7 @@ package com.flansmod.common.entity.vehicle.seats;
 
 import com.flansmod.common.entity.vehicle.IVehicleSaveNode;
 import com.flansmod.common.entity.vehicle.VehicleEntity;
+import com.flansmod.common.types.vehicles.elements.InputDefinition;
 import com.flansmod.common.types.vehicles.elements.SeatDefinition;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.entity.Entity;
@@ -23,6 +24,9 @@ public class VehicleSeatSaveState implements IVehicleSaveNode
 		Def = def;
 		Passenger = null;
 	}
+
+	@Nonnull
+	public InputDefinition[] GetInputs() { return Def.inputs; }
 
 	public void Load(@Nonnull VehicleEntity vehicle, @Nonnull CompoundTag tags)
 	{

@@ -5,6 +5,7 @@ import com.flansmod.common.entity.vehicle.IVehicleModule;
 import com.flansmod.common.entity.vehicle.VehicleEntity;
 import com.flansmod.common.entity.vehicle.controls.ControlLogic;
 import com.flansmod.common.entity.vehicle.controls.ControlLogics;
+import com.flansmod.common.entity.vehicle.controls.VehicleInputState;
 import com.flansmod.common.entity.vehicle.hierarchy.WheelEntity;
 import com.flansmod.common.types.vehicles.ControlSchemeDefinition;
 import com.flansmod.common.types.vehicles.elements.EControlLogicHint;
@@ -25,10 +26,12 @@ public class VehiclePhysicsModule implements IVehicleModule
 	private final Map<String, List<WheelEntity>> WheelsByPartName = new HashMap<>();
 	private final List<WheelEntity> WheelsByIndex = new ArrayList<>();
 	private final Map<EControlLogicHint, List<WheelEntity>> WheelsByHint = new HashMap<>();
-
 	private final Map<ResourceLocation, ControlLogic> Controllers = new HashMap<>();
 	@Nonnull
 	private ResourceLocation SelectedControllerLocation = new ResourceLocation(FlansMod.MODID, "control_schemes/null");
+
+
+
 
 	public VehiclePhysicsModule(@Nonnull VehiclePhysicsDefinition def)
 	{
@@ -87,9 +90,11 @@ public class VehiclePhysicsModule implements IVehicleModule
 			byHint.remove(wheel);
 	}
 
-
 	@Nullable
-	public ControlLogic CurrentController() { return Controllers.get(SelectedControllerLocation); }
+	public ControlLogic CurrentController(@Nonnull VehicleEntity vehicle)
+	{
+		return Controllers.get(vehicle.GetActiveControllerDef().GetLocation());
+	}
 	@Nullable
 	public WheelEntity WheelByIndex(int index) { return WheelsByIndex.get(index); }
 	@Nonnull
@@ -159,10 +164,18 @@ public class VehiclePhysicsModule implements IVehicleModule
 			}
 		}
 
-		ControlLogic controller = CurrentController();
+		ControlLogic controller = CurrentController(vehicle);
 		if(controller != null)
 		{
-
+			VehicleInputState inputs = vehicle.GetInputStateFor(controller);
+			if(vehicle.IsAuthority())
+			{
+				controller.TickAuthoritative(vehicle, inputs);
+			}
+			else
+			{
+				controller.TickRemote(vehicle, inputs);
+			}
 		}
 
 
@@ -183,6 +196,6 @@ public class VehiclePhysicsModule implements IVehicleModule
 	@Override
 	public CompoundTag Save(@Nonnull VehicleEntity vehicle)
 	{
-		return null;
+		return new CompoundTag();
 	}
 }

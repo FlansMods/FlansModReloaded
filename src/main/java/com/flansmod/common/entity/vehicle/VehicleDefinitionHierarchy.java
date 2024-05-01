@@ -5,14 +5,19 @@ import com.flansmod.common.types.vehicles.elements.ArticulatedPartDefinition;
 import com.flansmod.common.types.vehicles.elements.DamageablePartDefinition;
 import com.flansmod.common.types.vehicles.elements.MountedGunDefinition;
 import com.flansmod.common.types.vehicles.elements.SeatDefinition;
+import com.flansmod.util.TransformStack;
+import net.minecraft.world.phys.HitResult;
+import net.minecraft.world.phys.Vec3;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
 
-public class VehicleDefinitionHeirarchy
+public class VehicleDefinitionHierarchy
 {
 	public static class Node
 	{
@@ -28,6 +33,7 @@ public class VehicleDefinitionHeirarchy
 		public MountedGunDefinition MountedGun = null;
 		public DamageablePartDefinition Damageable = null;
 		public Node Parent = null;
+		public List<Node> Children = new ArrayList<>();
 
 		@Nonnull
 		public String Path()
@@ -72,7 +78,7 @@ public class VehicleDefinitionHeirarchy
 			Nodes.put(key, new Node(key));
 		Nodes.get(key).Damageable = damageable;
 	}
-	private void Heirarchise()
+	private void Hierarchise()
 	{
 		for(var kvp : Nodes.entrySet())
 		{
@@ -83,16 +89,22 @@ public class VehicleDefinitionHeirarchy
 			{
 				String parentKey = kvp.getValue().Articulation.attachedToPart;
 				if(Nodes.containsKey(parentKey))
+				{
 					kvp.getValue().Parent = Nodes.get(parentKey);
+					Nodes.get(parentKey).Children.add(kvp.getValue());
+				}
 				else
+				{
 					kvp.getValue().Parent = Nodes.get("body");
+					Nodes.get("body").Children.add(kvp.getValue());
+				}
 			}
 		}
 	}
 	@Nonnull
-	public static VehicleDefinitionHeirarchy of(@Nonnull VehicleDefinition def)
+	public static VehicleDefinitionHierarchy of(@Nonnull VehicleDefinition def)
 	{
-		VehicleDefinitionHeirarchy t = new VehicleDefinitionHeirarchy();
+		VehicleDefinitionHierarchy t = new VehicleDefinitionHierarchy();
 		t.AddRoot();
 
 		for(ArticulatedPartDefinition part : def.articulatedParts)
@@ -104,7 +116,7 @@ public class VehicleDefinitionHeirarchy
 		for(DamageablePartDefinition damageable : def.damageables)
 			t.Bind(damageable.partName, damageable);
 
-		t.Heirarchise();
+		t.Hierarchise();
 
 		return t;
 	}

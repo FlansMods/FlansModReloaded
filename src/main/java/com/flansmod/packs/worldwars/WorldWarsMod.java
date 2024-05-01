@@ -1,7 +1,9 @@
 package com.flansmod.packs.worldwars;
 
+import com.flansmod.client.render.vehicles.VehicleRenderer;
 import com.flansmod.common.FlansMod;
 import com.flansmod.common.crafting.WorkbenchBlockEntity;
+import com.flansmod.common.entity.vehicle.VehicleEntity;
 import com.flansmod.packs.worldwars.client.JanModel;
 import com.flansmod.packs.worldwars.client.JanRenderer;
 import com.flansmod.packs.worldwars.common.JanEntity;
@@ -80,6 +82,10 @@ public class WorldWarsMod
 
 	public static final RegistryObject<Item> GUN_BINOCULARS = 						FlansMod.Gun(ITEMS, MODID, "binoculars");
 	public static final RegistryObject<Item> GUN_KNIFE = 							FlansMod.Gun(ITEMS, MODID, "knife");
+
+	public static final RegistryObject<Item> VEHICLE_ITEM_JEEP = 					FlansMod.Vehicle_Item(ITEMS, MODID, "jeep");
+	public static final RegistryObject<EntityType<?>> VEHICLE_ENTITY_JEEP = 		FlansMod.Vehicle_Entity(ENTITY_TYPES, MODID, "jeep");
+
 
 	// British
 	public static final RegistryObject<Block> WORKBENCH_BLOCK_BRITISH = 			FlansMod.Workbench_Block(BLOCKS, MODID, "british_workbench");
@@ -179,6 +185,7 @@ public class WorldWarsMod
 		public static void EntityRenderEvent(EntityRenderersEvent.RegisterRenderers event)
 		{
 			event.registerEntityRenderer(ENTITY_TYPE_JAN.get(), JanRenderer::new);
+			event.registerEntityRenderer((EntityType<? extends VehicleEntity>)VEHICLE_ENTITY_JEEP.get(), VehicleRenderer::new);
 		}
 	}
 }

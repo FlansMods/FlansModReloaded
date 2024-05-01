@@ -1,9 +1,7 @@
 package com.flansmod.common.types;
 
-import com.flansmod.common.FlansMod;
-import com.flansmod.common.types.guns.GunDefinition;
-import cpw.mods.util.Lazy;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraftforge.common.util.Lazy;
 
 import javax.annotation.Nonnull;
 

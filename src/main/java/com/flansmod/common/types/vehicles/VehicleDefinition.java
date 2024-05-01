@@ -1,7 +1,7 @@
 package com.flansmod.common.types.vehicles;
 
 import com.flansmod.common.FlansMod;
-import com.flansmod.common.entity.vehicle.VehicleDefinitionHeirarchy;
+import com.flansmod.common.entity.vehicle.VehicleDefinitionHierarchy;
 import com.flansmod.common.types.JsonDefinition;
 import com.flansmod.common.types.JsonField;
 import com.flansmod.common.types.elements.ItemDefinition;
@@ -38,7 +38,8 @@ public class VehicleDefinition extends JsonDefinition
 	public DamageablePartDefinition[] damageables = new DamageablePartDefinition[0];
 	@JsonField
 	public VehiclePhysicsDefinition physics = new VehiclePhysicsDefinition();
-
+	@JsonField
+	public VehicleControlOptionDefinition[] controllers = new VehicleControlOptionDefinition[0];
 
 
 	// Power / Fuel
@@ -65,5 +66,5 @@ public class VehicleDefinition extends JsonDefinition
 
 
 	@Nonnull
-	public Lazy<VehicleDefinitionHeirarchy> AsHierarchy = Lazy.of(() -> VehicleDefinitionHeirarchy.of(this));
+	public Lazy<VehicleDefinitionHierarchy> AsHierarchy = Lazy.of(() -> VehicleDefinitionHierarchy.of(this));
 }

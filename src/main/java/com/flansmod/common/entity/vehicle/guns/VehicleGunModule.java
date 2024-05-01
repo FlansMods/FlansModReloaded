@@ -2,7 +2,7 @@ package com.flansmod.common.entity.vehicle.guns;
 
 import com.flansmod.common.FlansMod;
 import com.flansmod.common.entity.vehicle.IVehicleModule;
-import com.flansmod.common.entity.vehicle.VehicleDefinitionHeirarchy;
+import com.flansmod.common.entity.vehicle.VehicleDefinitionHierarchy;
 import com.flansmod.common.entity.vehicle.VehicleEntity;
 import com.flansmod.common.item.GunItem;
 import net.minecraft.nbt.CompoundTag;
@@ -17,7 +17,7 @@ public class VehicleGunModule implements IVehicleModule
 	@Nonnull
 	public final List<String> GunOrdering = new ArrayList<>();
 
-	public VehicleGunModule(@Nonnull VehicleDefinitionHeirarchy hierarchy,
+	public VehicleGunModule(@Nonnull VehicleDefinitionHierarchy hierarchy,
 							@Nonnull VehicleEntity vehicle)
 	{
 		hierarchy.ForEachMountedGun((gunDef) -> {

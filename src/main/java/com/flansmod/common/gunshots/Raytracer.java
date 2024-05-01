@@ -2,6 +2,7 @@ package com.flansmod.common.gunshots;
 
 import com.flansmod.client.render.debug.DebugRenderer;
 import com.flansmod.common.FlansMod;
+import com.flansmod.common.entity.vehicle.VehicleEntity;
 import com.flansmod.util.MinecraftHelpers;
 import net.minecraft.client.Minecraft;
 import net.minecraft.server.level.ServerLevel;
@@ -224,7 +225,12 @@ public class Raytracer
         AABB bounds = new AABB(origin, endPoint);
         for(Entity checkEnt : World.getEntities(null, bounds))
         {
-            if(checkEnt instanceof Player checkPlayer)
+            if(checkEnt instanceof VehicleEntity vehicle)
+            {
+                vehicle.Raycast(origin, endPoint, outResults);
+                continue;
+            }
+            else if(checkEnt instanceof Player checkPlayer)
             {
                 // Do player snapshot check
                 PlayerMovementHistory history = PlayerMovementHistories.get(checkPlayer);
