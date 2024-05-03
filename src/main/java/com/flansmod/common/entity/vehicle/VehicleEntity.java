@@ -188,6 +188,7 @@ public class VehicleEntity extends Entity implements ITransformEntity
 		Hierarchy().Tick(this);
 		Guns().Tick(this);
 		Seats().Tick(this);
+		Physics().Tick(this);
 	}
 	private void SaveModules(@Nonnull CompoundTag tags)
 	{

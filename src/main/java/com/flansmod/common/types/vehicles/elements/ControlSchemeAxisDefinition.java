@@ -1,16 +1,14 @@
 package com.flansmod.common.types.vehicles.elements;
 
 import com.flansmod.common.types.JsonField;
-import com.flansmod.common.types.vehicles.EDrivingControl;
+import com.flansmod.common.types.vehicles.EVehicleAxis;
 
 public class ControlSchemeAxisDefinition
 {
 	public static final ControlSchemeAxisDefinition INVALID = new ControlSchemeAxisDefinition();
 
 	@JsonField
-	public EDrivingControl positive = EDrivingControl.Accelerate;
-	@JsonField
-	public EDrivingControl negative = EDrivingControl.Unset;
+	public EVehicleAxis axisType = EVehicleAxis.Accelerator;
 
 	@JsonField
 	public EAxisBehaviourType axisBehaviour = EAxisBehaviourType.SliderWithRestPosition;

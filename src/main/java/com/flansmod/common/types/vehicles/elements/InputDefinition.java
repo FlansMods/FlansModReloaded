@@ -1,7 +1,7 @@
 package com.flansmod.common.types.vehicles.elements;
 
 import com.flansmod.common.types.JsonField;
-import com.flansmod.common.types.vehicles.EPlayerInput;
+import com.flansmod.common.types.elements.EPlayerInput;
 
 public class InputDefinition
 {
@@ -12,8 +12,6 @@ public class InputDefinition
 	public ArticulationInputDefinition[] articulations = new ArticulationInputDefinition[0];
 	@JsonField
 	public MountedGunInputDefinition[] guns = new MountedGunInputDefinition[0];
-	@JsonField
-	public DrivingInputDefinition[] driving = new DrivingInputDefinition[0];
 	@JsonField
 	public ArmInputDefinition[] arms = new ArmInputDefinition[0];
 

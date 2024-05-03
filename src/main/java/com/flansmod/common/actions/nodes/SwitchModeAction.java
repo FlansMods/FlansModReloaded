@@ -5,19 +5,14 @@ import com.flansmod.common.actions.ActionGroupInstance;
 import com.flansmod.common.actions.ActionInstance;
 import com.flansmod.common.actions.ActionStack;
 import com.flansmod.common.actions.contexts.ActionGroupContext;
-import com.flansmod.common.actions.contexts.GunInputContext;
 import com.flansmod.common.types.Constants;
 import com.flansmod.common.types.attachments.AttachmentDefinition;
-import com.flansmod.common.types.elements.ModifierDefinition;
 import com.flansmod.common.types.guns.elements.ActionDefinition;
 import com.flansmod.common.types.guns.elements.HandlerDefinition;
 import com.flansmod.common.types.guns.elements.HandlerNodeDefinition;
 import com.flansmod.common.types.guns.elements.ModeDefinition;
-import com.flansmod.common.types.vehicles.EPlayerInput;
-import com.mojang.datafixers.util.Pair;
 
 import javax.annotation.Nonnull;
-import java.util.List;
 
 public class SwitchModeAction extends ActionInstance
 {

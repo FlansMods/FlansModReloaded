@@ -1,7 +1,9 @@
 package com.flansmod.common.entity.vehicle.controls;
 
 import com.flansmod.common.FlansMod;
-import com.flansmod.common.types.vehicles.EDrivingControl;
+import com.flansmod.common.types.elements.EPlayerInput;
+import com.flansmod.common.types.vehicles.ControlSchemeDefinition;
+import com.flansmod.common.types.vehicles.EVehicleAxis;
 import com.flansmod.common.types.vehicles.elements.ControlSchemeAxisDefinition;
 import com.flansmod.common.types.vehicles.elements.EAxisBehaviourType;
 import com.flansmod.util.Maths;
@@ -12,49 +14,43 @@ import java.util.Map;
 
 public class VehicleInputState
 {
-	public Map<EDrivingControl, Float> AxisInputs = new HashMap<>();
-	public Map<EDrivingControl, Float> AxisValues = new HashMap<>();
+	public Map<EVehicleAxis, Float> AxisInputs = new HashMap<>();
+	public Map<EPlayerInput, Boolean> AdditionalInputs = new HashMap<>();
+	public Map<EVehicleAxis, Float> AxisValues = new HashMap<>();
 
-	public void SetValue(@Nonnull EDrivingControl control, float value)
-	{
-		AxisValues.put(control, value);
-	}
-	public float GetValue(@Nonnull EDrivingControl control)
-	{
-		return AxisValues.getOrDefault(control, 0.0f);
-	}
 
-	public void SetInput(@Nonnull EDrivingControl control, float value)
+	public void SetInput(@Nonnull EPlayerInput input, boolean pressed) { AdditionalInputs.put(input, pressed); }
+	public void SetInput(@Nonnull EVehicleAxis control, float value)
 	{
-		if(control != EDrivingControl.Unset)
+		if(control != EVehicleAxis.Unset)
 			AxisInputs.put(control, value);
 		else
 			FlansMod.LOGGER.warn("Passing Unset control input to vehicle input state?");
 	}
-	public float GetInput(@Nonnull EDrivingControl control)
+	public boolean GetInput(@Nonnull EPlayerInput input) { return AdditionalInputs.getOrDefault(input, false); }
+	public float GetInput(@Nonnull EVehicleAxis axisType) { return AxisInputs.getOrDefault(axisType, 0.0f); }
+
+
+
+	public void SetValue(@Nonnull EVehicleAxis control, float value)
 	{
-		if(AxisInputs.containsKey(control))
-			return AxisInputs.get(control);
-		return 0.0f;
+		AxisValues.put(control, value);
 	}
-	public float GetAxisValue(@Nonnull ControlSchemeAxisDefinition axisDef)
+	public float GetValue(@Nonnull EVehicleAxis control)
 	{
-		return GetInputPair(axisDef.positive, axisDef.negative);
-	}
-	public float GetInputPair(@Nonnull EDrivingControl positive, @Nonnull EDrivingControl negative)
-	{
-		float mag = 0.0f;
-		if(AxisInputs.containsKey(positive))
-			mag += AxisInputs.get(positive);
-		if(AxisInputs.containsKey(negative))
-			mag -= AxisInputs.get(negative);
-		return mag;
+		return AxisValues.getOrDefault(control, 0.0f);
 	}
 
+
+	public void Tick(@Nonnull ControlSchemeDefinition def)
+	{
+		for(ControlSchemeAxisDefinition axisDef : def.axes)
+			TickAxis(axisDef);
+	}
 	public float TickAxis(@Nonnull ControlSchemeAxisDefinition axisDef)
 	{
-		float axisInput = GetInputPair(axisDef.positive, axisDef.negative);
-		float axisValue = GetValue(axisDef.positive);
+		float axisInput = GetInput(axisDef.axisType);
+		float axisValue = GetValue(axisDef.axisType);
 
 		// For resting sliders, we need to move back to rest if the input is not pressed
 		if(Maths.Approx(axisInput, 0f) && axisDef.axisBehaviour == EAxisBehaviourType.SliderWithRestPosition)
@@ -78,7 +74,7 @@ public class VehicleInputState
 		}
 
 		newValue = Maths.Clamp(newValue, axisDef.minValue, axisDef.maxValue);
-		SetValue(axisDef.positive, newValue);
+		SetValue(axisDef.axisType, newValue);
 		return newValue;
 	}
 }

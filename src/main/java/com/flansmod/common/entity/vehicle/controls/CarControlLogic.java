@@ -4,7 +4,7 @@ import com.flansmod.common.entity.vehicle.VehicleEntity;
 import com.flansmod.common.entity.vehicle.hierarchy.WheelEntity;
 import com.flansmod.common.entity.vehicle.physics.VehiclePhysicsModule;
 import com.flansmod.common.types.vehicles.ControlSchemeDefinition;
-import com.flansmod.common.types.vehicles.EDrivingControl;
+import com.flansmod.common.types.vehicles.EVehicleAxis;
 import com.flansmod.common.types.vehicles.VehicleDefinition;
 import com.flansmod.common.types.vehicles.elements.ControlSchemeAxisDefinition;
 import com.flansmod.common.types.vehicles.elements.EControlLogicHint;
@@ -24,8 +24,8 @@ public class CarControlLogic extends ControlLogic
 	{
 		super(def);
 
-		AcceleratorAxis = FindAxis(EDrivingControl.Accelerate, EDrivingControl.Decelerate);
-		SteerLeftRightAxis = FindAxis(EDrivingControl.YawLeft, EDrivingControl.YawRight);
+		AcceleratorAxis = FindAxis(EVehicleAxis.Accelerator);
+		SteerLeftRightAxis = FindAxis(EVehicleAxis.Yaw);
 	}
 
 	@Override

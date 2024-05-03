@@ -1,4 +1,4 @@
-package com.flansmod.common.types.vehicles;
+package com.flansmod.common.types.elements;
 
 public enum EPlayerInput
 {
@@ -20,12 +20,17 @@ public enum EPlayerInput
 	Reload1,
 	Reload2,
 	Reload3,
+
+	// Could be used by vehicles, handbrake for example
 	Jump,
 	Sprint,
 
+	// Some examples are LookAt for guns, BarrelRoll for vehicles
 	SpecialKey1,
+	// Some examples are ModeSwitch for guns
 	SpecialKey2,
 
+	// Generally used for vehicles
 	GearUp,
 	GearDown,
 }

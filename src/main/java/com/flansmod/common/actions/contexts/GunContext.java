@@ -18,7 +18,7 @@ import com.flansmod.common.types.guns.elements.*;
 import com.flansmod.common.types.elements.ModifierDefinition;
 import com.flansmod.common.types.guns.*;
 import com.flansmod.common.types.parts.PartDefinition;
-import com.flansmod.common.types.vehicles.EPlayerInput;
+import com.flansmod.common.types.elements.EPlayerInput;
 import com.flansmod.util.MinecraftHelpers;
 import com.flansmod.util.Transform;
 import com.flansmod.util.formulae.FloatAccumulation;

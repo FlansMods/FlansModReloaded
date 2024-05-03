@@ -1,7 +1,7 @@
 package com.flansmod.common.types.guns.elements;
 
 import com.flansmod.common.types.JsonField;
-import com.flansmod.common.types.vehicles.EPlayerInput;
+import com.flansmod.common.types.elements.EPlayerInput;
 
 public class HandlerDefinition
 {

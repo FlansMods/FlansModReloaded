@@ -1,19 +1,23 @@
 package com.flansmod.common.entity.vehicle.seats;
 
+import com.flansmod.client.input.ClientInputHooks;
 import com.flansmod.common.FlansMod;
 import com.flansmod.common.entity.vehicle.IVehicleModule;
 import com.flansmod.common.entity.vehicle.VehicleDefinitionHierarchy;
 import com.flansmod.common.entity.vehicle.VehicleEntity;
 import com.flansmod.common.entity.vehicle.controls.VehicleInputState;
 import com.flansmod.common.types.vehicles.ControlSchemeDefinition;
+import com.flansmod.common.types.vehicles.elements.ControlSchemeAxisDefinition;
 import com.flansmod.common.types.vehicles.elements.InputDefinition;
 import com.flansmod.common.types.vehicles.elements.VehicleControlOptionDefinition;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import javax.naming.ldap.Control;
 import java.util.*;
 
 public class VehicleSeatsModule implements IVehicleModule
@@ -131,10 +135,32 @@ public class VehicleSeatsModule implements IVehicleModule
 		return null;
 	}
 
+	@OnlyIn(Dist.CLIENT)
+	public void Client_GetLocalPlayerInputs(@Nonnull VehicleEntity vehicle,
+											@Nonnull List<ControlSchemeDefinition> controlSchemes,
+											@Nonnull InputDefinition[] additionalInputs)
+	{
+		// Process any control schemes that are active (e.g. CarController, 1AxisTurretController)
+		for(ControlSchemeDefinition scheme : controlSchemes)
+		{
+			VehicleInputState inputs = vehicle.GetInputStateFor(scheme);
+			for(ControlSchemeAxisDefinition axis : scheme.axes)
+			{
+				float value = ClientInputHooks.GetInput(axis.axisType);
+				inputs.SetInput(axis.axisType, value);
+			}
+		}
+		for(InputDefinition input : additionalInputs)
+		{
+			VehicleInputState miscInputs = vehicle.GetMiscInputState();
+			miscInputs.SetInput(input.key, ClientInputHooks.GetInput(input.key));
+		}
+	}
 
 	@Override
 	public void Tick(@Nonnull VehicleEntity vehicle)
 	{
+		Map<ControlSchemeDefinition, VehicleInputState> statesToTick = new HashMap<>();
 		for(int i = 0; i < SeatOrdering.size(); i++)
 		{
 			String seatName = SeatOrdering.get(i);
@@ -144,30 +170,28 @@ public class VehicleSeatsModule implements IVehicleModule
 			Entity passenger = GetPassengerInSeat(i);
 			if(passenger != null) // TODO: && passenger.canDriveVehicle
 			{
-				// Process any control schemes that are active (e.g. CarController, 1AxisTurretController)
-				List<ControlSchemeDefinition> controlSchemes = GetActiveControllersForSeat(seatName, vehicle.ModalStates);
-				for(ControlSchemeDefinition scheme : controlSchemes)
+				if(passenger instanceof Player player && player.isLocalPlayer())
 				{
-					VehicleInputState inputs = vehicle.GetInputStateFor(scheme);
+					List<ControlSchemeDefinition> controlSchemes = GetActiveControllersForSeat(seatName, vehicle.ModalStates);
 
-					//inputs.updateFrom(...)
+					Client_GetLocalPlayerInputs(vehicle, controlSchemes, seatState.Def.inputs);
 
-					// TODO:
+					for(ControlSchemeDefinition scheme : controlSchemes)
+					{
+						statesToTick.put(scheme, vehicle.GetInputStateFor(scheme));
+					}
 				}
+				//else if(isControlledByAI())
+				//{
+//
+				//}
 
-				// And additional inputs (these are like opening one door or simple things that don't need a whole control scheme)
-				for(InputDefinition additionalInput : seatState.Def.inputs)
-				{
-					VehicleInputState inputs = vehicle.GetMiscInputState();
-
-					// TODO:
-
-
-				}
 			}
+		}
 
-
-
+		for(var kvp : statesToTick.entrySet())
+		{
+			kvp.getValue().Tick(kvp.getKey());
 		}
 	}
 
