@@ -1,0 +1,40 @@
+{
+    "classes": [
+        "britishScout",
+        "britishAssault",
+        "britishSupport",
+        "britishEngineer",
+        "britishMedic"
+    ],
+    "flagColour": {
+        "alpha": 1.0,
+        "red": 0.0,
+        "green": 0.0,
+        "blue": 1.0
+    },
+    "textColour": {},
+    "hat": {
+        "item": "minecraft:british_desert_helmet",
+        "count": 1,
+        "damage": -1,
+        "tags": "{}"
+    },
+    "chest": {
+        "item": "minecraft:british_desert_coat",
+        "count": 1,
+        "damage": -1,
+        "tags": "{}"
+    },
+    "legs": {
+        "item": "minecraft:british_desert_pants",
+        "count": 1,
+        "damage": -1,
+        "tags": "{}"
+    },
+    "shoes": {
+        "item": "minecraft:british_desert_boots",
+        "count": 1,
+        "damage": -1,
+        "tags": "{}"
+    }
+}

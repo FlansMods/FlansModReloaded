@@ -6,6 +6,9 @@ import net.minecraft.world.phys.Vec3;
 
 public class DamageablePartDefinition
 {
+	public static final DamageablePartDefinition INVALID = new DamageablePartDefinition();
+	public static final DamageablePartDefinition DEFAULT_BODY = new DamageablePartDefinition();
+
 	@JsonField
 	public String partName = "body";
 	@JsonField

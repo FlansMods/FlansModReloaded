@@ -23,7 +23,7 @@ public class PartItem extends FlanItem
 {
 	public PartDefinition Def() { return FlansMod.PARTS.Get(DefinitionLocation); }
 
-	public PartItem(ResourceLocation defLoc, Properties props)
+	public PartItem(@Nonnull ResourceLocation defLoc, @Nonnull Properties props)
 	{
 		super(defLoc, props);
 	}
@@ -69,24 +69,8 @@ public class PartItem extends FlanItem
 				case "flansmod:engine":
 				{
 					// Fuel consumption
-					switch (Def().engine.fuelType)
-					{
-						case Smeltable, Smokable, Blastable -> {
-							int coalPerHour = Maths.Ceil(Def().engine.fuelConsumptionRate * (20 * 60 * 60) / 800f);
-							tooltips.add(Component.translatable("tooltip.format.engine_solid_fuel_consumption", coalPerHour));
-							tooltips.add(Component.translatable("tooltip.format.engine_solid_fuel_storage", Def().engine.solidFuelSlots));
-						}
-						case Liquid -> {
-							int mBPerTick = Maths.Ceil(Def().engine.fuelConsumptionRate);
-							tooltips.add(Component.translatable("tooltip.format.engine_liquid_fuel_consumption", mBPerTick));
-							tooltips.add(Component.translatable("tooltip.format.engine_liquid_fuel_storage", Def().engine.liquidFuelCapacity, Def().engine.solidFuelSlots));
-						}
-						case FE -> {
-							int FEPerTick = Maths.Ceil(Def().engine.fuelConsumptionRate);
-							tooltips.add(Component.translatable("tooltip.format.engine_electric_fuel_consumption", MinecraftHelpers.GetFEString(FEPerTick)));
-							tooltips.add(Component.translatable("tooltip.format.engine_electric_fuel_storage", MinecraftHelpers.GetFEString(Def().engine.FECapacity), Def().engine.batterySlots));
-						}
-					}
+					tooltips.add(Def().engine.GetFuelConsumptionTooltip());
+					tooltips.add(Def().engine.GetFuelStorageTooltip());
 
 					// Max speed
 					if(Def().engine.maxSpeed != 1.0f)

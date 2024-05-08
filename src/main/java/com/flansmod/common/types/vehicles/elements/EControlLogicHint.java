@@ -12,4 +12,8 @@ public enum EControlLogicHint
 	Fixed,
 
 	Drive,
+
+	ForwardPropeller,
+	LiftPropeller,
+	TailPropeller,
 }

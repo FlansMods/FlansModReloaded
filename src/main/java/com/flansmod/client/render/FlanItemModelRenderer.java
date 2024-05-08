@@ -1,59 +1,54 @@
 package com.flansmod.client.render;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 
-import com.flansmod.client.FlansModClient;
 import com.flansmod.client.render.animation.FlanimationDefinition;
-import com.flansmod.client.render.animation.ESmoothSetting;
-import com.flansmod.client.render.animation.PoseCache;
-import com.flansmod.client.render.animation.elements.KeyframeDefinition;
-import com.flansmod.client.render.animation.elements.PoseDefinition;
-import com.flansmod.client.render.animation.elements.SequenceDefinition;
-import com.flansmod.client.render.animation.elements.SequenceEntryDefinition;
 import com.flansmod.client.render.models.*;
 import com.flansmod.common.FlansMod;
 import com.flansmod.common.actions.*;
-import com.flansmod.common.actions.contexts.ContextCache;
 import com.flansmod.common.actions.contexts.EContextSide;
 import com.flansmod.common.actions.contexts.GunContext;
-import com.flansmod.common.actions.nodes.AnimationAction;
 import com.flansmod.common.item.FlanItem;
 import com.flansmod.common.types.attachments.EAttachmentType;
 import com.flansmod.util.*;
 import com.mojang.blaze3d.platform.Lighting;
-import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.*;
 
-import net.minecraft.Util;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.*;
-import net.minecraft.client.renderer.block.model.BlockModel;
-import net.minecraft.client.renderer.texture.MissingTextureAtlasSprite;
 import net.minecraft.client.resources.model.BakedModel;
-import net.minecraft.client.resources.model.UnbakedModel;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.HumanoidArm;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.common.util.Lazy;
-import org.joml.*;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-public abstract class FlanItemModelRenderer extends BlockEntityWithoutLevelRenderer
+public abstract class FlanItemModelRenderer extends BlockEntityWithoutLevelRenderer implements ITurboRenderer
 {
-    @Nonnull
-    public TurboRenderUtility TurboRenderer = TurboRenderUtility.of();
+
     public final boolean ShouldRenderWhenHeld;
     @Nullable
     public final FlanItem Item;
+    @Nullable
+    private TurboRenderUtility TurboRenderHelper;
+    @Nonnull
+    public TurboRenderUtility GetTurboRigWrapper()
+    {
+        if(TurboRenderHelper == null)
+        {
+            if(Item == null)
+                TurboRenderHelper = TurboRenderUtility.of();
+            else
+                TurboRenderHelper = FlansModelRegistry.GetRigWrapperFor(Item.DefinitionLocation);
+        }
+        return TurboRenderHelper;
+    }
 
 
     public FlanItemModelRenderer(@Nullable FlanItem flanItem, boolean shouldRenderWhenHeld)
@@ -61,25 +56,8 @@ public abstract class FlanItemModelRenderer extends BlockEntityWithoutLevelRende
         super(null, null);
         Item = flanItem;
         ShouldRenderWhenHeld = shouldRenderWhenHeld;
+        TurboRenderHelper = null;
     }
-
-    // -------------------------------------------------------------------------------------------
-    // Events
-    public void OnUnbakedLoaded(@Nonnull UnbakedModel unbaked)
-    {
-        if(unbaked instanceof BlockModel blockModel)
-            if(blockModel.customData.hasCustomGeometry())
-                if(blockModel.customData.getCustomGeometry() instanceof TurboRig unbakedRig)
-                {
-                    TurboRenderer = TurboRenderer.with(unbakedRig);
-                }
-    }
-    public void OnBakedLoaded(@Nonnull BakedModel baked)
-    {
-        if (baked instanceof TurboRig.Baked turboBakedModel)
-            TurboRenderer = TurboRenderer.with(turboBakedModel);
-    }
-    // -------------------------------------------------------------------------------------------
 
     // Entry point for vanilla render calls
     @Override
@@ -97,7 +75,7 @@ public abstract class FlanItemModelRenderer extends BlockEntityWithoutLevelRende
         if(shouldRenderIcon)
         {
             String skin = FlanItem.GetPaintjobName(stack);
-            BakedModel iconModel = TurboRenderer.GetIconModel(skin);
+            BakedModel iconModel = GetTurboRigWrapper().GetIconModel(skin);
             if(iconModel != null)
             {
                 PoseStack poseStack = null;
@@ -173,13 +151,13 @@ public abstract class FlanItemModelRenderer extends BlockEntityWithoutLevelRende
 
     public boolean HasPart(@Nonnull String partName)
     {
-        return TurboRenderer.HasPart(partName);
+        return GetTurboRigWrapper().HasPart(partName);
     }
 
     @Nonnull
     protected Transform GetPose(@Nonnull FlanimationDefinition animationSet, @Nullable ActionStack actionStack, @Nonnull String partName)
     {
-        return TurboRenderer.GetPose(partName,
+        return GetTurboRigWrapper().GetPose(partName,
             GetDefLoc(),
             animationSet,
             actionStack,
@@ -195,12 +173,12 @@ public abstract class FlanItemModelRenderer extends BlockEntityWithoutLevelRende
     public ResourceLocation GetSkin(@Nullable ItemStack stack)
     {
         String skin = stack != null ? FlanItem.GetPaintjobName(stack) : "default";
-        return TurboRenderer.GetSkinLocation(skin);
+        return GetTurboRigWrapper().GetSkinLocation(skin);
     }
     @Nonnull
     public Map<String, Float> GetParameters()
     {
-        return TurboRenderer.GetParameters();
+        return GetTurboRigWrapper().GetParameters();
     }
     private static final ResourceLocation UnknownModelLocation = new ResourceLocation(FlansMod.MODID, "models/unknown");
     @Nonnull
@@ -225,7 +203,7 @@ public abstract class FlanItemModelRenderer extends BlockEntityWithoutLevelRende
                                          @Nonnull BiFunction<String, RenderContext, Boolean> preRenderFunc,
                                          @Nonnull BiConsumer<String, RenderContext> postRenderFunc)
     {
-        TurboRenderer.RenderPartIteratively(renderContext, partName, textureFunc, preRenderFunc, postRenderFunc);
+        GetTurboRigWrapper().RenderPartIteratively(renderContext, partName, textureFunc, preRenderFunc, postRenderFunc);
     }
 
     protected void RenderAttachedEffect(String attachPointName, ResourceLocation texture, ResourceLocation model, RenderContext renderContext)
@@ -238,7 +216,7 @@ public abstract class FlanItemModelRenderer extends BlockEntityWithoutLevelRende
                                        @Nullable FlanimationDefinition animationSet,
                                        @Nullable ActionStack actionStack)
     {
-        TurboRig.AttachPoint.Baked ap = TurboRenderer.GetAP(apName);
+        TurboRig.AttachPoint.Baked ap = GetTurboRigWrapper().GetAP(apName);
         if(ap != null)
         {
             // Resolve the AP that we are attached to first
@@ -264,7 +242,7 @@ public abstract class FlanItemModelRenderer extends BlockEntityWithoutLevelRende
     @Nonnull
     public String GetAPKey(@Nonnull EAttachmentType attachmentType, int attachmentIndex)
     {
-        return TurboRenderer.GetAPKey(attachmentType, attachmentIndex);
+        return GetTurboRigWrapper().GetAPKey(attachmentType, attachmentIndex);
     }
 
 

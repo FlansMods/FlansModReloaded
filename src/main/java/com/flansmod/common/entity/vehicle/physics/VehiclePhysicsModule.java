@@ -23,9 +23,13 @@ public class VehiclePhysicsModule implements IVehicleModule
 {
 	@Nonnull
 	public final VehiclePhysicsDefinition Def;
-	private final Map<String, List<WheelEntity>> WheelsByPartName = new HashMap<>();
-	private final List<WheelEntity> WheelsByIndex = new ArrayList<>();
-	private final Map<EControlLogicHint, List<WheelEntity>> WheelsByHint = new HashMap<>();
+
+	// Part lookups
+	private final MultiLookup<EControlLogicHint, WheelEntity> Wheels = new MultiLookup<>();
+	private final MultiLookup<EControlLogicHint, VehiclePropellerSaveState> Propellers = new MultiLookup<>();
+
+
+
 	private final Map<ResourceLocation, ControlLogic> Controllers = new HashMap<>();
 	@Nonnull
 	private ResourceLocation SelectedControllerLocation = new ResourceLocation(FlansMod.MODID, "control_schemes/null");
@@ -43,51 +47,16 @@ public class VehiclePhysicsModule implements IVehicleModule
 		for(WheelDefinition wheelDef : Def.wheels)
 		{
 			WheelEntity wheel = new WheelEntity(vehicle, wheelDef);
-
-
-			// Add lookup by part name
-			if(!WheelsByPartName.containsKey(wheelDef.attachedTo))
-				WheelsByPartName.put(wheelDef.attachedTo, new ArrayList<>());
-			WheelsByPartName.get(wheelDef.attachedTo).add(wheel);
-
-			// Add to raw indexed wheel list
-			WheelsByIndex.add(wheel);
-
-			// Add lookup by hint (can be multiple hints)
-			for(EControlLogicHint hint : wheelDef.controlHints)
-			{
-				if (!WheelsByHint.containsKey(hint))
-					WheelsByHint.put(hint, new ArrayList<>());
-				WheelsByHint.get(hint).add(wheel);
-			}
+			Wheels.Add(wheel, wheelDef.attachedTo, wheelDef.controlHints);
 		}
 	}
 	private void RegisterWheel(@Nonnull WheelEntity wheel)
 	{
-		// Add lookup by part name
-		if(!WheelsByPartName.containsKey(wheel.Def.attachedTo))
-			WheelsByPartName.put(wheel.Def.attachedTo, new ArrayList<>());
-		WheelsByPartName.get(wheel.Def.attachedTo).add(wheel);
-
-		// Add to raw indexed wheel list
-		WheelsByIndex.add(wheel);
-
-		// Add lookup by hint (can be multiple hints)
-		for(EControlLogicHint hint : wheel.Def.controlHints)
-		{
-			if (!WheelsByHint.containsKey(hint))
-				WheelsByHint.put(hint, new ArrayList<>());
-			WheelsByHint.get(hint).add(wheel);
-		}
+		Wheels.Add(wheel, wheel.Def.attachedTo, wheel.Def.controlHints);
 	}
 	private void UnregisterWheelAt(int wheelIndex)
 	{
-		WheelEntity wheel = WheelsByIndex.get(wheelIndex);
-		WheelsByIndex.remove(wheelIndex);
-		for(List<WheelEntity> byPart : WheelsByPartName.values())
-			byPart.remove(wheel);
-		for(List<WheelEntity> byHint : WheelsByHint.values())
-			byHint.remove(wheel);
+		Wheels.RemoveAt(wheelIndex);
 	}
 
 	@Nullable
@@ -95,38 +64,31 @@ public class VehiclePhysicsModule implements IVehicleModule
 	{
 		return Controllers.get(vehicle.GetActiveControllerDef().GetLocation());
 	}
-	@Nullable
-	public WheelEntity WheelByIndex(int index) { return WheelsByIndex.get(index); }
-	@Nonnull
-	public Collection<WheelEntity> WheelByVehiclePart(@Nonnull String partName) { return WheelsByPartName.getOrDefault(partName, List.of()); }
-	@Nonnull
-	public Collection<WheelEntity> WheelsThatMatch(@Nonnull EControlLogicHint hint) { return WheelsByHint.getOrDefault(hint, List.of()); }
-	@Nonnull
-	public Collection<WheelEntity> WheelsThatMatch(@Nonnull EControlLogicHint ... hints)
-	{
-		if(hints.length == 0)
-			return List.of();
-		Collection<WheelEntity> check0 = WheelsThatMatch(hints[0]);
-		if(hints.length == 1)
-			return check0;
 
-		List<WheelEntity> validWheels = new ArrayList<>(check0.size());
-		for(WheelEntity wheel : check0)
-		{
-			boolean valid = true;
-			for (int i = 1; i < hints.length; i++)
-			{
-				if (!wheel.Def.IsHintedAs(hints[i]))
-				{
-					valid = false;
-					break;
-				}
-			}
-			if(valid)
-				validWheels.add(wheel);
-		}
-		return validWheels;
-	}
+	// Wheel getters
+	@Nonnull
+	public Collection<WheelEntity> AllWheels() { return Wheels.All(); }
+	@Nullable
+	public WheelEntity WheelByIndex(int index) { return Wheels.ByIndex(index); }
+	@Nonnull
+	public Collection<WheelEntity> WheelsByVehiclePart(@Nonnull String partName) { return Wheels.ByPart(partName); }
+	@Nonnull
+	public Collection<WheelEntity> WheelsThatMatch(@Nonnull EControlLogicHint hint) { return Wheels.ByHint(hint); }
+	@Nonnull
+	public Collection<WheelEntity> WheelsThatMatch(@Nonnull EControlLogicHint ... hints) { return Wheels.ByHints(hints); }
+
+	// Propeller getters
+	@Nonnull
+	public Collection<VehiclePropellerSaveState> AllProps() { return Propellers.All(); }
+	@Nullable
+	public VehiclePropellerSaveState PropByIndex(int index) { return Propellers.ByIndex(index); }
+	@Nonnull
+	public Collection<VehiclePropellerSaveState> PropsByVehiclePart(@Nonnull String partName) { return Propellers.ByPart(partName); }
+	@Nonnull
+	public Collection<VehiclePropellerSaveState> PropsThatMatch(@Nonnull EControlLogicHint hint) { return Propellers.ByHint(hint); }
+	@Nonnull
+	public Collection<VehiclePropellerSaveState> PropsThatMatch(@Nonnull EControlLogicHint ... hints) { return Propellers.ByHints(hints); }
+
 
 
 	public void SelectController(@Nonnull VehicleEntity vehicle, @Nonnull ControlSchemeDefinition controllerDef)
@@ -154,15 +116,14 @@ public class VehiclePhysicsModule implements IVehicleModule
 	public void Tick(@Nonnull VehicleEntity vehicle)
 	{
 		// Check for missing wheels
-		for(int i = WheelsByIndex.size() - 1; i >= 0; i--)
-		{
-			WheelEntity wheel = WheelsByIndex.get(i);
+		Wheels.ForEachWithRemoval((wheel -> {
 			if(wheel == null || !wheel.isAlive())
 			{
 				FlansMod.LOGGER.warn(vehicle + ": Did not expect our wheel to die");
-				UnregisterWheelAt(i);
+				return true;
 			}
-		}
+			return false;
+		}));
 
 		ControlLogic controller = CurrentController(vehicle);
 		if(controller != null)
@@ -176,14 +137,19 @@ public class VehiclePhysicsModule implements IVehicleModule
 			{
 				controller.TickRemote(vehicle, inputs);
 			}
+
+			// We should make sure the controller didn't go wrong!
+
+			if(Double.isNaN(vehicle.position().x)
+			|| Double.isNaN(vehicle.position().y)
+			|| Double.isNaN(vehicle.position().z))
+			{
+				FlansMod.LOGGER.error("Vehicle went to NaNsville. Reverting one frame");
+				vehicle.setPos(vehicle.xOld, vehicle.yOld, vehicle.zOld);
+			}
 		}
 
-
-
-		for(WheelEntity wheel : WheelsByIndex)
-		{
-			wheel.ParentTick(vehicle);
-		}
+		Wheels.ForEach(wheel -> wheel.ParentTick(vehicle));
 	}
 
 	@Override

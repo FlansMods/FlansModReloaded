@@ -12,6 +12,8 @@ public class ControlLogics
 	{
 		return switch(def.logicType)
 		{
+			case LegacyCar -> new LegacyVehicleControlLogic(def, false);
+			case LegacyTank -> new LegacyVehicleControlLogic(def, true);
 			case Car -> new CarControlLogic(def);
 			default -> null;
 		};

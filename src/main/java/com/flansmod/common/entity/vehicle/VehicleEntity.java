@@ -6,16 +6,14 @@ import com.flansmod.common.entity.vehicle.controls.VehicleInputState;
 import com.flansmod.common.entity.vehicle.damage.VehicleDamageModule;
 import com.flansmod.common.entity.vehicle.guns.VehicleGunModule;
 import com.flansmod.common.entity.vehicle.hierarchy.VehicleHierarchyModule;
-import com.flansmod.common.entity.vehicle.hierarchy.WheelEntity;
+import com.flansmod.common.entity.vehicle.physics.VehicleEngineModule;
 import com.flansmod.common.entity.vehicle.physics.VehiclePhysicsModule;
 import com.flansmod.common.entity.vehicle.seats.VehicleSeatsModule;
 import com.flansmod.common.types.LazyDefinition;
 import com.flansmod.common.types.vehicles.ControlSchemeDefinition;
 import com.flansmod.common.types.vehicles.VehicleDefinition;
-import com.flansmod.common.types.vehicles.elements.SeatDefinition;
-import com.flansmod.common.types.vehicles.elements.VehiclePhysicsDefinition;
+import com.flansmod.util.Maths;
 import com.flansmod.util.Transform;
-import com.flansmod.util.TransformStack;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
@@ -35,12 +33,12 @@ import java.util.Map;
 public class VehicleEntity extends Entity implements ITransformEntity
 {
 	private final LazyDefinition<VehicleDefinition> DefRef;
-	private final Lazy<VehicleDamageModule> LazyDamage = Lazy.of(this::CreateDamageModule);
-	private final Lazy<VehicleHierarchyModule> LazyHierarchy = Lazy.of(this::CreateHierarchyModule);
-	private final Lazy<VehicleGunModule> LazyGuns = Lazy.of(this::CreateGunModule);
-	private final Lazy<VehicleSeatsModule> LazySeats = Lazy.of(this::CreateSeatsModule);
-	private final Lazy<VehiclePhysicsModule> LazyPhysics = Lazy.of(this::CreatePhysicsModule);
-
+	private final Lazy<VehicleDamageModule> LazyDamage = Lazy.of(() -> new VehicleDamageModule(Def().AsHierarchy.get(), this));
+	private final Lazy<VehicleHierarchyModule> LazyHierarchy = Lazy.of(() -> new VehicleHierarchyModule(Def().AsHierarchy.get(), this));
+	private final Lazy<VehicleGunModule> LazyGuns = Lazy.of(() -> new VehicleGunModule(Def().AsHierarchy.get(), this));
+	private final Lazy<VehicleSeatsModule> LazySeats = Lazy.of(() -> new VehicleSeatsModule(Def().AsHierarchy.get(), this));
+	private final Lazy<VehiclePhysicsModule> LazyPhysics = Lazy.of(() -> new VehiclePhysicsModule(Def().physics));
+	private final Lazy<VehicleEngineModule> LazyEngine = Lazy.of(() -> new VehicleEngineModule(this));
 	private final Lazy<VehicleInventory> LazyInventory = Lazy.of(this::CreateInventory);
 
 	// Definition / ID Access
@@ -53,6 +51,8 @@ public class VehicleEntity extends Entity implements ITransformEntity
 	@Nonnull public VehicleGunModule Guns() { return LazyGuns.get(); }
 	@Nonnull public VehicleSeatsModule Seats() { return LazySeats.get(); }
 	@Nonnull public VehiclePhysicsModule Physics() { return LazyPhysics.get(); }
+	@Nonnull public VehicleEngineModule Engine() { return LazyEngine.get(); }
+
 
 	// Inventory (sort of module-ey)
 	@Nonnull public VehicleInventory Inventory() { return LazyInventory.get(); }
@@ -77,6 +77,21 @@ public class VehicleEntity extends Entity implements ITransformEntity
 
 		return true;
 	}
+
+	// -------------------------------------------------------------------------------------------
+	// Transform and some vanilla overrides. We want to use Quaternions, pleassse Minecraft
+	@Override public float getYRot() { return RootTransform0().Yaw(); }
+	@Override public float getXRot() { return RootTransform0().Pitch(); }
+	@Override public void setYRot(float yaw) { Hierarchy().SetYaw(yaw); }
+	@Override public void setXRot(float pitch) { Hierarchy().SetPitch(pitch); }
+
+
+	public void SetEulerAngles(float pitch, float yaw, float roll) { Hierarchy().SetEulerAngles(pitch, yaw, roll); }
+	@Nonnull
+	public Transform RootTransform0() { return Hierarchy().RootTransform; }
+	@Nonnull
+	public Transform RootTransform(float dt) { return Hierarchy().GetRootTransformDelta(dt); }
+	// -------------------------------------------------------------------------------------------
 
 	@Nonnull
 	private VehicleInputState GetInputStateFor(@Nonnull String key)
@@ -157,33 +172,9 @@ public class VehicleEntity extends Entity implements ITransformEntity
 	// ---------------------------------------------------------------------------------------------------------
 	// MODULES
 	// ---------------------------------------------------------------------------------------------------------
-	@Nonnull
-	private VehicleHierarchyModule CreateHierarchyModule()
-	{
-		return new VehicleHierarchyModule(Def().AsHierarchy.get(), this);
-	}
-	@Nonnull
-	private VehicleDamageModule CreateDamageModule()
-	{
-		return new VehicleDamageModule(Def().AsHierarchy.get(), this);
-	}
-	@Nonnull
-	private VehicleGunModule CreateGunModule()
-	{
-		return new VehicleGunModule(Def().AsHierarchy.get(), this);
-	}
-	@Nonnull
-	private VehicleSeatsModule CreateSeatsModule()
-	{
-		return new VehicleSeatsModule(Def().AsHierarchy.get(), this);
-	}
-	@Nonnull
-	private VehiclePhysicsModule CreatePhysicsModule()
-	{
-		return new VehiclePhysicsModule(Def().physics);
-	}
 	private void TickModules()
 	{
+		Engine().Tick(this);
 		Damage().Tick(this);
 		Hierarchy().Tick(this);
 		Guns().Tick(this);
@@ -192,6 +183,7 @@ public class VehicleEntity extends Entity implements ITransformEntity
 	}
 	private void SaveModules(@Nonnull CompoundTag tags)
 	{
+		tags.put("engine", Engine().Save(this));
 		tags.put("damage", Damage().Save(this));
 		tags.put("articulation", Hierarchy().Save(this));
 		tags.put("guns", Guns().Save(this));
@@ -200,6 +192,8 @@ public class VehicleEntity extends Entity implements ITransformEntity
 	}
 	private void LoadModules(@Nonnull CompoundTag tags)
 	{
+		if(tags.contains("engine"))
+			Engine().Load(this, tags.getCompound("engine"));
 		if(tags.contains("damage"))
 			Damage().Load(this, tags.getCompound("damage"));
 		if(tags.contains("articulation"))
@@ -225,13 +219,16 @@ public class VehicleEntity extends Entity implements ITransformEntity
 
 	@Nonnull
 	@Override
-	public Transform GetLocal0() { return Hierarchy().RootTransform0; }
+	public Transform GetLocal0() { return Hierarchy().RootTransform; }
 	@Nonnull
 	@Override
-	public Transform GetLocal(float dt) { return Hierarchy().GetRootTransform(dt); }
+	public Transform GetLocal(float dt) { return Hierarchy().GetRootTransformDelta(dt); }
 	@Nullable
 	@Override
 	public ITransformEntity GetParent() { return null; }
+
+	public double GetSpeedXZ() { return Maths.LengthXZ(getDeltaMovement()); }
+	public double GetSpeed() { return Maths.LengthXYZ(getDeltaMovement()); }
 
 	public void Raycast(@Nonnull Vec3 start, @Nonnull Vec3 end, @Nonnull List<HitResult> results)
 	{

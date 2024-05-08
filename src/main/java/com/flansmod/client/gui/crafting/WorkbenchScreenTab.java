@@ -5,6 +5,7 @@ import com.flansmod.client.gui.FMScreen;
 import com.flansmod.client.render.FlanItemModelRenderer;
 import com.flansmod.client.render.RenderContext;
 import com.flansmod.client.render.models.FlansModelRegistry;
+import com.flansmod.client.render.models.ITurboRenderer;
 import com.flansmod.common.FlansMod;
 import com.flansmod.common.crafting.menus.WorkbenchMenu;
 import com.flansmod.util.Maths;
@@ -221,7 +222,7 @@ public abstract class WorkbenchScreenTab<T extends WorkbenchMenu> extends FMScre
 			.rotateLocalY(yaw * Maths.DegToRadF));
 		graphics.pose().translate(-10f, 0f, 0f);
 
-		FlanItemModelRenderer gunRenderer = FlansModelRegistry.forItem(stack);
+		ITurboRenderer gunRenderer = FlansModelRegistry.GetItemRenderer(stack);
 		if(gunRenderer != null)
 		{
 			graphics.pose().pushPose();

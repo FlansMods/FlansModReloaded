@@ -1,7 +1,7 @@
 package com.flansmod.common.item;
 
 import com.flansmod.client.FlansModClient;
-import com.flansmod.client.render.FlanClientItemExtensions;
+import com.flansmod.client.render.guns.GunItemClientExtension;
 import com.flansmod.client.render.guns.GunItemRenderer;
 import com.flansmod.common.FlansMod;
 import com.flansmod.common.actions.*;
@@ -58,7 +58,7 @@ public class GunItem extends FlanItem
 {
     public GunDefinition Def() { return FlansMod.GUNS.Get(DefinitionLocation); }
 
-    public GunItem(ResourceLocation defLoc, Properties properties)
+    public GunItem(@Nonnull ResourceLocation defLoc, @Nonnull Properties properties)
     {
         super(defLoc, properties);
     }
@@ -586,9 +586,9 @@ public class GunItem extends FlanItem
 
     @Override
     @OnlyIn(Dist.CLIENT)
-    public void initializeClient(Consumer<IClientItemExtensions> consumer)
+    public void initializeClient(@Nonnull Consumer<IClientItemExtensions> consumer)
     {
-        consumer.accept(FlanClientItemExtensions.create(this, new GunItemRenderer(this)));
+        consumer.accept(GunItemClientExtension.of(this));
     }
 
     // Random parameter overrides

@@ -28,6 +28,11 @@ public class WheelDefinition
 	@JsonField(Min = 0.01f)
 	public float radius = 0.25f;
 
+	@JsonField
+	public boolean floatOnWater = false;
+	@JsonField
+	public float buoyancy = 1.0f;
+
 
 	@JsonField(Min = 0.0f, Docs = "Roughly how many seconds it takes for player changes to torque to be applied")
 	public float torqueResponsiveness = 0.1f;

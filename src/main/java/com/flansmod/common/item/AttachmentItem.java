@@ -1,6 +1,6 @@
 package com.flansmod.common.item;
 
-import com.flansmod.client.render.FlanClientItemExtensions;
+import com.flansmod.client.render.guns.AttachmentItemClientExtension;
 import com.flansmod.client.render.guns.AttachmentItemRenderer;
 import com.flansmod.client.render.guns.GunItemRenderer;
 import com.flansmod.common.FlansMod;
@@ -34,7 +34,7 @@ public class AttachmentItem extends FlanItem
 	@Override
 	public AttachmentDefinition Def() { return FlansMod.ATTACHMENTS.Get(DefinitionLocation); }
 
-	public AttachmentItem(ResourceLocation defLoc, Properties properties)
+	public AttachmentItem(@Nonnull ResourceLocation defLoc, @Nonnull Properties properties)
 	{
 		super(defLoc, properties);
 	}
@@ -47,7 +47,7 @@ public class AttachmentItem extends FlanItem
 	@OnlyIn(Dist.CLIENT)
 	public void initializeClient(Consumer<IClientItemExtensions> consumer)
 	{
-		consumer.accept(FlanClientItemExtensions.create(this, new AttachmentItemRenderer(this)));
+		consumer.accept(AttachmentItemClientExtension.of(this));
 	}
 
 	// Random parameter overrides

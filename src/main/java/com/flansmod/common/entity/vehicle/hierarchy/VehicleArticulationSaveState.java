@@ -1,5 +1,6 @@
 package com.flansmod.common.entity.vehicle.hierarchy;
 
+import com.flansmod.common.entity.vehicle.IVehicleModule;
 import com.flansmod.common.entity.vehicle.IVehicleSaveNode;
 import com.flansmod.common.entity.vehicle.VehicleEntity;
 import com.flansmod.common.types.vehicles.elements.ArticulatedPartDefinition;
@@ -14,6 +15,7 @@ public class VehicleArticulationSaveState implements IVehicleSaveNode
 	@Nonnull
 	public final ArticulatedPartDefinition Def;
 	public float Parameter;
+	public float ParameterPrev;
 	public float Velocity;
 
 	public VehicleArticulationSaveState(@Nonnull ArticulatedPartDefinition def)
@@ -27,17 +29,13 @@ public class VehicleArticulationSaveState implements IVehicleSaveNode
 	public void SetVelocity(float f) { Velocity = f; }
 	public float GetVelocityUnitsPerSecond() { return Velocity; }
 	public float GetVelocityUnitsPerTick() { return Velocity / 20f; }
-	public float GetParameter0() { return Parameter; }
-	public float GetParameter(float dt) {
-		return Maths.Clamp(Parameter + GetVelocityUnitsPerTick() * dt, Def.minParameter, Def.maxParameter);
+	public float GetParameter(@Nonnull IVehicleModule.IInterpolator func) {
+		return func.apply(ParameterPrev, Parameter);
 	}
 	@Nonnull
-	public Transform GetLocalTransform0() {
-		return Def.Apply(0f);
-	}
-	@Nonnull
-	public Transform GetLocalTransform(float dt) {
-		float dParam = GetParameter(dt);
+	public Transform GetLocalTransform(@Nonnull IVehicleModule.IInterpolator func)
+	{
+		float dParam = GetParameter(func);
 		return Def.Apply(dParam);
 	}
 

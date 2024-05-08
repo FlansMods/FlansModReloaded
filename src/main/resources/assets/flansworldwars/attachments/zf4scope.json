@@ -1,0 +1,109 @@
+{
+    "itemSettings": {
+        "maxStackSize": 1,
+        "tags": [
+            "flansmod:bullet",
+            "flansmod:sights"
+        ]
+    },
+    "attachmentType": "Sights",
+    "modifiers": [
+        {
+            "stat": "spread",
+            "matchGroupPaths": [],
+            "accumulators": [
+                {
+                    "operation": "StackablePercentage",
+                    "value": -60.0,
+                    "multiplyPer": []
+                }
+            ],
+            "setValue": ""
+        },
+        {
+            "stat": "vertical_recoil",
+            "matchGroupPaths": [],
+            "accumulators": [
+                {
+                    "operation": "StackablePercentage",
+                    "value": -19.9999981,
+                    "multiplyPer": []
+                }
+            ],
+            "setValue": ""
+        },
+        {
+            "stat": "horizontal_recoil",
+            "matchGroupPaths": [],
+            "accumulators": [
+                {
+                    "operation": "StackablePercentage",
+                    "value": -19.9999981,
+                    "multiplyPer": []
+                }
+            ],
+            "setValue": ""
+        }
+    ],
+    "mechaEffects": [],
+    "mechaEffectFilter": "",
+    "handlerOverrides": [
+        {
+            "inputType": "Fire2",
+            "nodes": [
+                {
+                    "actionGroupToTrigger": "scope",
+                    "modalCheck": "",
+                    "canTriggerWhileReloading": false,
+                    "deferToAttachment": false,
+                    "attachmentType": "Generic",
+                    "attachmentIndex": 0,
+                    "andContinueEvaluating": false
+                }
+            ]
+        }
+    ],
+    "actionOverrides": [
+        {
+            "key": "scope",
+            "canActUnderwater": true,
+            "canActUnderOtherLiquid": false,
+            "canBeOverriden": false,
+            "twoHanded": false,
+            "repeatMode": "Toggle",
+            "repeatDelay": 0.0,
+            "repeatCount": 0,
+            "spinUpDuration": 1.0,
+            "loudness": 150.0,
+            "autoCancelIfNotInMode": "",
+            "actions": [
+                {
+                    "actionType": "Scope",
+                    "duration": 0.0,
+                    "sounds": [],
+                    "itemStack": "",
+                    "scopeOverlay": "wwiikar98ksniper",
+                    "anim": ""
+                }
+            ],
+            "modifiers": [
+                {
+                    "stat": "fov_factor",
+                    "matchGroupPaths": [],
+                    "accumulators": [
+                        {
+                            "operation": "BaseAdd",
+                            "value": 2.0,
+                            "multiplyPer": []
+                        }
+                    ],
+                    "setValue": ""
+                }
+            ]
+        }
+    ],
+    "reloadOverrides": [],
+    "abilities": [],
+    "modeOverride": "FullAuto",
+    "overrideFireMode": false
+}

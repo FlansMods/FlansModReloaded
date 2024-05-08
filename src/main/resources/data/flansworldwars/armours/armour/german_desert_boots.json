@@ -1,0 +1,41 @@
+{
+    "hasDurability": false,
+    "maxDurability": 0,
+    "armourType": "Head",
+    "armourToughness": 0,
+    "damageReduction": 0,
+    "enchantable": false,
+    "enchantability": 10,
+    "itemSettings": {
+        "maxStackSize": 64,
+        "tags": [
+            "flansmod:armour"
+        ]
+    },
+    "paints": {
+        "paintjobs": []
+    },
+    "inputHandlers": [],
+    "staticAbilities": [],
+    "traitProviders": [],
+    "modes": [],
+    "modifiers": [
+        {
+            "stat": "knockback",
+            "matchGroupPaths": [],
+            "accumulators": [
+                {
+                    "operation": "StackablePercentage",
+                    "value": -80.0,
+                    "multiplyPer": []
+                }
+            ],
+            "setValue": ""
+        }
+    ],
+    "immunities": [],
+    "animationSet": "",
+    "armourTextureName": "GermanDesert",
+    "nightVision": false,
+    "screenOverlay": ""
+}

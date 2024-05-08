@@ -29,9 +29,9 @@ public class VehicleHierarchyModule implements IVehicleModule
 	@Nonnull
 	public final Map<String, VehicleArticulationSaveState> ArticulationStates = new HashMap<>();
 	@Nonnull
-	public Transform RootTransform0 = Transform.Identity();
+	public Transform RootTransform = Transform.Identity();
 	@Nonnull
-	public Transform RootTransform1 = Transform.Identity();
+	public Transform RootTransformPrev = Transform.Identity();
 
 	public VehicleHierarchyModule(@Nonnull VehicleDefinitionHierarchy hierarchy,
 								  @Nonnull VehicleEntity vehicle)
@@ -44,6 +44,13 @@ public class VehicleHierarchyModule implements IVehicleModule
 		});
 	}
 
+	public void SetYaw(float yaw) { RootTransform = RootTransform.WithYaw(yaw); }
+	public void SetPitch(float pitch) { RootTransform = RootTransform.WithPitch(pitch); }
+	public void SetRoll(float roll) { RootTransform = RootTransform.WithRoll(roll); }
+	public void RotateYaw(float yaw) { RootTransform = RootTransform.RotateYaw(yaw); }
+	public void RotatePitch(float pitch) { RootTransform = RootTransform.RotatePitch(pitch); }
+	public void RotateRoll(float roll) { RootTransform = RootTransform.RotateRoll(roll); }
+	public void SetEulerAngles(float pitch, float yaw, float roll) { RootTransform = RootTransform.WithEulerAngles(pitch, yaw, roll); }
 
 	// Velocity is units per second, NOT per tick
 	public void SetArticulationVelocity(@Nonnull String key, float velocity)
@@ -57,40 +64,77 @@ public class VehicleHierarchyModule implements IVehicleModule
 			return ArticulationStates.get(key).GetVelocityUnitsPerSecond();
 		return 0.0f;
 	}
+
+	@Nonnull public Transform GetRootTransformPrevious() { return GetRootTransform(IVehicleModule.Previous); }
+	@Nonnull public Transform GetRootTransformDelta(float dt) { return GetRootTransform(IVehicleModule.Delta(dt)); }
+	@Nonnull public Transform GetRootTransformCurrent() { return GetRootTransform(IVehicleModule.Current); }
+
+
+	@Nonnull public Transform GetWorldToPartPrevious(@Nonnull String partName) { return GetWorldToPart(partName, IVehicleModule.Previous); }
+	@Nonnull public Transform GetWorldToPartDelta(@Nonnull String partName, float dt) { return GetWorldToPart(partName, IVehicleModule.Delta(dt)); }
+	@Nonnull public Transform GetWorldToPartCurrent(@Nonnull String partName) { return GetWorldToPart(partName, IVehicleModule.Current); }
+
+	@Nonnull public Transform GetArticulationPrevious(@Nonnull String partName) { return GetArticulation(partName, IVehicleModule.Previous); }
+	@Nonnull public Transform GetArticulationDelta(@Nonnull String partName, float dt) { return GetArticulation(partName, IVehicleModule.Delta(dt)); }
+	@Nonnull public Transform GetArticulationCurrent(@Nonnull String partName) { return GetArticulation(partName, IVehicleModule.Current); }
+
+	@Nonnull public Transform GetAttachmentPrevious(@Nonnull String partName, @Nonnull Vec3 offset) { return GetAttachment(partName, offset, IVehicleModule.Previous); }
+	@Nonnull public Transform GetAttachmentDelta(@Nonnull String partName, @Nonnull Vec3 offset, float dt) { return GetAttachment(partName, offset, IVehicleModule.Delta(dt)); }
+	@Nonnull public Transform GetAttachmentCurrent(@Nonnull String partName, @Nonnull Vec3 offset) { return GetAttachment(partName, offset, IVehicleModule.Current); }
+
+
 	@Nonnull
-	public Transform GetRootTransform(float dt)
+	private Transform GetRootTransform(@Nonnull IInterpolator func)
 	{
-		return Transform.Interpolate(RootTransform0, RootTransform1, dt);
+		return func.apply(RootTransformPrev, RootTransform);
 	}
 	@Nonnull
-	public Transform GetArticulationTransformLocal(@Nonnull String key, float dt)
+	private Transform GetWorldToPart(@Nonnull String partName, @Nonnull IInterpolator func)
+	{
+		TransformStack stack = new TransformStack();
+		TransformWorldToRoot(stack, func);
+		TransformRootToPart(partName, stack, func);
+		return stack.Top();
+	}
+	@Nonnull
+	private Transform GetArticulation(@Nonnull String key, @Nonnull IInterpolator func)
 	{
 		if(ArticulationStates.containsKey(key))
-			return ArticulationStates.get(key).GetLocalTransform(dt);
+			return ArticulationStates.get(key).GetLocalTransform(func);
 
 		return Transform.Identity();
 	}
+	@Nonnull
+	private Transform GetAttachment(@Nonnull String key, @Nonnull Vec3 offset, @Nonnull IInterpolator func)
+	{
+		TransformStack stack = new TransformStack();
+		TransformWorldToRoot(stack, func);
+		TransformRootToPart(key, stack, func);
+		stack.add(Transform.FromPos(offset));
+		return stack.Top();
+	}
 
-	public void TransformWorldToPart(@Nonnull String vehiclePart, @Nonnull TransformStack stack, float dt)
+
+	private void TransformWorldToPart(@Nonnull String vehiclePart, @Nonnull TransformStack stack, @Nonnull IInterpolator func)
 	{
-		TransformWorldToRoot(stack, dt);
-		TransformRootToPart(vehiclePart, stack, dt);
+		TransformWorldToRoot(stack, func);
+		TransformRootToPart(vehiclePart, stack, func);
 	}
-	public void TransformWorldToRoot(@Nonnull TransformStack stack, float dt)
+	private void TransformWorldToRoot(@Nonnull TransformStack stack, @Nonnull IInterpolator func)
 	{
-		stack.add(GetRootTransform(dt));
+		stack.add(GetRootTransform(func));
 	}
-	public void TransformRootToPart(@Nonnull String vehiclePart, @Nonnull TransformStack stack, float dt)
+	private void TransformRootToPart(@Nonnull String vehiclePart, @Nonnull TransformStack stack, @Nonnull IInterpolator func)
 	{
 		VehicleDefinitionHierarchy.Node node = Reference.Find(vehiclePart);
 		if(node != null)
 		{
 			// Apply parent transform iteratively first
 			if (node.Parent != null)
-				TransformRootToPart(node.Parent.Key, stack, dt);
+				TransformRootToPart(node.Parent.Key, stack, func);
 
 			// Then apply child
-			stack.add(GetArticulationTransformLocal(vehiclePart, dt));
+			stack.add(GetArticulation(vehiclePart, func));
 		}
 	}
 
@@ -103,7 +147,7 @@ public class VehicleHierarchyModule implements IVehicleModule
 	{
 		if(RootDefinitionNode != null)
 		{
-			TransformStack stack = TransformStack.of(GetRootTransform(dt));
+			TransformStack stack = TransformStack.of(GetRootTransformDelta(dt));
 			Raycast(vehicle, stack, RootDefinitionNode, start, end, results, dt);
 		}
 	}
@@ -112,7 +156,7 @@ public class VehicleHierarchyModule implements IVehicleModule
 		stack.PushSaveState();
 
 		// If this piece is articulated, add a transform
-		Transform articulation = GetArticulationTransformLocal(node.Key, dt);
+		Transform articulation = GetArticulationDelta(node.Key, dt);
 		if(!articulation.IsIdentity())
 		{
 			start = articulation.GlobalToLocalPosition(start);

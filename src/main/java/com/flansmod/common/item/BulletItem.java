@@ -1,6 +1,6 @@
 package com.flansmod.common.item;
 
-import com.flansmod.client.render.FlanClientItemExtensions;
+import com.flansmod.client.render.bullets.BulletItemClientExtension;
 import com.flansmod.client.render.bullets.BulletItemRenderer;
 import com.flansmod.client.render.guns.GunItemRenderer;
 import com.flansmod.common.FlansMod;
@@ -35,7 +35,7 @@ public class BulletItem extends FlanItem implements IForgeItem
 	@Override
 	public BulletDefinition Def() { return FlansMod.BULLETS.Get(DefinitionLocation); }
 
-	public BulletItem(ResourceLocation defLoc, Properties properties)
+	public BulletItem(@Nonnull ResourceLocation defLoc, @Nonnull Properties properties)
 	{
 		super(defLoc, properties);
 	}
@@ -78,7 +78,7 @@ public class BulletItem extends FlanItem implements IForgeItem
 	@OnlyIn(Dist.CLIENT)
 	public void initializeClient(Consumer<IClientItemExtensions> consumer)
 	{
-		consumer.accept(FlanClientItemExtensions.create(this, new BulletItemRenderer(this)));
+		consumer.accept(BulletItemClientExtension.of(this));
 	}
 
 	@Override

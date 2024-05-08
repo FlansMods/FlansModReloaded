@@ -1,0 +1,40 @@
+{
+    "classes": [
+        "russianScout",
+        "russianAssault",
+        "russianSupport",
+        "russianEngineer",
+        "russianMedic"
+    ],
+    "flagColour": {
+        "alpha": 1.0,
+        "red": 1.0,
+        "green": 0.0,
+        "blue": 0.0
+    },
+    "textColour": {},
+    "hat": {
+        "item": "minecraft:russian_helmet",
+        "count": 1,
+        "damage": -1,
+        "tags": "{}"
+    },
+    "chest": {
+        "item": "minecraft:russian_coat",
+        "count": 1,
+        "damage": -1,
+        "tags": "{}"
+    },
+    "legs": {
+        "item": "minecraft:russian_pants",
+        "count": 1,
+        "damage": -1,
+        "tags": "{}"
+    },
+    "shoes": {
+        "item": "minecraft:russian_boots",
+        "count": 1,
+        "damage": -1,
+        "tags": "{}"
+    }
+}

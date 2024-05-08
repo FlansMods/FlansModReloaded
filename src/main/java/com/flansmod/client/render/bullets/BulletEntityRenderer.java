@@ -5,6 +5,7 @@ import com.flansmod.client.render.FlanItemModelRenderer;
 import com.flansmod.client.render.RenderContext;
 import com.flansmod.client.render.guns.AttachmentItemRenderer;
 import com.flansmod.client.render.models.FlansModelRegistry;
+import com.flansmod.client.render.models.ITurboRenderer;
 import com.flansmod.common.FlansMod;
 import com.flansmod.common.projectiles.BulletEntity;
 import com.flansmod.common.types.bullets.BulletDefinition;
@@ -49,30 +50,25 @@ public class BulletEntityRenderer extends EntityRenderer<BulletEntity>
 	@Override
 	public void render(@Nonnull BulletEntity bullet, float yaw, float partialTick, @Nonnull PoseStack pose, @Nonnull MultiBufferSource buffers, int light)
 	{
-		Item item = ForgeRegistries.ITEMS.getValue(bullet.Def.Location);
-		if(item != null)
+		ITurboRenderer bulletRenderer = FlansModelRegistry.GetItemRenderer(bullet.Def.Location);
+		if(bulletRenderer != null)
 		{
-			FlanItemModelRenderer bulletRenderer = FlansModelRegistry.forItem(item);
-			if(bulletRenderer != null)
-			{
-				pose.pushPose();
-				pose.translate(0f, bullet.getBbHeight() * 0.5f, 0f);
-				pose.mulPose(Axis.YP.rotationDegrees(Mth.lerp(partialTick, bullet.yRotO, bullet.getYRot()) - 90.0F));
-				pose.mulPose(Axis.ZP.rotationDegrees(Mth.lerp(partialTick, bullet.xRotO, bullet.getXRot())));
+			pose.pushPose();
+			pose.translate(0f, bullet.getBbHeight() * 0.5f, 0f);
+			pose.mulPose(Axis.YP.rotationDegrees(Mth.lerp(partialTick, bullet.yRotO, bullet.getYRot()) - 90.0F));
+			pose.mulPose(Axis.ZP.rotationDegrees(Mth.lerp(partialTick, bullet.xRotO, bullet.getXRot())));
 
-				bulletRenderer.RenderDirect(
-					bullet,
-					new ItemStack(item),
-					new RenderContext(
-						buffers,
-						ItemDisplayContext.FIXED,
-						pose,
-						light,
-						0));
-				pose.popPose();
-			}
-			else FlansMod.LOGGER.warn("Could not find bullet renderer for " + item);
+			bulletRenderer.RenderDirect(
+				bullet,
+				ItemStack.EMPTY,
+				new RenderContext(
+					buffers,
+					ItemDisplayContext.FIXED,
+					pose,
+					light,
+					0));
+			pose.popPose();
 		}
-		else FlansMod.LOGGER.warn("Could not find item for bullet def " + bullet.Context.Bullet.Location);
+		else FlansMod.LOGGER.warn("Could not find bullet renderer for " + bullet);
 	}
 }

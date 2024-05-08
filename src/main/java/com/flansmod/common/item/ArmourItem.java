@@ -1,6 +1,6 @@
 package com.flansmod.common.item;
 
-import com.flansmod.client.render.FlanClientItemExtensions;
+import com.flansmod.client.render.armour.ArmourItemClientExtension;
 import com.flansmod.client.render.armour.ArmourItemRenderer;
 import com.flansmod.client.render.guns.AttachmentItemRenderer;
 import com.flansmod.common.FlansMod;
@@ -35,9 +35,9 @@ public class ArmourItem extends FlanItem implements Equipable
 
 	@Override
 	@OnlyIn(Dist.CLIENT)
-	public void initializeClient(Consumer<IClientItemExtensions> consumer)
+	public void initializeClient(@Nonnull Consumer<IClientItemExtensions> consumer)
 	{
-		consumer.accept(FlanClientItemExtensions.create(this, new ArmourItemRenderer(this)));
+		consumer.accept(ArmourItemClientExtension.of(this));
 	}
 
 	// Random parameter overrides

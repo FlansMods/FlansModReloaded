@@ -63,6 +63,7 @@ import net.minecraft.world.inventory.RecipeBookType;
 import net.minecraft.world.item.*;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.item.crafting.RecipeType;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.BlockEntityType;
@@ -330,14 +331,23 @@ public class FlansMod
         return itemRegister.register(name, () -> new VehicleItem(loc, new Item.Properties()));
     }
 
-    public static RegistryObject<EntityType<?>> Vehicle_Entity(DeferredRegister<EntityType<? extends Entity>> entityRegister, String modID, String name)
+
+    private record VehicleFactory(@Nonnull ResourceLocation Loc)
+    {
+        @Nonnull
+        public VehicleEntity Create(@Nonnull EntityType<VehicleEntity> type, @Nonnull Level level)
+        {
+            return new VehicleEntity(type, Loc, level);
+        }
+    }
+    @Nonnull
+    public static RegistryObject<EntityType<VehicleEntity>> Vehicle_Entity(DeferredRegister<EntityType<?>> entityRegister, String modID, String name)
     {
         ResourceLocation loc = new ResourceLocation(modID, name);
-        return entityRegister.register(name, () -> EntityType.Builder.of(
-            (type, world) -> new VehicleEntity(type, loc, world),
-            MobCategory.MISC)
-            .sized(1f, 1f)
-            .build(name));
+        return entityRegister.register(name, () ->
+            EntityType.Builder.of(new VehicleFactory(loc)::Create, MobCategory.MISC)
+                .sized(1f, 1f)
+                .build(name));
     }
 
     @Nonnull

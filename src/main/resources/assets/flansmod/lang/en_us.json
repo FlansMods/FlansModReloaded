@@ -1,5 +1,8 @@
 {
-  "item.flansmod.default_car": "Car",
+  "item.flansmod.legacy_car": "Old-School Car",
+  "item.flansmod.legacy_helicopter": "Car",
+  "item.flansmod.legacy_plane": "Car",
+  "item.flansmod.legacy_tank": "Car",
   "block.flansmod.gun_modification_table": "Gun Modification Table",
   "block.flansmod.portable_coal_generator": "Portable Coal Generator",
   "block.flansmod.portable_diesel_generator": "Portable Diesel Generator",

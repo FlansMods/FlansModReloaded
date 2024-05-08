@@ -1,6 +1,12 @@
 package com.flansmod.common.types.parts.elements;
 
 import com.flansmod.common.types.JsonField;
+import com.flansmod.util.Maths;
+import com.flansmod.util.MinecraftHelpers;
+import net.minecraft.network.chat.Component;
+import net.minecraft.world.entity.player.Player;
+
+import javax.annotation.Nonnull;
 
 public class EngineDefinition
 {
@@ -18,7 +24,9 @@ public class EngineDefinition
 	public EFuelType fuelType = EFuelType.Creative;
 
 	@JsonField
-	public float fuelConsumptionRate = 1.0f;
+	public float fuelConsumptionIdle = 0.0f;
+	@JsonField
+	public float fuelConsumptionFull = 1.0f;
 	@JsonField
 	public int solidFuelSlots = 0;
 	@JsonField(Docs = "In millibuckets")
@@ -27,5 +35,71 @@ public class EngineDefinition
 	public int batterySlots = 0;
 	@JsonField
 	public int FECapacity = 0;
+
+
+	// For solid fuel engines
+	public int GetCoalPerHourIdle() { return Maths.Ceil(fuelConsumptionIdle * (20 * 60 * 60) / 800f); }
+	public int GetCoalPerHourFull() { return Maths.Ceil(fuelConsumptionFull * (20 * 60 * 60) / 800f); }
+	// For liquid engines
+	public int GetMilliBucketsPerTickIdle() { return Maths.Ceil(fuelConsumptionIdle); }
+	public int GetMilliBucketsPerTickFull() { return Maths.Ceil(fuelConsumptionFull); }
+	// For electric engines
+	public int GetForgeEnergyPerTickIdle() { return Maths.Ceil(fuelConsumptionIdle); }
+	public int GetForgeEnergyPerTickFull() { return Maths.Ceil(fuelConsumptionFull); }
+
+	@Nonnull
+	public Component GetFuelConsumptionTooltip()
+	{
+		switch(fuelType)
+		{
+			case Smeltable, Smokable, Blastable -> {
+				int cphIdle = GetCoalPerHourIdle();
+				int cphFull = GetCoalPerHourFull();
+				if(cphIdle == cphFull)
+					return Component.translatable("tooltip.format.engine_solid_fuel_consumption", cphIdle);
+				return Component.translatable("tooltip.format.engine_solid_fuel_consumption.range", cphIdle, cphFull);
+			}
+			case Liquid -> {
+				int mbptIdle = GetMilliBucketsPerTickIdle();
+				int mbptFull = GetMilliBucketsPerTickFull();
+				if(mbptIdle == mbptFull)
+					return Component.translatable("tooltip.format.engine_liquid_fuel_consumption", mbptIdle);
+				return Component.translatable("tooltip.format.engine_liquid_fuel_consumption.range", mbptIdle, mbptFull);
+			}
+			case FE -> {
+				int feptIdle = GetForgeEnergyPerTickIdle();
+				int feptFull = GetForgeEnergyPerTickFull();
+				if(feptIdle == feptFull)
+					return Component.translatable("tooltip.format.engine_electric_fuel_consumption", feptIdle);
+				return Component.translatable("tooltip.format.engine_electric_fuel_consumption.range", feptIdle, feptFull);
+			}
+			case Creative -> {
+				return Component.translatable("tooltip.format.engine_creative_consumption");
+			}
+		}
+		return Component.empty();
+	}
+
+	@Nonnull
+	public Component GetFuelStorageTooltip()
+	{
+		switch(fuelType)
+		{
+			case Smeltable, Smokable, Blastable -> {
+				return Component.translatable("tooltip.format.engine_solid_fuel_storage", solidFuelSlots);
+			}
+			case Liquid -> {
+				return Component.translatable("tooltip.format.engine_liquid_fuel_storage", liquidFuelCapacity, solidFuelSlots);
+			}
+			case FE -> {
+				return Component.translatable("tooltip.format.engine_electric_fuel_storage", MinecraftHelpers.GetFEString(FECapacity), batterySlots);
+			}
+			case Creative -> {
+				return Component.translatable("tooltip.format.engine_creative_storage");
+			}
+		}
+		return Component.empty();
+	}
+
 
 }

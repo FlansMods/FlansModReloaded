@@ -225,6 +225,36 @@ public class Transform
         return Transform.FromPositionAndLookDirection(reflectedPos, reflectedFwd, reflectedUp);
     }
     @Nonnull
+    public Transform WithEulerAngles(float pitch, float yaw, float roll)
+    {
+        return new Transform(Position, QuatFromEuler(pitch, yaw, roll), Scale, () -> "SetEulers");
+    }
+    @Nonnull
+    public Transform WithYaw(float yaw)
+    {
+        Vector3f euler = Euler();
+        return new Transform(Position, QuatFromEuler(euler.x, yaw, euler.z), Scale, () -> "SetYaw");
+    }
+    @Nonnull
+    public Transform WithPitch(float pitch)
+    {
+        Vector3f euler = Euler();
+        return new Transform(Position, QuatFromEuler(pitch, euler.y, euler.z), Scale, () -> "SetPitch");
+    }
+    @Nonnull
+    public Transform WithRoll(float roll)
+    {
+        Vector3f euler = Euler();
+        return new Transform(Position, QuatFromEuler(euler.x, euler.y, roll), Scale, () -> "SetRoll");
+    }
+    @Nonnull
+    public Transform RotateYaw(float dYaw)  { return new Transform(Position, Orientation.mul(QuatFromEuler(0, dYaw, 0), new Quaternionf()), Scale, () -> "AddYaw"); }
+    @Nonnull
+    public Transform RotatePitch(float dPitch)  { return new Transform(Position, Orientation.mul(QuatFromEuler(dPitch, 0, 0), new Quaternionf()), Scale, () -> "AddPitch"); }
+    @Nonnull
+    public Transform RotateRoll(float dRoll)  { return new Transform(Position, Orientation.mul(QuatFromEuler(0, 0, dRoll), new Quaternionf()), Scale, () -> "AddRoll"); }
+
+    @Nonnull
     public static Vector3f GetScale(@Nonnull Matrix4f mat)
     {
         Vector3f result = new Vector3f();
@@ -284,6 +314,13 @@ public class Transform
             && Orientation.equals(IDENTITY_QUAT, Maths.EpsilonF)
             && Maths.Approx(Scale.x, 1f) && Maths.Approx(Scale.y, 1f) && Maths.Approx(Scale.z, 1f);
     }
+    @Nonnull
+    public Vector3f Euler() { return ToEuler(Orientation); }
+    public float Yaw() { return ToEuler(Orientation).y; }
+    public float Pitch() { return ToEuler(Orientation).x; }
+    public float Roll() { return ToEuler(Orientation).z; }
+
+
 
     // ----------------------------------------------------------------------------------------
     // -------- Transformations i.e. Convert between this space and the parent space ----------

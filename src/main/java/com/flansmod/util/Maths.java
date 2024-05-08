@@ -111,6 +111,8 @@ public class Maths
     public static Vec3 Sub(Vec3 a, Vec3 b) { return new Vec3(a.x - b.x, a.y - b.y, a.z - b.z); }
     public static Vec3 Add(Vec3 a, Vec3 b) { return new Vec3(a.x + b.x, a.y + b.y, a.z + b.z); }
     public static Vec3 Cross(Vec3 a, Vec3 b) { return a.cross(b); }
+    public static double LengthXYZ(Vec3 v) { return v.length(); }
+    public static double LengthXZ(Vec3 v) { return Sqrt(v.x * v.x + v.z * v.z); }
 
 
     public static Quaternionf Slerp(Quaternionf a, Quaternionf b, float t) { return a.slerp(b, t, new Quaternionf()); }

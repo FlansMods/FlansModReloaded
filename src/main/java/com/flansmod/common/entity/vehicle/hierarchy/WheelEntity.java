@@ -133,8 +133,8 @@ public class WheelEntity extends PartEntity<VehicleEntity> implements ITransform
 		// It does not care about
 		//  - Entity.rotYaw, rotPitch
 
-		Transform vehicleRoot = parent.Hierarchy().GetRootTransform(0f);
-		Transform rootToAP = parent.Hierarchy().GetArticulationTransformLocal(Def.attachedTo, 0f);
+		Transform vehicleRoot = parent.Hierarchy().GetRootTransformPrevious();
+		Transform rootToAP = parent.Hierarchy().GetArticulationPrevious(Def.attachedTo);
 		TransformStack worldToAP = TransformStack.of(vehicleRoot, rootToAP);
 
 		// Now we know how offset the wheel is from its intended position in vehicle space

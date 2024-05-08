@@ -380,22 +380,22 @@ public class BasicPartsMod
 	{
 		static
 		{
-			FlansModelRegistry.PreRegisterEntityModel(new ResourceLocation(MODID, "entity/artillery_shell"));
-			FlansModelRegistry.PreRegisterEntityModel(new ResourceLocation(MODID, "entity/artillery_shell_ap"));
-			FlansModelRegistry.PreRegisterEntityModel(new ResourceLocation(MODID, "entity/artillery_shell_ex"));
-			FlansModelRegistry.PreRegisterEntityModel(new ResourceLocation(MODID, "entity/artillery_shell_incendiary"));
-			FlansModelRegistry.PreRegisterEntityModel(new ResourceLocation(MODID, "entity/pistol_bullet"));
-			FlansModelRegistry.PreRegisterEntityModel(new ResourceLocation(MODID, "entity/pistol_bullet_ap"));
-			FlansModelRegistry.PreRegisterEntityModel(new ResourceLocation(MODID, "entity/pistol_bullet_ex"));
-			FlansModelRegistry.PreRegisterEntityModel(new ResourceLocation(MODID, "entity/pistol_bullet_incendiary"));
-			FlansModelRegistry.PreRegisterEntityModel(new ResourceLocation(MODID, "entity/projectile_grenade_impact"));
-			FlansModelRegistry.PreRegisterEntityModel(new ResourceLocation(MODID, "entity/projectile_grenade_sticky"));
-			FlansModelRegistry.PreRegisterEntityModel(new ResourceLocation(MODID, "entity/projectile_grenade_ex"));
-			FlansModelRegistry.PreRegisterEntityModel(new ResourceLocation(MODID, "entity/projectile_grenade_incendiary"));
-			FlansModelRegistry.PreRegisterEntityModel(new ResourceLocation(MODID, "entity/rifle_bullet"));
-			FlansModelRegistry.PreRegisterEntityModel(new ResourceLocation(MODID, "entity/rifle_bullet_ap"));
-			FlansModelRegistry.PreRegisterEntityModel(new ResourceLocation(MODID, "entity/rifle_bullet_ex"));
-			FlansModelRegistry.PreRegisterEntityModel(new ResourceLocation(MODID, "entity/rifle_bullet_incendiary"));
+			FlansModelRegistry.PreRegisterModel(new ResourceLocation(MODID, "entity/artillery_shell"));
+			FlansModelRegistry.PreRegisterModel(new ResourceLocation(MODID, "entity/artillery_shell_ap"));
+			FlansModelRegistry.PreRegisterModel(new ResourceLocation(MODID, "entity/artillery_shell_ex"));
+			FlansModelRegistry.PreRegisterModel(new ResourceLocation(MODID, "entity/artillery_shell_incendiary"));
+			FlansModelRegistry.PreRegisterModel(new ResourceLocation(MODID, "entity/pistol_bullet"));
+			FlansModelRegistry.PreRegisterModel(new ResourceLocation(MODID, "entity/pistol_bullet_ap"));
+			FlansModelRegistry.PreRegisterModel(new ResourceLocation(MODID, "entity/pistol_bullet_ex"));
+			FlansModelRegistry.PreRegisterModel(new ResourceLocation(MODID, "entity/pistol_bullet_incendiary"));
+			FlansModelRegistry.PreRegisterModel(new ResourceLocation(MODID, "entity/projectile_grenade_impact"));
+			FlansModelRegistry.PreRegisterModel(new ResourceLocation(MODID, "entity/projectile_grenade_sticky"));
+			FlansModelRegistry.PreRegisterModel(new ResourceLocation(MODID, "entity/projectile_grenade_ex"));
+			FlansModelRegistry.PreRegisterModel(new ResourceLocation(MODID, "entity/projectile_grenade_incendiary"));
+			FlansModelRegistry.PreRegisterModel(new ResourceLocation(MODID, "entity/rifle_bullet"));
+			FlansModelRegistry.PreRegisterModel(new ResourceLocation(MODID, "entity/rifle_bullet_ap"));
+			FlansModelRegistry.PreRegisterModel(new ResourceLocation(MODID, "entity/rifle_bullet_ex"));
+			FlansModelRegistry.PreRegisterModel(new ResourceLocation(MODID, "entity/rifle_bullet_incendiary"));
 		}
 
 		@OnlyIn(Dist.CLIENT)

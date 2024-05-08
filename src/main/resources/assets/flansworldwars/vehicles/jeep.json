@@ -1,0 +1,273 @@
+{
+    "itemSettings": {
+        "maxStackSize": 1,
+        "tags": [
+            "flansmod:vehicle"
+        ]
+    },
+    "seats": [
+        {
+            "attachedTo": "core",
+            "offsetFromAttachPoint": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "minYaw": -360.0,
+            "maxYaw": 360.0,
+            "minPitch": -89.0,
+            "maxPitch": 89.0,
+            "gyroStabilised": false,
+            "controllerOptions": [],
+            "inputs": []
+        },
+        {
+            "attachedTo": "core",
+            "offsetFromAttachPoint": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "minYaw": -360.0,
+            "maxYaw": 360.0,
+            "minPitch": -89.0,
+            "maxPitch": 89.0,
+            "gyroStabilised": false,
+            "controllerOptions": [],
+            "inputs": []
+        },
+        {
+            "attachedTo": "core",
+            "offsetFromAttachPoint": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "minYaw": -60.0,
+            "maxYaw": 60.0,
+            "minPitch": -30.0,
+            "maxPitch": 60.0,
+            "gyroStabilised": false,
+            "controllerOptions": [],
+            "inputs": [
+                {
+                    "key": "Fire1",
+                    "articulations": [],
+                    "guns": [
+                        {
+                            "gunName": "seat_2_gun",
+                            "toggle": false
+                        }
+                    ],
+                    "arms": [],
+                    "alternateInputs": false,
+                    "switchVehicleMode": ""
+                }
+            ]
+        }
+    ],
+    "articulatedParts": [],
+    "guns": [
+        {
+            "name": "seat_2_gun",
+            "primaryActions": [
+                {
+                    "actionType": "Shoot",
+                    "duration": 0.0,
+                    "sounds": [
+                        {
+                            "sound": ":browning_shoot",
+                            "length": 0.0,
+                            "minPitchMultiplier": 1.0,
+                            "maxPitchMultiplier": 1.0,
+                            "minVolume": 1.0,
+                            "maxVolume": 1.0,
+                            "maxRange": 100.0,
+                            "LODs": []
+                        }
+                    ],
+                    "itemStack": "",
+                    "scopeOverlay": "",
+                    "anim": ""
+                }
+            ],
+            "recoil": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "attachedTo": "core",
+            "shootPointOffset": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "minYaw": -60.0,
+            "maxYaw": 60.0,
+            "minPitch": -30.0,
+            "maxPitch": 60.0,
+            "aimingSpeed": 1.0,
+            "lockSeatToGunAngles": false,
+            "traveseIndependently": false,
+            "yawSound": {
+                "sound": ":",
+                "length": 0.0,
+                "minPitchMultiplier": 1.0,
+                "maxPitchMultiplier": 1.0,
+                "minVolume": 1.0,
+                "maxVolume": 1.0,
+                "maxRange": 100.0,
+                "LODs": []
+            },
+            "pitchSound": {
+                "sound": ":",
+                "length": 0.0,
+                "minPitchMultiplier": 1.0,
+                "maxPitchMultiplier": 1.0,
+                "minVolume": 1.0,
+                "maxVolume": 1.0,
+                "maxRange": 100.0,
+                "LODs": []
+            }
+        }
+    ],
+    "damageables": [],
+    "physics": {
+        "restingEulerAngles": [
+            0.0,
+            0.0,
+            0.0
+        ],
+        "drag": 0.05,
+        "maxThrottle": 1.0,
+        "wheels": [
+            {
+                "attachedTo": "coreWheel",
+                "visualOffset": [
+                    -1.375,
+                    -0.5,
+                    -0.875
+                ],
+                "physicsOffset": [
+                    -1.375,
+                    -0.5,
+                    -0.875
+                ],
+                "springStrength": 0.5,
+                "stepHeight": 1.0,
+                "gravityScale": 1.0,
+                "maxForwardTorque": 1.0,
+                "maxReverseTorque": 1.0,
+                "radius": 0.25,
+                "floatOnWater": false,
+                "buoyancy": 1.0,
+                "torqueResponsiveness": 0.1,
+                "yawResponsiveness": 0.1,
+                "controlHints": []
+            },
+            {
+                "attachedTo": "coreWheel",
+                "visualOffset": [
+                    -1.375,
+                    -0.5,
+                    0.875
+                ],
+                "physicsOffset": [
+                    -1.375,
+                    -0.5,
+                    0.875
+                ],
+                "springStrength": 0.5,
+                "stepHeight": 1.0,
+                "gravityScale": 1.0,
+                "maxForwardTorque": 1.0,
+                "maxReverseTorque": 1.0,
+                "radius": 0.25,
+                "floatOnWater": false,
+                "buoyancy": 1.0,
+                "torqueResponsiveness": 0.1,
+                "yawResponsiveness": 0.1,
+                "controlHints": []
+            },
+            {
+                "attachedTo": "coreWheel",
+                "visualOffset": [
+                    1.375,
+                    -0.5,
+                    0.875
+                ],
+                "physicsOffset": [
+                    1.375,
+                    -0.5,
+                    0.875
+                ],
+                "springStrength": 0.5,
+                "stepHeight": 1.0,
+                "gravityScale": 1.0,
+                "maxForwardTorque": 1.0,
+                "maxReverseTorque": 1.0,
+                "radius": 0.25,
+                "floatOnWater": false,
+                "buoyancy": 1.0,
+                "torqueResponsiveness": 0.1,
+                "yawResponsiveness": 0.1,
+                "controlHints": []
+            },
+            {
+                "attachedTo": "coreWheel",
+                "visualOffset": [
+                    1.375,
+                    -0.5,
+                    -0.875
+                ],
+                "physicsOffset": [
+                    1.375,
+                    -0.5,
+                    -0.875
+                ],
+                "springStrength": 0.5,
+                "stepHeight": 1.0,
+                "gravityScale": 1.0,
+                "maxForwardTorque": 1.0,
+                "maxReverseTorque": 1.0,
+                "radius": 0.25,
+                "floatOnWater": false,
+                "buoyancy": 1.0,
+                "torqueResponsiveness": 0.1,
+                "yawResponsiveness": 0.1,
+                "controlHints": []
+            }
+        ],
+        "propellers": [],
+        "legs": [],
+        "arms": [],
+        "collisionPoints": []
+    },
+    "controllers": [
+        {
+            "key": "default",
+            "controlScheme": "flansmod:legacy_car",
+            "modalCheck": ""
+        }
+    ],
+    "defaultEngine": {
+        "maxAcceleration": 1.0,
+        "maxDeceleration": 1.0,
+        "maxSpeed": 1.0,
+        "fuelType": "Creative",
+        "fuelConsumptionIdle": 0.0,
+        "fuelConsumptionFull": 1.0,
+        "solidFuelSlots": 0,
+        "liquidFuelCapacity": 1000,
+        "batterySlots": 0,
+        "FECapacity": 0
+    },
+    "useAABBCollisionOnly": false,
+    "aabbSize": [
+        0.0,
+        0.0,
+        0.0
+    ],
+    "CargoSlots": 0,
+    "CanAccessMenusWhileMoving": true
+}

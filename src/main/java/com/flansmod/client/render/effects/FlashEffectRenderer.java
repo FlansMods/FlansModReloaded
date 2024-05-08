@@ -5,6 +5,7 @@ import com.flansmod.client.render.FlanItemModelRenderer;
 import com.flansmod.client.render.PartialRenderUtility;
 import com.flansmod.client.render.RenderContext;
 import com.flansmod.client.render.models.FlansModelRegistry;
+import com.flansmod.client.render.models.ITurboRenderer;
 import com.flansmod.common.FlansMod;
 import com.flansmod.common.actions.ActionGroupInstance;
 import com.flansmod.common.actions.ActionInstance;
@@ -144,7 +145,7 @@ public class FlashEffectRenderer
 										  @Nonnull ResourceLocation modelLoc,
 										  @Nonnull ResourceLocation textureLoc)
 	{
-		FlanItemModelRenderer renderer = FlansModelRegistry.forLocation(modelLoc);
+		ITurboRenderer renderer = FlansModelRegistry.GetItemRenderer(modelLoc);
 		if(renderer != null)
 		{
 			ItemDisplayContext transformType = ItemDisplayContext.THIRD_PERSON_RIGHT_HAND;

@@ -5,6 +5,7 @@ import com.flansmod.client.render.FlanItemModelRenderer;
 import com.flansmod.client.render.RenderContext;
 import com.flansmod.client.render.animation.*;
 import com.flansmod.client.render.models.FlansModelRegistry;
+import com.flansmod.client.render.models.ITurboRenderer;
 import com.flansmod.common.actions.*;
 import com.flansmod.common.actions.ActionInstance;
 import com.flansmod.common.actions.contexts.*;
@@ -147,7 +148,7 @@ public class GunItemRenderer extends FlanItemModelRenderer
         {
             anyAttachmentsPresent = true;
 
-            FlanItemModelRenderer attachmentRenderer = FlansModelRegistry.forItem(attachmentStack);
+            ITurboRenderer attachmentRenderer = FlansModelRegistry.GetItemRenderer(attachmentStack);
             if (attachmentRenderer instanceof AttachmentItemRenderer attachmentItemRenderer)
             {
                 renderContext.Transforms.PushSaveState();
