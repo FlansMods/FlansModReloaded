@@ -1,12 +1,15 @@
 package com.flansmod.client.input;
 
 import com.flansmod.client.FlansModClient;
+import com.flansmod.common.FlansMod;
+import com.flansmod.common.entity.vehicle.physics.VehiclePhysicsModule;
 import com.flansmod.common.item.GunItem;
 import com.flansmod.common.types.vehicles.EVehicleAxis;
 import com.flansmod.common.types.elements.EPlayerInput;
 import com.flansmod.util.Maths;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.Options;
+import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.client.event.InputEvent;
@@ -322,6 +325,15 @@ public class ClientInputHooks
 				ProcessPressHoldRelease(player, Attack, EPlayerInput.Fire1);
 				ProcessPressHoldRelease(player, Use, EPlayerInput.Fire2);
 
+			}
+
+			while(KeyMappings.DEBUG_PAUSE_PHYSICS.get().consumeClick())
+			{
+				VehiclePhysicsModule.PAUSE = !VehiclePhysicsModule.PAUSE;
+				if(VehiclePhysicsModule.PAUSE)
+					Minecraft.getInstance().getChatListener().handleSystemMessage(Component.translatable("flansmod.debug.physics_pause.on"), false);
+				else
+					Minecraft.getInstance().getChatListener().handleSystemMessage(Component.translatable("flansmod.debug.physics_pause.off"), false);
 			}
 		}
 	}

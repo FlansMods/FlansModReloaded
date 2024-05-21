@@ -19,8 +19,6 @@ public class SeatDefinition
 	public static final SeatDefinition INVALID = new SeatDefinition();
 
 	@JsonField
-	public String attachedTo = "body";
-	@JsonField
 	public Vec3 offsetFromAttachPoint = Vec3.ZERO;
 	@JsonField
 	public float minYaw = -360f;

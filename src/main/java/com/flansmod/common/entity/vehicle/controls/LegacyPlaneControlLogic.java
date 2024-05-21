@@ -35,13 +35,13 @@ public class LegacyPlaneControlLogic extends ControlLogic
 	}
 
 	@Override
-	public void TickAuthoritative(@Nonnull VehicleEntity vehicle, @Nonnull VehicleInputState inputs)
+	public void TickAuthoritative(@Nonnull VehicleEntity vehicle, @Nonnull VehicleInputState inputs, @Nonnull ForceModel forces)
 	{
-		TickShared(vehicle, inputs);
+		TickShared(vehicle, inputs, forces);
 	}
 
 	@Override
-	public void TickRemote(@Nonnull VehicleEntity vehicle, @Nonnull VehicleInputState inputs)
+	public void TickRemote(@Nonnull VehicleEntity vehicle, @Nonnull VehicleInputState inputs, @Nonnull ForceModel forces)
 	{
 		// if(vehicle.level().isClientSide && !thePlayerIsDrivingThis)
 		//		{
@@ -54,13 +54,13 @@ public class LegacyPlaneControlLogic extends ControlLogic
 		//
 		//		}
 
-		TickShared(vehicle, inputs);
+		TickShared(vehicle, inputs, forces);
 
 
 	}
 	private static final float g = 0.98F / 10F;
 
-	private void TickShared(@Nonnull VehicleEntity vehicle, @Nonnull VehicleInputState inputs)
+	private void TickShared(@Nonnull VehicleEntity vehicle, @Nonnull VehicleInputState inputs, @Nonnull ForceModel forces)
 	{
 		// TODO: if(!readyForUpdates) return;
 		Player driver = (vehicle.getControllingPassenger() instanceof Player player) ? player : null;
@@ -160,7 +160,7 @@ public class LegacyPlaneControlLogic extends ControlLogic
 				numPropsWorking--;
 
 
-		Transform root = vehicle.Hierarchy().GetRootTransformCurrent();
+		Transform root = vehicle.GetWorldToEntity().GetCurrent();
 		Vec3 up = root.UpVec3();
 
 		throttleScaled *= numProps == 0 ? 0 : (float)numPropsWorking / numProps * 2F;
@@ -212,7 +212,7 @@ public class LegacyPlaneControlLogic extends ControlLogic
 
 		//Apply forces
 
-		Transform root = vehicle.Hierarchy().GetRootTransformCurrent();
+		Transform root = vehicle.GetWorldToEntity().GetCurrent();
 		Vec3 forwards = root.ForwardVec3();
 
 

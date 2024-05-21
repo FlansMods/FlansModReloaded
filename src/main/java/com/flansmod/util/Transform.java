@@ -5,6 +5,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.renderer.block.model.ItemTransform;
 import net.minecraft.client.renderer.block.model.ItemTransforms;
 import net.minecraft.core.BlockPos;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.phys.Vec3;
 import org.joml.*;
 import org.joml.Runtime;
@@ -123,6 +124,7 @@ public class Transform
     @Nonnull public static Transform FromBlockPos(@Nonnull BlockPos blockPos)                                                 { return new Transform(blockPos.getX(), blockPos.getY(), blockPos.getZ(), 1f, null); }
     @Nonnull public static Transform FromPose(@Nonnull Matrix4f pose)                                                         { return new Transform(pose.transformPosition(new Vector3f()), pose.getUnnormalizedRotation(new Quaternionf()), GetScale(pose), null); }
     @Nonnull public static Transform FromPose(@Nonnull PoseStack poseStack)                                                   { return FromPose(poseStack.last().pose(), null); }
+    @Nonnull public static Transform FromEntity(@Nonnull Entity entity)                                                       { return FromPosAndEuler(entity.position(), entity.getXRot(), entity.getYRot(), 0f, () -> "From Ent:" + entity); }
 
 
     @Nonnull public static Transform Identity(@Nullable Supplier<String> debugFunc)                                                                                 { return new Transform(debugFunc); }
@@ -227,25 +229,35 @@ public class Transform
     @Nonnull
     public Transform WithEulerAngles(float pitch, float yaw, float roll)
     {
-        return new Transform(Position, QuatFromEuler(pitch, yaw, roll), Scale, () -> "SetEulers");
+        return new Transform(Position, QuatFromEuler(pitch, yaw, roll), Scale, () -> "SetEulers[P:"+pitch+", Y:"+yaw+", R:"+roll+"]");
+    }
+    @Nonnull
+    public Transform WithPosition(double x, double y, double z)
+    {
+        return new Transform(new Vec3(x, y, z), Orientation, Scale, () -> "SetPos["+x+","+y+","+z+"]");
+    }
+    @Nonnull
+    public Transform WithPosition(@Nonnull Vec3 pos)
+    {
+        return new Transform(pos, Orientation, Scale, () -> "SetPos["+pos+"]");
     }
     @Nonnull
     public Transform WithYaw(float yaw)
     {
         Vector3f euler = Euler();
-        return new Transform(Position, QuatFromEuler(euler.x, yaw, euler.z), Scale, () -> "SetYaw");
+        return new Transform(Position, QuatFromEuler(euler.x, yaw, euler.z), Scale, () -> "SetYaw["+yaw+"]");
     }
     @Nonnull
     public Transform WithPitch(float pitch)
     {
         Vector3f euler = Euler();
-        return new Transform(Position, QuatFromEuler(pitch, euler.y, euler.z), Scale, () -> "SetPitch");
+        return new Transform(Position, QuatFromEuler(pitch, euler.y, euler.z), Scale, () -> "SetPitch["+pitch+"]");
     }
     @Nonnull
     public Transform WithRoll(float roll)
     {
         Vector3f euler = Euler();
-        return new Transform(Position, QuatFromEuler(euler.x, euler.y, roll), Scale, () -> "SetRoll");
+        return new Transform(Position, QuatFromEuler(euler.x, euler.y, roll), Scale, () -> "SetRoll["+roll+"]");
     }
     @Nonnull
     public Transform RotateYaw(float dYaw)  { return new Transform(Position, Orientation.mul(QuatFromEuler(0, dYaw, 0), new Quaternionf()), Scale, () -> "AddYaw"); }

@@ -33,9 +33,9 @@ public abstract class ShooterContextVehicle extends ShooterContext
 
 
 	@Nonnull
-	public ShooterContextVehicleSeat GetSeat(int seatIndex)
+	public ShooterContextVehicleSeat GetSeat(@Nonnull String seatPath)
 	{
-		return new ShooterContextVehicleSeat(Vehicle, seatIndex);
+		return new ShooterContextVehicleSeat(Vehicle, seatPath);
 	}
 
 	@Override

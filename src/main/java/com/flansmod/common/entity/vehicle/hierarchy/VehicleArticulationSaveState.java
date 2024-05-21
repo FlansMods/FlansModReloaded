@@ -29,15 +29,8 @@ public class VehicleArticulationSaveState implements IVehicleSaveNode
 	public void SetVelocity(float f) { Velocity = f; }
 	public float GetVelocityUnitsPerSecond() { return Velocity; }
 	public float GetVelocityUnitsPerTick() { return Velocity / 20f; }
-	public float GetParameter(@Nonnull IVehicleModule.IInterpolator func) {
-		return func.apply(ParameterPrev, Parameter);
-	}
-	@Nonnull
-	public Transform GetLocalTransform(@Nonnull IVehicleModule.IInterpolator func)
-	{
-		float dParam = GetParameter(func);
-		return Def.Apply(dParam);
-	}
+	@Nonnull public Transform GetPartLocalPrevious() { return Def.Apply(ParameterPrev); }
+	@Nonnull public Transform GetPartLocalCurrent() { return Def.Apply(Parameter); }
 
 	public void Load(@Nonnull VehicleEntity vehicle, @Nonnull CompoundTag tags)
 	{

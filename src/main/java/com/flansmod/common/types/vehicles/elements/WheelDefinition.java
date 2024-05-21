@@ -8,12 +8,10 @@ import javax.annotation.Nonnull;
 
 public class WheelDefinition
 {
-	@JsonField
-	public String attachedTo = "body";
+	public static final WheelDefinition INVALID = new WheelDefinition();
+
 	@JsonField
 	public Vec3 visualOffset = Vec3.ZERO;
-	@JsonField
-	public Vec3 physicsOffset = Vec3.ZERO;
 	@JsonField
 	public float springStrength = 1.0f;
 	@JsonField
@@ -32,6 +30,8 @@ public class WheelDefinition
 	public boolean floatOnWater = false;
 	@JsonField
 	public float buoyancy = 1.0f;
+	@JsonField(Min = 0.0001f)
+	public float mass = 1.0f;
 
 
 	@JsonField(Min = 0.0f, Docs = "Roughly how many seconds it takes for player changes to torque to be applied")

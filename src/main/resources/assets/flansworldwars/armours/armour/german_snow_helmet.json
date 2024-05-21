@@ -37,5 +37,5 @@
     "animationSet": "",
     "armourTextureName": "GermanSnow",
     "nightVision": false,
-    "screenOverlay": ""
+    "screenOverlay": {}
 }

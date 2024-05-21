@@ -37,5 +37,5 @@
     "animationSet": "",
     "armourTextureName": "Russian",
     "nightVision": false,
-    "screenOverlay": ""
+    "screenOverlay": {}
 }

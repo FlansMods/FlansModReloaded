@@ -11,7 +11,11 @@ import com.flansmod.common.crafting.menus.*;
 import com.flansmod.common.crafting.recipes.GunFabricationRecipe;
 import com.flansmod.common.crafting.recipes.PartFabricationRecipe;
 import com.flansmod.common.entity.NpcRelationshipCapabilityAttacher;
+import com.flansmod.common.entity.longdistance.LongDistanceEntitySystem;
+import com.flansmod.common.entity.longdistance.LongDistanceVehicle;
+import com.flansmod.common.entity.longdistance.ServerLongDistanceEntitySystem;
 import com.flansmod.common.entity.vehicle.VehicleEntity;
+import com.flansmod.common.entity.vehicle.hierarchy.WheelEntity;
 import com.flansmod.common.gunshots.Raytracer;
 import com.flansmod.common.item.*;
 import com.flansmod.common.network.FlansModPacketHandler;
@@ -125,6 +129,14 @@ public class FlansMod
             MobCategory.MISC)
             .sized(0.5f, 0.5f)
             .build("bullet"));
+    // PartEntitys don't get registered?
+    //public static final RegistryObject<EntityType<WheelEntity>> ENT_TYPE_WHEEL = ENTITY_TYPES.register(
+    //    "wheel",
+    //    () -> EntityType.Builder.of(
+    //            WheelEntity::new,
+    //            MobCategory.MISC)
+    //        .sized(0.5f, 0.5f)
+    //        .build("wheel"));
 
     public static final RegistryObject<Item> RAINBOW_PAINT_CAN_ITEM = ITEMS.register("rainbow_paint_can", () -> new Item(new Item.Properties()));
     public static final RegistryObject<Item> MAG_UPGRADE_ITEM = ITEMS.register("magazine_upgrade", () -> new Item(new Item.Properties()));
@@ -274,6 +286,7 @@ public class FlansMod
 
     // Server handlers
     public static final ServerActionManager ACTIONS_SERVER = new ServerActionManager();
+    public static final ServerLongDistanceEntitySystem LONG_DISTANCE_SERVER = new ServerLongDistanceEntitySystem();
     public static final ContextCache CONTEXT_CACHE = new ServerContextCache();
 
     public static RegistryObject<Item> Gun(DeferredRegister<Item> itemRegister, String modID, String name)
@@ -335,19 +348,34 @@ public class FlansMod
     private record VehicleFactory(@Nonnull ResourceLocation Loc)
     {
         @Nonnull
-        public VehicleEntity Create(@Nonnull EntityType<VehicleEntity> type, @Nonnull Level level)
+        public VehicleEntity CreateEntity(@Nonnull EntityType<VehicleEntity> type, @Nonnull Level level)
         {
             return new VehicleEntity(type, Loc, level);
         }
+        @Nonnull
+        public LongDistanceVehicle CreateLongDistance(@Nonnull EntityType<?> type)
+        {
+            return new LongDistanceVehicle(type, Loc);
+        }
     }
     @Nonnull
-    public static RegistryObject<EntityType<VehicleEntity>> Vehicle_Entity(DeferredRegister<EntityType<?>> entityRegister, String modID, String name)
+    public static RegistryObject<EntityType<VehicleEntity>> Vehicle_Entity(
+        @Nonnull DeferredRegister<EntityType<?>> entityRegister,
+        @Nonnull String modID,
+        @Nonnull String name,
+        boolean longDistanceEnabled)
     {
         ResourceLocation loc = new ResourceLocation(modID, name);
         return entityRegister.register(name, () ->
-            EntityType.Builder.of(new VehicleFactory(loc)::Create, MobCategory.MISC)
+        {
+            VehicleFactory factory = new VehicleFactory(loc);
+            EntityType<VehicleEntity> entityType = EntityType.Builder.of(factory::CreateEntity, MobCategory.MISC)
                 .sized(1f, 1f)
-                .build(name));
+                .build(name);
+            if(longDistanceEnabled)
+                LongDistanceEntitySystem.RegisterLongDistanceEntityClass(entityType, factory::CreateLongDistance);
+            return entityType;
+        });
     }
 
     @Nonnull

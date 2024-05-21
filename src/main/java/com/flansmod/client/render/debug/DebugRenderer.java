@@ -24,6 +24,7 @@ import org.joml.Vector4f;
 
 import javax.swing.*;
 import java.util.ArrayList;
+import java.util.function.BiConsumer;
 
 public class DebugRenderer
 {
@@ -46,17 +47,19 @@ public class DebugRenderer
     private static class DebugRenderLine extends DebugRenderItem
     {
         public Vec3 direction;
+        public boolean Arrow;
 
-        public DebugRenderLine(Transform t, int ticks, Vector4f col, Vec3 dir)
+        public DebugRenderLine(Transform t, int ticks, Vector4f col, Vec3 dir, boolean arrow)
         {
             super(t, ticks, col);
             direction = dir;
+            Arrow = arrow;
         }
 
         protected void RenderLine(PoseStack poseStack, Tesselator tesselator, Vec3 start, Vec3 ray, Vector4f col)
         {
             BufferBuilder buf = tesselator.getBuilder();
-            buf.begin(VertexFormat.Mode.TRIANGLE_STRIP, DefaultVertexFormat.POSITION_COLOR);
+            buf.begin(VertexFormat.Mode.TRIANGLES, DefaultVertexFormat.POSITION_COLOR);
 
             Vec3 center = new Vec3(
                 start.x + ray.x * 0.5f,
@@ -66,26 +69,41 @@ public class DebugRenderer
             Vec3 lateralAxis = Maths.Cross(toCamera, ray).normalize();
             lateralAxis = lateralAxis.scale(0.02d);
 
-            buf.vertex(poseStack.last().pose(), (float)lateralAxis.x, (float)lateralAxis.y, (float)lateralAxis.z)
-                .color(col.x, col.y, col.z, col.w)
-                .endVertex();
-            buf.vertex(poseStack.last().pose(), (float)-lateralAxis.x, (float)-lateralAxis.y, (float)-lateralAxis.z)
-                .color(col.x, col.y, col.z, col.w)
-                .endVertex();
+            final Vec3 vAxis = ray;
+            final Vec3 uAxis = lateralAxis;
+            BiConsumer<Float, Float> vertexFunc = (u, v) -> {
+                buf.vertex(poseStack.last().pose(),
+                    (float)(uAxis.x * u + vAxis.x * v),
+                    (float)(uAxis.y * u + vAxis.y * v),
+                    (float)(uAxis.z * u + vAxis.z * v))
+                    .color(col.x, col.y, col.z, col.w)
+                    .endVertex();
+            };
 
+            if(Arrow)
+            {
+                vertexFunc.accept(1.0f, 0.0f);
+                vertexFunc.accept(-1.0f, 0.0f);
+                vertexFunc.accept(-1.0f, 0.9f);
 
-            buf.vertex(poseStack.last().pose(),
-                    (float)(ray.x + lateralAxis.x),
-                    (float)(ray.y + lateralAxis.y),
-                    (float)(ray.z + lateralAxis.z))
-                .color(col.x, col.y, col.z, col.w)
-                .endVertex();
-            buf.vertex(poseStack.last().pose(),
-                    (float)(ray.x - lateralAxis.x),
-                    (float)(ray.y - lateralAxis.y),
-                    (float)(ray.z - lateralAxis.z))
-                .color(col.x, col.y, col.z, col.w)
-                .endVertex();
+                vertexFunc.accept(1.0f, 0.0f);
+                vertexFunc.accept(-1.0f, 0.9f);
+                vertexFunc.accept(1.0f, 0.9f);
+
+                vertexFunc.accept(4.0f, 0.9f);
+                vertexFunc.accept(-4.0f, 0.9f);
+                vertexFunc.accept(0.0f, 1.0f);
+            }
+            else
+            {
+                vertexFunc.accept(1.0f, 0.0f);
+                vertexFunc.accept(-1.0f, 0.0f);
+                vertexFunc.accept(-1.0f, 1.0f);
+
+                vertexFunc.accept(1.0f, 0.0f);
+                vertexFunc.accept(-1.0f, 1.0f);
+                vertexFunc.accept(1.0f, 1.0f);
+            }
 
             tesselator.end();
         }
@@ -150,7 +168,7 @@ public class DebugRenderer
     {
         public DebugRenderAxes(Transform t, int ticks, Vector4f col)
         {
-            super(t, ticks, col, t.ForwardVec3());
+            super(t, ticks, col, t.ForwardVec3(), false);
         }
 
         @Override
@@ -174,13 +192,19 @@ public class DebugRenderer
 
     public static void RenderLine(Vec3 origin, int ticks, Vector4f col, Vec3 ray)
     {
-        renderItems.add(new DebugRenderLine(Transform.FromPos(origin, () -> "\"DebugLine\""), ticks, col, ray));
+        renderItems.add(new DebugRenderLine(Transform.FromPos(origin, () -> "\"DebugLine\""), ticks, col, ray, false));
+    }
+    public static void RenderArrow(Vec3 origin, int ticks, Vector4f col, Vec3 ray)
+    {
+        renderItems.add(new DebugRenderLine(Transform.FromPos(origin, () -> "\"DebugLine\""), ticks, col, ray, true));
     }
 
     public static void RenderAxes(Transform t, int ticks, Vector4f col)
     {
         renderItems.add(new DebugRenderAxes(t, ticks, col));
     }
+
+
 
     public DebugRenderer()
     {

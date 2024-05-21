@@ -37,5 +37,5 @@
     "animationSet": "",
     "armourTextureName": "American",
     "nightVision": false,
-    "screenOverlay": ""
+    "screenOverlay": {}
 }

@@ -15,6 +15,7 @@ import javax.annotation.Nonnull;
 
 public class VehicleDefinition extends JsonDefinition
 {
+	public static final String CoreName = "body";
 	public static final VehicleDefinition INVALID = new VehicleDefinition(new ResourceLocation(FlansMod.MODID, "vehicles/null"));
 	public static final String TYPE = "vehicle";
 	public static final String FOLDER = "vehicles";
@@ -28,18 +29,12 @@ public class VehicleDefinition extends JsonDefinition
 
 	@JsonField
 	public ItemDefinition itemSettings = new ItemDefinition();
+
+
 	@JsonField
-	public SeatDefinition[] seats = new SeatDefinition[0];
-	@JsonField
-	public ArticulatedPartDefinition[] articulatedParts = new ArticulatedPartDefinition[0];
-	@JsonField
-	public MountedGunDefinition[] guns = new MountedGunDefinition[0];
-	@JsonField
-	public DamageablePartDefinition[] damageables = new DamageablePartDefinition[0];
+	public VehiclePartDefinition[] parts = new VehiclePartDefinition[0];
 	@JsonField
 	public VehiclePhysicsDefinition physics = new VehiclePhysicsDefinition();
-	@JsonField
-	public VehicleControlOptionDefinition[] controllers = new VehicleControlOptionDefinition[0];
 
 
 	// Power / Fuel

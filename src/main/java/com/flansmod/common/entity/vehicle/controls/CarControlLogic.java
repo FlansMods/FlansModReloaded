@@ -12,6 +12,7 @@ import com.flansmod.common.types.vehicles.elements.WheelDefinition;
 
 import javax.annotation.Nonnull;
 import java.util.Collection;
+import java.util.List;
 
 public class CarControlLogic extends ControlLogic
 {
@@ -31,7 +32,8 @@ public class CarControlLogic extends ControlLogic
 	@Override
 	public boolean CanControl(@Nonnull VehicleDefinition vehicleDef)
 	{
-		int numWheels = vehicleDef.physics.wheels.length;
+		List<WheelDefinition> allWheels = vehicleDef.AsHierarchy.get().GetAllWheels();
+		int numWheels = allWheels.size();
 		if(numWheels < 3)
 			return false;
 
@@ -39,7 +41,7 @@ public class CarControlLogic extends ControlLogic
 		boolean hasFront = false;
 		boolean hasRear = false;
 		boolean hasDrive = false;
-		for(WheelDefinition wheelDef : vehicleDef.physics.wheels)
+		for(WheelDefinition wheelDef : allWheels)
 		{
 			if(wheelDef.IsHintedAs(EControlLogicHint.Steering))
 				hasSteering = true;
@@ -55,7 +57,7 @@ public class CarControlLogic extends ControlLogic
 	}
 
 	@Override
-	public void TickAuthoritative(@Nonnull VehicleEntity vehicle, @Nonnull VehicleInputState inputs)
+	public void TickAuthoritative(@Nonnull VehicleEntity vehicle, @Nonnull VehicleInputState inputs, @Nonnull ForceModel forces)
 	{
 		float accelerationInput = inputs.TickAxis(AcceleratorAxis);
 		float steeringInput = inputs.TickAxis(SteerLeftRightAxis);
@@ -76,7 +78,7 @@ public class CarControlLogic extends ControlLogic
 
 	}
 	@Override
-	public void TickRemote(@Nonnull VehicleEntity vehicle, @Nonnull VehicleInputState inputs)
+	public void TickRemote(@Nonnull VehicleEntity vehicle, @Nonnull VehicleInputState inputs, @Nonnull ForceModel forces)
 	{
 
 	}

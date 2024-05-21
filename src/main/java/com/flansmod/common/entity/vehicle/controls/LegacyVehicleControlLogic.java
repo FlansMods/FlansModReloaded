@@ -6,7 +6,6 @@ import com.flansmod.common.entity.vehicle.damage.VehicleDamageModule;
 import com.flansmod.common.entity.vehicle.hierarchy.VehicleHierarchyModule;
 import com.flansmod.common.entity.vehicle.hierarchy.WheelEntity;
 import com.flansmod.common.entity.vehicle.physics.VehiclePhysicsModule;
-import com.flansmod.common.gunshots.Raytracer;
 import com.flansmod.common.types.vehicles.ControlSchemeDefinition;
 import com.flansmod.common.types.vehicles.EVehicleAxis;
 import com.flansmod.common.types.vehicles.VehicleDefinition;
@@ -14,9 +13,6 @@ import com.flansmod.common.types.vehicles.elements.CollisionPointDefinition;
 import com.flansmod.util.Maths;
 import com.flansmod.util.Transform;
 import net.minecraft.core.BlockPos;
-import net.minecraft.world.damagesource.DamageSource;
-import net.minecraft.world.damagesource.DamageSources;
-import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.MoverType;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.ClipContext;
@@ -25,7 +21,6 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
-import net.minecraft.world.phys.shapes.CollisionContext;
 
 import javax.annotation.Nonnull;
 
@@ -46,7 +41,7 @@ public class LegacyVehicleControlLogic extends ControlLogic
 	@Override
 	public boolean CanControl(@Nonnull VehicleDefinition vehicleDef)
 	{
-		int numWheels = vehicleDef.physics.wheels.length;
+		int numWheels = vehicleDef.AsHierarchy.get().GetAllWheels().size();
 		if(numWheels != 4)
 			return false;
 
@@ -58,17 +53,19 @@ public class LegacyVehicleControlLogic extends ControlLogic
 	// https://github.com/FlansMods/FlansMod/blob/1.12.2/src/main/java/com/flansmod/common/driveables/EntityVehicle.java
 
 	@Override
-	public void TickAuthoritative(@Nonnull VehicleEntity vehicle, @Nonnull VehicleInputState inputs)
+	public void TickAuthoritative(@Nonnull VehicleEntity vehicle, @Nonnull VehicleInputState inputs, @Nonnull ForceModel forces)
 	{
-		TickShared(vehicle, inputs);
+		TickShared(vehicle, inputs, forces);
 	}
 
 	@Override
-	public void TickRemote(@Nonnull VehicleEntity vehicle, @Nonnull VehicleInputState inputs)
+	public void TickRemote(@Nonnull VehicleEntity vehicle, @Nonnull VehicleInputState inputs, @Nonnull ForceModel forces)
 	{
-		TickShared(vehicle, inputs);
+		TickShared(vehicle, inputs, forces);
 	}
-	private void TickShared(@Nonnull VehicleEntity vehicle, @Nonnull VehicleInputState inputs)
+	private static final float g = 0.98F / 10F;
+	private static final Vec3 GRAVITY = new Vec3(0f, -g, 0f);
+	private void TickShared(@Nonnull VehicleEntity vehicle, @Nonnull VehicleInputState inputs, @Nonnull ForceModel forces)
 	{
 		//Return the wheels to their resting position
 		wheelsYaw *= 0.9F;
@@ -111,10 +108,12 @@ public class LegacyVehicleControlLogic extends ControlLogic
 			}
 
 			Vec3 wheelMotion = wheel.getDeltaMovement();
-			wheelMotion = wheelMotion.scale(0.9f);
 
-			//Apply gravity
-			wheelMotion = wheelMotion.add(0f, -0.98f / 20f, 0f);
+			// wheelMotion = wheelMotion.scale(0.9f);
+			forces.AddDampenerToWheel(wheelID, 0.1f);
+
+			// wheelMotion = wheelMotion.add(GRAVITY);
+			forces.AddGlobalForceToWheel(wheelID, GRAVITY, () -> "Gravity");
 
 			//Apply velocity
 			if(vehicle.Engine().CanThrust(driver, SingleEngineKey)) // TODO: Fuel module
@@ -134,21 +133,26 @@ public class LegacyVehicleControlLogic extends ControlLogic
 					float effectiveWheelSpeed =
 						(throttle + (wheelsYaw * (left ? 1 : -1) * steeringScale)) * velocityScale;
 
-					wheelMotion = wheelMotion.add(
+					Vec3 wheelSteeringForce = new Vec3(
 						effectiveWheelSpeed * Math.cos(wheel.yRotO * Maths.DegToRadF),
 						0f,
-					 	effectiveWheelSpeed * Math.sin(wheel.yRotO * Maths.DegToRadF));
+						effectiveWheelSpeed * Math.sin(wheel.yRotO * Maths.DegToRadF));
 
+					//wheelMotion = wheelMotion.add(wheelSteeringForce);
+					forces.AddGlobalForceToWheel(wheelID, wheelSteeringForce, () -> "TankSteering");
 				}
 				else
 				{
 					//if(getVehicleType().fourWheelDrive || wheel.ID == 0 || wheel.ID == 1)
 					{
 						float velocityScale = 0.1F * throttle * engineSpeed;
-						wheelMotion = wheelMotion.add(
+						Vec3 wheelDriveForce = new Vec3(
 							Math.cos(wheel.yRotO * Maths.DegToRadF) * velocityScale,
 							0f,
 							Math.sin(wheel.yRotO * Maths.DegToRadF) * velocityScale);
+
+						// wheelMotion = wheelMotion.add(wheelDriveForce);
+						forces.AddGlobalForceToWheel(wheelID, wheelDriveForce, () -> "WheelDrive");
 					}
 
 					//Apply steering
@@ -157,21 +161,26 @@ public class LegacyVehicleControlLogic extends ControlLogic
 						float velocityScale = 0.01F * steering * (throttle > 0 ? 1 : -1);
 						double xzSpeed = Maths.Sqrt(wheelMotion.x * wheelMotion.x + wheelMotion.z * wheelMotion.z);
 
-						wheelMotion = wheelMotion.add(
+						Vec3 wheelSteeringForce = new Vec3(
 							-xzSpeed * Math.sin(wheel.yRotO * Maths.DegToRadF) * velocityScale * wheelsYaw,
 							0f,
 							xzSpeed * Math.cos(wheel.yRotO * Maths.DegToRadF) * velocityScale * wheelsYaw);
+
+						//wheelMotion = wheelMotion.add(wheelSteeringForce);
+						forces.AddGlobalForceToWheel(wheelID, wheelSteeringForce, () -> "CarSteering");
 					}
 					else
 					{
-						wheelMotion = wheelMotion.scale(0.9f);
+						//wheelMotion = wheelMotion.scale(0.9f);
+						forces.AddDampenerToWheel(wheelID, 0.1f);
 					}
 				}
 			}
 
 			if(wheel.Def.floatOnWater && vehicle.level().containsAnyLiquid(wheel.getBoundingBox()))
 			{
-				wheelMotion = wheelMotion.add(0f, wheel.Def.buoyancy, 0f);
+				// wheelMotion = wheelMotion.add(0f, wheel.Def.buoyancy, 0f);
+				forces.AddGlobalForceToWheel(wheelID, new Vec3(0f, wheel.Def.buoyancy, 0f), () -> "Buoyancy");
 			}
 
 			wheel.setDeltaMovement(wheelMotion);
@@ -305,8 +314,8 @@ public class LegacyVehicleControlLogic extends ControlLogic
 			if(damage.IsPartDestroyed(point.attachedTo))
 				continue;
 
-			Transform prevPointPos = hierarchy.GetAttachmentPrevious(point.attachedTo, point.offset);
-			Transform currentPointPos = hierarchy.GetAttachmentCurrent(point.attachedTo, point.offset);
+			Vec3 prevPointPos = hierarchy.GetWorldToPart(point.attachedTo).GetPrevious().LocalToGlobalPosition(point.offset);
+			Vec3 currentPointPos = hierarchy.GetWorldToPart(point.attachedTo).GetCurrent().LocalToGlobalPosition(point.offset);
 
 			if(FlansMod.DEBUG && level.isClientSide)
 			{
@@ -320,8 +329,8 @@ public class LegacyVehicleControlLogic extends ControlLogic
 			//raytracer.CastBullet()
 
 			BlockHitResult blockHit = level.clip(new ClipContext(
-				prevPointPos.PositionVec3(),
-				currentPointPos.PositionVec3(),
+				prevPointPos,
+				currentPointPos,
 				ClipContext.Block.COLLIDER,
 				ClipContext.Fluid.NONE, // TODO: crashInWater -> change context
 				vehicle));
@@ -357,7 +366,7 @@ public class LegacyVehicleControlLogic extends ControlLogic
 
 					if(!level.isClientSide && blockHardness <= collisionForce)
 					{
-						level.destroyBlock(pos, true, vehicle.Seats().GetPassengerInSeat(0));
+						level.destroyBlock(pos, true, vehicle.Seats().GetControllingPassenger());
 					}
 				}
 				else
@@ -365,9 +374,9 @@ public class LegacyVehicleControlLogic extends ControlLogic
 					// The part died!
 					level.explode(
 						vehicle,
-						currentPointPos.PositionVec3().x,
-						currentPointPos.PositionVec3().y,
-						currentPointPos.PositionVec3().z,
+						currentPointPos.x,
+						currentPointPos.y,
+						currentPointPos.z,
 						1F,
 						Level.ExplosionInteraction.MOB);
 				}

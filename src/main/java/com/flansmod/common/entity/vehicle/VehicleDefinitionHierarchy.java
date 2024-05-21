@@ -1,20 +1,14 @@
 package com.flansmod.common.entity.vehicle;
 
+import com.flansmod.common.FlansMod;
 import com.flansmod.common.types.vehicles.VehicleDefinition;
-import com.flansmod.common.types.vehicles.elements.ArticulatedPartDefinition;
-import com.flansmod.common.types.vehicles.elements.DamageablePartDefinition;
-import com.flansmod.common.types.vehicles.elements.MountedGunDefinition;
-import com.flansmod.common.types.vehicles.elements.SeatDefinition;
-import com.flansmod.util.TransformStack;
-import net.minecraft.world.phys.HitResult;
-import net.minecraft.world.phys.Vec3;
+import com.flansmod.common.types.vehicles.elements.*;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.function.BiConsumer;
+import java.util.function.BiFunction;
 import java.util.function.Consumer;
 
 public class VehicleDefinitionHierarchy
@@ -22,18 +16,13 @@ public class VehicleDefinitionHierarchy
 	public static class Node
 	{
 		@Nonnull
-		public final String Key;
-		public Node(@Nonnull String key)
+		public final VehiclePartDefinition Def;
+		public Node(@Nonnull VehiclePartDefinition part)
 		{
-			Key = key;
+			Def = part;
 		}
-
-		public ArticulatedPartDefinition Articulation = null;
-		public SeatDefinition Seat = null;
-		public MountedGunDefinition MountedGun = null;
-		public DamageablePartDefinition Damageable = null;
 		public Node Parent = null;
-		public List<Node> Children = new ArrayList<>();
+		public Map<String, Node> Children = new HashMap<>();
 
 		@Nonnull
 		public String Path()
@@ -42,184 +31,271 @@ public class VehicleDefinitionHierarchy
 			{
 				String parentPath = Parent.Path();
 				if(!parentPath.isEmpty())
-					return Parent.Path() + "/" + Key;
+					return Parent.Path() + "/" + Def.partName;
 			}
-			return Key;
+			return Def.partName;
+		}
+
+		@Nullable
+		public Node FindNode(@Nonnull String path)
+		{
+			return RunOnNode(path, (node, subpath) -> node).orElse(null);
+		}
+		@Nonnull
+		public <T> Optional<T> RunOnNode(@Nonnull String path, @Nonnull BiFunction<Node, String, T> func)
+		{
+			String[] subpath = path.split("/", 1);
+			if(subpath.length > 1)
+			{
+				if (Children.containsKey(subpath[0]))
+					return Children.get(subpath[0]).RunOnNode(subpath[1], func);
+				else
+				{
+					FlansMod.LOGGER.warn("Failed to find child node for subpath " + subpath[0]);
+					return Optional.empty();
+				}
+			}
+			else if(subpath.length == 1)
+			{
+				return Optional.ofNullable(func.apply(this, subpath[0]));
+			}
+			else
+			{
+				FlansMod.LOGGER.warn("Failed to find path, but hit 0-length");
+				return Optional.empty();
+			}
+		}
+
+		public void ForEachNode(@Nonnull Consumer<Node> func)
+		{
+			func.accept(this);
+			for(var child : Children.values())
+				child.ForEachNode(func);
 		}
 	}
-	public final Map<String, Node> Nodes = new HashMap<>();
+	public final Node RootNode;
+	public VehicleDefinitionHierarchy(@Nonnull Node rootNode)
+	{
+		RootNode = rootNode;
+	}
 
-	private void AddRoot()
+	@Nonnull
+	public static VehicleDefinitionHierarchy of(@Nonnull VehicleDefinition def)
 	{
-		if(!Nodes.containsKey("body"))
-			Nodes.put("body", new Node(""));
-	}
-	private void Bind(@Nonnull String key, @Nonnull ArticulatedPartDefinition artic)
-	{
-		if(!Nodes.containsKey(key))
-			Nodes.put(key, new Node(key));
-		Nodes.get(key).Articulation = artic;
-	}
-	private void Bind(@Nonnull String key, @Nonnull SeatDefinition seat)
-	{
-		if(!Nodes.containsKey(key))
-			Nodes.put(key, new Node(key));
-		Nodes.get(key).Seat = seat;
-	}
-	private void Bind(@Nonnull String key, @Nonnull MountedGunDefinition mountedGun)
-	{
-		if(!Nodes.containsKey(key))
-			Nodes.put(key, new Node(key));
-		Nodes.get(key).MountedGun = mountedGun;
-	}
-	private void Bind(@Nonnull String key, @Nonnull DamageablePartDefinition damageable)
-	{
-		if(!Nodes.containsKey(key))
-			Nodes.put(key, new Node(key));
-		Nodes.get(key).Damageable = damageable;
-	}
-	private void Hierarchise()
-	{
-		for(var kvp : Nodes.entrySet())
+		Map<String, Node> nodes = new HashMap<>();
+		for(VehiclePartDefinition partDef : def.parts)
+		{
+			if (nodes.containsKey(partDef.partName))
+			{
+				FlansMod.LOGGER.warn("More than one VehiclePartDefinition named " + partDef.partName);
+			}
+			nodes.put(partDef.partName, new Node(partDef));
+		}
+
+		// Make sure we have a root node
+		if(!nodes.containsKey("body"))
+		{
+			nodes.put("body", new Node(VehiclePartDefinition.INVALID));
+		}
+
+		for(var kvp : nodes.entrySet())
 		{
 			if(kvp.getKey().equals("body"))
 				continue;
 
-			if(kvp.getValue().Articulation != null)
+			String attachedTo = kvp.getValue().Def.attachedTo;
+			if(nodes.containsKey(attachedTo))
 			{
-				String parentKey = kvp.getValue().Articulation.attachedToPart;
-				if(Nodes.containsKey(parentKey))
-				{
-					kvp.getValue().Parent = Nodes.get(parentKey);
-					Nodes.get(parentKey).Children.add(kvp.getValue());
-				}
-				else
-				{
-					kvp.getValue().Parent = Nodes.get("body");
-					Nodes.get("body").Children.add(kvp.getValue());
-				}
+				Node parentNode = nodes.get(attachedTo);
+				parentNode.Children.put(kvp.getKey(), kvp.getValue());
+				kvp.getValue().Parent = parentNode;
+			}
+			else
+			{
+				FlansMod.LOGGER.warn("Could not find parent node " + attachedTo + " for " + kvp.getKey());
+			}
+		}
+		return new VehicleDefinitionHierarchy(nodes.get("body"));
+	}
+
+	private static int FindIndex(@Nonnull String id, @Nonnull String prefix)
+	{
+		if (id.startsWith(prefix))
+		{
+			return Integer.parseInt(id.substring(prefix.length() + 1));
+		}
+		return Integer.parseInt(id);
+	}
+	public void Traverse(@Nonnull String partPath, @Nonnull Consumer<Node> func)
+	{
+		Traverse(partPath.split("/"), func);
+	}
+	public void Traverse(@Nonnull String[] partPathElements, @Nonnull Consumer<Node> func)
+	{
+		Node node = RootNode;
+		func.accept(node);
+		for(int i = 0; i < partPathElements.length; i++)
+		{
+
+			// You can start with "body", but it isn't really needed
+			if(partPathElements[i].equals("body"))
+				continue;
+
+			Node childNode = node.Children.get(partPathElements[i]);
+			if(childNode != null)
+			{
+				func.accept(childNode);
+				node = childNode;
+			}
+			else
+			{
+				// This is the end of the line. We may have one more identifier like "wheel_0" (an entity)
+				// or "articulation_2", a component
 			}
 		}
 	}
-	@Nonnull
-	public static VehicleDefinitionHierarchy of(@Nonnull VehicleDefinition def)
-	{
-		VehicleDefinitionHierarchy t = new VehicleDefinitionHierarchy();
-		t.AddRoot();
-
-		for(ArticulatedPartDefinition part : def.articulatedParts)
-			t.Bind(part.partName, part);
-		for(SeatDefinition seat : def.seats)
-			t.Bind(seat.attachedTo, seat);
-		for(MountedGunDefinition mountedGun : def.guns)
-			t.Bind(mountedGun.attachedTo, mountedGun);
-		for(DamageablePartDefinition damageable : def.damageables)
-			t.Bind(damageable.partName, damageable);
-
-		t.Hierarchise();
-
-		return t;
-	}
-
 	@Nullable
-	public Node Find(@Nonnull String partName)
-	{
-		return Nodes.get(partName);
-	}
+	public Node Find(@Nonnull String partName) { return RootNode.FindNode(partName); }
+	public void ForEachNode(@Nonnull Consumer<Node> func) { RootNode.ForEachNode(func); }
+
+	public static final String SEAT_PREFIX = "seat";
 	public void ForEachSeatPath(@Nonnull Consumer<String> func)
 	{
-		for(var kvp : Nodes.entrySet())
-			if(kvp.getValue().Seat != null)
-				func.accept(kvp.getValue().Path());
+		ForEachNode((node) -> {
+			for(int i = 0; i < node.Def.seats.length; i++)
+				func.accept(node.Path() + "/" + SEAT_PREFIX + "_" + i);
+		});
 	}
 	public void ForEachSeat(@Nonnull Consumer<SeatDefinition> func)
 	{
-		for(var kvp : Nodes.entrySet())
-			if(kvp.getValue().Seat != null)
-				func.accept(kvp.getValue().Seat);
+		ForEachNode((node) -> {
+			for(SeatDefinition seat : node.Def.seats)
+				func.accept(seat);
+		});
 	}
-	@Nullable
-	public SeatDefinition GetSeat(@Nonnull String path)
+	public void ForEachSeat(@Nonnull BiConsumer<String, SeatDefinition> func)
 	{
-		String key = path.substring(path.lastIndexOf('/')+1);
-		if(Nodes.containsKey(key))
-		{
-			Node node = Nodes.get(key);
-			if(node.Path().equals(path) && node.Seat != null)
-				return node.Seat;
-		}
-		return null;
+		ForEachNode((node) -> {
+			for(int i = 0; i < node.Def.seats.length; i++)
+				func.accept(node.Path()+ "/" + SEAT_PREFIX + "_" + i, node.Def.seats[i]);
+		});
 	}
+	@Nonnull
+	public SeatDefinition FindSeat(@Nonnull String path)
+	{
+		return RootNode.RunOnNode(path, (node, endOfPath) -> node.Def.seats[FindIndex(endOfPath, SEAT_PREFIX)]).orElse(SeatDefinition.INVALID);
+	}
+
+	public static final String ARTICULATION_PREFIX = "articulation";
 	public void ForEachArticulationPath(@Nonnull Consumer<String> func)
 	{
-		for(var kvp : Nodes.entrySet())
-			if(kvp.getValue().Articulation != null)
-				func.accept(kvp.getValue().Path());
+		ForEachNode((node) -> {
+			if(node.Def.IsArticulated())
+				func.accept(node.Path() + "/" + ARTICULATION_PREFIX);
+		});
 	}
-	public void ForEachArticulation(@Nonnull Consumer<ArticulatedPartDefinition> func)
+	public void ForEachArticulation(@Nonnull BiConsumer<String, ArticulatedPartDefinition> func)
 	{
-		for(var kvp : Nodes.entrySet())
-			if(kvp.getValue().Articulation != null)
-				func.accept(kvp.getValue().Articulation);
+		ForEachNode((node) -> {
+			if(node.Def.IsArticulated())
+				func.accept(node.Path(), node.Def.articulation);
+		});
 	}
 	@Nullable
-	public ArticulatedPartDefinition GetArticulation(@Nonnull String path)
+	public ArticulatedPartDefinition FindArticulation(@Nonnull String path)
 	{
-		String key = path.substring(path.lastIndexOf('/')+1);
-		if(Nodes.containsKey(key))
-		{
-			Node node = Nodes.get(key);
-			if(node.Path().equals(path) && node.Articulation != null)
-				return node.Articulation;
-		}
-		return null;
+		return RootNode.RunOnNode(path, (node, endOfPath) -> node.Def.articulation).orElse(null);
 	}
+
+	public static final String MOUNTED_GUN_PREFIX = "gun";
 	public void ForEachMountedGunPath(@Nonnull Consumer<String> func)
 	{
-		for(var kvp : Nodes.entrySet())
-			if(kvp.getValue().MountedGun != null)
-				func.accept(kvp.getValue().Path());
+		ForEachNode((node) -> {
+			for(int i = 0; i < node.Def.guns.length; i++)
+				func.accept(node.Path() + "/" + MOUNTED_GUN_PREFIX + "_" + i);
+		});
 	}
 	public void ForEachMountedGun(@Nonnull Consumer<MountedGunDefinition> func)
 	{
-		for(var kvp : Nodes.entrySet())
-			if(kvp.getValue().MountedGun != null)
-				func.accept(kvp.getValue().MountedGun);
+		ForEachNode((node) -> {
+			for(MountedGunDefinition gun : node.Def.guns)
+				func.accept(gun);
+		});
 	}
-	@Nullable
-	public MountedGunDefinition GetMountedGun(@Nonnull String path)
+	public void ForEachMountedGun(@Nonnull BiConsumer<String, MountedGunDefinition> func)
 	{
-		String key = path.substring(path.lastIndexOf('/')+1);
-		if(Nodes.containsKey(key))
-		{
-			Node node = Nodes.get(key);
-			if(node.Path().equals(path) && node.MountedGun != null)
-				return node.MountedGun;
-		}
-		return null;
+		ForEachNode((node) -> {
+			for(int i = 0; i < node.Def.guns.length; i++)
+				func.accept(node.Path()+ "/" + MOUNTED_GUN_PREFIX + "_" + i, node.Def.guns[i]);
+		});
 	}
+	@Nonnull
+	public MountedGunDefinition FindMountedGun(@Nonnull String path)
+	{
+		return RootNode.RunOnNode(path, (node, endOfPath) -> node.Def.guns[FindIndex(endOfPath, MOUNTED_GUN_PREFIX)]).orElse(MountedGunDefinition.INVALID);
+	}
+
+	public static final String DAMAGEABLE_PREFIX = "damageable";
 	public void ForEachDamageablePath(@Nonnull Consumer<String> func)
 	{
-		for(var kvp : Nodes.entrySet())
-			if(kvp.getValue().Damageable != null)
-				func.accept(kvp.getValue().Path());
+		ForEachNode((node) -> {
+			if(node.Def.IsDamageable())
+				func.accept(node.Path() + "/" + DAMAGEABLE_PREFIX);
+		});
 	}
 	public void ForEachDamageable(@Nonnull Consumer<DamageablePartDefinition> func)
 	{
-		for(var kvp : Nodes.entrySet())
-			if(kvp.getValue().Damageable != null)
-				func.accept(kvp.getValue().Damageable);
+		ForEachNode((node) -> {
+			if(node.Def.IsDamageable())
+				func.accept(node.Def.damage);
+		});
 	}
-	@Nullable
-	public DamageablePartDefinition GetDamageable(@Nonnull String path)
+	public void ForEachDamageable(@Nonnull BiConsumer<String, DamageablePartDefinition> func)
 	{
-		String key = path.substring(path.lastIndexOf('/')+1);
-		if(Nodes.containsKey(key))
-		{
-			Node node = Nodes.get(key);
-			if(node.Path().equals(path) && node.Damageable != null)
-				return node.Damageable;
-		}
-		return null;
+		ForEachNode((node) -> {
+			if(node.Def.IsDamageable())
+				func.accept(node.Path()+ "/" + DAMAGEABLE_PREFIX, node.Def.damage);
+		});
+	}
+	@Nonnull
+	public DamageablePartDefinition FindDamageable(@Nonnull String path)
+	{
+		return RootNode.RunOnNode(path, (node, endOfPath) -> node.Def.damage).orElse(DamageablePartDefinition.INVALID);
+	}
+
+
+	public static final String WHEEL_PREFIX = "wheel";
+	public void ForEachWheelPath(@Nonnull Consumer<String> func)
+	{
+		ForEachNode((node) -> {
+			for(int i = 0; i < node.Def.wheels.length; i++)
+				func.accept(node.Path() + "/" + WHEEL_PREFIX + "_" + i);
+		});
+	}
+	public void ForEachWheel(@Nonnull Consumer<WheelDefinition> func)
+	{
+		ForEachNode((node) -> {
+			for(int i = 0; i < node.Def.wheels.length; i++)
+				func.accept(node.Def.wheels[i]);
+		});
+	}
+	public void ForEachWheel(@Nonnull BiConsumer<String, WheelDefinition> func)
+	{
+		ForEachNode((node) -> {
+			for(int i = 0; i < node.Def.wheels.length; i++)
+				func.accept(node.Path() + "/" + WHEEL_PREFIX + "_" + i, node.Def.wheels[i]);
+		});
+	}
+	@Nonnull
+	public List<WheelDefinition> GetAllWheels()
+	{
+		List<WheelDefinition> wheels = new ArrayList<>();
+		ForEachWheel((wheel) -> wheels.add(wheel));
+		return wheels;
+	}
+	@Nonnull
+	public WheelDefinition FindWheel(@Nonnull String path)
+	{
+		return RootNode.RunOnNode(path, (node, endOfPath) -> node.Def.wheels[FindIndex(endOfPath, WHEEL_PREFIX)]).orElse(WheelDefinition.INVALID);
 	}
 }

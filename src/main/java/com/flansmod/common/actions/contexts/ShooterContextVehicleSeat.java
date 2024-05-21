@@ -15,31 +15,23 @@ import java.util.UUID;
 
 public class ShooterContextVehicleSeat extends ShooterContextVehicle
 {
-	protected final int SeatIndex;
-
 	@Nonnull
-	public SeatDefinition SeatDef()
-	{
-		VehicleDefinition vehicleDef = VehicleDef();
-		if(0 <= SeatIndex && SeatIndex < vehicleDef.seats.length)
-		{
-			return vehicleDef.seats[SeatIndex];
-		}
-		return SeatDefinition.INVALID;
-	}
+	public final String SeatPath;
+	@Nullable
+	public final SeatDefinition SeatDef;
 
-
-	public ShooterContextVehicleSeat(@Nonnull VehicleEntity vehicle, int seatIndex)
+	public ShooterContextVehicleSeat(@Nonnull VehicleEntity vehicle, @Nonnull String seatPath)
 	{
 		super(vehicle);
-		SeatIndex = seatIndex;
+		SeatPath = seatPath;
+		SeatDef = VehicleDef().AsHierarchy.get().FindSeat(SeatPath);
 	}
 
 	@Override
 	public int GetNumValidContexts()
 	{
 		// TODO: Calculate how many of this vehicle's guns are referenced by this seat
-		return SeatDef().inputs.length;
+		return SeatDef.inputs.length;
 	}
 	@Override
 	@Nullable
@@ -70,12 +62,7 @@ public class ShooterContextVehicleSeat extends ShooterContextVehicle
 	@Nullable
 	public Entity EntityInThisSeat()
 	{
-		List<Entity> passengers = Vehicle.getPassengers();
-		if(0 <= SeatIndex && SeatIndex < passengers.size())
-		{
-			return passengers.get(SeatIndex);
-		}
-		return null;
+		return Vehicle.Seats().GetPassengerInSeat(SeatPath);
 	}
 	public boolean IsOccupied() { return EntityInThisSeat() != null; }
 }

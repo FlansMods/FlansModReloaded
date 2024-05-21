@@ -10,17 +10,10 @@ public class VehiclePhysicsDefinition
 	public Vec3 restingEulerAngles = Vec3.ZERO;
 	@JsonField(Min = 0f, Max = 1f, Docs = "How much speed to lose per second")
 	public float drag = 0.05f;
+	@JsonField(Min = 0.0001f)
+	public float mass = 10.0f;
 	@JsonField(Docs = "Legacy only, use new axis bindings")
 	public float maxThrottle = 1.0f;
-
-	@JsonField
-	public WheelDefinition[] wheels = new WheelDefinition[0];
-	@JsonField
-	public PropellerDefinition[] propellers = new PropellerDefinition[0];
-	@JsonField
-	public LegsDefinition[] legs = new LegsDefinition[0];
-	@JsonField
-	public ArmDefinition[] arms = new ArmDefinition[0];
 
 	@JsonField
 	public CollisionPointDefinition[] collisionPoints = new CollisionPointDefinition[0];

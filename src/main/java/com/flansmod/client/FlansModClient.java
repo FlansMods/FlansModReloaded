@@ -14,6 +14,7 @@ import com.flansmod.client.render.debug.DebugRenderer;
 import com.flansmod.client.render.effects.DecalRenderer;
 import com.flansmod.client.render.bullets.ShotRenderer;
 import com.flansmod.client.render.effects.LaserRenderer;
+import com.flansmod.client.render.vehicles.VehicleDebugRenderer;
 import com.flansmod.common.FlansMod;
 import com.flansmod.common.actions.contexts.*;
 import com.flansmod.common.gunshots.Raytracer;
@@ -59,10 +60,13 @@ import java.lang.reflect.Method;
 @Mod.EventBusSubscriber(value = Dist.CLIENT, bus = Mod.EventBusSubscriber.Bus.MOD, modid = FlansMod.MODID)
 public class FlansModClient
 {
+
+	public static final DebugRenderer DEBUG_RENDERER = new DebugRenderer();
+	public static final VehicleDebugRenderer VEHICLE_DEBUG_RENDERER = new VehicleDebugRenderer();
+
 	public static final ShotRenderer SHOT_RENDERER= new ShotRenderer();
 	public static final LaserRenderer LASER_RENDERER = new LaserRenderer();
 	public static final FlashEffectRenderer FLASH_RENDERER = new FlashEffectRenderer();
-	public static final DebugRenderer DEBUG_RENDERER = new DebugRenderer();
 	public static final ClientInputHooks CLIENT_INPUT_HOOKS = new ClientInputHooks();
 	public static final ClientRenderHooks CLIENT_OVERLAY_HOOKS = new ClientRenderHooks();
 	public static final FlansModelRegistry MODEL_REGISTRATION = new FlansModelRegistry();
@@ -73,6 +77,7 @@ public class FlansModClient
 
 	public static final ClientActionManager ACTIONS_CLIENT = new ClientActionManager();
 	public static final ContextCache CONTEXT_CACHE = new ClientContextCache();
+	public static final ClientLongDistanceEntitySystem CLIENT_LONG_DISTANCE = new ClientLongDistanceEntitySystem();
 
 
 	public static long PREV_FRAME_NS = 0L;

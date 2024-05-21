@@ -20,8 +20,8 @@ public class VehicleGunModule implements IVehicleModule
 	public VehicleGunModule(@Nonnull VehicleDefinitionHierarchy hierarchy,
 							@Nonnull VehicleEntity vehicle)
 	{
-		hierarchy.ForEachMountedGun((gunDef) -> {
-			GunStates.put(gunDef.attachedTo, new VehicleGunSaveState(gunDef));
+		hierarchy.ForEachMountedGun((gunPath, gunDef) -> {
+			GunStates.put(gunPath, new VehicleGunSaveState(gunDef));
 		});
 
 		GunOrdering.addAll(GunStates.keySet());

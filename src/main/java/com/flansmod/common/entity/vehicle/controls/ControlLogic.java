@@ -31,6 +31,6 @@ public abstract class ControlLogic
 
 	public abstract boolean CanControl(@Nonnull VehicleDefinition vehicleDef);
 
-	public abstract void TickAuthoritative(@Nonnull VehicleEntity vehicle, @Nonnull VehicleInputState inputs);
-	public abstract void TickRemote(@Nonnull VehicleEntity vehicle, @Nonnull VehicleInputState inputs);
+	public abstract void TickAuthoritative(@Nonnull VehicleEntity vehicle, @Nonnull VehicleInputState inputs, @Nonnull ForceModel forces);
+	public abstract void TickRemote(@Nonnull VehicleEntity vehicle, @Nonnull VehicleInputState inputs, @Nonnull ForceModel forces);
 }

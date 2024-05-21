@@ -1,11 +1,13 @@
 package com.flansmod.common.entity.vehicle;
 
 import com.flansmod.common.FlansMod;
+import com.flansmod.common.entity.ITransformPair;
 import com.flansmod.common.entity.vehicle.controls.ControlLogic;
 import com.flansmod.common.entity.vehicle.controls.VehicleInputState;
 import com.flansmod.common.entity.vehicle.damage.VehicleDamageModule;
 import com.flansmod.common.entity.vehicle.guns.VehicleGunModule;
 import com.flansmod.common.entity.vehicle.hierarchy.VehicleHierarchyModule;
+import com.flansmod.common.entity.vehicle.hierarchy.WheelEntity;
 import com.flansmod.common.entity.vehicle.physics.VehicleEngineModule;
 import com.flansmod.common.entity.vehicle.physics.VehiclePhysicsModule;
 import com.flansmod.common.entity.vehicle.seats.VehicleSeatsModule;
@@ -14,15 +16,22 @@ import com.flansmod.common.types.vehicles.ControlSchemeDefinition;
 import com.flansmod.common.types.vehicles.VehicleDefinition;
 import com.flansmod.util.Maths;
 import com.flansmod.util.Transform;
+import com.flansmod.util.TransformStack;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.syncher.EntityDataAccessor;
+import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.util.Mth;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.*;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.common.util.Lazy;
+import net.minecraftforge.entity.PartEntity;
+import org.joml.Vector3f;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -67,6 +76,10 @@ public class VehicleEntity extends Entity implements ITransformEntity
 		super(type, world);
 		DefRef = LazyDefinition.of(defLoc, FlansMod.VEHICLES);
 		SelectedSkin = defLoc;
+
+		blocksBuilding = true;
+
+		Physics().CreateSubEntities(this);
 	}
 
 	public boolean InitFromDefinition()
@@ -78,19 +91,57 @@ public class VehicleEntity extends Entity implements ITransformEntity
 		return true;
 	}
 
+	// Some misc overrides
+	public static boolean canVehicleCollide(@Nonnull Entity a, @Nonnull Entity b)
+	{
+		return (b.canBeCollidedWith() || b.isPushable()) && !a.isPassengerOfSameVehicle(b);
+	}
+	@Override public boolean canCollideWith(@Nonnull Entity other) {
+		return canVehicleCollide(this, other);
+	}
+	@Override public boolean canBeCollidedWith() {
+		return true;
+	}
+	@Override public boolean isPushable() {
+		return true;
+	}
+	@Override
+	protected void positionRider(@Nonnull Entity rider, @Nonnull Entity.MoveFunction moveFunc)
+	{
+		if (hasPassenger(rider))
+		{
+			int seatIndex = Seats().GetSeatIndexOf(rider);
+
+		}
+	}
+	@Override
+	@Nonnull
+	public Vec3 getDismountLocationForPassenger(@Nonnull LivingEntity p_38357_)
+	{
+		Vec3 vec3 = getCollisionHorizontalEscapeVector((double) (this.getBbWidth() * Mth.SQRT_OF_TWO), (double) p_38357_.getBbWidth(), p_38357_.getYRot());
+		return vec3;
+	}
+
 	// -------------------------------------------------------------------------------------------
 	// Transform and some vanilla overrides. We want to use Quaternions, pleassse Minecraft
 	@Override public float getYRot() { return RootTransform0().Yaw(); }
 	@Override public float getXRot() { return RootTransform0().Pitch(); }
 	@Override public void setYRot(float yaw) { Hierarchy().SetYaw(yaw); }
 	@Override public void setXRot(float pitch) { Hierarchy().SetPitch(pitch); }
-
+	//@Override public void setPos(double x, double y, double z) { SetPosition(x, y, z); }
+	@Override
+	public void moveTo(double x, double y, double z, float xRot, float yRot) {
+		super.moveTo(x, y, z, xRot, yRot);
+		SyncEntityToTransform();
+		for(WheelEntity wheel : Physics().AllWheels())
+			wheel.SyncTransformToEntity();
+	}
 
 	public void SetEulerAngles(float pitch, float yaw, float roll) { Hierarchy().SetEulerAngles(pitch, yaw, roll); }
 	@Nonnull
 	public Transform RootTransform0() { return Hierarchy().RootTransform; }
 	@Nonnull
-	public Transform RootTransform(float dt) { return Hierarchy().GetRootTransformDelta(dt); }
+	public Transform RootTransform(float dt) { return Hierarchy().GetWorldToRoot().GetDelta(dt); }
 	// -------------------------------------------------------------------------------------------
 
 	@Nonnull
@@ -124,8 +175,20 @@ public class VehicleEntity extends Entity implements ITransformEntity
 	// Entity overrides
 	// ---------------------------------------------------------------------------------------------------------
 	@Override
+	public boolean isMultipartEntity() {
+		return true;
+	}
+	@Override @Nonnull
+	public PartEntity<?>[] getParts() {
+		return Physics().AllWheels().toArray(new WheelEntity[0]);
+	}
+
+
+	// Data Syncing
+	@Override
 	protected void defineSynchedData()
 	{
+		DefineModuleSyncing();
 	}
 
 	@Override
@@ -159,13 +222,29 @@ public class VehicleEntity extends Entity implements ITransformEntity
 	@Override
 	public LivingEntity getControllingPassenger()
 	{
-		int driverSeatIndex = Seats().GetControlSeatIndex();
-		if(driverSeatIndex != VehicleSeatsModule.INVALID_SEAT_INDEX)
-		{
-			if (Seats().GetPassengerInSeat(driverSeatIndex) instanceof LivingEntity living)
-				return living;
-		}
+		if (Seats().GetControllingPassenger() instanceof LivingEntity living)
+			return living;
 		return null;
+	}
+	@Nonnull
+	@Override
+	public InteractionResult interact(@Nonnull Player player, @Nonnull InteractionHand hand)
+	{
+		if (player.isSecondaryUseActive())
+		{
+			return InteractionResult.PASS;
+		}
+		else
+		{
+			if (!level().isClientSide)
+			{
+				return player.startRiding(this) ? InteractionResult.CONSUME : InteractionResult.PASS;
+			}
+			else
+			{
+				return InteractionResult.SUCCESS;
+			}
+		}
 	}
 
 
@@ -180,6 +259,15 @@ public class VehicleEntity extends Entity implements ITransformEntity
 		Guns().Tick(this);
 		Seats().Tick(this);
 		Physics().Tick(this);
+	}
+	private void DefineModuleSyncing(@Nonnull SynchedEntityData entityData)
+	{
+		Engine().DefineSyncedData(entityData);
+		Damage().DefineSyncedData(entityData);
+		Hierarchy().DefineSyncedData(entityData);
+		Guns().DefineSyncedData(entityData);
+		Seats().DefineSyncedData(entityData);
+		Physics().DefineSyncedData(entityData);
 	}
 	private void SaveModules(@Nonnull CompoundTag tags)
 	{
@@ -216,17 +304,6 @@ public class VehicleEntity extends Entity implements ITransformEntity
 		// TODO
 		return new VehicleInventory(1, 1, 1);
 	}
-
-	@Nonnull
-	@Override
-	public Transform GetLocal0() { return Hierarchy().RootTransform; }
-	@Nonnull
-	@Override
-	public Transform GetLocal(float dt) { return Hierarchy().GetRootTransformDelta(dt); }
-	@Nullable
-	@Override
-	public ITransformEntity GetParent() { return null; }
-
 	public double GetSpeedXZ() { return Maths.LengthXZ(getDeltaMovement()); }
 	public double GetSpeed() { return Maths.LengthXYZ(getDeltaMovement()); }
 
@@ -244,4 +321,61 @@ public class VehicleEntity extends Entity implements ITransformEntity
 		ControlSchemeDefinition active = Seats().GetMainActiveController(ModalStates);
 		return active != null ? active : ControlSchemeDefinition.INVALID;
 	}
+
+
+	/// --------------------------------------------------------------------------
+	// ITransformEntity
+	@Override
+	public void SyncTransformToEntity()
+	{
+		Transform worldRoot = GetWorldToEntity().GetCurrent();
+		Vector3f euler = worldRoot.Euler();
+		setPos(worldRoot.PositionVec3());
+		yRotO = euler.y;
+		xRotO = euler.x;
+	}
+	@Override
+	public void SyncEntityToTransform()
+	{
+		Hierarchy().RootTransform = Transform.FromPosAndEuler(getPosition(1f), getXRot(), getYRot(), 0f);
+	}
+	@Override public void SetWorldToEntity(@Nonnull Transform currentTransform) { Hierarchy().SetCurrentRootTransform(currentTransform); }
+	@Override @Nonnull public ITransformPair GetWorldToEntity() { return Hierarchy().GetWorldToRoot(); }
+	@Override @Nonnull public ITransformPair GetEntityToAP(@Nonnull String apPath) { return Hierarchy().GetRootToPart(apPath); }
+	@Override @Nonnull
+	public Vec3 GetVelocity() { return getDeltaMovement().scale(20f); }
+	@Override
+	public void SetVelocity(@Nonnull Vec3 velocityMetersPerSecond) { setDeltaMovement(velocityMetersPerSecond.scale(1f/20f)); }
+	@Override
+	public void ApplyVelocity()
+	{
+		move(MoverType.SELF, getDeltaMovement());
+		CheckCollisions();
+	}
+	/// --------------------------------------------------------------------------------
+
+
+	private void CheckCollisions()
+	{
+		Level level = level();
+		List<Entity> list = level.getEntities(this, getBoundingBox().inflate((double)0.2F, (double)-0.01F, (double)0.2F), EntitySelector.pushableBy(this));
+		if (!list.isEmpty()) {
+			//boolean flag = !level.isClientSide && !(this.getControllingPassenger() instanceof Player);
+
+			for(int j = 0; j < list.size(); ++j) {
+				Entity entity = list.get(j);
+				if (!entity.hasPassenger(this)) {
+					push(entity);
+					//if (flag && this.getPassengers().size() < this.getMaxPassengers() && !entity.isPassenger() && this.hasEnoughSpaceFor(entity) && entity instanceof LivingEntity && !(entity instanceof WaterAnimal) && !(entity instanceof Player)) {
+					//	entity.startRiding(this);
+					//} else {
+					//	this.push(entity);
+					//}
+				}
+			}
+		}
+	}
+	/// ----------------------------------------
+
+
 }

@@ -13,9 +13,11 @@ import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.phys.*;
+import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.fml.LogicalSide;
+import net.minecraftforge.server.ServerLifecycleHooks;
 import org.joml.Vector4f;
 import org.spongepowered.asm.mixin.MixinEnvironment;
 
@@ -81,6 +83,16 @@ public class Raytracer
         {
             for(var kvp : PlayerMovementHistories.entrySet())
             {
+                if(Minecraft.getInstance().options.getCameraType().isFirstPerson())
+                {
+                    if(kvp.getKey().isLocalPlayer())
+                        continue;
+                    if(ServerLifecycleHooks.getCurrentServer() != null)
+                    {
+                        if(ServerLifecycleHooks.getCurrentServer().getPlayerList().getPlayers().size() == 1)
+                            continue;
+                    }
+                }
                 kvp.getValue().debugRender(!(World instanceof ServerLevel));
             }
         }

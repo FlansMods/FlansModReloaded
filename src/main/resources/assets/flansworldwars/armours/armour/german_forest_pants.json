@@ -37,5 +37,5 @@
     "animationSet": "",
     "armourTextureName": "GermanForest",
     "nightVision": false,
-    "screenOverlay": ""
+    "screenOverlay": {}
 }

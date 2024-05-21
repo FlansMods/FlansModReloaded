@@ -5,14 +5,24 @@ import com.flansmod.common.entity.vehicle.IVehicleModule;
 import com.flansmod.common.entity.vehicle.VehicleEntity;
 import com.flansmod.common.entity.vehicle.controls.ControlLogic;
 import com.flansmod.common.entity.vehicle.controls.ControlLogics;
+import com.flansmod.common.entity.vehicle.controls.ForceModel;
 import com.flansmod.common.entity.vehicle.controls.VehicleInputState;
 import com.flansmod.common.entity.vehicle.hierarchy.WheelEntity;
 import com.flansmod.common.types.vehicles.ControlSchemeDefinition;
 import com.flansmod.common.types.vehicles.elements.EControlLogicHint;
 import com.flansmod.common.types.vehicles.elements.VehiclePhysicsDefinition;
 import com.flansmod.common.types.vehicles.elements.WheelDefinition;
+import com.flansmod.util.Transform;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntitySelector;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.MoverType;
+import net.minecraft.world.entity.animal.WaterAnimal;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.Vec3;
 import org.codehaus.plexus.util.CachedMap;
 
 import javax.annotation.Nonnull;
@@ -21,8 +31,12 @@ import java.util.*;
 
 public class VehiclePhysicsModule implements IVehicleModule
 {
+	public static boolean PAUSE = false;
+
 	@Nonnull
 	public final VehiclePhysicsDefinition Def;
+	@Nonnull
+	public ForceModel ForcesLastFrame;
 
 	// Part lookups
 	private final MultiLookup<EControlLogicHint, WheelEntity> Wheels = new MultiLookup<>();
@@ -40,19 +54,22 @@ public class VehiclePhysicsModule implements IVehicleModule
 	public VehiclePhysicsModule(@Nonnull VehiclePhysicsDefinition def)
 	{
 		Def = def;
+		ForcesLastFrame = new ForceModel();
 	}
 
 	public void CreateSubEntities(@Nonnull VehicleEntity vehicle)
 	{
-		for(WheelDefinition wheelDef : Def.wheels)
+		vehicle.Def().AsHierarchy.get().ForEachWheel((wheelPath, wheelDef) -> {
+			WheelEntity wheel = new WheelEntity(vehicle, wheelPath, wheelDef);
+			Wheels.Add(wheel, wheelPath, wheelDef.controlHints);
+		});
+
+		for(int i = 0; i < Wheels.All().size(); i++)
 		{
-			WheelEntity wheel = new WheelEntity(vehicle, wheelDef);
-			Wheels.Add(wheel, wheelDef.attachedTo, wheelDef.controlHints);
+			WheelEntity wheel = WheelByIndex(i);
+			if(wheel != null)
+				vehicle.Hierarchy().RegisterWheel(i, wheel);
 		}
-	}
-	private void RegisterWheel(@Nonnull WheelEntity wheel)
-	{
-		Wheels.Add(wheel, wheel.Def.attachedTo, wheel.Def.controlHints);
 	}
 	private void UnregisterWheelAt(int wheelIndex)
 	{
@@ -112,6 +129,8 @@ public class VehiclePhysicsModule implements IVehicleModule
 		}
 	}
 
+
+
 	@Override
 	public void Tick(@Nonnull VehicleEntity vehicle)
 	{
@@ -125,17 +144,22 @@ public class VehiclePhysicsModule implements IVehicleModule
 			return false;
 		}));
 
+		Wheels.ForEach(wheel -> wheel.ParentTick(vehicle));
+
+		// Create a force model and load it up with forces for debug rendering
+		ForceModel forces = new ForceModel();
+
 		ControlLogic controller = CurrentController(vehicle);
 		if(controller != null)
 		{
 			VehicleInputState inputs = vehicle.GetInputStateFor(controller);
 			if(vehicle.IsAuthority())
 			{
-				controller.TickAuthoritative(vehicle, inputs);
+				controller.TickAuthoritative(vehicle, inputs, forces);
 			}
 			else
 			{
-				controller.TickRemote(vehicle, inputs);
+				controller.TickRemote(vehicle, inputs, forces);
 			}
 
 			// We should make sure the controller didn't go wrong!
@@ -148,8 +172,49 @@ public class VehiclePhysicsModule implements IVehicleModule
 				vehicle.setPos(vehicle.xOld, vehicle.yOld, vehicle.zOld);
 			}
 		}
+		else
+		{
+			forces.AddGlobalForceToCore(new Vec3(0f, -9.81f * Def.mass, 0f), () -> "Gravity");
+			for(int i = 0; i < AllWheels().size(); i++)
+			{
+				WheelEntity wheel = WheelByIndex(i);
+				if(wheel != null)
+				{
+					forces.AddGlobalForceToWheel(i, new Vec3(0f, -9.81f * wheel.Def.mass, 0f), () -> "Gravity");
+					forces.AddDefaultWheelSpring(vehicle, wheel);
+				}
+			}
 
-		Wheels.ForEach(wheel -> wheel.ParentTick(vehicle));
+			//Vec3 motion = vehicle.getDeltaMovement();
+			//motion = motion.add(0f, -9.81f / 20f, 0f);
+			//vehicle.setDeltaMovement(motion);
+			//vehicle.move(MoverType.SELF, motion);
+		}
+
+
+		// Stash our latest Force Model for debug rendering
+		ForcesLastFrame = forces;
+		if(!PAUSE)
+		{
+			// Now process the results of the Force Model
+			Vec3 motion = vehicle.GetVelocity();
+			motion = forces.ApplyLinearForcesToCore(motion, vehicle.GetWorldToEntity().GetCurrent(), Def.mass);
+			motion = forces.ApplySpringForcesToCore(motion, vehicle.GetWorldToEntity().GetCurrent(), Def.mass, vehicle.Hierarchy()::GetWorldToPartCurrent);
+			motion = forces.ApplyDampeningToCore(motion);
+			vehicle.SetVelocity(motion);
+			vehicle.ApplyVelocity();
+		}
+
+		vehicle.SyncEntityToTransform();
+
+
+		// Wheels need to move too
+		for(int i = 0; i < Wheels.All().size(); i++)
+		{
+			WheelEntity wheel = Wheels.ByIndex(i);
+			if(wheel != null)
+				wheel.PhysicsTick(vehicle, i, forces);
+		}
 	}
 
 	@Override

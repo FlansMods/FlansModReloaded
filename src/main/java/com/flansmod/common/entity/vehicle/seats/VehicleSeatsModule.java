@@ -23,6 +23,7 @@ import java.util.*;
 public class VehicleSeatsModule implements IVehicleModule
 {
 	public static final int INVALID_SEAT_INDEX = -1;
+	public static final String INVALID_SEAT_PATH = "body/seat_-1";
 
 	@Nonnull
 	public final List<String> SeatOrdering = new ArrayList<>();
@@ -32,29 +33,36 @@ public class VehicleSeatsModule implements IVehicleModule
 	public VehicleSeatsModule(@Nonnull VehicleDefinitionHierarchy hierarchy,
 							  @Nonnull VehicleEntity vehicle)
 	{
-		hierarchy.ForEachSeat((seatDef) -> {
-				SeatStates.put(seatDef.attachedTo, new VehicleSeatSaveState(seatDef));
+		hierarchy.ForEachSeat((seatPath, seatDef) -> {
+				SeatStates.put(seatPath, new VehicleSeatSaveState(seatDef));
 		});
 
 		SeatOrdering.addAll(SeatStates.keySet());
 	}
 
 	@Nonnull
-	protected VehicleSeatSaveState GetSeat(@Nonnull String vehiclePart) {
-		return SeatStates.getOrDefault(vehiclePart, VehicleSeatSaveState.INVALID);
+	protected VehicleSeatSaveState GetSeat(@Nonnull String seatPath) {
+		return SeatStates.getOrDefault(seatPath, VehicleSeatSaveState.INVALID);
 	}
 	@Nonnull
 	protected VehicleSeatSaveState GetSeat(int seatIndex) {
 		return SeatStates.getOrDefault(SeatOrdering.get(seatIndex), VehicleSeatSaveState.INVALID);
 	}
-	@Nullable
-	public Entity GetPassengerInSeat(int seatIndex)
+
+	public int GetSeatIndexOf(@Nonnull Entity entity)
 	{
-		return GetSeat(seatIndex).Passenger;
+		for(int i = 0; i < SeatOrdering.size(); i++)
+		{
+			if(GetSeat(i).Passenger == entity)
+				return i;
+		}
+		return INVALID_SEAT_INDEX;
 	}
-
-
-
+	@Nullable
+	public Entity GetPassengerInSeat(@Nonnull String seatPath)
+	{
+		return GetSeat(seatPath).Passenger;
+	}
 	public int GetSeatIndexForNewPassenger(@Nonnull Entity passenger)
 	{
 		// TODO:
@@ -64,6 +72,23 @@ public class VehicleSeatsModule implements IVehicleModule
 	public int GetControlSeatIndex()
 	{
 		return INVALID_SEAT_INDEX;
+	}
+	@Nullable
+	public Entity GetControllingPassenger()
+	{
+		return GetSeat(GetControlSeatPath()).Passenger;
+	}
+	@Nonnull
+	public String GetControlSeatPath()
+	{
+		for(int i = 0; i < SeatOrdering.size(); i++)
+		{
+			//if(SeatStates.get(SeatOrdering.get(i)).IsController())
+			{
+				return SeatOrdering.get(i);
+			}
+		}
+		return INVALID_SEAT_PATH;
 	}
 
 	@Nonnull
@@ -163,16 +188,16 @@ public class VehicleSeatsModule implements IVehicleModule
 		Map<ControlSchemeDefinition, VehicleInputState> statesToTick = new HashMap<>();
 		for(int i = 0; i < SeatOrdering.size(); i++)
 		{
-			String seatName = SeatOrdering.get(i);
-			VehicleSeatSaveState seatState = SeatStates.get(seatName);
+			String seatPath = SeatOrdering.get(i);
+			VehicleSeatSaveState seatState = SeatStates.get(seatPath);
 
 			// If there is someone in this seat, process inputs
-			Entity passenger = GetPassengerInSeat(i);
+			Entity passenger = GetPassengerInSeat(seatPath);
 			if(passenger != null) // TODO: && passenger.canDriveVehicle
 			{
 				if(passenger instanceof Player player && player.isLocalPlayer())
 				{
-					List<ControlSchemeDefinition> controlSchemes = GetActiveControllersForSeat(seatName, vehicle.ModalStates);
+					List<ControlSchemeDefinition> controlSchemes = GetActiveControllersForSeat(seatPath, vehicle.ModalStates);
 
 					Client_GetLocalPlayerInputs(vehicle, controlSchemes, seatState.Def.inputs);
 

@@ -5,7 +5,10 @@ import com.flansmod.common.entity.vehicle.VehicleEntity;
 import com.flansmod.common.types.vehicles.elements.DamageablePartDefinition;
 import com.flansmod.util.Maths;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.syncher.EntityDataSerializer;
 import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.item.ItemStack;
 import org.checkerframework.checker.units.qual.Current;
 
 import javax.annotation.Nonnull;
