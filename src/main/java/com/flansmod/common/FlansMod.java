@@ -400,6 +400,7 @@ public class FlansMod
         ACTIONS_SERVER.HookServer(modEventBus);
         FlansModPacketHandler.RegisterMessages();
         ContextSerializers.RegisterSerializers();
+        VehicleEntity.RegisterSerializers();
         modEventBus.addListener(this::OnRegsiterEvent);
 
         new NpcRelationshipCapabilityAttacher();

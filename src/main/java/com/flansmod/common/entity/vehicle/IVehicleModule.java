@@ -12,6 +12,5 @@ import javax.annotation.Nullable;
 public interface IVehicleModule extends IVehicleSaveNode
 {
 	void Tick(@Nonnull VehicleEntity vehicle);
-	void DefineSyncedData(@Nonnull SynchedEntityData entityData);
 	@Nullable default Container AsInventory() { return null; }
 }

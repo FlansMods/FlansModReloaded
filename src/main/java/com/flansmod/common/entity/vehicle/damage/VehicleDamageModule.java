@@ -2,8 +2,10 @@ package com.flansmod.common.entity.vehicle.damage;
 
 import com.flansmod.common.FlansMod;
 import com.flansmod.common.entity.vehicle.IVehicleModule;
+import com.flansmod.common.entity.vehicle.PerPartMap;
 import com.flansmod.common.entity.vehicle.VehicleDefinitionHierarchy;
 import com.flansmod.common.entity.vehicle.VehicleEntity;
+import com.flansmod.common.entity.vehicle.guns.VehicleGunSaveState;
 import com.flansmod.common.types.vehicles.VehicleDefinition;
 import com.flansmod.common.types.vehicles.elements.DamageablePartDefinition;
 import com.flansmod.util.Maths;
@@ -22,9 +24,31 @@ import java.util.Map;
 
 public class VehicleDamageModule implements IVehicleModule
 {
-	private static final Map<String, EntityDataAccessor<Float>> PER_PART_HEALTH = new HashMap<>();
-	private SynchedEntityData VehicleDataSynchronizer;
+	public record DamageState(float Health)
+	{
+		public static EntityDataSerializer<DamageState> SERIALIZER = new EntityDataSerializer.ForValueType<>()
+		{
+			@Override
+			public void write(@Nonnull FriendlyByteBuf buf, @Nonnull DamageState data)
+			{
+				EntityDataSerializers.FLOAT.write(buf, data.Health);
+			}
+			@Override
+			@Nonnull
+			public DamageState read(@Nonnull FriendlyByteBuf buf)
+			{
+				return new DamageState(EntityDataSerializers.FLOAT.read(buf));
+			}
+		};
+	}
+	public static final EntityDataSerializer<PerPartMap<DamageState>> DAMAGE_SERIALIZER =
+		PerPartMap.SERIALIZER(DamageState.SERIALIZER);
+	public static final EntityDataAccessor<PerPartMap<DamageState>> DAMAGE_ACCESSOR =
+		SynchedEntityData.defineId(VehicleEntity.class, DAMAGE_SERIALIZER);
+
 	public final Map<String, DamageablePartDefinition> DamageDefinitions = new HashMap<>();
+	@Nonnull
+	private final SynchedEntityData VehicleDataSynchronizer;
 
 	public VehicleDamageModule(@Nonnull VehicleDefinitionHierarchy heirarchy,
 							   @Nonnull VehicleEntity vehicle)
@@ -36,36 +60,21 @@ public class VehicleDamageModule implements IVehicleModule
 			FlansMod.LOGGER.warn("VehicleDamageModule for " + vehicle.Def() + " had no 'body' collider");
 			DamageDefinitions.put("body", DamageablePartDefinition.DEFAULT_BODY);
 		}
+		VehicleDataSynchronizer = vehicle.getEntityData();
 	}
 
-	@Override
-	public void DefineSyncedData(@Nonnull SynchedEntityData entityData)
-	{
-		VehicleDataSynchronizer = entityData;
-		for(var kvp : DamageDefinitions.entrySet())
-		{
-			EntityDataAccessor<Float> healthSync = SynchedEntityData.defineId(VehicleEntity.class, EntityDataSerializers.FLOAT);
-			PER_PART_HEALTH.put(kvp.getKey(), healthSync);
-			entityData.define(healthSync, kvp.getValue().maxHealth);
-		}
-	}
+	@Nonnull public PerPartMap<DamageState> GetDamageMap() { return VehicleDataSynchronizer.get(DAMAGE_ACCESSOR); }
+	public void SetDamageMap(@Nonnull PerPartMap<DamageState> map) { VehicleDataSynchronizer.set(DAMAGE_ACCESSOR, map); }
 
 	public float GetHealthOf(@Nonnull String partName)
 	{
-		EntityDataAccessor<Float> healthAccessor = PER_PART_HEALTH.get(partName);
-		if (healthAccessor != null)
-		{
-			return VehicleDataSynchronizer.get(healthAccessor);
-		}
-		return 0f;
+		return GetDamageMap().ApplyOrDefault(partName, DamageState::Health, 0f);
 	}
 	public void SetHealthOf(@Nonnull String partName, float health)
 	{
-		EntityDataAccessor<Float> healthAccessor = PER_PART_HEALTH.get(partName);
-		if (healthAccessor != null)
-		{
-			VehicleDataSynchronizer.set(healthAccessor, health);
-		}
+		PerPartMap<DamageState> map = GetDamageMap();
+		map.Put(partName, new DamageState(health));
+		SetDamageMap(map);
 	}
 	@Nonnull
 	public DamageablePartDefinition GetDef(@Nonnull String partName) { return DamageDefinitions.getOrDefault(partName, DamageablePartDefinition.DEFAULT_BODY); }
@@ -80,8 +89,9 @@ public class VehicleDamageModule implements IVehicleModule
 	public float GetTotalHealth()
 	{
 		float totalHealth = 0.0f;
-		for(var accessor : PER_PART_HEALTH.values())
-			totalHealth += VehicleDataSynchronizer.get(accessor);
+		PerPartMap<DamageState> map = GetDamageMap();
+		for(var damageState : map.Values.values())
+			totalHealth += damageState.Health;
 		return totalHealth;
 	}
 	public boolean HasPart(@Nonnull String partName)

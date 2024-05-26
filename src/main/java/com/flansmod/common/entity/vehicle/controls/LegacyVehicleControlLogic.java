@@ -85,7 +85,7 @@ public class LegacyVehicleControlLogic extends ControlLogic
 		// TODO: Weave in (wheelsYaw > 0 ? type.turnLeftModifier : type.turnRightModifier)
 		float steering = inputs.GetValue(EVehicleAxis.Yaw);
 
-		float engineSpeed = vehicle.Engine().GetEngine(SingleEngineKey).maxSpeed;
+		float engineSpeed = vehicle.Engine().GetEngineDef(SingleEngineKey).maxSpeed;
 		// -------------------------------------------------------------------------------------
 
 		WheelEntity[] wheels = vehicle.Physics().AllWheels().toArray(new WheelEntity[0]);
@@ -366,7 +366,7 @@ public class LegacyVehicleControlLogic extends ControlLogic
 
 					if(!level.isClientSide && blockHardness <= collisionForce)
 					{
-						level.destroyBlock(pos, true, vehicle.Seats().GetControllingPassenger());
+						level.destroyBlock(pos, true, vehicle.Seats().GetControllingPassenger(vehicle));
 					}
 				}
 				else

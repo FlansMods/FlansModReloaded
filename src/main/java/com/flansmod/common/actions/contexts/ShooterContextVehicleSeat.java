@@ -62,7 +62,7 @@ public class ShooterContextVehicleSeat extends ShooterContextVehicle
 	@Nullable
 	public Entity EntityInThisSeat()
 	{
-		return Vehicle.Seats().GetPassengerInSeat(SeatPath);
+		return Vehicle.Seats().GetPassengerInSeat(SeatPath, Vehicle.getPassengers());
 	}
 	public boolean IsOccupied() { return EntityInThisSeat() != null; }
 }

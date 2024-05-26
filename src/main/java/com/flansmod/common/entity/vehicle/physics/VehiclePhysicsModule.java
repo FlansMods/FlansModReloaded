@@ -2,11 +2,13 @@ package com.flansmod.common.entity.vehicle.physics;
 
 import com.flansmod.common.FlansMod;
 import com.flansmod.common.entity.vehicle.IVehicleModule;
+import com.flansmod.common.entity.vehicle.PerPartMap;
 import com.flansmod.common.entity.vehicle.VehicleEntity;
 import com.flansmod.common.entity.vehicle.controls.ControlLogic;
 import com.flansmod.common.entity.vehicle.controls.ControlLogics;
 import com.flansmod.common.entity.vehicle.controls.ForceModel;
 import com.flansmod.common.entity.vehicle.controls.VehicleInputState;
+import com.flansmod.common.entity.vehicle.guns.VehicleGunSaveState;
 import com.flansmod.common.entity.vehicle.hierarchy.WheelEntity;
 import com.flansmod.common.types.vehicles.ControlSchemeDefinition;
 import com.flansmod.common.types.vehicles.elements.EControlLogicHint;
@@ -14,6 +16,7 @@ import com.flansmod.common.types.vehicles.elements.VehiclePhysicsDefinition;
 import com.flansmod.common.types.vehicles.elements.WheelDefinition;
 import com.flansmod.util.Transform;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntitySelector;
@@ -41,14 +44,9 @@ public class VehiclePhysicsModule implements IVehicleModule
 	// Part lookups
 	private final MultiLookup<EControlLogicHint, WheelEntity> Wheels = new MultiLookup<>();
 	private final MultiLookup<EControlLogicHint, VehiclePropellerSaveState> Propellers = new MultiLookup<>();
-
-
-
 	private final Map<ResourceLocation, ControlLogic> Controllers = new HashMap<>();
 	@Nonnull
 	private ResourceLocation SelectedControllerLocation = new ResourceLocation(FlansMod.MODID, "control_schemes/null");
-
-
 
 
 	public VehiclePhysicsModule(@Nonnull VehiclePhysicsDefinition def)
@@ -128,9 +126,6 @@ public class VehiclePhysicsModule implements IVehicleModule
 			}
 		}
 	}
-
-
-
 	@Override
 	public void Tick(@Nonnull VehicleEntity vehicle)
 	{

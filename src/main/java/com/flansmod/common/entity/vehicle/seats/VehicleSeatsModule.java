@@ -3,14 +3,19 @@ package com.flansmod.common.entity.vehicle.seats;
 import com.flansmod.client.input.ClientInputHooks;
 import com.flansmod.common.FlansMod;
 import com.flansmod.common.entity.vehicle.IVehicleModule;
+import com.flansmod.common.entity.vehicle.PerPartMap;
 import com.flansmod.common.entity.vehicle.VehicleDefinitionHierarchy;
 import com.flansmod.common.entity.vehicle.VehicleEntity;
 import com.flansmod.common.entity.vehicle.controls.VehicleInputState;
 import com.flansmod.common.types.vehicles.ControlSchemeDefinition;
 import com.flansmod.common.types.vehicles.elements.ControlSchemeAxisDefinition;
 import com.flansmod.common.types.vehicles.elements.InputDefinition;
+import com.flansmod.common.types.vehicles.elements.SeatDefinition;
 import com.flansmod.common.types.vehicles.elements.VehicleControlOptionDefinition;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.syncher.EntityDataAccessor;
+import net.minecraft.network.syncher.EntityDataSerializer;
+import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.api.distmarker.Dist;
@@ -24,59 +29,54 @@ public class VehicleSeatsModule implements IVehicleModule
 {
 	public static final int INVALID_SEAT_INDEX = -1;
 	public static final String INVALID_SEAT_PATH = "body/seat_-1";
+	public static final EntityDataSerializer<PerPartMap<VehicleSeatSaveState>> SEATS_SERIALIZER =
+		PerPartMap.SERIALIZER(VehicleSeatSaveState.SERIALIZER);
+	public static final EntityDataAccessor<PerPartMap<VehicleSeatSaveState>> SEATS_ACCESSOR =
+		SynchedEntityData.defineId(VehicleEntity.class, SEATS_SERIALIZER);
+
+
 
 	@Nonnull
 	public final List<String> SeatOrdering = new ArrayList<>();
 	@Nonnull
-	public final Map<String, VehicleSeatSaveState> SeatStates = new HashMap<>();
+	public final Map<String, SeatDefinition> SeatDefs = new HashMap<>();
+	@Nonnull
+	private final SynchedEntityData VehicleDataSynchronizer;
+
+
 
 	public VehicleSeatsModule(@Nonnull VehicleDefinitionHierarchy hierarchy,
 							  @Nonnull VehicleEntity vehicle)
 	{
-		hierarchy.ForEachSeat((seatPath, seatDef) -> {
-				SeatStates.put(seatPath, new VehicleSeatSaveState(seatDef));
-		});
-
-		SeatOrdering.addAll(SeatStates.keySet());
+		hierarchy.ForEachSeat(SeatDefs::put);
+		SeatOrdering.addAll(SeatDefs.keySet());
+		VehicleDataSynchronizer = vehicle.getEntityData();
 	}
 
 	@Nonnull
-	protected VehicleSeatSaveState GetSeat(@Nonnull String seatPath) {
-		return SeatStates.getOrDefault(seatPath, VehicleSeatSaveState.INVALID);
+	public PerPartMap<VehicleSeatSaveState> GetSeatSaveData() { return VehicleDataSynchronizer.get(SEATS_ACCESSOR); }
+	public void SetSeatSaveData(@Nonnull PerPartMap<VehicleSeatSaveState> map) { VehicleDataSynchronizer.set(SEATS_ACCESSOR, map); }
+
+
+	// Seat functions by SeatPath
+	@Nonnull
+	protected VehicleSeatSaveState GetSeat(@Nonnull String seatPath)
+	{
+		return GetSeatSaveData().GetOrDefault(seatPath, VehicleSeatSaveState.INVALID);
 	}
 	@Nonnull
-	protected VehicleSeatSaveState GetSeat(int seatIndex) {
-		return SeatStates.getOrDefault(SeatOrdering.get(seatIndex), VehicleSeatSaveState.INVALID);
-	}
-
-	public int GetSeatIndexOf(@Nonnull Entity entity)
+	public UUID GetPassengerIDInSeat(@Nonnull String seatPath)
 	{
-		for(int i = 0; i < SeatOrdering.size(); i++)
-		{
-			if(GetSeat(i).Passenger == entity)
-				return i;
-		}
-		return INVALID_SEAT_INDEX;
+		return GetSeat(seatPath).PassengerID;
 	}
 	@Nullable
-	public Entity GetPassengerInSeat(@Nonnull String seatPath)
+	public Entity GetPassengerInSeat(@Nonnull String seatPath, @Nonnull List<Entity> passengers)
 	{
-		return GetSeat(seatPath).Passenger;
-	}
-	public int GetSeatIndexForNewPassenger(@Nonnull Entity passenger)
-	{
-		// TODO:
-		return INVALID_SEAT_INDEX;
-	}
-	// Minecraft needs this, but our vehicles are more complex, other seats might control sub-pieces
-	public int GetControlSeatIndex()
-	{
-		return INVALID_SEAT_INDEX;
-	}
-	@Nullable
-	public Entity GetControllingPassenger()
-	{
-		return GetSeat(GetControlSeatPath()).Passenger;
+		UUID id = GetPassengerIDInSeat(seatPath);
+		for(Entity entity : passengers)
+			if(entity.getUUID().equals(id))
+				return entity;
+		return null;
 	}
 	@Nonnull
 	public String GetControlSeatPath()
@@ -91,12 +91,49 @@ public class VehicleSeatsModule implements IVehicleModule
 		return INVALID_SEAT_PATH;
 	}
 
+
+	// Seat functions by Index
+	@Nonnull
+	protected VehicleSeatSaveState GetSeat(int seatIndex)
+	{
+		return GetSeat(SeatOrdering.get(seatIndex));
+	}
+	public int GetSeatIndexOf(@Nonnull Entity entity)
+	{
+		for(int i = 0; i < SeatOrdering.size(); i++)
+		{
+			if(GetSeat(i).PassengerID == entity.getUUID())
+				return i;
+		}
+		return INVALID_SEAT_INDEX;
+	}
+	public int GetSeatIndexForNewPassenger(@Nonnull Entity passenger)
+	{
+		for(int i = 0; i < SeatDefs.size(); i++)
+		{
+			if(GetSeat(i).IsEmpty())
+				return i;
+		}
+		return INVALID_SEAT_INDEX;
+	}
+	// Minecraft needs this, but our vehicles are more complex, other seats might control sub-pieces
+	public int GetControlSeatIndex()
+	{
+		return INVALID_SEAT_INDEX;
+	}
+
+
+	@Nullable
+	public Entity GetControllingPassenger(@Nonnull VehicleEntity vehicle)
+	{
+		return GetPassengerInSeat(GetControlSeatPath(), vehicle.getPassengers());
+	}
 	@Nonnull
 	public List<ControlSchemeDefinition> GetAllValidControllers()
 	{
 		List<ControlSchemeDefinition> list = new ArrayList<>();
-		for(var seatState : SeatStates.values())
-			for(ControlSchemeDefinition controlScheme : seatState.Def.Controllers.get().values())
+		for(var seatDef : SeatDefs.values())
+			for(ControlSchemeDefinition controlScheme : seatDef.Controllers.get().values())
 			{
 				if(!list.contains(controlScheme))
 					list.add(controlScheme);
@@ -106,23 +143,23 @@ public class VehicleSeatsModule implements IVehicleModule
 	@Nonnull
 	public Collection<ControlSchemeDefinition> GetValidControllersForSeat(@Nonnull String seatName)
 	{
-		VehicleSeatSaveState seatState = SeatStates.get(seatName);
-		if(seatState != null)
-			return seatState.Def.Controllers.get().values();
+		SeatDefinition seatDef = SeatDefs.get(seatName);
+		if(seatDef != null)
+			return seatDef.Controllers.get().values();
 		return List.of();
 	}
 	@Nonnull
 	public List<ControlSchemeDefinition> GetActiveControllersForSeat(@Nonnull String seatName,
 																	 @Nonnull Map<String, String> modes)
 	{
-		VehicleSeatSaveState seatState = SeatStates.get(seatName);
-		if(seatState != null)
+		SeatDefinition seatDef = SeatDefs.get(seatName);
+		if(seatDef != null)
 		{
 			List<ControlSchemeDefinition> matches = new ArrayList<>();
-			for(VehicleControlOptionDefinition option : seatState.Def.controllerOptions)
+			for(VehicleControlOptionDefinition option : seatDef.controllerOptions)
 			{
 				if(option.Passes(modes))
-					matches.add(seatState.Def.Controllers.get().get(option.key));
+					matches.add(seatDef.Controllers.get().get(option.key));
 			}
 			return matches;
 		}
@@ -132,13 +169,13 @@ public class VehicleSeatsModule implements IVehicleModule
 	public List<ControlSchemeDefinition> GetAllActiveControllers(@Nonnull Map<String, String> modes)
 	{
 		List<ControlSchemeDefinition> matches = new ArrayList<>();
-		for(VehicleSeatSaveState seatState : SeatStates.values())
+		for(SeatDefinition seatDef : SeatDefs.values())
 		{
-			for(VehicleControlOptionDefinition option : seatState.Def.controllerOptions)
+			for(VehicleControlOptionDefinition option : seatDef.controllerOptions)
 			{
 				if(option.Passes(modes))
 				{
-					ControlSchemeDefinition scheme = seatState.Def.Controllers.get().get(option.key);
+					ControlSchemeDefinition scheme = seatDef.Controllers.get().get(option.key);
 					if(scheme != null && !matches.contains(scheme))
 						matches.add(scheme);
 				}
@@ -189,28 +226,31 @@ public class VehicleSeatsModule implements IVehicleModule
 		for(int i = 0; i < SeatOrdering.size(); i++)
 		{
 			String seatPath = SeatOrdering.get(i);
-			VehicleSeatSaveState seatState = SeatStates.get(seatPath);
+			SeatDefinition seatDef = SeatDefs.get(seatPath);
 
-			// If there is someone in this seat, process inputs
-			Entity passenger = GetPassengerInSeat(seatPath);
-			if(passenger != null) // TODO: && passenger.canDriveVehicle
+			if(seatDef != null)
 			{
-				if(passenger instanceof Player player && player.isLocalPlayer())
+				// If there is someone in this seat, process inputs
+				Entity passenger = GetPassengerInSeat(seatPath, vehicle.getPassengers());
+				if (passenger != null) // TODO: && passenger.canDriveVehicle
 				{
-					List<ControlSchemeDefinition> controlSchemes = GetActiveControllersForSeat(seatPath, vehicle.ModalStates);
-
-					Client_GetLocalPlayerInputs(vehicle, controlSchemes, seatState.Def.inputs);
-
-					for(ControlSchemeDefinition scheme : controlSchemes)
+					if (passenger instanceof Player player && player.isLocalPlayer())
 					{
-						statesToTick.put(scheme, vehicle.GetInputStateFor(scheme));
-					}
-				}
-				//else if(isControlledByAI())
-				//{
-//
-				//}
+						List<ControlSchemeDefinition> controlSchemes = GetActiveControllersForSeat(seatPath, vehicle.ModalStates);
 
+						Client_GetLocalPlayerInputs(vehicle, controlSchemes, seatDef.inputs);
+
+						for (ControlSchemeDefinition scheme : controlSchemes)
+						{
+							statesToTick.put(scheme, vehicle.GetInputStateFor(scheme));
+						}
+					}
+					//else if(isControlledByAI())
+					//{
+//
+					//}
+
+				}
 			}
 		}
 
@@ -219,29 +259,34 @@ public class VehicleSeatsModule implements IVehicleModule
 			kvp.getValue().Tick(kvp.getKey());
 		}
 	}
-
 	@Override
 	public void Load(@Nonnull VehicleEntity vehicle, @Nonnull CompoundTag tags)
 	{
+		PerPartMap<VehicleSeatSaveState> seatMap = GetSeatSaveData();
 		for(String key : tags.getAllKeys())
 		{
-			if(SeatStates.containsKey(key))
+			if(SeatDefs.containsKey(key))
 			{
-				SeatStates.get(key).Load(vehicle, tags.getCompound(key));
+				VehicleSeatSaveState seatState = new VehicleSeatSaveState();
+				seatState.Load(vehicle, tags.getCompound(key));
+				seatMap.Put(key, seatState);
 			}
 			else FlansMod.LOGGER.warn("Seat key " + key + " was stored in vehicle save data, but this vehicle doesn't have that part");
 		}
+		SetSeatSaveData(seatMap);
 	}
 
 	@Nonnull
 	@Override
 	public CompoundTag Save(@Nonnull VehicleEntity vehicle)
 	{
+		PerPartMap<VehicleSeatSaveState> map = GetSeatSaveData();
 		CompoundTag tags = new CompoundTag();
-		for(var kvp : SeatStates.entrySet())
+		for (var kvp : SeatDefs.entrySet())
 		{
-			CompoundTag seatTags = kvp.getValue().Save(vehicle);
-			tags.put(kvp.getKey(), seatTags);
+			String partName = kvp.getKey();
+			if(map.Values.containsKey(partName.hashCode()))
+				tags.put(partName, map.Values.get(partName.hashCode()).Save(vehicle));
 		}
 		return tags;
 	}

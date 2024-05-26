@@ -3,16 +3,19 @@ package com.flansmod.common.entity.vehicle.hierarchy;
 import com.flansmod.common.FlansMod;
 import com.flansmod.common.entity.ITransformChildEntity;
 import com.flansmod.common.entity.ITransformPair;
-import com.flansmod.common.entity.vehicle.ITransformEntity;
-import com.flansmod.common.entity.vehicle.IVehicleModule;
-import com.flansmod.common.entity.vehicle.VehicleDefinitionHierarchy;
-import com.flansmod.common.entity.vehicle.VehicleEntity;
+import com.flansmod.common.entity.vehicle.*;
 import com.flansmod.common.entity.vehicle.controls.ForceModel;
+import com.flansmod.common.entity.vehicle.damage.VehicleDamageModule;
 import com.flansmod.common.entity.vehicle.damage.VehicleHitResult;
+import com.flansmod.common.types.vehicles.elements.ArticulatedPartDefinition;
 import com.flansmod.util.Maths;
 import com.flansmod.util.Transform;
 import com.flansmod.util.TransformStack;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.syncher.EntityDataAccessor;
+import net.minecraft.network.syncher.EntityDataSerializer;
+import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 import org.joml.Vector3d;
@@ -25,18 +28,45 @@ import java.util.Map;
 
 public class VehicleHierarchyModule implements IVehicleModule
 {
+	public record ArticulationInstance(float Parameter, float Velocity)
+	{
+		public static final EntityDataSerializer<ArticulationInstance> SERIALIZER = new EntityDataSerializer.ForValueType<>()
+		{
+			@Override
+			public void write(@Nonnull FriendlyByteBuf buf, @Nonnull ArticulationInstance data)
+			{
+				buf.writeFloat(data.Parameter);
+				buf.writeFloat(data.Velocity);
+			}
+			@Override
+			@Nonnull
+			public ArticulationInstance read(@Nonnull FriendlyByteBuf buf)
+			{
+				float param = buf.readFloat();
+				float velocity = buf.readFloat();
+				return new ArticulationInstance(param, velocity);
+			}
+		};
+	}
+	public static final EntityDataSerializer<PerPartMap<ArticulationInstance>> ARTICULATIONS_SERIALIZER =
+		PerPartMap.SERIALIZER(ArticulationInstance.SERIALIZER);
+	public static final EntityDataAccessor<PerPartMap<ArticulationInstance>> ARTICULATIONS_ACCESSOR =
+		SynchedEntityData.defineId(VehicleEntity.class, ARTICULATIONS_SERIALIZER);
+
 	@Nonnull
 	public final VehicleDefinitionHierarchy Reference;
 	@Nullable
 	public final VehicleDefinitionHierarchy.Node RootDefinitionNode;
 	@Nonnull
-	public final Map<String, VehicleArticulationSaveState> ArticulationStates = new HashMap<>();
+	public final Map<String, ArticulatedPartDefinition> ArticulatedParts = new HashMap<>();
 	@Nonnull
 	public final Map<String, ITransformChildEntity> ChildEntities = new HashMap<>();
 	@Nonnull
 	public Transform RootTransform = Transform.Identity();
 	@Nonnull
 	public Transform RootTransformPrev = Transform.Identity();
+	@Nonnull
+	private final SynchedEntityData VehicleDataSynchronizer;
 
 	public VehicleHierarchyModule(@Nonnull VehicleDefinitionHierarchy hierarchy,
 								  @Nonnull VehicleEntity vehicle)
@@ -44,10 +74,12 @@ public class VehicleHierarchyModule implements IVehicleModule
 		Reference = hierarchy;
 		RootDefinitionNode = hierarchy.Find("body");
 
-		hierarchy.ForEachArticulation((nodePath, articulationDef) -> {
-			ArticulationStates.put(nodePath, new VehicleArticulationSaveState(articulationDef));
-		});
+		hierarchy.ForEachArticulation(ArticulatedParts::put);
+		VehicleDataSynchronizer = vehicle.getEntityData();
 	}
+
+	@Nonnull public PerPartMap<ArticulationInstance> GetArticulationMap() { return VehicleDataSynchronizer.get(ARTICULATIONS_ACCESSOR); }
+	public void SetArticulationMap(@Nonnull PerPartMap<ArticulationInstance> map) { VehicleDataSynchronizer.set(ARTICULATIONS_ACCESSOR, map); }
 
 	public void SetPosition(double x, double y, double z) { RootTransform = RootTransform.WithPosition(x, y, z); }
 	public void SetPosition(@Nonnull Vec3 pos) { RootTransform = RootTransform.WithPosition(pos); }
@@ -60,17 +92,60 @@ public class VehicleHierarchyModule implements IVehicleModule
 	public void SetEulerAngles(float pitch, float yaw, float roll) { RootTransform = RootTransform.WithEulerAngles(pitch, yaw, roll); }
 
 	// Velocity is units per second, NOT per tick
-	public void SetArticulationVelocity(@Nonnull String key, float velocity)
+	// Articulation Accessors
+	public void SetArticulationParameterByHash(int hash, float parameter)
 	{
-		if(ArticulationStates.containsKey(key))
-			ArticulationStates.get(key).SetVelocity(velocity);
+		PerPartMap<ArticulationInstance> map = GetArticulationMap();
+		float existingVelocity = map.Values.containsKey(hash) ? map.Values.get(hash).Velocity : 0.0f;
+		map.Values.put(hash, new ArticulationInstance(parameter, existingVelocity));
+		SetArticulationMap(map);
 	}
-	public float GetArticulationVelocity(@Nonnull String key)
+	public void SetArticulationVelocityByHash(int hash, float velocity)
 	{
-		if(ArticulationStates.containsKey(key))
-			return ArticulationStates.get(key).GetVelocityUnitsPerSecond();
-		return 0.0f;
+		PerPartMap<ArticulationInstance> map = GetArticulationMap();
+		float existingParam = map.Values.containsKey(hash) ? map.Values.get(hash).Parameter : 0.0f;
+		map.Values.put(hash, new ArticulationInstance(existingParam, velocity));
+		SetArticulationMap(map);
 	}
+	public float GetArticulationParameterByHash(int hash)
+	{
+		PerPartMap<ArticulationInstance> map = GetArticulationMap();
+		return map.Values.containsKey(hash) ? map.Values.get(hash).Parameter : 0.0f;
+	}
+	public float GetArticulationVelocityByHash(int hash)
+	{
+		PerPartMap<ArticulationInstance> map = GetArticulationMap();
+		return map.Values.containsKey(hash) ? map.Values.get(hash).Velocity : 0.0f;
+	}
+
+	public void SetArticulationParameter(@Nonnull String partName, float parameter)
+	{
+		SetArticulationParameterByHash(partName.hashCode(), parameter);
+	}
+	public float GetArticulationParameter(@Nonnull String partName)
+	{
+		return GetArticulationParameterByHash(partName.hashCode());
+	}
+	public void SetArticulationVelocity(@Nonnull String partName, float velocity)
+	{
+		SetArticulationVelocityByHash(partName.hashCode(), velocity);
+	}
+	public float GetArticulationVelocity(@Nonnull String partName)
+	{
+		return GetArticulationVelocityByHash(partName.hashCode());
+	}
+	@Nonnull
+	public Transform GetArticulationTransform(@Nonnull String partName)
+	{
+		ArticulatedPartDefinition def = ArticulatedParts.get(partName);
+		if (def != null && def.active)
+		{
+			float parameter = GetArticulationParameter(partName);
+			return def.Apply(parameter);
+		}
+		return Transform.IDENTITY;
+	}
+
 	public void RegisterWheel(int wheelIndex, @Nonnull WheelEntity wheel)
 	{
 		ChildEntities.put(ForceModel.Wheel(wheelIndex), wheel);
@@ -123,8 +198,9 @@ public class VehicleHierarchyModule implements IVehicleModule
 	{
 		if(node.Def.IsArticulated())
 		{
-			VehicleArticulationSaveState articulation = ArticulationStates.get(node.Def.partName);
-			return articulation.GetPartLocalPrevious();
+			float articulationParameter = GetArticulationParameter(node.Def.partName);
+			float articulationVelocity = GetArticulationVelocity(node.Def.partName);
+			return node.Def.articulation.Apply(articulationParameter - articulationVelocity);
 		}
 		return node.Def.LocalTransform.get();
 	}
@@ -133,8 +209,8 @@ public class VehicleHierarchyModule implements IVehicleModule
 	{
 		if(node.Def.IsArticulated())
 		{
-			VehicleArticulationSaveState articulation = ArticulationStates.get(node.Def.partName);
-			return articulation.GetPartLocalCurrent();
+			float articulationParameter = GetArticulationParameter(node.Def.partName);
+			return node.Def.articulation.Apply(articulationParameter);
 		}
 		return node.Def.LocalTransform.get();
 	}
@@ -203,11 +279,13 @@ public class VehicleHierarchyModule implements IVehicleModule
 	@Override
 	public void Load(@Nonnull VehicleEntity vehicle, @Nonnull CompoundTag tags)
 	{
+		PerPartMap<ArticulationInstance> articulation = GetArticulationMap();
 		for(String key : tags.getAllKeys())
 		{
-			if(ArticulationStates.containsKey(key))
+			CompoundTag articulationTags = tags.getCompound(key);
+			if(articulation.Values.containsKey(key.hashCode()))
 			{
-				ArticulationStates.get(key).Load(vehicle, tags.getCompound(key));
+				articulation.Values.put(key.hashCode(), new ArticulationInstance(articulationTags.getFloat("param"), articulationTags.getFloat("velocity")));
 			}
 			else FlansMod.LOGGER.warn("Articulation key " + key + " was stored in vehicle save data, but this vehicle doesn't have that part");
 		}
@@ -217,10 +295,14 @@ public class VehicleHierarchyModule implements IVehicleModule
 	@Override
 	public CompoundTag Save(@Nonnull VehicleEntity vehicle)
 	{
+		PerPartMap<ArticulationInstance> map = GetArticulationMap();
 		CompoundTag tags = new CompoundTag();
-		for(var kvp : ArticulationStates.entrySet())
+		for(var kvp : ArticulatedParts.entrySet())
 		{
-			tags.put(kvp.getKey(), kvp.getValue().Save(vehicle));
+			CompoundTag articulationTags = new CompoundTag();
+			articulationTags.putFloat("param", GetArticulationParameter(kvp.getKey()));
+			articulationTags.putFloat("velocity", GetArticulationVelocity(kvp.getKey()));
+			tags.put(kvp.getKey(), articulationTags);
 		}
 		return tags;
 	}

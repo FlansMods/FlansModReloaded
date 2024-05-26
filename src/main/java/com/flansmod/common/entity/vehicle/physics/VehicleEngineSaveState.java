@@ -3,14 +3,14 @@ package com.flansmod.common.entity.vehicle.physics;
 import com.flansmod.common.entity.vehicle.IVehicleSaveNode;
 import com.flansmod.common.entity.vehicle.VehicleEntity;
 import com.flansmod.common.item.PartItem;
-import com.flansmod.common.types.Definitions;
 import com.flansmod.common.types.parts.PartDefinition;
 import com.flansmod.common.types.parts.elements.EngineDefinition;
 import com.flansmod.util.Maths;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.syncher.EntityDataSerializer;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.RecipeType;
-import net.minecraft.world.item.crafting.SmeltingRecipe;
 import net.minecraft.world.level.block.LiquidBlock;
 import net.minecraftforge.common.ForgeHooks;
 
@@ -20,8 +20,25 @@ import javax.annotation.Nullable;
 public class VehicleEngineSaveState implements IVehicleSaveNode
 {
 	public static final int NO_SLOT = -1;
-	@Nonnull
-	public final EngineDefinition DefaultEngineDef;
+
+	public static final EntityDataSerializer<VehicleEngineSaveState> SERIALIZER = new EntityDataSerializer.ForValueType<>()
+	{
+		@Override
+		public void write(@Nonnull FriendlyByteBuf buf, @Nonnull VehicleEngineSaveState data)
+		{
+			buf.writeInt(data.BurnTimeDuration);
+			buf.writeInt(data.BurnTimeRemaining);
+		}
+		@Override
+		@Nonnull
+		public VehicleEngineSaveState read(@Nonnull FriendlyByteBuf buf)
+		{
+			VehicleEngineSaveState state = new VehicleEngineSaveState();
+			state.BurnTimeDuration = buf.readInt();
+			state.BurnTimeRemaining = buf.readInt();
+			return state;
+		}
+	};
 
 	public int BurnTimeDuration = 0;
 	public int BurnTimeRemaining = 0;
@@ -30,7 +47,7 @@ public class VehicleEngineSaveState implements IVehicleSaveNode
 	public static final float ENGINE_OFF = 0.0f;
 	public static final float ENGINE_IDLE = 1.0f;
 	public static final float ENGINE_MAX = 2.0f;
-	public float FuelConsumptionRate = 0.0f;
+	public float Throttle = 0.0f;
 
 
 	@Nonnull
@@ -48,9 +65,8 @@ public class VehicleEngineSaveState implements IVehicleSaveNode
 	public LiquidBlock LiquidType;
 	public int LiquidAmount;
 
-	public VehicleEngineSaveState(@Nonnull EngineDefinition defaultEngineDef)
+	public VehicleEngineSaveState()
 	{
-		DefaultEngineDef = defaultEngineDef;
 		EngineStack = ItemStack.EMPTY;
 		SolidFuelSlots = new ItemStack[0];
 		LiquidType = null;
@@ -59,11 +75,11 @@ public class VehicleEngineSaveState implements IVehicleSaveNode
 	}
 
 
-	@Nonnull
-	public EngineDefinition GetEngineOrDefault()
+	@Nullable
+	public EngineDefinition GetEngine()
 	{
 		PartDefinition part = GetPart();
-		return part.IsValid() ? part.engine : DefaultEngineDef;
+		return part.IsValid() ? part.engine : null;
 	}
 
 	@Nonnull
@@ -72,15 +88,7 @@ public class VehicleEngineSaveState implements IVehicleSaveNode
 		return (!EngineStack.isEmpty() && EngineStack.getItem() instanceof PartItem part) ? part.Def() : PartDefinition.INVALID;
 	}
 
-	public float GetFuelConsumptionRate()
-	{
-		EngineDefinition engine = GetEngineOrDefault();
-		if(FuelConsumptionRate <= ENGINE_IDLE)
-			return Maths.LerpF(0f, engine.fuelConsumptionIdle, FuelConsumptionRate);
-		else
-			return Maths.LerpF(engine.fuelConsumptionIdle, engine.fuelConsumptionFull, FuelConsumptionRate - 1f);
-	}
-
+	public float GetEngineThrottle() { return Throttle; }
 	public int GetNextBurnableSlot(@Nonnull RecipeType<?> recipeType)
 	{
 		for (int i = 0; i < SolidFuelSlots.length; i++)
@@ -91,7 +99,6 @@ public class VehicleEngineSaveState implements IVehicleSaveNode
 		}
 		return NO_SLOT;
 	}
-
 	public int CountBurnTime(@Nonnull RecipeType<?> recipeType)
 	{
 		int burnTime = 0;
@@ -108,70 +115,21 @@ public class VehicleEngineSaveState implements IVehicleSaveNode
 				burnables += solidFuelSlot.getCount();
 		return burnables;
 	}
+	public int GetBurnTimeRemaining() { return BurnTimeRemaining; }
+	public int GetBurnTimeDuration() { return BurnTimeDuration; }
+	public int GetCurrentFE() { return CurrentFE; }
+	public int GetLiquidAmount() { return LiquidAmount; }
 
-	public int GetFuelFillLevel()
-	{
-		EngineDefinition engine = GetEngineOrDefault();
-		return switch (engine.fuelType)
-			{
-				case Creative -> 999;
-				case FE -> CurrentFE;
-				case Liquid -> LiquidAmount;
-				case Smeltable -> CountBurnableItems(RecipeType.SMELTING);
-				case Smokable -> CountBurnableItems(RecipeType.SMOKING);
-				case Blastable -> CountBurnableItems(RecipeType.BLASTING);
-			};
-	}
-
-	public int GetFuelMaxLevel()
-	{
-		EngineDefinition engine = GetEngineOrDefault();
-		return switch (engine.fuelType)
-			{
-				case Creative -> 999;
-				case FE -> engine.FECapacity;
-				case Liquid -> engine.liquidFuelCapacity;
-				case Smeltable -> engine.solidFuelSlots * 64;
-				case Smokable -> engine.solidFuelSlots * 64;
-				case Blastable -> engine.solidFuelSlots * 64;
-			};
-	}
-
-	public boolean CanBurnMoreFuel()
-	{
-		EngineDefinition engine = GetEngineOrDefault();
-		return switch (engine.fuelType)
-			{
-				case Creative -> true;
-				case FE -> CurrentFE > 0;
-				case Liquid -> LiquidAmount > 0;
-				case Smeltable -> GetNextBurnableSlot(RecipeType.SMELTING) != NO_SLOT;
-				case Smokable -> GetNextBurnableSlot(RecipeType.SMOKING) != NO_SLOT;
-				case Blastable -> GetNextBurnableSlot(RecipeType.BLASTING) != NO_SLOT;
-			};
-	}
-
-	public boolean CanThrust()
-	{
-		EngineDefinition engine = GetEngineOrDefault();
-		return switch (engine.fuelType)
-			{
-				case Creative -> true;
-				case FE -> CurrentFE > 0;
-				default -> BurnTimeRemaining > 0;
-			};
-	}
-
-	public void SetOff() { FuelConsumptionRate = ENGINE_OFF; }
-	public void SetIdle() { FuelConsumptionRate = ENGINE_IDLE; }
-	public void SetFull() { FuelConsumptionRate = ENGINE_MAX; }
+	public void SetOff() { Throttle = ENGINE_OFF; }
+	public void SetIdle() { Throttle = ENGINE_IDLE; }
+	public void SetFull() { Throttle = ENGINE_MAX; }
 	public void SetBetweenOffAndFull(float parameter)
 	{
-		FuelConsumptionRate = Maths.LerpF(ENGINE_OFF, ENGINE_MAX, parameter);
+		Throttle = Maths.LerpF(ENGINE_OFF, ENGINE_MAX, parameter);
 	}
 	public void SetBetweenIdleAndFull(float parameter)
 	{
-		FuelConsumptionRate = Maths.LerpF(ENGINE_IDLE, ENGINE_MAX, parameter);
+		Throttle = Maths.LerpF(ENGINE_IDLE, ENGINE_MAX, parameter);
 	}
 
 	@Override
@@ -181,7 +139,7 @@ public class VehicleEngineSaveState implements IVehicleSaveNode
 			EngineStack = ItemStack.of(tags.getCompound("item"));
 		BurnTimeRemaining = tags.getInt("burnRemaining");
 		BurnTimeDuration = tags.getInt("burnDuration");
-		FuelConsumptionRate = tags.getFloat("power");
+		Throttle = tags.getFloat("power");
 	}
 
 	@Nonnull
@@ -192,7 +150,7 @@ public class VehicleEngineSaveState implements IVehicleSaveNode
 		tags.put("item", EngineStack.save(new CompoundTag()));
 		tags.putInt("burnRemaining", BurnTimeRemaining);
 		tags.putInt("burnDuration", BurnTimeDuration);
-		tags.putFloat("power", FuelConsumptionRate);
+		tags.putFloat("power", Throttle);
 		return tags;
 	}
 }

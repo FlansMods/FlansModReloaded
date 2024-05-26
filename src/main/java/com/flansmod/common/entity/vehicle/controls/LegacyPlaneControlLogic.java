@@ -131,7 +131,7 @@ public class LegacyPlaneControlLogic extends ControlLogic
 		float drag = 1F - (0.05F * vehicle.Physics().Def.drag);
 		float wobbleFactor = 0F;//.005F;
 
-		EngineDefinition engine = vehicle.Engine().GetEngine(SingleEngineKey);
+		EngineDefinition engine = vehicle.Engine().GetEngineDef(SingleEngineKey);
 		float throttleScaled = 0.01F * (vehicle.Physics().Def.maxThrottle + engine.maxSpeed);
 
 		if(!vehicle.Engine().CanThrust(driver, SingleEngineKey))
@@ -194,7 +194,7 @@ public class LegacyPlaneControlLogic extends ControlLogic
 
 		vehicle.setDeltaMovement(motion);
 
-		vehicle.Engine().SetEnginePower(SingleEngineKey, upwardsForce * 2f);
+		vehicle.Engine().SetThrottle(SingleEngineKey, upwardsForce * 2f);
 	}
 
 	private void PlanePhysics(@Nonnull VehicleEntity vehicle, float throttleScaled, float drag)
@@ -263,6 +263,6 @@ public class LegacyPlaneControlLogic extends ControlLogic
 
 		vehicle.setDeltaMovement(motion);
 
-		vehicle.Engine().SetEnginePower(SingleEngineKey, Math.abs(throttle) * throttleScaled * 10f);
+		vehicle.Engine().SetThrottle(SingleEngineKey, Math.abs(throttle) * throttleScaled * 10f);
 	}
 }
