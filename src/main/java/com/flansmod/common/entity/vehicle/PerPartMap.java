@@ -45,6 +45,16 @@ public class PerPartMap<T>
 		applyFunc.accept(Values.get(partName.hashCode()));
 	}
 
+	@Override
+	public boolean equals(Object other)
+	{
+		if(other instanceof PerPartMap<?> otherMap)
+		{
+			return Values.equals(otherMap.Values);
+		}
+		return false;
+	}
+
 	public static <TDataType> EntityDataSerializer<PerPartMap<TDataType>> SERIALIZER(
 		@Nonnull EntityDataSerializer<TDataType> elementSerializer)
 	{

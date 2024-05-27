@@ -6,6 +6,7 @@ import com.flansmod.common.FlansMod;
 import com.flansmod.common.entity.vehicle.VehicleEntity;
 import com.flansmod.common.types.LazyDefinition;
 import com.flansmod.common.types.vehicles.VehicleDefinition;
+import com.flansmod.util.Transform;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.block.model.BlockModel;
@@ -52,9 +53,15 @@ public class VehicleRenderer extends EntityRenderer<VehicleEntity> implements IT
 		return TextureManager.INTENTIONAL_MISSING_TEXTURE;
 	}
 
-	public void RenderDirect(@Nullable Entity heldByEntity, @Nullable ItemStack stack, @Nonnull RenderContext renderContext)
+	private void DoRender(@Nullable VehicleEntity vehicle, @Nonnull RenderContext renderContext, float deltaTick)
 	{
-		ResourceLocation skin = heldByEntity instanceof VehicleEntity vehicle ? getTextureLocation(vehicle) : TextureManager.INTENTIONAL_MISSING_TEXTURE;
+		// Minecraft rendering starts upside down for legacy reasons
+		renderContext.Transforms.add(Transform.FromEuler(0f, 0f, 180f));
+		ResourceLocation skin = vehicle != null ? getTextureLocation(vehicle) : TextureManager.INTENTIONAL_MISSING_TEXTURE;
+		if(vehicle != null)
+		{
+			renderContext.Transforms.add(Transform.ExtractOrientation(vehicle.RootTransform(deltaTick), false, () -> "RootOri"));
+		}
 		GetTurboRigWrapper().RenderPartIteratively(renderContext,
 			"body",
 			(partName) -> skin,
@@ -66,6 +73,10 @@ public class VehicleRenderer extends EntityRenderer<VehicleEntity> implements IT
 			});
 	}
 
+	public void RenderDirect(@Nullable Entity heldByEntity, @Nullable ItemStack stack, @Nonnull RenderContext renderContext)
+	{
+		DoRender(heldByEntity instanceof VehicleEntity veh ? veh : null, renderContext, 0);
+	}
 
 	// ItemRenderer
 	public void render(@Nonnull VehicleEntity vehicle,
@@ -76,6 +87,6 @@ public class VehicleRenderer extends EntityRenderer<VehicleEntity> implements IT
 					   int light)
 	{
 		RenderContext renderContext = new RenderContext(buffers, ItemDisplayContext.FIXED, poseStack, light, 0);
-		RenderDirect(vehicle, ItemStack.EMPTY, renderContext);
+		DoRender(vehicle, renderContext, dt);
 	}
 }

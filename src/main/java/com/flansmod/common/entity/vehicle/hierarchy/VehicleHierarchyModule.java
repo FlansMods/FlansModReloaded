@@ -53,6 +53,12 @@ public class VehicleHierarchyModule implements IVehicleModule
 	public static final EntityDataAccessor<PerPartMap<ArticulationInstance>> ARTICULATIONS_ACCESSOR =
 		SynchedEntityData.defineId(VehicleEntity.class, ARTICULATIONS_SERIALIZER);
 
+	public static final EntityDataAccessor<PerPartMap<WheelEntity.WheelSyncData>> WHEELS_ACCESSOR =
+		SynchedEntityData.defineId(VehicleEntity.class, WheelEntity.WHEELS_SERIALIZER);
+
+
+
+
 	@Nonnull
 	public final VehicleDefinitionHierarchy Reference;
 	@Nullable
@@ -78,9 +84,7 @@ public class VehicleHierarchyModule implements IVehicleModule
 		VehicleDataSynchronizer = vehicle.getEntityData();
 	}
 
-	@Nonnull public PerPartMap<ArticulationInstance> GetArticulationMap() { return VehicleDataSynchronizer.get(ARTICULATIONS_ACCESSOR); }
-	public void SetArticulationMap(@Nonnull PerPartMap<ArticulationInstance> map) { VehicleDataSynchronizer.set(ARTICULATIONS_ACCESSOR, map); }
-
+	// Root Transform settings
 	public void SetPosition(double x, double y, double z) { RootTransform = RootTransform.WithPosition(x, y, z); }
 	public void SetPosition(@Nonnull Vec3 pos) { RootTransform = RootTransform.WithPosition(pos); }
 	public void SetYaw(float yaw) { RootTransform = RootTransform.WithYaw(yaw); }
@@ -90,7 +94,21 @@ public class VehicleHierarchyModule implements IVehicleModule
 	public void RotatePitch(float pitch) { RootTransform = RootTransform.RotatePitch(pitch); }
 	public void RotateRoll(float roll) { RootTransform = RootTransform.RotateRoll(roll); }
 	public void SetEulerAngles(float pitch, float yaw, float roll) { RootTransform = RootTransform.WithEulerAngles(pitch, yaw, roll); }
+	public void SetCurrentRootTransform(@Nonnull Transform transform) { RootTransform = transform; }
+	public void SetPreviousRootTransform(@Nonnull Transform transform) { RootTransformPrev = transform; }
 
+
+	// -----------------------------------------------------------------------------------------------
+	// Synced data maps
+	@Nonnull private PerPartMap<ArticulationInstance> GetArticulationMap() { return VehicleDataSynchronizer.get(ARTICULATIONS_ACCESSOR); }
+	private void SetArticulationMap(@Nonnull PerPartMap<ArticulationInstance> map) { VehicleDataSynchronizer.set(ARTICULATIONS_ACCESSOR, map); }
+
+	@Nonnull private PerPartMap<WheelEntity.WheelSyncData> GetWheelMap() { return VehicleDataSynchronizer.get(WHEELS_ACCESSOR); }
+	private void SetWheelMap(@Nonnull PerPartMap<WheelEntity.WheelSyncData> map) { VehicleDataSynchronizer.set(WHEELS_ACCESSOR, map); }
+
+
+
+	// -----------------------------------------------------------------------------------------------
 	// Velocity is units per second, NOT per tick
 	// Articulation Accessors
 	public void SetArticulationParameterByHash(int hash, float parameter)
@@ -146,13 +164,28 @@ public class VehicleHierarchyModule implements IVehicleModule
 		return Transform.IDENTITY;
 	}
 
+	// -----------------------------------------------------------------------------------------------
+	// Wheel Accessors
 	public void RegisterWheel(int wheelIndex, @Nonnull WheelEntity wheel)
 	{
 		ChildEntities.put(ForceModel.Wheel(wheelIndex), wheel);
 	}
+	@Nullable
+	public WheelEntity.WheelSyncData GetWheelData(@Nonnull String wheelPath)
+	{
+		return GetWheelMap().ForPart(wheelPath);
+	}
+	public void SetWheelData(@Nonnull String wheelPath, @Nonnull WheelEntity.WheelSyncData data)
+	{
+		PerPartMap<WheelEntity.WheelSyncData> map = GetWheelMap();
+		map.Put(wheelPath, data);
+		SetWheelMap(map);
+	}
 
-	public void SetCurrentRootTransform(@Nonnull Transform transform) { RootTransform = transform; }
-	public void SetPreviousRootTransform(@Nonnull Transform transform) { RootTransformPrev = transform; }
+
+
+
+
 
 	// ----------------------------------------------------------------------------------------------------------------
 	// World to Part

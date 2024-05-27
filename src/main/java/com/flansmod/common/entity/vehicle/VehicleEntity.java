@@ -60,6 +60,9 @@ public class VehicleEntity extends Entity implements ITransformEntity
 
 		EntityDataSerializers.registerSerializer(VehicleEngineSaveState.SERIALIZER);
 		EntityDataSerializers.registerSerializer(VehicleEngineModule.ENGINES_SERIALIZER);
+
+		EntityDataSerializers.registerSerializer(WheelEntity.WheelSyncData.SERIALIZER);
+		EntityDataSerializers.registerSerializer(WheelEntity.WHEELS_SERIALIZER);
 	}
 
 	private final LazyDefinition<VehicleDefinition> DefRef;
@@ -153,6 +156,23 @@ public class VehicleEntity extends Entity implements ITransformEntity
 	@Override
 	public void moveTo(double x, double y, double z, float xRot, float yRot) {
 		super.moveTo(x, y, z, xRot, yRot);
+		SetAllPositionsFromEntity();
+	}
+	// This is the default entity movement packet
+	@Override
+	public void lerpTo(double x, double y, double z, float yaw, float pitch, int i, boolean flag)
+	{
+		super.lerpTo(x, y, z, yaw, pitch, i, flag);
+		SyncEntityToTransform();
+	}
+	@Override
+	protected void reapplyPosition()
+	{
+		super.reapplyPosition();
+		SetAllPositionsFromEntity();
+	}
+	private void SetAllPositionsFromEntity()
+	{
 		SyncEntityToTransform();
 		for(WheelEntity wheel : Physics().AllWheels())
 			wheel.SyncTransformToEntity();
@@ -288,6 +308,7 @@ public class VehicleEntity extends Entity implements ITransformEntity
 		entityData.define(VehicleDamageModule.DAMAGE_ACCESSOR, new PerPartMap<>());
 		entityData.define(VehicleEngineModule.ENGINES_ACCESSOR, new PerPartMap<>());
 		entityData.define(VehicleHierarchyModule.ARTICULATIONS_ACCESSOR, new PerPartMap<>());
+		entityData.define(VehicleHierarchyModule.WHEELS_ACCESSOR, new PerPartMap<>());
 		// TOO early for these to exist
 		//Engine().DefineSyncedData(entityData);
 		//Damage().DefineSyncedData(entityData);

@@ -2,31 +2,18 @@ package com.flansmod.common.entity.vehicle.physics;
 
 import com.flansmod.common.FlansMod;
 import com.flansmod.common.entity.vehicle.IVehicleModule;
-import com.flansmod.common.entity.vehicle.PerPartMap;
 import com.flansmod.common.entity.vehicle.VehicleEntity;
 import com.flansmod.common.entity.vehicle.controls.ControlLogic;
 import com.flansmod.common.entity.vehicle.controls.ControlLogics;
 import com.flansmod.common.entity.vehicle.controls.ForceModel;
 import com.flansmod.common.entity.vehicle.controls.VehicleInputState;
-import com.flansmod.common.entity.vehicle.guns.VehicleGunSaveState;
 import com.flansmod.common.entity.vehicle.hierarchy.WheelEntity;
 import com.flansmod.common.types.vehicles.ControlSchemeDefinition;
 import com.flansmod.common.types.vehicles.elements.EControlLogicHint;
 import com.flansmod.common.types.vehicles.elements.VehiclePhysicsDefinition;
-import com.flansmod.common.types.vehicles.elements.WheelDefinition;
-import com.flansmod.util.Transform;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.EntitySelector;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.MoverType;
-import net.minecraft.world.entity.animal.WaterAnimal;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
-import org.codehaus.plexus.util.CachedMap;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -139,7 +126,7 @@ public class VehiclePhysicsModule implements IVehicleModule
 			return false;
 		}));
 
-		Wheels.ForEach(wheel -> wheel.ParentTick(vehicle));
+		Wheels.ForEach(wheel -> wheel.StartTick(vehicle));
 
 		// Create a force model and load it up with forces for debug rendering
 		ForceModel forces = new ForceModel();
@@ -170,12 +157,14 @@ public class VehiclePhysicsModule implements IVehicleModule
 		else
 		{
 			forces.AddGlobalForceToCore(new Vec3(0f, -9.81f * Def.mass, 0f), () -> "Gravity");
+			forces.AddDampenerToCore(0.1f);
 			for(int i = 0; i < AllWheels().size(); i++)
 			{
 				WheelEntity wheel = WheelByIndex(i);
 				if(wheel != null)
 				{
 					forces.AddGlobalForceToWheel(i, new Vec3(0f, -9.81f * wheel.Def.mass, 0f), () -> "Gravity");
+					forces.AddDampenerToWheel(i, 0.1f);
 					forces.AddDefaultWheelSpring(vehicle, wheel);
 				}
 			}
@@ -210,6 +199,13 @@ public class VehiclePhysicsModule implements IVehicleModule
 			if(wheel != null)
 				wheel.PhysicsTick(vehicle, i, forces);
 		}
+
+		// End of Tick
+		if(vehicle.IsAuthority())
+		{
+
+		}
+		Wheels.ForEach(wheel -> wheel.EndTick(vehicle));
 	}
 
 	@Override
