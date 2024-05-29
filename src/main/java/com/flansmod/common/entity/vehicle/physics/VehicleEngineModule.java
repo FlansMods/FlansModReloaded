@@ -4,6 +4,7 @@ import com.flansmod.common.FlansMod;
 import com.flansmod.common.entity.vehicle.IVehicleModule;
 import com.flansmod.common.entity.vehicle.PerPartMap;
 import com.flansmod.common.entity.vehicle.VehicleEntity;
+import com.flansmod.common.network.FlansEntityDataSerializers;
 import com.flansmod.common.types.parts.elements.EngineDefinition;
 import com.flansmod.util.Maths;
 import net.minecraft.nbt.CompoundTag;
@@ -21,18 +22,14 @@ import java.util.function.Consumer;
 
 public class VehicleEngineModule implements IVehicleModule
 {
-	public static final EntityDataSerializer<PerPartMap<VehicleEngineSaveState>> ENGINES_SERIALIZER =
-		PerPartMap.SERIALIZER(VehicleEngineSaveState.SERIALIZER);
-	public static final EntityDataAccessor<PerPartMap<VehicleEngineSaveState>> ENGINES_ACCESSOR =
-		SynchedEntityData.defineId(VehicleEntity.class, ENGINES_SERIALIZER);
+	public static final EntityDataAccessor<PerPartMap<EngineSyncState>> ENGINES_ACCESSOR =
+		SynchedEntityData.defineId(VehicleEntity.class, FlansEntityDataSerializers.ENGINE_MAP);
 
 	@Nonnull
 	public final EngineDefinition DefaultEngineDef;
 	@Nonnull
 	private final SynchedEntityData VehicleDataSynchronizer;
 	public final List<String> EnginePaths = new ArrayList<>();
-
-
 
 	public VehicleEngineModule(@Nonnull VehicleEntity vehicle)
 	{
@@ -45,13 +42,13 @@ public class VehicleEngineModule implements IVehicleModule
 
 
 	@Nonnull
-	public PerPartMap<VehicleEngineSaveState> GetEngineSaveData() { return VehicleDataSynchronizer.get(ENGINES_ACCESSOR); }
-	public void SetEngineSaveData(@Nonnull PerPartMap<VehicleEngineSaveState> map) { VehicleDataSynchronizer.set(ENGINES_ACCESSOR, map); }
-	private void ApplyToSaveState(@Nonnull String enginePath, @Nonnull Consumer<VehicleEngineSaveState> func)
+	public PerPartMap<EngineSyncState> GetEngineSaveData() { return VehicleDataSynchronizer.get(ENGINES_ACCESSOR); }
+	public void SetEngineSaveData(@Nonnull PerPartMap<EngineSyncState> map) { VehicleDataSynchronizer.set(ENGINES_ACCESSOR, map); }
+	private void ApplyToSaveState(@Nonnull String enginePath, @Nonnull Consumer<EngineSyncState> func)
 	{
-		PerPartMap<VehicleEngineSaveState> map = GetEngineSaveData();
+		PerPartMap<EngineSyncState> map = GetEngineSaveData();
 		map.CreateAndApply(enginePath,
-			VehicleEngineSaveState::new,
+			EngineSyncState::new,
 			func);
 		SetEngineSaveData(map);
 	}
@@ -60,45 +57,45 @@ public class VehicleEngineModule implements IVehicleModule
 	@Nonnull
 	public EngineDefinition GetEngineDef(@Nonnull String enginePath)
 	{
-		return GetEngineSaveData().ApplyOrDefault(enginePath, VehicleEngineSaveState::GetEngine, DefaultEngineDef);
+		return GetEngineSaveData().ApplyOrDefault(enginePath, EngineSyncState::GetEngine, DefaultEngineDef);
 	}
 	public float GetThrottle(@Nonnull String enginePath)
 	{
-		return GetEngineSaveData().ApplyOrDefault(enginePath, VehicleEngineSaveState::GetEngineThrottle, 0.0f);
+		return GetEngineSaveData().ApplyOrDefault(enginePath, EngineSyncState::GetEngineThrottle, 0.0f);
 	}
 	public int GetBurnTimeRemaining(@Nonnull String enginePath)
 	{
-		return GetEngineSaveData().ApplyOrDefault(enginePath, VehicleEngineSaveState::GetBurnTimeRemaining, 0);
+		return GetEngineSaveData().ApplyOrDefault(enginePath, EngineSyncState::GetBurnTimeRemaining, 0);
 	}
 	public int GetBurnTimeDuration(@Nonnull String enginePath)
 	{
-		return GetEngineSaveData().ApplyOrDefault(enginePath, VehicleEngineSaveState::GetBurnTimeDuration, 0);
+		return GetEngineSaveData().ApplyOrDefault(enginePath, EngineSyncState::GetBurnTimeDuration, 0);
 	}
 	public int GetCurrentFE(@Nonnull String enginePath)
 	{
-		return GetEngineSaveData().ApplyOrDefault(enginePath, VehicleEngineSaveState::GetCurrentFE, 0);
+		return GetEngineSaveData().ApplyOrDefault(enginePath, EngineSyncState::GetCurrentFE, 0);
 	}
 	public int GetLiquidAmount(@Nonnull String enginePath)
 	{
-		return GetEngineSaveData().ApplyOrDefault(enginePath, VehicleEngineSaveState::GetLiquidAmount, 0);
+		return GetEngineSaveData().ApplyOrDefault(enginePath, EngineSyncState::GetLiquidAmount, 0);
 	}
 	public int GetNextBurnableSlot(@Nonnull String enginePath, @Nonnull RecipeType<?> recipeType)
 	{
-		return GetEngineSaveData().ApplyOrDefault(enginePath, (engineSave) -> engineSave.GetNextBurnableSlot(recipeType), VehicleEngineSaveState.NO_SLOT);
+		return GetEngineSaveData().ApplyOrDefault(enginePath, (engineSave) -> engineSave.GetNextBurnableSlot(recipeType), EngineSyncState.NO_SLOT);
 	}
 	public int CountBurnTime(@Nonnull String enginePath, @Nonnull RecipeType<?> recipeType)
 	{
-		return GetEngineSaveData().ApplyOrDefault(enginePath, (engineSave) -> engineSave.CountBurnTime(recipeType), VehicleEngineSaveState.NO_SLOT);
+		return GetEngineSaveData().ApplyOrDefault(enginePath, (engineSave) -> engineSave.CountBurnTime(recipeType), EngineSyncState.NO_SLOT);
 	}
 	public int CountBurnableItems(@Nonnull String enginePath, @Nonnull RecipeType<?> recipeType)
 	{
-		return GetEngineSaveData().ApplyOrDefault(enginePath, (engineSave) -> engineSave.CountBurnableItems(recipeType), VehicleEngineSaveState.NO_SLOT);
+		return GetEngineSaveData().ApplyOrDefault(enginePath, (engineSave) -> engineSave.CountBurnableItems(recipeType), EngineSyncState.NO_SLOT);
 	}
 	public float GetFuelConsumptionRate(@Nonnull String enginePath)
 	{
 		EngineDefinition engine = GetEngineDef(enginePath);
 		float throttle = GetThrottle(enginePath);
-		if(throttle <= VehicleEngineSaveState.ENGINE_IDLE)
+		if(throttle <= EngineSyncState.ENGINE_IDLE)
 			return Maths.LerpF(0f, engine.fuelConsumptionIdle, throttle);
 		else
 			return Maths.LerpF(engine.fuelConsumptionIdle, engine.fuelConsumptionFull, throttle - 1f);
@@ -128,9 +125,9 @@ public class VehicleEngineModule implements IVehicleModule
 				case Creative -> true;
 				case FE -> GetCurrentFE(enginePath) > 0;
 				case Liquid -> GetLiquidAmount(enginePath) > 0;
-				case Smeltable -> GetNextBurnableSlot(enginePath, RecipeType.SMELTING) != VehicleEngineSaveState.NO_SLOT;
-				case Smokable -> GetNextBurnableSlot(enginePath, RecipeType.SMOKING) != VehicleEngineSaveState.NO_SLOT;
-				case Blastable -> GetNextBurnableSlot(enginePath, RecipeType.BLASTING) != VehicleEngineSaveState.NO_SLOT;
+				case Smeltable -> GetNextBurnableSlot(enginePath, RecipeType.SMELTING) != EngineSyncState.NO_SLOT;
+				case Smokable -> GetNextBurnableSlot(enginePath, RecipeType.SMOKING) != EngineSyncState.NO_SLOT;
+				case Blastable -> GetNextBurnableSlot(enginePath, RecipeType.BLASTING) != EngineSyncState.NO_SLOT;
 			};
 	}
 	public int GetFuelFillLevel(@Nonnull String enginePath)
@@ -163,15 +160,15 @@ public class VehicleEngineModule implements IVehicleModule
 
 	public void SetToOff(@Nonnull String enginePath)
 	{
-		SetThrottle(enginePath, VehicleEngineSaveState.ENGINE_OFF);
+		SetThrottle(enginePath, EngineSyncState.ENGINE_OFF);
 	}
 	public void SetToIdle(@Nonnull String enginePath)
 	{
-		SetThrottle(enginePath, VehicleEngineSaveState.ENGINE_IDLE);
+		SetThrottle(enginePath, EngineSyncState.ENGINE_IDLE);
 	}
 	public void SetToFull(@Nonnull String enginePath)
 	{
-		SetThrottle(enginePath, VehicleEngineSaveState.ENGINE_MAX);
+		SetThrottle(enginePath, EngineSyncState.ENGINE_MAX);
 	}
 	public void SetThrottle(@Nonnull String enginePath, float parameter)
 	{
@@ -192,12 +189,12 @@ public class VehicleEngineModule implements IVehicleModule
 	@Override
 	public void Load(@Nonnull VehicleEntity vehicle, @Nonnull CompoundTag tags)
 	{
-		PerPartMap<VehicleEngineSaveState> engineMap = GetEngineSaveData();
+		PerPartMap<EngineSyncState> engineMap = GetEngineSaveData();
 		for(String key : tags.getAllKeys())
 		{
 			if(EnginePaths.contains(key))
 			{
-				VehicleEngineSaveState engineState = new VehicleEngineSaveState();
+				EngineSyncState engineState = new EngineSyncState();
 				engineState.Load(vehicle, tags.getCompound(key));
 				engineMap.Put(key, engineState);
 			}
@@ -210,7 +207,7 @@ public class VehicleEngineModule implements IVehicleModule
 	@Override
 	public CompoundTag Save(@Nonnull VehicleEntity vehicle)
 	{
-		PerPartMap<VehicleEngineSaveState> map = GetEngineSaveData();
+		PerPartMap<EngineSyncState> map = GetEngineSaveData();
 		CompoundTag tags = new CompoundTag();
 		for (var enginePath : EnginePaths)
 		{

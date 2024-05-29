@@ -17,28 +17,9 @@ import net.minecraftforge.common.ForgeHooks;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-public class VehicleEngineSaveState implements IVehicleSaveNode
+public class EngineSyncState implements IVehicleSaveNode
 {
 	public static final int NO_SLOT = -1;
-
-	public static final EntityDataSerializer<VehicleEngineSaveState> SERIALIZER = new EntityDataSerializer.ForValueType<>()
-	{
-		@Override
-		public void write(@Nonnull FriendlyByteBuf buf, @Nonnull VehicleEngineSaveState data)
-		{
-			buf.writeInt(data.BurnTimeDuration);
-			buf.writeInt(data.BurnTimeRemaining);
-		}
-		@Override
-		@Nonnull
-		public VehicleEngineSaveState read(@Nonnull FriendlyByteBuf buf)
-		{
-			VehicleEngineSaveState state = new VehicleEngineSaveState();
-			state.BurnTimeDuration = buf.readInt();
-			state.BurnTimeRemaining = buf.readInt();
-			return state;
-		}
-	};
 
 	public int BurnTimeDuration = 0;
 	public int BurnTimeRemaining = 0;
@@ -65,7 +46,7 @@ public class VehicleEngineSaveState implements IVehicleSaveNode
 	public LiquidBlock LiquidType;
 	public int LiquidAmount;
 
-	public VehicleEngineSaveState()
+	public EngineSyncState()
 	{
 		EngineStack = ItemStack.EMPTY;
 		SolidFuelSlots = new ItemStack[0];

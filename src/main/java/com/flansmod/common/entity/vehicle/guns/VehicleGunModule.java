@@ -6,10 +6,10 @@ import com.flansmod.common.entity.vehicle.PerPartMap;
 import com.flansmod.common.entity.vehicle.VehicleDefinitionHierarchy;
 import com.flansmod.common.entity.vehicle.VehicleEntity;
 import com.flansmod.common.item.GunItem;
+import com.flansmod.common.network.FlansEntityDataSerializers;
 import com.flansmod.common.types.vehicles.elements.MountedGunDefinition;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
-import net.minecraft.network.syncher.EntityDataSerializer;
 import net.minecraft.network.syncher.SynchedEntityData;
 
 import javax.annotation.Nonnull;
@@ -17,11 +17,8 @@ import java.util.*;
 
 public class VehicleGunModule implements IVehicleModule
 {
-	public static final EntityDataSerializer<PerPartMap<VehicleGunSaveState>> GUNS_SERIALIZER =
-		PerPartMap.SERIALIZER(VehicleGunSaveState.SERIALIZER);
-	public static final EntityDataAccessor<PerPartMap<VehicleGunSaveState>> GUNS_ACCESSOR =
-		SynchedEntityData.defineId(VehicleEntity.class, GUNS_SERIALIZER);
-
+	public static final EntityDataAccessor<PerPartMap<GunSyncState>> GUNS_ACCESSOR =
+		SynchedEntityData.defineId(VehicleEntity.class, FlansEntityDataSerializers.GUN_MAP);
 
 	@Nonnull
 	public final Map<String, MountedGunDefinition> GunDefs = new HashMap<>();
@@ -38,20 +35,20 @@ public class VehicleGunModule implements IVehicleModule
 		VehicleDataSynchronizer = vehicle.getEntityData();
 	}
 
-	public void SetGunSaveData(@Nonnull PerPartMap<VehicleGunSaveState> map) { VehicleDataSynchronizer.set(GUNS_ACCESSOR, map); }
+	public void SetGunSaveData(@Nonnull PerPartMap<GunSyncState> map) { VehicleDataSynchronizer.set(GUNS_ACCESSOR, map); }
 	@Nonnull
-	public PerPartMap<VehicleGunSaveState> GetGunSaveData() { return VehicleDataSynchronizer.get(GUNS_ACCESSOR); }
+	public PerPartMap<GunSyncState> GetGunSaveData() { return VehicleDataSynchronizer.get(GUNS_ACCESSOR); }
 	@Nonnull
-	public VehicleGunSaveState GetGunStateAtIndex(int index) {
-		return GetGunSaveData().GetOrDefault(GunOrdering.get(index), VehicleGunSaveState.INVALID);
+	public GunSyncState GetGunStateAtIndex(int index) {
+		return GetGunSaveData().GetOrDefault(GunOrdering.get(index), GunSyncState.INVALID);
 	}
-	public void SetGunState(@Nonnull String partName, @Nonnull VehicleGunSaveState gunState)
+	public void SetGunState(@Nonnull String partName, @Nonnull GunSyncState gunState)
 	{
-		PerPartMap<VehicleGunSaveState> map = GetGunSaveData();
+		PerPartMap<GunSyncState> map = GetGunSaveData();
 		map.Put(partName, gunState);
 		SetGunSaveData(map);
 	}
-	public void SetGunState(int index, @Nonnull VehicleGunSaveState gunState)
+	public void SetGunState(int index, @Nonnull GunSyncState gunState)
 	{
 		SetGunState(GunOrdering.get(index), gunState);
 	}
@@ -71,7 +68,7 @@ public class VehicleGunModule implements IVehicleModule
 	public List<UUID> GetAllGunIDs()
 	{
 		List<UUID> uuids = new ArrayList<>();
-		for(VehicleGunSaveState state : GetGunSaveData().Values.values())
+		for(GunSyncState state : GetGunSaveData().Values.values())
 		{
 			UUID id = state.GetGunID();
 			if(!id.equals(GunItem.InvalidGunUUID))
@@ -89,12 +86,12 @@ public class VehicleGunModule implements IVehicleModule
 	@Override
 	public void Load(@Nonnull VehicleEntity vehicle, @Nonnull CompoundTag tags)
 	{
-		PerPartMap<VehicleGunSaveState> map = GetGunSaveData();
+		PerPartMap<GunSyncState> map = GetGunSaveData();
 		for(String key : tags.getAllKeys())
 		{
 			if(GunDefs.containsKey(key))
 			{
-				VehicleGunSaveState gunState = new VehicleGunSaveState();
+				GunSyncState gunState = new GunSyncState();
 				gunState.Load(vehicle, tags.getCompound(key));
 				map.Put(key, gunState);
 			}
@@ -107,7 +104,7 @@ public class VehicleGunModule implements IVehicleModule
 	@Override
 	public CompoundTag Save(@Nonnull VehicleEntity vehicle)
 	{
-		PerPartMap<VehicleGunSaveState> map = GetGunSaveData();
+		PerPartMap<GunSyncState> map = GetGunSaveData();
 		CompoundTag tags = new CompoundTag();
 		for (var kvp : GunDefs.entrySet())
 		{

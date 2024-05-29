@@ -131,11 +131,11 @@ public class VehicleDebugRenderer
 					if(wheel != null)
 					{
 						Transform wheelPos = Transform.FromPos(wheel.position());
-						Vector3f debugWheelBoxSize = new Vector3f(0.5f * wheel.Def.radius, wheel.Def.radius, wheel.Def.radius);
-						DebugRenderer.RenderAxes(wheel.GetWorldToEntity().GetCurrent(), 1, palette.Default);
+						Vector3f debugWheelBoxSize = new Vector3f(0.5f * wheel.GetWheelDef().radius, wheel.GetWheelDef().radius, wheel.GetWheelDef().radius);
+						DebugRenderer.RenderAxes(wheel.GetWorldTransformCurrent(), 1, palette.Default);
 						DebugRenderer.RenderCube(wheelPos, 1, palette.WheelCurrent, debugWheelBoxSize);
 
-						Vec3 wheelMotionNextFrame = DebugRenderForces(forces.Debug_GetForcesOnWheel(wheelIndex), wheel.getDeltaMovement(), wheel.GetWorldToEntity().GetCurrent(), palette, false, wheel.Def.mass, vehicle.Hierarchy()::GetWorldToPartCurrent);
+						Vec3 wheelMotionNextFrame = DebugRenderForces(forces.Debug_GetForcesOnWheel(wheelIndex), wheel.getDeltaMovement(), wheel.GetWorldTransformCurrent(), palette, false, wheel.GetWheelDef().mass, vehicle.Hierarchy()::GetWorldToPartCurrent);
 						Transform wheelPosNext = Transform.Compose(wheelPos, Transform.FromPos(wheelMotionNextFrame.scale(1f/20f)));
 						DebugRenderer.RenderCube(wheelPosNext, 1, palette.WheelNext, debugWheelBoxSize);
 					}

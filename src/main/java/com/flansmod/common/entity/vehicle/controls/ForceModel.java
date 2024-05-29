@@ -101,14 +101,14 @@ public class ForceModel
 	}
 	public void AddDefaultWheelSpring(@Nonnull VehicleEntity vehicle, @Nonnull WheelEntity wheel)
 	{
-		Transform wheelAP = vehicle.GetWorldToAP(wheel.WheelPath).GetCurrent();
+		Transform wheelAP = vehicle.GetWorldToAP(wheel.GetWheelPath()).GetCurrent();
 		Vec3 wheelAPPos = wheelAP.PositionVec3();
 		Vec3 wheelEntityPos = wheel.position();
 		Vec3 delta = wheelEntityPos.subtract(wheelAPPos);
-		Vec3 springForce = delta.scale(wheel.Def.springStrength * 20f);
+		Vec3 springForce = delta.scale(wheel.GetWheelDef().springStrength * 20f);
 
 		AddGlobalOffsetForce(VehicleDefinition.CoreName, wheelAPPos.subtract(vehicle.position()), springForce, () -> "Wheel Spring Pull on Core");
-		AddGlobalForce(wheel.GetPathInHierarchy(), springForce.scale(-1f), () -> "Core Pull on Wheel Spring");
+		AddGlobalForce(wheel.GetWheelPath(), springForce.scale(-1f), () -> "Core Pull on Wheel Spring");
 	}
 
 

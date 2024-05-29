@@ -7,6 +7,7 @@ import com.flansmod.common.entity.vehicle.PerPartMap;
 import com.flansmod.common.entity.vehicle.VehicleDefinitionHierarchy;
 import com.flansmod.common.entity.vehicle.VehicleEntity;
 import com.flansmod.common.entity.vehicle.controls.VehicleInputState;
+import com.flansmod.common.network.FlansEntityDataSerializers;
 import com.flansmod.common.types.vehicles.ControlSchemeDefinition;
 import com.flansmod.common.types.vehicles.elements.ControlSchemeAxisDefinition;
 import com.flansmod.common.types.vehicles.elements.InputDefinition;
@@ -14,7 +15,6 @@ import com.flansmod.common.types.vehicles.elements.SeatDefinition;
 import com.flansmod.common.types.vehicles.elements.VehicleControlOptionDefinition;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
-import net.minecraft.network.syncher.EntityDataSerializer;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
@@ -29,12 +29,8 @@ public class VehicleSeatsModule implements IVehicleModule
 {
 	public static final int INVALID_SEAT_INDEX = -1;
 	public static final String INVALID_SEAT_PATH = "body/seat_-1";
-	public static final EntityDataSerializer<PerPartMap<VehicleSeatSaveState>> SEATS_SERIALIZER =
-		PerPartMap.SERIALIZER(VehicleSeatSaveState.SERIALIZER);
-	public static final EntityDataAccessor<PerPartMap<VehicleSeatSaveState>> SEATS_ACCESSOR =
-		SynchedEntityData.defineId(VehicleEntity.class, SEATS_SERIALIZER);
-
-
+	public static final EntityDataAccessor<PerPartMap<SeatSyncState>> SEATS_ACCESSOR =
+		SynchedEntityData.defineId(VehicleEntity.class, FlansEntityDataSerializers.SEAT_MAP);
 
 	@Nonnull
 	public final List<String> SeatOrdering = new ArrayList<>();
@@ -42,8 +38,6 @@ public class VehicleSeatsModule implements IVehicleModule
 	public final Map<String, SeatDefinition> SeatDefs = new HashMap<>();
 	@Nonnull
 	private final SynchedEntityData VehicleDataSynchronizer;
-
-
 
 	public VehicleSeatsModule(@Nonnull VehicleDefinitionHierarchy hierarchy,
 							  @Nonnull VehicleEntity vehicle)
@@ -54,15 +48,15 @@ public class VehicleSeatsModule implements IVehicleModule
 	}
 
 	@Nonnull
-	public PerPartMap<VehicleSeatSaveState> GetSeatSaveData() { return VehicleDataSynchronizer.get(SEATS_ACCESSOR); }
-	public void SetSeatSaveData(@Nonnull PerPartMap<VehicleSeatSaveState> map) { VehicleDataSynchronizer.set(SEATS_ACCESSOR, map); }
+	public PerPartMap<SeatSyncState> GetSeatSaveData() { return VehicleDataSynchronizer.get(SEATS_ACCESSOR); }
+	public void SetSeatSaveData(@Nonnull PerPartMap<SeatSyncState> map) { VehicleDataSynchronizer.set(SEATS_ACCESSOR, map); }
 
 
 	// Seat functions by SeatPath
 	@Nonnull
-	protected VehicleSeatSaveState GetSeat(@Nonnull String seatPath)
+	protected SeatSyncState GetSeat(@Nonnull String seatPath)
 	{
-		return GetSeatSaveData().GetOrDefault(seatPath, VehicleSeatSaveState.INVALID);
+		return GetSeatSaveData().GetOrDefault(seatPath, SeatSyncState.INVALID);
 	}
 	@Nonnull
 	public UUID GetPassengerIDInSeat(@Nonnull String seatPath)
@@ -94,7 +88,7 @@ public class VehicleSeatsModule implements IVehicleModule
 
 	// Seat functions by Index
 	@Nonnull
-	protected VehicleSeatSaveState GetSeat(int seatIndex)
+	protected SeatSyncState GetSeat(int seatIndex)
 	{
 		return GetSeat(SeatOrdering.get(seatIndex));
 	}
@@ -262,12 +256,12 @@ public class VehicleSeatsModule implements IVehicleModule
 	@Override
 	public void Load(@Nonnull VehicleEntity vehicle, @Nonnull CompoundTag tags)
 	{
-		PerPartMap<VehicleSeatSaveState> seatMap = GetSeatSaveData();
+		PerPartMap<SeatSyncState> seatMap = GetSeatSaveData();
 		for(String key : tags.getAllKeys())
 		{
 			if(SeatDefs.containsKey(key))
 			{
-				VehicleSeatSaveState seatState = new VehicleSeatSaveState();
+				SeatSyncState seatState = new SeatSyncState();
 				seatState.Load(vehicle, tags.getCompound(key));
 				seatMap.Put(key, seatState);
 			}
@@ -280,7 +274,7 @@ public class VehicleSeatsModule implements IVehicleModule
 	@Override
 	public CompoundTag Save(@Nonnull VehicleEntity vehicle)
 	{
-		PerPartMap<VehicleSeatSaveState> map = GetSeatSaveData();
+		PerPartMap<SeatSyncState> map = GetSeatSaveData();
 		CompoundTag tags = new CompoundTag();
 		for (var kvp : SeatDefs.entrySet())
 		{

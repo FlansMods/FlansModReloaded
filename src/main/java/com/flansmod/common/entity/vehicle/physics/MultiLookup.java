@@ -13,11 +13,13 @@ import java.util.function.Function;
 public class MultiLookup<THint, TValue>
 {
 	private final Map<String, List<TValue>> ByPartName = new HashMap<>();
+	private final List<String> PartListByIndex = new ArrayList<>();
 	private final List<TValue> ByIndex = new ArrayList<>();
 	private final Map<THint, List<TValue>> ByHint = new HashMap<>();
 
 	@Nonnull public Collection<TValue> All() { return ByIndex; }
 	@Nullable public TValue ByIndex(int index) { return ByIndex.get(index); }
+	@Nonnull public String PartNameOfIndex(int index) { return PartListByIndex.get(index); }
 	@Nonnull public Collection<TValue> ByPart(@Nonnull String partName) { return ByPartName.getOrDefault(partName, List.of()); }
 	@Nonnull public Collection<TValue> ByHint(@Nonnull THint hint) { return ByHint.getOrDefault(hint, List.of()); }
 	@Nonnull
@@ -60,10 +62,11 @@ public class MultiLookup<THint, TValue>
 	}
 
 
-	public void Add(@Nonnull TValue t, @Nonnull String partName, @Nonnull THint[] hints)
+	public int Add(@Nonnull TValue t, @Nonnull String partName, @Nonnull THint[] hints)
 	{
 		// Add to raw indexed list
 		ByIndex.add(t);
+		PartListByIndex.add(partName);
 
 		// Add lookup by part name
 		if(!ByPartName.containsKey(partName))
@@ -77,21 +80,18 @@ public class MultiLookup<THint, TValue>
 				ByHint.put(hint, new ArrayList<>());
 			ByHint.get(hint).add(t);
 		}
+
+		return ByIndex.size() - 1;
 	}
 	public void RemoveAt(int index)
 	{
 		TValue t = ByIndex.get(index);
-		Remove(t);
-	}
-	public void Remove(@Nonnull TValue t)
-	{
-		ByIndex.remove(t);
 		for(List<TValue> byPart : ByPartName.values())
 			byPart.remove(t);
 		for(List<TValue> byHint : ByHint.values())
 			byHint.remove(t);
-
-
+		ByIndex.remove(index);
+		PartListByIndex.remove(index);
 	}
 
 }

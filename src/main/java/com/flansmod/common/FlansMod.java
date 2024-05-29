@@ -18,6 +18,7 @@ import com.flansmod.common.entity.vehicle.VehicleEntity;
 import com.flansmod.common.entity.vehicle.hierarchy.WheelEntity;
 import com.flansmod.common.gunshots.Raytracer;
 import com.flansmod.common.item.*;
+import com.flansmod.common.network.FlansEntityDataSerializers;
 import com.flansmod.common.network.FlansModPacketHandler;
 import com.flansmod.common.projectiles.BulletEntity;
 import com.flansmod.common.types.abilities.CraftingTraitDefinition;
@@ -56,14 +57,12 @@ import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.damagesource.DamageType;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
-import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.MobCategory;
 import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.ai.attributes.RangedAttribute;
 import net.minecraft.world.inventory.MenuType;
-import net.minecraft.world.inventory.RecipeBookType;
 import net.minecraft.world.item.*;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.item.crafting.RecipeType;
@@ -129,6 +128,15 @@ public class FlansMod
             MobCategory.MISC)
             .sized(0.5f, 0.5f)
             .build("bullet"));
+    public static final RegistryObject<EntityType<WheelEntity>> ENT_TYPE_WHEEL = ENTITY_TYPES.register(
+        "wheel",
+        () -> EntityType.Builder.of(
+            WheelEntity::new,
+            MobCategory.MISC)
+            .sized(0.25f, 0.25f)
+            .build("wheel"));
+
+
     // PartEntitys don't get registered?
     //public static final RegistryObject<EntityType<WheelEntity>> ENT_TYPE_WHEEL = ENTITY_TYPES.register(
     //    "wheel",
@@ -399,8 +407,7 @@ public class FlansMod
         modEventBus.addListener(this::CommonInit);
         ACTIONS_SERVER.HookServer(modEventBus);
         FlansModPacketHandler.RegisterMessages();
-        ContextSerializers.RegisterSerializers();
-        VehicleEntity.RegisterSerializers();
+        FlansEntityDataSerializers.RegisterSerializers();
         modEventBus.addListener(this::OnRegsiterEvent);
 
         new NpcRelationshipCapabilityAttacher();

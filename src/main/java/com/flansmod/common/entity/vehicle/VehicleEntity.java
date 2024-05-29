@@ -6,13 +6,10 @@ import com.flansmod.common.entity.vehicle.controls.ControlLogic;
 import com.flansmod.common.entity.vehicle.controls.VehicleInputState;
 import com.flansmod.common.entity.vehicle.damage.VehicleDamageModule;
 import com.flansmod.common.entity.vehicle.guns.VehicleGunModule;
-import com.flansmod.common.entity.vehicle.guns.VehicleGunSaveState;
 import com.flansmod.common.entity.vehicle.hierarchy.VehicleHierarchyModule;
 import com.flansmod.common.entity.vehicle.hierarchy.WheelEntity;
 import com.flansmod.common.entity.vehicle.physics.VehicleEngineModule;
-import com.flansmod.common.entity.vehicle.physics.VehicleEngineSaveState;
 import com.flansmod.common.entity.vehicle.physics.VehiclePhysicsModule;
-import com.flansmod.common.entity.vehicle.seats.VehicleSeatSaveState;
 import com.flansmod.common.entity.vehicle.seats.VehicleSeatsModule;
 import com.flansmod.common.types.LazyDefinition;
 import com.flansmod.common.types.vehicles.ControlSchemeDefinition;
@@ -20,8 +17,6 @@ import com.flansmod.common.types.vehicles.VehicleDefinition;
 import com.flansmod.util.Maths;
 import com.flansmod.util.Transform;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.syncher.EntityDataSerializer;
-import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
@@ -44,27 +39,6 @@ import java.util.Map;
 
 public class VehicleEntity extends Entity implements ITransformEntity
 {
-	public static void RegisterSerializers()
-	{
-		EntityDataSerializers.registerSerializer(VehicleGunSaveState.SERIALIZER);
-		EntityDataSerializers.registerSerializer(VehicleGunModule.GUNS_SERIALIZER);
-
-		EntityDataSerializers.registerSerializer(VehicleDamageModule.DamageState.SERIALIZER);
-		EntityDataSerializers.registerSerializer(VehicleDamageModule.DAMAGE_SERIALIZER);
-
-		EntityDataSerializers.registerSerializer(VehicleSeatSaveState.SERIALIZER);
-		EntityDataSerializers.registerSerializer(VehicleSeatsModule.SEATS_SERIALIZER);
-
-		EntityDataSerializers.registerSerializer(VehicleHierarchyModule.ArticulationInstance.SERIALIZER);
-		EntityDataSerializers.registerSerializer(VehicleHierarchyModule.ARTICULATIONS_SERIALIZER);
-
-		EntityDataSerializers.registerSerializer(VehicleEngineSaveState.SERIALIZER);
-		EntityDataSerializers.registerSerializer(VehicleEngineModule.ENGINES_SERIALIZER);
-
-		EntityDataSerializers.registerSerializer(WheelEntity.WheelSyncData.SERIALIZER);
-		EntityDataSerializers.registerSerializer(WheelEntity.WHEELS_SERIALIZER);
-	}
-
 	private final LazyDefinition<VehicleDefinition> DefRef;
 	private final Lazy<VehicleDamageModule> LazyDamage = Lazy.of(() -> new VehicleDamageModule(Def().AsHierarchy.get(), this));
 	private final Lazy<VehicleHierarchyModule> LazyHierarchy = Lazy.of(() -> new VehicleHierarchyModule(Def().AsHierarchy.get(), this));
@@ -102,8 +76,8 @@ public class VehicleEntity extends Entity implements ITransformEntity
 		SelectedSkin = defLoc;
 
 		blocksBuilding = true;
-
-		Physics().CreateSubEntities(this);
+		if(!world.isClientSide)
+			Physics().CreateSubEntities(this);
 	}
 
 	public boolean InitFromDefinition()
@@ -215,16 +189,6 @@ public class VehicleEntity extends Entity implements ITransformEntity
 	// ---------------------------------------------------------------------------------------------------------
 	// Entity overrides
 	// ---------------------------------------------------------------------------------------------------------
-	@Override
-	public boolean isMultipartEntity() {
-		return true;
-	}
-	@Override @Nonnull
-	public PartEntity<?>[] getParts() {
-		return Physics().AllWheels().toArray(new WheelEntity[0]);
-	}
-
-
 	// Data Syncing
 	@Override
 	protected void defineSynchedData()
@@ -308,7 +272,6 @@ public class VehicleEntity extends Entity implements ITransformEntity
 		entityData.define(VehicleDamageModule.DAMAGE_ACCESSOR, new PerPartMap<>());
 		entityData.define(VehicleEngineModule.ENGINES_ACCESSOR, new PerPartMap<>());
 		entityData.define(VehicleHierarchyModule.ARTICULATIONS_ACCESSOR, new PerPartMap<>());
-		entityData.define(VehicleHierarchyModule.WHEELS_ACCESSOR, new PerPartMap<>());
 		// TOO early for these to exist
 		//Engine().DefineSyncedData(entityData);
 		//Damage().DefineSyncedData(entityData);

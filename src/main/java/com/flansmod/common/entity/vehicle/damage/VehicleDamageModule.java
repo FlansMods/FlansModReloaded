@@ -5,15 +5,12 @@ import com.flansmod.common.entity.vehicle.IVehicleModule;
 import com.flansmod.common.entity.vehicle.PerPartMap;
 import com.flansmod.common.entity.vehicle.VehicleDefinitionHierarchy;
 import com.flansmod.common.entity.vehicle.VehicleEntity;
-import com.flansmod.common.entity.vehicle.guns.VehicleGunSaveState;
+import com.flansmod.common.network.FlansEntityDataSerializers;
 import com.flansmod.common.types.vehicles.VehicleDefinition;
 import com.flansmod.common.types.vehicles.elements.DamageablePartDefinition;
 import com.flansmod.util.Maths;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.syncher.EntityDataAccessor;
-import net.minecraft.network.syncher.EntityDataSerializer;
-import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.world.damagesource.DamageSource;
 
@@ -24,27 +21,8 @@ import java.util.Map;
 
 public class VehicleDamageModule implements IVehicleModule
 {
-	public record DamageState(float Health)
-	{
-		public static EntityDataSerializer<DamageState> SERIALIZER = new EntityDataSerializer.ForValueType<>()
-		{
-			@Override
-			public void write(@Nonnull FriendlyByteBuf buf, @Nonnull DamageState data)
-			{
-				EntityDataSerializers.FLOAT.write(buf, data.Health);
-			}
-			@Override
-			@Nonnull
-			public DamageState read(@Nonnull FriendlyByteBuf buf)
-			{
-				return new DamageState(EntityDataSerializers.FLOAT.read(buf));
-			}
-		};
-	}
-	public static final EntityDataSerializer<PerPartMap<DamageState>> DAMAGE_SERIALIZER =
-		PerPartMap.SERIALIZER(DamageState.SERIALIZER);
-	public static final EntityDataAccessor<PerPartMap<DamageState>> DAMAGE_ACCESSOR =
-		SynchedEntityData.defineId(VehicleEntity.class, DAMAGE_SERIALIZER);
+	public static final EntityDataAccessor<PerPartMap<DamageSyncState>> DAMAGE_ACCESSOR =
+		SynchedEntityData.defineId(VehicleEntity.class, FlansEntityDataSerializers.DAMAGE_MAP);
 
 	public final Map<String, DamageablePartDefinition> DamageDefinitions = new HashMap<>();
 	@Nonnull
@@ -63,17 +41,17 @@ public class VehicleDamageModule implements IVehicleModule
 		VehicleDataSynchronizer = vehicle.getEntityData();
 	}
 
-	@Nonnull public PerPartMap<DamageState> GetDamageMap() { return VehicleDataSynchronizer.get(DAMAGE_ACCESSOR); }
-	public void SetDamageMap(@Nonnull PerPartMap<DamageState> map) { VehicleDataSynchronizer.set(DAMAGE_ACCESSOR, map); }
+	@Nonnull public PerPartMap<DamageSyncState> GetDamageMap() { return VehicleDataSynchronizer.get(DAMAGE_ACCESSOR); }
+	public void SetDamageMap(@Nonnull PerPartMap<DamageSyncState> map) { VehicleDataSynchronizer.set(DAMAGE_ACCESSOR, map); }
 
 	public float GetHealthOf(@Nonnull String partName)
 	{
-		return GetDamageMap().ApplyOrDefault(partName, DamageState::Health, 0f);
+		return GetDamageMap().ApplyOrDefault(partName, DamageSyncState::Health, 0f);
 	}
 	public void SetHealthOf(@Nonnull String partName, float health)
 	{
-		PerPartMap<DamageState> map = GetDamageMap();
-		map.Put(partName, new DamageState(health));
+		PerPartMap<DamageSyncState> map = GetDamageMap();
+		map.Put(partName, new DamageSyncState(health));
 		SetDamageMap(map);
 	}
 	@Nonnull
@@ -89,9 +67,9 @@ public class VehicleDamageModule implements IVehicleModule
 	public float GetTotalHealth()
 	{
 		float totalHealth = 0.0f;
-		PerPartMap<DamageState> map = GetDamageMap();
+		PerPartMap<DamageSyncState> map = GetDamageMap();
 		for(var damageState : map.Values.values())
-			totalHealth += damageState.Health;
+			totalHealth += damageState.Health();
 		return totalHealth;
 	}
 	public boolean HasPart(@Nonnull String partName)

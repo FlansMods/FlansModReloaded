@@ -1,5 +1,6 @@
 package com.flansmod.common.entity;
 
+import com.flansmod.common.FlansMod;
 import com.flansmod.common.types.elements.EDamageSourceType;
 import com.flansmod.common.types.npc.NpcDefinition;
 import com.flansmod.common.types.npc.elements.ENpcActionType;
@@ -417,7 +418,7 @@ public abstract class ShopkeeperEntity extends PathfinderMob implements Npc, Mer
 	public void SetCooldownForPlayer(Player player, int cooldown)
 	{
 		LazyOptional<INpcRelationshipsCapability> relationshipsCap = player.getCapability(NpcRelationshipsCapability.INSTANCE, Direction.UP);
-		relationshipsCap.ifPresent(relationships -> relationships.SetCooldownTicks(GetDef().Location, cooldown));
+		relationshipsCap.ifPresent(relationships -> relationships.SetEndCooldownTick(GetDef().Location, level().getGameTime() + cooldown));
 	}
 
 	// -------------------------------------------------------------------------------------

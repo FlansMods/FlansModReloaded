@@ -3,24 +3,20 @@ package com.flansmod.common.projectiles;
 import com.flansmod.common.FlansMod;
 import com.flansmod.common.actions.ActionGroupInstance;
 import com.flansmod.common.actions.ActionStack;
-import com.flansmod.common.actions.contexts.ActionGroupContext;
-import com.flansmod.common.actions.contexts.ContextSerializers;
-import com.flansmod.common.actions.contexts.GunContext;
 import com.flansmod.common.gunshots.Gunshot;
 import com.flansmod.common.actions.contexts.GunshotContext;
+import com.flansmod.common.network.FlansEntityDataSerializers;
 import com.flansmod.common.types.bullets.BulletDefinition;
 import com.flansmod.common.types.bullets.elements.ProjectileDefinition;
 import com.flansmod.util.Maths;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
-import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MoverType;
-import net.minecraft.world.entity.animal.horse.Llama;
 import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.world.entity.projectile.ProjectileUtil;
 import net.minecraft.world.level.Level;
@@ -30,12 +26,11 @@ import net.minecraft.world.phys.Vec3;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.Optional;
 import java.util.UUID;
 
 public class BulletEntity extends Projectile
 {
-	private static final EntityDataAccessor<GunshotContext> DATA_CONTEXT = SynchedEntityData.defineId(BulletEntity.class, ContextSerializers.GUNSHOT_CONTEXT_FULL);
+	private static final EntityDataAccessor<GunshotContext> DATA_CONTEXT = SynchedEntityData.defineId(BulletEntity.class, FlansEntityDataSerializers.GUNSHOT_CONTEXT_FULL);
 
 	// We store the context locally because we may exist long after the player is gone
 	@Nonnull

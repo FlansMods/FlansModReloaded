@@ -177,10 +177,10 @@ public class LegacyVehicleControlLogic extends ControlLogic
 				}
 			}
 
-			if(wheel.Def.floatOnWater && vehicle.level().containsAnyLiquid(wheel.getBoundingBox()))
+			if(wheel.GetWheelDef().floatOnWater && vehicle.level().containsAnyLiquid(wheel.getBoundingBox()))
 			{
 				// wheelMotion = wheelMotion.add(0f, wheel.Def.buoyancy, 0f);
-				forces.AddGlobalForceToWheel(wheelID, new Vec3(0f, wheel.Def.buoyancy, 0f), () -> "Buoyancy");
+				forces.AddGlobalForceToWheel(wheelID, new Vec3(0f, wheel.GetWheelDef().buoyancy, 0f), () -> "Buoyancy");
 			}
 
 			wheel.setDeltaMovement(wheelMotion);
@@ -191,7 +191,7 @@ public class LegacyVehicleControlLogic extends ControlLogic
 			Transform expectedWheelPosition = vehicle.Hierarchy().GetWorldToPartPrevious("wheel_" + wheelID);
 
 			Vec3 dPos = expectedWheelPosition.PositionVec3().subtract(wheel.position());
-			dPos = dPos.scale(wheel.Def.springStrength);
+			dPos = dPos.scale(wheel.GetWheelDef().springStrength);
 			if(dPos.lengthSqr() > 0.00001d)
 			{
 				// Move the wheel by this much

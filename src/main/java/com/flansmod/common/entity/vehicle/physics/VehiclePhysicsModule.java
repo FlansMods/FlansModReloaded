@@ -45,16 +45,17 @@ public class VehiclePhysicsModule implements IVehicleModule
 	public void CreateSubEntities(@Nonnull VehicleEntity vehicle)
 	{
 		vehicle.Def().AsHierarchy.get().ForEachWheel((wheelPath, wheelDef) -> {
-			WheelEntity wheel = new WheelEntity(vehicle, wheelPath, wheelDef);
-			Wheels.Add(wheel, wheelPath, wheelDef.controlHints);
+			WheelEntity wheel = new WheelEntity(FlansMod.ENT_TYPE_WHEEL.get(), vehicle.level());
+			int wheelIndex = Wheels.Add(wheel, wheelPath, wheelDef.controlHints);
+			wheel.SetLinkToVehicle(vehicle, wheelIndex);
 		});
 
-		for(int i = 0; i < Wheels.All().size(); i++)
-		{
-			WheelEntity wheel = WheelByIndex(i);
-			if(wheel != null)
-				vehicle.Hierarchy().RegisterWheel(i, wheel);
-		}
+		//for(int i = 0; i < Wheels.All().size(); i++)
+		//{
+		//	WheelEntity wheel = WheelByIndex(i);
+		//	if(wheel != null)
+		//		vehicle.Hierarchy().RegisterWheel(i, wheel);
+		//}
 	}
 	private void UnregisterWheelAt(int wheelIndex)
 	{
@@ -72,6 +73,8 @@ public class VehiclePhysicsModule implements IVehicleModule
 	public Collection<WheelEntity> AllWheels() { return Wheels.All(); }
 	@Nullable
 	public WheelEntity WheelByIndex(int index) { return Wheels.ByIndex(index); }
+	@Nonnull
+	public String GetPathOfWheel(int index) { return Wheels.PartNameOfIndex(index); }
 	@Nonnull
 	public Collection<WheelEntity> WheelsByVehiclePart(@Nonnull String partName) { return Wheels.ByPart(partName); }
 	@Nonnull
@@ -163,7 +166,7 @@ public class VehiclePhysicsModule implements IVehicleModule
 				WheelEntity wheel = WheelByIndex(i);
 				if(wheel != null)
 				{
-					forces.AddGlobalForceToWheel(i, new Vec3(0f, -9.81f * wheel.Def.mass, 0f), () -> "Gravity");
+					forces.AddGlobalForceToWheel(i, new Vec3(0f, -9.81f * wheel.GetWheelDef().mass, 0f), () -> "Gravity");
 					forces.AddDampenerToWheel(i, 0.1f);
 					forces.AddDefaultWheelSpring(vehicle, wheel);
 				}
