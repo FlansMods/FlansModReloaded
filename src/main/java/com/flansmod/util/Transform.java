@@ -19,6 +19,7 @@ import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.Arrays;
 import java.util.List;
+import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 public class Transform
@@ -162,6 +163,13 @@ public class Transform
     {
         Vector3d pos = from.Position.mul(scale, new Vector3d());
         return new Transform(pos.x, pos.y, pos.z, IDENTITY_QUAT, 1f, debugFunc == null ? () -> "{\"PosFrom\":"+from.DebugInfo+"}" : debugFunc);
+    }
+    @Nonnull
+    public static Transform Flatten(@Nonnull Consumer<TransformStack> func)
+    {
+        TransformStack stack = new TransformStack();
+        func.accept(stack);
+        return stack.Top();
     }
 
     // ----------------------------------------------------------------------------------------

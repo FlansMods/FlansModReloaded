@@ -6,17 +6,26 @@ import com.flansmod.common.entity.vehicle.controls.ControlLogic;
 import com.flansmod.common.entity.vehicle.controls.VehicleInputState;
 import com.flansmod.common.entity.vehicle.damage.VehicleDamageModule;
 import com.flansmod.common.entity.vehicle.guns.VehicleGunModule;
+import com.flansmod.common.entity.vehicle.hierarchy.ArticulationSyncState;
+import com.flansmod.common.entity.vehicle.hierarchy.IVehicleTransformHelpers;
 import com.flansmod.common.entity.vehicle.hierarchy.VehicleHierarchyModule;
 import com.flansmod.common.entity.vehicle.hierarchy.WheelEntity;
+import com.flansmod.common.entity.vehicle.physics.*;
 import com.flansmod.common.entity.vehicle.physics.VehicleEngineModule;
-import com.flansmod.common.entity.vehicle.physics.VehiclePhysicsModule;
 import com.flansmod.common.entity.vehicle.seats.VehicleSeatsModule;
+import com.flansmod.common.network.FlansEntityDataSerializers;
 import com.flansmod.common.types.LazyDefinition;
+import com.flansmod.common.types.parts.elements.EngineDefinition;
 import com.flansmod.common.types.vehicles.ControlSchemeDefinition;
 import com.flansmod.common.types.vehicles.VehicleDefinition;
+import com.flansmod.common.types.vehicles.elements.EControlLogicHint;
 import com.flansmod.util.Maths;
 import com.flansmod.util.Transform;
+import com.flansmod.util.TransformStack;
+import com.flansmod.util.collision.ColliderHandle;
+import com.flansmod.util.collision.OBBCollisionSystem;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
@@ -28,7 +37,6 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.common.util.Lazy;
-import net.minecraftforge.entity.PartEntity;
 import org.joml.Vector3f;
 
 import javax.annotation.Nonnull;
@@ -36,32 +44,34 @@ import javax.annotation.Nullable;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Consumer;
 
-public class VehicleEntity extends Entity implements ITransformEntity
+public class VehicleEntity extends Entity implements
+	ITransformEntity,
+	IVehicleEngineModule,
+	IVehicleTransformHelpers
+
 {
-	private final LazyDefinition<VehicleDefinition> DefRef;
-	private final Lazy<VehicleDamageModule> LazyDamage = Lazy.of(() -> new VehicleDamageModule(Def().AsHierarchy.get(), this));
-	private final Lazy<VehicleHierarchyModule> LazyHierarchy = Lazy.of(() -> new VehicleHierarchyModule(Def().AsHierarchy.get(), this));
-	private final Lazy<VehicleGunModule> LazyGuns = Lazy.of(() -> new VehicleGunModule(Def().AsHierarchy.get(), this));
-	private final Lazy<VehicleSeatsModule> LazySeats = Lazy.of(() -> new VehicleSeatsModule(Def().AsHierarchy.get(), this));
-	private final Lazy<VehiclePhysicsModule> LazyPhysics = Lazy.of(() -> new VehiclePhysicsModule(Def().physics));
-	private final Lazy<VehicleEngineModule> LazyEngine = Lazy.of(() -> new VehicleEngineModule(this));
-	private final Lazy<VehicleInventory> LazyInventory = Lazy.of(this::CreateInventory);
+	// Data Synchronizer Accessors
+	public static final EntityDataAccessor<PerPartMap<EngineSyncState>> ENGINES_ACCESSOR =
+		SynchedEntityData.defineId(VehicleEntity.class, FlansEntityDataSerializers.ENGINE_MAP);
+	public static final EntityDataAccessor<PerPartMap<ArticulationSyncState>> ARTICULATIONS_ACCESSOR =
+		SynchedEntityData.defineId(VehicleEntity.class, FlansEntityDataSerializers.ARTICULATION_MAP);
+
+
+
+	// Location and sync
+	@Nonnull public Transform RootTransform = Transform.Identity();
+	@Nonnull public Transform RootTransformPrev = Transform.Identity();
 
 	// Definition / ID Access
+	@Nonnull private final LazyDefinition<VehicleDefinition> DefRef;
 	@Nonnull public VehicleDefinition Def() { return DefRef.DefGetter().get(); }
 	@Nonnull public ResourceLocation Loc() { return DefRef.Loc(); }
 
-	// Module getters
-	@Nonnull public VehicleDamageModule Damage() { return LazyDamage.get(); }
-	@Nonnull public VehicleHierarchyModule Hierarchy() { return LazyHierarchy.get(); }
-	@Nonnull public VehicleGunModule Guns() { return LazyGuns.get(); }
-	@Nonnull public VehicleSeatsModule Seats() { return LazySeats.get(); }
-	@Nonnull public VehiclePhysicsModule Physics() { return LazyPhysics.get(); }
-	@Nonnull public VehicleEngineModule Engine() { return LazyEngine.get(); }
-
 
 	// Inventory (sort of module-ey)
+	private final Lazy<VehicleInventory> LazyInventory = Lazy.of(this::CreateInventory);
 	@Nonnull public VehicleInventory Inventory() { return LazyInventory.get(); }
 
 	// Other misc fields
@@ -251,13 +261,147 @@ public class VehicleEntity extends Entity implements ITransformEntity
 		}
 	}
 
+	// Useful Lookups
+	// Part lookups
+	private final MultiLookup<EControlLogicHint, WheelEntity> Wheels = new MultiLookup<>();
+	private final MultiLookup<EControlLogicHint, VehiclePropellerSaveState> Propellers = new MultiLookup<>();
+	private final Map<ResourceLocation, ControlLogic> Controllers = new HashMap<>();
+
+
+	// ---------------------------------------------------------------------------------------------------------
+	// ARTICULATION MODULE
+	@Nonnull private PerPartMap<ArticulationSyncState> GetArticulationMap() { return VehicleDataSynchronizer.get(ARTICULATIONS_ACCESSOR); }
+	private void SetArticulationMap(@Nonnull PerPartMap<ArticulationSyncState> map) { VehicleDataSynchronizer.set(ARTICULATIONS_ACCESSOR, map); }
+
+	@Override
+	public void ApplyWorldToRootPrevious(@Nonnull TransformStack stack)
+	{
+		stack.add(RootTransformPrev);
+	}
+	@Override
+	public void ApplyWorldToRootCurrent(@Nonnull TransformStack stack)
+	{
+		stack.add(RootTransform);
+	}
+	@Override
+	public void ApplyPartToPartPrevious(@Nonnull VehicleDefinitionHierarchy.Node childPart, @Nonnull TransformStack stack)
+	{
+
+	}
+	@Override
+	public void ApplyPartToPartCurrent(@Nonnull VehicleDefinitionHierarchy.Node childPart, @Nonnull TransformStack stack)
+	{
+
+	}
+	@Override
+	@Nonnull
+	public VehicleDefinitionHierarchy.Node GetHeirarchyRoot()
+	{
+		return Def().AsHierarchy.get().RootNode;
+	}
+
+
+
+	// Root to Part
+	@Nonnull public ITransformPair GetRootToPart(@Nonnull String vehiclePart) {
+		return ITransformPair.of(() -> GetRootToPartPrevious(vehiclePart), () -> GetRootToPartCurrent(vehiclePart));
+	}
+	@Nonnull public Transform GetRootToPartPrevious(@Nonnull String vehiclePart) {
+		TransformStack stack = new TransformStack();
+		TransformRootToPartPrevious(vehiclePart, stack);
+		return stack.Top();
+	}
+	@Nonnull public Transform GetRootToPartCurrent(@Nonnull String vehiclePart) {
+		TransformStack stack = new TransformStack();
+		TransformRootToPartCurrent(vehiclePart, stack);
+		return stack.Top();
+	}
+	public void TransformRootToPartPrevious(@Nonnull String vehiclePart, @Nonnull TransformStack stack) {
+		Def().AsHierarchy.get().Traverse(vehiclePart, (node) -> { stack.add(GetPartLocalPrevious(node)); });
+	}
+	public void TransformRootToPartCurrent(@Nonnull String vehiclePart, @Nonnull TransformStack stack) {
+		Def().AsHierarchy.get().Traverse(vehiclePart, (node) -> { stack.add(GetPartLocalCurrent(node)); });
+	}
+
+	// Part-to-Part Transforms
+	@Nonnull public ITransformPair GetPartLocal(@Nonnull VehicleDefinitionHierarchy.Node node) {
+		return ITransformPair.of(() -> GetPartLocalPrevious(node), () -> GetPartLocalCurrent(node));
+	}
+	@Nonnull
+	public Transform GetPartLocalPrevious(@Nonnull VehicleDefinitionHierarchy.Node node)
+	{
+		if(node.Def.IsArticulated())
+		{
+			float articulationParameter = GetArticulationParameter(node.Def.partName);
+			float articulationVelocity = GetArticulationVelocity(node.Def.partName);
+			return node.Def.articulation.Apply(articulationParameter - articulationVelocity);
+		}
+		return node.Def.LocalTransform.get();
+	}
+	@Nonnull
+	public Transform GetPartLocalCurrent(@Nonnull VehicleDefinitionHierarchy.Node node)
+	{
+		if(node.Def.IsArticulated())
+		{
+			float articulationParameter = GetArticulationParameter(node.Def.partName);
+			return node.Def.articulation.Apply(articulationParameter);
+		}
+		return node.Def.LocalTransform.get();
+	}
+
+
+
+	// ---------------------------------------------------------------------------------------------------------
+	// PHYSICS MODULE
+	@Nullable
+	public ColliderHandle CorePhsyicsHandle = null;
+	@Nullable
+	public ColliderHandle[] WheelPhysicsHandles = new ColliderHandle[0];
+
+	private void InitPhysics()
+	{
+		OBBCollisionSystem physics = OBBCollisionSystem.ForLevel(level());
+		physics.RegisterDynamic()
+
+
+		Def().AsHierarchy.get().ForEachWheel((wheelPath, wheelDef) -> {
+			WheelEntity wheel = new WheelEntity(FlansMod.ENT_TYPE_WHEEL.get(), level());
+			int wheelIndex = Wheels.Add(wheel, wheelPath, wheelDef.controlHints);
+			wheel.SetLinkToVehicle(this, wheelIndex);
+		});
+	}
+
+
+
+	// ---------------------------------------------------------------------------------------------------------
+	// ENGINE MODULE
+
+	@Nonnull
+	@Override
+	public EngineDefinition GetDefaultEngine() { return Def().defaultEngine; }
+	@Nonnull
+	@Override
+	public PerPartMap<EngineSyncState> GetEngineSaveData() { return entityData.get(ENGINES_ACCESSOR); }
+	@Override
+	public void SetEngineSaveData(@Nonnull PerPartMap<EngineSyncState> map) { entityData.set(ENGINES_ACCESSOR, map); }
+	@Override
+	public void ModifyEngineSaveData(@Nonnull String enginePath, @Nonnull Consumer<EngineSyncState> func)
+	{
+		PerPartMap<EngineSyncState> map = GetEngineSaveData();
+		map.CreateAndApply(enginePath,
+			EngineSyncState::new,
+			func);
+		SetEngineSaveData(map);
+	}
+	// ---------------------------------------------------------------------------------------------------------
+
 
 	// ---------------------------------------------------------------------------------------------------------
 	// MODULES
 	// ---------------------------------------------------------------------------------------------------------
 	private void TickModules()
 	{
-		Engine().Tick(this);
+
 		Damage().Tick(this);
 		Hierarchy().Tick(this);
 		Guns().Tick(this);
@@ -269,19 +413,12 @@ public class VehicleEntity extends Entity implements ITransformEntity
 		entityData.define(VehicleSeatsModule.SEATS_ACCESSOR, new PerPartMap<>());
 		entityData.define(VehicleGunModule.GUNS_ACCESSOR, new PerPartMap<>());
 		entityData.define(VehicleDamageModule.DAMAGE_ACCESSOR, new PerPartMap<>());
-		entityData.define(VehicleEngineModule.ENGINES_ACCESSOR, new PerPartMap<>());
+		entityData.define(ENGINES_ACCESSOR, new PerPartMap<>());
 		entityData.define(VehicleHierarchyModule.ARTICULATIONS_ACCESSOR, new PerPartMap<>());
-		// TOO early for these to exist
-		//Engine().DefineSyncedData(entityData);
-		//Damage().DefineSyncedData(entityData);
-		//Hierarchy().DefineSyncedData(entityData);
-		//Guns().DefineSyncedData(entityData);
-		//Seats().DefineSyncedData(entityData);
-		//Physics().DefineSyncedData(entityData);
 	}
 	private void SaveModules(@Nonnull CompoundTag tags)
 	{
-		tags.put("engine", Engine().Save(this));
+		tags.put("engine", SaveEngineData(this));
 		tags.put("damage", Damage().Save(this));
 		tags.put("articulation", Hierarchy().Save(this));
 		tags.put("guns", Guns().Save(this));
@@ -291,7 +428,7 @@ public class VehicleEntity extends Entity implements ITransformEntity
 	private void LoadModules(@Nonnull CompoundTag tags)
 	{
 		if(tags.contains("engine"))
-			Engine().Load(this, tags.getCompound("engine"));
+			LoadEngineData(this, tags.getCompound("engine"));
 		if(tags.contains("damage"))
 			Damage().Load(this, tags.getCompound("damage"));
 		if(tags.contains("articulation"))

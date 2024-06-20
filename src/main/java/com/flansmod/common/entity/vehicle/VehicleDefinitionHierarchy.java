@@ -3,6 +3,7 @@ package com.flansmod.common.entity.vehicle;
 import com.flansmod.common.FlansMod;
 import com.flansmod.common.types.vehicles.VehicleDefinition;
 import com.flansmod.common.types.vehicles.elements.*;
+import com.google.common.collect.ImmutableList;
 import org.lwjgl.system.linux.Stat;
 import org.spongepowered.asm.mixin.Dynamic;
 
@@ -12,6 +13,7 @@ import java.util.*;
 import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
+import java.util.function.Function;
 
 public class VehicleDefinitionHierarchy
 {
@@ -26,19 +28,32 @@ public class VehicleDefinitionHierarchy
 		public Node Parent = null;
 		public Map<String, Node> StaticChildren = new HashMap<>();
 		public Map<String, Node> DynamicChildren = new HashMap<>();
+		private VehiclePartPath NamedPath = null;
 
 		@Nonnull
-		public String Path()
+		public VehiclePartPath GetNamedPath()
 		{
-			if(Parent != null)
+			if(NamedPath == null)
 			{
-				String parentPath = Parent.Path();
-				if(!parentPath.isEmpty())
-					return Parent.Path() + "/" + Def.partName;
+				ImmutableList.Builder<String> pathBuilder = ImmutableList.builder();
+				GenerateNamedPath(pathBuilder);
+				NamedPath = VehiclePartPath.of(pathBuilder.build());
 			}
-			return Def.partName;
+			return NamedPath;
 		}
 
+		private void GenerateNamedPath(@Nonnull ImmutableList.Builder<String> builder)
+		{
+			if(Parent != null)
+				Parent.GenerateNamedPath(builder);
+			builder.add(Def.partName);
+		}
+
+		@Nullable
+		public Node FindNode(@Nonnull String path)
+		{
+			return RunOnNode(path, (node, subpath) -> node).orElse(null);
+		}
 		@Nullable
 		public Node FindNode(@Nonnull String path)
 		{
@@ -69,6 +84,11 @@ public class VehicleDefinitionHierarchy
 				FlansMod.LOGGER.warn("Failed to find path, but hit 0-length");
 				return Optional.empty();
 			}
+		}
+		@Nonnull
+		public <T> Optional<T> RunOnNode(@Nonnull VehiclePartPath path, @Nonnull Function<Node, T> func)
+		{
+
 		}
 		public void ForEachNode(@Nonnull Consumer<Node> func)
 		{

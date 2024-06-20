@@ -53,8 +53,6 @@ public class VehiclePhysicsModule implements IVehicleModule
 
 	public void CreateSubEntities(@Nonnull VehicleEntity vehicle)
 	{
-		OBBCollisionSystem physics = OBBCollisionSystem.ForLevel(vehicle.level());
-		physics.RegisterDynamic()
 
 		vehicle.Def().AsHierarchy.get().ForEachWheel((wheelPath, wheelDef) -> {
 			WheelEntity wheel = new WheelEntity(FlansMod.ENT_TYPE_WHEEL.get(), vehicle.level());
