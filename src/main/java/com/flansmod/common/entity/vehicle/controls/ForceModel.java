@@ -108,7 +108,7 @@ public class ForceModel
 		Vec3 springForce = delta.scale(wheel.GetWheelDef().springStrength * 20f);
 
 		AddGlobalOffsetForce(VehicleDefinition.CoreName, wheelAPPos.subtract(vehicle.position()), springForce, () -> "Wheel Spring Pull on Core");
-		AddGlobalForce(wheel.GetWheelPath(), springForce.scale(-1f), () -> "Core Pull on Wheel Spring");
+		AddGlobalForce(Wheel(wheel.GetWheelIndex()), springForce.scale(-1f), () -> "Core Pull on Wheel Spring");
 	}
 
 

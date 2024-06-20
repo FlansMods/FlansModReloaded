@@ -3,6 +3,8 @@ package com.flansmod.common.entity.vehicle;
 import com.flansmod.common.FlansMod;
 import com.flansmod.common.types.vehicles.VehicleDefinition;
 import com.flansmod.common.types.vehicles.elements.*;
+import org.lwjgl.system.linux.Stat;
+import org.spongepowered.asm.mixin.Dynamic;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -22,7 +24,8 @@ public class VehicleDefinitionHierarchy
 			Def = part;
 		}
 		public Node Parent = null;
-		public Map<String, Node> Children = new HashMap<>();
+		public Map<String, Node> StaticChildren = new HashMap<>();
+		public Map<String, Node> DynamicChildren = new HashMap<>();
 
 		@Nonnull
 		public String Path()
@@ -47,8 +50,10 @@ public class VehicleDefinitionHierarchy
 			String[] subpath = path.split("/", 1);
 			if(subpath.length > 1)
 			{
-				if (Children.containsKey(subpath[0]))
-					return Children.get(subpath[0]).RunOnNode(subpath[1], func);
+				if (StaticChildren.containsKey(subpath[0]))
+					return StaticChildren.get(subpath[0]).RunOnNode(subpath[1], func);
+				else if (DynamicChildren.containsKey(subpath[0]))
+					return DynamicChildren.get(subpath[0]).RunOnNode(subpath[1], func);
 				else
 				{
 					FlansMod.LOGGER.warn("Failed to find child node for subpath " + subpath[0]);
@@ -65,12 +70,24 @@ public class VehicleDefinitionHierarchy
 				return Optional.empty();
 			}
 		}
-
 		public void ForEachNode(@Nonnull Consumer<Node> func)
 		{
-			func.accept(this);
-			for(var child : Children.values())
-				child.ForEachNode(func);
+			ForEachNode(true, true, true, func);
+		}
+		public void ForEachNode(boolean includeSelf, boolean includeStatic, boolean includeDynamic, @Nonnull Consumer<Node> func)
+		{
+			if(includeSelf)
+				func.accept(this);
+			if(includeStatic)
+			{
+				for (var child : StaticChildren.values())
+					child.ForEachNode(true, includeStatic, includeDynamic, func);
+			}
+			if(includeDynamic)
+			{
+				for (var child : DynamicChildren.values())
+					child.ForEachNode(true, includeStatic, includeDynamic, func);
+			}
 		}
 	}
 	public final Node RootNode;
@@ -107,7 +124,10 @@ public class VehicleDefinitionHierarchy
 			if(nodes.containsKey(attachedTo))
 			{
 				Node parentNode = nodes.get(attachedTo);
-				parentNode.Children.put(kvp.getKey(), kvp.getValue());
+				if(kvp.getValue().Def.articulation.active)
+					parentNode.DynamicChildren.put(kvp.getKey(), kvp.getValue());
+				else
+					parentNode.StaticChildren.put(kvp.getKey(), kvp.getValue());
 				kvp.getValue().Parent = parentNode;
 			}
 			else
@@ -141,7 +161,7 @@ public class VehicleDefinitionHierarchy
 			if(partPathElements[i].equals("body"))
 				continue;
 
-			Node childNode = node.Children.get(partPathElements[i]);
+			Node childNode = node.StaticChildren.get(partPathElements[i]);
 			if(childNode != null)
 			{
 				func.accept(childNode);
@@ -149,6 +169,12 @@ public class VehicleDefinitionHierarchy
 			}
 			else
 			{
+				Node articChildNode = node.DynamicChildren.get(partPathElements[i]);
+				if(articChildNode != null)
+				{
+					func.accept(articChildNode);
+					node = articChildNode;
+				}
 				// This is the end of the line. We may have one more identifier like "wheel_0" (an entity)
 				// or "articulation_2", a component
 			}

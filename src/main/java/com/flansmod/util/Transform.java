@@ -5,13 +5,16 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.renderer.block.model.ItemTransform;
 import net.minecraft.client.renderer.block.model.ItemTransforms;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import org.joml.*;
 import org.joml.Runtime;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.nio.FloatBuffer;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.Arrays;
@@ -125,7 +128,7 @@ public class Transform
     @Nonnull public static Transform FromPose(@Nonnull Matrix4f pose)                                                         { return new Transform(pose.transformPosition(new Vector3f()), pose.getUnnormalizedRotation(new Quaternionf()), GetScale(pose), null); }
     @Nonnull public static Transform FromPose(@Nonnull PoseStack poseStack)                                                   { return FromPose(poseStack.last().pose(), null); }
     @Nonnull public static Transform FromEntity(@Nonnull Entity entity)                                                       { return FromPosAndEuler(entity.position(), entity.getXRot(), entity.getYRot(), 0f, () -> "From Ent:" + entity); }
-
+    @Nonnull public static Transform Copy(@Nonnull Transform other)                                                           { return new Transform(other); }
 
     @Nonnull public static Transform Identity(@Nullable Supplier<String> debugFunc)                                                                                 { return new Transform(debugFunc); }
     @Nonnull public static Transform FromScale(float scale, @Nullable Supplier<String> debugFunc)                                                                   { return new Transform(scale, debugFunc);  }
@@ -242,6 +245,11 @@ public class Transform
         return new Transform(pos, Orientation, Scale, () -> "SetPos["+pos+"]");
     }
     @Nonnull
+    public Transform Translated(@Nonnull Vec3 pos)
+    {
+        return new Transform(new Vector3d(Position.x + pos.x, Position.y + pos.y, Position.z + pos.z), Orientation, Scale, () -> "AddPos["+pos+"]");
+    }
+    @Nonnull
     public Transform WithYaw(float yaw)
     {
         Vector3f euler = Euler();
@@ -315,12 +323,16 @@ public class Transform
     public BlockPos BlockPos() { return new BlockPos(Maths.Floor(Position.x), Maths.Floor(Position.y), Maths.Floor(Position.z)); }
     @Nonnull
     public Vec3 PositionVec3() { return new Vec3(Position.x, Position.y, Position.z); }
-    @Nonnull
-    public Vec3 ForwardVec3() { return LocalToGlobalDirection(new Vec3(0d, 0d, -1d)); }
-    @Nonnull
-    public Vec3 UpVec3() { return LocalToGlobalDirection(new Vec3(0d, 1d, 0d)); }
-    @Nonnull
-    public Vec3 RightVec3() { return LocalToGlobalDirection(new Vec3(1d, 0d, 0d)); }
+    @Nonnull public Vec3 ForwardVec3()  { return LocalToGlobalDirection(new Vec3(0d, 0d, -1d)); }
+    @Nonnull public Vec3 BackVec3()     { return LocalToGlobalDirection(new Vec3(0d, 0d, 1d)); }
+    @Nonnull public Vec3 UpVec3()       { return LocalToGlobalDirection(new Vec3(0d, 1d, 0d)); }
+    @Nonnull public Vec3 DownVec3()     { return LocalToGlobalDirection(new Vec3(0d, -1d, 0d)); }
+    @Nonnull public Vec3 RightVec3()    { return LocalToGlobalDirection(new Vec3(1d, 0d, 0d)); }
+    @Nonnull public Vec3 LeftVec3()     { return LocalToGlobalDirection(new Vec3(-1d, 0d, 0d)); }
+    @Nonnull public Vec3 DirectionVec3(@Nonnull Direction dir) { return LocalToGlobalDirection(new Vec3(dir.step())); }
+
+
+
     public boolean IsIdentity() {
         return Position.lengthSquared() <= Maths.Epsilon
             && Orientation.equals(IDENTITY_QUAT, Maths.EpsilonF)
@@ -331,7 +343,14 @@ public class Transform
     public float Yaw() { return ToEuler(Orientation).y; }
     public float Pitch() { return ToEuler(Orientation).x; }
     public float Roll() { return ToEuler(Orientation).z; }
-
+    @Nonnull
+    public Matrix3f OriMatrix() {
+        float[] floats = new float[9];
+        FloatBuffer buf = FloatBuffer.wrap(floats);
+        Orientation.getAsMatrix3f(buf);
+        buf.reset();
+        return new Matrix3f(buf);
+    }
 
 
     // ----------------------------------------------------------------------------------------
@@ -439,6 +458,33 @@ public class Transform
             GlobalToLocalOrientation(globalTransform.Orientation),
             GlobalToLocalScale(globalTransform.Scale),
             () -> "{\"Globl\":"+globalTransform+",\"Apply\":"+this+"}");
+    }
+    @Nonnull
+    public AABB LocalToGlobalBounds(@Nonnull AABB localBounds)
+    {
+        double minX = Double.MAX_VALUE;
+        double minY = Double.MAX_VALUE;
+        double minZ = Double.MAX_VALUE;
+        double maxX = -Double.MAX_VALUE;
+        double maxY = -Double.MAX_VALUE;
+        double maxZ = -Double.MAX_VALUE;
+        for(int x = 0; x < 2; x++)
+            for(int y = 0; y < 2; y++)
+                for(int z = 0; z < 2; z++)
+                {
+                    Vec3 rotated = LocalToGlobalPosition(
+                        new Vec3(localBounds.minX + localBounds.getXsize() * x,
+                                localBounds.minY + localBounds.getYsize() * y,
+                                localBounds.minZ + localBounds.getZsize() * z));
+                    minX = Maths.Min(minX, rotated.x);
+                    minY = Maths.Min(minY, rotated.y);
+                    minZ = Maths.Min(minZ, rotated.z);
+                    maxX = Maths.Max(maxX, rotated.x);
+                    maxY = Maths.Max(maxY, rotated.y);
+                    maxZ = Maths.Max(maxZ, rotated.z);
+
+                }
+        return new AABB(minX, minY, minZ, maxX, maxY, maxZ);
     }
     // ----------------------------------------------------------------------------------------
 

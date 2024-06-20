@@ -11,8 +11,11 @@ import com.flansmod.common.entity.vehicle.hierarchy.WheelEntity;
 import com.flansmod.common.types.vehicles.ControlSchemeDefinition;
 import com.flansmod.common.types.vehicles.elements.EControlLogicHint;
 import com.flansmod.common.types.vehicles.elements.VehiclePhysicsDefinition;
+import com.flansmod.util.collision.ColliderHandle;
+import com.flansmod.util.collision.OBBCollisionSystem;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 
 import javax.annotation.Nonnull;
@@ -27,6 +30,12 @@ public class VehiclePhysicsModule implements IVehicleModule
 	public final VehiclePhysicsDefinition Def;
 	@Nonnull
 	public ForceModel ForcesLastFrame;
+
+	public boolean IsPhysicsInitDone = false;
+	@Nullable
+	public ColliderHandle CorePhsyicsHandle = null;
+	@Nullable
+	public ColliderHandle[] WheelPhysicsHandles = new ColliderHandle[0];
 
 	// Part lookups
 	private final MultiLookup<EControlLogicHint, WheelEntity> Wheels = new MultiLookup<>();
@@ -44,6 +53,9 @@ public class VehiclePhysicsModule implements IVehicleModule
 
 	public void CreateSubEntities(@Nonnull VehicleEntity vehicle)
 	{
+		OBBCollisionSystem physics = OBBCollisionSystem.ForLevel(vehicle.level());
+		physics.RegisterDynamic()
+
 		vehicle.Def().AsHierarchy.get().ForEachWheel((wheelPath, wheelDef) -> {
 			WheelEntity wheel = new WheelEntity(FlansMod.ENT_TYPE_WHEEL.get(), vehicle.level());
 			int wheelIndex = Wheels.Add(wheel, wheelPath, wheelDef.controlHints);
@@ -194,6 +206,8 @@ public class VehiclePhysicsModule implements IVehicleModule
 
 		vehicle.SyncEntityToTransform();
 
+		VehicleCollisionSystem.CollideEntities(vehicle);
+
 
 		// Wheels need to move too
 		for(int i = 0; i < Wheels.All().size(); i++)
@@ -210,6 +224,12 @@ public class VehiclePhysicsModule implements IVehicleModule
 		}
 		Wheels.ForEach(wheel -> wheel.EndTick(vehicle));
 	}
+
+	//@Nonnull
+	//public List<AABB> GetAllColliders(@Nonnull VehicleEntity vehicle)
+	//{
+	//	vehicle.Hierarchy().Traverse();
+	//}
 
 	@Override
 	public void Load(@Nonnull VehicleEntity vehicle, @Nonnull CompoundTag tags)

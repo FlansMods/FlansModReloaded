@@ -122,8 +122,8 @@ public class VehicleEntity extends Entity implements ITransformEntity
 
 	// -------------------------------------------------------------------------------------------
 	// Transform and some vanilla overrides. We want to use Quaternions, pleassse Minecraft
-	@Override public float getYRot() { return RootTransform0().Yaw(); }
-	@Override public float getXRot() { return RootTransform0().Pitch(); }
+	@Override public float getYRot() { return GetWorldToEntity().GetCurrent().Yaw(); }
+	@Override public float getXRot() { return GetWorldToEntity().GetCurrent().Pitch(); }
 	@Override public void setYRot(float yaw) { Hierarchy().SetYaw(yaw); }
 	@Override public void setXRot(float pitch) { Hierarchy().SetPitch(pitch); }
 	//@Override public void setPos(double x, double y, double z) { SetPosition(x, y, z); }
@@ -149,14 +149,13 @@ public class VehicleEntity extends Entity implements ITransformEntity
 	{
 		SyncEntityToTransform();
 		for(WheelEntity wheel : Physics().AllWheels())
-			wheel.SyncTransformToEntity();
+			wheel.setPos(GetWorldToAP(wheel.GetWheelPath()).GetCurrent().PositionVec3());
 	}
 
 	public void SetEulerAngles(float pitch, float yaw, float roll) { Hierarchy().SetEulerAngles(pitch, yaw, roll); }
-	@Nonnull
-	public Transform RootTransform0() { return Hierarchy().RootTransform; }
-	@Nonnull
-	public Transform RootTransform(float dt) { return Hierarchy().GetWorldToRoot().GetDelta(dt); }
+	@Nonnull public Transform RootTransformCurrent() { return Hierarchy().GetWorldToRoot().GetCurrent(); }
+	@Nonnull public Transform RootTransformPrevious() { return Hierarchy().GetWorldToRoot().GetPrevious(); }
+	@Nonnull public Transform RootTransform(float dt) { return Hierarchy().GetWorldToRoot().GetDelta(dt); }
 	// -------------------------------------------------------------------------------------------
 
 	@Nonnull
@@ -360,8 +359,27 @@ public class VehicleEntity extends Entity implements ITransformEntity
 	@Override
 	public void ApplyVelocity()
 	{
+		// Stash pre-values
+		Vec3 prePos = position();
+		Vec3 expectedMovement = getDeltaMovement();
+
+		// Apply the movement
 		move(MoverType.SELF, getDeltaMovement());
 		CheckCollisions();
+
+		// Check where we ended up
+		Vec3 postPos = position();
+		Vec3 actualMovement = postPos.subtract(prePos);
+
+		// If we collided, add a normal reaction "force".
+		// This should not actually be applied in the force model (we are after application now),
+		// but it is useful to render it
+		if(verticalCollision || horizontalCollision)
+		{
+			Physics().ForcesLastFrame.AddGlobalForce(VehicleDefinition.CoreName,
+				actualMovement.subtract(expectedMovement).scale(20f * 20f * Physics().Def.mass),
+				() -> "Normal reaction force");
+		}
 	}
 	/// --------------------------------------------------------------------------------
 

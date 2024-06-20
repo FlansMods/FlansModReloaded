@@ -119,11 +119,22 @@ public class VehicleDebugRenderer
 
 				Transform vehiclePos = vehicle.GetWorldToEntity().GetCurrent();
 
-				DebugRenderer.RenderAxes(vehiclePos, 1, palette.Default);
+				//DebugRenderer.RenderAxes(vehiclePos, 1, palette.Default);
 				DebugRenderer.RenderCube(vehiclePos, 1, palette.CoreCurrent, new Vector3f(0.6f, 0.25f, 0.6f));
 				Vec3 coreMotionNextFrame = DebugRenderForces(forces.Debug_GetForcesOnCore(), vehicle.getDeltaMovement(), vehicle.GetWorldToEntity().GetCurrent(), palette, true, vehicle.Physics().Def.mass, vehicle.Hierarchy()::GetWorldToPartCurrent);
 				Transform vehiclePosNext = Transform.Compose(vehiclePos, Transform.FromPos(coreMotionNextFrame.scale(1f/20f)));
 				DebugRenderer.RenderCube(vehiclePosNext, 1, palette.CoreNext,  new Vector3f(0.6f, 0.25f, 0.6f));
+
+				vehicle.Hierarchy().Reference.ForEachNode((node) -> {
+					Transform pos = vehicle.Hierarchy().GetWorldToPartCurrent(node.Path());
+					DebugRenderer.RenderPoint(pos, 1, palette.WheelCurrent);
+					if(node.Parent != null)
+					{
+						Transform parent = vehicle.Hierarchy().GetWorldToPartCurrent(node.Parent.Path());
+						DebugRenderer.RenderLine(parent.PositionVec3(), 1, palette.WheelCurrent, parent.GlobalToLocalPosition(pos.PositionVec3()));
+					}
+
+				});
 
 				for(int wheelIndex = 0; wheelIndex < vehicle.Physics().AllWheels().size(); wheelIndex++)
 				{
@@ -132,7 +143,7 @@ public class VehicleDebugRenderer
 					{
 						Transform wheelPos = Transform.FromPos(wheel.position());
 						Vector3f debugWheelBoxSize = new Vector3f(0.5f * wheel.GetWheelDef().radius, wheel.GetWheelDef().radius, wheel.GetWheelDef().radius);
-						DebugRenderer.RenderAxes(wheel.GetWorldTransformCurrent(), 1, palette.Default);
+						//DebugRenderer.RenderAxes(wheel.GetWorldTransformCurrent(), 1, palette.Default);
 						DebugRenderer.RenderCube(wheelPos, 1, palette.WheelCurrent, debugWheelBoxSize);
 
 						Vec3 wheelMotionNextFrame = DebugRenderForces(forces.Debug_GetForcesOnWheel(wheelIndex), wheel.getDeltaMovement(), wheel.GetWorldTransformCurrent(), palette, false, wheel.GetWheelDef().mass, vehicle.Hierarchy()::GetWorldToPartCurrent);
@@ -159,35 +170,33 @@ public class VehicleDebugRenderer
 		if(forces != null)
 		{
 			Vec3 origin = worldTransform.PositionVec3();
-			Vec3 accelerationTotal = new Vec3(0d, 0d, 0d);
+			Vec3 forceTotal = new Vec3(0d, 0d, 0d);
 			Vector4f forceColour = isCore ? palette.CoreForces : palette.WheelForces;
 			for(ForceModel.Force global : forces.GlobalForces)
 			{
-				Vec3 acceleration = global.Vector().scale(inertia);
-				DebugRenderer.RenderArrow(origin, 1, forceColour, acceleration.scale(arrowScale));
-				accelerationTotal = accelerationTotal.add(acceleration);
+				Vec3 force = global.Vector();
+				DebugRenderer.RenderArrow(origin, 1, forceColour, force.scale(arrowScale));
+				forceTotal = forceTotal.add(global.Vector());
 			}
 			for(ForceModel.OffsetForce global : forces.OffsetGlobalForces)
 			{
 				Vec3 offsetOrigin = origin.add(global.Offset());
-				Vec3 acceleration = global.Vector().scale(inertia);
-				DebugRenderer.RenderArrow(offsetOrigin, 1, forceColour, acceleration.scale(arrowScale));
-				accelerationTotal = accelerationTotal.add(acceleration);
+				Vec3 force = global.Vector();
+				DebugRenderer.RenderArrow(offsetOrigin, 1, forceColour, force.scale(arrowScale));
+				forceTotal = forceTotal.add(force);
 			}
 			for(ForceModel.Force local : forces.LocalForces)
 			{
-				Vec3 global = worldTransform.LocalToGlobalDirection(local.Vector());
-				Vec3 acceleration = global.scale(inertia);
-				accelerationTotal = accelerationTotal.add(acceleration);
-				DebugRenderer.RenderArrow(origin, 1, forceColour, acceleration.scale(arrowScale));
+				Vec3 force = worldTransform.LocalToGlobalDirection(local.Vector());
+				forceTotal = forceTotal.add(force);
+				DebugRenderer.RenderArrow(origin, 1, forceColour, force.scale(arrowScale));
 			}
 			for(ForceModel.OffsetForce local : forces.OffsetLocalForces)
 			{
 				Vec3 offsetOrigin = worldTransform.LocalToGlobalPosition(local.Offset());
-				Vec3 global = worldTransform.LocalToGlobalDirection(local.Vector());
-				Vec3 acceleration = global.scale(inertia);
-				accelerationTotal = accelerationTotal.add(acceleration);
-				DebugRenderer.RenderArrow(offsetOrigin, 1, forceColour, acceleration.scale(arrowScale));
+				Vec3 force = worldTransform.LocalToGlobalDirection(local.Vector());
+				forceTotal = forceTotal.add(force);
+				DebugRenderer.RenderArrow(offsetOrigin, 1, forceColour, force.scale(arrowScale));
 			}
 			//for(ForceModel.SpringJoint spring : forces.Springs)
 			//{
@@ -204,11 +213,10 @@ public class VehicleDebugRenderer
 			//	}
 			//}
 
-			Vec3 motionNext = motion.add(accelerationTotal);
-			DebugRenderer.RenderArrow(origin, 1, palette.MotionCurrent, motion.scale(arrowScale));
-			DebugRenderer.RenderArrow(origin, 1, palette.MotionNext, motionNext.scale(arrowScale));
-
-			DebugRenderer.RenderArrow(origin.add(motion.scale(arrowScale)), 1, palette.TotalForce, accelerationTotal.scale(arrowScale));
+			Vec3 motionNext = motion.add(forceTotal.scale(inertia));
+			//DebugRenderer.RenderArrow(origin, 1, palette.MotionCurrent, motion.scale(arrowScale));
+			//DebugRenderer.RenderArrow(origin, 1, palette.MotionNext, motionNext.scale(arrowScale));
+			//DebugRenderer.RenderArrow(origin.add(motion.scale(arrowScale)), 1, palette.TotalForce, forceTotal.scale(arrowScale));
 			return motionNext;
 		}
 		return Vec3.ZERO;

@@ -33,7 +33,9 @@ public class Maths
     public static int FloorLerp(int a, int b, float t) { return Maths.Floor(a + (b-a)*t); }
 
     // Double maths
+    public static final double Root2 = Sqrt(2);
     public static final double Epsilon = 0.000000000001d;
+    public static final double EpsilonSq = Epsilon * Epsilon;
     public static double Abs(double a) { return a < 0 ? -a : a; }
     public static double Clamp(double i, double min, double max) { return i > max ? max : (i < min ? min : i);  }
     public static int Ceil(double d) { return (int)Math.ceil(d); }
@@ -49,6 +51,7 @@ public class Maths
     public static double Pow(double a, double b) { return Math.pow(a, b); }
 
     // Float maths
+    public static final float Root2F = SqrtF(2f);
     public static final float EpsilonF = 0.000001f;
     public static float Clamp(float i, float min, float max)
     {
@@ -56,6 +59,7 @@ public class Maths
     }
     public static float Abs(float a) { return a < 0 ? -a : a; }
     public static float Max(float a, float b) { return a > b ? a : b; }
+    public static float Max(float a, float b, float c) { return Max(Max(a, b), c); }
     public static float Min(float a, float b) { return a < b ? a : b; }
     public static int Ceil(float d) { return (int)Math.ceil(d); }
     public static int Floor(float d) { return (int)Math.floor(d); }
@@ -113,6 +117,7 @@ public class Maths
     public static Vec3 Cross(Vec3 a, Vec3 b) { return a.cross(b); }
     public static double LengthXYZ(Vec3 v) { return v.length(); }
     public static double LengthXZ(Vec3 v) { return Sqrt(v.x * v.x + v.z * v.z); }
+    public static boolean Approx(Vec3 a, Vec3 b) { return (a.x-b.x)*(a.x-b.x)+(a.y-b.y)*(a.y-b.y)+(a.z-b.z)*(a.z-b.z) < EpsilonSq; }
 
 
     public static Quaternionf Slerp(Quaternionf a, Quaternionf b, float t) { return a.slerp(b, t, new Quaternionf()); }

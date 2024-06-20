@@ -100,7 +100,7 @@ public class LegacyVehicleControlLogic extends ControlLogic
 			wheel.setOnGround(true);
 
 			//Update angles
-			wheel.setYRot(vehicle.RootTransform0().Yaw());
+			wheel.setYRot(vehicle.RootTransformCurrent().Yaw());
 			//Front wheels
 			if(!Tank && (wheelID == 2 || wheelID == 3))
 			{

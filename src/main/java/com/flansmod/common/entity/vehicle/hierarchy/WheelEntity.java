@@ -44,6 +44,7 @@ public class WheelEntity extends Entity implements ITransformChildEntity
 
 	private WheelDefinition Def;
 	public EntityDimensions Size;
+	private Optional<VehicleEntity> Vehicle = Optional.empty();
 
 	public static EntityDataAccessor<Integer> VEHICLE_ENTITY_ID = SynchedEntityData.defineId(WheelEntity.class, EntityDataSerializers.INT);
 	public static EntityDataAccessor<VehicleDefinition> VEHICLE_DEF = SynchedEntityData.defineId(WheelEntity.class, FlansEntityDataSerializers.VEHICLE_DEF);
@@ -93,6 +94,7 @@ public class WheelEntity extends Entity implements ITransformChildEntity
 
 		WheelDefinition def = GetWheelDef();
 		Size = EntityDimensions.fixed(def.radius, def.radius);
+		Vehicle = Optional.of(vehicle);
 		setPos(vehicle.GetWorldToAP(GetWheelPath()).GetCurrent().PositionVec3());
 	}
 	private void SetVehicleDef(@Nonnull VehicleDefinition def) { entityData.set(VEHICLE_DEF, def); }
@@ -104,9 +106,14 @@ public class WheelEntity extends Entity implements ITransformChildEntity
 	public int GetVehicleID() { return entityData.get(VEHICLE_ENTITY_ID); }
 	@Nullable public VehicleEntity GetVehicle()
 	{
-		if(level().getEntity(GetVehicleID()) instanceof VehicleEntity vehicle)
-			return vehicle;
-		return null;
+		if(Vehicle.isEmpty())
+		{
+			if(level().getEntity(GetVehicleID()) instanceof VehicleEntity parent)
+			{
+				Vehicle = Optional.of(parent);
+			}
+		}
+		return Vehicle.get();
 	}
 	public int GetWheelIndex() { return entityData.get(WHEEL_INDEX); }
 	public String GetWheelPath()
@@ -388,9 +395,31 @@ public class WheelEntity extends Entity implements ITransformChildEntity
 	public void SetVelocity(@Nonnull Vec3 velocityMetersPerSecond) { setDeltaMovement(velocityMetersPerSecond.scale(1f/20f)); }
 	public void ApplyVelocity()
 	{
+		// Stash pre-values
+		Vec3 prePos = position();
+		Vec3 expectedMovement = getDeltaMovement();
+
+		// Apply the movement
 		move(MoverType.SELF, getDeltaMovement());
 		CheckCollisions();
-		SyncEntityToTransform();
+
+		// Check where we ended up
+		Vec3 postPos = position();
+		Vec3 actualMovement = postPos.subtract(prePos);
+
+		// If we collided, add a normal reaction "force".
+		// This should not actually be applied in the force model (we are after application now),
+		// but it is useful to render it
+		if(verticalCollision || horizontalCollision)
+		{
+			VehicleEntity parent = GetVehicle();
+			if(parent != null)
+			{
+				parent.Physics().ForcesLastFrame.AddGlobalForce(ForceModel.Wheel(GetWheelIndex()),
+					actualMovement.subtract(expectedMovement).scale(20f * 20f * Def.mass),
+					() -> "Normal reaction force");
+			}
+		}
 	}
 	// ---------------------------------------------------------------------------------------------------
 

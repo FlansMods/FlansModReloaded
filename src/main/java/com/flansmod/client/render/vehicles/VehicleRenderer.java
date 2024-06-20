@@ -87,6 +87,6 @@ public class VehicleRenderer extends EntityRenderer<VehicleEntity> implements IT
 					   int light)
 	{
 		RenderContext renderContext = new RenderContext(buffers, ItemDisplayContext.FIXED, poseStack, light, 0);
-		DoRender(vehicle, renderContext, dt);
+		//DoRender(vehicle, renderContext, dt);
 	}
 }

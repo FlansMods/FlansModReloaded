@@ -2,7 +2,11 @@ package com.flansmod.common.types.vehicles.elements;
 
 import com.flansmod.common.types.JsonField;
 import com.flansmod.util.Maths;
+import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
+import net.minecraftforge.common.util.Lazy;
+
+import javax.annotation.Nonnull;
 
 
 public class DamageablePartDefinition
@@ -24,4 +28,6 @@ public class DamageablePartDefinition
 	{
 		return maxHealth > 0 && hitboxHalfExtents.lengthSqr() > Maths.Epsilon;
 	}
+	@Nonnull
+	public Lazy<AABB> Hitbox = Lazy.of(()-> new AABB(hitboxCenter, hitboxHalfExtents));
 }

@@ -8,6 +8,7 @@ import com.flansmod.common.entity.vehicle.controls.ForceModel;
 import com.flansmod.common.entity.vehicle.damage.VehicleDamageModule;
 import com.flansmod.common.entity.vehicle.damage.VehicleHitResult;
 import com.flansmod.common.network.FlansEntityDataSerializers;
+import com.flansmod.common.types.vehicles.VehicleDefinition;
 import com.flansmod.common.types.vehicles.elements.ArticulatedPartDefinition;
 import com.flansmod.util.Maths;
 import com.flansmod.util.Transform;
@@ -17,15 +18,19 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializer;
 import net.minecraft.network.syncher.SynchedEntityData;
+import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
+import org.apache.logging.log4j.util.TriConsumer;
 import org.joml.Vector3d;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.BiConsumer;
 
 public class VehicleHierarchyModule implements IVehicleModule
 {
@@ -192,6 +197,33 @@ public class VehicleHierarchyModule implements IVehicleModule
 		return node.Def.LocalTransform.get();
 	}
 
+	// ---------------------------------------------------------------------------------------------------------
+	// AABBs
+	public void ForEachCollider(@Nonnull TriConsumer<String, ITransformPair, List<AABB>> func)
+	{
+		if (RootDefinitionNode != null)
+		{
+			// Process the root node as a single collider
+			ForCollidersAttachedTo(RootDefinitionNode, (trans, list) -> func.accept(VehicleDefinition.CoreName, trans, list));
+
+			// Then process each dynamic child
+			RootDefinitionNode.ForEachNode(false, false, true, (dynamicChild) ->
+			{
+				ForCollidersAttachedTo(dynamicChild, (trans, list) -> func.accept(dynamicChild.Path(), trans, list));
+			});
+		}
+	}
+	public void ForCollidersAttachedTo(@Nonnull VehicleDefinitionHierarchy.Node node, @Nonnull BiConsumer<ITransformPair, List<AABB>> func)
+	{
+		List<AABB> bbs = new ArrayList<>();
+		node.ForEachNode(true, true, false, (staticChild) -> {
+			if(staticChild.Def.IsDamageable())
+			{
+				bbs.add(staticChild.Def.damage.Hitbox.get());
+			}
+		});
+		func.accept(GetRootToPart(node.Path()), bbs);
+	}
 
 	// ---------------------------------------------------------------------------------------------------------
 	// Raycasts
@@ -225,7 +257,11 @@ public class VehicleHierarchyModule implements IVehicleModule
 		}
 
 		// Cast against children nodes
-		for(VehicleDefinitionHierarchy.Node child : node.Children.values())
+		for(VehicleDefinitionHierarchy.Node child : node.StaticChildren.values())
+		{
+			Raycast(vehicle, stack, child, start, end, results, dt);
+		}
+		for(VehicleDefinitionHierarchy.Node child : node.DynamicChildren.values())
 		{
 			Raycast(vehicle, stack, child, start, end, results, dt);
 		}
