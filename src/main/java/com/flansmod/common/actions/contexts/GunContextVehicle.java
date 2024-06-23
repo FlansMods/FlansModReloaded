@@ -1,7 +1,7 @@
 package com.flansmod.common.actions.contexts;
 
 import com.flansmod.common.actions.ActionStack;
-import com.flansmod.common.entity.vehicle.guns.GunSyncState;
+import com.flansmod.common.entity.vehicle.save.GunSyncState;
 
 import javax.annotation.Nonnull;
 
@@ -11,7 +11,7 @@ public class GunContextVehicle extends GunContextInventoryItem
 	protected final int GunIndex;
 
 	@Nonnull
-	protected GunSyncState State() { return VehicleContext.Vehicle.Guns().GetGunStateAtIndex(GunIndex); }
+	protected GunSyncState State() { return VehicleContext.Vehicle.GetGunStateAtIndex(GunIndex); }
 
 	public GunContextVehicle(@Nonnull ShooterContextVehicle vehicle, int gunIndex)
 	{

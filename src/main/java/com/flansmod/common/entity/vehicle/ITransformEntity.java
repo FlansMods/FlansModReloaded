@@ -1,6 +1,8 @@
 package com.flansmod.common.entity.vehicle;
 
 import com.flansmod.common.entity.ITransformPair;
+import com.flansmod.common.entity.vehicle.hierarchy.VehicleComponentPath;
+import com.flansmod.common.entity.vehicle.hierarchy.VehiclePartPath;
 import com.flansmod.util.Transform;
 import com.flansmod.util.TransformStack;
 import net.minecraft.world.phys.Vec3;
@@ -15,7 +17,7 @@ public interface ITransformEntity
 
 	void SetWorldToEntity(@Nonnull Transform transform);
 	@Nonnull ITransformPair GetWorldToEntity();
-	@Nonnull ITransformPair GetEntityToAP(@Nonnull String apPath);
+	@Nonnull ITransformPair GetEntityToAP(@Nonnull VehiclePartPath apPath);
 
 	// Velocity handling
 	@Nonnull Vec3 GetVelocity();
@@ -31,8 +33,11 @@ public interface ITransformEntity
 	//@Nonnull default Transform GetEntityToAPPrevious(@Nonnull String apPath) { return GetEntityToAP(apPath).GetPrevious(); }
 	//@Nonnull default Transform GetEntityToAPCurrent(@Nonnull String apPath) { return GetEntityToAP(apPath).GetCurrent(); }
 	//@Nonnull default Transform GetEntityToAP(@Nonnull String apPath, float dt) { return GetEntityToAP(apPath).GetDelta(dt); }
-	@Nonnull default ITransformPair GetWorldToAP(@Nonnull String apPath) {
+	@Nonnull default ITransformPair GetWorldToAP(@Nonnull VehiclePartPath apPath) {
 		return ITransformPair.compose(GetWorldToEntity(), GetEntityToAP(apPath));
+	}
+	@Nonnull default ITransformPair GetWorldToAP(@Nonnull VehicleComponentPath apPath) {
+		return ITransformPair.compose(GetWorldToEntity(), GetEntityToAP(apPath.Part()));
 	}
 	//@Nonnull default Transform GetWorldToAPPrevious(@Nonnull String apPath) { return GetWorldToAP(apPath).GetPrevious(); }
 	//@Nonnull default Transform GetWorldToAPCurrent(@Nonnull String apPath) { return GetWorldToAP(apPath).GetCurrent(); }

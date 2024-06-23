@@ -13,7 +13,6 @@ import com.flansmod.common.actions.ActionGroupInstance;
 import com.flansmod.common.actions.ActionInstance;
 import com.flansmod.common.actions.ActionStack;
 import com.flansmod.common.actions.nodes.AnimationAction;
-import com.flansmod.common.entity.vehicle.hierarchy.VehicleHierarchyModule;
 import com.flansmod.common.types.attachments.EAttachmentType;
 import com.flansmod.util.Maths;
 import com.flansmod.util.Transform;
@@ -27,7 +26,6 @@ import net.minecraft.Util;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.RenderStateShard;
 import net.minecraft.client.renderer.RenderType;
-import net.minecraft.client.renderer.block.model.ItemTransforms;
 import net.minecraft.client.renderer.texture.MissingTextureAtlasSprite;
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.core.Direction;
@@ -237,8 +235,7 @@ public class TurboRenderUtility
 	public Transform GetPose(@Nonnull String partName,
 							 @Nonnull ResourceLocation modelLocation,
 							 @Nonnull FlanimationDefinition animationSet,
-							 @Nullable ActionStack actionStack,
-							 @Nullable VehicleHierarchyModule articulation)
+							 @Nullable ActionStack actionStack)
 	{
 		if(Unbaked == null)
 			return Transform.Error("Unbaked Rig Missing");

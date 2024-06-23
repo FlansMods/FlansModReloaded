@@ -3,6 +3,7 @@ package com.flansmod.common.actions.contexts;
 import com.flansmod.common.entity.vehicle.VehicleEntity;
 import com.flansmod.common.entity.vehicle.VehicleInventory;
 import com.flansmod.common.entity.vehicle.VehicleSubContainer;
+import com.flansmod.common.entity.vehicle.hierarchy.VehicleComponentPath;
 import com.flansmod.common.item.FlanItem;
 import com.flansmod.common.types.vehicles.VehicleDefinition;
 import com.flansmod.common.types.vehicles.elements.SeatDefinition;
@@ -33,7 +34,7 @@ public abstract class ShooterContextVehicle extends ShooterContext
 
 
 	@Nonnull
-	public ShooterContextVehicleSeat GetSeat(@Nonnull String seatPath)
+	public ShooterContextVehicleSeat GetSeat(@Nonnull VehicleComponentPath seatPath)
 	{
 		return new ShooterContextVehicleSeat(Vehicle, seatPath);
 	}
@@ -46,15 +47,15 @@ public abstract class ShooterContextVehicle extends ShooterContext
 	}
 	@Override
 	@Nonnull
-	public UUID[] GetAllGunIDs() { return Vehicle.Guns().GetAllGunIDs().toArray(new UUID[0]); }
+	public UUID[] GetAllGunIDs() { return Vehicle.GetAllGunIDs().toArray(new UUID[0]); }
 	@Nonnull
 	@Override
-	public UUID GetGunIDForSlot(int gunSlotIndex) { return Vehicle.Guns().GetGunIDAtIndex(gunSlotIndex); }
+	public UUID GetGunIDForSlot(int gunSlotIndex) { return Vehicle.GetGunIDAtIndex(gunSlotIndex); }
 	@Nonnull
 	@Override
 	public GunContext CreateContext(@Nonnull UUID gunID)
 	{
-		int gunSlotIndex = Vehicle.Guns().GetIndexOfGunID(gunID);
+		int gunSlotIndex = Vehicle.GetIndexOfGunID(gunID);
 		if(gunSlotIndex != -1)
 		{
 			return new GunContextVehicle(this, gunSlotIndex);

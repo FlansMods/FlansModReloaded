@@ -239,7 +239,7 @@ public class Raytracer
         {
             if(checkEnt instanceof VehicleEntity vehicle)
             {
-                vehicle.Raycast(origin, endPoint, outResults);
+                vehicle.Raycast(origin, endPoint, 0f, outResults);
                 continue;
             }
             else if(checkEnt instanceof Player checkPlayer)

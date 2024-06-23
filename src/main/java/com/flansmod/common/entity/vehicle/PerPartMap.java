@@ -1,12 +1,12 @@
 package com.flansmod.common.entity.vehicle;
 
+import com.flansmod.common.entity.vehicle.hierarchy.VehicleComponentPath;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.syncher.EntityDataSerializer;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -14,35 +14,53 @@ import java.util.function.Supplier;
 public class PerPartMap<T>
 {
 	@Nonnull
-	public final Map<Integer, T> Values = new HashMap<>();
+	private final Map<Integer, T> Values = new HashMap<>();
+
 
 	@Nonnull
-	public <R> R ApplyOrDefault(@Nonnull String partName, @Nonnull Function<T, R> func, @Nonnull R defaultValue)
+	public Set<Integer> HashKeys() { return Values.keySet(); }
+	@Nonnull
+	public Collection<T> Values() { return Values.values(); }
+	@Nonnull
+	public Set<Map.Entry<Integer, T>> EntrySet() { return Values.entrySet(); }
+
+
+	@Nonnull
+	public <R> R ApplyOrDefault(int hash, @Nonnull Function<T, R> func, @Nonnull R defaultValue)
 	{
-		if(Values.containsKey(partName.hashCode()))
-			return func.apply(Values.get(partName.hashCode()));
+		if(Values.containsKey(hash))
+			return func.apply(Values.get(hash));
 		return defaultValue;
 	}
 	@Nonnull
-	public T GetOrDefault(@Nonnull String partName, @Nonnull T defaultValue) { return Values.getOrDefault(partName.hashCode(), defaultValue); }
+	public T GetOrDefault(int hash, @Nonnull T defaultValue) { return Values.getOrDefault(hash, defaultValue); }
 	@Nullable
 	public T ForHash(int hash) { return Values.get(hash); }
+	public void Put(int hash, @Nonnull T value) { Values.put(hash, value); }
+	public void ApplyTo(int hash, @Nonnull Consumer<T> applyFunc)
+	{
+		if(Values.containsKey(hash))
+			applyFunc.accept(Values.get(hash));
+	}
+	@Nonnull
+	public Optional<T> TryGet(int hash) { return Optional.ofNullable(Values.get(hash)); }
+
+	@Nonnull
+	public <R> R ApplyOrDefault(@Nonnull VehicleComponentPath componentPath, @Nonnull Function<T, R> func, @Nonnull R defaultValue) { return ApplyOrDefault(componentPath.hashCode(), func, defaultValue); }
+	@Nonnull
+	public T GetOrDefault(@Nonnull VehicleComponentPath componentPath, @Nonnull T defaultValue) { return GetOrDefault(componentPath.hashCode(), defaultValue); }
 	@Nullable
-	public T ForPart(@Nonnull String partName) { return Values.get(partName.hashCode()); }
-	public void Put(@Nonnull String partName, @Nonnull T value)
+	public T ForPart(@Nonnull VehicleComponentPath componentPath) { return ForHash(componentPath.hashCode()); }
+	@Nonnull
+	public Optional<T> TryGet(@Nonnull VehicleComponentPath componentPath) { return TryGet(componentPath.hashCode()); }
+	public void Put(@Nonnull VehicleComponentPath componentPath, @Nonnull T value) { Put(componentPath.hashCode(), value); }
+	public void ApplyTo(@Nonnull VehicleComponentPath componentPath, @Nonnull Consumer<T> applyFunc) { ApplyTo(componentPath.hashCode(), applyFunc); }
+	public void CreateAndApply(@Nonnull VehicleComponentPath componentPath, @Nonnull Supplier<T> createFunc, @Nonnull Consumer<T> applyFunc)
 	{
-		Values.put(partName.hashCode(), value);
-	}
-	public void ApplyTo(@Nonnull String partName, @Nonnull Consumer<T> applyFunc)
-	{
-		if(Values.containsKey(partName.hashCode()))
-			applyFunc.accept(Values.get(partName.hashCode()));
-	}
-	public void CreateAndApply(@Nonnull String partName, @Nonnull Supplier<T> createFunc, @Nonnull Consumer<T> applyFunc)
-	{
-		if(!Values.containsKey(partName.hashCode()))
-			Values.put(partName.hashCode(), createFunc.get());
-		applyFunc.accept(Values.get(partName.hashCode()));
+		int hash = componentPath.hashCode();
+		if(!Values.containsKey(hash))
+			Values.put(hash, createFunc.get());
+		applyFunc.accept(Values.get(hash));
 	}
 
 	@Override

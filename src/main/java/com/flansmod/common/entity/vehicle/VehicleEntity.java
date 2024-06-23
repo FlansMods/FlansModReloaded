@@ -1,29 +1,36 @@
 package com.flansmod.common.entity.vehicle;
 
+import com.flansmod.client.input.ClientInputHooks;
 import com.flansmod.common.FlansMod;
 import com.flansmod.common.entity.ITransformPair;
 import com.flansmod.common.entity.vehicle.controls.ControlLogic;
+import com.flansmod.common.entity.vehicle.controls.ControlLogics;
+import com.flansmod.common.entity.vehicle.controls.ForceModel;
 import com.flansmod.common.entity.vehicle.controls.VehicleInputState;
-import com.flansmod.common.entity.vehicle.damage.VehicleDamageModule;
-import com.flansmod.common.entity.vehicle.guns.VehicleGunModule;
-import com.flansmod.common.entity.vehicle.hierarchy.ArticulationSyncState;
-import com.flansmod.common.entity.vehicle.hierarchy.IVehicleTransformHelpers;
-import com.flansmod.common.entity.vehicle.hierarchy.VehicleHierarchyModule;
-import com.flansmod.common.entity.vehicle.hierarchy.WheelEntity;
-import com.flansmod.common.entity.vehicle.physics.*;
-import com.flansmod.common.entity.vehicle.physics.VehicleEngineModule;
-import com.flansmod.common.entity.vehicle.seats.VehicleSeatsModule;
+import com.flansmod.common.entity.vehicle.modules.IVehicleEngineModule;
+import com.flansmod.common.entity.vehicle.modules.IVehicleTransformHelpers;
+import com.flansmod.common.entity.vehicle.save.DamageSyncState;
+import com.flansmod.common.entity.vehicle.modules.IVehicleDamageHelper;
+import com.flansmod.common.entity.vehicle.save.GunSyncState;
+import com.flansmod.common.entity.vehicle.hierarchy.*;
+import com.flansmod.common.entity.vehicle.save.ArticulationSyncState;
+import com.flansmod.common.entity.vehicle.save.EngineSyncState;
+import com.flansmod.common.entity.vehicle.save.VehiclePropellerSaveState;
+import com.flansmod.common.entity.vehicle.modules.IVehicleSeatHelper;
+import com.flansmod.common.entity.vehicle.save.SeatSyncState;
+import com.flansmod.common.item.GunItem;
 import com.flansmod.common.network.FlansEntityDataSerializers;
 import com.flansmod.common.types.LazyDefinition;
 import com.flansmod.common.types.parts.elements.EngineDefinition;
 import com.flansmod.common.types.vehicles.ControlSchemeDefinition;
 import com.flansmod.common.types.vehicles.VehicleDefinition;
-import com.flansmod.common.types.vehicles.elements.EControlLogicHint;
+import com.flansmod.common.types.vehicles.elements.*;
 import com.flansmod.util.Maths;
 import com.flansmod.util.Transform;
 import com.flansmod.util.TransformStack;
 import com.flansmod.util.collision.ColliderHandle;
 import com.flansmod.util.collision.OBBCollisionSystem;
+import com.google.common.collect.ImmutableList;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.SynchedEntityData;
@@ -34,22 +41,25 @@ import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.util.Lazy;
 import org.joml.Vector3f;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Consumer;
 
 public class VehicleEntity extends Entity implements
 	ITransformEntity,
 	IVehicleEngineModule,
-	IVehicleTransformHelpers
+	IVehicleTransformHelpers,
+	IVehicleSeatHelper,
+	IVehicleDamageHelper
 
 {
 	// Data Synchronizer Accessors
@@ -57,8 +67,17 @@ public class VehicleEntity extends Entity implements
 		SynchedEntityData.defineId(VehicleEntity.class, FlansEntityDataSerializers.ENGINE_MAP);
 	public static final EntityDataAccessor<PerPartMap<ArticulationSyncState>> ARTICULATIONS_ACCESSOR =
 		SynchedEntityData.defineId(VehicleEntity.class, FlansEntityDataSerializers.ARTICULATION_MAP);
+	public static final EntityDataAccessor<PerPartMap<SeatSyncState>> SEATS_ACCESSOR =
+		SynchedEntityData.defineId(VehicleEntity.class, FlansEntityDataSerializers.SEAT_MAP);
+	public static final EntityDataAccessor<PerPartMap<DamageSyncState>> DAMAGE_ACCESSOR =
+		SynchedEntityData.defineId(VehicleEntity.class, FlansEntityDataSerializers.DAMAGE_MAP);
+	public static final EntityDataAccessor<PerPartMap<GunSyncState>> GUNS_ACCESSOR =
+		SynchedEntityData.defineId(VehicleEntity.class, FlansEntityDataSerializers.GUN_MAP);
 
 
+
+	public static final int INVALID_SEAT_INDEX = -1;
+	public static final String INVALID_SEAT_PATH = "body/seat_-1";
 
 	// Location and sync
 	@Nonnull public Transform RootTransform = Transform.Identity();
@@ -74,6 +93,30 @@ public class VehicleEntity extends Entity implements
 	private final Lazy<VehicleInventory> LazyInventory = Lazy.of(this::CreateInventory);
 	@Nonnull public VehicleInventory Inventory() { return LazyInventory.get(); }
 
+	// Useful Lookups
+	// Part lookups
+	public final MultiLookup<EControlLogicHint, VehiclePartPath> Articulations = new MultiLookup<>();
+	public final MultiLookup<EControlLogicHint, WheelEntity> Wheels = new MultiLookup<>();
+	public final MultiLookup<EControlLogicHint, VehiclePropellerSaveState> Propellers = new MultiLookup<>();
+	public final Map<ResourceLocation, ControlLogic> Controllers = new HashMap<>();
+	@Nonnull
+	public final List<VehicleComponentPath> SeatOrdering = new ArrayList<>();
+	@Nonnull
+	public final List<VehicleComponentPath> GunOrdering = new ArrayList<>();
+	@Nonnull
+	private ResourceLocation SelectedControllerLocation = new ResourceLocation(FlansMod.MODID, "control_schemes/null");
+
+	// Physics
+	public static boolean PAUSE_PHYSICS = false;
+	@Nullable
+	public ColliderHandle CorePhsyicsHandle = null;
+	@Nonnull
+	public final Map<VehiclePartPath, ColliderHandle> ArticulatedPhysicsHandles = new HashMap<>();
+	@Nullable
+	public ColliderHandle[] WheelPhysicsHandles = new ColliderHandle[0];
+	@Nonnull
+	public ForceModel ForcesLastFrame; // TODO: Handled by OBB Collision System?
+
 	// Other misc fields
 	@Nonnull public ResourceLocation SelectedSkin;
 	@Nonnull public final Map<String, VehicleInputState> InputStates = new HashMap<>();
@@ -86,8 +129,8 @@ public class VehicleEntity extends Entity implements
 		SelectedSkin = defLoc;
 
 		blocksBuilding = true;
-		if(!world.isClientSide)
-			Physics().CreateSubEntities(this);
+		ForcesLastFrame = new ForceModel();
+		InitFromDefinition();
 	}
 
 	public boolean InitFromDefinition()
@@ -95,6 +138,10 @@ public class VehicleEntity extends Entity implements
 		VehicleDefinition def = Def();
 		if(!def.IsValid())
 			return false;
+
+
+		SelectedControllerLocation = def.defaultControlScheme;
+		InitPhysics();
 
 		return true;
 	}
@@ -118,7 +165,7 @@ public class VehicleEntity extends Entity implements
 	{
 		if (hasPassenger(rider))
 		{
-			int seatIndex = Seats().GetSeatIndexOf(rider);
+			int seatIndex = GetSeatIndexOf(rider);
 
 		}
 	}
@@ -134,8 +181,8 @@ public class VehicleEntity extends Entity implements
 	// Transform and some vanilla overrides. We want to use Quaternions, pleassse Minecraft
 	@Override public float getYRot() { return GetWorldToEntity().GetCurrent().Yaw(); }
 	@Override public float getXRot() { return GetWorldToEntity().GetCurrent().Pitch(); }
-	@Override public void setYRot(float yaw) { Hierarchy().SetYaw(yaw); }
-	@Override public void setXRot(float pitch) { Hierarchy().SetPitch(pitch); }
+	@Override public void setYRot(float yaw) { SetYaw(yaw); }
+	@Override public void setXRot(float pitch) { SetPitch(pitch); }
 	//@Override public void setPos(double x, double y, double z) { SetPosition(x, y, z); }
 	@Override
 	public void moveTo(double x, double y, double z, float xRot, float yRot) {
@@ -158,14 +205,14 @@ public class VehicleEntity extends Entity implements
 	private void SetAllPositionsFromEntity()
 	{
 		SyncEntityToTransform();
-		for(WheelEntity wheel : Physics().AllWheels())
-			wheel.setPos(GetWorldToAP(wheel.GetWheelPath()).GetCurrent().PositionVec3());
+		for(WheelEntity wheel : Wheels.All())
+			wheel.setPos(GetWorldToAP(wheel.GetWheelPath().Part()).GetCurrent().PositionVec3());
 	}
 
-	public void SetEulerAngles(float pitch, float yaw, float roll) { Hierarchy().SetEulerAngles(pitch, yaw, roll); }
-	@Nonnull public Transform RootTransformCurrent() { return Hierarchy().GetWorldToRoot().GetCurrent(); }
-	@Nonnull public Transform RootTransformPrevious() { return Hierarchy().GetWorldToRoot().GetPrevious(); }
-	@Nonnull public Transform RootTransform(float dt) { return Hierarchy().GetWorldToRoot().GetDelta(dt); }
+	public void SetEulerAngles(float pitch, float yaw, float roll) { SetEulerAngles(pitch, yaw, roll); }
+	@Nonnull public Transform RootTransformCurrent() { return GetWorldToRoot().GetCurrent(); }
+	@Nonnull public Transform RootTransformPrevious() { return GetWorldToRoot().GetPrevious(); }
+	@Nonnull public Transform RootTransform(float dt) { return GetWorldToRoot().GetDelta(dt); }
 	// -------------------------------------------------------------------------------------------
 
 	@Nonnull
@@ -202,41 +249,65 @@ public class VehicleEntity extends Entity implements
 	@Override
 	protected void defineSynchedData()
 	{
-		DefineModuleSyncing(entityData);
+		entityData.define(ENGINES_ACCESSOR, new PerPartMap<>());
+		entityData.define(ARTICULATIONS_ACCESSOR, new PerPartMap<>());
+		entityData.define(SEATS_ACCESSOR, new PerPartMap<>());
+		entityData.define(GUNS_ACCESSOR, new PerPartMap<>());
+		entityData.define(DAMAGE_ACCESSOR, new PerPartMap<>());
 	}
 
 	@Override
 	protected void readAdditionalSaveData(@Nonnull CompoundTag tags)
 	{
-		LoadModules(tags);
+		if(tags.contains("engine"))
+			LoadEngineData(tags.getCompound("engine"));
+		if(tags.contains("articulation"))
+			LoadArticulation(tags.getCompound("articulation"));
+		if(tags.contains("seats"))
+			LoadSeatState(tags.getCompound("seats"));
+		if(tags.contains("damage"))
+			LoadDamageState(tags.getCompound("damage"));
+		if(tags.contains("guns"))
+			LoadGunState(tags.getCompound("guns"));
+		//if(tags.contains("physics"))
+		//	LoadPhysicsState(tags.getCompound("physics"));
 	}
 
 	@Override
 	protected void addAdditionalSaveData(@Nonnull CompoundTag tags)
 	{
-		SaveModules(tags);
+		tags.put("engine", SaveEngineData());
+		tags.put("articulation", SaveArticulation());
+		tags.put("seats", SaveSeatState());
+		tags.put("damage", SaveDamageState());
+		tags.put("guns", SaveGunState());
+		//tags.put("physics", SavePhysicsState());
 	}
 
 	@Override
 	public void tick()
 	{
 		super.tick();
-		TickModules();
+
+		TickControlSchemes();
+		TickPhysics();
+
+
 	}
 	@Override
 	protected boolean canAddPassenger(@Nonnull Entity entity)
 	{
 		// TODO: Locking module (Do you have the car keys?)
 
-		int seatIndex = Seats().GetSeatIndexForNewPassenger(entity);
+		int seatIndex = GetSeatIndexForNewPassenger(entity);
 
-		return seatIndex != VehicleSeatsModule.INVALID_SEAT_INDEX;
+		return seatIndex != INVALID_SEAT_INDEX;
 	}
 	@Nullable
 	@Override
 	public LivingEntity getControllingPassenger()
 	{
-		if (Seats().GetControllingPassenger(this) instanceof LivingEntity living)
+		if (GetControllingPassenger(this) instanceof LivingEntity living)
 			return living;
 		return null;
 	}
@@ -261,18 +332,60 @@ public class VehicleEntity extends Entity implements
 		}
 	}
 
-	// Useful Lookups
-	// Part lookups
-	private final MultiLookup<EControlLogicHint, WheelEntity> Wheels = new MultiLookup<>();
-	private final MultiLookup<EControlLogicHint, VehiclePropellerSaveState> Propellers = new MultiLookup<>();
-	private final Map<ResourceLocation, ControlLogic> Controllers = new HashMap<>();
+
 
 
 	// ---------------------------------------------------------------------------------------------------------
 	// ARTICULATION MODULE
-	@Nonnull private PerPartMap<ArticulationSyncState> GetArticulationMap() { return VehicleDataSynchronizer.get(ARTICULATIONS_ACCESSOR); }
-	private void SetArticulationMap(@Nonnull PerPartMap<ArticulationSyncState> map) { VehicleDataSynchronizer.set(ARTICULATIONS_ACCESSOR, map); }
+	@Nonnull private PerPartMap<ArticulationSyncState> GetArticulationMap() { return entityData.get(ARTICULATIONS_ACCESSOR); }
+	private void SetArticulationMap(@Nonnull PerPartMap<ArticulationSyncState> map) { entityData.set(ARTICULATIONS_ACCESSOR, map); }
 
+	// -----------------------------------------------------------------------------------------------
+	// Velocity is units per second, NOT per tick
+	// Articulation Accessors
+	public void SetArticulationParameter(@Nonnull VehicleComponentPath componentPath, float parameter)
+	{
+		PerPartMap<ArticulationSyncState> map = GetArticulationMap();
+		map.ApplyTo(componentPath, (state) -> state.SetParameter(parameter));
+		SetArticulationMap(map);
+	}
+	public float GetArticulationParameter(@Nonnull VehicleComponentPath componentPath)
+	{
+		return GetArticulationMap().ApplyOrDefault(componentPath, ArticulationSyncState::GetParameter, 0.0f);
+	}
+	public void SetArticulationVelocity(@Nonnull VehicleComponentPath componentPath, float velocity)
+	{
+		PerPartMap<ArticulationSyncState> map = GetArticulationMap();
+		map.ApplyTo(componentPath, (state) -> state.SetVelocity(velocity));
+		SetArticulationMap(map);
+	}
+	public float GetArticulationVelocity(@Nonnull VehicleComponentPath componentPath)
+	{
+		return GetArticulationMap().ApplyOrDefault(componentPath, ArticulationSyncState::GetVelocity, 0.0f);
+	}
+	@Nonnull
+	public Transform GetArticulationTransform(@Nonnull VehicleComponentPath partName)
+	{
+		Optional<Transform> result = GetHierarchy().IfArticulated(partName, (def) ->
+		{
+			if (def != null && def.active)
+			{
+				float parameter = GetArticulationParameter(partName);
+				return def.Apply(parameter);
+			}
+			return null;
+		});
+		return result.orElse(Transform.IDENTITY);
+	}
+
+	@Override @Nonnull
+	public VehicleDefinitionHierarchy GetHierarchy() { return Def().AsHierarchy(); }
+	@Override @Nonnull
+	public Transform GetRootTransformCurrent() { return RootTransform; }
+	@Override @Nonnull
+	public Transform GetRootTransformPrevious() { return RootTransformPrev; }
+	@Override
+	public void SetRootTransformCurrent(@Nonnull Transform transform) { RootTransform = transform; }
 	@Override
 	public void ApplyWorldToRootPrevious(@Nonnull TransformStack stack)
 	{
@@ -284,91 +397,262 @@ public class VehicleEntity extends Entity implements
 		stack.add(RootTransform);
 	}
 	@Override
-	public void ApplyPartToPartPrevious(@Nonnull VehicleDefinitionHierarchy.Node childPart, @Nonnull TransformStack stack)
-	{
-
-	}
-	@Override
-	public void ApplyPartToPartCurrent(@Nonnull VehicleDefinitionHierarchy.Node childPart, @Nonnull TransformStack stack)
-	{
-
-	}
-	@Override
-	@Nonnull
-	public VehicleDefinitionHierarchy.Node GetHeirarchyRoot()
-	{
-		return Def().AsHierarchy.get().RootNode;
-	}
-
-
-
-	// Root to Part
-	@Nonnull public ITransformPair GetRootToPart(@Nonnull String vehiclePart) {
-		return ITransformPair.of(() -> GetRootToPartPrevious(vehiclePart), () -> GetRootToPartCurrent(vehiclePart));
-	}
-	@Nonnull public Transform GetRootToPartPrevious(@Nonnull String vehiclePart) {
-		TransformStack stack = new TransformStack();
-		TransformRootToPartPrevious(vehiclePart, stack);
-		return stack.Top();
-	}
-	@Nonnull public Transform GetRootToPartCurrent(@Nonnull String vehiclePart) {
-		TransformStack stack = new TransformStack();
-		TransformRootToPartCurrent(vehiclePart, stack);
-		return stack.Top();
-	}
-	public void TransformRootToPartPrevious(@Nonnull String vehiclePart, @Nonnull TransformStack stack) {
-		Def().AsHierarchy.get().Traverse(vehiclePart, (node) -> { stack.add(GetPartLocalPrevious(node)); });
-	}
-	public void TransformRootToPartCurrent(@Nonnull String vehiclePart, @Nonnull TransformStack stack) {
-		Def().AsHierarchy.get().Traverse(vehiclePart, (node) -> { stack.add(GetPartLocalCurrent(node)); });
-	}
-
-	// Part-to-Part Transforms
-	@Nonnull public ITransformPair GetPartLocal(@Nonnull VehicleDefinitionHierarchy.Node node) {
-		return ITransformPair.of(() -> GetPartLocalPrevious(node), () -> GetPartLocalCurrent(node));
-	}
-	@Nonnull
-	public Transform GetPartLocalPrevious(@Nonnull VehicleDefinitionHierarchy.Node node)
+	public void ApplyPartToPartPrevious(@Nonnull VehicleDefinitionHierarchy.VehicleNode node, @Nonnull TransformStack stack)
 	{
 		if(node.Def.IsArticulated())
 		{
-			float articulationParameter = GetArticulationParameter(node.Def.partName);
-			float articulationVelocity = GetArticulationVelocity(node.Def.partName);
-			return node.Def.articulation.Apply(articulationParameter - articulationVelocity);
+			float articulationParameter = GetArticulationParameter(node.GetPath().Articulation());
+			float articulationVelocity = GetArticulationVelocity(node.GetPath().Articulation());
+			stack.add(node.Def.articulation.Apply(articulationParameter - articulationVelocity));
 		}
-		return node.Def.LocalTransform.get();
+		else
+			stack.add(node.Def.LocalTransform.get());
 	}
-	@Nonnull
-	public Transform GetPartLocalCurrent(@Nonnull VehicleDefinitionHierarchy.Node node)
+	@Override
+	public void ApplyPartToPartCurrent(@Nonnull VehicleDefinitionHierarchy.VehicleNode node, @Nonnull TransformStack stack)
 	{
 		if(node.Def.IsArticulated())
 		{
-			float articulationParameter = GetArticulationParameter(node.Def.partName);
-			return node.Def.articulation.Apply(articulationParameter);
+			float articulationParameter = GetArticulationParameter(node.GetPath().Articulation());
+			stack.add(node.Def.articulation.Apply(articulationParameter));
 		}
-		return node.Def.LocalTransform.get();
+		else
+			stack.add(node.Def.LocalTransform.get());
+	}
+	public void Raycast(@Nonnull Vec3 start,
+						@Nonnull Vec3 end,
+						float dt,
+						@Nonnull List<HitResult> results)
+	{
+		Raycast(start, end, dt, (partPath, hitPos) -> {
+			results.add(new VehicleHitResult(this, partPath));
+		});
+	}
+	protected void LoadArticulation(@Nonnull CompoundTag tags)
+	{
+		for(String key : tags.getAllKeys())
+		{
+			CompoundTag articulationTags = tags.getCompound(key);
+			VehiclePartPath path = VehiclePartPath.of(key);
+			SetArticulationParameter(path.Articulation(), articulationTags.getFloat("param"));
+			SetArticulationVelocity(path.Articulation(), articulationTags.getFloat("velocity"));
+		}
+	}
+	@Nonnull
+	protected CompoundTag SaveArticulation()
+	{
+		PerPartMap<ArticulationSyncState> map = GetArticulationMap();
+		CompoundTag tags = new CompoundTag();
+		GetHierarchy().ForEachArticulatedPart((path, def) -> {
+			CompoundTag articulationTags = new CompoundTag();
+			articulationTags.putFloat("param", GetArticulationParameter(path));
+			articulationTags.putFloat("velocity", GetArticulationVelocity(path));
+			tags.put(path.toString(), articulationTags);
+		});
+		return tags;
 	}
 
+	// ---------------------------------------------------------------------------------------------------------
+	// DAMAGE MODULE
+
+	@Nonnull public PerPartMap<DamageSyncState> GetDamageMap() { return entityData.get(DAMAGE_ACCESSOR); }
+	public void SetDamageMap(@Nonnull PerPartMap<DamageSyncState> map) { entityData.set(DAMAGE_ACCESSOR, map); }
+	@Nonnull public DamageablePartDefinition GetDef(@Nonnull VehicleComponentPath partPath) {
+		return GetHierarchy().FindDamageable(partPath).orElse(DamageablePartDefinition.INVALID);
+	}
+	protected void LoadDamageState(@Nonnull CompoundTag tags)
+	{
+		for(String key : tags.getAllKeys())
+		{
+			CompoundTag partTags = tags.getCompound(key);
+			VehicleComponentPath path = VehicleComponentPath.of(key);
+			if(HasDamageablePart(path))
+			{
+				SetHealthOf(path, partTags.getFloat("hp"));
+			}
+			else FlansMod.LOGGER.warn("Damage key " + key + " was stored in vehicle save data, but this vehicle doesn't have that part");
+		}
+	}
+	@Nonnull
+	protected CompoundTag SaveDamageState()
+	{
+		CompoundTag tags = new CompoundTag();
+		GetHierarchy().ForEachDamageable((partPath, damageDef) ->
+		{
+			CompoundTag partTags = new CompoundTag();
+			partTags.putFloat("hp", GetHealthOf(partPath));
+			tags.put(partPath.toString(), partTags);
+		});
+		return tags;
+	}
 
 
 	// ---------------------------------------------------------------------------------------------------------
 	// PHYSICS MODULE
-	@Nullable
-	public ColliderHandle CorePhsyicsHandle = null;
-	@Nullable
-	public ColliderHandle[] WheelPhysicsHandles = new ColliderHandle[0];
 
-	private void InitPhysics()
+	protected void InitPhysics()
 	{
+		Map<VehiclePartPath, ImmutableList<AABB>> bbLists = GatherBBs();
 		OBBCollisionSystem physics = OBBCollisionSystem.ForLevel(level());
-		physics.RegisterDynamic()
 
+		for(var kvp : bbLists.entrySet())
+		{
+			if(kvp.getKey().IsRoot())
+			{
+				CorePhsyicsHandle = physics.RegisterDynamic(kvp.getValue(), RootTransform);
+			}
+			else
+			{
+				ColliderHandle handle = physics.RegisterDynamic(kvp.getValue(), GetWorldToPartCurrent(kvp.getKey()));
+				ArticulatedPhysicsHandles.put(kvp.getKey(), handle);
+			}
+		}
 
-		Def().AsHierarchy.get().ForEachWheel((wheelPath, wheelDef) -> {
+		List<ColliderHandle> wheelHandles = new ArrayList<>();
+		Def().AsHierarchy().ForEachWheel((wheelPath, wheelDef) ->
+		{
 			WheelEntity wheel = new WheelEntity(FlansMod.ENT_TYPE_WHEEL.get(), level());
 			int wheelIndex = Wheels.Add(wheel, wheelPath, wheelDef.controlHints);
 			wheel.SetLinkToVehicle(this, wheelIndex);
+
+			wheelHandles.add(physics.RegisterDynamic(List.of(new AABB(-wheelDef.radius, -wheelDef.radius, -wheelDef.radius, wheelDef.radius, wheelDef.radius, wheelDef.radius)), GetWorldToPartCurrent(wheelPath)));
 		});
+		WheelPhysicsHandles = wheelHandles.toArray(new ColliderHandle[0]);
+	}
+	protected void TickPhysics()
+	{
+		// Check for missing wheels
+		Wheels.ForEachWithRemoval((wheel -> {
+			if(wheel == null || !wheel.isAlive())
+			{
+				FlansMod.LOGGER.warn(this + ": Did not expect our wheel to die");
+				return true;
+			}
+			return false;
+		}));
+
+		Wheels.ForEach(wheel -> wheel.StartTick(this));
+
+		// Create a force model and load it up with forces for debug rendering
+		ForceModel forces = new ForceModel();
+
+		ControlLogic controller = CurrentController();
+		if(controller != null)
+		{
+			VehicleInputState inputs = GetInputStateFor(controller);
+			if(IsAuthority())
+			{
+				controller.TickAuthoritative(this, inputs, forces);
+			}
+			else
+			{
+				controller.TickRemote(this, inputs, forces);
+			}
+
+			// We should make sure the controller didn't go wrong!
+
+			if(Double.isNaN(position().x)
+				|| Double.isNaN(position().y)
+				|| Double.isNaN(position().z))
+			{
+				FlansMod.LOGGER.error("Vehicle went to NaNsville. Reverting one frame");
+				setPos(xOld, yOld, zOld);
+			}
+		}
+		else
+		{
+			forces.AddGlobalForceToCore(new Vec3(0f, -9.81f * Def().physics.mass, 0f), () -> "Gravity");
+			forces.AddDampenerToCore(0.1f);
+			for(int i = 0; i < Wheels.All().size(); i++)
+			{
+				WheelEntity wheel = Wheels.ByIndex(i);
+				if(wheel != null)
+				{
+					forces.AddGlobalForceToWheel(i, new Vec3(0f, -9.81f * wheel.GetWheelDef().mass, 0f), () -> "Gravity");
+					forces.AddDampenerToWheel(i, 0.1f);
+					forces.AddDefaultWheelSpring(this, wheel);
+				}
+			}
+
+			//Vec3 motion = vehicle.getDeltaMovement();
+			//motion = motion.add(0f, -9.81f / 20f, 0f);
+			//vehicle.setDeltaMovement(motion);
+			//vehicle.move(MoverType.SELF, motion);
+		}
+
+
+		// Stash our latest Force Model for debug rendering
+		ForcesLastFrame = forces;
+		if(!PAUSE_PHYSICS)
+		{
+			// Now process the results of the Force Model
+			Vec3 motion = GetVelocity();
+			motion = forces.ApplyLinearForcesToCore(motion, GetWorldToEntity().GetCurrent(), Def().physics.mass);
+			motion = forces.ApplySpringForcesToCore(motion, GetWorldToEntity().GetCurrent(), Def().physics.mass, this::GetWorldToPartCurrent);
+			motion = forces.ApplyDampeningToCore(motion);
+			SetVelocity(motion);
+			ApplyVelocity();
+		}
+
+		SyncEntityToTransform();
+
+		VehicleCollisionSystem.CollideEntities(this);
+
+
+		// Wheels need to move too
+		for(int i = 0; i < Wheels.All().size(); i++)
+		{
+			WheelEntity wheel = Wheels.ByIndex(i);
+			if(wheel != null)
+				wheel.PhysicsTick(this, i, forces);
+		}
+
+		// End of Tick
+		if(IsAuthority())
+		{
+
+		}
+		Wheels.ForEach(wheel -> wheel.EndTick(this));
+	}
+	@Nonnull
+	private Map<VehiclePartPath, ImmutableList<AABB>> GatherBBs()
+	{
+		Map<VehiclePartPath, ImmutableList<AABB>> completedLists = new HashMap<>();
+		ImmutableList.Builder<AABB> rootObject = new ImmutableList.Builder<>();
+		VehicleDefinitionHierarchy.VehicleNode rootNode = GetHierarchy().RootNode;
+		GatherBBs(rootNode, rootObject, completedLists);
+		completedLists.put(rootNode.GetPath(), rootObject.build());
+		return completedLists;
+	}
+	private void GatherBBs(@Nonnull VehicleDefinitionHierarchy.VehicleNode node,
+						   @Nonnull ImmutableList.Builder<AABB> aabbListBuilder,
+						   @Nonnull Map<VehiclePartPath, ImmutableList<AABB>> completedLists)
+	{
+		if(node.Def.IsArticulated())
+		{
+			// If this object is articulated, it has a separate physics object
+			ImmutableList.Builder<AABB> articulatedObject = new ImmutableList.Builder<>();
+			if(node.Def.IsDamageable())
+			{
+				articulatedObject.add(node.Def.damage.Hitbox.get());
+			}
+			for(VehicleDefinitionHierarchy.VehicleNode child : node.ChildNodes.values())
+			{
+				GatherBBs(child, articulatedObject, completedLists);
+			}
+			completedLists.put(node.GetPath(), articulatedObject.build());
+		}
+		else
+		{
+			if(node.Def.IsDamageable())
+			{
+				aabbListBuilder.add(node.Def.damage.Hitbox.get());
+			}
+			for(VehicleDefinitionHierarchy.VehicleNode child : node.ChildNodes.values())
+			{
+				GatherBBs(child, aabbListBuilder, completedLists);
+			}
+		}
 	}
 
 
@@ -385,7 +669,7 @@ public class VehicleEntity extends Entity implements
 	@Override
 	public void SetEngineSaveData(@Nonnull PerPartMap<EngineSyncState> map) { entityData.set(ENGINES_ACCESSOR, map); }
 	@Override
-	public void ModifyEngineSaveData(@Nonnull String enginePath, @Nonnull Consumer<EngineSyncState> func)
+	public void ModifyEngineSaveData(@Nonnull VehicleComponentPath enginePath, @Nonnull Consumer<EngineSyncState> func)
 	{
 		PerPartMap<EngineSyncState> map = GetEngineSaveData();
 		map.CreateAndApply(enginePath,
@@ -393,54 +677,300 @@ public class VehicleEntity extends Entity implements
 			func);
 		SetEngineSaveData(map);
 	}
+	protected void LoadEngineData(@Nonnull CompoundTag tags)
+	{
+		PerPartMap<EngineSyncState> engineMap = GetEngineSaveData();
+		for(String key : tags.getAllKeys())
+		{
+			VehicleComponentPath path = VehicleComponentPath.of(key);
+			engineMap.CreateAndApply(path,
+				EngineSyncState::new,
+				(state) -> state.Load(this, tags.getCompound(key)));
+		}
+		SetEngineSaveData(engineMap);
+	}
+	@Nonnull
+	protected CompoundTag SaveEngineData()
+	{
+		PerPartMap<EngineSyncState> map = GetEngineSaveData();
+		CompoundTag tags = new CompoundTag();
+		// tODO:
+		//GetHierarchy().ForEachEngine((path, def) -> {
+		//	int hash = path.hashCode();
+		//	CompoundTag engineTags = new CompoundTag();
+		//	if(map.Values.containsKey(hash))
+		//		tags.put(hash, map.Values.get(hash).Save(this));
+		//	tags.put(path.toString(), engineTags);
+		//});
+		return tags;
+	}
 	// ---------------------------------------------------------------------------------------------------------
 
 
 	// ---------------------------------------------------------------------------------------------------------
-	// MODULES
-	// ---------------------------------------------------------------------------------------------------------
-	private void TickModules()
+	// SEATS MODULE
+	@Override @Nonnull
+	public List<VehicleComponentPath> GetSeatOrdering() { return SeatOrdering; }
+	@Override @Nonnull
+	public PerPartMap<SeatSyncState> GetSeatSaveData() { return entityData.get(SEATS_ACCESSOR); }
+	@Override
+	public void SetSeatSaveData(@Nonnull PerPartMap<SeatSyncState> map) { entityData.set(SEATS_ACCESSOR, map); }
+	public void LoadSeatState(@Nonnull CompoundTag tags)
 	{
+		PerPartMap<SeatSyncState> seatMap = GetSeatSaveData();
+		for(String key : tags.getAllKeys())
+		{
+			VehicleComponentPath path = VehicleComponentPath.of(key);
 
-		Damage().Tick(this);
-		Hierarchy().Tick(this);
-		Guns().Tick(this);
-		Seats().Tick(this);
-		Physics().Tick(this);
+			seatMap.CreateAndApply(path,
+				SeatSyncState::new,
+				(state) -> state.Load(this, tags.getCompound(key)));
+		}
+		SetSeatSaveData(seatMap);
 	}
-	private void DefineModuleSyncing(@Nonnull SynchedEntityData entityData)
+	@Nonnull
+	public CompoundTag SaveSeatState()
 	{
-		entityData.define(VehicleSeatsModule.SEATS_ACCESSOR, new PerPartMap<>());
-		entityData.define(VehicleGunModule.GUNS_ACCESSOR, new PerPartMap<>());
-		entityData.define(VehicleDamageModule.DAMAGE_ACCESSOR, new PerPartMap<>());
-		entityData.define(ENGINES_ACCESSOR, new PerPartMap<>());
-		entityData.define(VehicleHierarchyModule.ARTICULATIONS_ACCESSOR, new PerPartMap<>());
+		PerPartMap<SeatSyncState> map = GetSeatSaveData();
+		CompoundTag tags = new CompoundTag();
+		GetHierarchy().ForEachSeat((seatPath, seatDef) ->
+		{
+			map.TryGet(seatPath).ifPresent((state) ->
+			{
+				tags.put(seatPath.toString(), state.Save(this));
+			});
+		});
+		return tags;
 	}
-	private void SaveModules(@Nonnull CompoundTag tags)
+
+	// -----------------------------------------------------------------------------------------------------------------
+	// CONTROLLER MODULE
+	@OnlyIn(Dist.CLIENT)
+	public void Client_GetLocalPlayerInputs(@Nonnull List<ControlSchemeDefinition> controlSchemes,
+											@Nonnull InputDefinition[] additionalInputs)
 	{
-		tags.put("engine", SaveEngineData(this));
-		tags.put("damage", Damage().Save(this));
-		tags.put("articulation", Hierarchy().Save(this));
-		tags.put("guns", Guns().Save(this));
-		tags.put("seats", Seats().Save(this));
-		tags.put("physics", Physics().Save(this));
+		// Process any control schemes that are active (e.g. CarController, 1AxisTurretController)
+		for(ControlSchemeDefinition scheme : controlSchemes)
+		{
+			VehicleInputState inputs = GetInputStateFor(scheme);
+			for(ControlSchemeAxisDefinition axis : scheme.axes)
+			{
+				float value = ClientInputHooks.GetInput(axis.axisType);
+				inputs.SetInput(axis.axisType, value);
+			}
+		}
+		for(InputDefinition input : additionalInputs)
+		{
+			VehicleInputState miscInputs = GetMiscInputState();
+			miscInputs.SetInput(input.key, ClientInputHooks.GetInput(input.key));
+		}
 	}
-	private void LoadModules(@Nonnull CompoundTag tags)
+	protected void TickControlSchemes()
 	{
-		if(tags.contains("engine"))
-			LoadEngineData(this, tags.getCompound("engine"));
-		if(tags.contains("damage"))
-			Damage().Load(this, tags.getCompound("damage"));
-		if(tags.contains("articulation"))
-			Hierarchy().Load(this, tags.getCompound("articulation"));
-		if(tags.contains("guns"))
-			Guns().Load(this, tags.getCompound("guns"));
-		if(tags.contains("seats"))
-			Seats().Load(this, tags.getCompound("seats"));
-		if(tags.contains("physics"))
-			Seats().Load(this, tags.getCompound("physics"));
+		Map<ControlSchemeDefinition, VehicleInputState> statesToTick = new HashMap<>();
+		for(int i = 0; i < SeatOrdering.size(); i++)
+		{
+			VehicleComponentPath seatPath = SeatOrdering.get(i);
+			GetHierarchy().IfSeatExists(seatPath, (seatDef) ->
+			{
+				// If there is someone in this seat, process inputs
+				Entity passenger = GetPassengerInSeat(seatPath, getPassengers());
+				if (passenger != null) // TODO: && passenger.canDriveVehicle
+				{
+					if (passenger instanceof Player player && player.isLocalPlayer())
+					{
+						List<ControlSchemeDefinition> controlSchemes = GetActiveControllersForSeat(seatPath, ModalStates);
+
+						Client_GetLocalPlayerInputs(controlSchemes, seatDef.inputs);
+
+						for (ControlSchemeDefinition scheme : controlSchemes)
+						{
+							statesToTick.put(scheme, GetInputStateFor(scheme));
+						}
+					}
+					//else if(isControlledByAI())
+					//{
+//
+					//}
+
+				}
+			});
+		}
+
+		for(var kvp : statesToTick.entrySet())
+		{
+			kvp.getValue().Tick(kvp.getKey());
+		}
 	}
+	public void SelectController(@Nonnull ControlSchemeDefinition controllerDef)
+	{
+		// TODO: Send events for unselected, letting vehicles play anims etc
+
+		if(!Controllers.containsKey(controllerDef.GetLocation()))
+		{
+			ControlLogic controller = ControlLogics.InstanceControlLogic(controllerDef);
+			if(controller != null)
+			{
+				Controllers.put(controllerDef.GetLocation(), controller);
+				SelectedControllerLocation = controllerDef.GetLocation();
+
+				// TODO: Send events for selected
+			}
+			else
+			{
+				FlansMod.LOGGER.warn(this + ": Could not create control logic for '" + controllerDef.GetLocation() + "'");
+			}
+		}
+	}
+	@Nullable
+	public ControlLogic CurrentController()
+	{
+		return Controllers.get(GetActiveControllerDef().GetLocation());
+	}
+
+	@Nonnull
+	public Collection<ControlSchemeDefinition> GetValidControllersForSeat(@Nonnull VehicleComponentPath seatName)
+	{
+		Optional<Collection<ControlSchemeDefinition>> result = GetHierarchy().IfSeatExists(seatName, (seatDef) ->
+		{
+			return seatDef.Controllers.get().values();
+		});
+		return result.orElse(List.of());
+	}
+	@Nonnull
+	public List<ControlSchemeDefinition> GetActiveControllersForSeat(@Nonnull VehicleComponentPath seatName,
+																	  @Nonnull Map<String, String> modes)
+	{
+		Optional<List<ControlSchemeDefinition>> result = GetHierarchy().IfSeatExists(seatName, (seatDef) ->
+		{
+			List<ControlSchemeDefinition> matches = new ArrayList<>();
+			for(VehicleControlOptionDefinition option : seatDef.controllerOptions)
+			{
+				if(option.Passes(modes))
+					matches.add(seatDef.Controllers.get().get(option.key));
+			}
+			return matches;
+		});
+		return result.orElse(List.of());
+	}
+	@Nonnull
+	public List<ControlSchemeDefinition> GetAllActiveControllers(@Nonnull Map<String, String> modes)
+	{
+		List<ControlSchemeDefinition> matches = new ArrayList<>();
+		GetHierarchy().ForEachSeat((seatPath, seatDef) ->
+		{
+			for(VehicleControlOptionDefinition option : seatDef.controllerOptions)
+			{
+				if(option.Passes(modes))
+				{
+					ControlSchemeDefinition scheme = seatDef.Controllers.get().get(option.key);
+					if(scheme != null && !matches.contains(scheme))
+						matches.add(scheme);
+				}
+			}
+		});
+		return matches;
+	}
+	@Nullable
+	public ControlSchemeDefinition GetMainActiveController(@Nonnull Map<String, String> modes)
+	{
+		for (VehicleComponentPath seatName : GetSeatOrdering())
+		{
+			List<ControlSchemeDefinition> activeForSeat = GetActiveControllersForSeat(seatName, modes);
+			if(activeForSeat.size() > 1)
+				FlansMod.LOGGER.warn("Seat " + seatName + " has more than 1 control scheme active?");
+			if(activeForSeat.size() > 0)
+				return activeForSeat.get(0);
+		}
+		return null;
+	}
+	@Nonnull
+	public List<ControlSchemeDefinition> GetAllValidControllers()
+	{
+		List<ControlSchemeDefinition> list = new ArrayList<>();
+		GetHierarchy().ForEachSeat((partPath, seatDef) -> {
+			for(ControlSchemeDefinition controlScheme : seatDef.Controllers.get().values())
+				if(!list.contains(controlScheme))
+					list.add(controlScheme);
+		});
+		return list;
+	}
+
 	// ---------------------------------------------------------------------------------------------------------
+	// GUNS MODULE
+	public void SetGunSaveData(@Nonnull PerPartMap<GunSyncState> map) { entityData.set(GUNS_ACCESSOR, map); }
+	@Nonnull
+	public PerPartMap<GunSyncState> GetGunSaveData() { return entityData.get(GUNS_ACCESSOR); }
+	protected void InitGuns()
+	{
+		GetHierarchy().ForEachGun((partPath, gunDef) -> {
+			GunOrdering.add(partPath);
+		});
+	}
+	public void SetGunState(@Nonnull VehicleComponentPath partName, @Nonnull GunSyncState gunState)
+	{
+		PerPartMap<GunSyncState> map = GetGunSaveData();
+		map.Put(partName, gunState);
+		SetGunSaveData(map);
+	}
+	public void SetGunState(int index, @Nonnull GunSyncState gunState)
+	{
+		SetGunState(GunOrdering.get(index), gunState);
+	}
+	@Nonnull
+	public GunSyncState GetGunStateAtIndex(int index) {
+		return GetGunSaveData().GetOrDefault(GunOrdering.get(index), GunSyncState.INVALID);
+	}
+	@Nonnull
+	public VehicleComponentPath GetVehiclePartNameOfGunAtIndex(int index) { return GunOrdering.get(index); }
+	@Nonnull
+	public UUID GetGunIDAtIndex(int index) { return GetGunStateAtIndex(index).GetGunID(); }
+	public int GetIndexOfGunID(@Nonnull UUID gunID)
+	{
+		for(int i = 0; i < GunOrdering.size(); i++)
+			if(GetGunStateAtIndex(i).GetGunID().equals(gunID))
+				return i;
+		return -1;
+	}
+	@Nonnull
+	public List<UUID> GetAllGunIDs()
+	{
+		List<UUID> uuids = new ArrayList<>();
+		for(GunSyncState state : GetGunSaveData().Values())
+		{
+			UUID id = state.GetGunID();
+			if(!id.equals(GunItem.InvalidGunUUID))
+				uuids.add(id);
+		}
+		return uuids;
+	}
+	protected void LoadGunState(@Nonnull CompoundTag tags)
+	{
+		PerPartMap<GunSyncState> map = GetGunSaveData();
+		for(String key : tags.getAllKeys())
+		{
+			VehicleComponentPath path = VehicleComponentPath.of(key);
+			GunSyncState gunState = new GunSyncState();
+			gunState.Load(this, tags.getCompound(key));
+			map.Put(path, gunState);
+		}
+		SetGunSaveData(map);
+	}
+
+	@Nonnull
+	protected CompoundTag SaveGunState()
+	{
+		PerPartMap<GunSyncState> map = GetGunSaveData();
+		CompoundTag tags = new CompoundTag();
+		GetHierarchy().ForEachGun((partPath, gunDef) ->
+		{
+			map.TryGet(partPath).ifPresent((gunState) ->
+			{
+				tags.put(partPath.toString(), gunState.Save(this));
+			});
+		});
+		return tags;
+	}
 
 
 	// Inventory
@@ -454,18 +984,11 @@ public class VehicleEntity extends Entity implements
 	public double GetSpeedXZ() { return Maths.LengthXZ(getDeltaMovement()); }
 	public double GetSpeed() { return Maths.LengthXYZ(getDeltaMovement()); }
 
-	public void Raycast(@Nonnull Vec3 start, @Nonnull Vec3 end, @Nonnull List<HitResult> results)
-	{
-		Hierarchy().Raycast(this, start, end, results, 0f);
-	}
-	public void Raycast(@Nonnull Vec3 start, @Nonnull Vec3 end, @Nonnull List<HitResult> results, float dt)
-	{
-		Hierarchy().Raycast(this, start, end, results, dt);
-	}
+
 	@Nonnull
 	public ControlSchemeDefinition GetActiveControllerDef()
 	{
-		ControlSchemeDefinition active = Seats().GetMainActiveController(ModalStates);
+		ControlSchemeDefinition active = GetMainActiveController(ModalStates);
 		return active != null ? active : ControlSchemeDefinition.INVALID;
 	}
 
@@ -484,11 +1007,11 @@ public class VehicleEntity extends Entity implements
 	@Override
 	public void SyncEntityToTransform()
 	{
-		Hierarchy().RootTransform = Transform.FromPosAndEuler(getPosition(1f), getXRot(), getYRot(), 0f);
+		RootTransform = Transform.FromPosAndEuler(getPosition(1f), getXRot(), getYRot(), 0f);
 	}
-	@Override public void SetWorldToEntity(@Nonnull Transform currentTransform) { Hierarchy().SetCurrentRootTransform(currentTransform); }
-	@Override @Nonnull public ITransformPair GetWorldToEntity() { return Hierarchy().GetWorldToRoot(); }
-	@Override @Nonnull public ITransformPair GetEntityToAP(@Nonnull String apPath) { return Hierarchy().GetRootToPart(apPath); }
+	@Override public void SetWorldToEntity(@Nonnull Transform currentTransform) { RootTransform = currentTransform; }
+	@Override @Nonnull public ITransformPair GetWorldToEntity() { return GetWorldToRoot(); }
+	@Override @Nonnull public ITransformPair GetEntityToAP(@Nonnull VehiclePartPath apPath) { return GetRootToPart(apPath); }
 	@Override @Nonnull
 	public Vec3 GetVelocity() { return getDeltaMovement().scale(20f); }
 	@Override
@@ -513,8 +1036,8 @@ public class VehicleEntity extends Entity implements
 		// but it is useful to render it
 		if(verticalCollision || horizontalCollision)
 		{
-			Physics().ForcesLastFrame.AddGlobalForce(VehicleDefinition.CoreName,
-				actualMovement.subtract(expectedMovement).scale(20f * 20f * Physics().Def.mass),
+			ForcesLastFrame.AddGlobalForce(VehicleDefinition.CoreName,
+				actualMovement.subtract(expectedMovement).scale(20f * 20f * Def().physics.mass),
 				() -> "Normal reaction force");
 		}
 	}

@@ -1,4 +1,4 @@
-package com.flansmod.common.entity.vehicle.guns;
+package com.flansmod.common.entity.vehicle.save;
 
 import com.flansmod.common.actions.ActionStack;
 import com.flansmod.common.entity.vehicle.IVehicleSaveNode;

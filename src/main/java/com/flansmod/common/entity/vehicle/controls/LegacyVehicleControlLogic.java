@@ -1,32 +1,41 @@
 package com.flansmod.common.entity.vehicle.controls;
 
-import com.flansmod.common.FlansMod;
 import com.flansmod.common.entity.vehicle.VehicleEntity;
-import com.flansmod.common.entity.vehicle.damage.VehicleDamageModule;
-import com.flansmod.common.entity.vehicle.hierarchy.VehicleHierarchyModule;
+import com.flansmod.common.entity.vehicle.hierarchy.EPartDefComponent;
+import com.flansmod.common.entity.vehicle.hierarchy.VehicleComponentPath;
+import com.flansmod.common.entity.vehicle.hierarchy.VehiclePartPath;
 import com.flansmod.common.entity.vehicle.hierarchy.WheelEntity;
-import com.flansmod.common.entity.vehicle.physics.VehiclePhysicsModule;
 import com.flansmod.common.types.vehicles.ControlSchemeDefinition;
 import com.flansmod.common.types.vehicles.EVehicleAxis;
 import com.flansmod.common.types.vehicles.VehicleDefinition;
-import com.flansmod.common.types.vehicles.elements.CollisionPointDefinition;
 import com.flansmod.util.Maths;
 import com.flansmod.util.Transform;
-import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.MoverType;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.phys.BlockHitResult;
-import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 
 import javax.annotation.Nonnull;
 
 public class LegacyVehicleControlLogic extends ControlLogic
 {
-	private static final String SingleEngineKey = "main";
+	private static final VehicleComponentPath SingleEngineKey = VehicleComponentPath.of(VehiclePartPath.Core, EPartDefComponent.Engine, 0);
+	private static final VehiclePartPath FrontRightWheelPart = VehiclePartPath.of("front_right_wheel");
+	private static final VehiclePartPath BackRightWheelPart = VehiclePartPath.of("back_right_wheel");
+	private static final VehiclePartPath FrontLeftWheelPart = VehiclePartPath.of("front_left_wheel");
+	private static final VehiclePartPath BackLeftWheelPart = VehiclePartPath.of("back_left_wheel");
+	private static final VehicleComponentPath FrontRightWheelDamageable = VehicleComponentPath.of(FrontRightWheelPart, EPartDefComponent.Damage, 0);
+	private static final VehicleComponentPath BackRightWheelDamageable = VehicleComponentPath.of(BackRightWheelPart, EPartDefComponent.Damage, 0);
+	private static final VehicleComponentPath FrontLeftWheelDamageable = VehicleComponentPath.of(FrontLeftWheelPart, EPartDefComponent.Damage, 0);
+	private static final VehicleComponentPath BackLeftWheelDamageable = VehicleComponentPath.of(BackLeftWheelPart, EPartDefComponent.Damage, 0);
+	private static final VehicleComponentPath[] DefaultWheels = new VehicleComponentPath[] {
+		VehicleComponentPath.of(FrontRightWheelPart, EPartDefComponent.Wheel, 0),
+		VehicleComponentPath.of(BackRightWheelPart, EPartDefComponent.Wheel, 1),
+		VehicleComponentPath.of(FrontLeftWheelPart, EPartDefComponent.Wheel, 2),
+		VehicleComponentPath.of(BackLeftWheelPart, EPartDefComponent.Wheel, 3)
+	};
+
+
 
 	public final boolean Tank;
 
@@ -41,7 +50,7 @@ public class LegacyVehicleControlLogic extends ControlLogic
 	@Override
 	public boolean CanControl(@Nonnull VehicleDefinition vehicleDef)
 	{
-		int numWheels = vehicleDef.AsHierarchy.get().GetAllWheels().size();
+		int numWheels = vehicleDef.AsHierarchy().NumWheels();
 		if(numWheels != 4)
 			return false;
 
@@ -85,10 +94,10 @@ public class LegacyVehicleControlLogic extends ControlLogic
 		// TODO: Weave in (wheelsYaw > 0 ? type.turnLeftModifier : type.turnRightModifier)
 		float steering = inputs.GetValue(EVehicleAxis.Yaw);
 
-		float engineSpeed = vehicle.Engine().GetEngineDef(SingleEngineKey).maxSpeed;
+		float engineSpeed = vehicle.GetEngineDef(SingleEngineKey).maxSpeed;
 		// -------------------------------------------------------------------------------------
 
-		WheelEntity[] wheels = vehicle.Physics().AllWheels().toArray(new WheelEntity[0]);
+		WheelEntity[] wheels = vehicle.Wheels.All().toArray(new WheelEntity[0]);
 		for(int wheelID = 0; wheelID < wheels.length; wheelID++)
 		{
 			WheelEntity wheel = wheels[wheelID];
@@ -116,7 +125,7 @@ public class LegacyVehicleControlLogic extends ControlLogic
 			forces.AddGlobalForceToWheel(wheelID, GRAVITY, () -> "Gravity");
 
 			//Apply velocity
-			if(vehicle.Engine().CanThrust(driver, SingleEngineKey)) // TODO: Fuel module
+			if(vehicle.CanThrust(driver, SingleEngineKey)) // TODO: Fuel module
 			{
 				if(Tank)
 				{
@@ -188,7 +197,7 @@ public class LegacyVehicleControlLogic extends ControlLogic
 
 			//Pull wheels towards car
 			// TODO: Make sure the wheel position array (old) gets updated to this hierarchy structure
-			Transform expectedWheelPosition = vehicle.Hierarchy().GetWorldToPartPrevious("wheel_" + wheelID);
+			Transform expectedWheelPosition = vehicle.GetWorldToPartPrevious(DefaultWheels[wheelID]);
 
 			Vec3 dPos = expectedWheelPosition.PositionVec3().subtract(wheel.position());
 			dPos = dPos.scale(wheel.GetWheelDef().springStrength);
@@ -305,17 +314,16 @@ public class LegacyVehicleControlLogic extends ControlLogic
 		boolean crashInWater = false;
 		double speed = vehicle.getDeltaMovement().length();
 
-		VehicleHierarchyModule hierarchy = vehicle.Hierarchy();
-		VehiclePhysicsModule physics = vehicle.Physics();
-		VehicleDamageModule damage = vehicle.Damage();
 		Level level = vehicle.level();
+		// TODO: Collision
+		/*
 		for(CollisionPointDefinition point : physics.Def.collisionPoints)
 		{
-			if(damage.IsPartDestroyed(point.attachedTo))
+			if(vehicle.IsPartDestroyed(point.attachedTo))
 				continue;
 
-			Vec3 prevPointPos = hierarchy.GetWorldToPart(point.attachedTo).GetPrevious().LocalToGlobalPosition(point.offset);
-			Vec3 currentPointPos = hierarchy.GetWorldToPart(point.attachedTo).GetCurrent().LocalToGlobalPosition(point.offset);
+			Vec3 prevPointPos = vehicle.GetWorldToPart(point.attachedTo).GetPrevious().LocalToGlobalPosition(point.offset);
+			Vec3 currentPointPos = vehicle.GetWorldToPart(point.attachedTo).GetCurrent().LocalToGlobalPosition(point.offset);
 
 			if(FlansMod.DEBUG && level.isClientSide)
 			{
@@ -357,8 +365,8 @@ public class LegacyVehicleControlLogic extends ControlLogic
 				}
 
 				// Attack the part
-				float damageDealt = damage.ApplyDamageTo(point.attachedTo, level.damageSources().inWall(), impactDamage);
-				if(!damage.IsPartDestroyed(point.attachedTo)) // && TeamsManager.driveablesBreakBlocks)
+				float damageDealt = vehicle.ApplyDamageTo(point.attachedTo, level.damageSources().inWall(), impactDamage);
+				if(!vehicle.IsPartDestroyed(point.attachedTo)) // && TeamsManager.driveablesBreakBlocks)
 				{
 					// And if it didn't die from the attack, break the block
 					// TODO: [1.12] Heck
@@ -366,7 +374,7 @@ public class LegacyVehicleControlLogic extends ControlLogic
 
 					if(!level.isClientSide && blockHardness <= collisionForce)
 					{
-						level.destroyBlock(pos, true, vehicle.Seats().GetControllingPassenger(vehicle));
+						level.destroyBlock(pos, true, vehicle.GetControllingPassenger(vehicle));
 					}
 				}
 				else
@@ -383,5 +391,7 @@ public class LegacyVehicleControlLogic extends ControlLogic
 			}
 
 		}
+
+		 */
 	}
 }

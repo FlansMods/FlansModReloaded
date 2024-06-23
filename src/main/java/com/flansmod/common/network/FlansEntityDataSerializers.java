@@ -6,17 +6,15 @@ import com.flansmod.common.actions.contexts.GunContext;
 import com.flansmod.common.actions.contexts.GunshotContext;
 import com.flansmod.common.actions.contexts.ShooterContext;
 import com.flansmod.common.entity.vehicle.PerPartMap;
-import com.flansmod.common.entity.vehicle.damage.DamageSyncState;
-import com.flansmod.common.entity.vehicle.guns.GunSyncState;
-import com.flansmod.common.entity.vehicle.hierarchy.ArticulationSyncState;
-import com.flansmod.common.entity.vehicle.physics.EngineSyncState;
-import com.flansmod.common.entity.vehicle.seats.SeatSyncState;
+import com.flansmod.common.entity.vehicle.save.DamageSyncState;
+import com.flansmod.common.entity.vehicle.save.GunSyncState;
+import com.flansmod.common.entity.vehicle.save.ArticulationSyncState;
+import com.flansmod.common.entity.vehicle.save.EngineSyncState;
+import com.flansmod.common.entity.vehicle.save.SeatSyncState;
 import com.flansmod.common.types.Definitions;
 import com.flansmod.common.types.JsonDefinition;
 import com.flansmod.common.types.abilities.CraftingTraitDefinition;
-import com.flansmod.common.types.abilities.CraftingTraitDefinitions;
 import com.flansmod.common.types.armour.ArmourDefinition;
-import com.flansmod.common.types.armour.ArmourDefinitions;
 import com.flansmod.common.types.attachments.AttachmentDefinition;
 import com.flansmod.common.types.bullets.BulletDefinition;
 import com.flansmod.common.types.crafting.MaterialDefinition;
@@ -27,7 +25,6 @@ import com.flansmod.common.types.magazines.MagazineDefinition;
 import com.flansmod.common.types.npc.NpcDefinition;
 import com.flansmod.common.types.parts.PartDefinition;
 import com.flansmod.common.types.vehicles.ControlSchemeDefinition;
-import com.flansmod.common.types.vehicles.ControlSchemeDefinitions;
 import com.flansmod.common.types.vehicles.VehicleDefinition;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.syncher.EntityDataSerializer;
@@ -71,8 +68,8 @@ public class FlansEntityDataSerializers
 		@Override
 		public void write(@Nonnull FriendlyByteBuf buf, @Nonnull PerPartMap<TDataType> data)
 		{
-			buf.writeInt(data.Values.size());
-			for(var kvp : data.Values.entrySet())
+			buf.writeInt(data.Values().size());
+			for(var kvp : data.EntrySet())
 			{
 				buf.writeInt(kvp.getKey());
 				ElementSerializer.write(buf, kvp.getValue());
@@ -88,7 +85,7 @@ public class FlansEntityDataSerializers
 			{
 				int hash = buf.readInt();
 				TDataType element = ElementSerializer.read(buf);
-				map.Values.put(hash, element);
+				map.Put(hash, element);
 			}
 			return map;
 		}
@@ -101,8 +98,8 @@ public class FlansEntityDataSerializers
 		@Override
 		public void write(@Nonnull FriendlyByteBuf buf, @Nonnull ArticulationSyncState data)
 		{
-			buf.writeFloat(data.Parameter());
-			buf.writeFloat(data.Velocity());
+			buf.writeFloat(data.Parameter);
+			buf.writeFloat(data.Velocity);
 		}
 		@Override
 		@Nonnull

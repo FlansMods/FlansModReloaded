@@ -47,16 +47,16 @@ public record ContinuousSeparationManifold(
 	@Nullable
 	public Vec3 GetCollisionNormal()
 	{
-		return NormalSeparationAxis == null ? null : SeparationManifold.CreateSeparationVec(NormalSeparation, NormalSeparationAxis);
+		return null; //NormalSeparationAxis == null ? null : SeparationManifold.CreateSeparationVec(NormalSeparation, NormalSeparationAxis);
 	}
 	@Nullable
 	public Vec3 AsSeparationVec(double obbStepHeight)
 	{
 		if (IsDiscrete)
 		{
-			if (StepSeparation <= obbStepHeight)
-				return SeparationManifold.CreateSeparationVec(StepSeparation, StepSeparationAxis);
-			return SeparationManifold.CreateSeparationVec(Separation, Axis);
+			//if (StepSeparation <= obbStepHeight)
+			//	return SeparationManifold.CreateSeparationVec(StepSeparation, StepSeparationAxis);
+			//return SeparationManifold.CreateSeparationVec(Separation, Axis);
 		}
 		double t = GetTimeOfImpact();
 		if (t == UNDEFINED)

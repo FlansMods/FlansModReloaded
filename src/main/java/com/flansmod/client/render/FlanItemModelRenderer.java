@@ -160,8 +160,7 @@ public abstract class FlanItemModelRenderer extends BlockEntityWithoutLevelRende
         return GetTurboRigWrapper().GetPose(partName,
             GetDefLoc(),
             animationSet,
-            actionStack,
-            null);
+            actionStack);
     }
 
     private void ApplyItemArmTransform(PoseStack poseStack, HumanoidArm arm, float equipProgress)

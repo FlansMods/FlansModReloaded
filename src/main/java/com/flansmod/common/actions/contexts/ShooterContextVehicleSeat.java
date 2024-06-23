@@ -2,6 +2,7 @@ package com.flansmod.common.actions.contexts;
 
 import com.flansmod.common.actions.stats.IModifierBaker;
 import com.flansmod.common.entity.vehicle.VehicleEntity;
+import com.flansmod.common.entity.vehicle.hierarchy.VehicleComponentPath;
 import com.flansmod.common.types.vehicles.VehicleDefinition;
 import com.flansmod.common.types.vehicles.elements.SeatDefinition;
 import com.flansmod.util.Transform;
@@ -16,15 +17,15 @@ import java.util.UUID;
 public class ShooterContextVehicleSeat extends ShooterContextVehicle
 {
 	@Nonnull
-	public final String SeatPath;
+	public final VehicleComponentPath SeatPath;
 	@Nullable
 	public final SeatDefinition SeatDef;
 
-	public ShooterContextVehicleSeat(@Nonnull VehicleEntity vehicle, @Nonnull String seatPath)
+	public ShooterContextVehicleSeat(@Nonnull VehicleEntity vehicle, @Nonnull VehicleComponentPath seatPath)
 	{
 		super(vehicle);
 		SeatPath = seatPath;
-		SeatDef = VehicleDef().AsHierarchy.get().FindSeat(SeatPath);
+		SeatDef = VehicleDef().AsHierarchy().FindSeat(SeatPath).orElse(SeatDefinition.INVALID);
 	}
 
 	@Override
@@ -62,7 +63,7 @@ public class ShooterContextVehicleSeat extends ShooterContextVehicle
 	@Nullable
 	public Entity EntityInThisSeat()
 	{
-		return Vehicle.Seats().GetPassengerInSeat(SeatPath, Vehicle.getPassengers());
+		return Vehicle.GetPassengerInSeat(SeatPath, Vehicle.getPassengers());
 	}
 	public boolean IsOccupied() { return EntityInThisSeat() != null; }
 }

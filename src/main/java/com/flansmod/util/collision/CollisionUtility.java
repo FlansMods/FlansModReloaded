@@ -23,8 +23,8 @@ public class CollisionUtility
 	public static Vec3 Separate(@Nonnull TransformedBB a,
 								@Nonnull TransformedBB b)
 	{
-		return Separate(a.HalfExtents().toVector3f(),
-						b.HalfExtents().toVector3f(),
+		return Separate(a.HalfExtents(),
+						b.HalfExtents(),
 						a.Loc(),
 						b.Loc());
 	}
@@ -33,7 +33,7 @@ public class CollisionUtility
 								@Nonnull TransformedBB b)
 	{
 		return Separate(new Vector3f((float)a.getXsize()/2f, (float)a.getYsize()/2f, (float)a.getZsize()/2f),
-						b.HalfExtents().toVector3f(),
+						b.HalfExtents(),
 						Transform.FromPos(a.getCenter()),
 						b.Loc());
 	}
@@ -41,7 +41,7 @@ public class CollisionUtility
 	public static Vec3 Separate(@Nonnull TransformedBB a,
 								@Nonnull AABB b)
 	{
-		return Separate(a.HalfExtents().toVector3f(),
+		return Separate(a.HalfExtents(),
 						new Vector3f((float)b.getXsize()/2f, (float)b.getYsize()/2f, (float)b.getZsize()/2f),
 						a.Loc(),
 						Transform.FromPos(b.getCenter()));
@@ -102,7 +102,7 @@ public class CollisionUtility
 		if(selector.Try(tInverse.z, halfAMax.z, halfB.z, () -> new Vec3(m.m02, m.m12, m.m22))) // uB2
 			return null;
 
-		return selector.manifold.GetSeparationVec();
+		return selector.manifold.GetNormal();
 	}
 
 	private static double GetSeparationDistance(double dist, double radiusA, double radiusB)

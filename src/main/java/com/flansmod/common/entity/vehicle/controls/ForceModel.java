@@ -1,6 +1,7 @@
 package com.flansmod.common.entity.vehicle.controls;
 
 import com.flansmod.common.entity.vehicle.VehicleEntity;
+import com.flansmod.common.entity.vehicle.hierarchy.VehicleComponentPath;
 import com.flansmod.common.entity.vehicle.hierarchy.WheelEntity;
 import com.flansmod.common.types.vehicles.VehicleDefinition;
 import com.flansmod.util.Maths;
@@ -151,23 +152,23 @@ public class ForceModel
 		 	return motion.scale(Forces.get(partName).Dampening);
 		return motion;
 	}
-	@Nonnull public Vec3 ApplySpringForcesToCore(@Nonnull Vec3 motion, @Nonnull Transform coreTransform, float coreMass, @Nonnull Function<String, Transform> lookup)
+	@Nonnull public Vec3 ApplySpringForcesToCore(@Nonnull Vec3 motion, @Nonnull Transform coreTransform, float coreMass, @Nonnull Function<VehicleComponentPath, Transform> lookup)
 	{ return ApplySpringForces(motion, VehicleDefinition.CoreName, coreTransform, coreMass, lookup); }
-	@Nonnull public Vec3 ApplySpringForcesToWheel(@Nonnull Vec3 motion, int wheelIndex, @Nonnull Transform wheelTransform, float wheelMass, @Nonnull Function<String, Transform> lookup)
+	@Nonnull public Vec3 ApplySpringForcesToWheel(@Nonnull Vec3 motion, int wheelIndex, @Nonnull Transform wheelTransform, float wheelMass, @Nonnull Function<VehicleComponentPath, Transform> lookup)
 	{ return ApplySpringForces(motion, Wheel(wheelIndex), wheelTransform, wheelMass, lookup); }
 	@Nonnull
 	public Vec3 ApplySpringForces(@Nonnull Vec3 motion,
 								  @Nonnull String partName,
 								  @Nonnull Transform thisTransform,
 								  float mass,
-								  @Nonnull Function<String, Transform> lookup)
+								  @Nonnull Function<VehicleComponentPath, Transform> lookup)
 	{
 		if(Forces.containsKey(partName))
 		{
 			ForcesOnPart forces = Forces.get(partName);
 			for(SpringJoint spring : forces.Springs)
 			{
-				Transform target = lookup.apply(spring.PullTowardsAP);
+				Transform target = lookup.apply(VehicleComponentPath.of(spring.PullTowardsAP)); // TODO: Not gonna work?
 				if(target != null)
 				{
 					Vec3 currentWorldPos = thisTransform.PositionVec3();

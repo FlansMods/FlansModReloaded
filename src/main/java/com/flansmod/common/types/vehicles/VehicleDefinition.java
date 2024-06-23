@@ -1,12 +1,13 @@
 package com.flansmod.common.types.vehicles;
 
 import com.flansmod.common.FlansMod;
-import com.flansmod.common.entity.vehicle.VehicleDefinitionHierarchy;
+import com.flansmod.common.entity.vehicle.hierarchy.VehicleDefinitionHierarchy;
 import com.flansmod.common.types.JsonDefinition;
 import com.flansmod.common.types.JsonField;
 import com.flansmod.common.types.elements.ItemDefinition;
 import com.flansmod.common.types.parts.elements.EngineDefinition;
 import com.flansmod.common.types.vehicles.elements.*;
+import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.common.util.Lazy;
@@ -40,6 +41,8 @@ public class VehicleDefinition extends JsonDefinition
 	// Power / Fuel
 	@JsonField
 	public EngineDefinition defaultEngine = new EngineDefinition();
+	@JsonField
+	public ResourceLocation defaultControlScheme = InvalidLocation;
 
 	// Harvest volumes
 	// TODO:
@@ -61,5 +64,9 @@ public class VehicleDefinition extends JsonDefinition
 
 
 	@Nonnull
-	public Lazy<VehicleDefinitionHierarchy> AsHierarchy = Lazy.of(() -> VehicleDefinitionHierarchy.of(this));
+	private final Lazy<VehicleDefinitionHierarchy> Hierarchy = Lazy.of(() -> VehicleDefinitionHierarchy.of(this));
+	@Nonnull
+	public VehicleDefinitionHierarchy AsHierarchy() { return Hierarchy.get(); }
+	@Nonnull
+	public ControlSchemeDefinition DefaultControlScheme() { return FlansMod.CONTROL_SCHEMES.Get(defaultControlScheme); }
 }

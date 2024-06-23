@@ -1,7 +1,10 @@
 package com.flansmod.common.entity.vehicle.controls;
 
 import com.flansmod.common.entity.vehicle.VehicleEntity;
-import com.flansmod.common.entity.vehicle.physics.VehiclePropellerSaveState;
+import com.flansmod.common.entity.vehicle.hierarchy.EPartDefComponent;
+import com.flansmod.common.entity.vehicle.hierarchy.VehicleComponentPath;
+import com.flansmod.common.entity.vehicle.hierarchy.VehiclePartPath;
+import com.flansmod.common.entity.vehicle.save.VehiclePropellerSaveState;
 import com.flansmod.common.types.parts.elements.EngineDefinition;
 import com.flansmod.common.types.vehicles.ControlSchemeDefinition;
 import com.flansmod.common.types.vehicles.VehicleDefinition;
@@ -16,7 +19,13 @@ import java.util.Collection;
 
 public class LegacyPlaneControlLogic extends ControlLogic
 {
-	private static final String SingleEngineKey = "main";
+	private static final VehicleComponentPath SingleEngineKey = VehicleComponentPath.of(VehiclePartPath.Core, EPartDefComponent.Engine, 0);
+	private static final VehicleComponentPath DefaultLeftWingDamageable = VehicleComponentPath.of(VehiclePartPath.of("left_wing"), EPartDefComponent.Damage, 0);
+	private static final VehicleComponentPath DefaultRightWingDamageable = VehicleComponentPath.of(VehiclePartPath.of("right_wing"), EPartDefComponent.Damage, 0);
+	private static final VehicleComponentPath DefaultTailDamageable = VehicleComponentPath.of(VehiclePartPath.of("tail"), EPartDefComponent.Damage, 0);
+	private static final VehicleComponentPath DefaultBladesDamageable = VehicleComponentPath.of(VehiclePartPath.of("blades"), EPartDefComponent.Damage, 0);
+
+
 	public final boolean Heli;
 	public float flapsYaw, flapsPitchLeft, flapsPitchRight;
 	public float propAngle;
@@ -82,7 +91,7 @@ public class LegacyPlaneControlLogic extends ControlLogic
 		//With a player default to 0.5 for helicopters (hover speed)
 		//And default to the range 0.25 ~ 0.5 for planes (taxi speed ~ take off speed)
 		float throttlePull = 0.99F;
-		if(driver != null && Heli && vehicle.Engine().CanThrust(driver, SingleEngineKey))
+		if(driver != null && Heli && vehicle.CanThrust(driver, SingleEngineKey))
 			throttle = (throttle - 0.5F) * throttlePull + 0.5F;
 
 		//Alter angles
@@ -110,31 +119,31 @@ public class LegacyPlaneControlLogic extends ControlLogic
 		//Damage modifiers
 		if(!Heli)
 		{
-			if(vehicle.Damage().IsPartDestroyed("tail"))
+			if(vehicle.IsPartDestroyed(DefaultTailDamageable))
 			{
 				yaw = 0;
 				pitch = 0;
 				roll = 0;
 			}
-			if(vehicle.Damage().IsPartDestroyed("left_wing"))
+			if(vehicle.IsPartDestroyed(DefaultLeftWingDamageable))
 				roll -= 7F * vehicle.GetSpeedXZ();
-			if(vehicle.Damage().IsPartDestroyed("right_wing"))
+			if(vehicle.IsPartDestroyed(DefaultRightWingDamageable))
 				roll += 7F * vehicle.GetSpeedXZ();
 		}
 
-		vehicle.Hierarchy().RotateYaw(yaw);
-		vehicle.Hierarchy().RotatePitch(pitch);
-		vehicle.Hierarchy().RotateRoll(-roll);
+		vehicle.RotateYaw(yaw);
+		vehicle.RotatePitch(pitch);
+		vehicle.RotateRoll(-roll);
 
 		//Some constants
 
-		float drag = 1F - (0.05F * vehicle.Physics().Def.drag);
+		float drag = 1F - (0.05F * vehicle.Def().physics.drag);
 		float wobbleFactor = 0F;//.005F;
 
-		EngineDefinition engine = vehicle.Engine().GetEngineDef(SingleEngineKey);
-		float throttleScaled = 0.01F * (vehicle.Physics().Def.maxThrottle + engine.maxSpeed);
+		EngineDefinition engine = vehicle.GetEngineDef(SingleEngineKey);
+		float throttleScaled = 0.01F * (vehicle.Def().physics.maxThrottle + engine.maxSpeed);
 
-		if(!vehicle.Engine().CanThrust(driver, SingleEngineKey))
+		if(!vehicle.CanThrust(driver, SingleEngineKey))
 			throttleScaled = 0;
 
 		int numPropsWorking = 0;
@@ -149,14 +158,14 @@ public class LegacyPlaneControlLogic extends ControlLogic
 
 	private void HeliPhysics(@Nonnull VehicleEntity vehicle, float throttleScaled, float drag)
 	{
-		Collection<VehiclePropellerSaveState> liftPropellers = vehicle.Physics().PropsThatMatch(EControlLogicHint.LiftPropeller);
-		Collection<VehiclePropellerSaveState> tailPropellers = vehicle.Physics().PropsThatMatch(EControlLogicHint.TailPropeller);
+		Collection<VehiclePropellerSaveState> liftPropellers = vehicle.Propellers.ByHint(EControlLogicHint.LiftPropeller);
+		Collection<VehiclePropellerSaveState> tailPropellers = vehicle.Propellers.ByHint(EControlLogicHint.TailPropeller);
 
 		//Count the number of working propellers
 		int numProps = liftPropellers.size();
 		int numPropsWorking = numProps;
 		for(VehiclePropellerSaveState prop : liftPropellers)
-			if(vehicle.Damage().IsPartDestroyed(prop.Def.attachedTo))
+			if(vehicle.IsPartDestroyed(VehicleComponentPath.of(prop.Def.attachedTo)))
 				numPropsWorking--;
 
 
@@ -169,7 +178,7 @@ public class LegacyPlaneControlLogic extends ControlLogic
 		if(throttle < 0.5F)
 			upwardsForce = g * throttle * 2F;
 
-		if(vehicle.Damage().IsPartDestroyed("blades"))
+		if(vehicle.IsPartDestroyed(DefaultBladesDamageable))
 		{
 			upwardsForce = 0F;
 		}
@@ -194,18 +203,18 @@ public class LegacyPlaneControlLogic extends ControlLogic
 
 		vehicle.setDeltaMovement(motion);
 
-		vehicle.Engine().SetThrottle(SingleEngineKey, upwardsForce * 2f);
+		vehicle.SetThrottle(SingleEngineKey, upwardsForce * 2f);
 	}
 
 	private void PlanePhysics(@Nonnull VehicleEntity vehicle, float throttleScaled, float drag)
 	{
-		Collection<VehiclePropellerSaveState> forwardPropellers = vehicle.Physics().PropsThatMatch(EControlLogicHint.ForwardPropeller);
+		Collection<VehiclePropellerSaveState> forwardPropellers = vehicle.Propellers.ByHint(EControlLogicHint.ForwardPropeller);
 
 		//Count the number of working propellers
 		int numProps = forwardPropellers.size();
 		int numPropsWorking = numProps;
 		for(VehiclePropellerSaveState prop : forwardPropellers)
-			if(vehicle.Damage().IsPartDestroyed(prop.Def.attachedTo))
+			if(vehicle.IsPartDestroyed(VehicleComponentPath.of(prop.Def.attachedTo)))
 				numPropsWorking--;
 
 		float throttleTemp = throttle * (numProps == 0 ? 0 : (float)numPropsWorking / numProps * 2F);
@@ -240,14 +249,14 @@ public class LegacyPlaneControlLogic extends ControlLogic
 
 		//Apply lift
 		int numWingsIntact = 2;
-		if(vehicle.Damage().IsPartDestroyed("right_wing")) numWingsIntact--;
-		if(vehicle.Damage().IsPartDestroyed("left_wing")) numWingsIntact--;
+		if(vehicle.IsPartDestroyed(DefaultRightWingDamageable)) numWingsIntact--;
+		if(vehicle.IsPartDestroyed(DefaultLeftWingDamageable)) numWingsIntact--;
 
 		float amountOfLift = 2F * g * throttleTemp * numWingsIntact / 2F;
 		if(amountOfLift > g)
 			amountOfLift = g;
 
-		if(vehicle.Damage().IsPartDestroyed("tail"))
+		if(vehicle.IsPartDestroyed(DefaultTailDamageable))
 			amountOfLift *= 0.75F;
 
 		motion = motion.add(0f, amountOfLift, 0f);
@@ -263,6 +272,6 @@ public class LegacyPlaneControlLogic extends ControlLogic
 
 		vehicle.setDeltaMovement(motion);
 
-		vehicle.Engine().SetThrottle(SingleEngineKey, Math.abs(throttle) * throttleScaled * 10f);
+		vehicle.SetThrottle(SingleEngineKey, Math.abs(throttle) * throttleScaled * 10f);
 	}
 }

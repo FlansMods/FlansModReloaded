@@ -1,11 +1,10 @@
-package com.flansmod.common.entity.vehicle.physics;
+package com.flansmod.common.entity.vehicle.modules;
 
-import com.flansmod.common.FlansMod;
 import com.flansmod.common.entity.vehicle.PerPartMap;
-import com.flansmod.common.entity.vehicle.VehicleEntity;
+import com.flansmod.common.entity.vehicle.hierarchy.VehicleComponentPath;
+import com.flansmod.common.entity.vehicle.save.EngineSyncState;
 import com.flansmod.common.types.parts.elements.EngineDefinition;
 import com.flansmod.util.Maths;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.crafting.RecipeType;
 
@@ -18,7 +17,7 @@ public interface IVehicleEngineModule
 	@Nonnull
 	PerPartMap<EngineSyncState> GetEngineSaveData();
 	void SetEngineSaveData(@Nonnull PerPartMap<EngineSyncState> map);
-	void ModifyEngineSaveData(@Nonnull String enginePath, @Nonnull Consumer<EngineSyncState> func);
+	void ModifyEngineSaveData(@Nonnull VehicleComponentPath enginePath, @Nonnull Consumer<EngineSyncState> func);
 
 	@Nonnull
 	EngineDefinition GetDefaultEngine();
@@ -29,43 +28,43 @@ public interface IVehicleEngineModule
 
 
 	@Nonnull
-	default EngineDefinition GetEngineDef(@Nonnull String enginePath)
+	default EngineDefinition GetEngineDef(@Nonnull VehicleComponentPath enginePath)
 	{
 		return GetEngineSaveData().ApplyOrDefault(enginePath, EngineSyncState::GetEngine, GetDefaultEngine());
 	}
-	default float GetThrottle(@Nonnull String enginePath)
+	default float GetThrottle(@Nonnull VehicleComponentPath enginePath)
 	{
 		return GetEngineSaveData().ApplyOrDefault(enginePath, EngineSyncState::GetEngineThrottle, 0.0f);
 	}
-	default int GetBurnTimeRemaining(@Nonnull String enginePath)
+	default int GetBurnTimeRemaining(@Nonnull VehicleComponentPath enginePath)
 	{
 		return GetEngineSaveData().ApplyOrDefault(enginePath, EngineSyncState::GetBurnTimeRemaining, 0);
 	}
-	default int GetBurnTimeDuration(@Nonnull String enginePath)
+	default int GetBurnTimeDuration(@Nonnull VehicleComponentPath enginePath)
 	{
 		return GetEngineSaveData().ApplyOrDefault(enginePath, EngineSyncState::GetBurnTimeDuration, 0);
 	}
-	default int GetCurrentFE(@Nonnull String enginePath)
+	default int GetCurrentFE(@Nonnull VehicleComponentPath enginePath)
 	{
 		return GetEngineSaveData().ApplyOrDefault(enginePath, EngineSyncState::GetCurrentFE, 0);
 	}
-	default int GetLiquidAmount(@Nonnull String enginePath)
+	default int GetLiquidAmount(@Nonnull VehicleComponentPath enginePath)
 	{
 		return GetEngineSaveData().ApplyOrDefault(enginePath, EngineSyncState::GetLiquidAmount, 0);
 	}
-	default int GetNextBurnableSlot(@Nonnull String enginePath, @Nonnull RecipeType<?> recipeType)
+	default int GetNextBurnableSlot(@Nonnull VehicleComponentPath enginePath, @Nonnull RecipeType<?> recipeType)
 	{
 		return GetEngineSaveData().ApplyOrDefault(enginePath, (engineSave) -> engineSave.GetNextBurnableSlot(recipeType), EngineSyncState.NO_SLOT);
 	}
-	default int CountBurnTime(@Nonnull String enginePath, @Nonnull RecipeType<?> recipeType)
+	default int CountBurnTime(@Nonnull VehicleComponentPath enginePath, @Nonnull RecipeType<?> recipeType)
 	{
 		return GetEngineSaveData().ApplyOrDefault(enginePath, (engineSave) -> engineSave.CountBurnTime(recipeType), EngineSyncState.NO_SLOT);
 	}
-	default int CountBurnableItems(@Nonnull String enginePath, @Nonnull RecipeType<?> recipeType)
+	default int CountBurnableItems(@Nonnull VehicleComponentPath enginePath, @Nonnull RecipeType<?> recipeType)
 	{
 		return GetEngineSaveData().ApplyOrDefault(enginePath, (engineSave) -> engineSave.CountBurnableItems(recipeType), EngineSyncState.NO_SLOT);
 	}
-	default float GetFuelConsumptionRate(@Nonnull String enginePath)
+	default float GetFuelConsumptionRate(@Nonnull VehicleComponentPath enginePath)
 	{
 		EngineDefinition engine = GetEngineDef(enginePath);
 		float throttle = GetThrottle(enginePath);
@@ -74,14 +73,14 @@ public interface IVehicleEngineModule
 		else
 			return Maths.LerpF(engine.fuelConsumptionIdle, engine.fuelConsumptionFull, throttle - 1f);
 	}
-	default boolean CanThrust(@Nullable Player player, @Nonnull String enginePath)
+	default boolean CanThrust(@Nullable Player player, @Nonnull VehicleComponentPath enginePath)
 	{
 		if(player != null && player.isCreative())
 			return true;
 
 		return CanThrust(enginePath);
 	}
-	default boolean CanThrust(@Nonnull String enginePath)
+	default boolean CanThrust(@Nonnull VehicleComponentPath enginePath)
 	{
 		EngineDefinition engine = GetEngineDef(enginePath);
 		return switch (engine.fuelType)
@@ -91,7 +90,7 @@ public interface IVehicleEngineModule
 				default -> GetBurnTimeRemaining(enginePath) > 0;
 			};
 	}
-	default boolean CanBurnMoreFuel(@Nonnull String enginePath)
+	default boolean CanBurnMoreFuel(@Nonnull VehicleComponentPath enginePath)
 	{
 		EngineDefinition engine = GetEngineDef(enginePath);
 		return switch (engine.fuelType)
@@ -104,7 +103,7 @@ public interface IVehicleEngineModule
 				case Blastable -> GetNextBurnableSlot(enginePath, RecipeType.BLASTING) != EngineSyncState.NO_SLOT;
 			};
 	}
-	default int GetFuelFillLevel(@Nonnull String enginePath)
+	default int GetFuelFillLevel(@Nonnull VehicleComponentPath enginePath)
 	{
 		EngineDefinition engine = GetEngineDef(enginePath);
 		return switch (engine.fuelType)
@@ -117,7 +116,7 @@ public interface IVehicleEngineModule
 				case Blastable -> CountBurnableItems(enginePath, RecipeType.BLASTING);
 			};
 	}
-	default int GetFuelMaxLevel(@Nonnull String enginePath)
+	default int GetFuelMaxLevel(@Nonnull VehicleComponentPath enginePath)
 	{
 		EngineDefinition engine = GetEngineDef(enginePath);
 		return switch (engine.fuelType)
@@ -132,47 +131,21 @@ public interface IVehicleEngineModule
 	}
 
 
-	default void SetToOff(@Nonnull String enginePath)
+	default void SetToOff(@Nonnull VehicleComponentPath enginePath)
 	{
 		SetThrottle(enginePath, EngineSyncState.ENGINE_OFF);
 	}
-	default void SetToIdle(@Nonnull String enginePath)
+	default void SetToIdle(@Nonnull VehicleComponentPath enginePath)
 	{
 		SetThrottle(enginePath, EngineSyncState.ENGINE_IDLE);
 	}
-	default void SetToFull(@Nonnull String enginePath)
+	default void SetToFull(@Nonnull VehicleComponentPath enginePath)
 	{
 		SetThrottle(enginePath, EngineSyncState.ENGINE_MAX);
 	}
-	default void SetThrottle(@Nonnull String enginePath, float parameter)
+	default void SetThrottle(@Nonnull VehicleComponentPath enginePath, float parameter)
 	{
 		ModifyEngineSaveData(enginePath, (engineSaveData) -> engineSaveData.Throttle = parameter);
 	}
-	default void LoadEngineData(@Nonnull VehicleEntity vehicle, @Nonnull CompoundTag tags)
-	{
-		PerPartMap<EngineSyncState> engineMap = GetEngineSaveData();
-		for(String key : tags.getAllKeys())
-		{
-			if(EnginePaths.contains(key))
-			{
-				EngineSyncState engineState = new EngineSyncState();
-				engineState.Load(vehicle, tags.getCompound(key));
-				engineMap.Put(key, engineState);
-			}
-			else FlansMod.LOGGER.warn("Engine key " + key + " was stored in vehicle save data, but this vehicle doesn't have that part");
-		}
-		SetEngineSaveData(engineMap);
-	}
-	@Nonnull
-	default CompoundTag SaveEngineData(@Nonnull VehicleEntity vehicle)
-	{
-		PerPartMap<EngineSyncState> map = GetEngineSaveData();
-		CompoundTag tags = new CompoundTag();
-		for (var enginePath : EnginePaths)
-		{
-			if(map.Values.containsKey(enginePath.hashCode()))
-				tags.put(enginePath, map.Values.get(enginePath.hashCode()).Save(vehicle));
-		}
-		return tags;
-	}
+
 }

@@ -1,4 +1,4 @@
-package com.flansmod.common.entity.vehicle.physics;
+package com.flansmod.common.entity.vehicle.hierarchy;
 
 import com.flansmod.common.FlansMod;
 import com.flansmod.common.entity.vehicle.hierarchy.WheelEntity;
@@ -12,15 +12,15 @@ import java.util.function.Function;
 
 public class MultiLookup<THint, TValue>
 {
-	private final Map<String, List<TValue>> ByPartName = new HashMap<>();
-	private final List<String> PartListByIndex = new ArrayList<>();
+	private final Map<VehicleComponentPath, TValue> ByPartName = new HashMap<>();
+	private final List<VehicleComponentPath> PartListByIndex = new ArrayList<>();
 	private final List<TValue> ByIndex = new ArrayList<>();
 	private final Map<THint, List<TValue>> ByHint = new HashMap<>();
 
 	@Nonnull public Collection<TValue> All() { return ByIndex; }
 	@Nullable public TValue ByIndex(int index) { return ByIndex.get(index); }
-	@Nonnull public String PartNameOfIndex(int index) { return PartListByIndex.get(index); }
-	@Nonnull public Collection<TValue> ByPart(@Nonnull String partName) { return ByPartName.getOrDefault(partName, List.of()); }
+	@Nonnull public VehicleComponentPath PartNameOfIndex(int index) { return PartListByIndex.get(index); }
+	@Nullable public TValue ByPath(@Nonnull VehicleComponentPath partName) { return ByPartName.get(partName); }
 	@Nonnull public Collection<TValue> ByHint(@Nonnull THint hint) { return ByHint.getOrDefault(hint, List.of()); }
 	@Nonnull
 	public Collection<TValue> ByHints(@Nonnull THint ... hints)
@@ -62,7 +62,7 @@ public class MultiLookup<THint, TValue>
 	}
 
 
-	public int Add(@Nonnull TValue t, @Nonnull String partName, @Nonnull THint[] hints)
+	public int Add(@Nonnull TValue t, @Nonnull VehicleComponentPath partName, @Nonnull THint[] hints)
 	{
 		// Add to raw indexed list
 		ByIndex.add(t);
@@ -70,8 +70,7 @@ public class MultiLookup<THint, TValue>
 
 		// Add lookup by part name
 		if(!ByPartName.containsKey(partName))
-			ByPartName.put(partName, new ArrayList<>());
-		ByPartName.get(partName).add(t);
+			ByPartName.put(partName, t);
 
 		// Add lookup by hint (can be multiple hints)
 		for(THint hint : hints)
@@ -86,8 +85,12 @@ public class MultiLookup<THint, TValue>
 	public void RemoveAt(int index)
 	{
 		TValue t = ByIndex.get(index);
-		for(List<TValue> byPart : ByPartName.values())
-			byPart.remove(t);
+		VehicleComponentPath path = null;
+		for(var kvp : ByPartName.entrySet())
+			if(kvp.getValue() == t)
+				path = kvp.getKey();
+		if(path != null)
+			ByPartName.remove(path);
 		for(List<TValue> byHint : ByHint.values())
 			byHint.remove(t);
 		ByIndex.remove(index);

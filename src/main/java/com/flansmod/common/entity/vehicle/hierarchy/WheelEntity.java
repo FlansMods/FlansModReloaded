@@ -1,13 +1,10 @@
 package com.flansmod.common.entity.vehicle.hierarchy;
 
-import com.flansmod.common.FlansMod;
 import com.flansmod.common.entity.ITransformChildEntity;
 import com.flansmod.common.entity.ITransformPair;
 import com.flansmod.common.entity.vehicle.ITransformEntity;
-import com.flansmod.common.entity.vehicle.PerPartMap;
 import com.flansmod.common.entity.vehicle.VehicleEntity;
 import com.flansmod.common.entity.vehicle.controls.ForceModel;
-import com.flansmod.common.entity.vehicle.physics.VehiclePhysicsModule;
 import com.flansmod.common.network.FlansEntityDataSerializers;
 import com.flansmod.common.types.vehicles.VehicleDefinition;
 import com.flansmod.common.types.vehicles.elements.EControlLogicHint;
@@ -15,11 +12,9 @@ import com.flansmod.common.types.vehicles.elements.WheelDefinition;
 import com.flansmod.util.Maths;
 import com.flansmod.util.Transform;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.network.syncher.EntityDataAccessor;
-import net.minecraft.network.syncher.EntityDataSerializer;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.world.InteractionHand;
@@ -29,7 +24,6 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.entity.PartEntity;
 import org.joml.Vector3f;
 
 import javax.annotation.Nonnull;
@@ -49,6 +43,7 @@ public class WheelEntity extends Entity implements ITransformChildEntity
 	public static EntityDataAccessor<Integer> VEHICLE_ENTITY_ID = SynchedEntityData.defineId(WheelEntity.class, EntityDataSerializers.INT);
 	public static EntityDataAccessor<VehicleDefinition> VEHICLE_DEF = SynchedEntityData.defineId(WheelEntity.class, FlansEntityDataSerializers.VEHICLE_DEF);
 	public static EntityDataAccessor<Integer> WHEEL_INDEX = SynchedEntityData.defineId(WheelEntity.class, EntityDataSerializers.INT);
+	public static EntityDataAccessor<Integer> WHEEL_PATH = SynchedEntityData.defineId(WheelEntity.class, EntityDataSerializers.INT);
 	public static EntityDataAccessor<Float> ANGULAR_VELOCITY = SynchedEntityData.defineId(WheelEntity.class, EntityDataSerializers.FLOAT);
 
 	// From -1 to 1, this is a raw input from the controller
@@ -83,6 +78,7 @@ public class WheelEntity extends Entity implements ITransformChildEntity
 		entityData.define(VEHICLE_DEF, VehicleDefinition.INVALID);
 		entityData.define(VEHICLE_ENTITY_ID, 0);
 		entityData.define(WHEEL_INDEX, 0);
+		entityData.define(WHEEL_PATH, 0);
 		entityData.define(ANGULAR_VELOCITY, 0.0f);
 	}
 
@@ -95,7 +91,7 @@ public class WheelEntity extends Entity implements ITransformChildEntity
 		WheelDefinition def = GetWheelDef();
 		Size = EntityDimensions.fixed(def.radius, def.radius);
 		Vehicle = Optional.of(vehicle);
-		setPos(vehicle.GetWorldToAP(GetWheelPath()).GetCurrent().PositionVec3());
+		setPos(vehicle.GetWorldToAP(GetWheelPath().Part()).GetCurrent().PositionVec3());
 	}
 	private void SetVehicleDef(@Nonnull VehicleDefinition def) { entityData.set(VEHICLE_DEF, def); }
 	private void SetVehicleEntityID(int entityID) { entityData.set(VEHICLE_ENTITY_ID, entityID); }
@@ -116,18 +112,10 @@ public class WheelEntity extends Entity implements ITransformChildEntity
 		return Vehicle.get();
 	}
 	public int GetWheelIndex() { return entityData.get(WHEEL_INDEX); }
-	public String GetWheelPath()
+	@Nonnull
+	public VehicleComponentPath GetWheelPath()
 	{
-		int wheelIndex = GetWheelIndex();
-		if(wheelIndex != INVALID_WHEEL_INDEX)
-		{
-			VehicleEntity vehicle = GetVehicle();
-			if (vehicle != null)
-			{
-				return vehicle.Physics().GetPathOfWheel(wheelIndex);
-			}
-		}
-		return "";
+		return VehicleComponentPath.of(entityData.get(WHEEL_PATH), EPartDefComponent.Wheel, entityData.get(WHEEL_INDEX));
 	}
 	public float GetAngularVelocity() { return entityData.get(ANGULAR_VELOCITY); }
 	@Nonnull
@@ -141,9 +129,7 @@ public class WheelEntity extends Entity implements ITransformChildEntity
 				VehicleDefinition vehicleDef = GetVehicleDef();
 				if (vehicleDef.IsValid())
 				{
-					List<WheelDefinition> wheelDefs = vehicleDef.AsHierarchy.get().GetAllWheels();
-					if(wheelIndex < wheelDefs.size())
-						Def = wheelDefs.get(GetWheelIndex());
+					Def = vehicleDef.AsHierarchy().FindWheel(GetWheelPath()).orElse(WheelDefinition.INVALID);
 				}
 			}
 		}
@@ -246,12 +232,12 @@ public class WheelEntity extends Entity implements ITransformChildEntity
 
 	public void PhysicsTick(@Nonnull VehicleEntity vehicle, int wheelIndex, @Nonnull ForceModel forces)
 	{
-		if (!VehiclePhysicsModule.PAUSE)
+		if (!VehicleEntity.PAUSE_PHYSICS)
 		{
 			// Move using the Minecraft body, so we can process collisions
 			Vec3 motion = GetVelocity();
 			motion = forces.ApplyLinearForcesToWheel(motion, wheelIndex, GetWorldTransformCurrent(), GetWheelDef().mass);
-			motion = forces.ApplySpringForcesToWheel(motion, wheelIndex, GetWorldTransformCurrent(), GetWheelDef().mass, vehicle.Hierarchy()::GetWorldToPartCurrent);
+			motion = forces.ApplySpringForcesToWheel(motion, wheelIndex, GetWorldTransformCurrent(), GetWheelDef().mass, vehicle::GetWorldToPartCurrent);
 			motion = forces.ApplyDampeningToWheel(wheelIndex, motion);
 			SetVelocity(motion);
 			ApplyVelocity();
@@ -415,7 +401,7 @@ public class WheelEntity extends Entity implements ITransformChildEntity
 			VehicleEntity parent = GetVehicle();
 			if(parent != null)
 			{
-				parent.Physics().ForcesLastFrame.AddGlobalForce(ForceModel.Wheel(GetWheelIndex()),
+				parent.ForcesLastFrame.AddGlobalForce(ForceModel.Wheel(GetWheelIndex()),
 					actualMovement.subtract(expectedMovement).scale(20f * 20f * Def.mass),
 					() -> "Normal reaction force");
 			}

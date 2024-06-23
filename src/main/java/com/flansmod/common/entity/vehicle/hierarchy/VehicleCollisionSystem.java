@@ -1,4 +1,4 @@
-package com.flansmod.common.entity.vehicle.physics;
+package com.flansmod.common.entity.vehicle.hierarchy;
 
 import com.flansmod.common.entity.ITransformPair;
 import com.flansmod.common.entity.vehicle.VehicleEntity;
@@ -92,13 +92,13 @@ public class VehicleCollisionSystem
 
 	private static void CollideWithAuthority(@Nonnull VehicleEntity vehicle, @Nonnull Entity entity)
 	{
-		vehicle.Hierarchy().ForEachCollider((partPath, partTransformPair, partColliders) -> {
-			CollideWithAuthority(vehicle,
-				partTransformPair,
-				Vec3.ZERO, // TODO: Part motion is done on a per-point lookup
-				partColliders,
-				entity);
-		});
+		//vehicle.ForEachCollider((partPath, partTransformPair, partColliders) -> {
+		//	CollideWithAuthority(vehicle,
+		//		partTransformPair,
+		//		Vec3.ZERO, // TODO: Part motion is done on a per-point lookup
+		//		partColliders,
+		//		entity);
+		//});
 	}
 
 	private static void CollideWithAuthority(@Nonnull VehicleEntity vehicle,

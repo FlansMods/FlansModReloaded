@@ -1,4 +1,4 @@
-package com.flansmod.common.entity.vehicle.seats;
+package com.flansmod.common.entity.vehicle.save;
 
 import com.flansmod.common.entity.vehicle.IVehicleSaveNode;
 import com.flansmod.common.entity.vehicle.VehicleEntity;

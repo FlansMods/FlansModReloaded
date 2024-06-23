@@ -2,7 +2,6 @@ package com.flansmod.common.entity.vehicle.controls;
 
 import com.flansmod.common.entity.vehicle.VehicleEntity;
 import com.flansmod.common.entity.vehicle.hierarchy.WheelEntity;
-import com.flansmod.common.entity.vehicle.physics.VehiclePhysicsModule;
 import com.flansmod.common.types.vehicles.ControlSchemeDefinition;
 import com.flansmod.common.types.vehicles.EVehicleAxis;
 import com.flansmod.common.types.vehicles.VehicleDefinition;
@@ -32,7 +31,7 @@ public class CarControlLogic extends ControlLogic
 	@Override
 	public boolean CanControl(@Nonnull VehicleDefinition vehicleDef)
 	{
-		List<WheelDefinition> allWheels = vehicleDef.AsHierarchy.get().GetAllWheels();
+		List<WheelDefinition> allWheels = vehicleDef.AsHierarchy().AllWheels();
 		int numWheels = allWheels.size();
 		if(numWheels < 3)
 			return false;
@@ -62,11 +61,9 @@ public class CarControlLogic extends ControlLogic
 		float accelerationInput = inputs.TickAxis(AcceleratorAxis);
 		float steeringInput = inputs.TickAxis(SteerLeftRightAxis);
 
-		VehiclePhysicsModule phys = vehicle.Physics();
-
-		Collection<WheelEntity> steeringAtFront = phys.WheelsThatMatch(EControlLogicHint.Front, EControlLogicHint.Steering);
-		Collection<WheelEntity> steeringAtBack = phys.WheelsThatMatch(EControlLogicHint.Rear, EControlLogicHint.Steering);
-		Collection<WheelEntity> driveWheels = phys.WheelsThatMatch(EControlLogicHint.Drive);
+		Collection<WheelEntity> steeringAtFront = vehicle.Wheels.ByHints(EControlLogicHint.Front, EControlLogicHint.Steering);
+		Collection<WheelEntity> steeringAtBack = vehicle.Wheels.ByHints(EControlLogicHint.Rear, EControlLogicHint.Steering);
+		Collection<WheelEntity> driveWheels = vehicle.Wheels.ByHint(EControlLogicHint.Drive);
 
 		for(WheelEntity wheel : steeringAtFront)
 			wheel.SetYawParameter(steeringInput);

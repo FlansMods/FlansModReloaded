@@ -1,8 +1,7 @@
 package com.flansmod.client.input;
 
 import com.flansmod.client.FlansModClient;
-import com.flansmod.common.FlansMod;
-import com.flansmod.common.entity.vehicle.physics.VehiclePhysicsModule;
+import com.flansmod.common.entity.vehicle.VehicleEntity;
 import com.flansmod.common.item.GunItem;
 import com.flansmod.common.types.vehicles.EVehicleAxis;
 import com.flansmod.common.types.elements.EPlayerInput;
@@ -329,8 +328,8 @@ public class ClientInputHooks
 
 			while(KeyMappings.DEBUG_PAUSE_PHYSICS.get().consumeClick())
 			{
-				VehiclePhysicsModule.PAUSE = !VehiclePhysicsModule.PAUSE;
-				if(VehiclePhysicsModule.PAUSE)
+				VehicleEntity.PAUSE_PHYSICS = !VehicleEntity.PAUSE_PHYSICS;
+				if(VehicleEntity.PAUSE_PHYSICS)
 					Minecraft.getInstance().getChatListener().handleSystemMessage(Component.translatable("flansmod.debug.physics_pause.on"), false);
 				else
 					Minecraft.getInstance().getChatListener().handleSystemMessage(Component.translatable("flansmod.debug.physics_pause.off"), false);

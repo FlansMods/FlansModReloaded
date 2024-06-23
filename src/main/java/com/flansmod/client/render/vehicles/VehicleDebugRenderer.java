@@ -7,6 +7,7 @@ import com.flansmod.common.entity.longdistance.LongDistanceEntity;
 import com.flansmod.common.entity.longdistance.LongDistanceVehicle;
 import com.flansmod.common.entity.vehicle.VehicleEntity;
 import com.flansmod.common.entity.vehicle.controls.ForceModel;
+import com.flansmod.common.entity.vehicle.hierarchy.VehicleComponentPath;
 import com.flansmod.common.entity.vehicle.hierarchy.WheelEntity;
 import com.flansmod.util.Transform;
 import net.minecraft.client.Minecraft;
@@ -115,30 +116,30 @@ public class VehicleDebugRenderer
 			// Render a regular entity debug view
 			if(entity instanceof VehicleEntity vehicle)
 			{
-				ForceModel forces = vehicle.Physics().ForcesLastFrame;
+				ForceModel forces = vehicle.ForcesLastFrame;
 
 				Transform vehiclePos = vehicle.GetWorldToEntity().GetCurrent();
 
 				//DebugRenderer.RenderAxes(vehiclePos, 1, palette.Default);
 				DebugRenderer.RenderCube(vehiclePos, 1, palette.CoreCurrent, new Vector3f(0.6f, 0.25f, 0.6f));
-				Vec3 coreMotionNextFrame = DebugRenderForces(forces.Debug_GetForcesOnCore(), vehicle.getDeltaMovement(), vehicle.GetWorldToEntity().GetCurrent(), palette, true, vehicle.Physics().Def.mass, vehicle.Hierarchy()::GetWorldToPartCurrent);
+				Vec3 coreMotionNextFrame = DebugRenderForces(forces.Debug_GetForcesOnCore(), vehicle.getDeltaMovement(), vehicle.GetWorldToEntity().GetCurrent(), palette, true, vehicle.Def().physics.mass, vehicle::GetWorldToPartCurrent);
 				Transform vehiclePosNext = Transform.Compose(vehiclePos, Transform.FromPos(coreMotionNextFrame.scale(1f/20f)));
 				DebugRenderer.RenderCube(vehiclePosNext, 1, palette.CoreNext,  new Vector3f(0.6f, 0.25f, 0.6f));
 
-				vehicle.Hierarchy().Reference.ForEachNode((node) -> {
-					Transform pos = vehicle.Hierarchy().GetWorldToPartCurrent(node.Path());
+				vehicle.GetHierarchy().ForEachNode((node) -> {
+					Transform pos = vehicle.GetWorldToPartCurrent(node.GetPath());
 					DebugRenderer.RenderPoint(pos, 1, palette.WheelCurrent);
-					if(node.Parent != null)
+					if(node.ParentNode != null)
 					{
-						Transform parent = vehicle.Hierarchy().GetWorldToPartCurrent(node.Parent.Path());
+						Transform parent = vehicle.GetWorldToPartCurrent(node.ParentNode.GetPath());
 						DebugRenderer.RenderLine(parent.PositionVec3(), 1, palette.WheelCurrent, parent.GlobalToLocalPosition(pos.PositionVec3()));
 					}
 
 				});
 
-				for(int wheelIndex = 0; wheelIndex < vehicle.Physics().AllWheels().size(); wheelIndex++)
+				for(int wheelIndex = 0; wheelIndex < vehicle.Wheels.All().size(); wheelIndex++)
 				{
-					WheelEntity wheel = vehicle.Physics().WheelByIndex(wheelIndex);
+					WheelEntity wheel = vehicle.Wheels.ByIndex(wheelIndex);
 					if(wheel != null)
 					{
 						Transform wheelPos = Transform.FromPos(wheel.position());
@@ -146,7 +147,7 @@ public class VehicleDebugRenderer
 						//DebugRenderer.RenderAxes(wheel.GetWorldTransformCurrent(), 1, palette.Default);
 						DebugRenderer.RenderCube(wheelPos, 1, palette.WheelCurrent, debugWheelBoxSize);
 
-						Vec3 wheelMotionNextFrame = DebugRenderForces(forces.Debug_GetForcesOnWheel(wheelIndex), wheel.getDeltaMovement(), wheel.GetWorldTransformCurrent(), palette, false, wheel.GetWheelDef().mass, vehicle.Hierarchy()::GetWorldToPartCurrent);
+						Vec3 wheelMotionNextFrame = DebugRenderForces(forces.Debug_GetForcesOnWheel(wheelIndex), wheel.getDeltaMovement(), wheel.GetWorldTransformCurrent(), palette, false, wheel.GetWheelDef().mass, vehicle::GetWorldToPartCurrent);
 						Transform wheelPosNext = Transform.Compose(wheelPos, Transform.FromPos(wheelMotionNextFrame.scale(1f/20f)));
 						DebugRenderer.RenderCube(wheelPosNext, 1, palette.WheelNext, debugWheelBoxSize);
 					}
@@ -163,7 +164,7 @@ public class VehicleDebugRenderer
 								   @Nonnull DebugPalette palette,
 								   boolean isCore,
 								   float mass,
-								   @Nonnull Function<String, Transform> lookup)
+								   @Nonnull Function<VehicleComponentPath, Transform> lookup)
 	{
 		float inertia = 1.0f / mass;
 		float arrowScale = 1.0f / 20f;
