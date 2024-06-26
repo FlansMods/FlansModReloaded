@@ -184,7 +184,10 @@ public class WorkbenchBlockEntity extends BlockEntity implements WorldlyContaine
 		DirectionalItemCapLazyOptionals.add(LazyOptional.of(() -> SupplyItemCapability(Direction.SOUTH)));
 		DirectionalItemCapLazyOptionals.add(LazyOptional.of(() -> SupplyItemCapability(Direction.WEST)));
 		DirectionalItemCapLazyOptionals.add(LazyOptional.of(() -> SupplyItemCapability(Direction.EAST)));
-		EnergyStorageLazyOptional = LazyOptional.of(() -> EnergyStorage );
+		EnergyStorageLazyOptional = LazyOptional.of(() -> {
+			EnergyStorage = new EnergyStorage(Def.energy.maxFE);
+			return EnergyStorage;
+		} );
 
 		if(Def.gunModifying.isActive)
 		{
