@@ -15,11 +15,15 @@ import net.minecraft.world.level.border.WorldBorder;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.VoxelShape;
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.event.TickEvent;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
 import org.spongepowered.asm.mixin.Dynamic;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.*;
+import java.util.function.Consumer;
 
 public class OBBCollisionSystem
 {
@@ -55,6 +59,13 @@ public class OBBCollisionSystem
 	{
 		BlockAccess = level;
 	}
+
+	@Nonnull
+	public Collection<DynamicObject> GetDynamics()
+	{
+		return Dynamics.values();
+	}
+
 
 	private void DoAfterPhysics(@Nonnull Runnable func)
 	{
@@ -93,7 +104,31 @@ public class OBBCollisionSystem
 			}
 		});
 	}
+	public void Teleport(@Nonnull ColliderHandle handle, @Nonnull Transform to)
+	{
+		DoAfterPhysics(() -> {
+			DynamicObject dyn = Dynamics.get(handle);
+			if(dyn != null)
+			{
+				dyn.TeleportTo(to);
+			}
+		});
+	}
 
+
+	public void ProcessEvents(@Nonnull ColliderHandle handle,
+							  @Nonnull Consumer<StaticCollisionEvent> staticFunc,
+							  @Nonnull Consumer<DynamicCollisionEvent> dynamicFunc)
+	{
+		DynamicObject obj = Dynamics.get(handle);
+		if(obj != null)
+		{
+			for(StaticCollisionEvent collision : obj.StaticCollisions)
+				staticFunc.accept(collision);
+			for(DynamicCollisionEvent collision : obj.DynamicCollisions)
+				dynamicFunc.accept(collision);
+		}
+	}
 
 
 	//public long RegisterStatic(@Nonnull IStaticObject staticObj)
@@ -141,6 +176,9 @@ public class OBBCollisionSystem
 		{
 			ColliderHandle handleA = AllHandles.get(i);
 			DynamicObject objectA = Dynamics.get(handleA);
+			boolean movingA = objectA.NextFrameLinearMotion.lengthSqr() > Maths.EpsilonSq || objectA.NextFrameAngularMotion.angle() > Maths.EpsilonSq;
+
+
 
 			// Check against the static objects
 			AABB sweepTestAABB = objectA.GetSweepTestAABB();
@@ -152,20 +190,26 @@ public class OBBCollisionSystem
 				StaticSeparators.getOrDefault(handleA, ImmutableList.of())
 			));
 
+
 			// Check against all other dynamic objects
 			for (int j = i + 1; j < AllHandles.size(); j++)
 			{
 				ColliderHandle handleB = AllHandles.get(j);
 				DynamicObject objectB = Dynamics.get(handleA);
-				Pair<ColliderHandle, ColliderHandle> key = ColliderHandle.uniquePairOf(handleA, handleB);
+				boolean movingB = objectB.NextFrameLinearMotion.lengthSqr() > Maths.EpsilonSq || objectB.NextFrameAngularMotion.angle() > Maths.EpsilonSq;
 
-				DynamicSeparationTasks.add(CollisionTaskSeparateDynamicPair.of(
-					handleA,
-					objectA,
-					handleB,
-					objectB,
-					DynamicSeparations.getOrDefault(key, ImmutableList.of())
-				));
+				if(movingA || movingB)
+				{
+					Pair<ColliderHandle, ColliderHandle> key = ColliderHandle.uniquePairOf(handleA, handleB);
+
+					DynamicSeparationTasks.add(CollisionTaskSeparateDynamicPair.of(
+						handleA,
+						objectA,
+						handleB,
+						objectB,
+						DynamicSeparations.getOrDefault(key, ImmutableList.of())
+					));
+				}
 			}
 		}
 	}
@@ -202,55 +246,58 @@ public class OBBCollisionSystem
 					var output = task.GetResult();
 					if(output != null)
 					{
+						object.Frames.add(object.PendingFrame);
 						object.StaticCollisions.addAll(output.EventsA());
+						if(output.NewSeparatorList() != null && output.NewSeparatorList().size() > 0)
+							StaticSeparators.put(task.Handle, output.NewSeparatorList());
 					}
 				}
 			}
 		}
+		StaticSeparationTasks.clear();
 
 		for(int i = 0; i < DynamicSeparationTasks.size(); i++)
 		{
 			CollisionTaskSeparateDynamicPair task = DynamicSeparationTasks.get(i);
 			if(task.IsComplete())
 			{
-				DynamicObject objectA = Dynamics.get(task.HandleA);
-				if(objectA != null)
+				var output = task.GetResult();
+				if(output != null)
 				{
-					var output = task.GetResult();
-					if(output != null)
+					DynamicObject objectA = Dynamics.get(task.HandleA);
+					if(objectA != null)
 					{
 						objectA.DynamicCollisions.addAll(output.EventsA());
 					}
-				}
-				DynamicObject objectB = Dynamics.get(task.HandleB);
-				if(objectB != null)
-				{
-					var output = task.GetResult();
-					if(output != null)
+					DynamicObject objectB = Dynamics.get(task.HandleB);
+					if(objectB != null)
 					{
 						objectB.DynamicCollisions.addAll(output.EventsB());
 					}
+					if(output.NewSeparatorList() != null && output.NewSeparatorList().size() > 0)
+						DynamicSeparations.put(ColliderHandle.uniquePairOf(task.HandleA, task.HandleB), output.NewSeparatorList());
 				}
 			}
 		}
+		DynamicSeparationTasks.clear();
 	}
 
 	private void PhysicsStep_ApplyMotions()
 	{
-		for(int i = AllHandles.size() - 1; i >= 0 ; i--)
-		{
-			ColliderHandle handle = AllHandles.get(i);
-			DynamicObject object = Dynamics.get(handle);
-			if(object != null)
-			{
-
-			}
-			else
-			{
-				FlansMod.LOGGER.error("Lost a physics handle in the system " + handle.Handle());
-				AllHandles.remove(i);
-			}
-		}
+		//for(int i = AllHandles.size() - 1; i >= 0 ; i--)
+		//{
+		//	ColliderHandle handle = AllHandles.get(i);
+		//	DynamicObject object = Dynamics.get(handle);
+		//	if(object != null)
+		//	{
+		//		object.GenerateNextFrame();
+		//	}
+		//	else
+		//	{
+		//		FlansMod.LOGGER.error("Lost a physics handle in the system " + handle.Handle());
+		//		AllHandles.remove(i);
+		//	}
+		//}
 	}
 
 	private void Threaded_SeparateSimpleDynamics(@Nonnull TransformedBB a, @Nonnull TransformedBB b)

@@ -42,6 +42,7 @@ import com.flansmod.common.types.vehicles.ControlSchemeDefinitions;
 import com.flansmod.common.types.vehicles.VehicleDefinitions;
 import com.flansmod.common.worldgen.loot.LootPopulator;
 import com.flansmod.util.Transform;
+import com.flansmod.util.collision.OBBCollisionSystem;
 import com.mojang.logging.LogUtils;
 import com.mojang.serialization.Codec;
 import net.minecraft.advancements.CriteriaTriggers;
@@ -78,6 +79,7 @@ import net.minecraftforge.common.crafting.CraftingHelper;
 import net.minecraftforge.common.extensions.IForgeMenuType;
 import net.minecraftforge.common.loot.IGlobalLootModifier;
 import net.minecraftforge.event.AddReloadListenerEvent;
+import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.level.LevelEvent;
@@ -442,6 +444,16 @@ public class FlansMod
     {
         if(!event.getLevel().isClientSide())
             CONTEXT_CACHE.OnLevelUnloaded(ACTIONS_SERVER);
+    }
+    @SubscribeEvent
+    public void OnLevelTick(@Nonnull TickEvent.LevelTickEvent levelTick)
+    {
+        OBBCollisionSystem physics = OBBCollisionSystem.ForLevel(levelTick.level);
+
+        if(levelTick.phase == TickEvent.Phase.START)
+            physics.PreTick();
+        if(levelTick.phase == TickEvent.Phase.END)
+            physics.PhysicsTick();
     }
 
     @SubscribeEvent

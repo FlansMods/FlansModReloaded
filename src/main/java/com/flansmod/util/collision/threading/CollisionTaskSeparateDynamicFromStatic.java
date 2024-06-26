@@ -76,7 +76,7 @@ public class CollisionTaskSeparateDynamicFromStatic
 			}
 
 			// Bounds test
-			TransformedBB boundsA = Input.ObjectA.GetCurrentBB();
+			TransformedBB boundsA = Input.ObjectA.GetPendingBB();
 
 			SeparationTestResult objectToStaticSeparation = FindClosestSeparation(boundsA);
 			if(objectToStaticSeparation == null)

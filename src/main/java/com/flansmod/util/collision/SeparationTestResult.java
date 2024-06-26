@@ -16,7 +16,6 @@ public record SeparationTestResult(@Nonnull ISeparator Separator,
 	@Nonnull
 	public Vec3 GetCollidingPoint(@Nonnull TransformedBB bb)
 	{
-		Pair<Double, Double> minMax = Separator.ProjectBoxMinMax(bb);
-		return Vec3.ZERO; // TODO: !!!!
+		return Separator.GetIntersectionPoint(bb);
 	}
 }

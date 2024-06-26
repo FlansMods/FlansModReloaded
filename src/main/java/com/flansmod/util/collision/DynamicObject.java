@@ -8,6 +8,7 @@ import net.minecraft.world.phys.Vec3;
 import org.joml.Quaternionf;
 
 import javax.annotation.Nonnull;
+import javax.swing.text.html.Option;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -38,6 +39,7 @@ public class DynamicObject
 	public final AABB LocalBounds;
 	@Nonnull
 	public final Stack<FrameData> Frames = new Stack<>();
+	public FrameData PendingFrame = null;
 
 	// Next Frame Inputs
 	@Nonnull
@@ -131,10 +133,36 @@ public class DynamicObject
 	{
 		return TransformedBB.Of(GetFrameNTicksAgo(0).Location, LocalBounds);
 	}
-
+	@Nonnull
+	public TransformedBBCollection GetPendingColliders()
+	{
+		return new TransformedBBCollection(PendingFrame.Location, Colliders);
+	}
+	@Nonnull
+	public TransformedBB GetPendingBB()
+	{
+		return TransformedBB.Of(PendingFrame.Location, LocalBounds);
+	}
 	public void PreTick()
 	{
 		StaticCollisions.clear();
 		DynamicCollisions.clear();
+		PendingFrame = ExtrapolateNextFrame();
+		NextFrameTeleport = Optional.empty();
+	}
+
+	@Nonnull
+	private FrameData ExtrapolateNextFrame()
+	{
+		if(NextFrameTeleport.isPresent())
+		{
+			return new FrameData(NextFrameTeleport.get(), NextFrameLinearMotion, NextFrameAngularMotion);
+		}
+		else
+		{
+			FrameData currentFrame = GetFrameNTicksAgo(0);
+			Transform newLoc = Transform.Compose(currentFrame.Location, Transform.FromPosAndQuat(NextFrameLinearMotion, NextFrameAngularMotion, () -> ""));
+			return new FrameData(newLoc, NextFrameLinearMotion, NextFrameAngularMotion);
+		}
 	}
 }

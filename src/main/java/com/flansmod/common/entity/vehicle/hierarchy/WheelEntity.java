@@ -236,9 +236,9 @@ public class WheelEntity extends Entity implements ITransformChildEntity
 		{
 			// Move using the Minecraft body, so we can process collisions
 			Vec3 motion = GetVelocity();
-			motion = forces.ApplyLinearForcesToWheel(motion, wheelIndex, GetWorldTransformCurrent(), GetWheelDef().mass);
-			motion = forces.ApplySpringForcesToWheel(motion, wheelIndex, GetWorldTransformCurrent(), GetWheelDef().mass, vehicle::GetWorldToPartCurrent);
-			motion = forces.ApplyDampeningToWheel(wheelIndex, motion);
+			motion = forces.ApplyLinearForces(motion, GetWheelPath().Part(), GetWorldTransformCurrent(), GetWheelDef().mass);
+			motion = forces.ApplySpringForces(motion, GetWheelPath().Part(), GetWorldTransformCurrent(), GetWheelDef().mass, vehicle::GetWorldToPartCurrent);
+			motion = forces.ApplyDampening(GetWheelPath().Part(), motion);
 			SetVelocity(motion);
 			ApplyVelocity();
 
@@ -401,7 +401,7 @@ public class WheelEntity extends Entity implements ITransformChildEntity
 			VehicleEntity parent = GetVehicle();
 			if(parent != null)
 			{
-				parent.ForcesLastFrame.AddGlobalForce(ForceModel.Wheel(GetWheelIndex()),
+				parent.ForcesLastFrame.AddGlobalForce(GetWheelPath().Part(),
 					actualMovement.subtract(expectedMovement).scale(20f * 20f * Def.mass),
 					() -> "Normal reaction force");
 			}

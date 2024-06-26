@@ -119,10 +119,10 @@ public class LegacyVehicleControlLogic extends ControlLogic
 			Vec3 wheelMotion = wheel.getDeltaMovement();
 
 			// wheelMotion = wheelMotion.scale(0.9f);
-			forces.AddDampenerToWheel(wheelID, 0.1f);
+			forces.AddDampener(wheel.GetWheelPath().Part(), 0.1f);
 
 			// wheelMotion = wheelMotion.add(GRAVITY);
-			forces.AddGlobalForceToWheel(wheelID, GRAVITY, () -> "Gravity");
+			forces.AddGlobalForce(wheel.GetWheelPath().Part(), GRAVITY, () -> "Gravity");
 
 			//Apply velocity
 			if(vehicle.CanThrust(driver, SingleEngineKey)) // TODO: Fuel module
@@ -148,7 +148,7 @@ public class LegacyVehicleControlLogic extends ControlLogic
 						effectiveWheelSpeed * Math.sin(wheel.yRotO * Maths.DegToRadF));
 
 					//wheelMotion = wheelMotion.add(wheelSteeringForce);
-					forces.AddGlobalForceToWheel(wheelID, wheelSteeringForce, () -> "TankSteering");
+					forces.AddGlobalForce(wheel.GetWheelPath().Part(), wheelSteeringForce, () -> "TankSteering");
 				}
 				else
 				{
@@ -161,7 +161,7 @@ public class LegacyVehicleControlLogic extends ControlLogic
 							Math.sin(wheel.yRotO * Maths.DegToRadF) * velocityScale);
 
 						// wheelMotion = wheelMotion.add(wheelDriveForce);
-						forces.AddGlobalForceToWheel(wheelID, wheelDriveForce, () -> "WheelDrive");
+						forces.AddGlobalForce(wheel.GetWheelPath().Part(), wheelDriveForce, () -> "WheelDrive");
 					}
 
 					//Apply steering
@@ -176,12 +176,12 @@ public class LegacyVehicleControlLogic extends ControlLogic
 							xzSpeed * Math.cos(wheel.yRotO * Maths.DegToRadF) * velocityScale * wheelsYaw);
 
 						//wheelMotion = wheelMotion.add(wheelSteeringForce);
-						forces.AddGlobalForceToWheel(wheelID, wheelSteeringForce, () -> "CarSteering");
+						forces.AddGlobalForce(wheel.GetWheelPath().Part(), wheelSteeringForce, () -> "CarSteering");
 					}
 					else
 					{
 						//wheelMotion = wheelMotion.scale(0.9f);
-						forces.AddDampenerToWheel(wheelID, 0.1f);
+						forces.AddDampener(wheel.GetWheelPath().Part(), 0.1f);
 					}
 				}
 			}
@@ -189,7 +189,7 @@ public class LegacyVehicleControlLogic extends ControlLogic
 			if(wheel.GetWheelDef().floatOnWater && vehicle.level().containsAnyLiquid(wheel.getBoundingBox()))
 			{
 				// wheelMotion = wheelMotion.add(0f, wheel.Def.buoyancy, 0f);
-				forces.AddGlobalForceToWheel(wheelID, new Vec3(0f, wheel.GetWheelDef().buoyancy, 0f), () -> "Buoyancy");
+				forces.AddGlobalForce(wheel.GetWheelPath().Part(), new Vec3(0f, wheel.GetWheelDef().buoyancy, 0f), () -> "Buoyancy");
 			}
 
 			wheel.setDeltaMovement(wheelMotion);

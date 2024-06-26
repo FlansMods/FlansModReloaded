@@ -11,9 +11,11 @@ import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import org.joml.*;
 import org.joml.Runtime;
+import org.lwjgl.system.MemoryUtil;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
@@ -30,6 +32,9 @@ public class Transform
     public static final Transform IDENTITY = new Transform(() -> "\"Identity\"");
 
     // -- Fields --
+    public static final String DEBUG_OFF = "";
+    public static final Supplier<String> DEBUG_OFF_SUPP = () -> DEBUG_OFF;
+
     @Nullable
     public final Supplier<String> DebugInfo;
     @Nonnull
@@ -41,63 +46,72 @@ public class Transform
 
     private Transform(double x, double y, double z, float pitch, float yaw, float roll, float scale, @Nullable Supplier<String> debugFunc)
     {
-        DebugInfo = debugFunc;
+        DebugInfo = DEBUG_OFF_SUPP;
+        //DebugInfo = debugFunc;
         Position = new Vector3d(x, y, z);
         Orientation = QuatFromEuler(pitch, yaw, roll);
         Scale = new Vector3f(scale, scale, scale);
     }
     private Transform(@Nonnull Vec3 pos,  @Nonnull Quaternionf rotation, @Nonnull Vector3f scale, @Nullable Supplier<String> debugFunc)
     {
-        DebugInfo = debugFunc;
+        DebugInfo = DEBUG_OFF_SUPP;
+        //DebugInfo = debugFunc;
         Position = new Vector3d(pos.x, pos.y, pos.z);
         Orientation = new Quaternionf(rotation);
         Scale = new Vector3f(scale);
     }
     private Transform(@Nonnull Vector3d pos,  @Nonnull Quaternionf rotation, @Nonnull Vector3f scale, @Nullable Supplier<String> debugFunc)
     {
-        DebugInfo = debugFunc;
+        DebugInfo = DEBUG_OFF_SUPP;
+        //DebugInfo = debugFunc;
         Position = new Vector3d(pos.x, pos.y, pos.z);
         Orientation = new Quaternionf(rotation);
         Scale = new Vector3f(scale);
     }
     private Transform(double x, double y, double z, @Nonnull Quaternionf rotation, float scale, @Nullable Supplier<String> debugFunc)
     {
-        DebugInfo = debugFunc;
+        DebugInfo = DEBUG_OFF_SUPP;
+        //DebugInfo = debugFunc;
         Position = new Vector3d(x, y, z);
         Orientation = new Quaternionf(rotation);
         Scale = new Vector3f(scale, scale, scale);
     }
     private Transform(double x, double y, double z, float scale, @Nullable Supplier<String> debugFunc)
     {
-        DebugInfo = debugFunc;
+        DebugInfo = DEBUG_OFF_SUPP;
+        //DebugInfo = debugFunc;
         Position = new Vector3d(x, y, z);
         Orientation = IDENTITY_QUAT;
         Scale = new Vector3f(scale, scale, scale);
     }
     private Transform(@Nonnull Vector3f pos, @Nonnull Quaternionf rotation, @Nonnull Vector3f scale, @Nullable Supplier<String> debugFunc)
     {
-        DebugInfo = debugFunc;
+        DebugInfo = DEBUG_OFF_SUPP;
+        //DebugInfo = debugFunc;
         Position = new Vector3d(pos.x, pos.y, pos.z);
         Orientation = new Quaternionf(rotation);
         Scale = new Vector3f(scale);
     }
     private Transform(float scale, @Nullable Supplier<String> debugFunc)
     {
-        DebugInfo = debugFunc;
+        DebugInfo = DEBUG_OFF_SUPP;
+        //DebugInfo = debugFunc;
         Position = IDENTITY_POS;
         Orientation = IDENTITY_QUAT;
         Scale = new Vector3f(scale, scale, scale);
     }
     private Transform(@Nullable Supplier<String> debugFunc)
     {
-        DebugInfo = debugFunc;
+        DebugInfo = DEBUG_OFF_SUPP;
+        //DebugInfo = debugFunc;
         Position = IDENTITY_POS;
         Orientation = IDENTITY_QUAT;
         Scale = IDENTITY_SCALE;
     }
     private Transform()
     {
-        DebugInfo = null;
+        DebugInfo = DEBUG_OFF_SUPP;
+        //DebugInfo = null;
         Position = IDENTITY_POS;
         Orientation = IDENTITY_QUAT;
         Scale = IDENTITY_SCALE;
@@ -353,11 +367,15 @@ public class Transform
     public float Roll() { return ToEuler(Orientation).z; }
     @Nonnull
     public Matrix3f OriMatrix() {
-        float[] floats = new float[9];
-        FloatBuffer buf = FloatBuffer.wrap(floats);
+        //float[] floats = new float[9];
+        FloatBuffer buf = MemoryUtil.memAllocFloat(9);
+        //ByteBuffer buf = ByteBuffer.allocateDirect(9*4);
+        //FloatBuffer buf = FloatBuffer(9);
+        buf.mark();
         Orientation.getAsMatrix3f(buf);
         buf.reset();
         return new Matrix3f(buf);
+
     }
 
 

@@ -10,11 +10,13 @@ import com.flansmod.common.entity.vehicle.controls.ForceModel;
 import com.flansmod.common.entity.vehicle.hierarchy.VehicleComponentPath;
 import com.flansmod.common.entity.vehicle.hierarchy.WheelEntity;
 import com.flansmod.util.Transform;
+import com.flansmod.util.collision.*;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.TickEvent;
@@ -95,7 +97,13 @@ public class VehicleDebugRenderer
 					}
 				}
 
-				DebugRender(level.entitiesForRendering(), Client);
+				OBBCollisionSystem physics = OBBCollisionSystem.ForLevel(level);
+				for(DynamicObject dynamic : physics.GetDynamics())
+				{
+					DebugRender(dynamic, Client);
+				}
+
+				//DebugRender(level.entitiesForRendering(), Client);
 			}
 
 			MinecraftServer server = ServerLifecycleHooks.getCurrentServer();
@@ -103,9 +111,31 @@ public class VehicleDebugRenderer
 			{
 				for (ServerLevel loadedLevel : server.getAllLevels())
 				{
-					DebugRender(loadedLevel.getAllEntities(), Server);
+					//DebugRender(loadedLevel.getAllEntities(), Server);
 				}
 			}
+		}
+	}
+
+	private void DebugRender(@Nonnull DynamicObject dynamic, @Nonnull DebugPalette palette)
+	{
+		DebugRender(dynamic.GetCurrentColliders(), palette);
+		for(StaticCollisionEvent collision : dynamic.StaticCollisions)
+		{
+			DebugRenderer.RenderArrow(collision.ContactPoint(), 5, palette.CoreForces, collision.ContactNormal());
+		}
+		for(DynamicCollisionEvent collision : dynamic.DynamicCollisions)
+		{
+			DebugRenderer.RenderArrow(collision.ContactPoint(), 5, palette.WheelForces, collision.ContactNormal());
+		}
+	}
+
+	private void DebugRender(@Nonnull TransformedBBCollection bbs, @Nonnull DebugPalette palette)
+	{
+		for(int i = 0; i < bbs.GetCount(); i++)
+		{
+			TransformedBB bb = bbs.GetColliderBB(i);
+			DebugRenderer.RenderCube(bb.Loc(), 1, palette.CoreCurrent, bb.HalfExtents());
 		}
 	}
 
@@ -147,7 +177,7 @@ public class VehicleDebugRenderer
 						//DebugRenderer.RenderAxes(wheel.GetWorldTransformCurrent(), 1, palette.Default);
 						DebugRenderer.RenderCube(wheelPos, 1, palette.WheelCurrent, debugWheelBoxSize);
 
-						Vec3 wheelMotionNextFrame = DebugRenderForces(forces.Debug_GetForcesOnWheel(wheelIndex), wheel.getDeltaMovement(), wheel.GetWorldTransformCurrent(), palette, false, wheel.GetWheelDef().mass, vehicle::GetWorldToPartCurrent);
+						Vec3 wheelMotionNextFrame = DebugRenderForces(forces.Debug_GetForcesOn(wheel.GetWheelPath().Part()), wheel.getDeltaMovement(), wheel.GetWorldTransformCurrent(), palette, false, wheel.GetWheelDef().mass, vehicle::GetWorldToPartCurrent);
 						Transform wheelPosNext = Transform.Compose(wheelPos, Transform.FromPos(wheelMotionNextFrame.scale(1f/20f)));
 						DebugRenderer.RenderCube(wheelPosNext, 1, palette.WheelNext, debugWheelBoxSize);
 					}

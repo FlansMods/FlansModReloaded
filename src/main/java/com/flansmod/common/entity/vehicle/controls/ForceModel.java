@@ -2,6 +2,7 @@ package com.flansmod.common.entity.vehicle.controls;
 
 import com.flansmod.common.entity.vehicle.VehicleEntity;
 import com.flansmod.common.entity.vehicle.hierarchy.VehicleComponentPath;
+import com.flansmod.common.entity.vehicle.hierarchy.VehiclePartPath;
 import com.flansmod.common.entity.vehicle.hierarchy.WheelEntity;
 import com.flansmod.common.types.vehicles.VehicleDefinition;
 import com.flansmod.util.Maths;
@@ -29,7 +30,7 @@ public class ForceModel
 		@Nonnull
 		public String GetDebugString() { return DebugName != null ? DebugName.get() : "Force"; }
 	}
-	public record SpringJoint(@Nonnull String PullTowardsAP, @Nonnull Vec3 Offset, float SpringStrength, @Nullable Supplier<String> DebugName)
+	public record SpringJoint(@Nonnull VehiclePartPath PullTowardsAP, @Nonnull Vec3 Offset, float SpringStrength, @Nullable Supplier<String> DebugName)
 	{
 		@Nonnull
 		public String GetDebugString() { return DebugName != null ? DebugName.get() : "Spring"; }
@@ -45,9 +46,9 @@ public class ForceModel
 		public final List<SpringJoint> Springs = new ArrayList<>();
 	}
 
-	public final Map<String, ForcesOnPart> Forces = new HashMap<>();
+	public final Map<VehiclePartPath, ForcesOnPart> Forces = new HashMap<>();
 	@Nonnull
-	private ForcesOnPart GetOrCreate(@Nonnull String partName)
+	private ForcesOnPart GetOrCreate(@Nonnull VehiclePartPath partName)
 	{
 		if(Forces.containsKey(partName))
 			return Forces.get(partName);
@@ -56,47 +57,47 @@ public class ForceModel
 		return forces;
 	}
 
-	@Nonnull
-	public static String Wheel(int wheelIndex) { return "wheel_"+wheelIndex; }
+	//@Nonnull
+	//public static VehiclePartPath Wheel(int wheelIndex) { return "wheel_"+wheelIndex; }
 
 	// Apply to core quick functions
 	// Vectors are in m/s^2 - Do not divide by 20 for tickrate
-	public void AddLocalForceToCore(@Nonnull Vec3 localForce, @Nullable Supplier<String> debug) { AddLocalForce(VehicleDefinition.CoreName, localForce, debug); }
-	public void AddGlobalForceToCore(@Nonnull Vec3 globalForce, @Nullable Supplier<String> debug) { AddGlobalForce(VehicleDefinition.CoreName, globalForce, debug); }
-	public void AddLocalAngularImpulseToCore(@Nonnull Vec3 localAngularForce, @Nullable Supplier<String> debug) { AddLocalAngularImpulse(VehicleDefinition.CoreName, localAngularForce, debug); }
-	public void AddDampenerToCore(float dampening) { AddDampener(VehicleDefinition.CoreName, dampening); }
+	public void AddLocalForceToCore(@Nonnull Vec3 localForce, @Nullable Supplier<String> debug) { AddLocalForce(VehiclePartPath.Core, localForce, debug); }
+	public void AddGlobalForceToCore(@Nonnull Vec3 globalForce, @Nullable Supplier<String> debug) { AddGlobalForce(VehiclePartPath.Core, globalForce, debug); }
+	public void AddLocalAngularImpulseToCore(@Nonnull Vec3 localAngularForce, @Nullable Supplier<String> debug) { AddLocalAngularImpulse(VehiclePartPath.Core, localAngularForce, debug); }
+	public void AddDampenerToCore(float dampening) { AddDampener(VehiclePartPath.Core, dampening); }
 
 	// Apply to wheel quick functions
-	public void AddLocalForceToWheel(int wheelIndex, @Nonnull Vec3 localForce, @Nullable Supplier<String> debug) { AddLocalForce(Wheel(wheelIndex), localForce, debug); }
-	public void AddGlobalForceToWheel(int wheelIndex, @Nonnull Vec3 globalForce, @Nullable Supplier<String> debug) { AddGlobalForce(Wheel(wheelIndex), globalForce, debug); }
-	public void AddLocalAngularImpulseToWheel(int wheelIndex, @Nonnull Vec3 localAngularForce, @Nullable Supplier<String> debug) { AddLocalAngularImpulse(Wheel(wheelIndex), localAngularForce, debug); }
-	public void AddDampenerToWheel(int wheelIndex, float dampening) { AddDampener(Wheel(wheelIndex), dampening); }
+	//public void AddLocalForceToWheel(int wheelIndex, @Nonnull Vec3 localForce, @Nullable Supplier<String> debug) { AddLocalForce(Wheel(wheelIndex), localForce, debug); }
+	//public void AddGlobalForceToWheel(int wheelIndex, @Nonnull Vec3 globalForce, @Nullable Supplier<String> debug) { AddGlobalForce(Wheel(wheelIndex), globalForce, debug); }
+	//public void AddLocalAngularImpulseToWheel(int wheelIndex, @Nonnull Vec3 localAngularForce, @Nullable Supplier<String> debug) { AddLocalAngularImpulse(Wheel(wheelIndex), localAngularForce, debug); }
+	//public void AddDampenerToWheel(int wheelIndex, float dampening) { AddDampener(Wheel(wheelIndex), dampening); }
 
-	public void AddLocalForce(@Nonnull String partName, @Nonnull Vec3 localForce, @Nullable Supplier<String> debug)
+	public void AddLocalForce(@Nonnull VehiclePartPath partName, @Nonnull Vec3 localForce, @Nullable Supplier<String> debug)
 	{
 		GetOrCreate(partName).LocalForces.add(new Force(localForce, debug));
 	}
-	public void AddGlobalForce(@Nonnull String partName, @Nonnull Vec3 globalForce, @Nullable Supplier<String> debug)
+	public void AddGlobalForce(@Nonnull VehiclePartPath partName, @Nonnull Vec3 globalForce, @Nullable Supplier<String> debug)
 	{
 		GetOrCreate(partName).GlobalForces.add(new Force(globalForce, debug));
 	}
-	public void AddLocalOffsetForce(@Nonnull String partName, @Nonnull Vec3 offset, @Nonnull Vec3 localForce, @Nullable Supplier<String> debug)
+	public void AddLocalOffsetForce(@Nonnull VehiclePartPath partName, @Nonnull Vec3 offset, @Nonnull Vec3 localForce, @Nullable Supplier<String> debug)
 	{
 		GetOrCreate(partName).OffsetLocalForces.add(new OffsetForce(offset, localForce, debug));
 	}
-	public void AddGlobalOffsetForce(@Nonnull String partName, @Nonnull Vec3 offset, @Nonnull Vec3 globalForce, @Nullable Supplier<String> debug)
+	public void AddGlobalOffsetForce(@Nonnull VehiclePartPath partName, @Nonnull Vec3 offset, @Nonnull Vec3 globalForce, @Nullable Supplier<String> debug)
 	{
 		GetOrCreate(partName).OffsetGlobalForces.add(new OffsetForce(offset, globalForce, debug));
 	}
-	public void AddLocalAngularImpulse(@Nonnull String partName, @Nonnull Vec3 localAngularForce, @Nullable Supplier<String> debug)
+	public void AddLocalAngularImpulse(@Nonnull VehiclePartPath partName, @Nonnull Vec3 localAngularForce, @Nullable Supplier<String> debug)
 	{
 		GetOrCreate(partName).AngularLocals.add(new Force(localAngularForce, debug));
 	}
-	public void AddDampener(@Nonnull String partName, float dampening)
+	public void AddDampener(@Nonnull VehiclePartPath partName, float dampening)
 	{
 		GetOrCreate(partName).Dampening *= (1.0f - Maths.Clamp(dampening, 0f, 1f));
 	}
-	public void AddSpringOneWay(@Nonnull String pullOnPart, @Nonnull String pullTowards, @Nonnull Vec3 offset, float springStrength, @Nullable Supplier<String> debug)
+	public void AddSpringOneWay(@Nonnull VehiclePartPath pullOnPart, @Nonnull VehiclePartPath pullTowards, @Nonnull Vec3 offset, float springStrength, @Nullable Supplier<String> debug)
 	{
 		GetOrCreate(pullOnPart).Springs.add(new SpringJoint(pullTowards, offset, springStrength, debug));
 	}
@@ -108,23 +109,23 @@ public class ForceModel
 		Vec3 delta = wheelEntityPos.subtract(wheelAPPos);
 		Vec3 springForce = delta.scale(wheel.GetWheelDef().springStrength * 20f);
 
-		AddGlobalOffsetForce(VehicleDefinition.CoreName, wheelAPPos.subtract(vehicle.position()), springForce, () -> "Wheel Spring Pull on Core");
-		AddGlobalForce(Wheel(wheel.GetWheelIndex()), springForce.scale(-1f), () -> "Core Pull on Wheel Spring");
+		AddGlobalOffsetForce(VehiclePartPath.Core, wheelAPPos.subtract(vehicle.position()), springForce, () -> "Wheel Spring Pull on Core");
+		AddGlobalForce(wheel.GetWheelPath().Part(), springForce.scale(-1f), () -> "Core Pull on Wheel Spring");
 	}
 
 
 	@Nonnull
 	public Vec3 ApplyLinearForcesToCore(@Nonnull Vec3 motion, @Nonnull Transform coreTransform, float coreMass)
 	{
-		return ApplyLinearForces(motion, VehicleDefinition.CoreName, coreTransform, coreMass);
+		return ApplyLinearForces(motion, VehiclePartPath.Core, coreTransform, coreMass);
 	}
+	//@Nonnull
+	//public Vec3 ApplyLinearForcesToWheel(@Nonnull Vec3 motion, int wheelIndex, @Nonnull Transform wheelTransform, float wheelMass)
+	//{
+	//	return ApplyLinearForces(motion, Wheel(wheelIndex), wheelTransform, wheelMass);
+	//}
 	@Nonnull
-	public Vec3 ApplyLinearForcesToWheel(@Nonnull Vec3 motion, int wheelIndex, @Nonnull Transform wheelTransform, float wheelMass)
-	{
-		return ApplyLinearForces(motion, Wheel(wheelIndex), wheelTransform, wheelMass);
-	}
-	@Nonnull
-	public Vec3 ApplyLinearForces(@Nonnull Vec3 motion, @Nonnull String partName, @Nonnull Transform partTransform, float mass)
+	public Vec3 ApplyLinearForces(@Nonnull Vec3 motion, @Nonnull VehiclePartPath partName, @Nonnull Transform partTransform, float mass)
 	{
 		// When we say apply, we mean advance one tick, so simulate 1/20s
 		if(Forces.containsKey(partName))
@@ -143,32 +144,32 @@ public class ForceModel
 		}
 		return motion;
 	}
-	@Nonnull public Vec3 ApplyDampeningToCore(@Nonnull Vec3 motion) { return ApplyDampening(VehicleDefinition.CoreName, motion); }
-	@Nonnull public Vec3 ApplyDampeningToWheel(int wheelIndex, @Nonnull Vec3 motion) { return ApplyDampening(Wheel(wheelIndex), motion); }
+	@Nonnull public Vec3 ApplyDampeningToCore(@Nonnull Vec3 motion) { return ApplyDampening(VehiclePartPath.Core, motion); }
+	//@Nonnull public Vec3 ApplyDampeningToWheel(int wheelIndex, @Nonnull Vec3 motion) { return ApplyDampening(Wheel(wheelIndex), motion); }
 	@Nonnull
-	public Vec3 ApplyDampening(@Nonnull String partName, @Nonnull Vec3 motion)
+	public Vec3 ApplyDampening(@Nonnull VehiclePartPath partName, @Nonnull Vec3 motion)
 	{
 		if(Forces.containsKey(partName))
 		 	return motion.scale(Forces.get(partName).Dampening);
 		return motion;
 	}
-	@Nonnull public Vec3 ApplySpringForcesToCore(@Nonnull Vec3 motion, @Nonnull Transform coreTransform, float coreMass, @Nonnull Function<VehicleComponentPath, Transform> lookup)
-	{ return ApplySpringForces(motion, VehicleDefinition.CoreName, coreTransform, coreMass, lookup); }
-	@Nonnull public Vec3 ApplySpringForcesToWheel(@Nonnull Vec3 motion, int wheelIndex, @Nonnull Transform wheelTransform, float wheelMass, @Nonnull Function<VehicleComponentPath, Transform> lookup)
-	{ return ApplySpringForces(motion, Wheel(wheelIndex), wheelTransform, wheelMass, lookup); }
+	@Nonnull public Vec3 ApplySpringForcesToCore(@Nonnull Vec3 motion, @Nonnull Transform coreTransform, float coreMass, @Nonnull Function<VehiclePartPath, Transform> lookup)
+	{ return ApplySpringForces(motion, VehiclePartPath.Core, coreTransform, coreMass, lookup); }
+	//@Nonnull public Vec3 ApplySpringForcesToWheel(@Nonnull Vec3 motion, int wheelIndex, @Nonnull Transform wheelTransform, float wheelMass, @Nonnull Function<VehiclePartPath, Transform> lookup)
+	//{ return ApplySpringForces(motion, Wheel(wheelIndex), wheelTransform, wheelMass, lookup); }
 	@Nonnull
 	public Vec3 ApplySpringForces(@Nonnull Vec3 motion,
-								  @Nonnull String partName,
+								  @Nonnull VehiclePartPath partName,
 								  @Nonnull Transform thisTransform,
 								  float mass,
-								  @Nonnull Function<VehicleComponentPath, Transform> lookup)
+								  @Nonnull Function<VehiclePartPath, Transform> lookup)
 	{
 		if(Forces.containsKey(partName))
 		{
 			ForcesOnPart forces = Forces.get(partName);
 			for(SpringJoint spring : forces.Springs)
 			{
-				Transform target = lookup.apply(VehicleComponentPath.of(spring.PullTowardsAP)); // TODO: Not gonna work?
+				Transform target = lookup.apply(spring.PullTowardsAP); // TODO: Not gonna work?
 				if(target != null)
 				{
 					Vec3 currentWorldPos = thisTransform.PositionVec3();
@@ -183,11 +184,11 @@ public class ForceModel
 	}
 
 	// --
-	@Nullable public ForcesOnPart Debug_GetForcesOnCore() { return Debug_GetForcesOn(VehicleDefinition.CoreName); }
-	@Nullable public ForcesOnPart Debug_GetForcesOnWheel(int wheelIndex) { return Debug_GetForcesOn(Wheel(wheelIndex)); }
+	@Nullable public ForcesOnPart Debug_GetForcesOnCore() { return Debug_GetForcesOn(VehiclePartPath.Core); }
+	//@Nullable public ForcesOnPart Debug_GetForcesOnWheel(int wheelIndex) { return Debug_GetForcesOn(Wheel(wheelIndex)); }
 
 	@Nullable
-	public ForcesOnPart Debug_GetForcesOn(@Nonnull String partName)
+	public ForcesOnPart Debug_GetForcesOn(@Nonnull VehiclePartPath partName)
 	{
 		return Forces.get(partName);
 	}

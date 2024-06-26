@@ -68,8 +68,8 @@ public class CollisionTaskSeparateDynamicPair
 		if(Input != null)
 		{
 			// Bounds test
-			TransformedBB boundsA = Input.ObjectA.GetCurrentBB();
-			TransformedBB boundsB = Input.ObjectB.GetCurrentBB();
+			TransformedBB boundsA = Input.ObjectA.GetPendingBB();
+			TransformedBB boundsB = Input.ObjectB.GetPendingBB();
 
 			for (ISeparator separator : Input.ExistingSeparators)
 			{
