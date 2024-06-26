@@ -48,6 +48,8 @@ public class ClockworkCalamityMod
 	// Clockwork Guns
 	public static final RegistryObject<Item> GUN_CLOCKWORK_OVERKILL = 						FlansMod.Gun(ITEMS, MODID, "clockwork_overkill");
 
+	// Clockwork Bullets
+	public static final RegistryObject<Item> BULLET_PROJECTILE_GRENADE_SPAWN_FROG =			FlansMod.Bullet(ITEMS, MODID, "projectile_grenade_spawn_frog");
 
 
 
@@ -103,8 +105,8 @@ public class ClockworkCalamityMod
 
 			for (var entry : ITEMS.getEntries())
 			{
-				event.register(new ModelResourceLocation(MODID, entry.getId().getPath() + "_inventory", "inventory"));
-				shaper.register(entry.get(), new ModelResourceLocation(MODID, entry.getId().getPath() + "_inventory", "inventory"));
+				event.register(new ModelResourceLocation(MODID, entry.getId().getPath() + "", "inventory"));
+				shaper.register(entry.get(), new ModelResourceLocation(MODID, entry.getId().getPath() + "", "inventory"));
 			}
 		}
 

@@ -1,0 +1,16 @@
+{
+    "tags": [
+        "flansclockworkcalamity:clockwork_rubbler"
+    ],
+    "modifiers": [],
+    "ammoLoadMode": "OneBulletAtATime_Revolver",
+    "ammoConsumeMode": "RoundRobin",
+    "upgradeCost": 0,
+    "numRounds": 6,
+    "allRoundsMustBeIdentical": false,
+    "matchingBullets": {
+        "itemIDFilters": [],
+        "itemTagFilters": [],
+        "materialFilters": []
+    }
+}

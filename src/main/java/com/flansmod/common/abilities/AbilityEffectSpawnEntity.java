@@ -21,7 +21,7 @@ public class AbilityEffectSpawnEntity implements IAbilityEffect
 
 	public AbilityEffectSpawnEntity(@Nonnull AbilityEffectDefinition def)
 	{
-		String entityID = def.ModifyString(Constants.KEY_ENTITY_TAG, "");
+		String entityID = def.ModifyString(Constants.KEY_ENTITY_ID, "");
 		EntityType = ForgeRegistries.ENTITY_TYPES.getValue(new ResourceLocation(entityID));
 	}
 

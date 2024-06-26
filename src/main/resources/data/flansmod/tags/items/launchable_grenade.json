@@ -4,6 +4,7 @@
     "flansbasicparts:projectile_grenade_ex",
     "flansbasicparts:projectile_grenade_impact",
     "flansbasicparts:projectile_grenade_incendiary",
-    "flansbasicparts:projectile_grenade_sticky"
+    "flansbasicparts:projectile_grenade_sticky",
+    "flansclockworkcalamity:projectile_grenade_spawn_frog"
   ]
 }

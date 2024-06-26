@@ -2,6 +2,7 @@ package com.flansmod.common.types.bullets.elements;
 
 import com.flansmod.common.types.Constants;
 import com.flansmod.common.types.JsonField;
+import com.mojang.datafixers.kinds.Const;
 
 public class ProjectileDefinition
 {
@@ -19,8 +20,13 @@ public class ProjectileDefinition
 	public float launchSpeed = 3.0f;
 	@JsonField(ModifiedBy = Constants.STAT_PROJECTILE_GRAVITY_FACTOR, Docs = "How much does gravity affect this? 0=Not at all, 1=Regular")
 	public float gravityFactor = 1.0f;
-	@JsonField(ModifiedBy = Constants.STAT_PROJECTILE_STICKY)
-	public boolean sticky = false;
+
+	@JsonField(ModifiedBy = Constants.STAT_PROJECTILE_RESPONSE_TO_BLOCK)
+	public EProjectileResponseType responseToBlock = EProjectileResponseType.Bounce;
+	@JsonField(ModifiedBy = Constants.STAT_PROJECTILE_RESPONSE_TO_ENTITY)
+	public EProjectileResponseType responseToEntity = EProjectileResponseType.Detonate;
+	@JsonField(ModifiedBy = Constants.STAT_PROJECTILE_RESPONSE_TO_VEHICLE)
+	public EProjectileResponseType responseToVehicle = EProjectileResponseType.Detonate;
 
 	@JsonField(ModifiedBy = Constants.STAT_PROJECTILE_FUSE_TIME, Docs = "If set to a non-zero amount, this projectile will have a fuse timer, in seconds")
 	public float fuseTime = 0.0f;

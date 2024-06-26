@@ -7,6 +7,7 @@ import com.flansmod.common.gunshots.Gunshot;
 import com.flansmod.common.actions.contexts.GunshotContext;
 import com.flansmod.common.network.FlansEntityDataSerializers;
 import com.flansmod.common.types.bullets.BulletDefinition;
+import com.flansmod.common.types.bullets.elements.EProjectileResponseType;
 import com.flansmod.common.types.bullets.elements.ProjectileDefinition;
 import com.flansmod.util.Maths;
 import net.minecraft.core.Direction;
@@ -47,6 +48,7 @@ public class BulletEntity extends Projectile
 	public float RemainingPenetratingPower = 0.0f;
 	public int FuseRemaining = 0;
 	public boolean Stuck = false;
+	public boolean Detonated = false;
 	public final ActionStack Actions;
 
 	public Entity Owner()
@@ -181,38 +183,32 @@ public class BulletEntity extends Projectile
 	{
 		// Work out which thing we collided with (Minecraft is bad at telling us this...)
 		HitResult hitResult = ProjectileUtil.getHitResultOnMoveVector(this, this::CanHitEntity);
-		switch(hitResult.getType())
+		EProjectileResponseType responseType = switch(hitResult.getType()) {
+			case MISS -> EProjectileResponseType.PassThrough;
+			case ENTITY -> Context.ResponseToEntity();
+			case BLOCK -> Context.ResponseToBlock();
+		};
+
+		switch(responseType)
 		{
-			case MISS:
+			case PassThrough -> {
 				return motion;
-			case ENTITY:
-			{
+			}
+			case Stick -> {
+				Stuck = true;
+				return Vec3.ZERO;
+			}
+			case Detonate -> {
 				Detonate(hitResult);
 				return Vec3.ZERO;
 			}
-			case BLOCK:
-			{
-				if(Context.Sticky())
-				{
-					Stuck = true;
-					return Vec3.ZERO;
-				}
-				else if(Context.FuseTimeSeconds() > 0.0f)
-				{
-					// Bounce
-					BlockHitResult blockHitResult = (BlockHitResult) hitResult;
-					return switch (blockHitResult.getDirection())
-					{
-						case UP, DOWN -> new Vec3(motion.x, -motion.y, motion.z);
-						case EAST, WEST -> new Vec3(-motion.x, motion.y, motion.z);
-						case NORTH, SOUTH -> new Vec3(motion.x, motion.y, -motion.z);
-					};
-				}
-				else
-				{
-					Detonate(hitResult);
-					return Vec3.ZERO;
-				}
+			case Bounce -> {
+				BlockHitResult blockHitResult = (BlockHitResult) hitResult;
+				return switch (blockHitResult.getDirection()) {
+					case UP, DOWN -> new Vec3(motion.x, -motion.y, motion.z);
+					case EAST, WEST -> new Vec3(-motion.x, motion.y, motion.z);
+					case NORTH, SOUTH -> new Vec3(motion.x, motion.y, -motion.z);
+				};
 			}
 		}
 		return motion;
@@ -225,15 +221,19 @@ public class BulletEntity extends Projectile
 
 	public void Detonate(HitResult hit)
 	{
-		Gunshot shot = new Gunshot();
-		shot.fromShotIndex = 0;
-		shot.bulletDef = Def;
-		shot.origin = position();
-		shot.trajectory = getDeltaMovement();
-		shot.hits = new HitResult[] {
-			hit
-		};
-		Context.ProcessShot(shot);
+		if(!Detonated)
+		{
+			Gunshot shot = new Gunshot();
+			shot.fromShotIndex = 0;
+			shot.bulletDef = Def;
+			shot.origin = position();
+			shot.trajectory = getDeltaMovement();
+			shot.hits = new HitResult[]{
+				hit
+			};
+			Context.ProcessShot(shot);
+			Detonated = true;
+		}
 		if(!level().isClientSide)
 			kill();
 	}

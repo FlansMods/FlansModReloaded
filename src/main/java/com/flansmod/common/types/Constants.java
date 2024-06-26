@@ -17,7 +17,9 @@ public final class Constants
 	public static final String STAT_PROJECTILE_FUSE_TIME = "fuse_time";
 	public static final String STAT_PROJECTILE_LAUNCH_SPEED = "launch_speed";
 	public static final String STAT_PROJECTILE_GRAVITY_FACTOR = "gravity_factor";
-	public static final String STAT_PROJECTILE_STICKY = "gravity_factor";
+	public static final String STAT_PROJECTILE_RESPONSE_TO_BLOCK = "response_to_block";
+	public static final String STAT_PROJECTILE_RESPONSE_TO_ENTITY = "response_to_entity";
+	public static final String STAT_PROJECTILE_RESPONSE_TO_VEHICLE = "response_to_vehicle";
 	public static final String STAT_PROJECTILE_TURN_RATE = "turn_rate";
 	public static final String STAT_PROJECTILE_DRAG_IN_AIR = "drag_in_air";
 	public static final String STAT_PROJECTILE_DRAG_IN_WATER = "drag_in_water";
