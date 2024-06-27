@@ -191,7 +191,7 @@
                             "length": 0.0,
                             "minPitchMultiplier": 0.8333333,
                             "maxPitchMultiplier": 1.25,
-                            "minVolume": 0.1,
+                            "minVolume": 1.0,
                             "maxVolume": 1.0,
                             "maxRange": 100.0,
                             "LODs": []

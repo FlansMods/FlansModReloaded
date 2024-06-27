@@ -1,21 +1,20 @@
 {
-  "variants": {
-	  "facing=north": {
-		  "model": "flansvendersgame:block/fc_workbench",
-		  "y": 90		  
-	  },
-	  "facing=east": {
-		  "model": "flansvendersgame:block/fc_workbench",
-		  "y": 180		  
-	  },
-	  "facing=south": {
-		  "model": "flansvendersgame:block/fc_workbench",
-		  "y": 270		  
-	  },
-	  "facing=west": {
-		  "model": "flansvendersgame:block/fc_workbench",
-		  "y": 0		  
-	  }
-	  
-  }
+    "variants": {
+        "facing=north": {
+            "model": "flansvendersgame:block/fc_workbench",
+            "y": 90
+        },
+        "facing=east": {
+            "model": "flansvendersgame:block/fc_workbench",
+            "y": 180
+        },
+        "facing=south": {
+            "model": "flansvendersgame:block/fc_workbench",
+            "y": 270
+        },
+        "facing=west": {
+            "model": "flansvendersgame:block/fc_workbench",
+            "y": 0
+        }
+    }
 }
