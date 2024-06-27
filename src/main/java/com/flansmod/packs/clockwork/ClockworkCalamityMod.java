@@ -47,6 +47,7 @@ public class ClockworkCalamityMod
 
 	// Clockwork Guns
 	public static final RegistryObject<Item> GUN_CLOCKWORK_OVERKILL = 						FlansMod.Gun(ITEMS, MODID, "clockwork_overkill");
+	public static final RegistryObject<Item> GUN_CLOCKWORK_RUBBLER = 						FlansMod.Gun(ITEMS, MODID, "clockwork_rubbler");
 
 	// Clockwork Bullets
 	public static final RegistryObject<Item> BULLET_PROJECTILE_GRENADE_SPAWN_AXOLOTL =			FlansMod.Bullet(ITEMS, MODID, "projectile_grenade_spawn_axolotl");
