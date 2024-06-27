@@ -1,6 +1,14 @@
 {
   "replace": "false",
   "values": [
-    "flansclockworkcalamity:projectile_grenade_spawn_frog"
+    "flansclockworkcalamity:projectile_grenade_spawn_axolotl",
+    "flansclockworkcalamity:projectile_grenade_spawn_chicken",
+    "flansclockworkcalamity:projectile_grenade_spawn_cod",
+    "flansclockworkcalamity:projectile_grenade_spawn_frog",
+    "flansclockworkcalamity:projectile_grenade_spawn_pufferfish",
+    "flansclockworkcalamity:projectile_grenade_spawn_rabbit",
+    "flansclockworkcalamity:projectile_grenade_spawn_salmon",
+    "flansclockworkcalamity:projectile_grenade_spawn_slime",
+    "flansclockworkcalamity:projectile_grenade_spawn_tropical_fish"
   ]
 }

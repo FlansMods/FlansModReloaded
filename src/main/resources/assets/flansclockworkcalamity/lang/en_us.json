@@ -1,5 +1,13 @@
 {
+  "item.flansclockworkcalamity.projectile_grenade_spawn_axolotl": "Axolotl Launch Pod",
+  "item.flansclockworkcalamity.projectile_grenade_spawn_chicken": "Egg Launch Pod",
+  "item.flansclockworkcalamity.projectile_grenade_spawn_cod": "Cod Launch Pod",
   "item.flansclockworkcalamity.projectile_grenade_spawn_frog": "Frog Launch Pod",
+  "item.flansclockworkcalamity.projectile_grenade_spawn_pufferfish": "Pufferfish Launch Pod",
+  "item.flansclockworkcalamity.projectile_grenade_spawn_rabbit": "Bun Launch Pod",
+  "item.flansclockworkcalamity.projectile_grenade_spawn_salmon": "Salmon Launch Pod",
+  "item.flansclockworkcalamity.projectile_grenade_spawn_slime": "Small Slime Launch Pod",
+  "item.flansclockworkcalamity.projectile_grenade_spawn_tropical_fish": "Tropical Fish Launch Pod",
   "item.flansclockworkcalamity.clockwork_overkill": "Clockwork Creations Overkill",
   "item.flansclockworkcalamity.clockwork_rubbler": "Clockwork Creations Rubbler",
   "paintjob.flansclockworkcalamity.clockwork_rubbler_forg": "clockwork rubbler forg",

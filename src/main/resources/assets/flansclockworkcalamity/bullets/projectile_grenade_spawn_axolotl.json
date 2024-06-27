@@ -1,0 +1,55 @@
+{
+    "itemSettings": {
+        "maxStackSize": 64,
+        "tags": [
+            "flansmod:bullet",
+            "flansmod:launchable_grenade"
+        ]
+    },
+    "roundsPerItem": 1,
+    "hitscans": [],
+    "projectiles": [
+        {
+            "shotCount": 1,
+            "splashRadius": 0.0,
+            "impacts": [
+                {
+                    "targetType": "ShotPosition",
+                    "impactEffects": [
+                        {
+                            "effectType": "SpawnEntity",
+                            "modifiers": [
+                                {
+                                    "stat": "entity_id",
+                                    "matchGroupPaths": [],
+                                    "accumulators": [
+                                        {
+                                            "operation": "BaseAdd",
+                                            "value": 3.0,
+                                            "multiplyPer": []
+                                        }
+                                    ],
+                                    "setValue": "minecraft:axolotl"
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ],
+            "launchSpeed": 3.0,
+            "gravityFactor": 1.0,
+            "responseToBlock": "Detonate",
+            "responseToEntity": "Detonate",
+            "responseToVehicle": "Detonate",
+            "fuseTime": 8.0,
+            "turnRate": 0.0,
+            "dragInAir": 0.0,
+            "airParticles": "",
+            "dragInWater": 0.0,
+            "waterParticles": "",
+            "timeBetweenTrailParticles": 0.0
+        }
+    ],
+    "triggers": [],
+    "actionGroups": []
+}

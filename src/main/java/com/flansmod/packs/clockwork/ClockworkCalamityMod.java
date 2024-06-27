@@ -49,8 +49,15 @@ public class ClockworkCalamityMod
 	public static final RegistryObject<Item> GUN_CLOCKWORK_OVERKILL = 						FlansMod.Gun(ITEMS, MODID, "clockwork_overkill");
 
 	// Clockwork Bullets
-	public static final RegistryObject<Item> BULLET_PROJECTILE_GRENADE_SPAWN_FROG =			FlansMod.Bullet(ITEMS, MODID, "projectile_grenade_spawn_frog");
-
+	public static final RegistryObject<Item> BULLET_PROJECTILE_GRENADE_SPAWN_AXOLOTL =			FlansMod.Bullet(ITEMS, MODID, "projectile_grenade_spawn_axolotl");
+	public static final RegistryObject<Item> BULLET_PROJECTILE_GRENADE_SPAWN_CHICKEN =			FlansMod.Bullet(ITEMS, MODID, "projectile_grenade_spawn_chicken");
+	public static final RegistryObject<Item> BULLET_PROJECTILE_GRENADE_SPAWN_COD =				FlansMod.Bullet(ITEMS, MODID, "projectile_grenade_spawn_cod");
+	public static final RegistryObject<Item> BULLET_PROJECTILE_GRENADE_SPAWN_FROG =				FlansMod.Bullet(ITEMS, MODID, "projectile_grenade_spawn_frog");
+	public static final RegistryObject<Item> BULLET_PROJECTILE_GRENADE_SPAWN_PUFFERFISH =		FlansMod.Bullet(ITEMS, MODID, "projectile_grenade_spawn_pufferfish");
+	public static final RegistryObject<Item> BULLET_PROJECTILE_GRENADE_SPAWN_RABBIT =			FlansMod.Bullet(ITEMS, MODID, "projectile_grenade_spawn_rabbit");
+	public static final RegistryObject<Item> BULLET_PROJECTILE_GRENADE_SPAWN_SALMON =			FlansMod.Bullet(ITEMS, MODID, "projectile_grenade_spawn_salmon");
+	public static final RegistryObject<Item> BULLET_PROJECTILE_GRENADE_SPAWN_SLIME =			FlansMod.Bullet(ITEMS, MODID, "projectile_grenade_spawn_slime");
+	public static final RegistryObject<Item> BULLET_PROJECTILE_GRENADE_SPAWN_TROPICAL_FISH =	FlansMod.Bullet(ITEMS, MODID, "projectile_grenade_spawn_tropical_fish");
 
 
 	// Sadie NPC
