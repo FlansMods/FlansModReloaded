@@ -44,13 +44,13 @@ public class BulletEntityRenderer extends EntityRenderer<BulletEntity>
 	@Nonnull
 	public ResourceLocation getTextureLocation(@Nonnull BulletEntity bullet)
 	{
-		return bullet.Def.Location;
+		return bullet.GetBulletDef().Location;
 	}
 
 	@Override
 	public void render(@Nonnull BulletEntity bullet, float yaw, float partialTick, @Nonnull PoseStack pose, @Nonnull MultiBufferSource buffers, int light)
 	{
-		ITurboRenderer bulletRenderer = FlansModelRegistry.GetItemRenderer(bullet.Def.Location);
+		ITurboRenderer bulletRenderer = FlansModelRegistry.GetItemRenderer(bullet.GetBulletDef().Location);
 		if(bulletRenderer != null)
 		{
 			pose.pushPose();

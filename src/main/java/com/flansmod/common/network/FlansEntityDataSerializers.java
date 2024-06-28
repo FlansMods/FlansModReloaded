@@ -187,7 +187,7 @@ public class FlansEntityDataSerializers
 		new PerPartMapSerializer<>(GUN);
 
 
-
+/*
 	public static final EntityDataSerializer<ShooterContext> SHOOTER_CONTEXT = new EntityDataSerializer<>()
 	{
 		public void write(@Nonnull FriendlyByteBuf buf, @Nonnull ShooterContext context)
@@ -298,14 +298,15 @@ public class FlansEntityDataSerializers
 			return GunshotContext.of(context);
 		}
 	};
+	*/
 
 	public static void RegisterSerializers()
 	{
-		EntityDataSerializers.registerSerializer(SHOOTER_CONTEXT);
-		EntityDataSerializers.registerSerializer(GUN_CONTEXT_FULL);
-		EntityDataSerializers.registerSerializer(GUN_CONTEXT_LIGHT);
-		EntityDataSerializers.registerSerializer(ACTION_GROUP_CONTEXT_FULL);
-		EntityDataSerializers.registerSerializer(GUNSHOT_CONTEXT_FULL);
+		//EntityDataSerializers.registerSerializer(SHOOTER_CONTEXT);
+		//EntityDataSerializers.registerSerializer(GUN_CONTEXT_FULL);
+		//EntityDataSerializers.registerSerializer(GUN_CONTEXT_LIGHT);
+		//EntityDataSerializers.registerSerializer(ACTION_GROUP_CONTEXT_FULL);
+		//EntityDataSerializers.registerSerializer(GUNSHOT_CONTEXT_FULL);
 
 		EntityDataSerializers.registerSerializer(GUN_DEF);
 		EntityDataSerializers.registerSerializer(BULLET_DEF);
