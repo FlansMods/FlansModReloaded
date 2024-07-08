@@ -153,15 +153,15 @@ public class PartFabricationRecipe implements Recipe<WorkbenchBlockEntity>
 	public boolean matches(WorkbenchBlockEntity workbench, @Nonnull Level level)
 	{
 		// Is this recipe available in this particular workbench?
-		if(!workbench.PartRecipeCanBeCraftedInThisWorkbench(Result))
+		if(!workbench.Workbench.PartRecipeCanBeCraftedInThisWorkbench(Result))
 			return false;
 
 		int[] amountsMatched = new int[InputIngredients.size()];
 
 		// Then, can we output one from the input ingredients
-		for(int slot = 0; slot < workbench.PartCraftingInputContainer.getContainerSize(); slot++)
+		for(int slot = 0; slot < workbench.Workbench.PartCraftingInputContainer.getContainerSize(); slot++)
 		{
-			ItemStack inputStack = workbench.PartCraftingInputContainer.getItem(slot);
+			ItemStack inputStack = workbench.Workbench.PartCraftingInputContainer.getItem(slot);
 			int countRemaining = inputStack.getCount();
 			for(int i = 0; i < InputIngredients.size(); i++)
 			{

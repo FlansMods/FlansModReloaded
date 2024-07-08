@@ -33,6 +33,8 @@
     "flansclockworkcalamity:projectile_grenade_spawn_salmon",
     "flansclockworkcalamity:projectile_grenade_spawn_slime",
     "flansclockworkcalamity:projectile_grenade_spawn_tropical_fish",
+    "flansclockworkcalamity:projectile_placeable_redstone_torch",
+    "flansclockworkcalamity:projectile_placeable_torch",
     "flansworldwars:zf4scope"
   ]
 }

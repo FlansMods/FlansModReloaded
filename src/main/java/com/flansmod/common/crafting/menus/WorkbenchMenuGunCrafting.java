@@ -1,6 +1,7 @@
 package com.flansmod.common.crafting.menus;
 
 import com.flansmod.common.FlansMod;
+import com.flansmod.common.crafting.AbstractWorkbench;
 import com.flansmod.common.crafting.recipes.GunFabricationRecipe;
 import com.flansmod.common.crafting.slots.GunCraftingInputSlot;
 import com.flansmod.common.crafting.slots.GunCraftingOutputSlot;
@@ -44,11 +45,11 @@ public class WorkbenchMenuGunCrafting extends WorkbenchMenu
 
 	public WorkbenchMenuGunCrafting(int containerID,
 									 @Nonnull Inventory inventory,
-									 @Nonnull WorkbenchBlockEntity workbench)
+									 @Nonnull AbstractWorkbench workbench)
 	{
 		super(FlansMod.WORKBENCH_MENU_GUN_CRAFTING.get(), containerID, inventory, workbench);
-		GunCraftingInputContainer = BlockEntity.GunCraftingInputContainer;
-		GunCraftingOutputContainer = BlockEntity.GunCraftingOutputContainer;
+		GunCraftingInputContainer = Workbench.GunCraftingInputContainer;
+		GunCraftingOutputContainer = Workbench.GunCraftingOutputContainer;
 		CreateSlots(inventory, 0);
 	}
 
@@ -58,8 +59,8 @@ public class WorkbenchMenuGunCrafting extends WorkbenchMenu
 	{
 		super(FlansMod.WORKBENCH_MENU_GUN_CRAFTING.get(), containerID, inventory, data);
 
-		GunCraftingInputContainer = BlockEntity.GunCraftingInputContainer;
-		GunCraftingOutputContainer = BlockEntity.GunCraftingOutputContainer;
+		GunCraftingInputContainer = Workbench.GunCraftingInputContainer;
+		GunCraftingOutputContainer = Workbench.GunCraftingOutputContainer;
 		CreateSlots(inventory, 0);
 	}
 
@@ -81,14 +82,14 @@ public class WorkbenchMenuGunCrafting extends WorkbenchMenu
 		}
 		if(BUTTON_SELECT_GUN_RECIPE_0 <= buttonID && buttonID <= BUTTON_SELECT_GUN_RECIPE_MAX)
 		{
-			BlockEntity.SelectGunCraftingRecipe(buttonID - BUTTON_SELECT_GUN_RECIPE_0);
+			Workbench.SelectGunCraftingRecipe(player.level(), buttonID - BUTTON_SELECT_GUN_RECIPE_0);
 			UpdateActiveSlots();
 			return true;
 		}
 		if(BUTTON_AUTO_FILL_INGREDIENT_0 <= buttonID && buttonID <= BUTTON_AUTO_FULL_INGREDIENT_MAX)
 		{
 			int ingredientIndex = buttonID - BUTTON_AUTO_FILL_INGREDIENT_0;
-			BlockEntity.AutoFillGunCraftingInputSlot(player, ingredientIndex);
+			Workbench.AutoFillGunCraftingInputSlot(player, ingredientIndex);
 			return true;
 		}
 		return false;
@@ -121,7 +122,7 @@ public class WorkbenchMenuGunCrafting extends WorkbenchMenu
 			if(!GunCraftingInputSlots[i].getItem().isEmpty())
 				active = true;
 
-			GunFabricationRecipe gunRecipe = BlockEntity.GetSelectedGunRecipe();
+			GunFabricationRecipe gunRecipe = Workbench.GetSelectedGunRecipe(World);
 			if(gunRecipe != null)
 			{
 				if(i < gunRecipe.InputIngredients.size())
@@ -171,5 +172,23 @@ public class WorkbenchMenuGunCrafting extends WorkbenchMenu
 			}
 		}
 		return ItemStack.EMPTY;
+	}
+
+	@Nullable
+	public GunFabricationRecipe GetSelectedGunRecipe()
+	{
+		return Workbench.GetSelectedGunRecipe(World);
+	}
+	public void UpdateGunCraftingOutputSlot()
+	{
+		Workbench.UpdateGunCraftingOutputSlot(World);
+	}
+	public boolean IsGunCraftingFullyValid()
+	{
+		return Workbench.IsGunCraftingFullyValid(World);
+	}
+	public void ConsumeGunCraftingInputs()
+	{
+		Workbench.ConsumeGunCraftingInputs(World);
 	}
 }

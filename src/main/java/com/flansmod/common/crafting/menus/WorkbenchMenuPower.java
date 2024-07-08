@@ -1,6 +1,7 @@
 package com.flansmod.common.crafting.menus;
 
 import com.flansmod.common.FlansMod;
+import com.flansmod.common.crafting.AbstractWorkbench;
 import com.flansmod.common.crafting.slots.RestrictedSlot;
 import com.flansmod.common.crafting.WorkbenchBlockEntity;
 import net.minecraft.network.FriendlyByteBuf;
@@ -21,11 +22,11 @@ public class WorkbenchMenuPower extends WorkbenchMenu
 
 	public WorkbenchMenuPower(int containerID,
 									@Nonnull Inventory inventory,
-									@Nonnull WorkbenchBlockEntity workbench)
+									@Nonnull AbstractWorkbench workbench)
 	{
 		super(FlansMod.WORKBENCH_MENU_POWER.get(), containerID, inventory, workbench);
-		BatteryContainer = BlockEntity.BatteryContainer;
-		FuelContainer = BlockEntity.FuelContainer;
+		BatteryContainer = Workbench.BatteryContainer;
+		FuelContainer = Workbench.FuelContainer;
 		CreateSlots(inventory, 0);
 	}
 
@@ -35,8 +36,8 @@ public class WorkbenchMenuPower extends WorkbenchMenu
 	{
 		super(FlansMod.WORKBENCH_MENU_POWER.get(), containerID, inventory, data);
 
-		BatteryContainer = BlockEntity.BatteryContainer;
-		FuelContainer = BlockEntity.FuelContainer;
+		BatteryContainer = Workbench.BatteryContainer;
+		FuelContainer = Workbench.FuelContainer;
 		CreateSlots(inventory, 0);
 	}
 

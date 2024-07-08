@@ -10,7 +10,14 @@
     "allRoundsMustBeIdentical": false,
     "matchingBullets": {
         "itemIDFilters": [],
-        "itemTagFilters": [],
+        "itemTagFilters": [
+            {
+                "filterType": "Allow",
+                "matchResourceLocations": [
+                    "flansmod:launchable_grenade"
+                ]
+            }
+        ],
         "materialFilters": []
     }
 }

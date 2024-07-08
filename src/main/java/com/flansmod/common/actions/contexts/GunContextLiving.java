@@ -77,8 +77,9 @@ public class GunContextLiving extends GunContextInventoryItem
 	@Nullable
 	public Level GetLevel() { return ShooterContext.Level(); }
 	@Override
+	@Nonnull
 	public String toString()
 	{
-		return GetShooter() + " holding [" + GetItemStack().toString() + "] " + (Hand == InteractionHand.MAIN_HAND ? "(Main)" : "(Off)");
+		return GetShooter() + " holding [" + GetItemStack() + "] " + (Hand == InteractionHand.MAIN_HAND ? "(Main)" : "(Off)");
 	}
 }

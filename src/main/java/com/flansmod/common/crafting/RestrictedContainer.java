@@ -8,37 +8,49 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntity;
 
+import javax.annotation.Nonnull;
 import java.util.function.Function;
 
 public class RestrictedContainer implements Container, ContainerData
 {
-	public final BlockEntity OwnedBy;
 	public final int SlotCount;
-	public final double InteractRange;
+	public final Function<Player, Boolean> StillValidFunc;
 	public final int MaxStackSize;
 	public final Function<ItemStack, Boolean> AllowFunction;
 	public final ItemStack[] Slots;
 
-	public RestrictedContainer(BlockEntity parent)
+	public RestrictedContainer()
 	{
-		OwnedBy = parent;
-		InteractRange = 0.0f;
+		this(0, 0, (stack) -> false, (player) -> true);
+	}
+
+	public RestrictedContainer(@Nonnull BlockEntity parent)
+	{
+		StillValidFunc = (player) -> {
+			if(parent.isRemoved() || parent.getLevel().getBlockEntity(parent.getBlockPos()) != parent)
+				return false;
+			return true;
+		};
 		AllowFunction = (stack) -> { return false; };
 		SlotCount = 0;
 		MaxStackSize = 0;
 		Slots = new ItemStack[0];
 	}
 
-	public RestrictedContainer(BlockEntity parent, double interactRange, int slots, int maxStack, Function<ItemStack, Boolean> allowFunc)
+	public RestrictedContainer(int slots, int maxStack, @Nonnull Function<ItemStack, Boolean> allowFunc, @Nonnull Function<Player, Boolean> stillValidFunc)
 	{
-		OwnedBy = parent;
-		InteractRange = interactRange;
+		StillValidFunc = stillValidFunc;
 		AllowFunction = allowFunc;
 		SlotCount = slots;
 		MaxStackSize = maxStack;
 		Slots = new ItemStack[slots];
 		for(int i = 0; i < SlotCount; i++)
 			Slots[i] = ItemStack.EMPTY;
+	}
+
+	public RestrictedContainer(int slots, int maxStack, @Nonnull Function<ItemStack, Boolean> allowFunc)
+	{
+		this(slots, maxStack, allowFunc, (player) -> true);
 	}
 
 	// ContainerData
@@ -91,13 +103,9 @@ public class RestrictedContainer implements Container, ContainerData
 	@Override
 	public void setChanged() {}
 	@Override
-	public boolean stillValid(Player player)
+	public boolean stillValid(@Nonnull Player player)
 	{
-		if(OwnedBy == null || OwnedBy.isRemoved() || OwnedBy.getLevel().getBlockEntity(OwnedBy.getBlockPos()) != OwnedBy)
-			return false;
-		if(OwnedBy.getBlockPos().distToCenterSqr(player.getPosition(0f)) > InteractRange * InteractRange)
-			return false;
-		return true;
+		return StillValidFunc.apply(player);
 	}
 	@Override
 	public void clearContent()

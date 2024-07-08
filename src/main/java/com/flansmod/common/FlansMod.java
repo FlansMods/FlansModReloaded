@@ -157,6 +157,7 @@ public class FlansMod
     public static final RegistryObject<Item> GUN_MOD_TABLE_ITEM = ITEMS.register("gun_modification_table", () -> new BlockItem(GUN_MOD_TABLE_BLOCK.get(), new Item.Properties()));
     public static final RegistryObject<Item> DIESEL_GENERATOR_ITEM = ITEMS.register("portable_diesel_generator", () -> new BlockItem(DIESEL_GENERATOR_BLOCK.get(), new Item.Properties()));
     public static final RegistryObject<Item> COAL_GENERATOR_ITEM = ITEMS.register("portable_coal_generator", () -> new BlockItem(COAL_GENERATOR_BLOCK.get(), new Item.Properties()));
+    public static final RegistryObject<Item> GUN_MOD_PORTABLE_ITEM = FlansMod.Workbench_Quick_Item(ITEMS, MODID, "portable_mod_kit");
 
     // Tile entities
     public static final RegistryObject<BlockEntityType<WorkbenchBlockEntity>> DIESEL_GENERATOR_TILE_ENTITY = Workbench_TileEntityType(TILE_ENTITIES, MODID, "portable_diesel_generator");
@@ -208,6 +209,7 @@ public class FlansMod
                 .displayItems((itemDisplayParameters, output) ->
                 {
                     output.accept(GUN_MOD_TABLE_ITEM.get());
+                    output.accept(GUN_MOD_PORTABLE_ITEM.get());
                     output.accept(DIESEL_GENERATOR_ITEM.get());
                     output.accept(COAL_GENERATOR_ITEM.get());
                     for(ItemStack stack : stacks)
@@ -271,6 +273,7 @@ public class FlansMod
                 .displayItems((itemDisplayParameters, output) ->
                 {
                     output.accept(GUN_MOD_TABLE_ITEM.get());
+                    output.accept(GUN_MOD_PORTABLE_ITEM.get());
                     output.accept(RAINBOW_PAINT_CAN_ITEM.get());
                     output.accept(MAG_UPGRADE_ITEM.get());
                     for(ItemStack stack : stacks)
@@ -298,6 +301,7 @@ public class FlansMod
     public static final ServerActionManager ACTIONS_SERVER = new ServerActionManager();
     public static final ServerLongDistanceEntitySystem LONG_DISTANCE_SERVER = new ServerLongDistanceEntitySystem();
     public static final ContextCache CONTEXT_CACHE = new ServerContextCache();
+    public static final ServerInventoryManager INVENTORY_MANAGER = new ServerInventoryManager();
 
     public static RegistryObject<Item> Gun(DeferredRegister<Item> itemRegister, String modID, String name)
     {
@@ -340,6 +344,12 @@ public class FlansMod
     {
         ResourceLocation loc = new ResourceLocation(modID, name);
         return itemRegister.register(name, () -> new BlockItem(block.get(), new Item.Properties()));
+    }
+    @Nonnull
+    public static RegistryObject<Item> Workbench_Quick_Item(@Nonnull DeferredRegister<Item> itemRegister, @Nonnull String modID, @Nonnull String name)
+    {
+        ResourceLocation loc = new ResourceLocation(modID, name);
+        return itemRegister.register(name, () -> new TemporaryWorkbenchItem(loc));
     }
 
     public static RegistryObject<BlockEntityType<WorkbenchBlockEntity>> Workbench_TileEntityType(DeferredRegister<BlockEntityType<?>> tileEntityTypeRegister, String modID, String name)

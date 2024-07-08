@@ -46,8 +46,24 @@ public class ClockworkCalamityMod
 
 
 	// Clockwork Guns
-	public static final RegistryObject<Item> GUN_CLOCKWORK_OVERKILL = 						FlansMod.Gun(ITEMS, MODID, "clockwork_overkill");
-	public static final RegistryObject<Item> GUN_CLOCKWORK_RUBBLER = 						FlansMod.Gun(ITEMS, MODID, "clockwork_rubbler");
+	public static final RegistryObject<Item> GUN_CLOCKWORK_OVERKILL = 							FlansMod.Gun(ITEMS, MODID, "clockwork_overkill");
+	public static final RegistryObject<Item> GUN_CLOCKWORK_RUBBLER = 							FlansMod.Gun(ITEMS, MODID, "clockwork_rubbler");
+	public static final RegistryObject<Item> GUN_CLOCKWORK_PLACERATOR = 						FlansMod.Gun(ITEMS, MODID, "clockwork_placerator");
+	public static final RegistryObject<Item> GUN_CLOCKWORK_REPEATER = 							FlansMod.Gun(ITEMS, MODID, "clockwork_repeater");
+	public static final RegistryObject<Item> GUN_CLOCKWORK_ARC_CANNON = 						FlansMod.Gun(ITEMS, MODID, "clockwork_arc_cannon");
+
+	// Clockwork Attachments
+	public static final RegistryObject<Item> ATTACHMENT_6X_SILENCER =							FlansMod.Attachment(ITEMS, MODID, "6x_silencer");
+	public static final RegistryObject<Item> ATTACHMENT_ADJUSTABLE_SCOPE =						FlansMod.Attachment(ITEMS, MODID, "adjustable_scope");
+	public static final RegistryObject<Item> ATTACHMENT_BLASTER_COMPENSATOR =					FlansMod.Attachment(ITEMS, MODID, "blaster_compensator");
+	public static final RegistryObject<Item> ATTACHMENT_FLIP_MAGNIFIER =						FlansMod.Attachment(ITEMS, MODID, "flip_magnifier");
+	public static final RegistryObject<Item> ATTACHMENT_KNUCKLE_GRIP =							FlansMod.Attachment(ITEMS, MODID, "knuckle_grip");
+	public static final RegistryObject<Item> ATTACHMENT_MULTISHINE_MODULE =						FlansMod.Attachment(ITEMS, MODID, "multishine_module");
+	public static final RegistryObject<Item> ATTACHMENT_OPTICULAR_SIGHT =						FlansMod.Attachment(ITEMS, MODID, "opticular_sight");
+	public static final RegistryObject<Item> ATTACHMENT_PICK_AND_CHOOSE_SIGHT =					FlansMod.Attachment(ITEMS, MODID, "pick_and_choose_sight");
+	public static final RegistryObject<Item> ATTACHMENT_RGB_REFRACTOR =							FlansMod.Attachment(ITEMS, MODID, "rgb_refractor");
+	public static final RegistryObject<Item> ATTACHMENT_TRIPLE_FLIP_STOCK =						FlansMod.Attachment(ITEMS, MODID, "triple_flip_stock");
+	public static final RegistryObject<Item> ATTACHMENT_TRUMPET_BARREL =						FlansMod.Attachment(ITEMS, MODID, "trumpet_barrel");
 
 	// Clockwork Bullets
 	public static final RegistryObject<Item> BULLET_PROJECTILE_GRENADE_SPAWN_AXOLOTL =			FlansMod.Bullet(ITEMS, MODID, "projectile_grenade_spawn_axolotl");
@@ -59,6 +75,20 @@ public class ClockworkCalamityMod
 	public static final RegistryObject<Item> BULLET_PROJECTILE_GRENADE_SPAWN_SALMON =			FlansMod.Bullet(ITEMS, MODID, "projectile_grenade_spawn_salmon");
 	public static final RegistryObject<Item> BULLET_PROJECTILE_GRENADE_SPAWN_SLIME =			FlansMod.Bullet(ITEMS, MODID, "projectile_grenade_spawn_slime");
 	public static final RegistryObject<Item> BULLET_PROJECTILE_GRENADE_SPAWN_TROPICAL_FISH =	FlansMod.Bullet(ITEMS, MODID, "projectile_grenade_spawn_tropical_fish");
+
+	public static final RegistryObject<Item> BULLET_PROJECTILE_PLACEABLE_TORCH =				FlansMod.Bullet(ITEMS, MODID, "projectile_placeable_torch");
+
+	public static final RegistryObject<Item> PART_BRASS_MECHANICAL_PARTS = 						FlansMod.Part(ITEMS, MODID, "brass_mechanical_parts");
+	public static final RegistryObject<Item> PART_BRASS_ARMOUR = 								FlansMod.Part(ITEMS, MODID, "brass_armour");
+	public static final RegistryObject<Item> PART_BRASS_STRUCTURAL_PARTS = 						FlansMod.Part(ITEMS, MODID, "brass_structural_parts");
+	public static final RegistryObject<Item> PART_BRASS_PROPELLER = 							FlansMod.Part(ITEMS, MODID, "brass_propeller");
+	public static final RegistryObject<Item> PART_BRASS_UPPER_RECEIVER = 						FlansMod.Part(ITEMS, MODID, "brass_upper_receiver");
+	public static final RegistryObject<Item> PART_BRASS_LOWER_RECEIVER = 						FlansMod.Part(ITEMS, MODID, "brass_lower_receiver");
+	public static final RegistryObject<Item> PART_BRASS_BARREL = 								FlansMod.Part(ITEMS, MODID, "brass_barrel");
+	public static final RegistryObject<Item> PART_BRASS_STOCK = 								FlansMod.Part(ITEMS, MODID, "brass_stock");
+	public static final RegistryObject<Item> PART_BRASS_GRIP = 									FlansMod.Part(ITEMS, MODID, "brass_grip");
+
+
 
 
 	// Sadie NPC

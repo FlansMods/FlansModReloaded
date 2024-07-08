@@ -4,6 +4,7 @@ import com.flansmod.client.FlansModClient;
 import com.flansmod.client.gui.FMScreen;
 import com.flansmod.common.FlansMod;
 import com.flansmod.common.actions.Actions;
+import com.flansmod.common.crafting.AbstractWorkbench;
 import com.flansmod.common.crafting.WorkbenchBlockEntity;
 import com.flansmod.common.crafting.menus.WorkbenchMenu;
 import com.flansmod.common.crafting.menus.WorkbenchMenuModification;
@@ -232,7 +233,7 @@ public class WorkbenchScreenTabModification extends WorkbenchScreenTab<Workbench
 						{
 							List<FormattedCharSequence> lines = new ArrayList<>();
 							lines.add(Component.translatable("paintjob." + flanItem.DefinitionLocation.getNamespace() + "." + paintableDefinition.paintjobs[p].textureName).getVisualOrderText());
-							int paintCost = WorkbenchBlockEntity.GetPaintUpgradeCost(Workbench.GunContainer, p + 1);
+							int paintCost = AbstractWorkbench.GetPaintUpgradeCost(Workbench.GunContainer, p + 1);
 							if(paintCost == 1)
 								lines.add(Component.translatable("paintjob.cost.1").getVisualOrderText());
 							else lines.add(Component.translatable("paintjob.cost", paintCost).getVisualOrderText());
@@ -274,7 +275,7 @@ public class WorkbenchScreenTabModification extends WorkbenchScreenTab<Workbench
 											lines.add(Component.translatable(line, resLoc.toString()).getVisualOrderText());
 										}
 									}
-									int magCost = WorkbenchBlockEntity.GetMagUpgradeCost(Workbench.GunContainer, index);
+									int magCost = AbstractWorkbench.GetMagUpgradeCost(Workbench.GunContainer, index);
 									if(magCost == 1)
 										lines.add(Component.translatable("magazine.cost.1").getVisualOrderText());
 									else lines.add(Component.translatable("magazine.cost", magCost).getVisualOrderText());

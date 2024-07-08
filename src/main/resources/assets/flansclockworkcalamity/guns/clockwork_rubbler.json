@@ -352,7 +352,7 @@
         {
             "key": "primary",
             "matchByNames": [
-                "gl6_internal_mag_6"
+                "clockwork_rubbler_internal_mag_6"
             ],
             "matchByTags": [],
             "baseCostToSwap": 0

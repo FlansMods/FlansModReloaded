@@ -1,6 +1,7 @@
 package com.flansmod.client.gui.crafting;
 
 import com.flansmod.common.FlansMod;
+import com.flansmod.common.crafting.AbstractWorkbench;
 import com.flansmod.common.crafting.recipes.PartFabricationRecipe;
 import com.flansmod.common.crafting.WorkbenchBlockEntity;
 import com.flansmod.common.crafting.menus.WorkbenchMenuPartCrafting;
@@ -10,6 +11,7 @@ import com.flansmod.common.types.crafting.MaterialDefinition;
 import com.flansmod.plugins.jei.PartFabricationDrawable;
 import com.flansmod.util.Maths;
 import com.mojang.datafixers.util.Pair;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.core.RegistryAccess;
@@ -21,6 +23,7 @@ import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
+import net.minecraft.world.level.Level;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
@@ -200,16 +203,20 @@ public class WorkbenchScreenTabPartCrafting extends WorkbenchScreenTab<Workbench
 	@Override
 	protected boolean RenderTooltip(@Nonnull GuiGraphics graphics, int xMouse, int yMouse)
 	{
+		Level level = Minecraft.getInstance().level;
+		if(level == null)
+			return false;
+
 		int craftingSelection = SelectedPartIndex;
 		if(craftingSelection != -1)
 		{
-			List<PartFabricationRecipe> recipes = Workbench.BlockEntity.GetAllPartRecipes();
+			List<PartFabricationRecipe> recipes = Workbench.Workbench.GetAllPartRecipes(level);
 			PartFabricationRecipe recipe = recipes.get(craftingSelection);
 			if (recipe != null)
 			{
 				// Render info for this recipe
-				int[] matching = Workbench.BlockEntity.GetQuantityOfEachIngredientForRecipe(craftingSelection);
-				int[] required = Workbench.BlockEntity.GetRequiredOfEachIngredientForRecipe(craftingSelection);
+				int[] matching = Workbench.Workbench.GetQuantityOfEachIngredientForRecipe(level, craftingSelection);
+				int[] required = Workbench.Workbench.GetRequiredOfEachIngredientForRecipe(level, craftingSelection);
 
 				for (int i = 0; i < recipe.getIngredients().size(); i++)
 				{
@@ -240,7 +247,7 @@ public class WorkbenchScreenTabPartCrafting extends WorkbenchScreenTab<Workbench
 					xOrigin + BLUEPRINT_ORIGIN_X + 105 + 36, 17,
 					yOrigin + BLUEPRINT_ORIGIN_Y + 25, 17))
 				{
-					int maxCanCraft = Workbench.BlockEntity.GetMaxPartsCraftableFromInput(SelectedPartIndex);
+					int maxCanCraft = Workbench.Workbench.GetMaxPartsCraftableFromInput(level, SelectedPartIndex);
 					graphics.renderTooltip(font, Component.translatable("workbench.craft.all", maxCanCraft), xMouse, yMouse);
 					return true;
 				}
@@ -250,10 +257,10 @@ public class WorkbenchScreenTabPartCrafting extends WorkbenchScreenTab<Workbench
 		// Render the crafting queue
 		for(int i = 0; i < QUEUE_VIEWER_NUM_ENTRIES_Y; i++)
 		{
-			int queueSelection = Workbench.WorkbenchData.get(WorkbenchBlockEntity.DATA_CRAFT_SELECTION_0 + i);
+			int queueSelection = Workbench.WorkbenchData.get(AbstractWorkbench.DATA_CRAFT_SELECTION_0 + i);
 			if (queueSelection != -1)
 			{
-				List<PartFabricationRecipe> recipes = Workbench.BlockEntity.GetAllPartRecipes();
+				List<PartFabricationRecipe> recipes = Workbench.Workbench.GetAllPartRecipes(level);
 				PartFabricationRecipe recipe = recipes.get(queueSelection);
 				if (recipe != null)
 				{
@@ -261,11 +268,11 @@ public class WorkbenchScreenTabPartCrafting extends WorkbenchScreenTab<Workbench
 						xOrigin + QUEUE_VIEWER_ORIGIN_X, 67,
 						yOrigin + QUEUE_VIEWER_ORIGIN_Y + 18 * i, 18))
 					{
-						int craftingCount = Workbench.WorkbenchData.get(WorkbenchBlockEntity.DATA_CRAFT_QUEUE_COUNT_0 + i);
+						int craftingCount = Workbench.WorkbenchData.get(AbstractWorkbench.DATA_CRAFT_QUEUE_COUNT_0 + i);
 						if (craftingCount > 0)
 						{
-							int craftingTime = Workbench.WorkbenchData.get(WorkbenchBlockEntity.DATA_CRAFT_TIME);
-							int craftingDuration = Workbench.WorkbenchData.get(WorkbenchBlockEntity.DATA_CRAFT_DURATION);
+							int craftingTime = Workbench.WorkbenchData.get(AbstractWorkbench.DATA_CRAFT_TIME);
+							int craftingDuration = Workbench.WorkbenchData.get(AbstractWorkbench.DATA_CRAFT_DURATION);
 
 							graphics.renderTooltip(font, Component.translatable("crafting.parts.num_in_progress.named", craftingCount, recipe.getResultItem(RegistryAccess.EMPTY).getHoverName()), xMouse, yMouse);
 							return true;
@@ -322,6 +329,10 @@ public class WorkbenchScreenTabPartCrafting extends WorkbenchScreenTab<Workbench
 	{
 		graphics.blit(PARTS_BG, xOrigin, yOrigin, 0, 0, imageWidth, imageHeight, PARTS_W, PARTS_H);
 
+		Level level = Minecraft.getInstance().level;
+		if(level == null)
+			return;
+
 		// Input and Output Slot Backgrounds
 		for(int j = 0; j < PART_CRAFTING_NUM_INPUT_SLOTS_Y; j++)
 		{
@@ -344,12 +355,12 @@ public class WorkbenchScreenTabPartCrafting extends WorkbenchScreenTab<Workbench
 		int craftingSelection = SelectedPartIndex;
 		if(craftingSelection != -1)
 		{
-			List<PartFabricationRecipe> recipes = Workbench.BlockEntity.GetAllPartRecipes();
+			List<PartFabricationRecipe> recipes = Workbench.Workbench.GetAllPartRecipes(level);
 			PartFabricationRecipe recipe = recipes.get(craftingSelection);
 			if(recipe != null)
 			{
-				int[] matching = Workbench.BlockEntity.GetQuantityOfEachIngredientForRecipe(craftingSelection);
-				int[] required = Workbench.BlockEntity.GetRequiredOfEachIngredientForRecipe(craftingSelection);
+				int[] matching = Workbench.Workbench.GetQuantityOfEachIngredientForRecipe(level, craftingSelection);
+				int[] required = Workbench.Workbench.GetRequiredOfEachIngredientForRecipe(level, craftingSelection);
 
 				// Render info for this recipe
 				for (int i = 0; i < recipe.getIngredients().size(); i++)
@@ -402,14 +413,14 @@ public class WorkbenchScreenTabPartCrafting extends WorkbenchScreenTab<Workbench
 		// Render the crafting queue
 		for(int i = 0; i < QUEUE_VIEWER_NUM_ENTRIES_Y; i++)
 		{
-			int queueSelection = Workbench.WorkbenchData.get(WorkbenchBlockEntity.DATA_CRAFT_SELECTION_0 + i);
+			int queueSelection = Workbench.WorkbenchData.get(AbstractWorkbench.DATA_CRAFT_SELECTION_0 + i);
 			if (queueSelection != -1)
 			{
-				List<PartFabricationRecipe> recipes = Workbench.BlockEntity.GetAllPartRecipes();
+				List<PartFabricationRecipe> recipes = Workbench.Workbench.GetAllPartRecipes(level);
 				PartFabricationRecipe recipe = recipes.get(queueSelection);
 				if (recipe != null)
 				{
-					int craftingCount = Workbench.WorkbenchData.get(WorkbenchBlockEntity.DATA_CRAFT_QUEUE_COUNT_0 + i);
+					int craftingCount = Workbench.WorkbenchData.get(AbstractWorkbench.DATA_CRAFT_QUEUE_COUNT_0 + i);
 					if (craftingCount > 0)
 					{
 						// Blit a background into the queue panel
@@ -422,8 +433,8 @@ public class WorkbenchScreenTabPartCrafting extends WorkbenchScreenTab<Workbench
 						// And fill in the crafting progress bar
 						if(i == 0)
 						{
-							int craftingTime = Workbench.WorkbenchData.get(WorkbenchBlockEntity.DATA_CRAFT_TIME);
-							int craftingDuration = Workbench.WorkbenchData.get(WorkbenchBlockEntity.DATA_CRAFT_DURATION);
+							int craftingTime = Workbench.WorkbenchData.get(AbstractWorkbench.DATA_CRAFT_TIME);
+							int craftingDuration = Workbench.WorkbenchData.get(AbstractWorkbench.DATA_CRAFT_DURATION);
 
 							graphics.blit(PARTS_BG,
 								xOrigin + QUEUE_VIEWER_ORIGIN_X + 18,
@@ -498,7 +509,7 @@ public class WorkbenchScreenTabPartCrafting extends WorkbenchScreenTab<Workbench
 				for(int i = 0; i < numSlotsOnThisRow; i++)
 				{
 					Pair<Integer, PartFabricationRecipe> recipe = FilteredPartsList.get(j * PART_RECIPE_VIEWER_COLUMNS + i);
-					int maxCraftable = Workbench.BlockEntity.GetMaxPartsCraftableFromInput(recipe.getFirst());
+					int maxCraftable = Workbench.Workbench.GetMaxPartsCraftableFromInput(level, recipe.getFirst());
 					if(maxCraftable <= 0)
 						graphics.blit(PARTS_BG, xOrigin + PART_RECIPE_VIEWER_ORIGIN_X + 18 * i, yOrigin + PART_RECIPE_VIEWER_ORIGIN_Y + 18 * j, 359, 43, 18, 18, PARTS_W, PARTS_H);
 				}
@@ -518,10 +529,14 @@ public class WorkbenchScreenTabPartCrafting extends WorkbenchScreenTab<Workbench
 		graphics.drawString(font, Component.translatable("workbench.queue"), PART_CRAFTING_OUTPUT_SLOTS_X, 5, 0x404040, false);
 		graphics.drawString(font, Component.translatable("workbench.output"), PART_CRAFTING_OUTPUT_SLOTS_X, PART_CRAFTING_OUTPUT_SLOTS_Y - 11, 0x404040, false);
 
+		Level level = Minecraft.getInstance().level;
+		if(level == null)
+			return;
+
 		// Render info about the selected part
-		if(SelectedPartIndex >= 0 && SelectedPartIndex < Workbench.BlockEntity.GetAllPartRecipes().size())
+		if(SelectedPartIndex >= 0 && SelectedPartIndex < Workbench.Workbench.GetAllPartRecipes(level).size())
 		{
-			ItemStack selectedPart = Workbench.BlockEntity.GetAllPartRecipes().get(SelectedPartIndex).getResultItem(RegistryAccess.EMPTY);
+			ItemStack selectedPart = Workbench.Workbench.GetAllPartRecipes(level).get(SelectedPartIndex).getResultItem(RegistryAccess.EMPTY);
 			List<FormattedCharSequence> wordWrap = font.split(selectedPart.getHoverName(), 151);
 			graphics.drawString(font, wordWrap.get(0), 104, 70, 0xffffff, false);
 		}
@@ -530,7 +545,7 @@ public class WorkbenchScreenTabPartCrafting extends WorkbenchScreenTab<Workbench
 		//int craftingSelection = Workbench.WorkbenchData.get(WorkbenchBlockEntity.DATA_CRAFT_SELECTION);
 		if(craftingSelection != -1)
 		{
-			List<PartFabricationRecipe> recipes = Workbench.BlockEntity.GetAllPartRecipes();
+			List<PartFabricationRecipe> recipes = Workbench.Workbench.GetAllPartRecipes(level);
 			PartFabricationRecipe recipe = recipes.get(craftingSelection);
 			if (recipe != null)
 			{
@@ -556,15 +571,15 @@ public class WorkbenchScreenTabPartCrafting extends WorkbenchScreenTab<Workbench
 		// Render the crafing queue
 		for(int i = 0; i < QUEUE_VIEWER_NUM_ENTRIES_Y; i++)
 		{
-			int queueSelection = Workbench.WorkbenchData.get(WorkbenchBlockEntity.DATA_CRAFT_SELECTION_0 + i);
+			int queueSelection = Workbench.WorkbenchData.get(AbstractWorkbench.DATA_CRAFT_SELECTION_0 + i);
 			if (queueSelection != -1)
 			{
-				List<PartFabricationRecipe> recipes = Workbench.BlockEntity.GetAllPartRecipes();
+				List<PartFabricationRecipe> recipes = Workbench.Workbench.GetAllPartRecipes(level);
 				PartFabricationRecipe recipe = recipes.get(queueSelection);
 				if (recipe != null)
 				{
 					// Render icons into queue
-					int craftingCount = Workbench.WorkbenchData.get(WorkbenchBlockEntity.DATA_CRAFT_QUEUE_COUNT_0 + i);
+					int craftingCount = Workbench.WorkbenchData.get(AbstractWorkbench.DATA_CRAFT_QUEUE_COUNT_0 + i);
 					if (craftingCount > 0)
 					{
 						ItemStack queueStack = recipe.getResultItem(RegistryAccess.EMPTY).copyWithCount(recipe.getResultItem(RegistryAccess.EMPTY).getCount() * craftingCount);
@@ -605,8 +620,12 @@ public class WorkbenchScreenTabPartCrafting extends WorkbenchScreenTab<Workbench
 	// ---------------------------------------------------------------------------------
 	private void UpdatePartCraftingFilters()
 	{
+		Level level = Minecraft.getInstance().level;
+		if(level == null)
+			return;
+
 		FilteredPartsList.clear();
-		List<PartFabricationRecipe> allRecipes = Workbench.BlockEntity.GetAllPartRecipes();
+		List<PartFabricationRecipe> allRecipes = Workbench.Workbench.GetAllPartRecipes(level);
 
 		for(int i = 0; i < allRecipes.size(); i++)
 		{
@@ -629,7 +648,7 @@ public class WorkbenchScreenTabPartCrafting extends WorkbenchScreenTab<Workbench
 
 			if(OnlyCraftableFilter)
 			{
-				int numCraftable = Workbench.BlockEntity.GetMaxPartsCraftableFromInput(i);
+				int numCraftable = Workbench.Workbench.GetMaxPartsCraftableFromInput(level, i);
 				if(numCraftable <= 0)
 					continue;
 			}
@@ -645,6 +664,10 @@ public class WorkbenchScreenTabPartCrafting extends WorkbenchScreenTab<Workbench
 
 	private void UpdateActivePartSelectionButtons()
 	{
+		Level level = Minecraft.getInstance().level;
+		if(level == null)
+			return;
+
 		if(PartSelectionButtons != null)
 		{
 			for (int j = 0; j < PART_RECIPE_VIEWER_ROWS; j++)
@@ -662,7 +685,7 @@ public class WorkbenchScreenTabPartCrafting extends WorkbenchScreenTab<Workbench
 			for(int i = 0; i < 3; i++)
 			{
 				int numButtonRepresents = i == 1 ? 5 : 1;
-				int numCanCraft = Workbench.BlockEntity.GetMaxPartsCraftableFromInput(SelectedPartIndex);
+				int numCanCraft = Workbench.Workbench.GetMaxPartsCraftableFromInput(level, SelectedPartIndex);
 				PartCraftingButtons[i].active = IsActive && SelectedPartIndex != -1 && numCanCraft >= numButtonRepresents;
 			}
 		}
@@ -670,7 +693,7 @@ public class WorkbenchScreenTabPartCrafting extends WorkbenchScreenTab<Workbench
 		{
 			for(int i = 0; i < QUEUE_VIEWER_NUM_ENTRIES_Y; i++)
 			{
-				int queueSize = Workbench.WorkbenchData.get(WorkbenchBlockEntity.DATA_CRAFT_QUEUE_COUNT_0 + i);
+				int queueSize = Workbench.WorkbenchData.get(AbstractWorkbench.DATA_CRAFT_QUEUE_COUNT_0 + i);
 				PartQueueCancelButtons[i].active = IsActive && queueSize > 0;
 			}
 		}
@@ -678,13 +701,17 @@ public class WorkbenchScreenTabPartCrafting extends WorkbenchScreenTab<Workbench
 
 	private void SelectPartRecipe(int relativeIndex)
 	{
+		Level level = Minecraft.getInstance().level;
+		if(level == null)
+			return;
+
 		int filteredIndex = Maths.Floor(partSelectorScrollOffset) * PART_RECIPE_VIEWER_COLUMNS + relativeIndex;
 		if(filteredIndex >= FilteredPartsList.size())
 			filteredIndex = -1;
 
 		SelectedPartIndex = FilteredPartsList.get(filteredIndex).getFirst();
 		NetworkedButtonPress(WorkbenchMenuPartCrafting.BUTTON_SELECT_PART_RECIPE_0 + SelectedPartIndex);
-		CachedMaxPartsCraftable = Workbench.BlockEntity.GetMaxPartsCraftableFromInput(SelectedPartIndex);
+		CachedMaxPartsCraftable = Workbench.Workbench.GetMaxPartsCraftableFromInput(level, SelectedPartIndex);
 		UpdateActivePartSelectionButtons();
 	}
 

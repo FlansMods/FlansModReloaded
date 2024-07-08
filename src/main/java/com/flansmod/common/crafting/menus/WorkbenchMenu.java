@@ -1,8 +1,11 @@
 package com.flansmod.common.crafting.menus;
 
+import com.flansmod.client.FlansModClient;
 import com.flansmod.common.FlansMod;
 import com.flansmod.common.crafting.*;
 import com.flansmod.common.crafting.slots.RestrictedSlot;
+import com.flansmod.common.crafting.temporary.TemporaryWorkbench;
+import com.flansmod.common.item.TemporaryWorkbenchItem;
 import com.flansmod.common.types.crafting.WorkbenchDefinition;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
@@ -13,9 +16,13 @@ import net.minecraft.world.inventory.ContainerData;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 public abstract class WorkbenchMenu extends AbstractContainerMenu
 {
@@ -24,7 +31,9 @@ public abstract class WorkbenchMenu extends AbstractContainerMenu
 	@Nonnull
 	public final ContainerData WorkbenchData;
 	@Nonnull
-	public final WorkbenchBlockEntity BlockEntity;
+	public final AbstractWorkbench Workbench;
+	@Nonnull
+	public final Level World;
 
 	private Slot[] InventorySlots;
 
@@ -34,14 +43,16 @@ public abstract class WorkbenchMenu extends AbstractContainerMenu
 	public WorkbenchMenu(@Nonnull MenuType<? extends WorkbenchMenu> menuType,
 						 int containerID,
 						 @Nonnull Inventory inventory,
-						 @Nonnull WorkbenchBlockEntity workbench)
+						 @Nonnull AbstractWorkbench workbench)
 	{
 		super(menuType, containerID);
+		World = inventory.player.level();
 		Def = workbench.Def;
-		BlockEntity = workbench;
-		WorkbenchData = workbench.DataAccess;
+		Workbench = workbench;
+		WorkbenchData = workbench.GetDataAccess();
 	}
 
+	@OnlyIn(Dist.CLIENT)
 	public WorkbenchMenu(@Nonnull MenuType<? extends WorkbenchMenu> menuType,
 						 int containerID,
 						 @Nonnull Inventory inventory,
@@ -49,19 +60,26 @@ public abstract class WorkbenchMenu extends AbstractContainerMenu
 	{
 		super(menuType, containerID);
 
+		World = inventory.player.level();
 		BlockPos blockPos = data.readBlockPos();
-		BlockEntity blockEntity = inventory.player.level().getBlockEntity(blockPos);
-		if(blockEntity instanceof WorkbenchBlockEntity workbenchBlockEntity)
+		if(blockPos.equals(BlockPos.ZERO) && inventory.player.getMainHandItem().getItem() instanceof TemporaryWorkbenchItem workbenchItem)
+		{
+			Def = FlansMod.WORKBENCHES.Get(workbenchItem.DefLoc);
+			TemporaryWorkbench tempWorkbench = FlansModClient.INVENTORY_MANAGER.GetTemporaryInventory(workbenchItem.DefLoc);
+			Workbench = tempWorkbench.Workbench;
+			WorkbenchData = tempWorkbench.Workbench.GetDataAccess();
+		}
+		else if(inventory.player.level().getBlockEntity(blockPos) instanceof WorkbenchBlockEntity workbenchBlockEntity)
 		{
 			Def = workbenchBlockEntity.Def;
-			BlockEntity = workbenchBlockEntity;
+			Workbench = workbenchBlockEntity.Workbench;
 			WorkbenchData = workbenchBlockEntity.DataAccess;
 		}
 		else
 		{
 			FlansMod.LOGGER.error("Could not read GunModificationMenu data");
 			Def = WorkbenchDefinition.INVALID;
-			BlockEntity = null;
+			Workbench = null;
 			WorkbenchData = null;
 		}
 	}
@@ -94,6 +112,27 @@ public abstract class WorkbenchMenu extends AbstractContainerMenu
 			return ItemStack.EMPTY;
 		}
 		return slot.getItem();
+	}
+
+	@Override
+	public void removed(@Nonnull Player player)
+	{
+		super.removed(player);
+
+		if(player.level().isClientSide)
+		{
+			ClientRemoved();
+		}
+		else
+		{
+			FlansMod.INVENTORY_MANAGER.CloseTemporaryInventory(player);
+		}
+	}
+
+	@OnlyIn(Dist.CLIENT)
+	public void ClientRemoved()
+	{
+		FlansModClient.INVENTORY_MANAGER.CloseTemporaryInventory();
 	}
 
 	@Override

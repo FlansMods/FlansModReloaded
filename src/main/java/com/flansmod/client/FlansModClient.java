@@ -60,7 +60,7 @@ import java.lang.reflect.Method;
 @Mod.EventBusSubscriber(value = Dist.CLIENT, bus = Mod.EventBusSubscriber.Bus.MOD, modid = FlansMod.MODID)
 public class FlansModClient
 {
-
+	public static final ClientInventoryManager INVENTORY_MANAGER = new ClientInventoryManager();
 	public static final DebugRenderer DEBUG_RENDERER = new DebugRenderer();
 	public static final VehicleDebugRenderer VEHICLE_DEBUG_RENDERER = new VehicleDebugRenderer();
 

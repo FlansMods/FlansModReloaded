@@ -1,0 +1,23 @@
+{
+    "tags": [
+        "flansclockworkcalamity:clockwork_placerator"
+    ],
+    "modifiers": [],
+    "ammoLoadMode": "FullMag",
+    "ammoConsumeMode": "FirstNonEmpty",
+    "upgradeCost": 0,
+    "numRounds": 64,
+    "allRoundsMustBeIdentical": true,
+    "matchingBullets": {
+        "itemIDFilters": [],
+        "itemTagFilters": [
+            {
+                "filterType": "Allow",
+                "matchResourceLocations": [
+                    "flansmod:placeable"
+                ]
+            }
+        ],
+        "materialFilters": []
+    }
+}

@@ -24,7 +24,7 @@ public class GunCraftingInputSlot extends RestrictedSlot
 		if(stack.isEmpty())
 			return true;
 
-		GunFabricationRecipe gunRecipe = Menu.BlockEntity.GetSelectedGunRecipe();
+		GunFabricationRecipe gunRecipe = Menu.GetSelectedGunRecipe();
 		if(gunRecipe == null)
 			return false;
 
@@ -38,6 +38,6 @@ public class GunCraftingInputSlot extends RestrictedSlot
 	public void set(@Nonnull ItemStack stack)
 	{
 		super.set(stack);
-		Menu.BlockEntity.UpdateGunCraftingOutputSlot();
+		Menu.UpdateGunCraftingOutputSlot();
 	}
 }

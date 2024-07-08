@@ -1,6 +1,125 @@
 {
     "loader": "flansmod:turborig",
     "display": {
+        "gui": {
+            "translation": [
+                -0.001,
+                -0.02,
+                -0.001
+            ],
+            "rotation": [
+                0.0,
+                45.0,
+                90.0
+            ],
+            "scale": [
+                1.185,
+                1.185,
+                1.185
+            ]
+        },
+        "ground": {
+            "translation": [
+                0.0,
+                0.15,
+                0.0
+            ],
+            "rotation": [
+                0.0,
+                270.0,
+                0.0
+            ],
+            "scale": [
+                0.625,
+                0.625,
+                0.625
+            ]
+        },
+        "head": {
+            "translation": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "rotation": [
+                270.0,
+                270.0,
+                0.0
+            ],
+            "scale": [
+                1.0,
+                1.0,
+                1.0
+            ]
+        },
+        "thirdperson_lefthand": {
+            "translation": [
+                -1.0,
+                -2.0,
+                0.0
+            ],
+            "rotation": [
+                0.0,
+                270.0,
+                0.0
+            ],
+            "scale": [
+                1.0,
+                1.0,
+                1.0
+            ]
+        },
+        "thirdperson_righthand": {
+            "translation": [
+                -1.0,
+                -2.0,
+                0.0
+            ],
+            "rotation": [
+                0.0,
+                270.0,
+                0.0
+            ],
+            "scale": [
+                1.0,
+                1.0,
+                1.0
+            ]
+        },
+        "firstperson_lefthand": {
+            "translation": [
+                -8.0,
+                -7.0,
+                -13.0
+            ],
+            "rotation": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "scale": [
+                1.0,
+                1.0,
+                1.0
+            ]
+        },
+        "firstperson_righthand": {
+            "translation": [
+                8.0,
+                -7.0,
+                -13.0
+            ],
+            "rotation": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "scale": [
+                1.0,
+                1.0,
+                1.0
+            ]
+        },
         "fixed": {
             "translation": [
                 -0.001,
