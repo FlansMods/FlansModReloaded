@@ -48,7 +48,10 @@ public class ServerInventoryManager
 		if(OpenWorkbenches.containsKey(player))
 		{
 			TemporaryWorkbench existingWorkbench = OpenWorkbenches.get(player);
-			existingWorkbench.Close(player);
+			if(existingWorkbench != null)
+			{
+				existingWorkbench.Close(player);
+			}
 			OpenWorkbenches.remove(player);
 		}
 	}

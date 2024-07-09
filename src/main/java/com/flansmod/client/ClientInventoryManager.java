@@ -37,7 +37,10 @@ public class ClientInventoryManager
 
 	public void CloseTemporaryInventory()
 	{
-		OpenWorkbench.Close(Minecraft.getInstance().player);
-		OpenWorkbench = null;
+		if(OpenWorkbench != null)
+		{
+			OpenWorkbench.Close(Minecraft.getInstance().player);
+			OpenWorkbench = null;
+		}
 	}
 }

@@ -518,7 +518,7 @@ public class AbstractWorkbench implements Container, Clearable, MenuProvider
 			if(CraftTime <= 0)
 			{
 				// If the thing in slot 0 is done, advance the stack
-				if(CraftQueueCount[0] <= 0)
+				if(CraftQueueCount[0] == 0)
 				{
 					for(int i = 0; i < NUM_CRAFTING_QUEUE_SLOTS - 1; i++)
 					{
@@ -530,7 +530,7 @@ public class AbstractWorkbench implements Container, Clearable, MenuProvider
 				}
 
 				// Then, if there's something to craft in slot 0, start crafting one
-				if(CraftQueueCount[0] > 0)
+				if(CraftQueueCount[0] != 0)
 				{
 					int inputCount = GetMaxPartsCraftableFromInput(level, CraftingPart[0]);
 					boolean canOutput = GetOutputSlotToCraftPart(level) != Inventory.NOT_FOUND_INDEX;
@@ -858,7 +858,7 @@ public class AbstractWorkbench implements Container, Clearable, MenuProvider
 				CraftingPart[i] = PlayerSelectedCraftingPart;
 				if (count == -1)
 				{
-					CraftQueueCount[i] = GetMaxPartsCraftableFromInput(level, PlayerSelectedCraftingPart);
+					CraftQueueCount[i] = -1;
 					return;
 				} else
 				{
@@ -996,7 +996,8 @@ public class AbstractWorkbench implements Container, Clearable, MenuProvider
 				ConsumeIngredient(level, pos, ingredient);
 			}
 
-			CraftQueueCount[0]--;
+			if(CraftQueueCount[0] > 0)
+				CraftQueueCount[0]--;
 			ItemStack result = recipe.Result;
 			ItemStack existing = PartCraftingOutputContainer.getItem(outputSlot);
 			if(existing.isEmpty())

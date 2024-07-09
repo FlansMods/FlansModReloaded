@@ -269,7 +269,7 @@ public class WorkbenchScreenTabPartCrafting extends WorkbenchScreenTab<Workbench
 						yOrigin + QUEUE_VIEWER_ORIGIN_Y + 18 * i, 18))
 					{
 						int craftingCount = Workbench.WorkbenchData.get(AbstractWorkbench.DATA_CRAFT_QUEUE_COUNT_0 + i);
-						if (craftingCount > 0)
+						if (craftingCount != 0)
 						{
 							int craftingTime = Workbench.WorkbenchData.get(AbstractWorkbench.DATA_CRAFT_TIME);
 							int craftingDuration = Workbench.WorkbenchData.get(AbstractWorkbench.DATA_CRAFT_DURATION);
@@ -421,7 +421,7 @@ public class WorkbenchScreenTabPartCrafting extends WorkbenchScreenTab<Workbench
 				if (recipe != null)
 				{
 					int craftingCount = Workbench.WorkbenchData.get(AbstractWorkbench.DATA_CRAFT_QUEUE_COUNT_0 + i);
-					if (craftingCount > 0)
+					if (craftingCount != 0)
 					{
 						// Blit a background into the queue panel
 						graphics.blit(PARTS_BG,
@@ -441,6 +441,16 @@ public class WorkbenchScreenTabPartCrafting extends WorkbenchScreenTab<Workbench
 								yOrigin + QUEUE_VIEWER_ORIGIN_Y + 13,
 								375, 21,
 								Maths.Ceil(48f * (1.0f - ((float) craftingTime / (float) craftingDuration))), 4,
+								PARTS_W, PARTS_H);
+						}
+
+						if(craftingCount == -1)
+						{
+							graphics.blit(PARTS_BG,
+								xOrigin + QUEUE_VIEWER_ORIGIN_X + 29,
+								yOrigin + QUEUE_VIEWER_ORIGIN_Y + 3 + 18 * i,
+								450, 3,
+								13, 9,
 								PARTS_W, PARTS_H);
 						}
 
@@ -465,15 +475,15 @@ public class WorkbenchScreenTabPartCrafting extends WorkbenchScreenTab<Workbench
 		else if(InBox(xMouse, yMouse, xOrigin + BLUEPRINT_ORIGIN_X + 105, 17, yOrigin + BLUEPRINT_ORIGIN_Y + 25, 17))
 			graphics.blit(PARTS_BG, xOrigin + BLUEPRINT_ORIGIN_X + 105, yOrigin + BLUEPRINT_ORIGIN_Y + 25, 357, 236, 17, 17, PARTS_W, PARTS_H);
 
-		if(maxProduce < 5)
+		if(maxProduce < 8)
 			graphics.blit(PARTS_BG, xOrigin + BLUEPRINT_ORIGIN_X + 123, yOrigin + BLUEPRINT_ORIGIN_Y + 25, 375, 218, 17, 17, PARTS_W, PARTS_H);
 		else if(InBox(xMouse, yMouse, xOrigin + BLUEPRINT_ORIGIN_X + 123, 17, yOrigin + BLUEPRINT_ORIGIN_Y + 25, 17))
 			graphics.blit(PARTS_BG, xOrigin + BLUEPRINT_ORIGIN_X + 123, yOrigin + BLUEPRINT_ORIGIN_Y + 25, 375, 236, 17, 17, PARTS_W, PARTS_H);
 
-		if(maxProduce < 1)
-			graphics.blit(PARTS_BG, xOrigin + BLUEPRINT_ORIGIN_X + 141, yOrigin + BLUEPRINT_ORIGIN_Y + 25, 393, 218, 17, 17, PARTS_W, PARTS_H);
-		else if(InBox(xMouse, yMouse, xOrigin + BLUEPRINT_ORIGIN_X + 141, 17, yOrigin + BLUEPRINT_ORIGIN_Y + 25, 17))
-			graphics.blit(PARTS_BG, xOrigin + BLUEPRINT_ORIGIN_X + 141, yOrigin + BLUEPRINT_ORIGIN_Y + 25, 393, 236, 17, 17, PARTS_W, PARTS_H);
+		// Infinite Button
+		//graphics.blit(PARTS_BG, xOrigin + BLUEPRINT_ORIGIN_X + 141, yOrigin + BLUEPRINT_ORIGIN_Y + 25, 393, 218, 17, 17, PARTS_W, PARTS_H);
+		if(InBox(xMouse, yMouse, xOrigin + BLUEPRINT_ORIGIN_X + 141, 17, yOrigin + BLUEPRINT_ORIGIN_Y + 25, 17))
+			graphics.blit(PARTS_BG, xOrigin + BLUEPRINT_ORIGIN_X + 141, yOrigin + BLUEPRINT_ORIGIN_Y + 25, 411, 236, 17, 17, PARTS_W, PARTS_H);
 
 
 		// Render filter buttons
@@ -580,9 +590,10 @@ public class WorkbenchScreenTabPartCrafting extends WorkbenchScreenTab<Workbench
 				{
 					// Render icons into queue
 					int craftingCount = Workbench.WorkbenchData.get(AbstractWorkbench.DATA_CRAFT_QUEUE_COUNT_0 + i);
-					if (craftingCount > 0)
+					if (craftingCount != 0)
 					{
-						ItemStack queueStack = recipe.getResultItem(RegistryAccess.EMPTY).copyWithCount(recipe.getResultItem(RegistryAccess.EMPTY).getCount() * craftingCount);
+						int stackCount = craftingCount > 0 ? craftingCount : 1;
+						ItemStack queueStack = recipe.getResultItem(RegistryAccess.EMPTY).copyWithCount(recipe.getResultItem(RegistryAccess.EMPTY).getCount() * stackCount);
 						RenderGUIItem(graphics,
 							QUEUE_VIEWER_ORIGIN_X + 1,
 							QUEUE_VIEWER_ORIGIN_Y + 1 + 18 * i,
@@ -684,9 +695,16 @@ public class WorkbenchScreenTabPartCrafting extends WorkbenchScreenTab<Workbench
 		{
 			for(int i = 0; i < 3; i++)
 			{
-				int numButtonRepresents = i == 1 ? 5 : 1;
-				int numCanCraft = Workbench.Workbench.GetMaxPartsCraftableFromInput(level, SelectedPartIndex);
-				PartCraftingButtons[i].active = IsActive && SelectedPartIndex != -1 && numCanCraft >= numButtonRepresents;
+				if(i == 2)
+				{
+					PartCraftingButtons[i].active = true;
+				}
+				else
+				{
+					int numButtonRepresents = i == 1 ? 5 : 1;
+					int numCanCraft = Workbench.Workbench.GetMaxPartsCraftableFromInput(level, SelectedPartIndex);
+					PartCraftingButtons[i].active = IsActive && SelectedPartIndex != -1 && numCanCraft >= numButtonRepresents;
+				}
 			}
 		}
 		if(PartQueueCancelButtons != null)
@@ -694,7 +712,7 @@ public class WorkbenchScreenTabPartCrafting extends WorkbenchScreenTab<Workbench
 			for(int i = 0; i < QUEUE_VIEWER_NUM_ENTRIES_Y; i++)
 			{
 				int queueSize = Workbench.WorkbenchData.get(AbstractWorkbench.DATA_CRAFT_QUEUE_COUNT_0 + i);
-				PartQueueCancelButtons[i].active = IsActive && queueSize > 0;
+				PartQueueCancelButtons[i].active = IsActive && queueSize != 0;
 			}
 		}
 	}

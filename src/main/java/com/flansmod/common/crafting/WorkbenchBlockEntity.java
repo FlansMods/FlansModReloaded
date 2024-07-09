@@ -343,9 +343,10 @@ public class WorkbenchBlockEntity extends BlockEntity implements WorldlyContaine
 		{
 			switch(frontRelativeDirection)
 			{
-				case UP: 	{	return new ItemCapabilityMultiContainer(new Container[] { Workbench.MaterialContainer }, true, true); }
-				case DOWN: 	{ 	return new ItemCapabilityMultiContainer(new Container[] { Workbench.FuelContainer }, true, true); }
+				case UP: 	{	return new ItemCapabilityMultiContainer(new Container[] { Workbench.MaterialContainer, Workbench.PartCraftingInputContainer, Workbench.GunCraftingInputContainer }, true, true); }
+				case DOWN: 	{ 	return new ItemCapabilityMultiContainer(new Container[] { Workbench.MaterialContainer, Workbench.PartCraftingOutputContainer, Workbench.GunCraftingOutputContainer }, true, true); }
 				case NORTH: { 	return new ItemCapabilityMultiContainer(new Container[] { Workbench.BatteryContainer }, true, true); }
+				case SOUTH: { 	return new ItemCapabilityMultiContainer(new Container[] { Workbench.FuelContainer }, true, true); }
 				case EAST:  {	return new ItemCapabilityMultiContainer(new Container[] { Workbench.PartCraftingOutputContainer, Workbench.GunCraftingOutputContainer }, false, true); }
 				case WEST:  { 	return new ItemCapabilityMultiContainer(new Container[] { Workbench.PartCraftingInputContainer, Workbench.GunCraftingInputContainer }, true, false); }
 			}
