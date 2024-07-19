@@ -22,32 +22,18 @@ public class MaterialFilterDefinition
 	@JsonField
 	public int maxTier = 5;
 
-	public boolean Allows(@Nonnull ResourceLocation materialLoc)
+	public boolean Allows(@Nonnull MaterialDefinition material)
 	{
 		if(filterType == EFilterType.Allow)
-			for(MaterialDefinition match : GetMatches())
-				if(match.Location.equals(materialLoc))
-					return true;
+			return GetMatches().contains(material);
 		return false;
 	}
-
-	public boolean Disallows(@Nonnull ResourceLocation materialLoc)
+	public boolean Disallows(@Nonnull MaterialDefinition material)
 	{
 		if(filterType == EFilterType.Disallow)
-			for(MaterialDefinition match : GetMatches())
-				if(match.Location.equals(materialLoc))
-					return true;
+			return GetMatches().contains(material);
 		return false;
 	}
-
-	public boolean Matches(@Nonnull ResourceLocation materialLoc)
-	{
-		for(MaterialDefinition match : GetMatches())
-			if(match.Location.equals(materialLoc))
-				return true;
-		return false;
-	}
-
 
 	public boolean is(@Nonnull EMaterialType matType)
 	{

@@ -193,6 +193,11 @@ public class PartFabricationRecipe implements Recipe<WorkbenchBlockEntity>
 	@Override
 	public ItemStack assemble(@Nonnull WorkbenchBlockEntity distiller, @Nonnull RegistryAccess registryAccess) { return Result.copy(); }
 	@Override
+	public String toString()
+	{
+		return "PartFabRecipe: " + Loc;
+	}
+	@Override
 	@Nonnull
 	public RecipeSerializer<?> getSerializer() { return FlansMod.PART_FABRICATION_RECIPE_SERIALIZER.get(); }
 	public static class Serializer implements RecipeSerializer<PartFabricationRecipe>
