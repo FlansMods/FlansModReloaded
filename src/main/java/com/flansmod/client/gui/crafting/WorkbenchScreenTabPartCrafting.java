@@ -2,6 +2,7 @@ package com.flansmod.client.gui.crafting;
 
 import com.flansmod.common.FlansMod;
 import com.flansmod.common.crafting.AbstractWorkbench;
+import com.flansmod.common.crafting.ingredients.StackedIngredient;
 import com.flansmod.common.crafting.recipes.PartFabricationRecipe;
 import com.flansmod.common.crafting.WorkbenchBlockEntity;
 import com.flansmod.common.crafting.menus.WorkbenchMenuPartCrafting;
@@ -568,11 +569,45 @@ public class WorkbenchScreenTabPartCrafting extends WorkbenchScreenTab<Workbench
 					{
 						int pick = Maths.Modulo(Maths.Floor(ShowPotentialMatchTicker), possibleInputs.length);
 						ItemStack possibleInput = ingredient.getItems()[pick];
-						RenderGUIItem(graphics,
-							BLUEPRINT_ORIGIN_X + 7 + 25 * i,
-							BLUEPRINT_ORIGIN_Y + 24,
-							possibleInput,
-							false);
+
+						if(!possibleInput.isEmpty())
+						{
+							int slotX = BLUEPRINT_ORIGIN_X + 7 + 25 * i;
+							int slotY = BLUEPRINT_ORIGIN_Y + 24;
+							graphics.renderItem(possibleInput, slotX, slotY);
+
+							if(ingredient instanceof StackedIngredient stacked)
+							{
+								int countPerItem = stacked.Count(possibleInput);
+								int countTarget = stacked.Count;
+
+								if(countPerItem != 0)
+								{
+									int multi = countTarget / countPerItem;
+									int remainder = countTarget % countPerItem;
+									if (multi <= 0)
+									{
+										graphics.renderItemDecorations(font, possibleInput, slotX, slotY, "<1");
+									}
+									else if(remainder == 0)
+									{
+										graphics.renderItemDecorations(font, possibleInput, slotX, slotY, ""+multi);
+									}
+									else
+									{
+										graphics.renderItemDecorations(font, possibleInput, slotX, slotY, "<"+(multi+1));
+									}
+								}
+
+							}
+						}
+
+
+						//RenderGUIItem(graphics,
+						//	BLUEPRINT_ORIGIN_X + 7 + 25 * i,
+						//	BLUEPRINT_ORIGIN_Y + 24,
+						//	possibleInput,
+						//	false);
 					}
 				}
 			}

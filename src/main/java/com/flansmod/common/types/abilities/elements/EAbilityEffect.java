@@ -35,4 +35,6 @@ public enum EAbilityEffect
 	Explode,				// Ported from Bullet
 	ApplyDecal,				// Ported from Bullet
 
+	ApplyEnchantment,
+
 }

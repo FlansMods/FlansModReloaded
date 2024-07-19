@@ -99,4 +99,7 @@ public final class Constants
 	public static final String FLASH_MODEL = "flash_model";
 	public static final String FLASH_TEXTURE = "flash_texture";
 	public static final String FLASH_ANIMATION_EVENT = "flash_anim_event";
+
+	public static final String STAT_ENCHANTMENT_ID = "enchantment_id";
+	public static final String STAT_ENCHANTMENT_LEVEL = "enchantment_level";
 }

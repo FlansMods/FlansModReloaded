@@ -4,6 +4,7 @@ import com.flansmod.client.FlansModClient;
 import com.flansmod.client.render.guns.GunItemClientExtension;
 import com.flansmod.client.render.guns.GunItemRenderer;
 import com.flansmod.common.FlansMod;
+import com.flansmod.common.abilities.AbilityEffectProvideEnchantment;
 import com.flansmod.common.actions.*;
 import com.flansmod.common.actions.contexts.*;
 import com.flansmod.common.types.Constants;
@@ -35,6 +36,8 @@ import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.*;
 import net.minecraft.world.item.context.UseOnContext;
+import net.minecraft.world.item.enchantment.Enchantment;
+import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
@@ -414,6 +417,29 @@ public class GunItem extends FlanItem
             }
         }
 
+    }
+    @Override
+    public int getEnchantmentLevel(@Nonnull ItemStack stack, @Nonnull Enchantment enchantment)
+    {
+        int highestLevel = 0;
+        GunContext gun = GunContext.of(stack);
+        if(gun.IsValid())
+        {
+            for(var kvp : gun.GetActiveModifierAbilities().entrySet())
+            {
+                if(kvp.getKey().Def.GetEffectProcessor() instanceof AbilityEffectProvideEnchantment enchantmentProvider)
+                {
+                    if(enchantmentProvider.Enchant.equals(enchantment))
+                    {
+                        int level = enchantmentProvider.GetLevel(gun.GetActionGroupContext(Actions.DefaultPrimaryActionKey), kvp.getValue());
+                        if(level > highestLevel)
+                            highestLevel = level;
+                    }
+                }
+            }
+        }
+
+        return Maths.Max(highestLevel, super.getEnchantmentLevel(stack, enchantment));
     }
     @Override
     public Multimap<Attribute, AttributeModifier> getAttributeModifiers(EquipmentSlot slot, ItemStack stack)
