@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:block",
+  "pools": [
+    {
+      "bonus_rolls": 0.0,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "flansbasicparts:fiberglass_block"
+        }
+      ],
+      "rolls": 1.0
+    }
+  ],
+  "random_sequence": "flansbasicparts:blocks/fiberglass_block"
+}
