@@ -424,11 +424,25 @@ public class DistillationTowerBlockEntity extends BaseContainerBlockEntity imple
 				RecipesInProgress[i] = matches[i] == null ? ItemStack.EMPTY : matches[i].Result;
 				RecipesValid[i] = matches[i] != null;
 			}
-
-			// Consume the input
-			Slots[INPUT_SLOT].setCount(Slots[INPUT_SLOT].getCount() - 1);
 		}
 	}
+
+	private void ConsumeInput()
+	{
+		if(IsTop)
+		{
+			Slots[INPUT_SLOT].setCount(Slots[INPUT_SLOT].getCount() - 1);
+		}
+		else
+		{
+			DistillationTowerBlockEntity top = GetTopDistillationTileEntity();
+			if(top != null)
+			{
+				top.ConsumeInput();
+			}
+		}
+	}
+
 
 
 	public static void serverTick(Level level, BlockPos pos, BlockState state, DistillationTowerBlockEntity tower)
@@ -488,10 +502,12 @@ public class DistillationTowerBlockEntity extends BaseContainerBlockEntity imple
 
 							tower.RecipesInProgress[i] = ItemStack.EMPTY;
 						}
+						// Consume the input
 
 						// We hit max progress, complete the recipe
 						if(outputSuccessful)
 						{
+							tower.ConsumeInput();
 							tower.DistillingProgress = 0;
 							tower.DistillingTotalTime = 0;
 							// Retrigger a recipe check
