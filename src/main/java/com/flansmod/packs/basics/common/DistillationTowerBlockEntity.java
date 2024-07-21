@@ -389,6 +389,7 @@ public class DistillationTowerBlockEntity extends BaseContainerBlockEntity imple
 		// Get up to three matching recipes and see if we can run them all
 		DistillationRecipe[] matches = new DistillationRecipe[MAX_DISTILLATION_STACK_HEIGHT];
 		int numMatches = 0;
+		boolean abort = false;
 		int maxTimeRequired = 0;
 		for(int y = 1; y <= MAX_DISTILLATION_STACK_HEIGHT; y++)
 		{
@@ -403,9 +404,12 @@ public class DistillationTowerBlockEntity extends BaseContainerBlockEntity imple
 				if(matches[y-1] != null)
 				{
 					// Also check that we can output this item
-					if(stackAtLayer.getItem(OUTPUT_SLOT).isEmpty()
-					|| ItemStack.isSameItem(stackAtLayer.getItem(OUTPUT_SLOT), matches[y-1].Result))
+					ItemStack outputStack = stackAtLayer.getItem(OUTPUT_SLOT);
+					if(outputStack.isEmpty()
+					|| (ItemStack.isSameItem(outputStack, matches[y-1].Result)))
 					{
+						if(outputStack.getCount() + matches[y-1].Result.getCount() > stackAtLayer.getMaxStackSize())
+							abort = true;
 						numMatches++;
 						if (matches[y - 1].DistillationTime > maxTimeRequired)
 							maxTimeRequired = matches[y - 1].DistillationTime;
@@ -415,10 +419,10 @@ public class DistillationTowerBlockEntity extends BaseContainerBlockEntity imple
 		}
 
 		// We found a match? Start the process
-		if(numMatches > 0)
+		if(numMatches > 0 && !abort)
 		{
 			DistillingProgress = 0;
-			DistillingTotalTime = maxTimeRequired;
+			DistillingTotalTime = 20;//maxTimeRequired;
 			for(int i = 0; i < MAX_DISTILLATION_STACK_HEIGHT; i++)
 			{
 				RecipesInProgress[i] = matches[i] == null ? ItemStack.EMPTY : matches[i].Result;
@@ -449,6 +453,82 @@ public class DistillationTowerBlockEntity extends BaseContainerBlockEntity imple
 	{
 		if(tower.IsTop)
 		{
+			if(!tower.IsDistillationInProgress())
+			{
+				tower.CheckForRecipe();
+			}
+
+			// If we are distilling and need more fuel, check for it
+			if (tower.IsDistillationInProgress() && !tower.IsLit())
+			{
+				int burnTime = ForgeHooks.getBurnTime(tower.getItem(FUEL_SLOT), RecipeType.SMELTING);
+				if (burnTime > 0)
+				{
+					tower.removeItem(FUEL_SLOT, 1);
+					tower.LitDuration = burnTime;
+					tower.LitTime = burnTime;
+					setChanged(level, pos, state);
+				}
+			}
+
+			// If we have a recipe in progress, continue progressing it
+			if (tower.IsDistillationInProgress())
+			{
+				tower.DistillingProgress++;
+				if (tower.DistillingProgress >= tower.DistillingTotalTime)
+				{
+					// Create all valid outputs
+					boolean outputSuccessful = true;
+					for (int i = 0; i < MAX_DISTILLATION_STACK_HEIGHT; i++)
+					{
+						if (!tower.RecipesInProgress[i].isEmpty())
+						{
+							// Find the block it should be output into
+							BlockEntity blockEntity = level.getBlockEntity(pos.below(i + 1));
+							if (blockEntity instanceof DistillationTowerBlockEntity stackAtLayer)
+							{
+								// Didn't expect another top block, exit the stack
+								if (stackAtLayer.IsTop)
+								{
+									FlansMod.LOGGER.error("Trying to output distillation result into non-distillation block");
+									break;
+								}
+
+								// Either put a new stack in an empty slot
+								ItemStack outputContents = stackAtLayer.getItem(OUTPUT_SLOT);
+								if (outputContents.isEmpty())
+								{
+									stackAtLayer.setItem(OUTPUT_SLOT, tower.RecipesInProgress[i].copy());
+								}
+								// Or add to an existing stack
+								else if (outputContents.getItem() == tower.RecipesInProgress[i].getItem()
+									&& stackAtLayer.getMaxStackSize() - outputContents.getCount() >= tower.RecipesInProgress[i].getCount())
+								{
+									outputContents.setCount(outputContents.getCount() + tower.RecipesInProgress[i].getCount());
+								} else
+								{
+									outputSuccessful = false;
+								}
+							}
+						}
+
+						tower.RecipesInProgress[i] = ItemStack.EMPTY;
+					}
+					// Consume the input
+
+					// We hit max progress, complete the recipe
+					if(outputSuccessful)
+					{
+						tower.ConsumeInput();
+						tower.DistillingProgress = 0;
+						tower.DistillingTotalTime = 0;
+						// Retrigger a recipe check
+						tower.CheckForRecipe();
+						tower.setChanged();
+					}
+				}
+			}
+
 			// If lit, decrease the lit time
 			if (tower.IsLit())
 			{
@@ -457,80 +537,6 @@ public class DistillationTowerBlockEntity extends BaseContainerBlockEntity imple
 				{
 					tower.LitDuration = 0;
 					setChanged(level, pos, state);
-				}
-
-				// If we have a recipe in progress, continue progressing it
-				if (tower.IsDistillationInProgress())
-				{
-					tower.DistillingProgress++;
-					if (tower.DistillingProgress >= tower.DistillingTotalTime)
-					{
-						// Create all valid outputs
-						boolean outputSuccessful = true;
-						for (int i = 0; i < MAX_DISTILLATION_STACK_HEIGHT; i++)
-						{
-							if (!tower.RecipesInProgress[i].isEmpty())
-							{
-								// Find the block it should be output into
-								BlockEntity blockEntity = level.getBlockEntity(pos.below(i + 1));
-								if (blockEntity instanceof DistillationTowerBlockEntity stackAtLayer)
-								{
-									// Didn't expect another top block, exit the stack
-									if (stackAtLayer.IsTop)
-									{
-										FlansMod.LOGGER.error("Trying to output distillation result into non-distillation block");
-										break;
-									}
-
-									// Either put a new stack in an empty slot
-									ItemStack outputContents = stackAtLayer.getItem(OUTPUT_SLOT);
-									if (outputContents.isEmpty())
-									{
-										stackAtLayer.setItem(OUTPUT_SLOT, tower.RecipesInProgress[i].copy());
-									}
-									// Or add to an existing stack
-									else if (outputContents.getItem() == tower.RecipesInProgress[i].getItem()
-										&& stackAtLayer.getMaxStackSize() - outputContents.getCount() >= tower.RecipesInProgress[i].getCount())
-									{
-										outputContents.setCount(outputContents.getCount() + tower.RecipesInProgress[i].getCount());
-									} else
-									{
-										outputSuccessful = false;
-									}
-								}
-							}
-
-							tower.RecipesInProgress[i] = ItemStack.EMPTY;
-						}
-						// Consume the input
-
-						// We hit max progress, complete the recipe
-						if(outputSuccessful)
-						{
-							tower.ConsumeInput();
-							tower.DistillingProgress = 0;
-							tower.DistillingTotalTime = 0;
-							// Retrigger a recipe check
-							tower.CheckForRecipe();
-							tower.setChanged();
-						}
-					}
-				}
-			}
-
-			// If we are distilling and need more fuel, check for it
-			if(tower.IsDistillationInProgress())
-			{
-				if (!tower.IsLit())
-				{
-					int burnTime = ForgeHooks.getBurnTime(tower.getItem(FUEL_SLOT), RecipeType.SMELTING);
-					if (burnTime > 0)
-					{
-						tower.removeItem(FUEL_SLOT, 1);
-						tower.LitDuration = burnTime;
-						tower.LitTime = burnTime;
-						setChanged(level, pos, state);
-					}
 				}
 			}
 		}
