@@ -422,7 +422,7 @@ public class DistillationTowerBlockEntity extends BaseContainerBlockEntity imple
 		if(numMatches > 0 && !abort)
 		{
 			DistillingProgress = 0;
-			DistillingTotalTime = 20;//maxTimeRequired;
+			DistillingTotalTime = maxTimeRequired;
 			for(int i = 0; i < MAX_DISTILLATION_STACK_HEIGHT; i++)
 			{
 				RecipesInProgress[i] = matches[i] == null ? ItemStack.EMPTY : matches[i].Result;
