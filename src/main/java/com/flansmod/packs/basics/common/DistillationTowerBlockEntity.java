@@ -1,21 +1,19 @@
 package com.flansmod.packs.basics.common;
 
 import com.flansmod.common.FlansMod;
-import com.flansmod.common.crafting.RestrictedContainer;
 import com.flansmod.packs.basics.BasicPartsMod;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.Clearable;
-import net.minecraft.world.Container;
 import net.minecraft.world.MenuProvider;
+import net.minecraft.world.WorldlyContainer;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.ContainerData;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.RecipeManager;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.Level;
@@ -24,15 +22,19 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.common.ForgeHooks;
+import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.common.capabilities.ForgeCapabilities;
+import net.minecraftforge.common.util.LazyOptional;
+import net.minecraftforge.items.IItemHandler;
+import net.minecraftforge.items.wrapper.SidedInvWrapper;
 import net.minecraftforge.registries.RegistryObject;
-import org.jetbrains.annotations.Nullable;
-import org.lwjgl.system.windows.INPUT;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.Arrays;
 import java.util.Set;
 
-public class DistillationTowerBlockEntity extends BaseContainerBlockEntity implements MenuProvider, Clearable
+public class DistillationTowerBlockEntity extends BaseContainerBlockEntity implements WorldlyContainer, MenuProvider, Clearable
 {
 	public final boolean IsTop;
 
@@ -517,4 +519,62 @@ public class DistillationTowerBlockEntity extends BaseContainerBlockEntity imple
 			}
 		}
 	}
+
+
+	@Override
+	@Nonnull
+	public int[] getSlotsForFace(@Nonnull Direction direction)
+	{
+		if(IsTop)
+		{
+			if (direction == Direction.UP)
+				return new int[]{INPUT_SLOT};
+			else
+				return new int[]{FUEL_SLOT};
+		}
+		return new int[] { OUTPUT_SLOT };
+	}
+	@Override
+	public boolean canPlaceItemThroughFace(int slot, @Nonnull ItemStack stack, @Nullable Direction direction)
+	{
+		return IsTop;
+	}
+	@Override
+	public boolean canTakeItemThroughFace(int slot, @Nonnull ItemStack stack, @Nonnull Direction direction)
+	{
+		return !IsTop;
+	}
+
+
+	private LazyOptional<? extends IItemHandler>[] handlers =
+		SidedInvWrapper.create(this, Direction.UP, Direction.DOWN, Direction.NORTH);
+
+	@Override
+	@Nonnull
+	public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> capability, @Nullable Direction facing) {
+		if (!this.remove && facing != null && capability == ForgeCapabilities.ITEM_HANDLER) {
+			if (facing == Direction.UP)
+				return handlers[0].cast();
+			else if (facing == Direction.DOWN)
+				return handlers[1].cast();
+			else
+				return handlers[2].cast();
+		}
+		return super.getCapability(capability, facing);
+	}
+
+	@Override
+	public void invalidateCaps() {
+		super.invalidateCaps();
+		for (int x = 0; x < handlers.length; x++)
+			handlers[x].invalidate();
+	}
+
+	@Override
+	public void reviveCaps() {
+		super.reviveCaps();
+		handlers = SidedInvWrapper.create(this, Direction.UP, Direction.DOWN, Direction.NORTH);
+	}
+
+
 }
