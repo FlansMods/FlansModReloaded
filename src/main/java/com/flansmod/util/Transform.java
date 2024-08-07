@@ -377,6 +377,13 @@ public class Transform
         return new Matrix3f(buf);
 
     }
+    public boolean HasNaN()
+    {
+
+        return Double.isNaN(Position.x) || Double.isNaN(Position.y) || Double.isNaN(Position.z) ||
+            Double.isNaN(Orientation.x) || Double.isNaN(Orientation.y) || Double.isNaN(Orientation.z) || Double.isNaN(Orientation.w) ||
+            Double.isNaN(Scale.x) || Double.isNaN(Scale.y) || Double.isNaN(Scale.z);
+    }
 
 
     // ----------------------------------------------------------------------------------------

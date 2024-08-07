@@ -27,6 +27,8 @@ import org.joml.Vector4f;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Vector;
 import java.util.function.Function;
 
@@ -102,8 +104,9 @@ public class VehicleDebugRenderer
 				{
 					DebugRender(dynamic, Client);
 				}
+				DebugRenderSeparations(physics, Client);
 
-				//DebugRender(level.entitiesForRendering(), Client);
+				DebugRender(level.entitiesForRendering(), Client);
 			}
 
 			MinecraftServer server = ServerLifecycleHooks.getCurrentServer();
@@ -111,9 +114,42 @@ public class VehicleDebugRenderer
 			{
 				for (ServerLevel loadedLevel : server.getAllLevels())
 				{
-					//DebugRender(loadedLevel.getAllEntities(), Server);
+					DebugRender(loadedLevel.getAllEntities(), Server);
+					OBBCollisionSystem physics = OBBCollisionSystem.ForLevel(loadedLevel);
+					DebugRenderSeparations(physics, Server);
 				}
 			}
+		}
+	}
+
+	private void DebugRenderSeparations(@Nonnull OBBCollisionSystem physics, @Nonnull DebugPalette palettte)
+	{
+		if(OBBCollisionSystem.DEBUG_HANDLE.Handle() != 0L)
+		{
+			List<Vec3> staticCollisionPoints = new ArrayList<>();
+			List<Vec3> dynamicCollisionPoints = new ArrayList<>();
+			Transform position = physics.ProcessEvents(OBBCollisionSystem.DEBUG_HANDLE,
+				(stat) -> {
+					Transform collisionFrame = Transform.FromPositionAndLookDirection(stat.ContactPoint(), stat.ContactNormal(), new Vec3(0d, 1d, 0d));
+					DebugRenderer.RenderPoint(collisionFrame, 1, palettte.WheelCurrent);
+					DebugRenderer.RenderArrow(stat.ContactPoint(), 1, palettte.WheelCurrent, stat.ContactNormal());
+					DebugRenderer.RenderCube(collisionFrame, 1, palettte.WheelCurrent, new Vector3f(1f, 1f, 0f));
+					staticCollisionPoints.add(collisionFrame.PositionVec3());
+				},
+				(dyn) -> {
+					Transform collisionFrame = Transform.FromPositionAndLookDirection(dyn.ContactPoint(), dyn.ContactNormal(), new Vec3(0d, 1d, 0d));
+					DebugRenderer.RenderPoint(collisionFrame, 1, palettte.WheelNext);
+					DebugRenderer.RenderArrow(dyn.ContactPoint(), 1, palettte.WheelNext, dyn.ContactNormal());
+					DebugRenderer.RenderCube(collisionFrame, 1, palettte.WheelNext, new Vector3f(1f, 1f, 0f));
+					dynamicCollisionPoints.add(collisionFrame.PositionVec3());
+				});
+			DebugRenderer.RenderAxes(position, 1, palettte.WheelForces);
+
+			for(Vec3 point : staticCollisionPoints)
+				DebugRenderer.RenderLine(position.PositionVec3(), 1, palettte.Default, point.subtract(position.PositionVec3()));
+			for(Vec3 point : dynamicCollisionPoints)
+				DebugRenderer.RenderLine(position.PositionVec3(), 1, palettte.CoreCurrent, point.subtract(position.PositionVec3()));
+
 		}
 	}
 
@@ -150,6 +186,7 @@ public class VehicleDebugRenderer
 
 				Transform vehiclePos = vehicle.GetWorldToEntity().GetCurrent();
 
+				DebugRenderer.RenderCube(Transform.FromPos(vehicle.position()), 1, palette.CoreCurrent, new Vector3f(0.15f, 0.1f, 0.15f));
 				//DebugRenderer.RenderAxes(vehiclePos, 1, palette.Default);
 				DebugRenderer.RenderCube(vehiclePos, 1, palette.CoreCurrent, new Vector3f(0.6f, 0.25f, 0.6f));
 				Vec3 coreMotionNextFrame = DebugRenderForces(forces.Debug_GetForcesOnCore(), vehicle.getDeltaMovement(), vehicle.GetWorldToEntity().GetCurrent(), palette, true, vehicle.Def().physics.mass, vehicle::GetWorldToPartCurrent);

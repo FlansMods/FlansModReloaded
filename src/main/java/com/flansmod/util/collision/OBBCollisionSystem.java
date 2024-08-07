@@ -49,6 +49,22 @@ public class OBBCollisionSystem
 
 
 	private final boolean SINGLE_THREAD_DEBUG = true;
+	public static ColliderHandle DEBUG_HANDLE = new ColliderHandle(0L);
+	public static ColliderHandle CycleDebugHandle(@Nonnull Level level)
+	{
+		OBBCollisionSystem system = ForLevel(level);
+		int index = system.AllHandles.indexOf(DEBUG_HANDLE);
+		if(index == system.AllHandles.size() - 1)
+		{
+			DEBUG_HANDLE = new ColliderHandle(0L);
+			return DEBUG_HANDLE;
+		}
+		else
+		{
+			DEBUG_HANDLE = system.AllHandles.get(index + 1);
+			return DEBUG_HANDLE;
+		}
+	}
 	private final List<CollisionTaskSeparateDynamicPair> DynamicSeparationTasks = new ArrayList<>();
 	private final List<CollisionTaskSeparateDynamicFromStatic> StaticSeparationTasks = new ArrayList<>();
 
@@ -115,8 +131,8 @@ public class OBBCollisionSystem
 		});
 	}
 
-
-	public void ProcessEvents(@Nonnull ColliderHandle handle,
+	@Nonnull
+	public Transform ProcessEvents(@Nonnull ColliderHandle handle,
 							  @Nonnull Consumer<StaticCollisionEvent> staticFunc,
 							  @Nonnull Consumer<DynamicCollisionEvent> dynamicFunc)
 	{
@@ -127,7 +143,9 @@ public class OBBCollisionSystem
 				staticFunc.accept(collision);
 			for(DynamicCollisionEvent collision : obj.DynamicCollisions)
 				dynamicFunc.accept(collision);
+			return obj.GetCurrentColliders().Location();
 		}
+		return Transform.IDENTITY;
 	}
 
 
@@ -195,7 +213,7 @@ public class OBBCollisionSystem
 			for (int j = i + 1; j < AllHandles.size(); j++)
 			{
 				ColliderHandle handleB = AllHandles.get(j);
-				DynamicObject objectB = Dynamics.get(handleA);
+				DynamicObject objectB = Dynamics.get(handleB);
 				boolean movingB = objectB.NextFrameLinearMotion.lengthSqr() > Maths.EpsilonSq || objectB.NextFrameAngularMotion.angle() > Maths.EpsilonSq;
 
 				if(movingA || movingB)

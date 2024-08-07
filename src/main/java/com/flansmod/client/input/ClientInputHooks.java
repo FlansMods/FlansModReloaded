@@ -6,6 +6,8 @@ import com.flansmod.common.item.GunItem;
 import com.flansmod.common.types.vehicles.EVehicleAxis;
 import com.flansmod.common.types.elements.EPlayerInput;
 import com.flansmod.util.Maths;
+import com.flansmod.util.collision.ColliderHandle;
+import com.flansmod.util.collision.OBBCollisionSystem;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.Options;
 import net.minecraft.network.chat.Component;
@@ -333,6 +335,17 @@ public class ClientInputHooks
 					Minecraft.getInstance().getChatListener().handleSystemMessage(Component.translatable("flansmod.debug.physics_pause.on"), false);
 				else
 					Minecraft.getInstance().getChatListener().handleSystemMessage(Component.translatable("flansmod.debug.physics_pause.off"), false);
+			}
+			while(KeyMappings.DEBUG_CYCLE_PHYSICS_INSPECT.get().consumeClick())
+			{
+				if(Minecraft.getInstance().level != null)
+				{
+					ColliderHandle handle = OBBCollisionSystem.CycleDebugHandle(Minecraft.getInstance().level);
+					if(handle.Handle() == 0L)
+						Minecraft.getInstance().getChatListener().handleSystemMessage(Component.translatable("flansmod.debug.physics_handle_inspect.off"), false);
+					else
+						Minecraft.getInstance().getChatListener().handleSystemMessage(Component.literal(""+handle.Handle()), false);
+				}
 			}
 		}
 	}

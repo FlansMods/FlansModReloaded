@@ -28,10 +28,7 @@ import com.flansmod.common.types.vehicles.elements.*;
 import com.flansmod.util.Maths;
 import com.flansmod.util.Transform;
 import com.flansmod.util.TransformStack;
-import com.flansmod.util.collision.ColliderHandle;
-import com.flansmod.util.collision.DynamicCollisionEvent;
-import com.flansmod.util.collision.OBBCollisionSystem;
-import com.flansmod.util.collision.StaticCollisionEvent;
+import com.flansmod.util.collision.*;
 import com.google.common.collect.ImmutableList;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
@@ -284,6 +281,13 @@ public class VehicleEntity extends Entity implements
 		tags.put("damage", SaveDamageState());
 		tags.put("guns", SaveGunState());
 		//tags.put("physics", SavePhysicsState());
+	}
+
+	@Override @Nonnull
+	protected AABB makeBoundingBox()
+	{
+		return super.makeBoundingBox();
+		//return new OBB(GetRootTransformCurrent(), -getBbWidth() / 2f, -getBbHeight() / 2f, -getBbWidth() / 2f, getBbWidth() / 2f, getBbHeight() / 2f, getBbWidth() / 2f);
 	}
 
 	@Override
@@ -541,33 +545,15 @@ public class VehicleEntity extends Entity implements
 			}
 		}
 	}
-	protected void TickPhysics()
+
+	protected void CopyResponsesToForceModel(@Nonnull OBBCollisionSystem physics, @Nullable ControlLogic controller, @Nonnull ForceModel forces)
 	{
-		// Check for missing wheels
-		Wheels.ForEachWithRemoval((wheel -> {
-			if(wheel == null || !wheel.isAlive())
-			{
-				FlansMod.LOGGER.warn(this + ": Did not expect our wheel to die");
-				return true;
-			}
-			return false;
-		}));
-
-		Wheels.ForEach(wheel -> wheel.StartTick(this));
-
-		// Create a force model and load it up with forces for debug rendering
-		ForceModel forces = new ForceModel();
-		ControlLogic controller = CurrentController();
-
-		// Respond to collision events from last frame
 		if(CorePhsyicsHandle != null)
 		{
-			OBBCollisionSystem physics = OBBCollisionSystem.ForLevel(level());
-
-
-			physics.ProcessEvents(CorePhsyicsHandle,
+			Transform newPos = physics.ProcessEvents(CorePhsyicsHandle,
 				(collision) -> ProcessStaticCollision(VehiclePartPath.Core, controller, forces, collision),
 				(collision) -> ProcessDynamicCollision(VehiclePartPath.Core, controller, forces, collision));
+			SetRootTransformCurrent(newPos);
 
 			for(var kvp : ArticulatedPhysicsHandles.entrySet())
 			{
@@ -584,7 +570,9 @@ public class VehicleEntity extends Entity implements
 					(collision) -> ProcessDynamicCollision(wheelPath, controller, forces, collision));
 			}
 		}
-
+	}
+	protected void TickController(@Nullable ControlLogic controller, @Nonnull ForceModel forces)
+	{
 		if(controller != null)
 		{
 			VehicleInputState inputs = GetInputStateFor(controller);
@@ -626,24 +614,66 @@ public class VehicleEntity extends Entity implements
 			//motion = motion.add(0f, -9.81f / 20f, 0f);
 			//vehicle.setDeltaMovement(motion);
 			//vehicle.move(MoverType.SELF, motion);
-		}
 
+
+		}
+	}
+	protected void SendNewForcesToPhysics(@Nonnull OBBCollisionSystem physics, @Nonnull ForceModel forces)
+	{
+		if(!PAUSE_PHYSICS)
+		{
+			if(CorePhsyicsHandle != null)
+			{
+				Vec3 deltaV = Vec3.ZERO;
+				deltaV = forces.ApplyLinearForcesToCore(deltaV, GetWorldToEntity().GetCurrent(), Def().physics.mass);
+				deltaV = forces.ApplySpringForcesToCore(deltaV, GetWorldToEntity().GetCurrent(), Def().physics.mass, this::GetWorldToPartCurrent);
+				deltaV = forces.ApplyDampeningToCore(deltaV);
+				physics.ApplyAcceleration(CorePhsyicsHandle, deltaV);
+			}
+			for(int i = 0; i < WheelPhysicsHandles.length; i++)
+			{
+				if(WheelPhysicsHandles[i] != null)
+				{
+					Vec3 deltaV = Vec3.ZERO;
+					deltaV = forces.ApplyLinearForcesToWheel(deltaV, GetWorldToEntity().GetCurrent(), Def().physics.mass);
+					deltaV = forces.ApplySpringForcesToCore(deltaV, GetWorldToEntity().GetCurrent(), Def().physics.mass, this::GetWorldToPartCurrent);
+					deltaV = forces.ApplyDampeningToCore(deltaV);
+					physics.ApplyAcceleration(CorePhsyicsHandle, deltaV);
+				}
+			}
+		}
+	}
+	protected void TickPhysics()
+	{
+		// Check for missing wheels
+		Wheels.ForEachWithRemoval((wheel -> {
+			if(wheel == null || !wheel.isAlive())
+			{
+				FlansMod.LOGGER.warn(this + ": Did not expect our wheel to die");
+				return true;
+			}
+			return false;
+		}));
+
+		Wheels.ForEach(wheel -> wheel.StartTick(this));
+
+		// Create a force model and load it up with forces for debug rendering
+		ForceModel forces = new ForceModel();
+		ControlLogic controller = CurrentController();
+		OBBCollisionSystem physics = OBBCollisionSystem.ForLevel(level());
+
+		// Respond to collision events from last frame, and update our location
+		CopyResponsesToForceModel(physics, controller, forces);
+		SyncTransformToEntity();
+
+		// Apply one frame of control logic
+		TickController(controller, forces);
 
 		// Stash our latest Force Model for debug rendering
 		ForcesLastFrame = forces;
-		if(!PAUSE_PHYSICS)
-		{
-			// Now process the results of the Force Model
-			Vec3 motion = GetVelocity();
-			motion = forces.ApplyLinearForcesToCore(motion, GetWorldToEntity().GetCurrent(), Def().physics.mass);
-			motion = forces.ApplySpringForcesToCore(motion, GetWorldToEntity().GetCurrent(), Def().physics.mass, this::GetWorldToPartCurrent);
-			motion = forces.ApplyDampeningToCore(motion);
-			SetVelocity(motion);
-			ApplyVelocity();
-		}
 
-		SyncEntityToTransform();
-
+		// Now send the results of the Force Model to the collision engine
+		SendNewForcesToPhysics(physics, forces);
 
 		// Wheels need to move too
 		for(int i = 0; i < Wheels.All().size(); i++)
@@ -658,6 +688,11 @@ public class VehicleEntity extends Entity implements
 		{
 
 		}
+		else
+		{
+			//SyncEntityToTransform();
+		}
+
 		Wheels.ForEach(wheel -> wheel.EndTick(this));
 	}
 	protected void ProcessStaticCollision(@Nonnull VehiclePartPath onPart, @Nullable ControlLogic controller, @Nonnull ForceModel forces, @Nonnull StaticCollisionEvent collision)

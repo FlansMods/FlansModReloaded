@@ -26,14 +26,14 @@
 	{
 		"type": "flansmod:tiered_part",
 		"materials": [ "Wood", "Composite", "Metal" ],
-		"tag": "flansmod:lower_receiver",
+		"tag": "flansmod:stock",
 		"min": 1,
 		"max": 99
 	},
 	{
 		"type": "flansmod:tiered_part",
 		"materials": [ "Wood", "Composite", "Metal" ],
-		"tag": "flansmod:lower_receiver",
+		"tag": "flansmod:grip",
 		"min": 1,
 		"max": 99
 	}
