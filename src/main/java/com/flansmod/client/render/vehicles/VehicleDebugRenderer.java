@@ -42,7 +42,9 @@ public class VehicleDebugRenderer
 								@Nonnull Vector4f WheelNext,
 								@Nonnull Vector4f CoreForces,
 								@Nonnull Vector4f CoreCurrent,
-								@Nonnull Vector4f CoreNext)
+								@Nonnull Vector4f CoreNext,
+								@Nonnull Vector4f StaticCollision,
+								@Nonnull Vector4f DynamicCollision)
 	{}
 
 	// Client palette is red(forces) -> blue(motions)
@@ -56,7 +58,10 @@ public class VehicleDebugRenderer
 		new Vector4f(0.25f, 0.25f, 1f, 0.25f),	// WheelNext
 		new Vector4f(1f, 0f, 0f, 1f),			// CoreForces
 		new Vector4f(0.125f, 0.125f, 1f, 0.5f),	// CoreCurrent
-		new Vector4f(0.25f, 0.25f, 1f, 0.25f));	// CoreNext
+		new Vector4f(0.25f, 0.25f, 1f, 0.25f),  // CoreNext
+		new Vector4f(1f, 0f, 1f, 1f),			// StaticCollision
+		new Vector4f(1f, 0.25f, 0.75f, 1f)		// DynamicCollision
+	);
 
 	// Server palette is green -> yellow
 	private static final DebugPalette Server = new DebugPalette(
@@ -69,7 +74,10 @@ public class VehicleDebugRenderer
 		new Vector4f(1f, 1f, 0.25f, 0.25f),		// WheelNext
 		new Vector4f(0f, 1f, 0f, 1f),			// CoreForces
 		new Vector4f(1f, 1f, 0.125f, 0.5f),		// CoreCurrent
-		new Vector4f(1f, 1f, 0.25f, 0.25f));	// CoreNext
+		new Vector4f(1f, 1f, 0.25f, 0.25f),		// CoreNext
+		new Vector4f(1f, 1f, 0f, 1f),			// StaticCollision
+		new Vector4f(1f, 0.75f, 0.25f, 1f)		// DynamicCollision
+	);
 
 
 
@@ -114,6 +122,10 @@ public class VehicleDebugRenderer
 				{
 					DebugRender(loadedLevel.getAllEntities(), Server);
 					OBBCollisionSystem physics = OBBCollisionSystem.ForLevel(loadedLevel);
+					for(DynamicObject dynamic : physics.GetDynamics())
+					{
+						DebugRender(dynamic, Server);
+					}
 					DebugRenderSeparations(physics, Server);
 				}
 			}
@@ -156,11 +168,11 @@ public class VehicleDebugRenderer
 		DebugRender(dynamic.GetCurrentColliders(), palette);
 		for(StaticCollisionEvent collision : dynamic.StaticCollisions)
 		{
-			DebugRenderer.RenderArrow(collision.ContactPoint(), 5, palette.CoreForces, collision.ContactNormal());
+			DebugRenderer.RenderArrow(collision.ContactPoint(), 1, palette.StaticCollision, collision.ContactNormal());
 		}
 		for(DynamicCollisionEvent collision : dynamic.DynamicCollisions)
 		{
-			DebugRenderer.RenderArrow(collision.ContactPoint(), 5, palette.WheelForces, collision.ContactNormal());
+			DebugRenderer.RenderArrow(collision.ContactPoint(), 1, palette.DynamicCollision, collision.ContactNormal());
 		}
 	}
 
@@ -242,7 +254,8 @@ public class VehicleDebugRenderer
 								   @Nonnull Function<VehicleComponentPath, Transform> lookup)
 	{
 		float inertia = 1.0f / mass;
-		float arrowScale = 1.0f / 20f;
+		float forceArrowScale = 1.0f / 20f;
+		float motionArrowScale = 1.0f;
 		if(forces != null)
 		{
 			Vec3 origin = worldTransform.PositionVec3();
@@ -254,7 +267,7 @@ public class VehicleDebugRenderer
 				if(force.HasLinearComponent(worldTransform))
 				{
 					LinearForce linear = force.GetLinearComponent(worldTransform);
-					DebugRenderer.RenderArrow(origin, 1, forceColour, linear.Force().scale(arrowScale));
+					DebugRenderer.RenderArrow(origin, 1, forceColour, linear.Force().scale(forceArrowScale));
 				}
 				if(force.HasAngularComponent(worldTransform))
 				{
@@ -307,9 +320,9 @@ public class VehicleDebugRenderer
 			//}
 
 			Vec3 motionNext = motion.add(forceTotal.scale(inertia));
-			//DebugRenderer.RenderArrow(origin, 1, palette.MotionCurrent, motion.scale(arrowScale));
-			//DebugRenderer.RenderArrow(origin, 1, palette.MotionNext, motionNext.scale(arrowScale));
-			//DebugRenderer.RenderArrow(origin.add(motion.scale(arrowScale)), 1, palette.TotalForce, forceTotal.scale(arrowScale));
+			DebugRenderer.RenderArrow(origin, 1, palette.MotionCurrent, motion.scale(motionArrowScale));
+			DebugRenderer.RenderArrow(origin, 1, palette.MotionNext, motionNext.scale(motionArrowScale));
+			DebugRenderer.RenderArrow(origin.add(motion.scale(motionArrowScale)), 1, palette.TotalForce, forceTotal.scale(motionArrowScale));
 			return motionNext;
 		}
 		return Vec3.ZERO;

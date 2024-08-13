@@ -13,8 +13,8 @@ public class Units
 		Ticks,
 		Seconds;
 
-		public static final double Ticks_To_Seconds = 20d;
-		public static final double Seconds_To_Ticks = 1d/20d;
+		public static final double Ticks_To_Seconds = 1d/20d;
+		public static final double Seconds_To_Ticks = 20d;
 		public static final double PerTick_To_PerSecond = 1d / Ticks_To_Seconds;
 		public static final double PerSecond_To_PerTick = 1d / Seconds_To_Ticks;
 		public static final double PerTickSq_To_PerSecondSq = PerTick_To_PerSecond * PerTick_To_PerSecond;

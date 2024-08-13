@@ -75,7 +75,7 @@ public class CollisionTasks
 
 		// Test B local X axis
 		{
-			SeparationManifold testBX = aCollider.GetSide(deltaInBSpace.x > 0.0f ? Direction.EAST : Direction.WEST);
+			SeparationManifold testBX = bCollider.GetSide(deltaInBSpace.x > 0.0f ? Direction.EAST : Direction.WEST);
 			double dist = testBX.GetSeparationDistance(aCollider, bCollider);
 			if (dist >= 0.0f)
 				return new SeparationTestResult(testBX, dist);
@@ -87,7 +87,7 @@ public class CollisionTasks
 		}
 		// Test B local Z axis
 		{
-			SeparationManifold testBZ = aCollider.GetSide(deltaInBSpace.z > 0.0f ? Direction.NORTH : Direction.SOUTH);
+			SeparationManifold testBZ = bCollider.GetSide(deltaInBSpace.z > 0.0f ? Direction.NORTH : Direction.SOUTH);
 			double dist = testBZ.GetSeparationDistance(aCollider, bCollider);
 			if (dist >= 0.0f)
 				return new SeparationTestResult(testBZ, dist);
@@ -99,7 +99,7 @@ public class CollisionTasks
 		}
 		// Test B local Y axis
 		{
-			SeparationManifold testBY = aCollider.GetSide(deltaInBSpace.y > 0.0f ? Direction.UP : Direction.DOWN);
+			SeparationManifold testBY = bCollider.GetSide(deltaInBSpace.y > 0.0f ? Direction.UP : Direction.DOWN);
 			double dist = testBY.GetSeparationDistance(aCollider, bCollider);
 			if (dist >= 0.0f)
 				return new SeparationTestResult(testBY, dist);

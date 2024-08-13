@@ -1,5 +1,6 @@
 package com.flansmod.util.collision;
 
+import com.flansmod.common.entity.vehicle.VehicleEntity;
 import com.flansmod.util.Maths;
 import com.flansmod.util.Transform;
 import com.flansmod.util.physics.AngularAcceleration;
@@ -174,9 +175,12 @@ public class DynamicObject
 
 	public void CommitFrame()
 	{
-		if(Frames.size() >= MAX_HISTORY)
-			Frames.remove(0);
-		Frames.push(PendingFrame);
+		if(!VehicleEntity.PAUSE_PHYSICS)
+		{
+			if (Frames.size() >= MAX_HISTORY)
+				Frames.remove(0);
+			Frames.push(PendingFrame);
+		}
 	}
 
 	@Nonnull
