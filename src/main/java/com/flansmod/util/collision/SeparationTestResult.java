@@ -1,5 +1,6 @@
 package com.flansmod.util.collision;
 
+import com.flansmod.common.FlansMod;
 import com.flansmod.util.Maths;
 import com.mojang.datafixers.util.Pair;
 import net.minecraft.world.phys.Vec3;
@@ -16,6 +17,12 @@ public record SeparationTestResult(@Nonnull ISeparator Separator,
 	@Nonnull
 	public Vec3 GetCollidingPoint(@Nonnull TransformedBB bb)
 	{
-		return Separator.GetIntersectionPoint(bb);
+		Vec3 intersection = Separator.GetIntersectionPoint(bb);
+		// DEBUG
+		if(!bb.Contains(intersection))
+		{
+			FlansMod.LOGGER.error("Colliding Point is not in BB");
+		}
+		return intersection;
 	}
 }

@@ -194,12 +194,12 @@ public class VehicleDebugRenderer
 			{
 				Transform vehiclePos = vehicle.GetWorldToEntity().GetCurrent();
 
-				DebugRenderer.RenderCube(Transform.FromPos(vehicle.position()), 1, palette.CoreCurrent, new Vector3f(0.15f, 0.1f, 0.15f));
+				//DebugRenderer.RenderCube(Transform.FromPos(vehicle.position()), 1, palette.CoreCurrent, new Vector3f(0.15f, 0.1f, 0.15f));
 				//DebugRenderer.RenderAxes(vehiclePos, 1, palette.Default);
-				DebugRenderer.RenderCube(vehiclePos, 1, palette.CoreCurrent, new Vector3f(0.6f, 0.25f, 0.6f));
+				//DebugRenderer.RenderCube(vehiclePos, 1, palette.CoreCurrent, new Vector3f(0.6f, 0.25f, 0.6f));
 				Vec3 coreMotionNextFrame = DebugRenderForces(vehicle.GetCoreForces(), vehicle.getDeltaMovement(), vehicle.GetWorldToEntity().GetCurrent(), palette, true, vehicle.Def().physics.mass, vehicle::GetWorldToPartCurrent);
 				Transform vehiclePosNext = Transform.Compose(vehiclePos, Transform.FromPos(coreMotionNextFrame.scale(1f/20f)));
-				DebugRenderer.RenderCube(vehiclePosNext, 1, palette.CoreNext,  new Vector3f(0.6f, 0.25f, 0.6f));
+				//DebugRenderer.RenderCube(vehiclePosNext, 1, palette.CoreNext,  new Vector3f(0.6f, 0.25f, 0.6f));
 
 				vehicle.GetHierarchy().ForEachNode((node) -> {
 					Transform pos = vehicle.GetWorldToPartCurrent(node.GetPath());
@@ -226,7 +226,7 @@ public class VehicleDebugRenderer
 					Transform wheelPos =physics.LocationCurrent;
 					Vector3f debugWheelBoxSize = new Vector3f(0.5f * def.radius, def.radius, def.radius);
 					//DebugRenderer.RenderAxes(wheel.GetWorldTransformCurrent(), 1, palette.Default);
-					DebugRenderer.RenderCube(wheelPos, 1, palette.WheelCurrent, debugWheelBoxSize);
+					//DebugRenderer.RenderCube(wheelPos, 1, palette.WheelCurrent, debugWheelBoxSize);
 
 					Vec3 wheelMotionNextFrame = DebugRenderForces(physics.Forces,
 						physics.GetDeltaFramePos(),
@@ -236,7 +236,7 @@ public class VehicleDebugRenderer
 						def.mass,
 						vehicle::GetWorldToPartCurrent);
 					Transform wheelPosNext = Transform.Compose(wheelPos, Transform.FromPos(wheelMotionNextFrame.scale(1f/20f)));
-					DebugRenderer.RenderCube(wheelPosNext, 1, palette.WheelNext, debugWheelBoxSize);
+					//DebugRenderer.RenderCube(wheelPosNext, 1, palette.WheelNext, debugWheelBoxSize);
 					//}
 				});
 			}

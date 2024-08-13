@@ -102,7 +102,7 @@ public class CollisionTaskSeparateDynamicPair
 			Vec3 pointInB = test.GetCollidingPoint(boundsB);
 
 			Output = new Output(
-				ImmutableList.of(new DynamicCollisionEvent(HandleB, pointInA, test.Separator().GetNormal())),
+				ImmutableList.of(new DynamicCollisionEvent(HandleB, pointInA, test.Separator().GetNormal().scale(-1d))),
 				ImmutableList.of(new DynamicCollisionEvent(HandleA, pointInB, test.Separator().GetNormal())),
 				ImmutableList.of(test.Separator()));
 		}

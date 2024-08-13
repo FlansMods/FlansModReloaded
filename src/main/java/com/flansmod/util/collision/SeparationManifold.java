@@ -140,7 +140,12 @@ public record SeparationManifold(@Nonnull Vec3 Axis, double Distance) implements
 		double maxProjX = max(xPos, xNeg); // <- Pick the best vMax.x
 		double minProjX = min(xPos, xNeg); // <- Pick the best vMin.x
 		// If subtracting half x is better than adding half x, then swap our min/max corner vectors
-		if(xPos < xNeg)
+		if(Maths.Approx(xPos, xNeg))
+		{
+			maxCorner.mul(0f, 1f, 1f);
+			minCorner.mul(0f, 1f, 1f);
+		}
+		else if(xPos < xNeg)
 			maxCorner.mul(-1f, 1f, 1f);
 		else
 			minCorner.mul(-1f, 1f, 1f);
@@ -152,7 +157,12 @@ public record SeparationManifold(@Nonnull Vec3 Axis, double Distance) implements
 		double maxProjY = max(yPos, yNeg); // <- Pick the best vMax.y
 		double minProjY = min(yPos, yNeg); // <- Pick the best vMin.y
 		// If subtracting half y is better than adding half y, then swap our min/max corner vectors
-		if(yPos < yNeg)
+		if(Maths.Approx(yPos, yNeg))
+		{
+			maxCorner.mul(1f, 0f, 1f);
+			minCorner.mul(1f, 0f, 1f);
+		}
+		else if(yPos < yNeg)
 			maxCorner.mul(1f, -1f, 1f);
 		else
 			minCorner.mul(1f, -1f, 1f);
@@ -164,13 +174,18 @@ public record SeparationManifold(@Nonnull Vec3 Axis, double Distance) implements
 		double maxProjZ = max(zPos, zNeg); // <- Pick the best vMax.z
 		double minProjZ = min(zPos, zNeg); // <- Pick the best vMin.z
 		// If subtracting half z is better than adding half z, then swap our min/max corner vectors
-		if(zPos < zNeg)
+		if(Maths.Approx(zPos, zNeg))
+		{
+			maxCorner.mul(1f, 1f, 0f);
+			minCorner.mul(1f, 1f, 0f);
+		}
+		else if(zPos < zNeg)
 			maxCorner.mul(1f, 1f, -1f);
 		else
 			minCorner.mul(1f, 1f, -1f);
 
-		double min = minProjX + minProjY + minProjZ;
-		double max = maxProjX + maxProjY + maxProjZ;
+		double min = minProjX + minProjY + minProjZ - Distance;
+		double max = maxProjX + maxProjY + maxProjZ - Distance;
 
 		if(Maths.Abs(min) < Maths.Abs(max))
 		{

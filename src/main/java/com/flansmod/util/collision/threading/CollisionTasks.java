@@ -28,7 +28,7 @@ public class CollisionTasks
 		}
 
 		SeparationManifold shortestIntersection = null;
-		double shortestIntersectionDist = Double.MAX_VALUE;
+		double shortestIntersectionDist = -Double.MAX_VALUE;
 
 		// Try some axes in A-local space
 		Vec3 deltaInASpace = aCollider.Loc().GlobalToLocalDirection(deltaPos);
@@ -39,7 +39,7 @@ public class CollisionTasks
 			double dist = testAX.GetSeparationDistance(aCollider, bCollider);
 			if (dist >= 0.0f)
 				return new SeparationTestResult(testAX, dist);
-			else //if(dist < shortestIntersectionDist)
+			else if(dist > shortestIntersectionDist)
 			{
 				shortestIntersectionDist = dist;
 				shortestIntersection = testAX;
@@ -47,11 +47,11 @@ public class CollisionTasks
 		}
 		// Test A local Z axis
 		{
-			SeparationManifold testAZ = aCollider.GetSide(deltaInASpace.z > 0.0f ? Direction.NORTH : Direction.SOUTH);
+			SeparationManifold testAZ = aCollider.GetSide(deltaInASpace.z > 0.0f ? Direction.SOUTH : Direction.NORTH);
 			double dist = testAZ.GetSeparationDistance(aCollider, bCollider);
 			if (dist >= 0.0f)
 				return new SeparationTestResult(testAZ, dist);
-			else if(dist < shortestIntersectionDist)
+			else if(dist > shortestIntersectionDist)
 			{
 				shortestIntersectionDist = dist;
 				shortestIntersection = testAZ;
@@ -63,7 +63,7 @@ public class CollisionTasks
 			double dist = testAY.GetSeparationDistance(aCollider, bCollider);
 			if (dist >= 0.0f)
 				return new SeparationTestResult(testAY, dist);
-			else if(dist < shortestIntersectionDist)
+			else if(dist > shortestIntersectionDist)
 			{
 				shortestIntersectionDist = dist;
 				shortestIntersection = testAY;
@@ -79,7 +79,7 @@ public class CollisionTasks
 			double dist = testBX.GetSeparationDistance(aCollider, bCollider);
 			if (dist >= 0.0f)
 				return new SeparationTestResult(testBX, dist);
-			else if (dist < shortestIntersectionDist)
+			else if (dist > shortestIntersectionDist)
 			{
 				shortestIntersectionDist = dist;
 				shortestIntersection = testBX;
@@ -87,11 +87,11 @@ public class CollisionTasks
 		}
 		// Test B local Z axis
 		{
-			SeparationManifold testBZ = bCollider.GetSide(deltaInBSpace.z > 0.0f ? Direction.NORTH : Direction.SOUTH);
+			SeparationManifold testBZ = bCollider.GetSide(deltaInBSpace.z > 0.0f ? Direction.SOUTH : Direction.NORTH);
 			double dist = testBZ.GetSeparationDistance(aCollider, bCollider);
 			if (dist >= 0.0f)
 				return new SeparationTestResult(testBZ, dist);
-			else if (dist < shortestIntersectionDist)
+			else if (dist > shortestIntersectionDist)
 			{
 				shortestIntersectionDist = dist;
 				shortestIntersection = testBZ;
@@ -103,9 +103,9 @@ public class CollisionTasks
 			double dist = testBY.GetSeparationDistance(aCollider, bCollider);
 			if (dist >= 0.0f)
 				return new SeparationTestResult(testBY, dist);
-			else if (dist < shortestIntersectionDist)
+			else if (dist > shortestIntersectionDist)
 			{
-				//shortestIntersectionDist = dist;
+				shortestIntersectionDist = dist;
 				shortestIntersection = testBY;
 			}
 		}

@@ -22,7 +22,7 @@ public record TransformedBBCollection(@Nonnull Transform Location, @Nonnull Immu
 	@Nonnull
 	public TransformedBB GetColliderBB(int index)
 	{
-		return new TransformedBB(Location.Translated(GetCenter(index)), GetHalfExtents(index));
+		return new TransformedBB(Transform.FromPos(GetCenter(index)), GetHalfExtents(index));
 	}
 	@Nonnull
 	public TransformedBB GetBoundingBB()

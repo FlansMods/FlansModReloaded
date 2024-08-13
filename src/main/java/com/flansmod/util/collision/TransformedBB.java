@@ -3,6 +3,7 @@ package com.flansmod.util.collision;
 import com.flansmod.util.Maths;
 import com.flansmod.util.Transform;
 import net.minecraft.core.Direction;
+import net.minecraft.world.level.block.state.properties.Half;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import org.joml.Vector3f;
@@ -47,6 +48,14 @@ public record TransformedBB(@Nonnull Transform Loc, @Nonnull Vector3f HalfExtent
 	public Vec3 Intersect(@Nonnull AABB bb) { return CollisionUtility.Separate(this, bb); }
 	@Nullable
 	public Vec3 Intersect(@Nonnull TransformedBB other) { return CollisionUtility.Separate(this, other); }
+
+	public boolean Contains(@Nonnull Vec3 point)
+	{
+		Vec3 local = Loc.GlobalToLocalPosition(point);
+		return Maths.Abs(local.x) <= HalfExtents.x
+			&& Maths.Abs(local.y) <= HalfExtents.y
+			&& Maths.Abs(local.z) <= HalfExtents.z;
+	}
 
 	public double XSize() { return HalfExtents.x * 2d; }
 	public double YSize() { return HalfExtents.y * 2d; }
