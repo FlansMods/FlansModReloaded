@@ -56,26 +56,26 @@ public class CarControlLogic extends ControlLogic
 	}
 
 	@Override
-	public void TickAuthoritative(@Nonnull VehicleEntity vehicle, @Nonnull VehicleInputState inputs, @Nonnull ForceModel forces)
+	public void TickAuthoritative(@Nonnull VehicleEntity vehicle, @Nonnull VehicleInputState inputs)
 	{
 		float accelerationInput = inputs.TickAxis(AcceleratorAxis);
 		float steeringInput = inputs.TickAxis(SteerLeftRightAxis);
 
-		Collection<WheelEntity> steeringAtFront = vehicle.Wheels.ByHints(EControlLogicHint.Front, EControlLogicHint.Steering);
-		Collection<WheelEntity> steeringAtBack = vehicle.Wheels.ByHints(EControlLogicHint.Rear, EControlLogicHint.Steering);
-		Collection<WheelEntity> driveWheels = vehicle.Wheels.ByHint(EControlLogicHint.Drive);
-
-		for(WheelEntity wheel : steeringAtFront)
-			wheel.SetYawParameter(steeringInput);
-		for(WheelEntity wheel : steeringAtBack)
-			wheel.SetYawParameter(-steeringInput);
-
-		for(WheelEntity driveWheel : driveWheels)
-			driveWheel.SetTorqueParameter(accelerationInput);
+		//Collection<WheelEntity> steeringAtFront = vehicle.Wheels.ByHints(EControlLogicHint.Front, EControlLogicHint.Steering);
+		//Collection<WheelEntity> steeringAtBack = vehicle.Wheels.ByHints(EControlLogicHint.Rear, EControlLogicHint.Steering);
+		//Collection<WheelEntity> driveWheels = vehicle.Wheels.ByHint(EControlLogicHint.Drive);
+//
+		//for(WheelEntity wheel : steeringAtFront)
+		//	wheel.SetYawParameter(steeringInput);
+		//for(WheelEntity wheel : steeringAtBack)
+		//	wheel.SetYawParameter(-steeringInput);
+//
+		//for(WheelEntity driveWheel : driveWheels)
+		//	driveWheel.SetTorqueParameter(accelerationInput);
 
 	}
 	@Override
-	public void TickRemote(@Nonnull VehicleEntity vehicle, @Nonnull VehicleInputState inputs, @Nonnull ForceModel forces)
+	public void TickRemote(@Nonnull VehicleEntity vehicle, @Nonnull VehicleInputState inputs)
 	{
 
 	}

@@ -44,13 +44,13 @@ public class LegacyPlaneControlLogic extends ControlLogic
 	}
 
 	@Override
-	public void TickAuthoritative(@Nonnull VehicleEntity vehicle, @Nonnull VehicleInputState inputs, @Nonnull ForceModel forces)
+	public void TickAuthoritative(@Nonnull VehicleEntity vehicle, @Nonnull VehicleInputState inputs)
 	{
-		TickShared(vehicle, inputs, forces);
+		TickShared(vehicle, inputs);
 	}
 
 	@Override
-	public void TickRemote(@Nonnull VehicleEntity vehicle, @Nonnull VehicleInputState inputs, @Nonnull ForceModel forces)
+	public void TickRemote(@Nonnull VehicleEntity vehicle, @Nonnull VehicleInputState inputs)
 	{
 		// if(vehicle.level().isClientSide && !thePlayerIsDrivingThis)
 		//		{
@@ -63,13 +63,13 @@ public class LegacyPlaneControlLogic extends ControlLogic
 		//
 		//		}
 
-		TickShared(vehicle, inputs, forces);
+		TickShared(vehicle, inputs);
 
 
 	}
 	private static final float g = 0.98F / 10F;
 
-	private void TickShared(@Nonnull VehicleEntity vehicle, @Nonnull VehicleInputState inputs, @Nonnull ForceModel forces)
+	private void TickShared(@Nonnull VehicleEntity vehicle, @Nonnull VehicleInputState inputs)
 	{
 		// TODO: if(!readyForUpdates) return;
 		Player driver = (vehicle.getControllingPassenger() instanceof Player player) ? player : null;

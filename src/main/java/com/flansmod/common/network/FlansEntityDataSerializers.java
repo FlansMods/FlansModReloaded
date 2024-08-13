@@ -6,11 +6,8 @@ import com.flansmod.common.actions.contexts.GunContext;
 import com.flansmod.common.actions.contexts.GunshotContext;
 import com.flansmod.common.actions.contexts.ShooterContext;
 import com.flansmod.common.entity.vehicle.PerPartMap;
-import com.flansmod.common.entity.vehicle.save.DamageSyncState;
-import com.flansmod.common.entity.vehicle.save.GunSyncState;
-import com.flansmod.common.entity.vehicle.save.ArticulationSyncState;
-import com.flansmod.common.entity.vehicle.save.EngineSyncState;
-import com.flansmod.common.entity.vehicle.save.SeatSyncState;
+import com.flansmod.common.entity.vehicle.hierarchy.WheelEntity;
+import com.flansmod.common.entity.vehicle.save.*;
 import com.flansmod.common.types.Definitions;
 import com.flansmod.common.types.JsonDefinition;
 import com.flansmod.common.types.abilities.CraftingTraitDefinition;
@@ -174,6 +171,22 @@ public class FlansEntityDataSerializers
 			return state;
 		}
 	};
+	public static final EntityDataSerializer<WheelSyncState> WHEEL = new EntityDataSerializer.ForValueType<>()
+	{
+		@Override
+		public void write(@Nonnull FriendlyByteBuf buf, @Nonnull WheelSyncState data)
+		{
+			//buf.writeItemStack(data.GunStack, false);
+		}
+		@Override
+		@Nonnull
+		public WheelSyncState read(@Nonnull FriendlyByteBuf buf)
+		{
+			WheelSyncState state = new WheelSyncState();
+			//state.GunStack = buf.readItem();
+			return state;
+		}
+	};
 
 	public static final EntityDataSerializer<PerPartMap<ArticulationSyncState>> ARTICULATION_MAP =
 		new PerPartMapSerializer<>(ARTICULATION);
@@ -185,7 +198,8 @@ public class FlansEntityDataSerializers
 		new PerPartMapSerializer<>(DAMAGE);
 	public static final EntityDataSerializer<PerPartMap<GunSyncState>> GUN_MAP =
 		new PerPartMapSerializer<>(GUN);
-
+	public static final EntityDataSerializer<PerPartMap<WheelSyncState>> WHEEL_MAP =
+		new PerPartMapSerializer<>(WHEEL);
 
 /*
 	public static final EntityDataSerializer<ShooterContext> SHOOTER_CONTEXT = new EntityDataSerializer<>()
@@ -327,12 +341,15 @@ public class FlansEntityDataSerializers
 		EntityDataSerializers.registerSerializer(SEAT);
 		EntityDataSerializers.registerSerializer(DAMAGE);
 		EntityDataSerializers.registerSerializer(GUN);
+		EntityDataSerializers.registerSerializer(WHEEL);
+
 
 		EntityDataSerializers.registerSerializer(ARTICULATION_MAP);
 		EntityDataSerializers.registerSerializer(ENGINE_MAP);
 		EntityDataSerializers.registerSerializer(SEAT_MAP);
 		EntityDataSerializers.registerSerializer(DAMAGE_MAP);
 		EntityDataSerializers.registerSerializer(GUN_MAP);
+		EntityDataSerializers.registerSerializer(WHEEL_MAP);
 
 	}
 }

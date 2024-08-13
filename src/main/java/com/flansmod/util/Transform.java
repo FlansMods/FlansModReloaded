@@ -6,9 +6,11 @@ import net.minecraft.client.renderer.block.model.ItemTransform;
 import net.minecraft.client.renderer.block.model.ItemTransforms;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
+import net.minecraftforge.fml.loading.FMLEnvironment;
 import org.joml.*;
 import org.joml.Runtime;
 import org.lwjgl.system.MemoryUtil;
@@ -44,6 +46,24 @@ public class Transform
     @Nonnull
     public final Vector3f Scale;
 
+    private void ConstructorNaNCheck()
+    {
+        // Don't do in live, this is costly
+        if(FMLEnvironment.production)
+            return;
+
+        if(Orientation.lengthSquared() < 0.01d)
+        {
+            FlansMod.LOGGER.error("Transform has near-zero Quaternion");
+        }
+        if(HasNaN())
+        {
+            FlansMod.LOGGER.error("Transform failed NaN check");
+        }
+    }
+
+
+
     private Transform(double x, double y, double z, float pitch, float yaw, float roll, float scale, @Nullable Supplier<String> debugFunc)
     {
         DebugInfo = DEBUG_OFF_SUPP;
@@ -51,6 +71,7 @@ public class Transform
         Position = new Vector3d(x, y, z);
         Orientation = QuatFromEuler(pitch, yaw, roll);
         Scale = new Vector3f(scale, scale, scale);
+        ConstructorNaNCheck();
     }
     private Transform(@Nonnull Vec3 pos,  @Nonnull Quaternionf rotation, @Nonnull Vector3f scale, @Nullable Supplier<String> debugFunc)
     {
@@ -59,6 +80,7 @@ public class Transform
         Position = new Vector3d(pos.x, pos.y, pos.z);
         Orientation = new Quaternionf(rotation);
         Scale = new Vector3f(scale);
+        ConstructorNaNCheck();
     }
     private Transform(@Nonnull Vector3d pos,  @Nonnull Quaternionf rotation, @Nonnull Vector3f scale, @Nullable Supplier<String> debugFunc)
     {
@@ -67,6 +89,7 @@ public class Transform
         Position = new Vector3d(pos.x, pos.y, pos.z);
         Orientation = new Quaternionf(rotation);
         Scale = new Vector3f(scale);
+        ConstructorNaNCheck();
     }
     private Transform(double x, double y, double z, @Nonnull Quaternionf rotation, float scale, @Nullable Supplier<String> debugFunc)
     {
@@ -75,6 +98,7 @@ public class Transform
         Position = new Vector3d(x, y, z);
         Orientation = new Quaternionf(rotation);
         Scale = new Vector3f(scale, scale, scale);
+        ConstructorNaNCheck();
     }
     private Transform(double x, double y, double z, float scale, @Nullable Supplier<String> debugFunc)
     {
@@ -83,6 +107,7 @@ public class Transform
         Position = new Vector3d(x, y, z);
         Orientation = IDENTITY_QUAT;
         Scale = new Vector3f(scale, scale, scale);
+        ConstructorNaNCheck();
     }
     private Transform(@Nonnull Vector3f pos, @Nonnull Quaternionf rotation, @Nonnull Vector3f scale, @Nullable Supplier<String> debugFunc)
     {
@@ -91,6 +116,7 @@ public class Transform
         Position = new Vector3d(pos.x, pos.y, pos.z);
         Orientation = new Quaternionf(rotation);
         Scale = new Vector3f(scale);
+        ConstructorNaNCheck();
     }
     private Transform(float scale, @Nullable Supplier<String> debugFunc)
     {
@@ -99,6 +125,7 @@ public class Transform
         Position = IDENTITY_POS;
         Orientation = IDENTITY_QUAT;
         Scale = new Vector3f(scale, scale, scale);
+        ConstructorNaNCheck();
     }
     private Transform(@Nullable Supplier<String> debugFunc)
     {
@@ -107,6 +134,7 @@ public class Transform
         Position = IDENTITY_POS;
         Orientation = IDENTITY_QUAT;
         Scale = IDENTITY_SCALE;
+        ConstructorNaNCheck();
     }
     private Transform()
     {
@@ -115,6 +143,7 @@ public class Transform
         Position = IDENTITY_POS;
         Orientation = IDENTITY_QUAT;
         Scale = IDENTITY_SCALE;
+        ConstructorNaNCheck();
     }
 
     // From complete transform
@@ -185,7 +214,69 @@ public class Transform
         func.accept(stack);
         return stack.Top();
     }
+    @Nonnull
+    public CompoundTag ToTag(boolean storePos, boolean storeOri, boolean storeScale)
+    {
+        CompoundTag tags = new CompoundTag();
+        if(storePos)
+        {
+            tags.putDouble("px", Position.x);
+            tags.putDouble("py", Position.y);
+            tags.putDouble("pz", Position.z);
+        }
+        if(storeOri)
+        {
+            Vector3f euler = ToEuler(Orientation);
+            tags.putFloat("rp", euler.x);
+            tags.putFloat("ry", euler.y);
+            tags.putFloat("rr", euler.z);
+        }
+        if(storeScale)
+        {
+            tags.putFloat("sx", Scale.x);
+            tags.putFloat("sy", Scale.y);
+            tags.putFloat("sz", Scale.z);
+        }
 
+        return tags;
+    }
+    @Nonnull
+    public CompoundTag ToPosTag() { return ToTag(true, false, false); }
+    @Nonnull
+    public CompoundTag ToPosAndOriTag() { return ToTag(true, true, false); }
+    @Nonnull
+    public static Transform FromTag(@Nonnull CompoundTag tags, @Nullable Vec3 withPos, @Nullable Quaternionf withOri, @Nullable Vector3f withScale)
+    {
+        if(withPos == null)
+        {
+            double x = tags.getDouble("px");
+            double y = tags.getDouble("py");
+            double z = tags.getDouble("pz");
+            withPos = new Vec3(x, y, z);
+        }
+        if(withOri == null)
+        {
+            float pitch = tags.getFloat("rp");
+            float yaw = tags.getFloat("ry");
+            float roll = tags.getFloat("rr");
+            withOri = QuatFromEuler(pitch, yaw, roll);
+        }
+        if(withScale == null)
+        {
+            float scaleX = tags.getFloat("sx");
+            float scaleY = tags.getFloat("sy");
+            float scaleZ = tags.getFloat("sz");
+            withScale = new Vector3f(scaleX, scaleY, scaleZ);
+        }
+
+        return new Transform(withPos, withOri, withScale, ()->"Loaded from Tag");
+    }
+    @Nonnull
+    public static Transform FromTag(@Nonnull CompoundTag tags) {  return FromTag(tags, null, null, null); }
+    @Nonnull
+    public static Transform FromPosAndOriTag(@Nonnull CompoundTag tags) {  return FromTag(tags, null, null, new Vector3f(1f, 1f, 1f)); }
+    @Nonnull
+    public static Transform FromTagWithScale(@Nonnull CompoundTag tags, @Nonnull Vector3f scale) {  return FromTag(tags, null, null, scale); }
     // ----------------------------------------------------------------------------------------
     // --- Minecraft RenderSystem / JOML interface ---
     // ----------------------------------------------------------------------------------------
@@ -607,9 +698,10 @@ public class Transform
     }
 
 
-
     private static final NumberFormat FLOAT_FORMAT = new DecimalFormat("#.##");
     private static final NumberFormat ANGLE_FORMAT = new DecimalFormat("#");
+
+
 
     @Nonnull
     public String GetDebugInfo()

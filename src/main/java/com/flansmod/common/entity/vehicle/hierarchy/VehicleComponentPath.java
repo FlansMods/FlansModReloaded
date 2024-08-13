@@ -11,7 +11,8 @@ public record VehicleComponentPath(@Nonnull VehiclePartPath Part,
 								   int Index)
 {
 	public static final VehicleComponentPath Invalid = new VehicleComponentPath(VehiclePartPath.Invalid, EPartDefComponent.Articulation, 0);
-	@Nonnull public static VehicleComponentPath coreDamage() { return new VehicleComponentPath(VehiclePartPath.Core, EPartDefComponent.Damage, 0); }
+	public static final VehicleComponentPath coreDamage = new VehicleComponentPath(VehiclePartPath.Core, EPartDefComponent.Damage, 0);
+	public static final VehicleComponentPath coreArticulation = new VehicleComponentPath(VehiclePartPath.Core, EPartDefComponent.Damage, 0);
 
 	@Override
 	public int hashCode()

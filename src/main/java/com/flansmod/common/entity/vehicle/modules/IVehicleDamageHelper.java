@@ -60,7 +60,7 @@ public interface IVehicleDamageHelper
 	@Nonnull
 	default VehicleComponentPath DamageableOrElseCore(@Nonnull VehicleComponentPath partName)
 	{
-		return HasDamageablePart(partName) ? partName : VehicleComponentPath.coreDamage();
+		return HasDamageablePart(partName) ? partName : VehicleComponentPath.coreDamage;
 	}
 	default boolean IsPartDestroyed(@Nonnull VehicleComponentPath partName)
 	{

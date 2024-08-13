@@ -5,23 +5,22 @@ import com.flansmod.client.render.debug.DebugRenderer;
 import com.flansmod.common.FlansMod;
 import com.flansmod.common.entity.longdistance.LongDistanceEntity;
 import com.flansmod.common.entity.longdistance.LongDistanceVehicle;
+import com.flansmod.common.entity.vehicle.physics.*;
 import com.flansmod.common.entity.vehicle.VehicleEntity;
-import com.flansmod.common.entity.vehicle.controls.ForceModel;
 import com.flansmod.common.entity.vehicle.hierarchy.VehicleComponentPath;
-import com.flansmod.common.entity.vehicle.hierarchy.WheelEntity;
 import com.flansmod.util.Transform;
 import com.flansmod.util.collision.*;
+import com.flansmod.util.physics.IForce;
+import com.flansmod.util.physics.LinearForce;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.server.ServerLifecycleHooks;
-import org.jetbrains.annotations.Debug;
 import org.joml.Vector3f;
 import org.joml.Vector4f;
 
@@ -29,7 +28,6 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Vector;
 import java.util.function.Function;
 
 public class VehicleDebugRenderer
@@ -60,7 +58,7 @@ public class VehicleDebugRenderer
 		new Vector4f(0.125f, 0.125f, 1f, 0.5f),	// CoreCurrent
 		new Vector4f(0.25f, 0.25f, 1f, 0.25f));	// CoreNext
 
-	// Client palette is green -> yellow
+	// Server palette is green -> yellow
 	private static final DebugPalette Server = new DebugPalette(
 		new Vector4f(1f, 1f, 1f, 1f),			// Default
 		new Vector4f(1f, 1f, 0.25f, 1f),		// MotionCurrent
@@ -182,14 +180,12 @@ public class VehicleDebugRenderer
 			// Render a regular entity debug view
 			if(entity instanceof VehicleEntity vehicle)
 			{
-				ForceModel forces = vehicle.ForcesLastFrame;
-
 				Transform vehiclePos = vehicle.GetWorldToEntity().GetCurrent();
 
 				DebugRenderer.RenderCube(Transform.FromPos(vehicle.position()), 1, palette.CoreCurrent, new Vector3f(0.15f, 0.1f, 0.15f));
 				//DebugRenderer.RenderAxes(vehiclePos, 1, palette.Default);
 				DebugRenderer.RenderCube(vehiclePos, 1, palette.CoreCurrent, new Vector3f(0.6f, 0.25f, 0.6f));
-				Vec3 coreMotionNextFrame = DebugRenderForces(forces.Debug_GetForcesOnCore(), vehicle.getDeltaMovement(), vehicle.GetWorldToEntity().GetCurrent(), palette, true, vehicle.Def().physics.mass, vehicle::GetWorldToPartCurrent);
+				Vec3 coreMotionNextFrame = DebugRenderForces(vehicle.GetCoreForces(), vehicle.getDeltaMovement(), vehicle.GetWorldToEntity().GetCurrent(), palette, true, vehicle.Def().physics.mass, vehicle::GetWorldToPartCurrent);
 				Transform vehiclePosNext = Transform.Compose(vehiclePos, Transform.FromPos(coreMotionNextFrame.scale(1f/20f)));
 				DebugRenderer.RenderCube(vehiclePosNext, 1, palette.CoreNext,  new Vector3f(0.6f, 0.25f, 0.6f));
 
@@ -204,28 +200,40 @@ public class VehicleDebugRenderer
 
 				});
 
-				for(int wheelIndex = 0; wheelIndex < vehicle.Wheels.All().size(); wheelIndex++)
-				{
-					WheelEntity wheel = vehicle.Wheels.ByIndex(wheelIndex);
-					if(wheel != null)
-					{
-						Transform wheelPos = Transform.FromPos(wheel.position());
-						Vector3f debugWheelBoxSize = new Vector3f(0.5f * wheel.GetWheelDef().radius, wheel.GetWheelDef().radius, wheel.GetWheelDef().radius);
-						//DebugRenderer.RenderAxes(wheel.GetWorldTransformCurrent(), 1, palette.Default);
-						DebugRenderer.RenderCube(wheelPos, 1, palette.WheelCurrent, debugWheelBoxSize);
+				vehicle.GetHierarchy().ForEachWheel((path, def) -> {
 
-						Vec3 wheelMotionNextFrame = DebugRenderForces(forces.Debug_GetForcesOn(wheel.GetWheelPath().Part()), wheel.getDeltaMovement(), wheel.GetWorldTransformCurrent(), palette, false, wheel.GetWheelDef().mass, vehicle::GetWorldToPartCurrent);
-						Transform wheelPosNext = Transform.Compose(wheelPos, Transform.FromPos(wheelMotionNextFrame.scale(1f/20f)));
-						DebugRenderer.RenderCube(wheelPosNext, 1, palette.WheelNext, debugWheelBoxSize);
-					}
-				}
+				//});
+				//
+				//for(int wheelIndex = 0; wheelIndex < vehicle.Wheels.All().size(); wheelIndex++)
+				//{
+				//	WheelEntity wheel = vehicle.Wheels.ByIndex(wheelIndex);
+				//	if(wheel != null)
+				//	{
+					VehiclePartPhysics physics = vehicle.GetPartPhysics(path);
+
+					Transform wheelPos =physics.LocationCurrent;
+					Vector3f debugWheelBoxSize = new Vector3f(0.5f * def.radius, def.radius, def.radius);
+					//DebugRenderer.RenderAxes(wheel.GetWorldTransformCurrent(), 1, palette.Default);
+					DebugRenderer.RenderCube(wheelPos, 1, palette.WheelCurrent, debugWheelBoxSize);
+
+					Vec3 wheelMotionNextFrame = DebugRenderForces(physics.Forces,
+						physics.GetDeltaFramePos(),
+						wheelPos,
+						palette,
+						false,
+						def.mass,
+						vehicle::GetWorldToPartCurrent);
+					Transform wheelPosNext = Transform.Compose(wheelPos, Transform.FromPos(wheelMotionNextFrame.scale(1f/20f)));
+					DebugRenderer.RenderCube(wheelPosNext, 1, palette.WheelNext, debugWheelBoxSize);
+					//}
+				});
 			}
 		}
 	}
 
 
 
-	private Vec3 DebugRenderForces(@Nullable ForceModel.ForcesOnPart forces,
+	private Vec3 DebugRenderForces(@Nullable ForcesOnPart forces,
 								   @Nonnull Vec3 motion,
 								   @Nonnull Transform worldTransform,
 								   @Nonnull DebugPalette palette,
@@ -240,32 +248,49 @@ public class VehicleDebugRenderer
 			Vec3 origin = worldTransform.PositionVec3();
 			Vec3 forceTotal = new Vec3(0d, 0d, 0d);
 			Vector4f forceColour = isCore ? palette.CoreForces : palette.WheelForces;
-			for(ForceModel.Force global : forces.GlobalForces)
+
+			for(IForce force : forces.Debug_GetForces())
 			{
-				Vec3 force = global.Vector();
-				DebugRenderer.RenderArrow(origin, 1, forceColour, force.scale(arrowScale));
-				forceTotal = forceTotal.add(global.Vector());
+				if(force.HasLinearComponent(worldTransform))
+				{
+					LinearForce linear = force.GetLinearComponent(worldTransform);
+					DebugRenderer.RenderArrow(origin, 1, forceColour, linear.Force().scale(arrowScale));
+				}
+				if(force.HasAngularComponent(worldTransform))
+				{
+					//Quaternionf angular = force.GetAngularComponentRadiansPerSecondSq(worldTransform);
+					//forceTotal = forceTotal.add(global.Vector());
+				}
 			}
-			for(ForceModel.OffsetForce global : forces.OffsetGlobalForces)
-			{
-				Vec3 offsetOrigin = origin.add(global.Offset());
-				Vec3 force = global.Vector();
-				DebugRenderer.RenderArrow(offsetOrigin, 1, forceColour, force.scale(arrowScale));
-				forceTotal = forceTotal.add(force);
-			}
-			for(ForceModel.Force local : forces.LocalForces)
-			{
-				Vec3 force = worldTransform.LocalToGlobalDirection(local.Vector());
-				forceTotal = forceTotal.add(force);
-				DebugRenderer.RenderArrow(origin, 1, forceColour, force.scale(arrowScale));
-			}
-			for(ForceModel.OffsetForce local : forces.OffsetLocalForces)
-			{
-				Vec3 offsetOrigin = worldTransform.LocalToGlobalPosition(local.Offset());
-				Vec3 force = worldTransform.LocalToGlobalDirection(local.Vector());
-				forceTotal = forceTotal.add(force);
-				DebugRenderer.RenderArrow(offsetOrigin, 1, forceColour, force.scale(arrowScale));
-			}
+
+
+
+			//for(LinearForce global : forces.GlobalForces)
+			//{
+			//	Vec3 force = global.Vector();
+			//	DebugRenderer.RenderArrow(origin, 1, forceColour, force.scale(arrowScale));
+			//	forceTotal = forceTotal.add(global.Vector());
+			//}
+			//for(OffsetForce global : forces.OffsetGlobalForces)
+			//{
+			//	Vec3 offsetOrigin = origin.add(global.Offset());
+			//	Vec3 force = global.Vector();
+			//	DebugRenderer.RenderArrow(offsetOrigin, 1, forceColour, force.scale(arrowScale));
+			//	forceTotal = forceTotal.add(force);
+			//}
+			//for(LinearForce local : forces.LocalForces)
+			//{
+			//	Vec3 force = worldTransform.LocalToGlobalDirection(local.Vector());
+			//	forceTotal = forceTotal.add(force);
+			//	DebugRenderer.RenderArrow(origin, 1, forceColour, force.scale(arrowScale));
+			//}
+			//for(OffsetForce local : forces.OffsetLocalForces)
+			//{
+			//	Vec3 offsetOrigin = worldTransform.LocalToGlobalPosition(local.Offset());
+			//	Vec3 force = worldTransform.LocalToGlobalDirection(local.Vector());
+			//	forceTotal = forceTotal.add(force);
+			//	DebugRenderer.RenderArrow(offsetOrigin, 1, forceColour, force.scale(arrowScale));
+			//}
 			//for(ForceModel.SpringJoint spring : forces.Springs)
 			//{
 			//	Transform pullTowards = lookup.apply(spring.PullTowardsAP());

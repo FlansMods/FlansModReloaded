@@ -1,10 +1,10 @@
 package com.flansmod.common.entity.vehicle.hierarchy;
 
+import com.flansmod.common.FlansMod;
 import com.flansmod.common.entity.ITransformChildEntity;
 import com.flansmod.common.entity.ITransformPair;
 import com.flansmod.common.entity.vehicle.ITransformEntity;
 import com.flansmod.common.entity.vehicle.VehicleEntity;
-import com.flansmod.common.entity.vehicle.controls.ForceModel;
 import com.flansmod.common.network.FlansEntityDataSerializers;
 import com.flansmod.common.types.vehicles.VehicleDefinition;
 import com.flansmod.common.types.vehicles.elements.EControlLogicHint;
@@ -30,7 +30,6 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
 
 public class WheelEntity extends Entity implements ITransformChildEntity
 {
@@ -81,11 +80,17 @@ public class WheelEntity extends Entity implements ITransformChildEntity
 		entityData.define(WHEEL_PATH, 0);
 		entityData.define(ANGULAR_VELOCITY, 0.0f);
 	}
-
-	public void SetLinkToVehicle(@Nonnull VehicleEntity vehicle, int wheelIndex)
+	public void SetLinkToVehicle(@Nonnull VehicleEntity vehicle, @Nonnull VehicleComponentPath path)
+	{
+		if(path.Type() != EPartDefComponent.Wheel)
+			FlansMod.LOGGER.error("Wheel attempted to link to vehicle at invalid path " + path);
+		SetLinkToVehicle(vehicle, path.Part(), path.Index());
+	}
+	public void SetLinkToVehicle(@Nonnull VehicleEntity vehicle, @Nonnull VehiclePartPath path, int wheelIndex)
 	{
 		SetVehicleDef(vehicle.Def());
 		SetVehicleEntityID(vehicle.getId());
+		SetWheelPath(path);
 		SetWheelIndex(wheelIndex);
 
 		WheelDefinition def = GetWheelDef();
@@ -95,6 +100,7 @@ public class WheelEntity extends Entity implements ITransformChildEntity
 	}
 	private void SetVehicleDef(@Nonnull VehicleDefinition def) { entityData.set(VEHICLE_DEF, def); }
 	private void SetVehicleEntityID(int entityID) { entityData.set(VEHICLE_ENTITY_ID, entityID); }
+	private void SetWheelPath(@Nonnull VehiclePartPath path) { entityData.set(WHEEL_PATH, path.hashCode()); }
 	private void SetWheelIndex(int index) { entityData.set(WHEEL_INDEX, index); }
 	private void SetAngularVelocity(float angularVelocity) { entityData.set(ANGULAR_VELOCITY, angularVelocity); }
 
@@ -230,20 +236,9 @@ public class WheelEntity extends Entity implements ITransformChildEntity
 		TorqueParameterPrevious = TorqueParameterCurrent;
 	}
 
-	public void PhysicsTick(@Nonnull VehicleEntity vehicle, int wheelIndex, @Nonnull ForceModel forces)
+	public void PhysicsTick(@Nonnull VehicleEntity vehicle, int wheelIndex)
 	{
-		if (!VehicleEntity.PAUSE_PHYSICS)
-		{
-			// Move using the Minecraft body, so we can process collisions
-			Vec3 motion = GetVelocity();
-			motion = forces.ApplyLinearForces(motion, GetWheelPath().Part(), GetWorldTransformCurrent(), GetWheelDef().mass);
-			motion = forces.ApplySpringForces(motion, GetWheelPath().Part(), GetWorldTransformCurrent(), GetWheelDef().mass, vehicle::GetWorldToPartCurrent);
-			motion = forces.ApplyDampening(GetWheelPath().Part(), motion);
-			SetVelocity(motion);
-			ApplyVelocity();
 
-			SyncEntityToTransform();
-		}
 	}
 
 	public void EndTick(@Nonnull VehicleEntity parent)
@@ -401,9 +396,9 @@ public class WheelEntity extends Entity implements ITransformChildEntity
 			VehicleEntity parent = GetVehicle();
 			if(parent != null)
 			{
-				parent.ForcesLastFrame.AddGlobalForce(GetWheelPath().Part(),
-					actualMovement.subtract(expectedMovement).scale(20f * 20f * Def.mass),
-					() -> "Normal reaction force");
+				//parent.ForcesLastFrame.AddGlobalForce(GetWheelPath().Part(),
+				//	actualMovement.subtract(expectedMovement).scale(20f * 20f * Def.mass),
+				//	() -> "Normal reaction force");
 			}
 		}
 	}

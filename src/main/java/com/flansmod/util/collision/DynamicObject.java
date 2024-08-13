@@ -2,13 +2,16 @@ package com.flansmod.util.collision;
 
 import com.flansmod.util.Maths;
 import com.flansmod.util.Transform;
+import com.flansmod.util.physics.AngularAcceleration;
+import com.flansmod.util.physics.AngularVelocity;
+import com.flansmod.util.physics.LinearAcceleration;
+import com.flansmod.util.physics.LinearVelocity;
 import com.google.common.collect.ImmutableList;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import org.joml.Quaternionf;
 
 import javax.annotation.Nonnull;
-import javax.swing.text.html.Option;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -16,21 +19,13 @@ import java.util.Stack;
 
 public class DynamicObject
 {
-	private static class FrameData
-	{
-		@Nonnull
-		public Transform Location;
-		@Nonnull
-		public Vec3 LinearMotion;
-		@Nonnull
-		public Quaternionf AngularMotion;
+	public static final int MAX_HISTORY = 20;
 
-		public FrameData(@Nonnull Transform loc, @Nonnull Vec3 motion, @Nonnull Quaternionf angular)
-		{
-			Location = loc;
-			LinearMotion = motion;
-			AngularMotion = angular;
-		}
+	private record FrameData(@Nonnull Transform Location,
+							 @Nonnull LinearVelocity linearVelocity,
+							 @Nonnull AngularVelocity angularVelocity)
+	{
+
 	}
 
 	@Nonnull
@@ -42,10 +37,12 @@ public class DynamicObject
 	public FrameData PendingFrame = null;
 
 	// Next Frame Inputs
+
+	// In M/Tick
 	@Nonnull
-	public Vec3 NextFrameLinearMotion;
+	public LinearVelocity NextFrameLinearMotion;
 	@Nonnull
-	public Quaternionf NextFrameAngularMotion;
+	public AngularVelocity NextFrameAngularMotion;
 	@Nonnull
 	public Optional<Transform> NextFrameTeleport;
 	@Nonnull
@@ -61,9 +58,9 @@ public class DynamicObject
 		ImmutableList.Builder<AABB> builder = ImmutableList.builder();
 		Colliders = builder.addAll(localColliders).build();
 		LocalBounds = GetLocalBounds();
-		Frames.add(new FrameData(Transform.Copy(initialLocation), Vec3.ZERO, new Quaternionf()));
-		NextFrameLinearMotion = Vec3.ZERO;
-		NextFrameAngularMotion = new Quaternionf();
+		Frames.add(new FrameData(Transform.Copy(initialLocation), LinearVelocity.Zero, AngularVelocity.Zero));
+		NextFrameLinearMotion = LinearVelocity.Zero;
+		NextFrameAngularMotion = AngularVelocity.Zero;
 		NextFrameTeleport = Optional.empty();
 		DynamicCollisions = new ArrayList<>();
 		StaticCollisions = new ArrayList<>();
@@ -81,7 +78,7 @@ public class DynamicObject
 	{
 		FrameData frame = GetFrameNTicksAgo(0);
 		AABB globalAABB = frame.Location.LocalToGlobalBounds(GetLocalBounds());
-		return globalAABB.expandTowards(NextFrameLinearMotion);
+		return globalAABB.expandTowards(NextFrameLinearMotion.ApplyOneTick());
 	}
 
 	@Nonnull
@@ -105,14 +102,38 @@ public class DynamicObject
 		return new AABB(xMin, yMin, zMin, xMax, yMax, zMax);
 	}
 
-	public void SetLinearMotion(@Nonnull Vec3 linearMotion)
+	public void SetLinearVelocity(@Nonnull LinearVelocity linearVelocity)
 	{
-		NextFrameLinearMotion = linearMotion;
+		NextFrameLinearMotion = linearVelocity;
 	}
-	public void ApplyAcceleration(@Nonnull Vec3 linearMotionDelta)
+	public void AddLinearAcceleration(@Nonnull LinearAcceleration linearAcceleration)
 	{
-		NextFrameLinearMotion = NextFrameLinearMotion.add(linearMotionDelta);
+		NextFrameLinearMotion = NextFrameLinearMotion.add(linearAcceleration.ApplyOneTick());
 	}
+	//public void AddOneTickOfLinearAcceleration(@Nonnull LinearAcceleration linearMotionDelta)
+	//{
+	//	NextFrameLinearMotion = Maths.Clamp(
+	//		NextFrameLinearMotion.add(linearMotionDelta),
+	//		-OBBCollisionSystem.MAX_LINEAR_BLOCKS_PER_TICK,
+	//		OBBCollisionSystem.MAX_LINEAR_BLOCKS_PER_TICK);
+	//}
+
+	public void SetAngularVelocity(@Nonnull AngularVelocity angularVelocity)
+	{
+		NextFrameAngularMotion = angularVelocity;
+	}
+	public void AddAngularAcceleration(@Nonnull AngularAcceleration angularAcceleration)
+	{
+		NextFrameAngularMotion = NextFrameAngularMotion.compose(angularAcceleration.ApplyOneTick());
+	}
+	//public void AddAngularAccelerationPerTick(@Nonnull AxisAngle4f angularMotionDelta)
+	//{
+	//	Quaternionf nextFrameQ = new Quaternionf().set(NextFrameAngularMotion);
+	//	Quaternionf deltaQ = new Quaternionf().set(angularMotionDelta);
+	//	nextFrameQ.mul(deltaQ);
+	//	// TODO: If AngularMotion.angle > Pi, does quaternion composition not have the chance of going backwards?
+	//	nextFrameQ.get(NextFrameAngularMotion);
+	//}
 	public void TeleportTo(@Nonnull Transform location)
 	{
 		NextFrameTeleport = Optional.of(location);
@@ -151,6 +172,13 @@ public class DynamicObject
 		NextFrameTeleport = Optional.empty();
 	}
 
+	public void CommitFrame()
+	{
+		if(Frames.size() >= MAX_HISTORY)
+			Frames.remove(0);
+		Frames.push(PendingFrame);
+	}
+
 	@Nonnull
 	private FrameData ExtrapolateNextFrame()
 	{
@@ -161,7 +189,13 @@ public class DynamicObject
 		else
 		{
 			FrameData currentFrame = GetFrameNTicksAgo(0);
-			Transform newLoc = Transform.Compose(currentFrame.Location, Transform.FromPosAndQuat(NextFrameLinearMotion, NextFrameAngularMotion, () -> ""));
+
+			Vec3 deltaPos = NextFrameLinearMotion.ApplyOneTick();
+			Quaternionf deltaRot = NextFrameAngularMotion.ApplyOneTick();
+
+			Transform newLoc = Transform.Compose(
+				currentFrame.Location,
+				Transform.FromPosAndQuat(deltaPos, deltaRot, () -> "ExtrapolatePhysicsFrame"));
 			return new FrameData(newLoc, NextFrameLinearMotion, NextFrameAngularMotion);
 		}
 	}

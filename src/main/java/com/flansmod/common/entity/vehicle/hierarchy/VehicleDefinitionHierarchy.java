@@ -220,7 +220,7 @@ public class VehicleDefinitionHierarchy
 	{
 		for(var kvp : AllNodes.entrySet())
 			for(int i = 0; i < kvp.getValue().Def.wheels.length; i++)
-				func.accept(kvp.getKey().Seat(i), kvp.getValue().Def.wheels[i]);
+				func.accept(kvp.getKey().Wheel(i), kvp.getValue().Def.wheels[i]);
 	}
 	public void IfWheelExists(@Nonnull VehicleComponentPath wheelPath, @Nonnull Consumer<WheelDefinition> func)
 	{

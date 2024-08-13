@@ -1,27 +1,22 @@
 package com.flansmod.util.collision;
 
 import com.flansmod.common.FlansMod;
+import com.flansmod.util.physics.*;
 import com.flansmod.util.Maths;
 import com.flansmod.util.Transform;
 import com.flansmod.util.collision.threading.CollisionTaskSeparateDynamicFromStatic;
 import com.flansmod.util.collision.threading.CollisionTaskSeparateDynamicPair;
 import com.google.common.collect.ImmutableList;
 import com.mojang.datafixers.util.Pair;
-import net.minecraft.core.Direction;
-import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.CollisionGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.border.WorldBorder;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.VoxelShape;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.event.TickEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import org.spongepowered.asm.mixin.Dynamic;
+import org.joml.AxisAngle4f;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.util.*;
 import java.util.function.Consumer;
 
@@ -47,6 +42,8 @@ public class OBBCollisionSystem
 	private final Map<ColliderHandle, ImmutableList<ISeparator>> StaticSeparators = new HashMap<>();
 	private long NextID = 1L;
 
+	public static final double MAX_LINEAR_BLOCKS_PER_TICK = 60d;
+	public static final double MAX_ANGULAR_MOTION_PER_TICK = 60d;
 
 	private final boolean SINGLE_THREAD_DEBUG = true;
 	public static ColliderHandle DEBUG_HANDLE = new ColliderHandle(0L);
@@ -110,14 +107,36 @@ public class OBBCollisionSystem
 		//	Dynamics.put(handle, dynObj);
 		//});
 	}
-	public void ApplyAcceleration(@Nonnull ColliderHandle handle, @Nonnull Vec3 linearMotion)
+	public void AddLinearAcceleration(@Nonnull ColliderHandle handle, @Nonnull LinearAcceleration linearAcceleration)
 	{
 		DoAfterPhysics(() -> {
 			DynamicObject dyn = Dynamics.get(handle);
 			if(dyn != null)
-			{
-				dyn.ApplyAcceleration(linearMotion);
-			}
+				dyn.AddLinearAcceleration(linearAcceleration);
+		});
+	}
+	public void SetLinearVelocity(@Nonnull ColliderHandle handle, @Nonnull LinearVelocity linearVelocity)
+	{
+		DoAfterPhysics(() -> {
+			DynamicObject dyn = Dynamics.get(handle);
+			if(dyn != null)
+				dyn.SetLinearVelocity(linearVelocity);
+		});
+	}
+	public void AddAngularAcceleration(@Nonnull ColliderHandle handle, @Nonnull AngularAcceleration angularAcceleration)
+	{
+		DoAfterPhysics(() -> {
+			DynamicObject dyn = Dynamics.get(handle);
+			if(dyn != null)
+				dyn.AddAngularAcceleration(angularAcceleration);
+		});
+	}
+	public void SetAngularVelocity(@Nonnull ColliderHandle handle, @Nonnull AngularVelocity angularVelocity)
+	{
+		DoAfterPhysics(() -> {
+			DynamicObject dyn = Dynamics.get(handle);
+			if(dyn != null)
+				dyn.SetAngularVelocity(angularVelocity);
 		});
 	}
 	public void Teleport(@Nonnull ColliderHandle handle, @Nonnull Transform to)
@@ -171,6 +190,8 @@ public class OBBCollisionSystem
 
 	public void PhysicsTick()
 	{
+		DoingPhysics = true;
+
 		PhysicsStep_ApplyMotions();
 		PhysicsStep_CreateTasks();
 
@@ -180,6 +201,13 @@ public class OBBCollisionSystem
 		}
 
 		PhysicsStep_CollectTasks();
+
+		DoingPhysics = false;
+
+		while(!DoAfterPhysics.isEmpty())
+		{
+			DoAfterPhysics.remove().run();
+		}
 	}
 
 
@@ -194,7 +222,7 @@ public class OBBCollisionSystem
 		{
 			ColliderHandle handleA = AllHandles.get(i);
 			DynamicObject objectA = Dynamics.get(handleA);
-			boolean movingA = objectA.NextFrameLinearMotion.lengthSqr() > Maths.EpsilonSq || objectA.NextFrameAngularMotion.angle() > Maths.EpsilonSq;
+			boolean movingA = !objectA.NextFrameLinearMotion.IsApproxZero() || !objectA.NextFrameAngularMotion.IsApproxZero();
 
 
 
@@ -214,7 +242,7 @@ public class OBBCollisionSystem
 			{
 				ColliderHandle handleB = AllHandles.get(j);
 				DynamicObject objectB = Dynamics.get(handleB);
-				boolean movingB = objectB.NextFrameLinearMotion.lengthSqr() > Maths.EpsilonSq || objectB.NextFrameAngularMotion.angle() > Maths.EpsilonSq;
+				boolean movingB = !objectB.NextFrameLinearMotion.IsApproxZero() || !objectB.NextFrameAngularMotion.IsApproxZero();
 
 				if(movingA || movingB)
 				{
@@ -264,7 +292,7 @@ public class OBBCollisionSystem
 					var output = task.GetResult();
 					if(output != null)
 					{
-						object.Frames.add(object.PendingFrame);
+						object.CommitFrame();
 						object.StaticCollisions.addAll(output.EventsA());
 						if(output.NewSeparatorList() != null && output.NewSeparatorList().size() > 0)
 							StaticSeparators.put(task.Handle, output.NewSeparatorList());
@@ -327,6 +355,14 @@ public class OBBCollisionSystem
 	private ImmutableList<VoxelShape> GetWorldColliders(@Nonnull AABB sweepAABB)
 	{
 		ImmutableList.Builder<VoxelShape> builder = ImmutableList.builder();
+
+		if(sweepAABB.getXsize() > 128d
+		|| sweepAABB.getYsize() > 64d
+		|| sweepAABB.getZsize() > 128d)
+		{
+			FlansMod.LOGGER.warn("Oversized SweepTest AABB at " + sweepAABB);
+			return builder.build();
+		}
 
 		// Add block shapes
 		Iterable<VoxelShape> blockCollisions = BlockAccess.getBlockCollisions(null, sweepAABB);
