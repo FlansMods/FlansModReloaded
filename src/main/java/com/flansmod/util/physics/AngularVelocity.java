@@ -31,6 +31,11 @@ public record AngularVelocity(@Nonnull Vec3 Axis, double Magnitude)
 		AxisAngle4f axisAngle = new AxisAngle4f().set(composed);
 		return new AngularVelocity(new Vec3(axisAngle.x, axisAngle.y, axisAngle.z), axisAngle.angle);
 	}
+	@Nonnull
+	public AngularVelocity scale(double scale)
+	{
+		return new AngularVelocity(Axis, Magnitude * scale);
+	}
 
 
 	//

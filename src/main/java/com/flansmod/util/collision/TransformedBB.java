@@ -56,6 +56,14 @@ public record TransformedBB(@Nonnull Transform Loc, @Nonnull Vector3f HalfExtent
 			&& Maths.Abs(local.y) <= HalfExtents.y
 			&& Maths.Abs(local.z) <= HalfExtents.z;
 	}
+	public boolean ApproxContains(@Nonnull Vec3 point) { return ApproxContains(point, 0.01d); }
+	public boolean ApproxContains(@Nonnull Vec3 point, double epsilon)
+	{
+		Vec3 local = Loc.GlobalToLocalPosition(point);
+		return Maths.Abs(local.x) <= HalfExtents.x + epsilon
+			&& Maths.Abs(local.y) <= HalfExtents.y + epsilon
+			&& Maths.Abs(local.z) <= HalfExtents.z + epsilon;
+	}
 
 	public double XSize() { return HalfExtents.x * 2d; }
 	public double YSize() { return HalfExtents.y * 2d; }

@@ -9,6 +9,8 @@ import org.joml.Vector3f;
 
 import javax.annotation.Nonnull;
 
+import java.util.Optional;
+
 import static java.lang.Math.*;
 
 
@@ -106,8 +108,7 @@ public record SeparationManifold(@Nonnull Vec3 Axis, double Distance) implements
 
 		return minProjX + minProjY + minProjZ;
 	}
-	@Override
-	@Nonnull
+	@Override @Nonnull
 	public Pair<Double, Double> ProjectBoxMinMax(@Nonnull Vec3 point, @Nonnull Vector3f halfExtents, @Nonnull Matrix3f ori)
 	{
 		double projPosX = point.x * Axis.x;
@@ -128,7 +129,22 @@ public record SeparationManifold(@Nonnull Vec3 Axis, double Distance) implements
 		return Pair.of(minProjX + minProjY + minProjZ, maxProjX + maxProjY + maxProjZ);
 	}
 
-	@Nonnull
+	@Override @Nonnull
+	public Optional<Vec3> RayPlaneIntersect(@Nonnull Vec3 origin, @Nonnull Vec3 ray)
+	{
+		// (Origin + t * Ray).V == d
+		// Solve for t
+		// (R.V)t = d - O.V
+		double rDotV = ray.dot(Axis);
+		if(Maths.Approx(rDotV, 0d))
+			return Optional.empty();
+
+		double oDotV = origin.dot(Axis);
+		double t = (Distance - oDotV) / rDotV;
+		return Optional.of(origin.add(ray.scale(t)));
+	}
+
+	@Override @Nonnull
 	public Vec3 GetIntersectionPoint(@Nonnull Vec3 point, @Nonnull Vector3f halfExtents, @Nonnull Matrix3f ori)
 	{
 		Vector3f maxCorner = new Vector3f(halfExtents);

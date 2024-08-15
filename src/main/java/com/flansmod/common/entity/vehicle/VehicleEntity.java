@@ -599,10 +599,11 @@ public class VehicleEntity extends Entity implements
 				// TODO: If debug, show them?
 				Transform newPos =  physics.ProcessEvents(part.PhysicsHandle,
 					(collision) -> {
-					//	part.Forces.AddForce(OffsetForce.physicsResponse(collision.ContactPoint(), collision.ContactNormal()));
+						part.Forces.AddForce(
+							OffsetForce.kgBlocksPerTickSq(collision.ContactNormal(), collision.ContactPoint()));
 					},
 					(collision) -> {
-					//	part.Forces.AddGlobalOffsetForce(collision.ContactPoint(), collision.ContactNormal());
+						//part.Forces.AddForce(OffsetForce.collision.ContactPoint(), collision.ContactNormal());
 					});
 
 				part.LocationCurrent = newPos;
@@ -640,10 +641,10 @@ public class VehicleEntity extends Entity implements
 		{
 			LinearForce gravity = LinearForce.kgBlocksPerSecondSq(new Vec3(0f, -9.81f * Def().physics.mass, 0f));
 
-			GetCorePhysics().Forces.AddForce(gravity);
+			//GetCorePhysics().Forces.AddForce(gravity);
 			GetCorePhysics().Forces.AddDampener(0.1f);
 			GetHierarchy().ForEachWheel((path, def) -> {
-				GetPartPhysics(path).Forces.AddForce(gravity);
+				//GetPartPhysics(path).Forces.AddForce(gravity);
 				GetPartPhysics(path).Forces.AddDampener(0.1f);
 			});
 		}
@@ -653,22 +654,35 @@ public class VehicleEntity extends Entity implements
 		if(PAUSE_PHYSICS)
 			return;
 
-		for(var kvp : PhysicsParts.entrySet())
 		{
-			VehicleComponentPath path = kvp.getKey();
-			VehiclePartPhysics part = kvp.getValue();
-
-			LinearAcceleration linear = part.Forces.SumLinearAcceleration(GetWorldToPartCurrent(path), Def().physics.mass);
-			AngularAcceleration angular = part.Forces.SumAngularAcceleration(GetWorldToPartCurrent(path), Def().physics.MomentOfInertia());
+			VehiclePartPhysics corePhysics = GetCorePhysics();
+			LinearAcceleration linear = corePhysics.Forces.SumLinearAcceleration(corePhysics.LocationCurrent, Def().physics.mass);
+			AngularAcceleration angular = corePhysics.Forces.SumAngularAcceleration(corePhysics.LocationCurrent, Def().physics.MomentOfInertia());
 			//float dampening = 1.0f;//part.Forces.GetDampeningRatio();
 			//if(dampening < 1.0f)
 			//{
 			//	linear = linear.subtract(part.GetVelocityMS().scale(1.0f - dampening));
 			//}
 
-			physics.AddLinearAcceleration(part.PhysicsHandle, linear);
-			physics.AddAngularAcceleration(part.PhysicsHandle, angular);
+			physics.AddLinearAcceleration(corePhysics.PhysicsHandle, linear);
+			physics.AddAngularAcceleration(corePhysics.PhysicsHandle, angular);
 		}
+
+		GetHierarchy().ForEachWheel((path, def) ->
+		{
+			VehiclePartPhysics wheelPhysics = GetPartPhysics(path);
+
+			LinearAcceleration linear = wheelPhysics.Forces.SumLinearAcceleration(GetWorldToPartCurrent(path), def.mass);
+			AngularAcceleration angular = wheelPhysics.Forces.SumAngularAcceleration(GetWorldToPartCurrent(path), def.MomentOfInertia());
+			//float dampening = 1.0f;//part.Forces.GetDampeningRatio();
+			//if(dampening < 1.0f)
+			//{
+			//	linear = linear.subtract(part.GetVelocityMS().scale(1.0f - dampening));
+			//}
+
+			physics.AddLinearAcceleration(wheelPhysics.PhysicsHandle, linear);
+			physics.AddAngularAcceleration(wheelPhysics.PhysicsHandle, angular);
+		});
 	}
 	protected void TickPhysics()
 	{

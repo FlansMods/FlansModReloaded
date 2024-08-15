@@ -1,5 +1,6 @@
 package com.flansmod.util.collision.threading;
 
+import com.flansmod.common.FlansMod;
 import com.flansmod.util.Maths;
 import com.flansmod.util.collision.SeparationManifold;
 import com.flansmod.util.collision.SeparationTestResult;
@@ -39,7 +40,7 @@ public class CollisionTasks
 			double dist = testAX.GetSeparationDistance(aCollider, bCollider);
 			if (dist >= 0.0f)
 				return new SeparationTestResult(testAX, dist);
-			else if(dist > shortestIntersectionDist)
+			else if(dist >= shortestIntersectionDist)
 			{
 				shortestIntersectionDist = dist;
 				shortestIntersection = testAX;
@@ -51,7 +52,7 @@ public class CollisionTasks
 			double dist = testAZ.GetSeparationDistance(aCollider, bCollider);
 			if (dist >= 0.0f)
 				return new SeparationTestResult(testAZ, dist);
-			else if(dist > shortestIntersectionDist)
+			else if(dist >= shortestIntersectionDist)
 			{
 				shortestIntersectionDist = dist;
 				shortestIntersection = testAZ;
@@ -63,7 +64,7 @@ public class CollisionTasks
 			double dist = testAY.GetSeparationDistance(aCollider, bCollider);
 			if (dist >= 0.0f)
 				return new SeparationTestResult(testAY, dist);
-			else if(dist > shortestIntersectionDist)
+			else if(dist >= shortestIntersectionDist)
 			{
 				shortestIntersectionDist = dist;
 				shortestIntersection = testAY;
@@ -79,7 +80,7 @@ public class CollisionTasks
 			double dist = testBX.GetSeparationDistance(aCollider, bCollider);
 			if (dist >= 0.0f)
 				return new SeparationTestResult(testBX, dist);
-			else if (dist > shortestIntersectionDist)
+			else if (dist >= shortestIntersectionDist)
 			{
 				shortestIntersectionDist = dist;
 				shortestIntersection = testBX;
@@ -91,7 +92,7 @@ public class CollisionTasks
 			double dist = testBZ.GetSeparationDistance(aCollider, bCollider);
 			if (dist >= 0.0f)
 				return new SeparationTestResult(testBZ, dist);
-			else if (dist > shortestIntersectionDist)
+			else if (dist >= shortestIntersectionDist)
 			{
 				shortestIntersectionDist = dist;
 				shortestIntersection = testBZ;
@@ -103,12 +104,21 @@ public class CollisionTasks
 			double dist = testBY.GetSeparationDistance(aCollider, bCollider);
 			if (dist >= 0.0f)
 				return new SeparationTestResult(testBY, dist);
-			else if (dist > shortestIntersectionDist)
+			else if (dist >= shortestIntersectionDist)
 			{
 				shortestIntersectionDist = dist;
 				shortestIntersection = testBY;
 			}
+
+
+
+			if(shortestIntersection == null)
+			{
+				FlansMod.LOGGER.error("Somehow found no separated plane, but no least intersected plane??");
+				shortestIntersection = testBY;
+			}
 		}
+
 
 		return new SeparationTestResult(shortestIntersection, shortestIntersectionDist);
 	}

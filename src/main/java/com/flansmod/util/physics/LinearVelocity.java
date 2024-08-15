@@ -22,6 +22,8 @@ public record LinearVelocity(@Nonnull Vec3 Velocity)
 
 	@Nonnull
 	public LinearVelocity add(@Nonnull LinearVelocity other) { return new LinearVelocity(Velocity.add(other.Velocity)); }
+	@Nonnull
+	public LinearVelocity scale(double scale) { return new LinearVelocity(Velocity.scale(scale)); }
 
 	@Nonnull
 	public Units.Speed GetDefaultUnits() { return Units.Speed.BlocksPerTick; }

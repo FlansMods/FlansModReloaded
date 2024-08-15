@@ -4,6 +4,7 @@ import com.flansmod.client.render.debug.DebugRenderer;
 import com.flansmod.common.FlansMod;
 import com.flansmod.common.entity.vehicle.VehicleEntity;
 import com.flansmod.util.MinecraftHelpers;
+import com.flansmod.util.Transform;
 import net.minecraft.client.Minecraft;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
@@ -198,7 +199,7 @@ public class Raytracer
                 if(World.isClientSide())
                 {
                     DebugRenderer.RenderLine(
-                        origin,
+                        Transform.FromPos(origin),
                         100,
                         new Vector4f(1.0f, 1.0f, 1.0f, 1.0f),
                         endPoint.subtract(origin));

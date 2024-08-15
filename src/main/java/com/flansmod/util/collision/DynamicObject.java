@@ -158,12 +158,16 @@ public class DynamicObject
 	@Nonnull
 	public TransformedBBCollection GetPendingColliders()
 	{
-		return new TransformedBBCollection(PendingFrame.Location, Colliders);
+		if(PendingFrame != null)
+			return new TransformedBBCollection(PendingFrame.Location, Colliders);
+		return GetCurrentColliders();
 	}
 	@Nonnull
 	public TransformedBB GetPendingBB()
 	{
-		return TransformedBB.Of(PendingFrame.Location, LocalBounds);
+		if(PendingFrame != null)
+			return TransformedBB.Of(PendingFrame.Location, LocalBounds);
+		return GetCurrentBB();
 	}
 	public void PreTick()
 	{
@@ -182,9 +186,8 @@ public class DynamicObject
 			Frames.push(PendingFrame);
 		}
 	}
-
 	@Nonnull
-	private FrameData ExtrapolateNextFrame()
+	public FrameData ExtrapolateNextFrame()
 	{
 		if(NextFrameTeleport.isPresent())
 		{

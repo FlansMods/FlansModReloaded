@@ -15,11 +15,16 @@ public record SeparationTestResult(@Nonnull ISeparator Separator,
 	public double GetCollisionDepth() { return Maths.Min(-Distance, 0d); }
 
 	@Nonnull
+	public Vec3 GetPointBetween(@Nonnull Vec3 centerA, @Nonnull Vec3 centerB)
+	{
+		return Separator.GetIntersectionPoint(centerA, centerB);
+	}
+	@Nonnull
 	public Vec3 GetCollidingPoint(@Nonnull TransformedBB bb)
 	{
 		Vec3 intersection = Separator.GetIntersectionPoint(bb);
 		// DEBUG
-		if(!bb.Contains(intersection))
+		if(!bb.ApproxContains(intersection))
 		{
 			FlansMod.LOGGER.error("Colliding Point is not in BB");
 		}

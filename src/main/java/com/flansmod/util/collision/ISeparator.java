@@ -7,6 +7,7 @@ import org.joml.Matrix3f;
 import org.joml.Vector3f;
 
 import javax.annotation.Nonnull;
+import java.util.Optional;
 
 public interface ISeparator
 {
@@ -25,7 +26,14 @@ public interface ISeparator
 										   @Nonnull Vec3 motionA,
 										   @Nonnull TransformedBBCollection b,
 										   @Nonnull Vec3 motionB);
+	@Nonnull Optional<Vec3> RayPlaneIntersect(@Nonnull Vec3 origin, @Nonnull Vec3 ray);
 
+	@Nonnull
+	default Vec3 GetIntersectionPoint(@Nonnull Vec3 pointA, @Nonnull Vec3 pointB)
+	{
+		Optional<Vec3> intersect = RayPlaneIntersect(pointA, pointB.subtract(pointA));
+		return intersect.orElseGet(() -> pointA.add(pointB).scale(0.5d));
+	}
 
 	// Some defaults to give more accessors
 	default boolean IsBoxFullyBelow(@Nonnull TransformedBB bb) { return IsBoxFullyBelow(bb.GetCenter(), bb.HalfExtents(), bb.Loc().OriMatrix()); }

@@ -541,7 +541,7 @@ public class Transform
         if(flipX || flipY || flipZ)
             return Reflect(flipX, flipY, flipZ).Orientation.mul(localOri, new Quaternionf());
 
-        return Orientation.mul(localOri, new Quaternionf());
+        return Orientation.mul(localOri, new Quaternionf()).normalize();
     }
     @Nonnull
     public Quaternionf GlobalToLocalOrientation(@Nonnull Quaternionf globalOri)
@@ -551,7 +551,7 @@ public class Transform
         boolean flipY = Scale.y < 0.0f;
         boolean flipZ = Scale.z < 0.0f;
         if(flipX || flipY || flipZ)
-            return Reflect(flipX, flipY, flipZ).Orientation.invert(new Quaternionf()).mul(globalOri, new Quaternionf());
+            return Reflect(flipX, flipY, flipZ).Orientation.invert(new Quaternionf()).mul(globalOri, new Quaternionf()).normalize();
 
         return Orientation.invert(new Quaternionf()).mul(globalOri, new Quaternionf());
     }

@@ -98,11 +98,14 @@ public class CollisionTaskSeparateDynamicFromStatic
 			// So we collided, right? Actually we might be non-colliding if we dig deeper than the bounds
 			// TODO: Fine-grain
 
+			;
+
 			// Collision!
 			Output = new Output(ImmutableList.of(
 				new StaticCollisionEvent(
 					objectToStaticSeparation.GetCollidingPoint(boundsA),
-					objectToStaticSeparation.Separator().GetNormal())),
+					objectToStaticSeparation.Separator().GetNormal(),
+					objectToStaticSeparation.GetCollisionDepth())),
 				newCollidersImmutable);
 		}
 	}

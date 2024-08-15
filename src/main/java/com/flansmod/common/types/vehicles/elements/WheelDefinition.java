@@ -1,6 +1,7 @@
 package com.flansmod.common.types.vehicles.elements;
 
 import com.flansmod.common.types.JsonField;
+import com.flansmod.util.Maths;
 import jdk.jfr.Label;
 import net.minecraft.world.phys.Vec3;
 
@@ -32,7 +33,8 @@ public class WheelDefinition
 	public float buoyancy = 1.0f;
 	@JsonField(Min = 0.0001f)
 	public float mass = 1.0f;
-
+	@JsonField(Docs = "Leave as zero to auto-calculate")
+	public Vec3 momentOfInertia = Vec3.ZERO;
 
 	@JsonField(Min = 0.0f, Docs = "Roughly how many seconds it takes for player changes to torque to be applied")
 	public float torqueResponsiveness = 0.1f;
@@ -61,5 +63,28 @@ public class WheelDefinition
 		if(yawResponsiveness < 0.01f)
 			return 1f;
 		return TICK_RATE / yawResponsiveness;
+	}
+
+	private Vec3 _CalculatedMoment = null;
+	public Vec3 MomentOfInertia() {
+		if(_CalculatedMoment == null)
+		{
+			if(momentOfInertia.distanceToSqr(Vec3.ZERO) < Maths.Epsilon)
+			{
+				// https://en.wikipedia.org/wiki/Moment_of_inertia#Examples_2
+				// Like a sphere?
+				double inertiaX = 0.4f * mass * radius * radius;
+				// idk, you can rotate wheels yaw
+				double inertiaY = inertiaX * 0.5f;
+				// But not camber???
+				double inertiaZ = inertiaX * 0.1f;
+				_CalculatedMoment = new Vec3(inertiaX, inertiaY, inertiaZ);
+			}
+			else
+			{
+				_CalculatedMoment = momentOfInertia;
+			}
+		}
+		return _CalculatedMoment;
 	}
 }

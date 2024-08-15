@@ -6,7 +6,8 @@ import javax.annotation.Nonnull;
 
 public record DynamicCollisionEvent(@Nonnull ColliderHandle ObjectHandle,
 									@Nonnull Vec3 ContactPoint,
-									@Nonnull Vec3 ContactNormal)
+									@Nonnull Vec3 ContactNormal,
+									double depth)
 {
 
 }

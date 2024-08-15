@@ -98,12 +98,12 @@ public class CollisionTaskSeparateDynamicPair
 			// So we collided, right? Actually we might be non-colliding if we dig deeper than the bounds
 			// TODO: Fine-grain
 
-			Vec3 pointInA = test.GetCollidingPoint(boundsA);
-			Vec3 pointInB = test.GetCollidingPoint(boundsB);
+			Vec3 collidingPoint = test.GetPointBetween(boundsA.GetCenter(), boundsB.GetCenter());
+			//Vec3 pointInB = test.GetCollidingPoint(boundsB);
 
 			Output = new Output(
-				ImmutableList.of(new DynamicCollisionEvent(HandleB, pointInA, test.Separator().GetNormal().scale(-1d))),
-				ImmutableList.of(new DynamicCollisionEvent(HandleA, pointInB, test.Separator().GetNormal())),
+				ImmutableList.of(new DynamicCollisionEvent(HandleB, collidingPoint, test.Separator().GetNormal().scale(-1d), test.GetCollisionDepth())),
+				ImmutableList.of(new DynamicCollisionEvent(HandleA, collidingPoint, test.Separator().GetNormal(), test.GetCollisionDepth())),
 				ImmutableList.of(test.Separator()));
 		}
 	}

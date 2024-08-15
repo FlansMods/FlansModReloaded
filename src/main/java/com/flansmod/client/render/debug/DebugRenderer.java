@@ -18,9 +18,7 @@ import net.minecraftforge.client.event.RenderLevelStageEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
-import org.joml.Vector3d;
-import org.joml.Vector3f;
-import org.joml.Vector4f;
+import org.joml.*;
 
 import javax.swing.*;
 import java.util.ArrayList;
@@ -94,7 +92,7 @@ public class DebugRenderer
             Arrow = arrow;
         }
 
-        protected void RenderLine(PoseStack poseStack, Tesselator tesselator, Vec3 start, Vec3 ray, Vector4f col)
+        protected void RenderLineSegment(PoseStack poseStack, Tesselator tesselator, Vec3 start, Vec3 ray, Vector4f col, boolean asArrow)
         {
             BufferBuilder buf = tesselator.getBuilder();
             buf.begin(VertexFormat.Mode.TRIANGLES, DefaultVertexFormat.POSITION_COLOR);
@@ -104,22 +102,29 @@ public class DebugRenderer
                 start.y + ray.y * 0.5f,
                 start.z + ray.z * 0.5f);
 
-            Vec3 toCamera = MinecraftHelpers.GetCamera().getForward().normalize();
-            Vec3 lateralAxis = Maths.Cross(toCamera, ray).normalize();
-            lateralAxis = lateralAxis.scale(0.02d);
+            Vector3f centerInModelSpace = poseStack.last().pose().transformPosition(center.toVector3f());
+            Vector3f rayInModelSpace = poseStack.last().pose().transformDirection(ray.toVector3f());
+            centerInModelSpace.normalize();
+            rayInModelSpace.normalize();
+            Vector3f lateralAxis = centerInModelSpace.cross(rayInModelSpace, new Vector3f());
+            lateralAxis.normalize();
+            lateralAxis.mul(0.02f);
+            lateralAxis.mulTransposeDirection(poseStack.last().pose());
 
-            final Vec3 vAxis = ray;
-            final Vec3 uAxis = lateralAxis;
+            final Vec3 v0 = start;
+            final Vector3f vAxis = ray.toVector3f();
+            final Vector3f uAxis = lateralAxis;
+
             BiConsumer<Float, Float> vertexFunc = (u, v) -> {
                 buf.vertex(poseStack.last().pose(),
-                    (float)(uAxis.x * u + vAxis.x * v),
-                    (float)(uAxis.y * u + vAxis.y * v),
-                    (float)(uAxis.z * u + vAxis.z * v))
+                    (float)(v0.x + uAxis.x * u + vAxis.x * v),
+                    (float)(v0.y + uAxis.y * u + vAxis.y * v),
+                    (float)(v0.z + uAxis.z * u + vAxis.z * v))
                     .color(col.x, col.y, col.z, col.w)
                     .endVertex();
             };
 
-            if(Arrow)
+            if(asArrow)
             {
                 vertexFunc.accept(1.0f, 0.0f);
                 vertexFunc.accept(-1.0f, 0.0f);
@@ -153,7 +158,44 @@ public class DebugRenderer
             if(MinecraftHelpers.GetCamera() == null)
                 return;
 
-            RenderLine(poseStack, tesselator, transform.PositionVec3(), direction, colour);
+            RenderLineSegment(poseStack, tesselator, Vec3.ZERO, direction, colour, Arrow);
+        }
+    }
+
+    private static class DebugRenderRotation extends DebugRenderLine
+    {
+        private final double RADIUS = 0.5f;
+        private final int NUM_SEGMENTS = 10;
+        private final double RADS_PER_SEGMENT = Maths.Tau / NUM_SEGMENTS;
+        public final double Magnitude;
+
+        public DebugRenderRotation(Transform t, int ticks, Vector4f col, Vec3 dir, double mag, boolean arrow)
+        {
+            super(t, ticks, col, dir, arrow);
+            Magnitude = mag;
+        }
+
+        @Override
+        public void Render(PoseStack poseStack, Tesselator tesselator)
+        {
+            if(MinecraftHelpers.GetCamera() == null)
+                return;
+
+            Vec3 from = GetPoint(0);
+            Vec3 to = GetPoint(1);
+            for(int i = 1; i < NUM_SEGMENTS; i++)
+            {
+                RenderLineSegment(poseStack, tesselator, from, to.subtract(from), colour, i == NUM_SEGMENTS - 1);
+                from = to;
+                to = GetPoint(i+1);
+            }
+        }
+
+        private Vec3 GetPoint(int index)
+        {
+            AxisAngle4d axisAngle = new AxisAngle4d(0.25d * Magnitude * index * RADS_PER_SEGMENT, direction.x, direction.y, direction.z);
+            Vector3d v = axisAngle.transform(new Vector3d(1d, 0d, 0d));
+            return new Vec3(v.x, v.y, v.z);
         }
     }
 
@@ -188,7 +230,7 @@ public class DebugRenderer
                     for(int z = 0; z < 2; z++)
                     {
                         verts[z*4 + y*2 + x] = new Vector3f((x*2-1)*halfExtents.x, (y*2-1)*halfExtents.y, (z*2-1)*halfExtents.z);
-                        transform.Orientation.transform(verts[z*4 + y*2 + x]);
+                        //transform.Orientation.transform(verts[z*4 + y*2 + x]);
                     }
 
             //buf.begin(VertexFormat.Mode.TRIANGLES, DefaultVertexFormat.POSITION_COLOR);
@@ -236,9 +278,9 @@ public class DebugRenderer
             if(MinecraftHelpers.GetCamera() == null)
                 return;
 
-            RenderLine(poseStack, tesselator, transform.PositionVec3(), transform.ForwardVec3(), new Vector4f(1f, 0f, 0f, 1f));
-            RenderLine(poseStack, tesselator, transform.PositionVec3(), transform.UpVec3(), new Vector4f(0f, 1f, 0f, 1f));
-            RenderLine(poseStack, tesselator, transform.PositionVec3(), transform.RightVec3(), new Vector4f(0f, 0f, 1f, 1f));
+            RenderLineSegment(poseStack, tesselator, Vec3.ZERO, transform.ForwardVec3(), new Vector4f(1f, 0f, 0f, 1f), false);
+            RenderLineSegment(poseStack, tesselator, Vec3.ZERO, transform.UpVec3(), new Vector4f(0f, 1f, 0f, 1f), false);
+            RenderLineSegment(poseStack, tesselator, Vec3.ZERO, transform.RightVec3(), new Vector4f(0f, 0f, 1f, 1f), false);
         }
     }
 
@@ -254,15 +296,18 @@ public class DebugRenderer
         renderItems.add(new DebugRenderPoint(t, ticks, col));
     }
 
-    public static void RenderLine(Vec3 origin, int ticks, Vector4f col, Vec3 ray)
+    public static void RenderLine(Transform t, int ticks, Vector4f col, Vec3 ray)
     {
-        renderItems.add(new DebugRenderLine(Transform.FromPos(origin, () -> "\"DebugLine\""), ticks, col, ray, false));
+        renderItems.add(new DebugRenderLine(t, ticks, col, ray, false));
     }
-    public static void RenderArrow(Vec3 origin, int ticks, Vector4f col, Vec3 ray)
+    public static void RenderArrow(Transform t, int ticks, Vector4f col, Vec3 ray)
     {
-        renderItems.add(new DebugRenderLine(Transform.FromPos(origin, () -> "\"DebugLine\""), ticks, col, ray, true));
+        renderItems.add(new DebugRenderLine(t, ticks, col, ray, true));
     }
-
+    public static void RenderRotation(Transform t, int ticks, Vector4f col, Vec3 axis, double magnitude)
+    {
+        renderItems.add(new DebugRenderRotation(t, ticks, col, axis, magnitude, true));
+    }
     public static void RenderAxes(Transform t, int ticks, Vector4f col)
     {
         renderItems.add(new DebugRenderAxes(t, ticks, col));
@@ -297,6 +342,7 @@ public class DebugRenderer
             {
                 poseStack.pushPose();
                 poseStack.translate(item.transform.Position.x - pos.x, item.transform.Position.y - pos.y, item.transform.Position.z - pos.z);
+                poseStack.mulPose(item.transform.Orientation);
                 item.Render(poseStack, tesselator);
                 poseStack.popPose();
             }

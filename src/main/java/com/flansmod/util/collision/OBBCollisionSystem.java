@@ -18,6 +18,8 @@ import org.joml.AxisAngle4f;
 
 import javax.annotation.Nonnull;
 import java.util.*;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 import java.util.function.Consumer;
 
 public class OBBCollisionSystem
@@ -45,6 +47,7 @@ public class OBBCollisionSystem
 	public static final double MAX_LINEAR_BLOCKS_PER_TICK = 60d;
 	public static final double MAX_ANGULAR_MOTION_PER_TICK = 60d;
 
+
 	private final boolean SINGLE_THREAD_DEBUG = true;
 	public static ColliderHandle DEBUG_HANDLE = new ColliderHandle(0L);
 	public static ColliderHandle CycleDebugHandle(@Nonnull Level level)
@@ -68,17 +71,69 @@ public class OBBCollisionSystem
 	private boolean DoingPhysics = false;
 	private final Queue<Runnable> DoAfterPhysics = new ArrayDeque<>();
 
+	private static final int PHYSICS_LOCK_MS_TIMEOUT = 16;
+	private final Lock DynamicsLock = new ReentrantLock();
+	private final Lock TasksLock = new ReentrantLock();
+
 	public OBBCollisionSystem(@Nonnull Level level)
 	{
 		BlockAccess = level;
 	}
 
-	@Nonnull
-	public Collection<DynamicObject> GetDynamics()
+	private boolean LockDynamics(int msTimeout)
 	{
-		return Dynamics.values();
+		int msElapsed = 0;
+		for(;;)
+		{
+			if(DynamicsLock.tryLock())
+			{
+				DoingPhysics = true;
+				return true;
+			}
+
+			msElapsed++;
+			if(msElapsed >= msTimeout)
+				return false;
+
+			try
+			{
+				Thread.sleep(1);
+			} catch (InterruptedException ignored)
+			{
+			}
+		}
+	}
+	private boolean TryLockDynamics()
+	{
+		return LockDynamics(0);
+	}
+	private void UnlockDynamics()
+	{
+		DoingPhysics = false;
+		DynamicsLock.unlock();
 	}
 
+	public boolean WaitForEachDynamic(@Nonnull Consumer<DynamicObject> func, int msTimeout)
+	{
+		if(LockDynamics(msTimeout))
+		{
+			try
+			{
+				for(DynamicObject dyn : Dynamics.values())
+					func.accept(dyn);
+			}
+			finally
+			{
+				UnlockDynamics();
+			}
+			return true;
+		}
+		return false;
+	}
+	public boolean TryForEachDynamic(@Nonnull Consumer<DynamicObject> func)
+	{
+		return WaitForEachDynamic(func, 0);
+	}
 
 	private void DoAfterPhysics(@Nonnull Runnable func)
 	{
@@ -182,31 +237,57 @@ public class OBBCollisionSystem
 
 	public void PreTick()
 	{
-		for(DynamicObject dyn : Dynamics.values())
+		if(LockDynamics(PHYSICS_LOCK_MS_TIMEOUT))
 		{
-			dyn.PreTick();
+			try
+			{
+
+			}
+			finally
+			{
+				UnlockDynamics();
+			}
+		}
+		else
+		{
+			FlansMod.LOGGER.warn("Physics could not lock after " + PHYSICS_LOCK_MS_TIMEOUT + "ms");
 		}
 	}
 
 	public void PhysicsTick()
 	{
-		DoingPhysics = true;
-
-		PhysicsStep_ApplyMotions();
-		PhysicsStep_CreateTasks();
-
-		if(SINGLE_THREAD_DEBUG)
+		if(LockDynamics(PHYSICS_LOCK_MS_TIMEOUT))
 		{
-			UnthreadedPhysics_ProcessTasks();
+			try
+			{
+				for (DynamicObject dyn : Dynamics.values())
+				{
+					dyn.PreTick();
+				}
+
+				PhysicsStep_CreateTasks();
+
+				if(SINGLE_THREAD_DEBUG)
+				{
+					UnthreadedPhysics_ProcessTasks();
+				}
+
+				PhysicsStep_CollectTasks();
+				PhysicsStep_ResolveTransforms();
+
+				while(!DoAfterPhysics.isEmpty())
+				{
+					DoAfterPhysics.remove().run();
+				}
+			}
+			finally
+			{
+				UnlockDynamics();
+			}
 		}
-
-		PhysicsStep_CollectTasks();
-
-		DoingPhysics = false;
-
-		while(!DoAfterPhysics.isEmpty())
+		else
 		{
-			DoAfterPhysics.remove().run();
+			FlansMod.LOGGER.warn("Physics could not lock after " + PHYSICS_LOCK_MS_TIMEOUT + "ms");
 		}
 	}
 
@@ -229,12 +310,15 @@ public class OBBCollisionSystem
 			// Check against the static objects
 			AABB sweepTestAABB = objectA.GetSweepTestAABB();
 			ImmutableList<VoxelShape> worldBBs = GetWorldColliders(sweepTestAABB);
-			StaticSeparationTasks.add(CollisionTaskSeparateDynamicFromStatic.of(
-				handleA,
-				objectA,
-				worldBBs,
-				StaticSeparators.getOrDefault(handleA, ImmutableList.of())
-			));
+			if(!worldBBs.isEmpty())
+			{
+				StaticSeparationTasks.add(CollisionTaskSeparateDynamicFromStatic.of(
+					handleA,
+					objectA,
+					worldBBs,
+					StaticSeparators.getOrDefault(handleA, ImmutableList.of())
+				));
+			}
 
 
 			// Check against all other dynamic objects
@@ -292,7 +376,6 @@ public class OBBCollisionSystem
 					var output = task.GetResult();
 					if(output != null)
 					{
-						object.CommitFrame();
 						object.StaticCollisions.addAll(output.EventsA());
 						if(output.NewSeparatorList() != null && output.NewSeparatorList().size() > 0)
 							StaticSeparators.put(task.Handle, output.NewSeparatorList());
@@ -326,10 +409,47 @@ public class OBBCollisionSystem
 			}
 		}
 		DynamicSeparationTasks.clear();
-	}
 
-	private void PhysicsStep_ApplyMotions()
+
+	}
+	private void PhysicsStep_ResolveTransforms()
 	{
+		for(DynamicObject dyn : Dynamics.values())
+		{
+			if(dyn.StaticCollisions.isEmpty() && dyn.DynamicCollisions.isEmpty())
+			{
+				dyn.CommitFrame();
+			}
+			else
+			{
+				// We have some collisions, we need to resolve them before committing the next frame data
+				//TransformedBBCollection pending = dyn.GetPendingColliders();
+				LinearVelocity linearV = dyn.NextFrameLinearMotion;
+				AngularVelocity angularV = dyn.NextFrameAngularMotion;
+				double maxT = 1.0d;
+
+				for(StaticCollisionEvent collision : dyn.StaticCollisions)
+				{
+					double vDotN = linearV.ApplyOneTick().dot(collision.ContactNormal());
+					if(!Maths.Approx(vDotN, 0d))
+					{
+						double t = (vDotN + collision.depth()) / vDotN;
+						if(t < maxT)
+							maxT = t;
+					}
+
+
+
+				}
+
+				dyn.SetLinearVelocity(linearV.scale(maxT));
+				dyn.SetAngularVelocity(angularV.scale(maxT));
+				dyn.ExtrapolateNextFrame();
+				dyn.CommitFrame();
+
+			}
+		}
+
 		//for(int i = AllHandles.size() - 1; i >= 0 ; i--)
 		//{
 		//	ColliderHandle handle = AllHandles.get(i);
