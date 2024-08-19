@@ -2,6 +2,7 @@ package com.flansmod.client.gui.crafting;
 
 import com.flansmod.client.gui.FMScreen;
 import com.flansmod.common.FlansMod;
+import com.flansmod.common.crafting.AbstractWorkbench;
 import com.flansmod.common.crafting.WorkbenchBlockEntity;
 import com.flansmod.common.crafting.menus.WorkbenchMenu;
 import com.flansmod.common.crafting.menus.WorkbenchMenuModification;
@@ -65,8 +66,8 @@ public class WorkbenchScreenTabPower extends WorkbenchScreenTab<WorkbenchMenuPow
 		// Render a fuel slot
 		if(Workbench.FuelContainer.getContainerSize() > 0)
 		{
-			int litTime = Workbench.WorkbenchData.get(WorkbenchBlockEntity.DATA_LIT_TIME);
-			int litDuration = Workbench.WorkbenchData.get(WorkbenchBlockEntity.DATA_LIT_DURATION);
+			int litTime = Workbench.WorkbenchData.get(AbstractWorkbench.DATA_LIT_TIME);
+			int litDuration = Workbench.WorkbenchData.get(AbstractWorkbench.DATA_LIT_DURATION);
 			int px = (int) (11f * (float) litTime / (float) litDuration);
 			graphics.blit(POWER_BG, xOrigin + 132, yOrigin + 51 + 11 - px, 344, 213 + 11 - px, 9, px, POWER_W, POWER_H);
 		}
@@ -85,7 +86,7 @@ public class WorkbenchScreenTabPower extends WorkbenchScreenTab<WorkbenchMenuPow
 			graphics.blit(POWER_BG, xOrigin + 74, yOrigin + 81, 24, 81, 18, 18, POWER_W, POWER_H);
 		}
 
-		int fe = Workbench.WorkbenchData.get(WorkbenchBlockEntity.DATA_FORGE_ENERGY);
+		int fe = Workbench.WorkbenchData.get(AbstractWorkbench.DATA_FORGE_ENERGY);
 		int feMax = Workbench.Def.energy.maxFE;
 
 		RenderPowerBarBG(graphics, xOrigin + 58, yOrigin + 52, fe, feMax);
@@ -93,7 +94,7 @@ public class WorkbenchScreenTabPower extends WorkbenchScreenTab<WorkbenchMenuPow
 	@Override
 	protected void RenderFG(@Nonnull GuiGraphics graphics, int xMouse, int yMouse)
 	{
-		int fe = Workbench.WorkbenchData.get(WorkbenchBlockEntity.DATA_FORGE_ENERGY);
+		int fe = Workbench.WorkbenchData.get(AbstractWorkbench.DATA_FORGE_ENERGY);
 		int feMax = Workbench.Def.energy.maxFE;
 
 		RenderPowerBarFG(graphics, imageWidth / 2, 23, fe, feMax);

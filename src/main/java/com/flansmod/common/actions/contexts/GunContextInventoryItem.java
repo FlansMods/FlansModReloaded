@@ -7,6 +7,7 @@ import net.minecraft.world.Container;
 import net.minecraft.world.item.ItemStack;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.function.BiConsumer;
 
 public class GunContextInventoryItem extends GunContextItem
@@ -21,7 +22,7 @@ public class GunContextInventoryItem extends GunContextItem
 		Slot = slot;
 	}
 	@Override
-	public void OnItemStackChanged(ItemStack stack)
+	public void OnItemStackChanged(@Nonnull ItemStack stack)
 	{
 		Inv.setItem(Slot, stack);
 	}
@@ -38,6 +39,7 @@ public class GunContextInventoryItem extends GunContextItem
 		return Inv.getItem(Slot);
 	}
 	@Override
+	@Nullable
 	public Container GetAttachedInventory() { return Inv; }
 	@Override
 	public int GetInventorySlotIndex() { return Slot; }
@@ -45,6 +47,7 @@ public class GunContextInventoryItem extends GunContextItem
 	@Override
 	public void BakeModifiers(@Nonnull IModifierBaker baker) {}
 	@Override
+	@Nonnull
 	public String toString()
 	{
 		return "Container: '"+Inv+"'/"+Slot+" -> Item ["+Stack+"]";

@@ -1,21 +1,25 @@
 package com.flansmod.common.types.vehicles;
 
 import com.flansmod.common.FlansMod;
+import com.flansmod.common.entity.vehicle.hierarchy.VehicleDefinitionHierarchy;
 import com.flansmod.common.types.JsonDefinition;
 import com.flansmod.common.types.JsonField;
 import com.flansmod.common.types.elements.ItemDefinition;
 import com.flansmod.common.types.parts.elements.EngineDefinition;
-import com.flansmod.common.types.vehicles.elements.ArticulatedPartDefinition;
-import com.flansmod.common.types.vehicles.elements.MountedGunDefinition;
-import com.flansmod.common.types.vehicles.elements.SeatDefinition;
-import com.flansmod.common.types.vehicles.elements.VehicleMovementDefinition;
+import com.flansmod.common.types.vehicles.elements.*;
+import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.phys.Vec3;
+import net.minecraftforge.common.util.Lazy;
+
+import javax.annotation.Nonnull;
 
 public class VehicleDefinition extends JsonDefinition
 {
+	public static final String CoreName = "body";
 	public static final VehicleDefinition INVALID = new VehicleDefinition(new ResourceLocation(FlansMod.MODID, "vehicles/null"));
 	public static final String TYPE = "vehicle";
+	public static final String FOLDER = "vehicles";
 	@Override
 	public String GetTypeName() { return TYPE; }
 
@@ -26,22 +30,19 @@ public class VehicleDefinition extends JsonDefinition
 
 	@JsonField
 	public ItemDefinition itemSettings = new ItemDefinition();
-	@JsonField
-	public SeatDefinition[] seats = new SeatDefinition[0];
-	@JsonField
-	public ArticulatedPartDefinition[] articulatedParts = new ArticulatedPartDefinition[0];
-	@JsonField
-	public MountedGunDefinition[] guns = new MountedGunDefinition[0];
-	@JsonField
-	public VehicleMovementDefinition[] movementModes = new VehicleMovementDefinition[0];
 
-	// Rest Pose
+
 	@JsonField
-	public Vec3 restingEulerAngles = Vec3.ZERO;
+	public VehiclePartDefinition[] parts = new VehiclePartDefinition[0];
+	@JsonField
+	public VehiclePhysicsDefinition physics = new VehiclePhysicsDefinition();
+
 
 	// Power / Fuel
 	@JsonField
 	public EngineDefinition defaultEngine = new EngineDefinition();
+	@JsonField
+	public ResourceLocation defaultControlScheme = InvalidLocation;
 
 	// Harvest volumes
 	// TODO:
@@ -59,4 +60,13 @@ public class VehicleDefinition extends JsonDefinition
 	public int CargoSlots = 0;
 	@JsonField
 	public boolean CanAccessMenusWhileMoving = true;
+
+
+
+	@Nonnull
+	private final Lazy<VehicleDefinitionHierarchy> Hierarchy = Lazy.of(() -> VehicleDefinitionHierarchy.of(this));
+	@Nonnull
+	public VehicleDefinitionHierarchy AsHierarchy() { return Hierarchy.get(); }
+	@Nonnull
+	public ControlSchemeDefinition DefaultControlScheme() { return FlansMod.CONTROL_SCHEMES.Get(defaultControlScheme); }
 }

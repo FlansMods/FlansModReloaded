@@ -1,0 +1,23 @@
+{
+    "tags": [
+        "flansclockworkcalamity:clockwork_rubbler"
+    ],
+    "modifiers": [],
+    "ammoLoadMode": "OneBulletAtATime_Revolver",
+    "ammoConsumeMode": "RoundRobin",
+    "upgradeCost": 0,
+    "numRounds": 6,
+    "allRoundsMustBeIdentical": false,
+    "matchingBullets": {
+        "itemIDFilters": [],
+        "itemTagFilters": [
+            {
+                "filterType": "Allow",
+                "matchResourceLocations": [
+                    "flansmod:launchable_grenade"
+                ]
+            }
+        ],
+        "materialFilters": []
+    }
+}

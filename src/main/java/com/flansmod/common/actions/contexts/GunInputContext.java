@@ -1,6 +1,6 @@
 package com.flansmod.common.actions.contexts;
 
-import com.flansmod.common.types.vehicles.EPlayerInput;
+import com.flansmod.common.types.elements.EPlayerInput;
 
 import javax.annotation.Nonnull;
 

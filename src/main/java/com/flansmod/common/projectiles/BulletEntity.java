@@ -4,11 +4,13 @@ import com.flansmod.common.FlansMod;
 import com.flansmod.common.actions.ActionGroupInstance;
 import com.flansmod.common.actions.ActionStack;
 import com.flansmod.common.actions.contexts.ActionGroupContext;
-import com.flansmod.common.actions.contexts.ContextSerializers;
 import com.flansmod.common.actions.contexts.GunContext;
+import com.flansmod.common.actions.contexts.ShooterContext;
 import com.flansmod.common.gunshots.Gunshot;
 import com.flansmod.common.actions.contexts.GunshotContext;
+import com.flansmod.common.network.FlansEntityDataSerializers;
 import com.flansmod.common.types.bullets.BulletDefinition;
+import com.flansmod.common.types.bullets.elements.EProjectileResponseType;
 import com.flansmod.common.types.bullets.elements.ProjectileDefinition;
 import com.flansmod.util.Maths;
 import net.minecraft.core.Direction;
@@ -20,7 +22,6 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MoverType;
-import net.minecraft.world.entity.animal.horse.Llama;
 import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.world.entity.projectile.ProjectileUtil;
 import net.minecraft.world.level.Level;
@@ -35,29 +36,63 @@ import java.util.UUID;
 
 public class BulletEntity extends Projectile
 {
-	private static final EntityDataAccessor<GunshotContext> DATA_CONTEXT = SynchedEntityData.defineId(BulletEntity.class, ContextSerializers.GUNSHOT_CONTEXT_FULL);
-
-	// We store the context locally because we may exist long after the player is gone
-	@Nonnull
-	public GunshotContext Context = GunshotContext.INVALID;
-	@Nonnull
-	public BulletDefinition Def = BulletDefinition.INVALID;
-	@Nullable
-	public ProjectileDefinition ProjectileDef = null;
-	public UUID OwnerUUID;
-
+	private static final EntityDataAccessor<Optional<UUID>> DATA_OWNER_UUID = SynchedEntityData.defineId(BulletEntity.class, EntityDataSerializers.OPTIONAL_UUID);
+	private static final EntityDataAccessor<Optional<UUID>> DATA_SHOOTER_UUID = SynchedEntityData.defineId(BulletEntity.class, EntityDataSerializers.OPTIONAL_UUID);
+	private static final EntityDataAccessor<Optional<UUID>> DATA_GUN_ID = SynchedEntityData.defineId(BulletEntity.class, EntityDataSerializers.OPTIONAL_UUID);
+	private static final EntityDataAccessor<BulletDefinition> DATA_BULLET_DEF = SynchedEntityData.defineId(BulletEntity.class, FlansEntityDataSerializers.BULLET_DEF);
+	private static final EntityDataAccessor<Integer> DATA_ACTION_GROUP_PATH_HASH = SynchedEntityData.defineId(BulletEntity.class, EntityDataSerializers.INT);
+	private static final EntityDataAccessor<Integer> DATA_SHOT_INDEX = SynchedEntityData.defineId(BulletEntity.class, EntityDataSerializers.INT);
 
 	@Nullable
 	public Entity LockedOnTo = null;
 	public float RemainingPenetratingPower = 0.0f;
 	public int FuseRemaining = 0;
 	public boolean Stuck = false;
+	public boolean Detonated = false;
 	public final ActionStack Actions;
 
-	public Entity Owner()
+	public void SetOwnerID(@Nonnull UUID ownerID) { entityData.set(DATA_OWNER_UUID, Optional.of(ownerID)); }
+	public void SetShooterID(@Nonnull UUID shooterID) { entityData.set(DATA_SHOOTER_UUID, Optional.of(shooterID)); }
+	public void SetGunID(@Nonnull UUID gunID) { entityData.set(DATA_GUN_ID, Optional.of(gunID)); }
+	public void SetActionGroupPathHash(int hash) { entityData.set(DATA_ACTION_GROUP_PATH_HASH, hash); }
+	public void SetBulletDef(@Nonnull BulletDefinition bulletDef) { entityData.set(DATA_BULLET_DEF, bulletDef); }
+	public void SetShotIndex(int index) { entityData.set(DATA_SHOT_INDEX, index); }
+
+	@Nonnull
+	public UUID GetOwnerID() { return entityData.get(DATA_OWNER_UUID).orElse(ShooterContext.InvalidID); }
+	@Nonnull
+	public UUID GetShooterID() { return entityData.get(DATA_SHOOTER_UUID).orElse(ShooterContext.InvalidID); }
+	@Nonnull
+	public UUID GetGunID() { return entityData.get(DATA_GUN_ID).orElse(GunContext.INVALID.GetUUID()); }
+	public int GetActionGroupPathHash() { return entityData.get(DATA_ACTION_GROUP_PATH_HASH); }
+	@Nonnull
+	public BulletDefinition GetBulletDef() { return entityData.get(DATA_BULLET_DEF); }
+	public int GetShotIndex() { return entityData.get(DATA_SHOT_INDEX); }
+	@Nullable
+	public ProjectileDefinition GetProjectileDef()
 	{
-		return level().getPlayerByUUID(OwnerUUID);
+		BulletDefinition bulletDef = GetBulletDef();
+		int shotIndex = GetShotIndex();
+		if(0 <= shotIndex && shotIndex < bulletDef.projectiles.length)
+			return bulletDef.projectiles[shotIndex];
+		return null;
 	}
+	@Nonnull
+	public GunshotContext GetContext()
+	{
+		ShooterContext shooter = ShooterContext.of(GetShooterID(), GetOwnerID());
+		GunContext gun = shooter.CreateContext(GetGunID());
+		ActionGroupContext actionGroup = gun.GetActionGroupContextByHash(GetActionGroupPathHash());
+		return GunshotContext.projectile(actionGroup, GetBulletDef(), GetShotIndex());
+	}
+
+
+	// TODO: These entity accessors need to check all entities
+	@Nullable
+	public Entity Owner() { return level().getPlayerByUUID(GetOwnerID()); }
+	@Nullable
+	public Entity GetShooter() { return level().getPlayerByUUID(GetOwnerID()); }
+
 
 	public BulletEntity(EntityType<? extends BulletEntity> entityType, Level level)
 	{
@@ -65,13 +100,27 @@ public class BulletEntity extends Projectile
 		Actions = new ActionStack(level.isClientSide);
 	}
 
+	@Override
+	protected void defineSynchedData()
+	{
+		entityData.define(DATA_OWNER_UUID, Optional.empty());
+		entityData.define(DATA_SHOOTER_UUID, Optional.empty());
+		entityData.define(DATA_GUN_ID, Optional.empty());
+		entityData.define(DATA_BULLET_DEF, BulletDefinition.INVALID);
+		entityData.define(DATA_SHOT_INDEX, 0);
+		entityData.define(DATA_ACTION_GROUP_PATH_HASH, 0);
+	}
+
 	public void InitContext(@Nonnull GunshotContext context)
 	{
-		Context = context;
-		Def = context.Bullet;
-		ProjectileDef = context.GetProjectileDef();
-		entityData.set(DATA_CONTEXT, context);
-		float fuseTime = Context.FuseTimeSeconds();
+		SetOwnerID(context.ActionGroup.Gun.GetShooter().OwnerUUID());
+		SetShooterID(context.ActionGroup.Gun.GetShooter().EntityUUID());
+		SetGunID(context.ActionGroup.Gun.GetUUID());
+		SetActionGroupPathHash(context.ActionGroup.GroupPath.hashCode());
+		SetBulletDef(context.Bullet);
+		SetShotIndex(context.DefIndex);
+
+		float fuseTime = context.FuseTimeSeconds();
 		if(fuseTime > 0.0f)
 		{
 			FuseRemaining = Maths.Ceil(fuseTime * 20f);
@@ -102,8 +151,9 @@ public class BulletEntity extends Projectile
 		float pitchDeg = (float)Maths.Atan2(motion.y, xz) * Maths.RadToDegF;
 
 		// Slerp
-		pitchDeg = Maths.LerpDegrees(getXRot(), pitchDeg, Context.TurnRate());
-		yawDeg = Maths.LerpDegrees(getYRot(), yawDeg, Context.TurnRate());
+		float turnRate = GetContext().TurnRate();
+		pitchDeg = Maths.LerpDegrees(getXRot(), pitchDeg, turnRate);
+		yawDeg = Maths.LerpDegrees(getYRot(), yawDeg, turnRate);
 
 		setXRot(pitchDeg);
 		setYRot(yawDeg);
@@ -145,7 +195,7 @@ public class BulletEntity extends Projectile
 			//{
 			//
 			//}
-			return motion.scale(Maths.Clamp(1.0f - Context.DragInWater(), 0f, 1f));
+			return motion.scale(Maths.Clamp(1.0f - GetContext().DragInWater(), 0f, 1f));
 		}
 		else
 		{
@@ -155,7 +205,7 @@ public class BulletEntity extends Projectile
 			//{
 			//
 			//}
-			return motion.scale(Maths.Clamp(1.0f - Context.DragInAir(), 0f, 1f));
+			return motion.scale(Maths.Clamp(1.0f - GetContext().DragInAir(), 0f, 1f));
 		}
 	}
 
@@ -165,7 +215,7 @@ public class BulletEntity extends Projectile
 			return motion;
 		return new Vec3(
 			motion.x,
-			motion.y - Context.GravityFactor() * 0.02d,
+			motion.y - GetContext().GravityFactor() * 0.02d,
 			motion.z);
 	}
 
@@ -173,7 +223,7 @@ public class BulletEntity extends Projectile
 	{
 		if(!level().isClientSide)
 		{
-			if (Context.FuseTimeSeconds() > 0.0f)
+			if (GetContext().FuseTimeSeconds() > 0.0f)
 			{
 				FuseRemaining--;
 				if (FuseRemaining <= 0)
@@ -186,38 +236,32 @@ public class BulletEntity extends Projectile
 	{
 		// Work out which thing we collided with (Minecraft is bad at telling us this...)
 		HitResult hitResult = ProjectileUtil.getHitResultOnMoveVector(this, this::CanHitEntity);
-		switch(hitResult.getType())
+		EProjectileResponseType responseType = switch(hitResult.getType()) {
+			case MISS -> EProjectileResponseType.PassThrough;
+			case ENTITY -> GetContext().ResponseToEntity();
+			case BLOCK -> GetContext().ResponseToBlock();
+		};
+
+		switch(responseType)
 		{
-			case MISS:
+			case PassThrough -> {
 				return motion;
-			case ENTITY:
-			{
+			}
+			case Stick -> {
+				Stuck = true;
+				return Vec3.ZERO;
+			}
+			case Detonate -> {
 				Detonate(hitResult);
 				return Vec3.ZERO;
 			}
-			case BLOCK:
-			{
-				if(Context.Sticky())
-				{
-					Stuck = true;
-					return Vec3.ZERO;
-				}
-				else if(Context.FuseTimeSeconds() > 0.0f)
-				{
-					// Bounce
-					BlockHitResult blockHitResult = (BlockHitResult) hitResult;
-					return switch (blockHitResult.getDirection())
-					{
-						case UP, DOWN -> new Vec3(motion.x, -motion.y, motion.z);
-						case EAST, WEST -> new Vec3(-motion.x, motion.y, motion.z);
-						case NORTH, SOUTH -> new Vec3(motion.x, motion.y, -motion.z);
-					};
-				}
-				else
-				{
-					Detonate(hitResult);
-					return Vec3.ZERO;
-				}
+			case Bounce -> {
+				BlockHitResult blockHitResult = (BlockHitResult) hitResult;
+				return switch (blockHitResult.getDirection()) {
+					case UP, DOWN -> new Vec3(motion.x, -motion.y, motion.z);
+					case EAST, WEST -> new Vec3(-motion.x, motion.y, motion.z);
+					case NORTH, SOUTH -> new Vec3(motion.x, motion.y, -motion.z);
+				};
 			}
 		}
 		return motion;
@@ -230,42 +274,31 @@ public class BulletEntity extends Projectile
 
 	public void Detonate(HitResult hit)
 	{
-		Gunshot shot = new Gunshot();
-		shot.fromShotIndex = 0;
-		shot.bulletDef = Def;
-		shot.origin = position();
-		shot.trajectory = getDeltaMovement();
-		shot.hits = new HitResult[] {
-			hit
-		};
-		Context.ProcessShot(shot);
+		if(!Detonated)
+		{
+			Gunshot shot = new Gunshot();
+			shot.fromShotIndex = 0;
+			shot.bulletDef = GetBulletDef();
+			shot.origin = position();
+			shot.trajectory = getDeltaMovement();
+			shot.hits = new HitResult[]{
+				hit
+			};
+			GetContext().ProcessShot(shot);
+			Detonated = true;
+		}
 		if(!level().isClientSide)
 			kill();
 	}
 
-	@Override
-	protected void defineSynchedData()
-	{
-		getEntityData().define(DATA_CONTEXT, GunshotContext.INVALID);
-	}
-
-	public void onSyncedDataUpdated(@Nonnull EntityDataAccessor<?> data)
-	{
-		if(DATA_CONTEXT.equals(data))
-		{
-			InitContext(getEntityData().get(DATA_CONTEXT));
-		}
-
-		super.onSyncedDataUpdated(data);
-	}
 
 	public void addAdditionalSaveData(CompoundTag tags)
 	{
-		tags.putString("bullet", Def.Location.toString());
+		tags.putString("bullet", GetBulletDef().Location.toString());
 		tags.putInt("fuse", FuseRemaining);
 		tags.putBoolean("stuck", Stuck);
 		CompoundTag contextTags = new CompoundTag();
-		Context.Save(contextTags);
+		GetContext().Save(contextTags);
 		tags.put("context", contextTags);
 	}
 
@@ -273,11 +306,12 @@ public class BulletEntity extends Projectile
 	{
 		if(tags.contains("bullet"))
 		{
-			Def = FlansMod.BULLETS.Get(new ResourceLocation(tags.getString("bullet")));
+			SetBulletDef(FlansMod.BULLETS.Get(new ResourceLocation(tags.getString("bullet"))));
 		}
 		FuseRemaining = tags.getInt("fuse");
 		Stuck = tags.getBoolean("stuck");
-		Context = GunshotContext.Load(tags.getCompound("context"), level().isClientSide);
+		GunshotContext context = GunshotContext.Load(tags.getCompound("context"), level().isClientSide);
+		InitContext(context);
 	}
 
 

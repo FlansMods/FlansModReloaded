@@ -10,6 +10,7 @@ import mezz.jei.api.recipe.RecipeType;
 import mezz.jei.api.registration.IRecipeCatalystRegistration;
 import mezz.jei.api.registration.IRecipeCategoryRegistration;
 import mezz.jei.api.registration.IRecipeRegistration;
+import mezz.jei.api.runtime.IJeiRuntime;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.resources.ResourceLocation;
@@ -18,6 +19,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.registries.ForgeRegistries;
 
 import javax.annotation.Nonnull;
+import java.util.List;
 
 @SuppressWarnings("unused")
 @JeiPlugin
@@ -32,6 +34,14 @@ public class FlansModJEIPlugin implements IModPlugin
 	private static final PartCraftingCategory PART_CRAFTING_CATEGORY = new PartCraftingCategory(PART_FABRICATION_RECIPE_TYPE);
 	private static final RecipeType<GunFabricationRecipe> GUN_FABRICATION_RECIPE_TYPE = RecipeType.create(FlansMod.MODID, "gun_fabrication", GunFabricationRecipe.class);
 	private static final GunCraftingCategory GUN_CRAFTING_CATEGORY = new GunCraftingCategory(GUN_FABRICATION_RECIPE_TYPE);
+
+	private IJeiRuntime Runtime = null;
+
+	@Override
+	public void onRuntimeAvailable(@Nonnull IJeiRuntime jeiRuntime)
+	{
+		Runtime = jeiRuntime;
+	}
 
 	@Override
 	public void registerCategories(@Nonnull IRecipeCategoryRegistration registration)
@@ -67,6 +77,21 @@ public class FlansModJEIPlugin implements IModPlugin
 				if(workbenchDefinition.gunCrafting.isActive)
 					registration.addRecipeCatalyst(new ItemStack(workbenchItem), GUN_FABRICATION_RECIPE_TYPE);
 			}
+		}
+	}
+
+	public void OpenPartFabList()
+	{
+		if(Runtime != null)
+		{
+			Runtime.getRecipesGui().showTypes(List.of(PART_FABRICATION_RECIPE_TYPE));
+		}
+	}
+	public void OpenGunFabList()
+	{
+		if(Runtime != null)
+		{
+			Runtime.getRecipesGui().showTypes(List.of(GUN_FABRICATION_RECIPE_TYPE));
 		}
 	}
 }

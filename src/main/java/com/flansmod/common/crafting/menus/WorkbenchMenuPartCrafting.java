@@ -1,6 +1,7 @@
 package com.flansmod.common.crafting.menus;
 
 import com.flansmod.common.FlansMod;
+import com.flansmod.common.crafting.AbstractWorkbench;
 import com.flansmod.common.crafting.slots.RestrictedSlot;
 import com.flansmod.common.crafting.WorkbenchBlockEntity;
 import net.minecraft.network.FriendlyByteBuf;
@@ -39,11 +40,11 @@ public class WorkbenchMenuPartCrafting extends WorkbenchMenu
 
 	public WorkbenchMenuPartCrafting(int containerID,
 									 @Nonnull Inventory inventory,
-									 @Nonnull WorkbenchBlockEntity workbench)
+									 @Nonnull AbstractWorkbench workbench)
 	{
 		super(FlansMod.WORKBENCH_MENU_PART_CRAFTING.get(), containerID, inventory, workbench);
-		PartCraftingInputContainer = BlockEntity.PartCraftingInputContainer;
-		PartCraftingOutputContainer = BlockEntity.PartCraftingOutputContainer;
+		PartCraftingInputContainer = Workbench.PartCraftingInputContainer;
+		PartCraftingOutputContainer = Workbench.PartCraftingOutputContainer;
 		CreateSlots(inventory, 0);
 	}
 
@@ -53,8 +54,8 @@ public class WorkbenchMenuPartCrafting extends WorkbenchMenu
 	{
 		super(FlansMod.WORKBENCH_MENU_PART_CRAFTING.get(), containerID, inventory, data);
 
-		PartCraftingInputContainer = BlockEntity.PartCraftingInputContainer;
-		PartCraftingOutputContainer = BlockEntity.PartCraftingOutputContainer;
+		PartCraftingInputContainer = Workbench.PartCraftingInputContainer;
+		PartCraftingOutputContainer = Workbench.PartCraftingOutputContainer;
 		CreateSlots(inventory, 0);
 	}
 
@@ -74,13 +75,13 @@ public class WorkbenchMenuPartCrafting extends WorkbenchMenu
 		}
 		if(BUTTON_SELECT_PART_RECIPE_0 <= buttonID && buttonID <= BUTTON_SELECT_PART_RECIPE_MAX)
 		{
-			BlockEntity.SelectPartCraftingRecipe(buttonID - BUTTON_SELECT_PART_RECIPE_0);
+			Workbench.SelectPartCraftingRecipe(player.level(), buttonID - BUTTON_SELECT_PART_RECIPE_0);
 			return true;
 		}
 		if(BUTTON_QUEUE_CANCEL_0 <= buttonID && buttonID <= BUTTON_QUEUE_CANCEL_MAX)
 		{
 			int cancelIndex = buttonID - BUTTON_QUEUE_CANCEL_0;
-			BlockEntity.CancelQueue(cancelIndex);
+			Workbench.CancelQueue(cancelIndex);
 			return true;
 		}
 		return false;
@@ -146,7 +147,7 @@ public class WorkbenchMenuPartCrafting extends WorkbenchMenu
 
 	public void CraftParts(int count)
 	{
-		BlockEntity.QueueCrafting(count);
+		Workbench.QueueCrafting(World, count);
 	}
 }
 

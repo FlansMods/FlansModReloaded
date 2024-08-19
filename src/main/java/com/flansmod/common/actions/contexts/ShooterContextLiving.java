@@ -65,7 +65,7 @@ public class ShooterContextLiving extends ShooterContext implements Container
 	}
 	@Override
 	@Nonnull
-	public GunContext CreateContext(UUID gunID)
+	public GunContext CreateContext(@Nonnull UUID gunID)
 	{
 		if(gunID.equals(GetMainHandGunID()))
 			return new GunContextLiving(this, InteractionHand.MAIN_HAND);

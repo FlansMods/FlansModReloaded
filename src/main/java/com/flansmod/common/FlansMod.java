@@ -11,8 +11,14 @@ import com.flansmod.common.crafting.menus.*;
 import com.flansmod.common.crafting.recipes.GunFabricationRecipe;
 import com.flansmod.common.crafting.recipes.PartFabricationRecipe;
 import com.flansmod.common.entity.NpcRelationshipCapabilityAttacher;
+import com.flansmod.common.entity.longdistance.LongDistanceEntitySystem;
+import com.flansmod.common.entity.longdistance.LongDistanceVehicle;
+import com.flansmod.common.entity.longdistance.ServerLongDistanceEntitySystem;
+import com.flansmod.common.entity.vehicle.VehicleEntity;
+import com.flansmod.common.entity.vehicle.hierarchy.WheelEntity;
 import com.flansmod.common.gunshots.Raytracer;
 import com.flansmod.common.item.*;
+import com.flansmod.common.network.FlansEntityDataSerializers;
 import com.flansmod.common.network.FlansModPacketHandler;
 import com.flansmod.common.projectiles.BulletEntity;
 import com.flansmod.common.types.abilities.CraftingTraitDefinition;
@@ -32,8 +38,11 @@ import com.flansmod.common.types.guns.elements.AbilityDefinition;
 import com.flansmod.common.types.magazines.MagazineDefinitions;
 import com.flansmod.common.types.npc.NpcDefinitions;
 import com.flansmod.common.types.parts.PartDefinitions;
+import com.flansmod.common.types.vehicles.ControlSchemeDefinitions;
+import com.flansmod.common.types.vehicles.VehicleDefinitions;
 import com.flansmod.common.worldgen.loot.LootPopulator;
 import com.flansmod.util.Transform;
+import com.flansmod.util.collision.OBBCollisionSystem;
 import com.mojang.logging.LogUtils;
 import com.mojang.serialization.Codec;
 import net.minecraft.advancements.CriteriaTriggers;
@@ -55,10 +64,10 @@ import net.minecraft.world.entity.MobCategory;
 import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.ai.attributes.RangedAttribute;
 import net.minecraft.world.inventory.MenuType;
-import net.minecraft.world.inventory.RecipeBookType;
 import net.minecraft.world.item.*;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.item.crafting.RecipeType;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.BlockEntityType;
@@ -70,6 +79,7 @@ import net.minecraftforge.common.crafting.CraftingHelper;
 import net.minecraftforge.common.extensions.IForgeMenuType;
 import net.minecraftforge.common.loot.IGlobalLootModifier;
 import net.minecraftforge.event.AddReloadListenerEvent;
+import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.level.LevelEvent;
@@ -120,6 +130,23 @@ public class FlansMod
             MobCategory.MISC)
             .sized(0.5f, 0.5f)
             .build("bullet"));
+    public static final RegistryObject<EntityType<WheelEntity>> ENT_TYPE_WHEEL = ENTITY_TYPES.register(
+        "wheel",
+        () -> EntityType.Builder.of(
+            WheelEntity::new,
+            MobCategory.MISC)
+            .sized(0.25f, 0.25f)
+            .build("wheel"));
+
+
+    // PartEntitys don't get registered?
+    //public static final RegistryObject<EntityType<WheelEntity>> ENT_TYPE_WHEEL = ENTITY_TYPES.register(
+    //    "wheel",
+    //    () -> EntityType.Builder.of(
+    //            WheelEntity::new,
+    //            MobCategory.MISC)
+    //        .sized(0.5f, 0.5f)
+    //        .build("wheel"));
 
     public static final RegistryObject<Item> RAINBOW_PAINT_CAN_ITEM = ITEMS.register("rainbow_paint_can", () -> new Item(new Item.Properties()));
     public static final RegistryObject<Item> MAG_UPGRADE_ITEM = ITEMS.register("magazine_upgrade", () -> new Item(new Item.Properties()));
@@ -130,6 +157,7 @@ public class FlansMod
     public static final RegistryObject<Item> GUN_MOD_TABLE_ITEM = ITEMS.register("gun_modification_table", () -> new BlockItem(GUN_MOD_TABLE_BLOCK.get(), new Item.Properties()));
     public static final RegistryObject<Item> DIESEL_GENERATOR_ITEM = ITEMS.register("portable_diesel_generator", () -> new BlockItem(DIESEL_GENERATOR_BLOCK.get(), new Item.Properties()));
     public static final RegistryObject<Item> COAL_GENERATOR_ITEM = ITEMS.register("portable_coal_generator", () -> new BlockItem(COAL_GENERATOR_BLOCK.get(), new Item.Properties()));
+    public static final RegistryObject<Item> GUN_MOD_PORTABLE_ITEM = FlansMod.Workbench_Quick_Item(ITEMS, MODID, "portable_mod_kit");
 
     // Tile entities
     public static final RegistryObject<BlockEntityType<WorkbenchBlockEntity>> DIESEL_GENERATOR_TILE_ENTITY = Workbench_TileEntityType(TILE_ENTITIES, MODID, "portable_diesel_generator");
@@ -181,6 +209,7 @@ public class FlansMod
                 .displayItems((itemDisplayParameters, output) ->
                 {
                     output.accept(GUN_MOD_TABLE_ITEM.get());
+                    output.accept(GUN_MOD_PORTABLE_ITEM.get());
                     output.accept(DIESEL_GENERATOR_ITEM.get());
                     output.accept(COAL_GENERATOR_ITEM.get());
                     for(ItemStack stack : stacks)
@@ -244,6 +273,7 @@ public class FlansMod
                 .displayItems((itemDisplayParameters, output) ->
                 {
                     output.accept(GUN_MOD_TABLE_ITEM.get());
+                    output.accept(GUN_MOD_PORTABLE_ITEM.get());
                     output.accept(RAINBOW_PAINT_CAN_ITEM.get());
                     output.accept(MAG_UPGRADE_ITEM.get());
                     for(ItemStack stack : stacks)
@@ -264,10 +294,14 @@ public class FlansMod
     public static final NpcDefinitions NPCS = new NpcDefinitions();
     public static final CraftingTraitDefinitions TRAITS = new CraftingTraitDefinitions();
     public static final ArmourDefinitions ARMOURS = new ArmourDefinitions();
+    public static final VehicleDefinitions VEHICLES = new VehicleDefinitions();
+    public static final ControlSchemeDefinitions CONTROL_SCHEMES = new ControlSchemeDefinitions();
 
     // Server handlers
     public static final ServerActionManager ACTIONS_SERVER = new ServerActionManager();
+    public static final ServerLongDistanceEntitySystem LONG_DISTANCE_SERVER = new ServerLongDistanceEntitySystem();
     public static final ContextCache CONTEXT_CACHE = new ServerContextCache();
+    public static final ServerInventoryManager INVENTORY_MANAGER = new ServerInventoryManager();
 
     public static RegistryObject<Item> Gun(DeferredRegister<Item> itemRegister, String modID, String name)
     {
@@ -311,11 +345,57 @@ public class FlansMod
         ResourceLocation loc = new ResourceLocation(modID, name);
         return itemRegister.register(name, () -> new BlockItem(block.get(), new Item.Properties()));
     }
+    @Nonnull
+    public static RegistryObject<Item> Workbench_Quick_Item(@Nonnull DeferredRegister<Item> itemRegister, @Nonnull String modID, @Nonnull String name)
+    {
+        ResourceLocation loc = new ResourceLocation(modID, name);
+        return itemRegister.register(name, () -> new TemporaryWorkbenchItem(loc));
+    }
 
     public static RegistryObject<BlockEntityType<WorkbenchBlockEntity>> Workbench_TileEntityType(DeferredRegister<BlockEntityType<?>> tileEntityTypeRegister, String modID, String name)
     {
         ResourceLocation loc = new ResourceLocation(modID, name);
         return tileEntityTypeRegister.register(name, () -> new WorkbenchBlockEntity.WorkbenchBlockEntityTypeHolder(loc).CreateType());
+    }
+
+    public static RegistryObject<Item> Vehicle_Item(DeferredRegister<Item> itemRegister, String modID, String name)
+    {
+        ResourceLocation loc = new ResourceLocation(modID, name);
+        return itemRegister.register(name, () -> new VehicleItem(loc, new Item.Properties()));
+    }
+
+
+    private record VehicleFactory(@Nonnull ResourceLocation Loc)
+    {
+        @Nonnull
+        public VehicleEntity CreateEntity(@Nonnull EntityType<VehicleEntity> type, @Nonnull Level level)
+        {
+            return new VehicleEntity(type, Loc, level);
+        }
+        @Nonnull
+        public LongDistanceVehicle CreateLongDistance(@Nonnull EntityType<?> type)
+        {
+            return new LongDistanceVehicle(type, Loc);
+        }
+    }
+    @Nonnull
+    public static RegistryObject<EntityType<VehicleEntity>> Vehicle_Entity(
+        @Nonnull DeferredRegister<EntityType<?>> entityRegister,
+        @Nonnull String modID,
+        @Nonnull String name,
+        boolean longDistanceEnabled)
+    {
+        ResourceLocation loc = new ResourceLocation(modID, name);
+        return entityRegister.register(name, () ->
+        {
+            VehicleFactory factory = new VehicleFactory(loc);
+            EntityType<VehicleEntity> entityType = EntityType.Builder.of(factory::CreateEntity, MobCategory.MISC)
+                .sized(1f, 1f)
+                .build(name);
+            if(longDistanceEnabled)
+                LongDistanceEntitySystem.RegisterLongDistanceEntityClass(entityType, factory::CreateLongDistance);
+            return entityType;
+        });
     }
 
     @Nonnull
@@ -339,7 +419,7 @@ public class FlansMod
         modEventBus.addListener(this::CommonInit);
         ACTIONS_SERVER.HookServer(modEventBus);
         FlansModPacketHandler.RegisterMessages();
-        ContextSerializers.RegisterSerializers();
+        FlansEntityDataSerializers.RegisterSerializers();
         modEventBus.addListener(this::OnRegsiterEvent);
 
         new NpcRelationshipCapabilityAttacher();
@@ -374,6 +454,16 @@ public class FlansMod
     {
         if(!event.getLevel().isClientSide())
             CONTEXT_CACHE.OnLevelUnloaded(ACTIONS_SERVER);
+    }
+    @SubscribeEvent
+    public void OnLevelTick(@Nonnull TickEvent.LevelTickEvent levelTick)
+    {
+        OBBCollisionSystem physics = OBBCollisionSystem.ForLevel(levelTick.level);
+
+        if(levelTick.phase == TickEvent.Phase.START)
+            physics.PreTick();
+        if(levelTick.phase == TickEvent.Phase.END)
+            physics.PhysicsTick();
     }
 
     @SubscribeEvent
@@ -488,5 +578,7 @@ public class FlansMod
         registerFunc.accept(NPCS);
         registerFunc.accept(TRAITS);
         registerFunc.accept(ARMOURS);
+        registerFunc.accept(VEHICLES);
+        registerFunc.accept(CONTROL_SCHEMES);
     }
 }

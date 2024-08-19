@@ -40,9 +40,10 @@ public abstract class FlanItem extends Item implements IForgeItem
         return ALL_ITEMS;
     }
     public abstract JsonDefinition Def();
+    @Nonnull
     public final ResourceLocation DefinitionLocation;
 
-    public FlanItem(ResourceLocation definitionLocation, Properties props)
+    public FlanItem(@Nonnull ResourceLocation definitionLocation, @Nonnull Properties props)
     {
         super(props);
         DefinitionLocation = definitionLocation;

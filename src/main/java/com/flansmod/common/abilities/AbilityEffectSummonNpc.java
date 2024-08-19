@@ -46,10 +46,11 @@ public class AbilityEffectSummonNpc implements IAbilityEffect
 		LazyOptional<INpcRelationshipsCapability> relationshipCap = player.getCapability(NpcRelationshipsCapability.INSTANCE);
 		if(relationshipCap.isPresent() && relationshipCap.resolve().isPresent())
 		{
-			int cooldownTicks = relationshipCap.resolve().get().GetCooldownTicks(NpcID);
-			if (cooldownTicks > 0)
+			long endCooldownTick = relationshipCap.resolve().get().GetEndCooldownTick(NpcID);
+			if (player.level().getGameTime() < endCooldownTick)
 			{
-				player.sendSystemMessage(Component.translatable("action.summon_npc.on_cooldown", cooldownTicks / 20));
+				long ticks = endCooldownTick - player.level().getGameTime();
+				player.sendSystemMessage(Component.translatable("action.summon_npc.on_cooldown", ticks / 20));
 				return false;
 			}
 		}
@@ -102,7 +103,7 @@ public class AbilityEffectSummonNpc implements IAbilityEffect
 								LazyOptional<INpcRelationshipsCapability> relationshipCap = playerContext.Player.getCapability(NpcRelationshipsCapability.INSTANCE);
 								if (relationshipCap.isPresent() && relationshipCap.resolve().isPresent())
 								{
-									relationshipCap.resolve().get().SetCooldownTicks(NpcID, shopkeeper.GetDef().CooldownTicks(true));
+									relationshipCap.resolve().get().SetEndCooldownTick(NpcID, shopkeeper.level().getGameTime() + shopkeeper.GetDef().CooldownTicks(true));
 								}
 							}
 						}

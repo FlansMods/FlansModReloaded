@@ -1,0 +1,75 @@
+{
+    "itemSettings": {
+        "maxStackSize": 4,
+        "tags": [
+            "flansmod:grenade"
+        ]
+    },
+    "primaryActions": [
+        {
+            "actionType": "Animation",
+            "duration": 0.0,
+            "sounds": [
+                {
+                    "sound": ":",
+                    "length": 1.0,
+                    "minPitchMultiplier": 1.0,
+                    "maxPitchMultiplier": 1.0,
+                    "minVolume": 1.0,
+                    "maxVolume": 1.0,
+                    "maxRange": 100.0,
+                    "LODs": []
+                }
+            ],
+            "itemStack": "",
+            "scopeOverlay": "",
+            "anim": "GrenadeThrow"
+        },
+        {
+            "actionType": "Invalid",
+            "duration": 0.0,
+            "sounds": [],
+            "itemStack": "",
+            "scopeOverlay": "",
+            "anim": ""
+        }
+    ],
+    "secondaryActions": [
+        {
+            "actionType": "Animation",
+            "duration": 0.0,
+            "sounds": [],
+            "itemStack": "",
+            "scopeOverlay": "",
+            "anim": "GrenadeCook"
+        },
+        {
+            "actionType": "Invalid",
+            "duration": 0.0,
+            "sounds": [],
+            "itemStack": "",
+            "scopeOverlay": "",
+            "anim": ""
+        }
+    ],
+    "bounciness": 0.8,
+    "sticky": false,
+    "canStickToThrower": false,
+    "livingProximityTrigger": -1.0,
+    "vehicleProximityTrigger": -1.0,
+    "detonateWhenShot": true,
+    "detonateWhenDamaged": true,
+    "fuse": 80.0,
+    "spinForceX": 10.0,
+    "spinForceY": 10.0,
+    "impact": {
+        "targetType": "ShotEntity",
+        "impactEffects": []
+    },
+    "lifetimeAfterDetonation": 0.0,
+    "smokeParticles": [
+        "explode"
+    ],
+    "effectsToApplyInSmoke": [],
+    "smokeRadius": 5.0
+}

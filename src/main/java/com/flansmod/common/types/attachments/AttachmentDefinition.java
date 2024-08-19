@@ -10,7 +10,7 @@ import com.flansmod.common.types.guns.elements.ActionGroupDefinition;
 import com.flansmod.common.types.guns.elements.ERepeatMode;
 import com.flansmod.common.types.guns.elements.HandlerDefinition;
 import com.flansmod.common.types.guns.elements.ReloadDefinition;
-import com.flansmod.common.types.vehicles.EPlayerInput;
+import com.flansmod.common.types.elements.EPlayerInput;
 import net.minecraft.resources.ResourceLocation;
 
 public class AttachmentDefinition extends JsonDefinition

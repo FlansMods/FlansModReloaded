@@ -54,8 +54,6 @@ public class BulletDefinition extends JsonDefinition
 	public ItemDefinition itemSettings = new ItemDefinition();
 	@JsonField
 	public int roundsPerItem = 1;
-	//@JsonField
-	//public ShotDefinition shootStats = new ShotDefinition();
 
 	@JsonField(Docs = "Any number of hitscan rays. These shoot the target instantly")
 	public HitscanDefinition[] hitscans = new HitscanDefinition[0];

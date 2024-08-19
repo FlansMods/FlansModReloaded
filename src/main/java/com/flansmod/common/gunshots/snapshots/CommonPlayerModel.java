@@ -287,31 +287,37 @@ public class CommonPlayerModel
 		// Now use all this good stuff to build a snapshot
 		poseStack.PushSaveState();
 		head.Pose(poseStack);
+		poseStack.mulPose(Axis.ZP.rotationDegrees(180f));
 		snap.UpdateHitbox(EPlayerHitArea.HEAD, poseStack.Top(), head.GetHalfExtents());
 		poseStack.PopSaveState();
 
 		poseStack.PushSaveState();
 		body.Pose(poseStack);
+		poseStack.mulPose(Axis.ZP.rotationDegrees(180f));
 		snap.UpdateHitbox(EPlayerHitArea.BODY, poseStack.Top(), body.GetHalfExtents());
 		poseStack.PopSaveState();
 
 		poseStack.PushSaveState();
 		leftLeg.Pose(poseStack);
+		poseStack.mulPose(Axis.ZP.rotationDegrees(180f));
 		snap.UpdateHitbox(EPlayerHitArea.LEFTLEG, poseStack.Top(), leftLeg.GetHalfExtents());
 		poseStack.PopSaveState();
 
 		poseStack.PushSaveState();
 		rightLeg.Pose(poseStack);
+		poseStack.mulPose(Axis.ZP.rotationDegrees(180f));
 		snap.UpdateHitbox(EPlayerHitArea.RIGHTLEG, poseStack.Top(), rightLeg.GetHalfExtents());
 		poseStack.PopSaveState();
 
 		poseStack.PushSaveState();
 		leftArm.Pose(poseStack);
+		poseStack.mulPose(Axis.ZP.rotationDegrees(180f));
 		snap.UpdateHitbox(EPlayerHitArea.LEFTARM, poseStack.Top(), leftArm.GetHalfExtents());
 		poseStack.PopSaveState();
 
 		poseStack.PushSaveState();
 		rightArm.Pose(poseStack);
+		poseStack.mulPose(Axis.ZP.rotationDegrees(180f));
 		snap.UpdateHitbox(EPlayerHitArea.RIGHTARM, poseStack.Top(), rightArm.GetHalfExtents());
 		poseStack.PopSaveState();
 

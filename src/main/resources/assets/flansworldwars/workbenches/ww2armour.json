@@ -1,0 +1,110 @@
+{
+    "titleString": "workbench",
+    "bannerTextureLocation": "minecraft:null",
+    "gunCrafting": {
+        "isActive": false,
+        "craftableGuns": {
+            "itemIDFilters": [],
+            "itemTagFilters": [],
+            "materialFilters": []
+        },
+        "maxSlots": 8,
+        "FECostPerCraft": 0
+    },
+    "partCrafting": {
+        "isActive": false,
+        "inputSlots": 8,
+        "outputSlots": 8,
+        "timePerCraft": 1.0,
+        "FECostPerCraft": 0.0,
+        "craftableParts": {
+            "itemIDFilters": [],
+            "itemTagFilters": [],
+            "materialFilters": []
+        }
+    },
+    "gunModifying": {
+        "isActive": false,
+        "disallowedMods": [],
+        "allowedMods": [],
+        "FECostPerModify": 0
+    },
+    "energy": {
+        "maxFE": 0,
+        "acceptFEPerTick": 0,
+        "disperseFEPerTick": 0,
+        "numBatterySlots": 0,
+        "batterySlotStackSize": 1,
+        "liquidFuelStorage": 0,
+        "liquidFuelFilter": "",
+        "liquidFEPerMillibucket": 0,
+        "numSolidFuelSlots": 0,
+        "solidFuelFilter": "",
+        "solidFEPerFuelTime": 0
+    },
+    "armourCrafting": {
+        "isActive": true,
+        "craftableArmour": {
+            "itemIDFilters": [
+                {
+                    "filterType": "Allow",
+                    "matchResourceLocations": [
+                        ":americanHelmet",
+                        ":americanCoat",
+                        ":americanPants",
+                        ":americanBoots",
+                        ":britishHelmet",
+                        ":britishCoat",
+                        ":britishPants",
+                        ":britishBoots",
+                        ":germanHelmet",
+                        ":germanCoat",
+                        ":germanPants",
+                        ":germanBoots",
+                        ":japaneseHelmet",
+                        ":japaneseCoat",
+                        ":japanesePants",
+                        ":japaneseBoots",
+                        ":russianHelmet",
+                        ":russianCoat",
+                        ":russianPants",
+                        ":russianBoots",
+                        ":britishDesertHelmet",
+                        ":britishDesertCoat",
+                        ":britishDesertPants",
+                        ":britishDesertBoots",
+                        ":germanDesertHelmet",
+                        ":germanDesertCoat",
+                        ":germanDesertPants",
+                        ":germanDesertBoots",
+                        ":americanSnowHelmet",
+                        ":americanSnowCoat",
+                        ":americanSnowPants",
+                        ":americanSnowBoots",
+                        ":germanSnowHelmet",
+                        ":germanSnowCoat",
+                        ":germanSnowPants",
+                        ":germanSnowBoots",
+                        ":germanForestHelmet",
+                        ":germanForestCoat",
+                        ":germanForestPants",
+                        ":germanForestBoots"
+                    ]
+                }
+            ],
+            "itemTagFilters": [],
+            "materialFilters": []
+        },
+        "FECostPerCraft": 0
+    },
+    "itemHolding": {
+        "slots": [],
+        "allow": "",
+        "maxStackSize": 64
+    },
+    "itemSettings": {
+        "maxStackSize": 64,
+        "tags": []
+    },
+    "sides": []
+}

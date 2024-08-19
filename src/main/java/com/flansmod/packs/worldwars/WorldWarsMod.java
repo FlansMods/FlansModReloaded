@@ -1,14 +1,20 @@
 package com.flansmod.packs.worldwars;
 
+import com.flansmod.client.render.guns.GunItemRenderer;
+import com.flansmod.client.render.models.FlansModelRegistry;
+import com.flansmod.client.render.vehicles.VehicleRenderer;
 import com.flansmod.common.FlansMod;
 import com.flansmod.common.crafting.WorkbenchBlockEntity;
+import com.flansmod.common.entity.vehicle.VehicleEntity;
 import com.flansmod.packs.worldwars.client.JanModel;
 import com.flansmod.packs.worldwars.client.JanRenderer;
 import com.flansmod.packs.worldwars.common.JanEntity;
 import com.mojang.logging.LogUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.ItemModelShaper;
+import net.minecraft.client.renderer.entity.EntityRenderers;
 import net.minecraft.client.resources.model.ModelResourceLocation;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobCategory;
 import net.minecraft.world.item.Item;
@@ -22,6 +28,7 @@ import net.minecraftforge.event.entity.EntityAttributeCreationEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
@@ -80,6 +87,10 @@ public class WorldWarsMod
 
 	public static final RegistryObject<Item> GUN_BINOCULARS = 						FlansMod.Gun(ITEMS, MODID, "binoculars");
 	public static final RegistryObject<Item> GUN_KNIFE = 							FlansMod.Gun(ITEMS, MODID, "knife");
+
+	public static final RegistryObject<Item> VEHICLE_ITEM_JEEP = 					FlansMod.Vehicle_Item(ITEMS, MODID, "jeep");
+	public static final RegistryObject<EntityType<VehicleEntity>> VEHICLE_ENTITY_JEEP = FlansMod.Vehicle_Entity(ENTITY_TYPES, MODID, "jeep", true);
+
 
 	// British
 	public static final RegistryObject<Block> WORKBENCH_BLOCK_BRITISH = 			FlansMod.Workbench_Block(BLOCKS, MODID, "british_workbench");
@@ -157,6 +168,17 @@ public class WorldWarsMod
 	@Mod.EventBusSubscriber(value = Dist.CLIENT, bus = Mod.EventBusSubscriber.Bus.MOD, modid = MODID)
 	public static class ClientMod
 	{
+		static
+		{
+			FlansModelRegistry.PreRegisterModel(new ResourceLocation(MODID, "jeep"));
+		}
+
+		@SubscribeEvent
+		public static void ClientInit(final FMLClientSetupEvent event)
+		{
+			EntityRenderers.register(VEHICLE_ENTITY_JEEP.get(), (ctx) -> new VehicleRenderer(VEHICLE_ENTITY_JEEP.getId(), ctx));
+		}
+
 		@SubscribeEvent
 		public static void RegisterLayerDefinitions(EntityRenderersEvent.RegisterLayerDefinitions event)
 		{
@@ -173,12 +195,14 @@ public class WorldWarsMod
 				event.register(new ModelResourceLocation(MODID, entry.getId().getPath() + "_inventory", "inventory"));
 				shaper.register(entry.get(), new ModelResourceLocation(MODID, entry.getId().getPath() + "_inventory", "inventory"));
 			}
+
 		}
 
 		@SubscribeEvent
 		public static void EntityRenderEvent(EntityRenderersEvent.RegisterRenderers event)
 		{
 			event.registerEntityRenderer(ENTITY_TYPE_JAN.get(), JanRenderer::new);
+			//event.registerEntityRenderer((EntityType<? extends VehicleEntity>)VEHICLE_ENTITY_JEEP.get(), VehicleRenderer::new);
 		}
 	}
 }

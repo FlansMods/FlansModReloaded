@@ -1,0 +1,25 @@
+{
+    "logicType": "Car",
+    "axes": [
+        {
+            "positive": "Accelerate",
+            "negative": "Decelerate",
+            "axisBehaviour": "SliderWithRestPosition",
+            "minValue": -1.0,
+            "maxValue": 1.0,
+            "startingPosition": 0.0,
+            "restingPosition": 0.0,
+            "notches": []
+        },
+        {
+            "positive": "YawLeft",
+            "negative": "YawRight",
+            "axisBehaviour": "SliderWithRestPosition",
+            "minValue": -1.0,
+            "maxValue": 1.0,
+            "startingPosition": 0.0,
+            "restingPosition": 0.0,
+            "notches": []
+        }
+    ]
+}

@@ -8,9 +8,8 @@ public interface INpcRelationshipsCapability extends INBTSerializable<CompoundTa
 {
 	ENpcRelationship GetRelationship(ResourceLocation npcID);
 	void SetRelationship(ResourceLocation npcID, ENpcRelationship relationship);
-	int GetCooldownTicks(ResourceLocation npcID);
-	void SetCooldownTicks(ResourceLocation npcID, int ticks);
+	long GetEndCooldownTick(ResourceLocation npcID);
+	void SetEndCooldownTick(ResourceLocation npcID, long tick);
 	int GetLevel(ResourceLocation npcID);
 	void SetLevel(ResourceLocation npcID, int level);
-	void TickAllCooldowns(int ticks);
 }

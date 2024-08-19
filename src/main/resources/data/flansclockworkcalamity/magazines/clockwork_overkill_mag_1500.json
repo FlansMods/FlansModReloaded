@@ -1,0 +1,16 @@
+{
+    "tags": [
+        "flansclockworkcalamity:clockwork_overkill"
+    ],
+    "modifiers": [],
+    "ammoLoadMode": "FullMag",
+    "ammoConsumeMode": "FirstNonEmpty",
+    "upgradeCost": 0,
+    "numRounds": 1500,
+    "allRoundsMustBeIdentical": true,
+    "matchingBullets": {
+        "itemIDFilters": [],
+        "itemTagFilters": [],
+        "materialFilters": []
+    }
+}

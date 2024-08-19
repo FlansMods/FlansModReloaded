@@ -1,0 +1,1237 @@
+{
+    "itemSettings": {
+        "maxStackSize": 1,
+        "tags": [
+            "flansmod:vehicle"
+        ]
+    },
+    "parts": [
+        {
+            "partName": "body",
+            "attachedTo": "",
+            "localPosition": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "localEulerAngles": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "damage": {
+                "maxHealth": 200.0,
+                "armourToughness": 1.0,
+                "hitboxCenter": [
+                    -0.4375,
+                    0.3125,
+                    0.0
+                ],
+                "hitboxHalfExtents": [
+                    0.625,
+                    0.75,
+                    0.625
+                ]
+            },
+            "seats": [
+                {
+                    "offsetFromAttachPoint": [
+                        -4.0,
+                        -4.0,
+                        0.0
+                    ],
+                    "minYaw": -360.0,
+                    "maxYaw": 360.0,
+                    "minPitch": -89.0,
+                    "maxPitch": 89.0,
+                    "gyroStabilised": false,
+                    "controllerOptions": [
+                        {
+                            "key": "default",
+                            "controlScheme": "flansmod:legacy_plane",
+                            "modalCheck": ""
+                        }
+                    ],
+                    "inputs": []
+                }
+            ],
+            "guns": [],
+            "wheels": [],
+            "propellers": [],
+            "legs": [],
+            "arms": [],
+            "articulation": {
+                "active": false,
+                "minParameter": 0.0,
+                "maxParameter": 1.0,
+                "startParameter": 0.0,
+                "cyclic": false,
+                "minYaw": 0.0,
+                "maxYaw": 0.0,
+                "minPitch": 0.0,
+                "maxPitch": 0.0,
+                "minRoll": 0.0,
+                "maxRoll": 0.0,
+                "minOffset": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "maxOffset": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "traverseSound": {
+                    "sound": "flansworldwars:null",
+                    "length": 1.0,
+                    "minPitchMultiplier": 1.0,
+                    "maxPitchMultiplier": 1.0,
+                    "minVolume": 1.0,
+                    "maxVolume": 1.0,
+                    "maxRange": 100.0,
+                    "LODs": []
+                },
+                "traveseIndependently": false,
+                "followSeatAtPath": "",
+                "lockSeatToGunAngles": false,
+                "rotateSpeed": 1.0
+            }
+        },
+        {
+            "partName": "core_wheel",
+            "attachedTo": "body",
+            "localPosition": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "localEulerAngles": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "damage": {
+                "maxHealth": 50.0,
+                "armourToughness": 1.0,
+                "hitboxCenter": [
+                    0.1875,
+                    -0.84375,
+                    0.0
+                ],
+                "hitboxHalfExtents": [
+                    0.1875,
+                    0.40625,
+                    0.5
+                ]
+            },
+            "seats": [],
+            "guns": [],
+            "wheels": [],
+            "propellers": [],
+            "legs": [],
+            "arms": [],
+            "articulation": {
+                "active": false,
+                "minParameter": 0.0,
+                "maxParameter": 1.0,
+                "startParameter": 0.0,
+                "cyclic": false,
+                "minYaw": 0.0,
+                "maxYaw": 0.0,
+                "minPitch": 0.0,
+                "maxPitch": 0.0,
+                "minRoll": 0.0,
+                "maxRoll": 0.0,
+                "minOffset": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "maxOffset": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "traverseSound": {
+                    "sound": "flansworldwars:null",
+                    "length": 1.0,
+                    "minPitchMultiplier": 1.0,
+                    "maxPitchMultiplier": 1.0,
+                    "minVolume": 1.0,
+                    "maxVolume": 1.0,
+                    "maxRange": 100.0,
+                    "LODs": []
+                },
+                "traveseIndependently": false,
+                "followSeatAtPath": "",
+                "lockSeatToGunAngles": false,
+                "rotateSpeed": 1.0
+            }
+        },
+        {
+            "partName": "nose",
+            "attachedTo": "body",
+            "localPosition": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "localEulerAngles": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "damage": {
+                "maxHealth": 100.0,
+                "armourToughness": 1.0,
+                "hitboxCenter": [
+                    1.6875,
+                    0.125,
+                    0.0
+                ],
+                "hitboxHalfExtents": [
+                    1.5,
+                    0.5625,
+                    0.625
+                ]
+            },
+            "seats": [],
+            "guns": [],
+            "wheels": [],
+            "propellers": [
+                {
+                    "attachedTo": "body",
+                    "visualOffset": [
+                        3.375,
+                        0.125,
+                        0.0
+                    ],
+                    "forceOffset": [
+                        0.0,
+                        0.0,
+                        0.0
+                    ]
+                }
+            ],
+            "legs": [],
+            "arms": [],
+            "articulation": {
+                "active": false,
+                "minParameter": 0.0,
+                "maxParameter": 1.0,
+                "startParameter": 0.0,
+                "cyclic": false,
+                "minYaw": 0.0,
+                "maxYaw": 0.0,
+                "minPitch": 0.0,
+                "maxPitch": 0.0,
+                "minRoll": 0.0,
+                "maxRoll": 0.0,
+                "minOffset": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "maxOffset": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "traverseSound": {
+                    "sound": "flansworldwars:null",
+                    "length": 1.0,
+                    "minPitchMultiplier": 1.0,
+                    "maxPitchMultiplier": 1.0,
+                    "minVolume": 1.0,
+                    "maxVolume": 1.0,
+                    "maxRange": 100.0,
+                    "LODs": []
+                },
+                "traveseIndependently": false,
+                "followSeatAtPath": "",
+                "lockSeatToGunAngles": false,
+                "rotateSpeed": 1.0
+            }
+        },
+        {
+            "partName": "right_wing",
+            "attachedTo": "body",
+            "localPosition": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "localEulerAngles": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "damage": {
+                "maxHealth": 100.0,
+                "armourToughness": 1.0,
+                "hitboxCenter": [
+                    0.5625,
+                    -0.25,
+                    3.0625
+                ],
+                "hitboxHalfExtents": [
+                    1.0,
+                    0.0625,
+                    2.4375
+                ]
+            },
+            "seats": [],
+            "guns": [],
+            "wheels": [],
+            "propellers": [],
+            "legs": [],
+            "arms": [],
+            "articulation": {
+                "active": false,
+                "minParameter": 0.0,
+                "maxParameter": 1.0,
+                "startParameter": 0.0,
+                "cyclic": false,
+                "minYaw": 0.0,
+                "maxYaw": 0.0,
+                "minPitch": 0.0,
+                "maxPitch": 0.0,
+                "minRoll": 0.0,
+                "maxRoll": 0.0,
+                "minOffset": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "maxOffset": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "traverseSound": {
+                    "sound": "flansworldwars:null",
+                    "length": 1.0,
+                    "minPitchMultiplier": 1.0,
+                    "maxPitchMultiplier": 1.0,
+                    "minVolume": 1.0,
+                    "maxVolume": 1.0,
+                    "maxRange": 100.0,
+                    "LODs": []
+                },
+                "traveseIndependently": false,
+                "followSeatAtPath": "",
+                "lockSeatToGunAngles": false,
+                "rotateSpeed": 1.0
+            }
+        },
+        {
+            "partName": "left_wing",
+            "attachedTo": "body",
+            "localPosition": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "localEulerAngles": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "damage": {
+                "maxHealth": 100.0,
+                "armourToughness": 1.0,
+                "hitboxCenter": [
+                    0.5625,
+                    -0.25,
+                    -3.0625
+                ],
+                "hitboxHalfExtents": [
+                    1.0,
+                    0.0625,
+                    2.4375
+                ]
+            },
+            "seats": [],
+            "guns": [],
+            "wheels": [],
+            "propellers": [],
+            "legs": [],
+            "arms": [],
+            "articulation": {
+                "active": false,
+                "minParameter": 0.0,
+                "maxParameter": 1.0,
+                "startParameter": 0.0,
+                "cyclic": false,
+                "minYaw": 0.0,
+                "maxYaw": 0.0,
+                "minPitch": 0.0,
+                "maxPitch": 0.0,
+                "minRoll": 0.0,
+                "maxRoll": 0.0,
+                "minOffset": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "maxOffset": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "traverseSound": {
+                    "sound": "flansworldwars:null",
+                    "length": 1.0,
+                    "minPitchMultiplier": 1.0,
+                    "maxPitchMultiplier": 1.0,
+                    "minVolume": 1.0,
+                    "maxVolume": 1.0,
+                    "maxRange": 100.0,
+                    "LODs": []
+                },
+                "traveseIndependently": false,
+                "followSeatAtPath": "",
+                "lockSeatToGunAngles": false,
+                "rotateSpeed": 1.0
+            }
+        },
+        {
+            "partName": "bay",
+            "attachedTo": "body",
+            "localPosition": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "localEulerAngles": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "damage": {
+                "maxHealth": 200.0,
+                "armourToughness": 1.0,
+                "hitboxCenter": [
+                    -2.71875,
+                    0.125,
+                    0.0
+                ],
+                "hitboxHalfExtents": [
+                    1.65625,
+                    0.5625,
+                    0.625
+                ]
+            },
+            "seats": [],
+            "guns": [],
+            "wheels": [],
+            "propellers": [],
+            "legs": [],
+            "arms": [],
+            "articulation": {
+                "active": false,
+                "minParameter": 0.0,
+                "maxParameter": 1.0,
+                "startParameter": 0.0,
+                "cyclic": false,
+                "minYaw": 0.0,
+                "maxYaw": 0.0,
+                "minPitch": 0.0,
+                "maxPitch": 0.0,
+                "minRoll": 0.0,
+                "maxRoll": 0.0,
+                "minOffset": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "maxOffset": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "traverseSound": {
+                    "sound": "flansworldwars:null",
+                    "length": 1.0,
+                    "minPitchMultiplier": 1.0,
+                    "maxPitchMultiplier": 1.0,
+                    "minVolume": 1.0,
+                    "maxVolume": 1.0,
+                    "maxRange": 100.0,
+                    "LODs": []
+                },
+                "traveseIndependently": false,
+                "followSeatAtPath": "",
+                "lockSeatToGunAngles": false,
+                "rotateSpeed": 1.0
+            }
+        },
+        {
+            "partName": "tail",
+            "attachedTo": "body",
+            "localPosition": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "localEulerAngles": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "damage": {
+                "maxHealth": 100.0,
+                "armourToughness": 1.0,
+                "hitboxCenter": [
+                    -5.09375,
+                    0.125,
+                    0.0
+                ],
+                "hitboxHalfExtents": [
+                    0.71875,
+                    0.4375,
+                    0.5
+                ]
+            },
+            "seats": [],
+            "guns": [],
+            "wheels": [],
+            "propellers": [],
+            "legs": [],
+            "arms": [],
+            "articulation": {
+                "active": false,
+                "minParameter": 0.0,
+                "maxParameter": 1.0,
+                "startParameter": 0.0,
+                "cyclic": false,
+                "minYaw": 0.0,
+                "maxYaw": 0.0,
+                "minPitch": 0.0,
+                "maxPitch": 0.0,
+                "minRoll": 0.0,
+                "maxRoll": 0.0,
+                "minOffset": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "maxOffset": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "traverseSound": {
+                    "sound": "flansworldwars:null",
+                    "length": 1.0,
+                    "minPitchMultiplier": 1.0,
+                    "maxPitchMultiplier": 1.0,
+                    "minVolume": 1.0,
+                    "maxVolume": 1.0,
+                    "maxRange": 100.0,
+                    "LODs": []
+                },
+                "traveseIndependently": false,
+                "followSeatAtPath": "",
+                "lockSeatToGunAngles": false,
+                "rotateSpeed": 1.0
+            }
+        },
+        {
+            "partName": "tail_wheel",
+            "attachedTo": "body",
+            "localPosition": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "localEulerAngles": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "damage": {
+                "maxHealth": 50.0,
+                "armourToughness": 1.0,
+                "hitboxCenter": [
+                    -5.125,
+                    -0.53125,
+                    0.0
+                ],
+                "hitboxHalfExtents": [
+                    0.1875,
+                    0.21875,
+                    0.125
+                ]
+            },
+            "seats": [],
+            "guns": [],
+            "wheels": [],
+            "propellers": [],
+            "legs": [],
+            "arms": [],
+            "articulation": {
+                "active": false,
+                "minParameter": 0.0,
+                "maxParameter": 1.0,
+                "startParameter": 0.0,
+                "cyclic": false,
+                "minYaw": 0.0,
+                "maxYaw": 0.0,
+                "minPitch": 0.0,
+                "maxPitch": 0.0,
+                "minRoll": 0.0,
+                "maxRoll": 0.0,
+                "minOffset": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "maxOffset": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "traverseSound": {
+                    "sound": "flansworldwars:null",
+                    "length": 1.0,
+                    "minPitchMultiplier": 1.0,
+                    "maxPitchMultiplier": 1.0,
+                    "minVolume": 1.0,
+                    "maxVolume": 1.0,
+                    "maxRange": 100.0,
+                    "LODs": []
+                },
+                "traveseIndependently": false,
+                "followSeatAtPath": "",
+                "lockSeatToGunAngles": false,
+                "rotateSpeed": 1.0
+            }
+        },
+        {
+            "partName": "core_wheel_0",
+            "attachedTo": "body",
+            "localPosition": [
+                0.1875,
+                -1.0625,
+                -0.4375
+            ],
+            "localEulerAngles": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "damage": {
+                "maxHealth": 100.0,
+                "armourToughness": 1.0,
+                "hitboxCenter": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "hitboxHalfExtents": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            },
+            "seats": [],
+            "guns": [],
+            "wheels": [
+                {
+                    "visualOffset": [
+                        0.0,
+                        0.0,
+                        0.0
+                    ],
+                    "springStrength": 0.125,
+                    "stepHeight": 1.0,
+                    "gravityScale": 1.0,
+                    "maxForwardTorque": 3.5,
+                    "maxReverseTorque": 0.0,
+                    "radius": 0.5,
+                    "floatOnWater": false,
+                    "buoyancy": 0.0165,
+                    "mass": 1.0,
+                    "torqueResponsiveness": 1.0,
+                    "yawResponsiveness": 1.0,
+                    "controlHints": [
+                        "Rear",
+                        "Drive"
+                    ]
+                }
+            ],
+            "propellers": [],
+            "legs": [],
+            "arms": [],
+            "articulation": {
+                "active": false,
+                "minParameter": 0.0,
+                "maxParameter": 1.0,
+                "startParameter": 0.0,
+                "cyclic": false,
+                "minYaw": 0.0,
+                "maxYaw": 0.0,
+                "minPitch": 0.0,
+                "maxPitch": 0.0,
+                "minRoll": 0.0,
+                "maxRoll": 0.0,
+                "minOffset": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "maxOffset": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "traverseSound": {
+                    "sound": "flansworldwars:null",
+                    "length": 1.0,
+                    "minPitchMultiplier": 1.0,
+                    "maxPitchMultiplier": 1.0,
+                    "minVolume": 1.0,
+                    "maxVolume": 1.0,
+                    "maxRange": 100.0,
+                    "LODs": []
+                },
+                "traveseIndependently": false,
+                "followSeatAtPath": "",
+                "lockSeatToGunAngles": false,
+                "rotateSpeed": 1.0
+            }
+        },
+        {
+            "partName": "core_wheel_1",
+            "attachedTo": "body",
+            "localPosition": [
+                0.1875,
+                -1.0625,
+                0.4375
+            ],
+            "localEulerAngles": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "damage": {
+                "maxHealth": 100.0,
+                "armourToughness": 1.0,
+                "hitboxCenter": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "hitboxHalfExtents": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            },
+            "seats": [],
+            "guns": [],
+            "wheels": [
+                {
+                    "visualOffset": [
+                        0.0,
+                        0.0,
+                        0.0
+                    ],
+                    "springStrength": 0.125,
+                    "stepHeight": 1.0,
+                    "gravityScale": 1.0,
+                    "maxForwardTorque": 3.5,
+                    "maxReverseTorque": 0.0,
+                    "radius": 0.5,
+                    "floatOnWater": false,
+                    "buoyancy": 0.0165,
+                    "mass": 1.0,
+                    "torqueResponsiveness": 1.0,
+                    "yawResponsiveness": 1.0,
+                    "controlHints": [
+                        "Rear",
+                        "Drive"
+                    ]
+                }
+            ],
+            "propellers": [],
+            "legs": [],
+            "arms": [],
+            "articulation": {
+                "active": false,
+                "minParameter": 0.0,
+                "maxParameter": 1.0,
+                "startParameter": 0.0,
+                "cyclic": false,
+                "minYaw": 0.0,
+                "maxYaw": 0.0,
+                "minPitch": 0.0,
+                "maxPitch": 0.0,
+                "minRoll": 0.0,
+                "maxRoll": 0.0,
+                "minOffset": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "maxOffset": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "traverseSound": {
+                    "sound": "flansworldwars:null",
+                    "length": 1.0,
+                    "minPitchMultiplier": 1.0,
+                    "maxPitchMultiplier": 1.0,
+                    "minVolume": 1.0,
+                    "maxVolume": 1.0,
+                    "maxRange": 100.0,
+                    "LODs": []
+                },
+                "traveseIndependently": false,
+                "followSeatAtPath": "",
+                "lockSeatToGunAngles": false,
+                "rotateSpeed": 1.0
+            }
+        },
+        {
+            "partName": "core_wheel_2",
+            "attachedTo": "body",
+            "localPosition": [
+                -5.125,
+                -0.5625,
+                0.0
+            ],
+            "localEulerAngles": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "damage": {
+                "maxHealth": 100.0,
+                "armourToughness": 1.0,
+                "hitboxCenter": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "hitboxHalfExtents": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            },
+            "seats": [],
+            "guns": [],
+            "wheels": [
+                {
+                    "visualOffset": [
+                        0.0,
+                        0.0,
+                        0.0
+                    ],
+                    "springStrength": 0.125,
+                    "stepHeight": 1.0,
+                    "gravityScale": 1.0,
+                    "maxForwardTorque": 3.5,
+                    "maxReverseTorque": 0.0,
+                    "radius": 0.5,
+                    "floatOnWater": false,
+                    "buoyancy": 0.0165,
+                    "mass": 1.0,
+                    "torqueResponsiveness": 1.0,
+                    "yawResponsiveness": 1.0,
+                    "controlHints": [
+                        "Front",
+                        "Steering"
+                    ]
+                }
+            ],
+            "propellers": [],
+            "legs": [],
+            "arms": [],
+            "articulation": {
+                "active": false,
+                "minParameter": 0.0,
+                "maxParameter": 1.0,
+                "startParameter": 0.0,
+                "cyclic": false,
+                "minYaw": 0.0,
+                "maxYaw": 0.0,
+                "minPitch": 0.0,
+                "maxPitch": 0.0,
+                "minRoll": 0.0,
+                "maxRoll": 0.0,
+                "minOffset": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "maxOffset": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "traverseSound": {
+                    "sound": "flansworldwars:null",
+                    "length": 1.0,
+                    "minPitchMultiplier": 1.0,
+                    "maxPitchMultiplier": 1.0,
+                    "minVolume": 1.0,
+                    "maxVolume": 1.0,
+                    "maxRange": 100.0,
+                    "LODs": []
+                },
+                "traveseIndependently": false,
+                "followSeatAtPath": "",
+                "lockSeatToGunAngles": false,
+                "rotateSpeed": 1.0
+            }
+        },
+        {
+            "partName": "pilot_gun_primary_0",
+            "attachedTo": "body",
+            "localPosition": [
+                3.75,
+                0.1875,
+                0.3125
+            ],
+            "localEulerAngles": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "damage": {
+                "maxHealth": 100.0,
+                "armourToughness": 1.0,
+                "hitboxCenter": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "hitboxHalfExtents": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            },
+            "seats": [],
+            "guns": [
+                {
+                    "shootPointOffset": [
+                        0.0,
+                        0.0,
+                        0.0
+                    ],
+                    "gun": ":mustang_pilot_gun_primary"
+                }
+            ],
+            "wheels": [],
+            "propellers": [],
+            "legs": [],
+            "arms": [],
+            "articulation": {
+                "active": false,
+                "minParameter": 0.0,
+                "maxParameter": 1.0,
+                "startParameter": 0.0,
+                "cyclic": false,
+                "minYaw": 0.0,
+                "maxYaw": 0.0,
+                "minPitch": 0.0,
+                "maxPitch": 0.0,
+                "minRoll": 0.0,
+                "maxRoll": 0.0,
+                "minOffset": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "maxOffset": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "traverseSound": {
+                    "sound": "flansworldwars:null",
+                    "length": 1.0,
+                    "minPitchMultiplier": 1.0,
+                    "maxPitchMultiplier": 1.0,
+                    "minVolume": 1.0,
+                    "maxVolume": 1.0,
+                    "maxRange": 100.0,
+                    "LODs": []
+                },
+                "traveseIndependently": false,
+                "followSeatAtPath": "",
+                "lockSeatToGunAngles": false,
+                "rotateSpeed": 1.0
+            }
+        },
+        {
+            "partName": "pilot_gun_primary_1",
+            "attachedTo": "body",
+            "localPosition": [
+                3.75,
+                0.1875,
+                -0.3125
+            ],
+            "localEulerAngles": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "damage": {
+                "maxHealth": 100.0,
+                "armourToughness": 1.0,
+                "hitboxCenter": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "hitboxHalfExtents": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            },
+            "seats": [],
+            "guns": [
+                {
+                    "shootPointOffset": [
+                        0.0,
+                        0.0,
+                        0.0
+                    ],
+                    "gun": ":mustang_pilot_gun_primary"
+                }
+            ],
+            "wheels": [],
+            "propellers": [],
+            "legs": [],
+            "arms": [],
+            "articulation": {
+                "active": false,
+                "minParameter": 0.0,
+                "maxParameter": 1.0,
+                "startParameter": 0.0,
+                "cyclic": false,
+                "minYaw": 0.0,
+                "maxYaw": 0.0,
+                "minPitch": 0.0,
+                "maxPitch": 0.0,
+                "minRoll": 0.0,
+                "maxRoll": 0.0,
+                "minOffset": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "maxOffset": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "traverseSound": {
+                    "sound": "flansworldwars:null",
+                    "length": 1.0,
+                    "minPitchMultiplier": 1.0,
+                    "maxPitchMultiplier": 1.0,
+                    "minVolume": 1.0,
+                    "maxVolume": 1.0,
+                    "maxRange": 100.0,
+                    "LODs": []
+                },
+                "traveseIndependently": false,
+                "followSeatAtPath": "",
+                "lockSeatToGunAngles": false,
+                "rotateSpeed": 1.0
+            }
+        },
+        {
+            "partName": "pilot_gun_secondary_0",
+            "attachedTo": "body",
+            "localPosition": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "localEulerAngles": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "damage": {
+                "maxHealth": 100.0,
+                "armourToughness": 1.0,
+                "hitboxCenter": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "hitboxHalfExtents": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            },
+            "seats": [],
+            "guns": [
+                {
+                    "shootPointOffset": [
+                        0.0,
+                        0.0,
+                        0.0
+                    ],
+                    "gun": ":mustang_pilot_gun_secondary"
+                }
+            ],
+            "wheels": [],
+            "propellers": [],
+            "legs": [],
+            "arms": [],
+            "articulation": {
+                "active": false,
+                "minParameter": 0.0,
+                "maxParameter": 1.0,
+                "startParameter": 0.0,
+                "cyclic": false,
+                "minYaw": 0.0,
+                "maxYaw": 0.0,
+                "minPitch": 0.0,
+                "maxPitch": 0.0,
+                "minRoll": 0.0,
+                "maxRoll": 0.0,
+                "minOffset": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "maxOffset": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "traverseSound": {
+                    "sound": "flansworldwars:null",
+                    "length": 1.0,
+                    "minPitchMultiplier": 1.0,
+                    "maxPitchMultiplier": 1.0,
+                    "minVolume": 1.0,
+                    "maxVolume": 1.0,
+                    "maxRange": 100.0,
+                    "LODs": []
+                },
+                "traveseIndependently": false,
+                "followSeatAtPath": "",
+                "lockSeatToGunAngles": false,
+                "rotateSpeed": 1.0
+            }
+        },
+        {
+            "partName": "",
+            "attachedTo": "body",
+            "localPosition": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "localEulerAngles": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "damage": {
+                "maxHealth": 100.0,
+                "armourToughness": 1.0,
+                "hitboxCenter": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "hitboxHalfExtents": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            },
+            "seats": [],
+            "guns": [],
+            "wheels": [],
+            "propellers": [],
+            "legs": [],
+            "arms": [],
+            "articulation": {
+                "active": false,
+                "minParameter": 0.0,
+                "maxParameter": 1.0,
+                "startParameter": 0.0,
+                "cyclic": false,
+                "minYaw": 0.0,
+                "maxYaw": 0.0,
+                "minPitch": 0.0,
+                "maxPitch": 0.0,
+                "minRoll": 0.0,
+                "maxRoll": 0.0,
+                "minOffset": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "maxOffset": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "traverseSound": {
+                    "sound": "flansworldwars:null",
+                    "length": 1.0,
+                    "minPitchMultiplier": 1.0,
+                    "maxPitchMultiplier": 1.0,
+                    "minVolume": 1.0,
+                    "maxVolume": 1.0,
+                    "maxRange": 100.0,
+                    "LODs": []
+                },
+                "traveseIndependently": false,
+                "followSeatAtPath": "",
+                "lockSeatToGunAngles": false,
+                "rotateSpeed": 1.0
+            }
+        }
+    ],
+    "physics": {
+        "restingEulerAngles": [
+            0.0,
+            0.0,
+            0.0
+        ],
+        "drag": 0.05,
+        "mass": 10.0,
+        "maxThrottle": 1.0,
+        "collisionPoints": []
+    },
+    "defaultEngine": {
+        "maxAcceleration": 1.0,
+        "maxDeceleration": 1.0,
+        "maxSpeed": 1.0,
+        "fuelType": "Creative",
+        "fuelConsumptionIdle": 0.0,
+        "fuelConsumptionFull": 1.0,
+        "solidFuelSlots": 0,
+        "liquidFuelCapacity": 1000,
+        "batterySlots": 0,
+        "FECapacity": 0
+    },
+    "useAABBCollisionOnly": false,
+    "aabbSize": [
+        0.0,
+        0.0,
+        0.0
+    ],
+    "CargoSlots": 0,
+    "CanAccessMenusWhileMoving": true
+}

@@ -8,6 +8,9 @@ import org.joml.Quaternionf;
 import org.joml.Vector3d;
 import org.joml.Vector3f;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 public class Maths
 {
     // Long maths
@@ -30,7 +33,9 @@ public class Maths
     public static int FloorLerp(int a, int b, float t) { return Maths.Floor(a + (b-a)*t); }
 
     // Double maths
+    public static final double Root2 = Sqrt(2);
     public static final double Epsilon = 0.000000000001d;
+    public static final double EpsilonSq = Epsilon * Epsilon;
     public static double Abs(double a) { return a < 0 ? -a : a; }
     public static double Clamp(double i, double min, double max) { return i > max ? max : (i < min ? min : i);  }
     public static int Ceil(double d) { return (int)Math.ceil(d); }
@@ -46,6 +51,7 @@ public class Maths
     public static double Pow(double a, double b) { return Math.pow(a, b); }
 
     // Float maths
+    public static final float Root2F = SqrtF(2f);
     public static final float EpsilonF = 0.000001f;
     public static float Clamp(float i, float min, float max)
     {
@@ -53,6 +59,7 @@ public class Maths
     }
     public static float Abs(float a) { return a < 0 ? -a : a; }
     public static float Max(float a, float b) { return a > b ? a : b; }
+    public static float Max(float a, float b, float c) { return Max(Max(a, b), c); }
     public static float Min(float a, float b) { return a < b ? a : b; }
     public static int Ceil(float d) { return (int)Math.ceil(d); }
     public static int Floor(float d) { return (int)Math.floor(d); }
@@ -108,6 +115,10 @@ public class Maths
     public static Vec3 Sub(Vec3 a, Vec3 b) { return new Vec3(a.x - b.x, a.y - b.y, a.z - b.z); }
     public static Vec3 Add(Vec3 a, Vec3 b) { return new Vec3(a.x + b.x, a.y + b.y, a.z + b.z); }
     public static Vec3 Cross(Vec3 a, Vec3 b) { return a.cross(b); }
+    public static double LengthXYZ(Vec3 v) { return v.length(); }
+    public static double LengthXZ(Vec3 v) { return Sqrt(v.x * v.x + v.z * v.z); }
+    public static boolean Approx(Vec3 a, Vec3 b) { return (a.x-b.x)*(a.x-b.x)+(a.y-b.y)*(a.y-b.y)+(a.z-b.z)*(a.z-b.z) < EpsilonSq; }
+    public static Vec3 Clamp(Vec3 v, double min, double max) { return new Vec3(Clamp(v.x, min, max), Clamp(v.y, min, max), Clamp(v.z, min, max)); }
 
 
     public static Quaternionf Slerp(Quaternionf a, Quaternionf b, float t) { return a.slerp(b, t, new Quaternionf()); }
@@ -240,6 +251,134 @@ public class Maths
             }
         }
         return n;
+    }
+
+    public static boolean RayBoxIntersect(@Nonnull Vec3 startPos,
+                                          @Nonnull Vec3 endPos,
+                                          @Nonnull Transform boxCenterTransform,
+                                          @Nonnull Vector3f boxHalfExtents,
+                                          @Nullable Vector3d outPos)
+    {
+        // Localise
+        startPos = boxCenterTransform.GlobalToLocalPosition(startPos);
+        endPos = boxCenterTransform.GlobalToLocalPosition(endPos);
+        Vec3 motion = endPos.subtract(startPos);
+
+        // We now have an AABB starting at -halfExtents and with dimensions 2*halfExtents and our ray in the same coordinate system
+        // We are looking for a point at which the ray enters the box, so we need only consider faces that the ray can see. Partition the space into 3 areas in each axis
+
+        // X - axis and faces x = -half.x, and x = half.x
+        if(motion.x != 0F)
+        {
+            if(startPos.x < -boxHalfExtents.x) //Check face -half.x
+            {
+                double intersectTime = (-boxHalfExtents.x - startPos.x) / motion.x;
+                double intersectY = startPos.y + motion.y * intersectTime;
+                double intersectZ = startPos.z + motion.z * intersectTime;
+                if(-boxHalfExtents.y <= intersectY && intersectY <= boxHalfExtents.y
+                    && -boxHalfExtents.z <= intersectZ && intersectZ <= boxHalfExtents.z)
+                {
+                    if(outPos != null)
+                    {
+                        Vec3 globalIntersect = boxCenterTransform.LocalToGlobalPosition(new Vec3(-boxHalfExtents.x, intersectY, intersectZ));
+                        outPos.set(globalIntersect.x, globalIntersect.y, globalIntersect.z);
+                    }
+                    return true;
+                }
+            }
+            else if(startPos.x > boxHalfExtents.x) //Check face +half.x
+            {
+                double intersectTime = (boxHalfExtents.x - startPos.x) / motion.x;
+                double intersectY = startPos.y + motion.y * intersectTime;
+                double intersectZ = startPos.z + motion.z * intersectTime;
+                if(-boxHalfExtents.y <= intersectY && intersectY <= boxHalfExtents.y
+                    && -boxHalfExtents.z <= intersectZ && intersectZ <= boxHalfExtents.z)
+                {
+                    if (outPos != null)
+                    {
+                        Vec3 globalIntersect = boxCenterTransform.LocalToGlobalPosition(new Vec3(boxHalfExtents.x, intersectY, intersectZ));
+                        outPos.set(globalIntersect.x, globalIntersect.y, globalIntersect.z);
+                    }
+                    return true;
+                }
+            }
+        }
+
+        // Z - axis and faces z = -half.z and z = half.z
+        if(motion.z != 0F)
+        {
+            if(startPos.z < -boxHalfExtents.z) // Check face z = -half.z
+            {
+                double intersectTime = (-boxHalfExtents.z - startPos.z) / motion.z;
+                double intersectX = startPos.x + motion.x * intersectTime;
+                double intersectY = startPos.y + motion.y * intersectTime;
+                if(-boxHalfExtents.x <= intersectX && intersectX <= boxHalfExtents.x
+                    && -boxHalfExtents.y <= intersectY && intersectY <= boxHalfExtents.y)
+                {
+                    if (outPos != null)
+                    {
+                        Vec3 globalIntersect = boxCenterTransform.LocalToGlobalPosition(new Vec3(intersectX, intersectY, -boxHalfExtents.z));
+                        outPos.set(globalIntersect.x, globalIntersect.y, globalIntersect.z);
+                    }
+                    return true;
+                }
+            }
+            else if(startPos.z > boxHalfExtents.z) //Check face z = +half.z
+            {
+                double intersectTime = (boxHalfExtents.z - startPos.z) / motion.z;
+                double intersectX = startPos.x + motion.x * intersectTime;
+                double intersectY = startPos.y + motion.y * intersectTime;
+                if(-boxHalfExtents.x <= intersectX && intersectX <= boxHalfExtents.x
+                    && -boxHalfExtents.y <= intersectY && intersectY <= boxHalfExtents.y)
+                {
+                    if (outPos != null)
+                    {
+                        Vec3 globalIntersect = boxCenterTransform.LocalToGlobalPosition(new Vec3(intersectX, intersectY, boxHalfExtents.z));
+                        outPos.set(globalIntersect.x, globalIntersect.y, globalIntersect.z);
+                    }
+                    return true;
+                }
+            }
+        }
+
+        // Y - axis and faces y = -half.y and y = +half.y
+        if(motion.y != 0F)
+        {
+            if(startPos.y < -boxHalfExtents.y) // Check face y = -half.y
+            {
+                double intersectTime = (-boxHalfExtents.y - startPos.y) / motion.y;
+                double intersectX = startPos.x + motion.x * intersectTime;
+                double intersectZ = startPos.z + motion.z * intersectTime;
+                if(-boxHalfExtents.x <= intersectX && intersectX <= boxHalfExtents.x
+                    && -boxHalfExtents.z <= intersectZ && intersectZ <= boxHalfExtents.z)
+                {
+                    if (outPos != null)
+                    {
+                        Vec3 globalIntersect = boxCenterTransform.LocalToGlobalPosition(new Vec3(intersectX, -boxHalfExtents.y, intersectZ));
+                        outPos.set(globalIntersect.x, globalIntersect.y, globalIntersect.z);
+                    }
+                    return true;
+                }
+            }
+            else if(startPos.y > boxHalfExtents.y) // Check face y = +half.y
+            {
+                double intersectTime = (boxHalfExtents.y - startPos.y) / motion.y;
+                double intersectX = startPos.x + motion.x * intersectTime;
+                double intersectZ = startPos.z + motion.z * intersectTime;
+                if(-boxHalfExtents.x <= intersectX && intersectX <= boxHalfExtents.x
+                    && -boxHalfExtents.z <= intersectZ && intersectZ <= boxHalfExtents.z)
+                {
+                    if (outPos != null)
+                    {
+                        Vec3 globalIntersect = boxCenterTransform.LocalToGlobalPosition(new Vec3(intersectX, boxHalfExtents.y, intersectZ));
+                        outPos.set(globalIntersect.x, globalIntersect.y, globalIntersect.z);
+                    }
+                    return true;
+                }
+            }
+        }
+
+        return false;
     }
 
 }

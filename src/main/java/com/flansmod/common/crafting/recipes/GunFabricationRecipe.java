@@ -1,6 +1,7 @@
 package com.flansmod.common.crafting.recipes;
 
 import com.flansmod.common.FlansMod;
+import com.flansmod.common.crafting.AbstractWorkbench;
 import com.flansmod.common.crafting.WorkbenchBlockEntity;
 import com.flansmod.common.crafting.ingredients.IExtraIngredientTooltip;
 import com.flansmod.common.crafting.ingredients.TieredPartIngredient;
@@ -25,7 +26,7 @@ import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
 
-public class GunFabricationRecipe implements Recipe<WorkbenchBlockEntity>
+public class GunFabricationRecipe implements Recipe<AbstractWorkbench>
 {
 	@Nonnull
 	public final RecipeType<?> Type;
@@ -85,7 +86,7 @@ public class GunFabricationRecipe implements Recipe<WorkbenchBlockEntity>
 	}
 
 	@Override
-	public boolean matches(@Nonnull WorkbenchBlockEntity workbench, @Nullable Level level)
+	public boolean matches(@Nonnull AbstractWorkbench workbench, @Nullable Level level)
 	{
 		// Is this recipe available in this particular workbench?
 		if (!workbench.GunRecipeCanBeCraftedInThisWorkbench(Result))
@@ -128,7 +129,7 @@ public class GunFabricationRecipe implements Recipe<WorkbenchBlockEntity>
 
 	@Nonnull
 	@Override
-	public ItemStack assemble(@Nonnull WorkbenchBlockEntity workbench, @Nonnull RegistryAccess registryAccess)
+	public ItemStack assemble(@Nonnull AbstractWorkbench workbench, @Nonnull RegistryAccess registryAccess)
 	{
 		List<ItemStack> craftingInputs = new ArrayList<>();
 		for(int slot = 0; slot < workbench.GunCraftingInputContainer.getContainerSize(); slot++)

@@ -1,5 +1,6 @@
 package com.flansmod.common.actions.contexts;
 
+import com.flansmod.common.entity.vehicle.VehicleEntity;
 import com.flansmod.util.MinecraftHelpers;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
@@ -99,6 +100,10 @@ public class ShooterContextHistory extends ContextHistory<ShooterContext>
 		else if(shooter instanceof LivingEntity living)
 		{
 			return new ShooterContextLiving(living);
+		}
+		else if(shooter instanceof VehicleEntity vehicle)
+		{
+			return new ShooterContextVehicleRoot(vehicle);
 		}
 
 		return new ShooterContextUnresolvedEntity(

@@ -2,7 +2,9 @@ package com.flansmod.common.gunshots;
 
 import com.flansmod.client.render.debug.DebugRenderer;
 import com.flansmod.common.FlansMod;
+import com.flansmod.common.entity.vehicle.VehicleEntity;
 import com.flansmod.util.MinecraftHelpers;
+import com.flansmod.util.Transform;
 import net.minecraft.client.Minecraft;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
@@ -12,9 +14,11 @@ import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.phys.*;
+import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.fml.LogicalSide;
+import net.minecraftforge.server.ServerLifecycleHooks;
 import org.joml.Vector4f;
 import org.spongepowered.asm.mixin.MixinEnvironment;
 
@@ -80,6 +84,16 @@ public class Raytracer
         {
             for(var kvp : PlayerMovementHistories.entrySet())
             {
+                if(Minecraft.getInstance().options.getCameraType().isFirstPerson())
+                {
+                    if(kvp.getKey().isLocalPlayer())
+                        continue;
+                    if(ServerLifecycleHooks.getCurrentServer() != null)
+                    {
+                        if(ServerLifecycleHooks.getCurrentServer().getPlayerList().getPlayers().size() == 1)
+                            continue;
+                    }
+                }
                 kvp.getValue().debugRender(!(World instanceof ServerLevel));
             }
         }
@@ -185,7 +199,7 @@ public class Raytracer
                 if(World.isClientSide())
                 {
                     DebugRenderer.RenderLine(
-                        origin,
+                        Transform.FromPos(origin),
                         100,
                         new Vector4f(1.0f, 1.0f, 1.0f, 1.0f),
                         endPoint.subtract(origin));
@@ -224,7 +238,12 @@ public class Raytracer
         AABB bounds = new AABB(origin, endPoint);
         for(Entity checkEnt : World.getEntities(null, bounds))
         {
-            if(checkEnt instanceof Player checkPlayer)
+            if(checkEnt instanceof VehicleEntity vehicle)
+            {
+                vehicle.Raycast(origin, endPoint, 0f, outResults);
+                continue;
+            }
+            else if(checkEnt instanceof Player checkPlayer)
             {
                 // Do player snapshot check
                 PlayerMovementHistory history = PlayerMovementHistories.get(checkPlayer);

@@ -1,0 +1,40 @@
+{
+    "classes": [
+        "japaneseScout",
+        "japaneseAssault",
+        "japaneseSupport",
+        "japaneseEngineer",
+        "japaneseMedic"
+    ],
+    "flagColour": {
+        "alpha": 1.0,
+        "red": 1.0,
+        "green": 1.0,
+        "blue": 1.0
+    },
+    "textColour": {},
+    "hat": {
+        "item": "minecraft:japanese_helmet",
+        "count": 1,
+        "damage": -1,
+        "tags": "{}"
+    },
+    "chest": {
+        "item": "minecraft:japanese_coat",
+        "count": 1,
+        "damage": -1,
+        "tags": "{}"
+    },
+    "legs": {
+        "item": "minecraft:japanese_pants",
+        "count": 1,
+        "damage": -1,
+        "tags": "{}"
+    },
+    "shoes": {
+        "item": "minecraft:japanese_boots",
+        "count": 1,
+        "damage": -1,
+        "tags": "{}"
+    }
+}

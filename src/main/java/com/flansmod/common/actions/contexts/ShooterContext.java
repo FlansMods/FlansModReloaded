@@ -5,11 +5,9 @@ import com.flansmod.common.FlansMod;
 import com.flansmod.common.actions.stats.*;
 import com.flansmod.common.item.FlanItem;
 import com.flansmod.common.types.Constants;
-import com.flansmod.common.types.elements.ModifierDefinition;
 import com.flansmod.util.MinecraftHelpers;
 import com.flansmod.util.Transform;
 import com.flansmod.util.formulae.FloatAccumulation;
-import com.mojang.datafixers.kinds.Const;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceKey;
@@ -17,7 +15,6 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.Container;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.ai.attributes.RangedAttribute;
 import net.minecraft.world.entity.player.Player;
@@ -29,7 +26,6 @@ import net.minecraftforge.registries.RegistryObject;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.*;
-import java.util.function.BiConsumer;
 
 public abstract class ShooterContext
 {
@@ -47,7 +43,7 @@ public abstract class ShooterContext
 		public UUID GetGunIDForSlot(int gunSlotIndex) { return FlanItem.InvalidGunUUID; }
 		@Override
 		@Nonnull
-		public GunContext CreateContext(UUID gunID) { return GunContext.INVALID; }
+		public GunContext CreateContext(@Nonnull UUID gunID) { return GunContext.INVALID; }
 		@Override
 		public Entity Entity() { return null; }
 		@Override
@@ -97,7 +93,7 @@ public abstract class ShooterContext
 	@Nonnull
 	public static ShooterContext of(@Nonnull UUID shooterID, @Nonnull UUID ownerID)
 	{
-		return MinecraftHelpers.IsClient() ? client(shooterID, ownerID) : server(shooterID, ownerID);
+		return MinecraftHelpers.IsClientThread() ? client(shooterID, ownerID) : server(shooterID, ownerID);
 	}
 	@Nonnull
 	public static ShooterContext server(@Nonnull Entity shooter) { return FlansMod.CONTEXT_CACHE.GetShooter(shooter); }
@@ -254,7 +250,7 @@ public abstract class ShooterContext
 	@Nonnull
 	public abstract UUID GetGunIDForSlot(int gunSlotIndex);
 	@Nonnull
-	public abstract GunContext CreateContext(UUID gunID);
+	public abstract GunContext CreateContext(@Nonnull UUID gunID);
 	public abstract Entity Entity();
 	public abstract Entity Owner();
 	public abstract Container GetAttachedInventory();

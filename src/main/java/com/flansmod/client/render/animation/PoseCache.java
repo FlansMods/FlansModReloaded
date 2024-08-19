@@ -5,6 +5,7 @@ import com.flansmod.client.render.FlanItemModelRenderer;
 import com.flansmod.client.render.animation.elements.KeyframeDefinition;
 import com.flansmod.client.render.animation.elements.PoseDefinition;
 import com.flansmod.client.render.models.FlansModelRegistry;
+import com.flansmod.client.render.models.ITurboRenderer;
 import com.flansmod.common.FlansMod;
 import com.flansmod.common.types.JsonDefinition;
 import com.flansmod.util.Maths;
@@ -74,22 +75,24 @@ public class PoseCache
 		// Create cache
 		FlansMod.LOGGER.info(">> Creating cache for [model:"+itemID+", anim:"+ animationID+"] <<");
 		Map<String, Map<String, Transform>> cache = new HashMap<>();
-		FlanItemModelRenderer renderer = FlansModelRegistry.forItem(itemID);
+		ITurboRenderer renderer = FlansModelRegistry.GetItemRenderer(itemID);
 		FlanimationDefinition anim = FlansModClient.ANIMATIONS.Get(animationID);
-		if(renderer == null)
+		if(renderer instanceof FlanItemModelRenderer flanRenderer)
+		{
+			for (KeyframeDefinition keyframe : anim.keyframes)
+			{
+				cache.put(keyframe.name, new HashMap<>());
+				var poseCache = cache.get(keyframe.name);
+				BuildPoseCache(flanRenderer, anim, keyframe, poseCache);
+			}
+
+			return cache;
+		}
+		else
 		{
 			FlansMod.LOGGER.error(">> Cache creation failed for [model:"+itemID+", anim:"+ animationID+"] <<");
 			return cache;
 		}
-
-		for(KeyframeDefinition keyframe : anim.keyframes)
-		{
-			cache.put(keyframe.name, new HashMap<>());
-			var poseCache = cache.get(keyframe.name);
-			BuildPoseCache(renderer, anim, keyframe, poseCache);
-		}
-
-		return cache;
 	}
 	private static void BuildPoseCache(@Nonnull FlanItemModelRenderer renderer,
 									   @Nonnull FlanimationDefinition anim,

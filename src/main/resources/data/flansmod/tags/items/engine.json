@@ -7,6 +7,7 @@
     "flansbasicparts:quartz_engine",
     "flansbasicparts:redstone_engine",
     "flansbasicparts:sculk_engine",
-    "flansbasicparts:steel_combustion_engine"
+    "flansbasicparts:steel_combustion_engine",
+    "flansclockworkcalamity:brass_combustion_engine"
   ]
 }

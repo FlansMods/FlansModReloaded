@@ -43,7 +43,7 @@ public class ShooterContextPlayer extends ShooterContextLiving
 	}
 	@Override
 	@Nonnull
-	public GunContext CreateContext(UUID gunID)
+	public GunContext CreateContext(@Nonnull UUID gunID)
 	{
 		for(int i = 0; i < Player.getInventory().getContainerSize(); i++)
 		{

@@ -1,0 +1,40 @@
+{
+    "classes": [
+        "americanScout",
+        "americanAssault",
+        "americanSupport",
+        "americanEngineer",
+        "americanMedic"
+    ],
+    "flagColour": {
+        "alpha": 1.0,
+        "red": 0.0,
+        "green": 1.0,
+        "blue": 0.0
+    },
+    "textColour": {},
+    "hat": {
+        "item": "minecraft:american_snow_helmet",
+        "count": 1,
+        "damage": -1,
+        "tags": "{}"
+    },
+    "chest": {
+        "item": "minecraft:american_snow_coat",
+        "count": 1,
+        "damage": -1,
+        "tags": "{}"
+    },
+    "legs": {
+        "item": "minecraft:american_snow_pants",
+        "count": 1,
+        "damage": -1,
+        "tags": "{}"
+    },
+    "shoes": {
+        "item": "minecraft:american_snow_boots",
+        "count": 1,
+        "damage": -1,
+        "tags": "{}"
+    }
+}

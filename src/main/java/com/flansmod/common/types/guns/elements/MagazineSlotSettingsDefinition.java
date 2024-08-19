@@ -23,7 +23,7 @@ public class MagazineSlotSettingsDefinition
 					// First check for exact name matches. These do not also need to pass tag checks
 					for (String matchBulletName : matchByNames)
 					{
-						if(magazine.Location.equals(matchBulletName))
+						if(magazine.Location.getPath().equals(matchBulletName))
 							return true;
 					}
 					// Then check the tags of this mag

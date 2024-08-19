@@ -4,7 +4,6 @@ import com.flansmod.common.FlansMod;
 import com.flansmod.common.actions.contexts.EContextSide;
 import com.flansmod.common.types.elements.ItemStackDefinition;
 import com.mojang.brigadier.StringReader;
-import com.mojang.datafixers.types.templates.Check;
 import net.minecraft.client.Minecraft;
 import net.minecraft.nbt.*;
 import net.minecraft.resources.ResourceKey;
@@ -14,7 +13,6 @@ import net.minecraft.tags.TagKey;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.HumanoidArm;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
@@ -25,15 +23,10 @@ import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.loading.FMLEnvironment;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.server.ServerLifecycleHooks;
-import org.joml.Quaternionf;
-import org.joml.Vector3f;
-import org.spongepowered.asm.mixin.MixinEnvironment;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.ArrayList;
-import java.util.UUID;
-import java.util.Vector;
 
 public class MinecraftHelpers
 {
@@ -48,7 +41,7 @@ public class MinecraftHelpers
 		}
 
 		// Failing that, there is a chance this is our current loaded client level
-		if(IsClient())
+		if(IsClientDist())
 		{
 			Level clientLevel = DistExecutor.safeCallWhenOn(Dist.CLIENT, () -> MinecraftHelpers::Client_GetCurrentLevel);
 			if (clientLevel.dimension().equals(dimension))
@@ -96,7 +89,7 @@ public class MinecraftHelpers
 
 	public static long GetTick()
 	{
-		if(IsClient())
+		if(IsClientDist())
 		{
 			Level level = Client_GetCurrentLevel();
 			if(level != null)
@@ -127,10 +120,13 @@ public class MinecraftHelpers
 		return fe + " FE";
 	}
 
-	public static boolean IsClient()
+	public static boolean IsClientDist()
 	{
 		return FMLEnvironment.dist == Dist.CLIENT;
 	}
+
+	public static boolean IsClientThread() { return GetLogicalSide() == EContextSide.Client; }
+	public static boolean IsServerThread() { return GetLogicalSide() == EContextSide.Server; }
 
 	@Nonnull
 	public static EContextSide GetLogicalSide(@Nonnull Entity entity)
@@ -149,7 +145,7 @@ public class MinecraftHelpers
 		if(currentServer != null)
 			if(Thread.currentThread() == currentServer.getRunningThread())
 				return EContextSide.Server;
-		if(IsClient())
+		if(IsClientDist())
 			return EContextSide.Client;
 		return EContextSide.Unknown;
 	}

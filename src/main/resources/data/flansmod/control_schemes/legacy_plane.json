@@ -1,0 +1,43 @@
+{
+    "logicType": "LegacyPlane",
+    "axes": [
+        {
+            "axisType": "Accelerator",
+            "axisBehaviour": "SliderWithRestPosition",
+            "minValue": -1.0,
+            "maxValue": 1.0,
+            "startingPosition": 0.0,
+            "restingPosition": 0.0,
+            "notches": [
+                0.0
+            ]
+        },
+        {
+            "axisType": "Yaw",
+            "axisBehaviour": "SliderWithRestPosition",
+            "minValue": -1.0,
+            "maxValue": 1.0,
+            "startingPosition": 0.0,
+            "restingPosition": 0.0,
+            "notches": []
+        },
+        {
+            "axisType": "Pitch",
+            "axisBehaviour": "SliderWithRestPosition",
+            "minValue": -1.0,
+            "maxValue": 1.0,
+            "startingPosition": 0.0,
+            "restingPosition": 0.0,
+            "notches": []
+        },
+        {
+            "axisType": "Roll",
+            "axisBehaviour": "SliderWithRestPosition",
+            "minValue": -1.0,
+            "maxValue": 1.0,
+            "startingPosition": 0.0,
+            "restingPosition": 0.0,
+            "notches": []
+        }
+    ]
+}

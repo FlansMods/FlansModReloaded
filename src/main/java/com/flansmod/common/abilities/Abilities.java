@@ -17,6 +17,7 @@ public class Abilities
 			case ApplyMobEffect -> { return new AbilityEffectApplyMobEffect(def); }
 			case ApplyAttribute -> { return new AbilityEffectApplyAttribute(def); }
 			case ApplyModifier -> { return new AbilityInstanceApplyModifier(def); }
+			case ApplyEnchantment -> { return new AbilityEffectProvideEnchantment(def); }
 
 			case BreakBlock -> { return new AbilityEffectBreakBlock(def); }
 			case PlaceBlock -> { return new AbilityEffectPlaceBlock(def); }

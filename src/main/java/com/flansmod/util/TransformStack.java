@@ -174,7 +174,7 @@ public class TransformStack extends Stack<Transform>
 				debug = get(j).LocalToGlobalTransform(debug);
 			}
 			DebugRenderer.RenderAxes(debug, ticks, new Vector4f());
-			DebugRenderer.RenderLine(prevAxesPos, 1, new Vector4f(1f, 1f, 0f, 1f), debug.PositionVec3().subtract(prevAxesPos));
+			//DebugRenderer.RenderLine(prevAxesPos, 1, new Vector4f(1f, 1f, 0f, 1f), debug.PositionVec3().subtract(prevAxesPos));
 			prevAxesPos = debug.PositionVec3();
 		}
 	}

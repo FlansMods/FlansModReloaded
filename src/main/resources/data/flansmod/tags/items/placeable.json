@@ -1,0 +1,7 @@
+{
+  "replace": "false",
+  "values": [
+    "flansclockworkcalamity:projectile_placeable_redstone_torch",
+    "flansclockworkcalamity:projectile_placeable_torch"
+  ]
+}

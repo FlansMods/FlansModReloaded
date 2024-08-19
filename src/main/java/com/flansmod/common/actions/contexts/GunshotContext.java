@@ -12,6 +12,7 @@ import com.flansmod.common.types.abilities.elements.EAbilityEffect;
 import com.flansmod.common.types.abilities.elements.EAbilityTarget;
 import com.flansmod.common.types.abilities.elements.EAbilityTrigger;
 import com.flansmod.common.types.bullets.BulletDefinition;
+import com.flansmod.common.types.bullets.elements.EProjectileResponseType;
 import com.flansmod.common.types.bullets.elements.HitscanDefinition;
 import com.flansmod.common.types.bullets.elements.ImpactDefinition;
 import com.flansmod.common.types.bullets.elements.ProjectileDefinition;
@@ -243,7 +244,9 @@ public class GunshotContext
 	public float FuseTimeSeconds()			{ return ModifyFloat(STAT_PROJECTILE_FUSE_TIME, BaseFuseTime()); }
 	public float LaunchSpeed()				{ return ModifyFloat(STAT_PROJECTILE_LAUNCH_SPEED, BaseLaunchSpeed()); }
 	public float GravityFactor()			{ return ModifyFloat(STAT_PROJECTILE_GRAVITY_FACTOR, BaseGravityFactor()); }
-	public boolean Sticky()					{ return ModifyBoolean(STAT_PROJECTILE_STICKY, BaseSticky()); }
+	@Nonnull public EProjectileResponseType ResponseToBlock() { return (EProjectileResponseType)ModifyEnum(STAT_PROJECTILE_RESPONSE_TO_BLOCK, BaseResponseToBlock(), EProjectileResponseType.class); }
+	@Nonnull public EProjectileResponseType ResponseToEntity() { return (EProjectileResponseType)ModifyEnum(STAT_PROJECTILE_RESPONSE_TO_ENTITY, BaseResponseToEntity(), EProjectileResponseType.class); }
+	@Nonnull public EProjectileResponseType ResponseToVehicle() { return (EProjectileResponseType)ModifyEnum(STAT_PROJECTILE_RESPONSE_TO_VEHICLE, BaseResponseToVehicle(), EProjectileResponseType.class); }
 	public float TurnRate()					{ return ModifyFloat(STAT_PROJECTILE_TURN_RATE, BaseTurnRate()); }
 	public float DragInWater()				{ return ModifyFloat(STAT_PROJECTILE_DRAG_IN_WATER, BaseDragInWater()); }
 	public float DragInAir()				{ return ModifyFloat(STAT_PROJECTILE_DRAG_IN_AIR, BaseDragInAir()); }
@@ -260,9 +263,20 @@ public class GunshotContext
 		ProjectileDefinition projectileDef = GetProjectileDef();
 		return projectileDef != null ? projectileDef.launchSpeed : 0.0f;
 	}
-	private boolean BaseSticky() {
+	@Nonnull
+	private EProjectileResponseType BaseResponseToBlock() {
 		ProjectileDefinition projectileDef = GetProjectileDef();
-		return projectileDef != null && projectileDef.sticky;
+		return projectileDef != null ? projectileDef.responseToBlock : EProjectileResponseType.Detonate;
+	}
+	@Nonnull
+	private EProjectileResponseType BaseResponseToEntity() {
+		ProjectileDefinition projectileDef = GetProjectileDef();
+		return projectileDef != null ? projectileDef.responseToEntity : EProjectileResponseType.Detonate;
+	}
+	@Nonnull
+	private EProjectileResponseType BaseResponseToVehicle() {
+		ProjectileDefinition projectileDef = GetProjectileDef();
+		return projectileDef != null ? projectileDef.responseToVehicle : EProjectileResponseType.Detonate;
 	}
 	private float BaseTurnRate()	{
 		ProjectileDefinition projectileDef = GetProjectileDef();

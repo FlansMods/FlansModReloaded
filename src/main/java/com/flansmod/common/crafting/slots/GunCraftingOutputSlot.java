@@ -9,24 +9,24 @@ import javax.annotation.Nonnull;
 public class GunCraftingOutputSlot extends RestrictedSlot
 {
 	@Nonnull
-	public final WorkbenchMenuGunCrafting Workbench;
-	public GunCraftingOutputSlot(@Nonnull WorkbenchMenuGunCrafting workbench,
+	public final WorkbenchMenuGunCrafting Menu;
+	public GunCraftingOutputSlot(@Nonnull WorkbenchMenuGunCrafting menu,
 								 @Nonnull Container container,
 								 int index, int x, int y)
 	{
 		super(container, index, x, y);
-		Workbench = workbench;
+		Menu = menu;
 	}
 
 	@Nonnull
 	@Override
 	public ItemStack remove(int count)
 	{
-		if(Workbench.BlockEntity.IsGunCraftingFullyValid())
+		if(Menu.IsGunCraftingFullyValid())
 		{
 			// Craft action
 			ItemStack output = getItem().copyWithCount(1);
-			Workbench.BlockEntity.ConsumeGunCraftingInputs();
+			Menu.ConsumeGunCraftingInputs();
 			getItem().setCount(getItem().getCount() - 1);
 			return output;
 		}

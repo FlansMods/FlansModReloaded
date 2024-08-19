@@ -74,7 +74,8 @@ public class PlayerMovementHistory
         {
             int i = 40;
             float decay = (float)i / (float)snapshotCount;
-            GetSnapshotNTicksAgo(i).debugRender(client ? new Vec3(1d, 0d, 0d) : new Vec3(-1d, 0d, 0d), new Vector4f(decay, client ? 1.0f : 0.0f, client ? 0.0f : 1.0f, 1.0f - decay));
+            // Add this if you want to compare client and server : (client ? new Vec3(1d, 0d, 0d) : new Vec3(-1d, 0d, 0d))
+            GetSnapshotNTicksAgo(i).debugRender(new Vec3(0d, 0d, 0d), new Vector4f(decay, client ? 1.0f : 0.0f, client ? 0.0f : 1.0f, 1.0f - decay));
         }
     }
 }

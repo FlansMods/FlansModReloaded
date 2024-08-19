@@ -54,128 +54,40 @@ import net.minecraftforge.energy.EnergyStorage;
 import net.minecraftforge.energy.IEnergyStorage;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.registries.ForgeRegistries;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
+import static com.flansmod.common.crafting.AbstractWorkbench.CRAFTING_NOTHING;
+
 public class WorkbenchBlockEntity extends BlockEntity implements WorldlyContainer, MenuProvider, Clearable, ICapabilityProvider
 {
 	public final WorkbenchDefinition Def;
-	public final RestrictedContainer GunContainer;
-	public final RestrictedContainer PaintCanContainer;
-	public final RestrictedContainer MagUpgradeContainer;
-	public final RestrictedContainer GunCraftingInputContainer;
-	public final RestrictedContainer GunCraftingOutputContainer;
-	public final RestrictedContainer PartCraftingInputContainer;
-	public final RestrictedContainer PartCraftingOutputContainer;
-	public final RestrictedContainer MaterialContainer;
-	public final RestrictedContainer BatteryContainer;
-	public final RestrictedContainer FuelContainer;
+	public final AbstractWorkbench Workbench;
 
-	private EnergyStorage EnergyStorage;
 	private final LazyOptional<IEnergyStorage> EnergyStorageLazyOptional;
 	private ItemCapabilityMultiContainer[] DirectionalItemCaps;
 	private final List<LazyOptional<IItemHandler>> DirectionalItemCapLazyOptionals;
 
+	private static final double INTERACT_RANGE_SQ = 5.0d * 5.0d;
 
-	private static final double INTERACT_RANGE = 5.0d;
-	public static final int NUM_CRAFTING_QUEUE_SLOTS = 4;
-
-	public static final int DATA_LIT_TIME = 0;
-	public static final int DATA_LIT_DURATION = 1;
-	public static final int DATA_FORGE_ENERGY = 2;
-
-
-
-	public static final int DATA_CRAFT_TIME = 3;
-	public static final int DATA_CRAFT_DURATION = 4;
-
-	public static final int DATA_CRAFT_QUEUE_COUNT_0 = 5;
-	public static final int DATA_CRAFT_QUEUE_COUNT_MAX = DATA_CRAFT_QUEUE_COUNT_0 + NUM_CRAFTING_QUEUE_SLOTS;
-
-	public static final int DATA_CRAFT_SELECTION_0 = DATA_CRAFT_QUEUE_COUNT_MAX + 1;
-	public static final int DATA_CRAFT_SELECTION_MAX = DATA_CRAFT_SELECTION_0 + NUM_CRAFTING_QUEUE_SLOTS;
-
-	public static final int NUM_DATA_MEMBERS = DATA_CRAFT_SELECTION_MAX + 1;
-
-	public static final int CRAFTING_NOTHING = -1;
-
-	public int LitTime = 0;
-	public int LitDuration = 0;
-
-	public int CraftTime = 0;
-	public int CraftDuration = 0;
-
-	public int PlayerSelectedCraftingGun = CRAFTING_NOTHING;
-	public int PlayerSelectedCraftingPart = CRAFTING_NOTHING;
-	public int[] CraftQueueCount = new int[NUM_CRAFTING_QUEUE_SLOTS];
-	public int[] CraftingPart = new int[] {CRAFTING_NOTHING, CRAFTING_NOTHING, CRAFTING_NOTHING, CRAFTING_NOTHING}; // new int[NUM_CRAFTING_QUEUE_SLOTS];
-
-	public final ContainerData DataAccess = new ContainerData()
-	{
-		@Override
-		public int get(int id)
-		{
-			switch (id)
-			{
-				case DATA_LIT_TIME -> { return LitTime; }
-				case DATA_LIT_DURATION -> { return LitDuration; }
-				case DATA_FORGE_ENERGY -> { return EnergyStorage == null ? 0 : EnergyStorage.getEnergyStored(); }
-				case DATA_CRAFT_TIME -> { return CraftTime; }
-				case DATA_CRAFT_DURATION -> { return CraftDuration; }
-				default ->
-				{
-					if(DATA_CRAFT_SELECTION_0 <= id && id < DATA_CRAFT_SELECTION_MAX)
-					{
-						return CraftingPart[id - DATA_CRAFT_SELECTION_0];
-					}
-					if(DATA_CRAFT_QUEUE_COUNT_0 <= id && id < DATA_CRAFT_QUEUE_COUNT_MAX)
-					{
-						return CraftQueueCount[id - DATA_CRAFT_QUEUE_COUNT_0];
-					}
-					return 0;
-				}
-			}
-
-
-		}
-
-		@Override
-		public void set(int id, int value)
-		{
-			switch (id)
-			{
-				case DATA_LIT_TIME -> LitTime = value;
-				case DATA_LIT_DURATION -> LitDuration = value;
-				case DATA_FORGE_ENERGY -> { if(EnergyStorage != null) EnergyStorage.receiveEnergy(value - EnergyStorage.getEnergyStored(), false); }
-				case DATA_CRAFT_TIME -> CraftTime = value;
-				case DATA_CRAFT_DURATION -> CraftDuration = value;
-				default ->
-				{
-					if(DATA_CRAFT_SELECTION_0 <= id && id < DATA_CRAFT_SELECTION_MAX)
-					{
-						CraftingPart[id - DATA_CRAFT_SELECTION_0] = value;
-					}
-					if(DATA_CRAFT_QUEUE_COUNT_0 <= id && id < DATA_CRAFT_QUEUE_COUNT_MAX)
-					{
-						CraftQueueCount[id - DATA_CRAFT_QUEUE_COUNT_0] = value;
-					}
-				}
-			}
-		}
-
-		@Override
-		public int getCount() { return NUM_DATA_MEMBERS; }
-	};
+	public final ContainerData DataAccess;
 
 	public WorkbenchBlockEntity(ResourceLocation defLoc, BlockPos pos, BlockState state)
 	{
 		super(ForgeRegistries.BLOCK_ENTITY_TYPES.getValue(defLoc), pos, state);
 		Def = FlansMod.WORKBENCHES.Get(defLoc);
+		Workbench = new AbstractWorkbench(Def, (player) -> {
+			if(isRemoved() || getLevel().getBlockEntity(getBlockPos()) != this)
+				return false;
+			if(getBlockPos().distToCenterSqr(player.getPosition(0f)) > INTERACT_RANGE_SQ)
+				return false;
+			return true;
+		});
+		DataAccess = Workbench.GetDataAccess();
 
 		DirectionalItemCapLazyOptionals = new ArrayList<>(6);
 		DirectionalItemCapLazyOptionals.add(LazyOptional.of(() -> SupplyItemCapability(Direction.DOWN)));
@@ -184,117 +96,7 @@ public class WorkbenchBlockEntity extends BlockEntity implements WorldlyContaine
 		DirectionalItemCapLazyOptionals.add(LazyOptional.of(() -> SupplyItemCapability(Direction.SOUTH)));
 		DirectionalItemCapLazyOptionals.add(LazyOptional.of(() -> SupplyItemCapability(Direction.WEST)));
 		DirectionalItemCapLazyOptionals.add(LazyOptional.of(() -> SupplyItemCapability(Direction.EAST)));
-		EnergyStorageLazyOptional = LazyOptional.of(() -> EnergyStorage );
-
-		if(Def.gunModifying.isActive)
-		{
-			GunContainer = new RestrictedContainer(
-				this,
-				INTERACT_RANGE,
-				1,
-				1,
-				(stack) -> stack.getItem() instanceof GunItem
-			);
-			PaintCanContainer = new RestrictedContainer(
-				this,
-				INTERACT_RANGE,
-				1,
-				64,
-				(stack) -> stack.getItem() == FlansMod.RAINBOW_PAINT_CAN_ITEM.get()
-			);
-			MagUpgradeContainer = new RestrictedContainer(
-				this,
-				INTERACT_RANGE,
-				1,
-				64,
-				(stack) -> stack.getItem() == FlansMod.MAG_UPGRADE_ITEM.get()
-			);
-		}
-		else
-		{
-			GunContainer = new RestrictedContainer(this);
-			PaintCanContainer = new RestrictedContainer(this);
-			MagUpgradeContainer = new RestrictedContainer(this);
-		}
-
-		if(Def.gunCrafting.isActive)
-		{
-			GunCraftingInputContainer = new RestrictedContainer(
-				this,
-				INTERACT_RANGE,
-				Def.gunCrafting.maxSlots,
-				64,
-				(stack) -> true);
-			GunCraftingOutputContainer = new RestrictedContainer(
-				this,
-				INTERACT_RANGE,
-				1,
-				64,
-				ItemStack::isEmpty );
-		}
-		else
-		{
-			GunCraftingInputContainer = new RestrictedContainer(this);
-			GunCraftingOutputContainer = new RestrictedContainer(this);
-		}
-
-		if(Def.partCrafting.isActive)
-		{
-			PartCraftingInputContainer = new RestrictedContainer(
-				this,
-				INTERACT_RANGE,
-				Def.partCrafting.inputSlots,
-				64,
-				(stack) -> true);
-			PartCraftingOutputContainer = new RestrictedContainer(
-				this,
-				INTERACT_RANGE,
-				Def.partCrafting.outputSlots,
-				64,
-				ItemStack::isEmpty);
-		}
-		else
-		{
-			PartCraftingInputContainer = new RestrictedContainer(this);
-			PartCraftingOutputContainer = new RestrictedContainer(this);
-		}
-
-		if(Def.itemHolding.slots.length > 0)
-		{
-			MaterialContainer = new RestrictedContainer(
-				this,
-				INTERACT_RANGE,
-				Def.itemHolding.slots.length,
-				Def.itemHolding.maxStackSize,
-				(stack) -> true
-			);
-		}
-		else MaterialContainer = new RestrictedContainer(this);
-
-		if(Def.energy.maxFE > 0)
-		{
-			EnergyStorage = new EnergyStorage(Def.energy.maxFE, Def.energy.acceptFEPerTick, Def.energy.disperseFEPerTick);
-			BatteryContainer = new RestrictedContainer(
-				this,
-				INTERACT_RANGE,
-				Def.energy.numBatterySlots,
-				Def.energy.batterySlotStackSize,
-				(stack) -> stack.getCapability(ForgeCapabilities.ENERGY).isPresent()
-			);
-			FuelContainer = new RestrictedContainer(
-				this,
-				INTERACT_RANGE,
-				Def.energy.numSolidFuelSlots,
-				64,
-				(stack) -> ForgeHooks.getBurnTime(stack, RecipeType.SMELTING) > 0.0f
-			);
-		}
-		else
-		{
-			EnergyStorage = null;
-			BatteryContainer = new RestrictedContainer(this);
-			FuelContainer = new RestrictedContainer(this);
-		}
+		EnergyStorageLazyOptional = Workbench.GetLazyOptionalEnergy();
 	}
 
 	// As a container
@@ -312,132 +114,21 @@ public class WorkbenchBlockEntity extends BlockEntity implements WorldlyContaine
 		return false;
 	}
 	@Override
-	public int getContainerSize()
-	{
-		return GunContainer.getContainerSize()
-			+ PaintCanContainer.getContainerSize()
-			+ MagUpgradeContainer.getContainerSize()
-			+ GunCraftingInputContainer.getContainerSize()
-			+ GunCraftingOutputContainer.getContainerSize()
-			+ PartCraftingInputContainer.getContainerSize()
-			+ PartCraftingOutputContainer.getContainerSize()
-			+ MaterialContainer.getContainerSize()
-			+ FuelContainer.getContainerSize()
-			+ BatteryContainer.getContainerSize();
-	}
+	public int getContainerSize() { return Workbench.getContainerSize(); }
 	@Override
-	public boolean isEmpty()
-	{
-		return GunContainer.isEmpty()
-			&& PaintCanContainer.isEmpty()
-			&& MagUpgradeContainer.isEmpty()
-			&& GunCraftingInputContainer.isEmpty()
-			&& GunCraftingOutputContainer.isEmpty()
-			&& PartCraftingInputContainer.isEmpty()
-			&& PartCraftingOutputContainer.isEmpty()
-			&& MaterialContainer.isEmpty()
-			&& FuelContainer.isEmpty()
-			&& BatteryContainer.isEmpty();
-	}
+	public boolean isEmpty() { return Workbench.isEmpty(); }
 	@Override
-	public boolean stillValid(@Nonnull Player player)
-	{
-		return GunContainer.stillValid(player)
-			&& PaintCanContainer.stillValid(player)
-			&& MagUpgradeContainer.stillValid(player)
-			&& GunCraftingInputContainer.stillValid(player)
-			&& GunCraftingOutputContainer.stillValid(player)
-			&& PartCraftingInputContainer.stillValid(player)
-			&& PartCraftingOutputContainer.stillValid(player)
-			&& MaterialContainer.stillValid(player)
-			&& FuelContainer.stillValid(player)
-			&& BatteryContainer.stillValid(player);
-	}
-
-	public Pair<Container, Integer> GetSubContainer(int slot)
-	{
-		if(slot < GunContainer.getContainerSize())
-			return Pair.of(GunContainer, slot);
-		else slot -= GunContainer.getContainerSize();
-
-		if(slot < PaintCanContainer.getContainerSize())
-			return Pair.of(PaintCanContainer, slot);
-		else slot -= PaintCanContainer.getContainerSize();
-
-		if(slot < MagUpgradeContainer.getContainerSize())
-			return Pair.of(MagUpgradeContainer, slot);
-		else slot -= MagUpgradeContainer.getContainerSize();
-
-		if(slot < GunCraftingInputContainer.getContainerSize())
-			return Pair.of(GunCraftingInputContainer, slot);
-		else slot -= GunCraftingInputContainer.getContainerSize();
-
-		if(slot < GunCraftingOutputContainer.getContainerSize())
-			return Pair.of(GunCraftingOutputContainer, slot);
-		else slot -= GunCraftingOutputContainer.getContainerSize();
-
-		if(slot < PartCraftingInputContainer.getContainerSize())
-			return Pair.of(PartCraftingInputContainer, slot);
-		else slot -= PartCraftingInputContainer.getContainerSize();
-
-		if(slot < PartCraftingOutputContainer.getContainerSize())
-			return Pair.of(PartCraftingOutputContainer, slot);
-		else slot -= PartCraftingOutputContainer.getContainerSize();
-
-		if(slot < MaterialContainer.getContainerSize())
-			return Pair.of(MaterialContainer, slot);
-		else slot -= MaterialContainer.getContainerSize();
-
-		if(slot < FuelContainer.getContainerSize())
-			return Pair.of(FuelContainer, slot);
-		else slot -= FuelContainer.getContainerSize();
-
-		if(slot < BatteryContainer.getContainerSize())
-			return Pair.of(BatteryContainer, slot);
-
-		// Huh?
-		return Pair.of(null, Inventory.NOT_FOUND_INDEX);
-	}
-
-	@Override
+	public boolean stillValid(@Nonnull Player player) { return Workbench.stillValid(player); }
 	@Nonnull
-	public ItemStack getItem(int slot)
-	{
-		Pair<Container, Integer> adjustedSlot = GetSubContainer(slot);
-		if(adjustedSlot.getSecond() == Inventory.NOT_FOUND_INDEX)
-			return ItemStack.EMPTY;
-		return adjustedSlot.getFirst().getItem(adjustedSlot.getSecond());
-	}
-
+	public Pair<Container, Integer> GetSubContainer(int slot) { return Workbench.GetSubContainer(slot); }
+	@Override @Nonnull
+	public ItemStack getItem(int slot) { return Workbench.getItem(slot); }
+	@Override @Nonnull
+	public ItemStack removeItem(int slot, int count) { return Workbench.removeItem(slot, count); }
+	@Override @Nonnull
+	public ItemStack removeItemNoUpdate(int slot) { return Workbench.removeItemNoUpdate(slot); }
 	@Override
-	@Nonnull
-	public ItemStack removeItem(int slot, int count)
-	{
-		Pair<Container, Integer> adjustedSlot = GetSubContainer(slot);
-		if(adjustedSlot.getSecond() == Inventory.NOT_FOUND_INDEX)
-			return ItemStack.EMPTY;
-		return adjustedSlot.getFirst().removeItem(adjustedSlot.getSecond(), count);
-	}
-
-	@Override
-	@Nonnull
-	public ItemStack removeItemNoUpdate(int slot)
-	{
-		Pair<Container, Integer> adjustedSlot = GetSubContainer(slot);
-		if(adjustedSlot.getSecond() == Inventory.NOT_FOUND_INDEX)
-			return ItemStack.EMPTY;
-		return adjustedSlot.getFirst().removeItemNoUpdate(adjustedSlot.getSecond());
-	}
-
-	@Override
-	public void setItem(int slot, @Nonnull ItemStack stack)
-	{
-		Pair<Container, Integer> adjustedSlot = GetSubContainer(slot);
-		if(adjustedSlot.getSecond() != Inventory.NOT_FOUND_INDEX)
-			adjustedSlot.getFirst().setItem(adjustedSlot.getSecond(), stack);
-	}
-
-
+	public void setItem(int slot, @Nonnull ItemStack stack) { Workbench.setItem(slot, stack); }
 
 	public static class WorkbenchBlockEntityTypeHolder implements BlockEntityType.BlockEntitySupplier<WorkbenchBlockEntity>
 	{
@@ -472,828 +163,32 @@ public class WorkbenchBlockEntity extends BlockEntity implements WorldlyContaine
 	protected void saveAdditional(@Nonnull CompoundTag tags)
 	{
 		super.saveAdditional(tags);
-		tags.put("gun", GunContainer.save(new CompoundTag()));
-		tags.put("paintcans", PaintCanContainer.save(new CompoundTag()));
-		tags.put("magupgrades", MagUpgradeContainer.save(new CompoundTag()));
-		tags.put("gun_input", GunCraftingInputContainer.save(new CompoundTag()));
-		tags.put("gun_output", GunCraftingOutputContainer.save(new CompoundTag()));
-		tags.put("part_input", PartCraftingInputContainer.save(new CompoundTag()));
-		tags.put("part_output", PartCraftingOutputContainer.save(new CompoundTag()));
-		tags.put("materials", MaterialContainer.save(new CompoundTag()));
-		tags.put("battery", BatteryContainer.save(new CompoundTag()));
-		tags.put("fuel", FuelContainer.save(new CompoundTag()));
-		if(EnergyStorage != null)
-			tags.put("energy", EnergyStorage.serializeNBT());
-
-		tags.putInt("lit_time", LitTime);
-		tags.putInt("lit_duration", LitDuration);
-		for(int i = 0; i < NUM_CRAFTING_QUEUE_SLOTS; i++)
-		{
-			tags.putInt("craft_queue_"+i, CraftQueueCount[i]);
-			tags.putInt("craft_selection_"+i, CraftingPart[i]);
-		}
-
-		tags.putInt("craft_duration", CraftDuration);
-		tags.putInt("craft_time", CraftTime);
+		Workbench.save(tags);
 	}
-
 	@Override
 	public void load(@Nonnull CompoundTag tags)
 	{
 		super.load(tags);
-		GunContainer.load(tags.getCompound("gun"));
-		PaintCanContainer.load(tags.getCompound("paintcans"));
-		MagUpgradeContainer.load(tags.getCompound("magupgrades"));
-		GunCraftingInputContainer.load(tags.getCompound("gun_input"));
-		GunCraftingOutputContainer.load(tags.getCompound("gun_output"));
-		PartCraftingInputContainer.load(tags.getCompound("part_input"));
-		PartCraftingOutputContainer.load(tags.getCompound("part_output"));
-		MaterialContainer.load(tags.getCompound("materials"));
-		BatteryContainer.load(tags.getCompound("battery"));
-		FuelContainer.load(tags.getCompound("fuel"));
-		if(EnergyStorage != null)
-			EnergyStorage.deserializeNBT(tags.getCompound("energy"));
-
-		LitTime = tags.getInt("lit_time");
-		LitDuration = tags.getInt("lit_duration");
-
-		CraftDuration = tags.getInt("craft_duration");
-		CraftTime = tags.getInt("craft_time");
-
-		for(int i = 0; i < NUM_CRAFTING_QUEUE_SLOTS; i++)
-		{
-			CraftQueueCount[i] = tags.getInt("craft_queue_"+i);
-			CraftingPart[i] = tags.getInt("craft_selection_"+i);
-			if(CraftQueueCount[i] == 0)
-				CraftingPart[i] = CRAFTING_NOTHING;
-		}
+		Workbench.load(tags);
 	}
 
 	private static final Component DISPLAY_NAME = Component.translatable("workbench.title");
 	@Override
 	@Nonnull
 	public Component getDisplayName() { return DISPLAY_NAME; }
-
 	@Override
-	public void clearContent()
-	{
-		GunContainer.clearContent();
-		PaintCanContainer.clearContent();
-		MagUpgradeContainer.clearContent();
-		GunCraftingInputContainer.clearContent();
-		GunCraftingOutputContainer.clearContent();
-		PartCraftingInputContainer.clearContent();
-		PartCraftingOutputContainer.clearContent();
-		MaterialContainer.clearContent();
-		BatteryContainer.clearContent();
-		FuelContainer.clearContent();
-	}
-
-
+	public void clearContent() { Workbench.clearContent(); }
 	@Nullable
 	@Override
 	public AbstractContainerMenu createMenu(int containerID, @Nonnull Inventory inventory, @Nonnull Player player)
 	{
-		if(Def.gunCrafting.isActive)
-			return new WorkbenchMenuGunCrafting(containerID, inventory, this);
-		if(Def.partCrafting.isActive)
-			return new WorkbenchMenuPartCrafting(containerID, inventory, this);
-		if(Def.gunModifying.isActive)
-			return new WorkbenchMenuModification(containerID, inventory, this);
-		if(Def.energy.maxFE > 0.0f)
-			return new WorkbenchMenuPower(containerID, inventory, this);
-
-		return new WorkbenchMenuMaterials(containerID, inventory, this);
+		return Workbench.createMenu(containerID, inventory, player);
 	}
 
 	public static void serverTick(@Nonnull Level level, @Nonnull BlockPos pos, @Nonnull BlockState state, @Nonnull WorkbenchBlockEntity workbench)
 	{
-		if(workbench.EnergyStorage != null)
-		{
-			if (workbench.LitTime > 0)
-			{
-				workbench.LitTime--;
-				workbench.EnergyStorage.receiveEnergy(workbench.Def.energy.solidFEPerFuelTime, false);
-				if (workbench.LitTime <= 0)
-				{
-					workbench.LitDuration = 0;
-					setChanged(level, pos, state);
-				}
-			}
-
-			if (workbench.LitTime <= 0 && workbench.EnergyStorage.getEnergyStored() < workbench.EnergyStorage.getMaxEnergyStored())
-			{
-				if (workbench.FuelContainer.getContainerSize() > 0)
-				{
-					int burnTime = ForgeHooks.getBurnTime(workbench.FuelContainer.getItem(0), RecipeType.SMELTING);
-					if (burnTime > 0)
-					{
-						workbench.FuelContainer.removeItem(0, 1);
-						workbench.LitDuration = burnTime;
-						workbench.LitTime = burnTime;
-						setChanged(level, pos, state);
-					}
-				}
-			}
-		}
-
-		if(workbench.PartCraftingOutputContainer.getContainerSize() > 0)
-		{
-			if(workbench.CraftTime > 0)
-			{
-				workbench.CraftTime--;
-				if(workbench.CraftTime <= 0)
-				{
-					workbench.CraftDuration = 0;
-					boolean success = workbench.CraftOnePart();
-					if(success)
-						setChanged(level, pos, state);
-				}
-			}
-
-			// Then try find a new craft
-			if(workbench.CraftTime <= 0)
-			{
-				// If the thing in slot 0 is done, advance the stack
-				if(workbench.CraftQueueCount[0] <= 0)
-				{
-					for(int i = 0; i < NUM_CRAFTING_QUEUE_SLOTS - 1; i++)
-					{
-						workbench.CraftQueueCount[i] = workbench.CraftQueueCount[i + 1];
-						workbench.CraftingPart[i] = workbench.CraftingPart[i+1];
-					}
-					workbench.CraftQueueCount[NUM_CRAFTING_QUEUE_SLOTS - 1] = 0;
-					workbench.CraftingPart[NUM_CRAFTING_QUEUE_SLOTS - 1] = CRAFTING_NOTHING;
-				}
-
-				// Then, if there's something to craft in slot 0, start crafting one
-				if(workbench.CraftQueueCount[0] > 0)
-				{
-					int inputCount = workbench.GetMaxPartsCraftableFromInput(workbench.CraftingPart[0]);
-					boolean canOutput = workbench.GetOutputSlotToCraftPart() != Inventory.NOT_FOUND_INDEX;
-					boolean canPower = true;
-					if (workbench.Def.partCrafting.FECostPerCraft > 0)
-					{
-						canPower = workbench.EnergyStorage.getEnergyStored() >= workbench.Def.partCrafting.FECostPerCraft;
-					}
-					if (inputCount > 0 && canOutput && canPower)
-					{
-						workbench.CraftTime = Maths.Floor(workbench.Def.partCrafting.timePerCraft * 20);
-						workbench.CraftDuration = workbench.CraftTime;
-						setChanged(level, pos, state);
-					}
-				}
-			}
-		}
-	}
-
-	// ----------------------------------------------------------------------------------------------
-	// --------------------------- GUN CRAFTING -----------------------------------------------------
-	// ----------------------------------------------------------------------------------------------
-	public boolean GunRecipeCanBeCraftedInThisWorkbench(@Nonnull ItemStack output)
-	{
-		// Server config hook
-		if(!FlansModConfig.AllowGunCrafting.get())
-			return false;
-		// ------------------
-
-		if(Def.gunCrafting.isActive)
-			for(ItemStack stack : Def.gunCrafting.GetAllOutputs())
-				if(ItemStack.isSameItem(stack, output))
-					return true;
-		return false;
-	}
-	@Nullable
-	public GunFabricationRecipe GetSelectedGunRecipe()
-	{
-		if(PlayerSelectedCraftingGun == CRAFTING_NOTHING || PlayerSelectedCraftingGun >= GetAllGunRecipes().size())
-			return null;
-		return GetAllGunRecipes().get(PlayerSelectedCraftingGun);
-	}
-	@Nonnull
-	public List<GunFabricationRecipe> GetAllGunRecipes()
-	{
-		return level == null ? new ArrayList<>() : Def.gunCrafting.GetAllRecipes(level);
-	}
-	public void SelectGunCraftingRecipe(int recipeIndex)
-	{
-		if(0 <= recipeIndex && recipeIndex < GetAllGunRecipes().size())
-			PlayerSelectedCraftingGun = recipeIndex;
-		else
-			PlayerSelectedCraftingGun = CRAFTING_NOTHING;
-
-		UpdateGunCraftingOutputSlot();
-	}
-	public boolean MatchesGunRecipe(int recipeIndex)
-	{
-		if(recipeIndex == CRAFTING_NOTHING || recipeIndex >= GetAllGunRecipes().size())
-			return false;
-
-		return GetAllGunRecipes().get(recipeIndex).matches(this, getLevel());
-	}
-	public void AutoFillGunCraftingInputSlot(@Nonnull Player player, int ingredientIndex)
-	{
-		GunFabricationRecipe currentRecipe = GetSelectedGunRecipe();
-		if(currentRecipe != null)
-		{
-			if(0 <= ingredientIndex && ingredientIndex < currentRecipe.InputIngredients.size())
-			{
-				// Get the existing stack
-				ItemStack stackInSlot = GunCraftingInputContainer.getItem(ingredientIndex);
-
-				// See if we can auto-populate for this specific ingredient
-				Ingredient ingredient = currentRecipe.InputIngredients.get(ingredientIndex);
-				boolean creative = player.isCreative();
-				if(creative)
-				{
-					ItemStack[] possibleItems = ingredient.getItems();
-					if(possibleItems.length > 0)
-					{
-						int existingIndex = -1;
-						for (int i = 0; i < possibleItems.length; i++)
-						{
-							if (ItemStack.isSameItemSameTags(stackInSlot, possibleItems[i]))
-							{
-								existingIndex = i;
-							}
-						}
-						GunCraftingInputContainer.setItem(ingredientIndex, possibleItems[(existingIndex + 1) % possibleItems.length].copy());
-						UpdateGunCraftingOutputSlot();
-					}
-				}
-				else // Non-creative
-				{
-					int foundMatch = -1;
-					for(int i = 0; i < player.getInventory().getContainerSize(); i++)
-					{
-						if(ingredient.test(player.getInventory().getItem(i)))
-						{
-							foundMatch = i;
-							break;
-						}
-					}
-
-					if(foundMatch != -1)
-					{
-						// We are adding to an empty slot, just place it
-						if(stackInSlot.isEmpty())
-						{
-							GunCraftingInputContainer.setItem(ingredientIndex, player.getInventory().getItem(foundMatch).copyWithCount(1));
-							player.getInventory().removeItem(foundMatch, 1);
-						}
-						else // There was already something there, only swap if there is space on the player
-						{
-							if(player.getInventory().add(stackInSlot.copy()))
-							{
-								GunCraftingInputContainer.setItem(ingredientIndex, player.getInventory().getItem(foundMatch));
-								UpdateGunCraftingOutputSlot();
-							}
-						}
-					}
-				}
-			}
-		}
-	}
-	@Nonnull
-	public List<GunFabricationRecipe> GetMatchingGunRecipes()
-	{
-		List<GunFabricationRecipe> matching = new ArrayList<>();
-		for(int i = 0; i < GetAllGunRecipes().size(); i++)
-			if(MatchesGunRecipe(i))
-				matching.add(GetAllGunRecipes().get(i));
-		return matching;
-	}
-	public boolean IsGunCraftingSlotValid(int ingredientIndex)
-	{
-		if(ingredientIndex < 0)
-			return false;
-
-		GunFabricationRecipe recipe = GetSelectedGunRecipe();
-		if(recipe == null)
-			return false;
-
-		if(ingredientIndex >= recipe.InputIngredients.size() || ingredientIndex >= GunCraftingInputContainer.getContainerSize())
-			return false;
-
-		return recipe.InputIngredients.get(ingredientIndex).test(GunCraftingInputContainer.getItem(ingredientIndex));
-	}
-	public boolean IsGunCraftingFullyValid()
-	{
-		// Server config hook
-		if(!FlansModConfig.AllowGunCrafting.get())
-			return false;
-		// ------------------
-
-		GunFabricationRecipe recipe = GetSelectedGunRecipe();
-		if(recipe == null)
-			return false;
-
-		for(int i = 0; i < recipe.InputIngredients.size(); i++)
-		{
-			if(!IsGunCraftingSlotValid(i))
-				return false;
-		}
-
-		return true;
-	}
-	public void ConsumeGunCraftingInputs()
-	{
-		GunFabricationRecipe recipe = GetSelectedGunRecipe();
-		if(recipe != null)
-		{
-			for (int i = 0; i < recipe.InputIngredients.size(); i++)
-			{
-				ItemStack stack = GunCraftingInputContainer.getItem(i);
-				stack.setCount(stack.getCount() - 1);
-			}
-		}
-	}
-	public void UpdateGunCraftingOutputSlot()
-	{
-		if(IsGunCraftingFullyValid())
-		{
-			GunFabricationRecipe recipe = GetSelectedGunRecipe();
-			if(recipe != null)
-			{
-				ItemStack output = recipe.assemble(this, RegistryAccess.EMPTY);
-				GunCraftingOutputContainer.setItem(0, output);
-
-			}
-			else
-				FlansMod.LOGGER.error("We think gun crafting is valid, but no recipe selection exists");
-		}
-		else
-			GunCraftingOutputContainer.setItem(0, ItemStack.EMPTY);
-	}
-
-	// ----------------------------------------------------------------------------------------------
-	// --------------------------- PART CRAFTING ----------------------------------------------------
-	// ----------------------------------------------------------------------------------------------
-	public boolean PartRecipeCanBeCraftedInThisWorkbench(@Nonnull ItemStack output)
-	{
-		if(Def.partCrafting.isActive)
-			for(ItemStack stack : Def.partCrafting.GetAllOutputs())
-				if(ItemStack.isSameItem(stack, output))
-					return true;
-		return false;
-	}
-	@Nonnull
-	public List<PartFabricationRecipe> GetAllPartRecipes()
-	{
-		return Def.partCrafting.GetAllRecipes(level);
-	}
-	public void SelectPartCraftingRecipe(int index)
-	{
-		if(0 <= index && index < GetAllPartRecipes().size())
-			PlayerSelectedCraftingPart = index;
-		else
-			PlayerSelectedCraftingPart = CRAFTING_NOTHING;
-	}
-	public int GetMaxPartsCraftableFromInput(int recipeIndex)
-	{
-		// Server config hook
-		if(!FlansModConfig.AllowPartCrafting.get())
-			return 0;
-		// ------------------
-
-		if(recipeIndex == CRAFTING_NOTHING)
-			return 0;
-
-		if(recipeIndex >= GetAllPartRecipes().size())
-			return 0;
-
-		PartFabricationRecipe recipe = GetAllPartRecipes().get(recipeIndex);
-		if(recipe == null)
-			return 0;
-
-		int lowestMatch = Integer.MAX_VALUE;
-		for (int i = 0; i < recipe.getIngredients().size(); i++)
-		{
-			Ingredient ingredient = recipe.getIngredients().get(i);
-			int required;
-			int matching = CountInputMatching(ingredient);
-			if (ingredient instanceof StackedIngredient stacked)
-				required = stacked.Count;
-			else
-				required = 1;
-
-			int maxProduction = matching / required;
-			if(maxProduction < lowestMatch)
-				lowestMatch = maxProduction;
-		}
-
-		return Maths.Clamp(lowestMatch, 0, 999);
-	}
-
-
-	public int[] GetQuantityOfEachIngredientForRecipe(int recipeIndex)
-	{
-		if(recipeIndex == CRAFTING_NOTHING || recipeIndex >= GetAllPartRecipes().size())
-			return new int[0];
-
-		PartFabricationRecipe recipe = GetAllPartRecipes().get(recipeIndex);
-		return recipe == null ? new int[0] : recipe.GetMatchingOfEachIngredient(PartCraftingInputContainer);
-	}
-
-	public int[] GetRequiredOfEachIngredientForRecipe(int recipeIndex)
-	{
-		if(recipeIndex == CRAFTING_NOTHING || recipeIndex >= GetAllPartRecipes().size())
-			return new int[0];
-
-		PartFabricationRecipe recipe = GetAllPartRecipes().get(recipeIndex);
-		return recipe == null ? new int[0] : recipe.GetRequiredOfEachIngredient();
-	}
-
-	public int GetOutputSlotToCraftPart()
-	{
-		if(CraftingPart[0] == CRAFTING_NOTHING)
-			return Inventory.NOT_FOUND_INDEX;
-
-		if(CraftingPart[0] >= GetAllPartRecipes().size())
-			return Inventory.NOT_FOUND_INDEX;
-
-		PartFabricationRecipe recipe = GetAllPartRecipes().get(CraftingPart[0]);
-		if(recipe == null)
-			return 0;
-
-		ItemStack result = recipe.Result;
-		// First pass, find a similar item to stack with
-		for(int i = 0; i < PartCraftingOutputContainer.getContainerSize(); i++)
-		{
-			ItemStack stackInSlot = PartCraftingOutputContainer.getItem(i);
-			if(ItemStack.isSameItem(result, stackInSlot))
-				if(stackInSlot.getCount() < PartCraftingOutputContainer.getMaxStackSize())
-					return i;
-		}
-
-		// Second pass, find an empty slot
-		for(int i = 0; i < PartCraftingOutputContainer.getContainerSize(); i++)
-		{
-			if(PartCraftingOutputContainer.getItem(i).isEmpty())
-				return i;
-		}
-
-		return Inventory.NOT_FOUND_INDEX;
-	}
-
-	public void QueueCrafting(int count)
-	{
-		for(int i = 0; i < NUM_CRAFTING_QUEUE_SLOTS; i++)
-		{
-			if (CraftingPart[i] == PlayerSelectedCraftingPart || CraftingPart[i] == CRAFTING_NOTHING)
-			{
-				CraftingPart[i] = PlayerSelectedCraftingPart;
-				if (count == -1)
-				{
-					CraftQueueCount[i] = GetMaxPartsCraftableFromInput(PlayerSelectedCraftingPart);
-					return;
-				} else
-				{
-					CraftQueueCount[i] += count;
-					return;
-				}
-			}
-		}
-	}
-
-	public void CancelQueue(int index)
-	{
-		if(0 <= index && index < NUM_CRAFTING_QUEUE_SLOTS)
-		{
-			CraftQueueCount[index] = (index == 0 && CraftDuration > 0) ? 1 : 0;
-			if(index > 0)
-			{
-				for(int i = index; i < NUM_CRAFTING_QUEUE_SLOTS - 1; i++)
-				{
-					CraftQueueCount[i] = CraftQueueCount[i + 1];
-					CraftingPart[i] = CraftingPart[i + 1];
-				}
-				CraftingPart[NUM_CRAFTING_QUEUE_SLOTS - 1] = CRAFTING_NOTHING;
-				CraftQueueCount[NUM_CRAFTING_QUEUE_SLOTS - 1] = 0;
-			}
-		}
-	}
-
-	public int CountInputMatching(Ingredient ingredient)
-	{
-		int count = 0;
-		for(int i = 0; i < PartCraftingInputContainer.getContainerSize(); i++)
-		{
-			ItemStack stack = PartCraftingInputContainer.getItem(i);
-			if(ingredient instanceof StackedIngredient stackedIngredient)
-			{
-				count += stackedIngredient.Count(stack);
-			}
-			else if(ingredient.test(stack))
-				count += stack.getCount();
-
-		}
-		return count;
-	}
-
-	private void ConsumeIngredient(Ingredient ingredient)
-	{
-		// We can do "refunds", pretty complicated
-		if(ingredient instanceof TieredMaterialIngredient tiered)
-		{
-			int count = 0;
-			for(int i = 0; i < PartCraftingInputContainer.getContainerSize(); i++)
-			{
-				int matchCount = tiered.Count(PartCraftingInputContainer.getItem(i));
-				if(matchCount > 0)
-				{
-					count += matchCount;
-					PartCraftingInputContainer.setItem(i, ItemStack.EMPTY);
-				}
-			}
-			int countAfterConsume = count - tiered.Count;
-			List<Pair<MaterialSourceDefinition, Integer>> refundSplit = tiered.MaterialType().ResolveAmount(countAfterConsume);
-			for(Pair<MaterialSourceDefinition, Integer> kvp : refundSplit)
-			{
-				if(kvp.getFirst().GetMatches().size() > 0)
-				{
-					ItemStack leftover = TryAddStackToCraftingInput(kvp.getFirst().GetMatches().get(0).copyWithCount(kvp.getSecond()));
-					if (!leftover.isEmpty() && level != null)
-					{
-						ItemEntity leftoverEntity = new ItemEntity(
-							level,
-							getBlockPos().getCenter().x,
-							getBlockPos().getCenter().y,
-							getBlockPos().getCenter().z,
-							leftover);
-						level.addFreshEntity(leftoverEntity);
-					}
-				}
-				else
-					FlansMod.LOGGER.error("Could not refund " + kvp.getSecond() + "x " + kvp.getFirst());
-
-			}
-		}
-	}
-
-	private ItemStack TryAddStackToCraftingInput(ItemStack stack)
-	{
-		int maxStack = PartCraftingInputContainer.getMaxStackSize();
-		for(int i = 0; i < PartCraftingInputContainer.getContainerSize(); i++)
-		{
-			ItemStack stackInSlot = PartCraftingInputContainer.getItem(i);
-			if(stackInSlot.isEmpty())
-			{
-				if(stack.getCount() > maxStack)
-				{
-					PartCraftingInputContainer.setItem(i, stack.copyWithCount(maxStack));
-					stack.setCount(stack.getCount() - maxStack);
-				}
-				else
-				{
-					PartCraftingInputContainer.setItem(i, stack.copy());
-					stack.setCount(0);
-				}
-			}
-			else if(ItemStack.isSameItem(stackInSlot, stack))
-			{
-				int countToAdd = Maths.Min(stack.getCount(), maxStack - stackInSlot.getCount());
-				if(countToAdd > 0)
-				{
-					stackInSlot.setCount(stackInSlot.getCount() + countToAdd);
-					stack.setCount(stack.getCount() - countToAdd);
-				}
-			}
-
-			if(stack.isEmpty())
-				return ItemStack.EMPTY;
-		}
-
-		return stack;
-	}
-
-	public boolean CraftOnePart()
-	{
-		// Server config hook
-		if(!FlansModConfig.AllowPartCrafting.get())
-			return false;
-		// ------------------
-
-		int outputSlot = GetOutputSlotToCraftPart();
-		if(outputSlot != Inventory.NOT_FOUND_INDEX)
-		{
-			PartFabricationRecipe recipe = GetAllPartRecipes().get(CraftingPart[0]);
-			for(Ingredient ingredient : recipe.getIngredients())
-			{
-				ConsumeIngredient(ingredient);
-			}
-
-			CraftQueueCount[0]--;
-			ItemStack result = recipe.Result;
-			ItemStack existing = PartCraftingOutputContainer.getItem(outputSlot);
-			if(existing.isEmpty())
-				PartCraftingOutputContainer.setItem(outputSlot, result.copy());
-			else if(ItemStack.isSameItem(existing, result))
-				existing.setCount(existing.getCount() + result.getCount());
-			else
-				FlansMod.LOGGER.error("CraftOnePart tried to craft into invalid slot " + outputSlot);
-
-			if(level != null)
-				level.playSound(null, getBlockPos(), SoundEvents.IRON_GOLEM_STEP, SoundSource.BLOCKS, 1.0F, 1.0F);
-
-			return true;
-		}
-		return false;
-	}
-
-	public static int GetPaintUpgradeCost(Container gunContainer, int paintIndex)
-	{
-		// Server config hook
-		int additionalCost = FlansModConfig.AdditionalMagazineModifyCost.get();
-		// ------------------
-
-		if (gunContainer.getContainerSize() <= 0)
-			return 0;
-		if(paintIndex == 0)
-			return 0;
-
-		if (gunContainer.getItem(0).getItem() instanceof FlanItem flanItem)
-		{
-			PaintableDefinition paintableDefinition = flanItem.GetPaintDef();
-			if (paintableDefinition.IsValid())
-			{
-				if (0 <= paintIndex - 1 && paintIndex - 1 < paintableDefinition.paintjobs.length)
-				{
-					return paintableDefinition.paintjobs[paintIndex - 1].paintBucketsRequired + additionalCost;
-				}
-			}
-		}
-		return 0;
-	}
-	public static boolean CanPaintGun(Player player, Container gunContainer, Container paintCanContainer, int skinIndex)
-	{
-		// Server config hook
-		if(!FlansModConfig.AllowPainting.get())
-			return false;
-
-		int additionalCost = FlansModConfig.AdditionalPaintCanCost.get();
-		// ------------------
-
-		// Check some obvious errors
-		if(skinIndex < 0)
-			return false;
-		if (gunContainer.getContainerSize() <= 0)
-			return false;
-		if(gunContainer.getItem(0).isEmpty())
-			return false;
-		if(gunContainer.getItem(0).getItem() instanceof FlanItem flanItem)
-		{
-			// We can always revert to the default skin, no matter what, and for free.
-			if(skinIndex == 0)
-				return true;
-
-			// Check if the item is paintable and our selection makes sense
-			PaintableDefinition paintableDefinition = flanItem.GetPaintDef();
-			if (!paintableDefinition.IsValid())
-				return false;
-			if (skinIndex >= paintableDefinition.paintjobs.length + 1)
-				return false;
-			PaintjobDefinition paintjobDefinition = paintableDefinition.paintjobs[skinIndex - 1];
-			if (paintjobDefinition == null)
-				return false;
-
-			// If this skin has entitlements, check them out
-			if (!paintjobDefinition.entitlementKey.isEmpty())
-			{
-				// TODO: Entitlement checks
-			}
-
-			// Creative players get to skip the cost checks
-			if (player.isCreative())
-				return true;
-
-			// Now we just need to check the cost
-			int paintCost = paintjobDefinition.paintBucketsRequired + additionalCost;
-			if (paintCanContainer.getItem(0).getCount() < paintCost)
-				return false;
-
-			// All checks passed, let's paint!
-			return true;
-		}
-		return false;
-	}
-
-	public void PaintGun(@Nonnull Player player, int skinIndex) { PaintGun(player, GunContainer, PaintCanContainer, skinIndex); }
-	public static void PaintGun(@Nonnull Player player, @Nonnull Container gunContainer, @Nonnull Container paintCanContainer, int skinIndex)
-	{
-		if(CanPaintGun(player, gunContainer, paintCanContainer, skinIndex))
-		{
-			if (gunContainer.getContainerSize() > 0 && !gunContainer.getItem(0).isEmpty() && gunContainer.getItem(0).getItem() instanceof FlanItem)
-			{
-				GunContext gunContext = GunContext.of(gunContainer, 0, player.level().isClientSide);
-				if(gunContext.IsValid())
-				{
-					PaintableDefinition paintableDefinition = gunContext.Def.paints;
-					if (paintableDefinition.IsValid())
-					{
-						if (skinIndex == 0)
-						{
-							gunContext.SetPaintjobName("default");
-						} else
-						{
-							PaintjobDefinition paintjobDefinition = paintableDefinition.paintjobs[skinIndex - 1];
-							paintCanContainer.getItem(0).setCount(paintCanContainer.getItem(0).getCount() - paintjobDefinition.paintBucketsRequired);
-							gunContext.SetPaintjobName(paintjobDefinition.textureName);
-						}
-					}
-				}
-			}
-		}
-	}
-
-	public static int GetMagUpgradeCost(@Nonnull Container gunContainer, int magIndex)
-	{
-		// Server config hook
-		int additionalCost = FlansModConfig.AdditionalMagazineModifyCost.get();
-		// ------------------
-
-		if (gunContainer.getContainerSize() <= 0)
-			return 0;
-
-		if (gunContainer.getItem(0).getItem() instanceof GunItem gunItem)
-		{
-			List<MagazineDefinition> mags = gunItem.Def().GetMagazineSettings(Actions.DefaultPrimaryActionKey).GetMatchingMagazines();
-			if (0 <= magIndex && magIndex < mags.size())
-			{
-				return gunItem.Def().GetMagazineSettings(Actions.DefaultPrimaryActionKey).baseCostToSwap + mags.get(magIndex).upgradeCost + additionalCost;
-			}
-			return gunItem.Def().GetMagazineSettings(Actions.DefaultPrimaryActionKey).baseCostToSwap + additionalCost;
-		}
-		return 0;
-	}
-	public static boolean CanSelectMagazine(@Nonnull Player player, @Nonnull Container gunContainer, @Nonnull Container magUpgradeContainer, int magIndex)
-	{
-		// Server config hook
-		if(!FlansModConfig.AllowMagazineModifying.get())
-			return false;
-
-		int additionalCost = FlansModConfig.AdditionalMagazineModifyCost.get();
-		// ------------------
-
-		// Check some obvious errors
-		if(magIndex < 0)
-			return false;
-		if (gunContainer.getContainerSize() <= 0)
-			return false;
-		if(gunContainer.getItem(0).isEmpty())
-			return false;
-		if(gunContainer.getItem(0).getItem() instanceof GunItem gunItem)
-		{
-			ItemStack gunStack = gunContainer.getItem(0);
-
-			// Check if the item has mag options and our selection makes sense
-			List<MagazineDefinition> mags = gunItem.Def().GetMagazineSettings(Actions.DefaultPrimaryActionKey).GetMatchingMagazines();
-			if(magIndex >= mags.size())
-				return false;
-
-			MagazineDefinition mag = mags.get(magIndex);
-			if(!mag.IsValid())
-				return false;
-
-			// Creative players get to skip the cost checks
-			if (player.isCreative())
-				return true;
-
-			// Now we just need to check the cost
-			int magCost = additionalCost
-				+ mag.upgradeCost
-				+ gunItem.Def().GetMagazineSettings(Actions.DefaultPrimaryActionKey).baseCostToSwap;
-			if (magUpgradeContainer.getItem(0).getCount() < magCost)
-				return false;
-
-			// All checks passed, let's swap the mags!
-			return true;
-		}
-		return false;
-	}
-	public void SelectMagazine(@Nonnull Player player, int magIndex) { SelectMagazine(player, GunContainer, MagUpgradeContainer, magIndex); }
-	public static void SelectMagazine(@Nonnull Player player, @Nonnull Container gunContainer, @Nonnull Container magUpgradeContainer, int magIndex)
-	{
-		if(CanSelectMagazine(player, gunContainer, magUpgradeContainer, magIndex))
-		{
-			if (gunContainer.getContainerSize() > 0 && !gunContainer.getItem(0).isEmpty() && gunContainer.getItem(0).getItem() instanceof GunItem gunItem)
-			{
-				GunContext gunContext = GunContext.of(gunContainer, 0, player.level().isClientSide);
-				if(gunContext.IsValid())
-				{
-					List<MagazineDefinition> mags = gunItem.Def().GetMagazineSettings(Actions.DefaultPrimaryActionKey).GetMatchingMagazines();
-					if (0 <= magIndex && magIndex < mags.size())
-					{
-						int magCost = mags.get(magIndex).upgradeCost + gunItem.Def().GetMagazineSettings(Actions.DefaultPrimaryActionKey).baseCostToSwap;
-						magUpgradeContainer.getItem(0).setCount(magUpgradeContainer.getItem(0).getCount() - magCost);
-						gunContext.GetActionGroupContext(Actions.DefaultPrimaryActionKey).SetMagazineType(0, mags.get(magIndex));
-					} else
-					{
-						FlansMod.LOGGER.warn(player.getName().getString() + " tried to set mag index " + magIndex + " on gun (" + gunItem.Def().Location + ") with only " + mags.size() + " mag options");
-					}
-				}
-			}
-		}
+		if(workbench.Workbench.serverTick(level, pos.getCenter()))
+			setChanged(level, pos, state);
 	}
 
 	public static class ItemCapabilityMultiContainer implements IItemHandler
@@ -1352,7 +247,7 @@ public class WorkbenchBlockEntity extends BlockEntity implements WorldlyContaine
 		}
 		@Override
 		@Nonnull
-		public ItemStack insertItem(int slot, @NotNull ItemStack stack, boolean simulate)
+		public ItemStack insertItem(int slot, @Nonnull ItemStack stack, boolean simulate)
 		{
 			if(!CanInsert)
 				return stack;
@@ -1399,7 +294,7 @@ public class WorkbenchBlockEntity extends BlockEntity implements WorldlyContaine
 			return 0;
 		}
 		@Override
-		public boolean isItemValid(int slot, @NotNull ItemStack stack)
+		public boolean isItemValid(int slot, @Nonnull ItemStack stack)
 		{
 			if(slot < 0)
 				return false;
@@ -1412,36 +307,6 @@ public class WorkbenchBlockEntity extends BlockEntity implements WorldlyContaine
 			}
 			return false;
 		}
-	}
-
-	private Container[] GetContainers(EWorkbenchInventoryType type)
-	{
-		return switch (type)
-		{
-			case PartInput -> new Container[]{PartCraftingInputContainer};
-			case PartOutput -> new Container[]{PartCraftingOutputContainer};
-			case GunInput -> new Container[]{GunCraftingInputContainer};
-			case GunOutput -> new Container[]{GunCraftingOutputContainer};
-			case Material -> new Container[]{MaterialContainer};
-			case Fuel -> new Container[]{FuelContainer};
-			case Power -> new Container[]{BatteryContainer};
-			case GunModification -> new Container[]{GunContainer};
-			case Attachment -> new Container[]{GunContainer};
-			case PaintCan -> new Container[]{PaintCanContainer};
-			case MagUpgrade -> new Container[]{MagUpgradeContainer};
-			case AllTypes -> new Container[]{
-				PartCraftingInputContainer,
-				PartCraftingOutputContainer,
-				GunCraftingInputContainer,
-				GunCraftingOutputContainer,
-				MaterialContainer,
-				FuelContainer,
-				BatteryContainer,
-				GunContainer,
-				PaintCanContainer,
-				MagUpgradeContainer,
-			};
-		};
 	}
 
 	@Nonnull
@@ -1466,7 +331,7 @@ public class WorkbenchBlockEntity extends BlockEntity implements WorldlyContaine
 			{
 				for(WorkbenchIOSettingDefinition ioSetting : sideDef.ioSettings)
 				{
-					return new ItemCapabilityMultiContainer(GetContainers(ioSetting.type), ioSetting.allowInput, ioSetting.allowExtract);
+					return new ItemCapabilityMultiContainer(Workbench.GetContainers(ioSetting.type), ioSetting.allowInput, ioSetting.allowExtract);
 				}
 			}
 			return ItemCapabilityMultiContainer.Invalid;
@@ -1478,17 +343,18 @@ public class WorkbenchBlockEntity extends BlockEntity implements WorldlyContaine
 		{
 			switch(frontRelativeDirection)
 			{
-				case UP: 	{	return new ItemCapabilityMultiContainer(new Container[] { MaterialContainer }, true, true); }
-				case DOWN: 	{ 	return new ItemCapabilityMultiContainer(new Container[] { FuelContainer }, true, true); }
-				case NORTH: { 	return new ItemCapabilityMultiContainer(new Container[] { BatteryContainer }, true, true); }
-				case EAST:  {	return new ItemCapabilityMultiContainer(new Container[] { PartCraftingOutputContainer, GunCraftingOutputContainer }, false, true); }
-				case WEST:  { 	return new ItemCapabilityMultiContainer(new Container[] { PartCraftingInputContainer, GunCraftingInputContainer }, true, false); }
+				case UP: 	{	return new ItemCapabilityMultiContainer(new Container[] { Workbench.MaterialContainer, Workbench.PartCraftingInputContainer, Workbench.GunCraftingInputContainer }, true, true); }
+				case DOWN: 	{ 	return new ItemCapabilityMultiContainer(new Container[] { Workbench.MaterialContainer, Workbench.PartCraftingOutputContainer, Workbench.GunCraftingOutputContainer }, true, true); }
+				case NORTH: { 	return new ItemCapabilityMultiContainer(new Container[] { Workbench.BatteryContainer }, true, true); }
+				case SOUTH: { 	return new ItemCapabilityMultiContainer(new Container[] { Workbench.FuelContainer }, true, true); }
+				case EAST:  {	return new ItemCapabilityMultiContainer(new Container[] { Workbench.PartCraftingOutputContainer, Workbench.GunCraftingOutputContainer }, false, true); }
+				case WEST:  { 	return new ItemCapabilityMultiContainer(new Container[] { Workbench.PartCraftingInputContainer, Workbench.GunCraftingInputContainer }, true, false); }
 			}
 		}
 		// If we have ONLY item holding, show it on all sides
 		else if(Def.itemHolding.slots.length > 0)
 		{
-			return new ItemCapabilityMultiContainer(new Container[] { MaterialContainer }, true, true);
+			return new ItemCapabilityMultiContainer(new Container[] { Workbench.MaterialContainer }, true, true);
 		}
 
 		return ItemCapabilityMultiContainer.Invalid;
@@ -1517,5 +383,32 @@ public class WorkbenchBlockEntity extends BlockEntity implements WorldlyContaine
 		super.invalidateCaps();
 		for(LazyOptional<IItemHandler> lazy : DirectionalItemCapLazyOptionals)
 			lazy.invalidate();
+	}
+
+
+
+	@Nullable
+	public GunFabricationRecipe GetSelectedGunRecipe()
+	{
+		return level != null ? Workbench.GetSelectedGunRecipe(level) : null;
+	}
+	public void UpdateGunCraftingOutputSlot()
+	{
+		if(level != null)
+			Workbench.UpdateGunCraftingOutputSlot(level);
+	}
+	public boolean IsGunCraftingFullyValid()
+	{
+		return level != null && Workbench.IsGunCraftingFullyValid(level);
+	}
+	public void ConsumeGunCraftingInputs()
+	{
+		if(level != null)
+			Workbench.ConsumeGunCraftingInputs(level);
+	}
+	public void QueueCrafting(int count)
+	{
+		if(level != null)
+			Workbench.QueueCrafting(level, count);
 	}
 }

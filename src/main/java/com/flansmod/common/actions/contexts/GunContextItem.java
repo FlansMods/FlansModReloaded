@@ -16,13 +16,13 @@ import java.util.function.BiConsumer;
 
 public class GunContextItem extends GunContext
 {
-	public GunContextItem(ItemStack stack)
+	public GunContextItem(@Nonnull ItemStack stack)
 	{
 		super(stack);
 	}
 	// We don't even know where this ItemStack lives, no-op
 	@Override
-	public void OnItemStackChanged(ItemStack stack) { }
+	public void OnItemStackChanged(@Nonnull ItemStack stack) { }
 	@Override
 	@Nonnull
 	public EItemStackLinkage CheckItemStackLink() { return EItemStackLinkage.NotConnected; }
@@ -36,6 +36,7 @@ public class GunContextItem extends GunContext
 	@Nonnull
 	public ShooterContext GetShooter() { return ShooterContext.INVALID; }
 	@Override
+	@Nullable
 	public Container GetAttachedInventory() { return null; }
 	@Override
 	public boolean CanPerformActions() { return false; }

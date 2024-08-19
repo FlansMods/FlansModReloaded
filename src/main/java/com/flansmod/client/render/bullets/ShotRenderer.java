@@ -5,6 +5,7 @@ import com.flansmod.client.render.FirstPersonManager;
 import com.flansmod.client.render.FlanItemModelRenderer;
 import com.flansmod.client.render.RenderContext;
 import com.flansmod.client.render.models.FlansModelRegistry;
+import com.flansmod.client.render.models.ITurboRenderer;
 import com.flansmod.common.actions.contexts.GunContextPlayer;
 import com.flansmod.common.actions.contexts.GunshotContext;
 import com.flansmod.common.item.FlanItem;
@@ -66,7 +67,7 @@ public class ShotRenderer
 		Item item = ForgeRegistries.ITEMS.getValue(gunshotContext.Bullet.Location);
 		if(item instanceof FlanItem flanItem)
 		{
-			FlanItemModelRenderer itemRenderer = FlansModelRegistry.forItem(flanItem);
+			ITurboRenderer itemRenderer = FlansModelRegistry.GetItemRenderer(flanItem);
 			if(itemRenderer instanceof BulletItemRenderer bulletRenderer)
 			{
 				return bulletRenderer;

@@ -1,6 +1,7 @@
 package com.flansmod.common.crafting.menus;
 
 import com.flansmod.common.FlansMod;
+import com.flansmod.common.crafting.AbstractWorkbench;
 import com.flansmod.common.crafting.slots.AttachmentSlot;
 import com.flansmod.common.crafting.slots.RestrictedSlot;
 import com.flansmod.common.crafting.WorkbenchBlockEntity;
@@ -58,12 +59,12 @@ public class WorkbenchMenuModification extends WorkbenchMenu
 
 	public WorkbenchMenuModification(int containerID,
 							  @Nonnull Inventory inventory,
-							  @Nonnull WorkbenchBlockEntity workbench)
+							  @Nonnull AbstractWorkbench workbench)
 	{
 		super(FlansMod.WORKBENCH_MENU_MODIFICATION.get(), containerID, inventory, workbench);
-		GunContainer = BlockEntity.GunContainer;
-		PaintCanContainer = BlockEntity.PaintCanContainer;
-		MagUpgradeContainer = BlockEntity.MagUpgradeContainer;
+		GunContainer = Workbench.GunContainer;
+		PaintCanContainer = Workbench.PaintCanContainer;
+		MagUpgradeContainer = Workbench.MagUpgradeContainer;
 		CreateSlots(inventory, 0);
 	}
 
@@ -73,9 +74,9 @@ public class WorkbenchMenuModification extends WorkbenchMenu
 	{
 		super(FlansMod.WORKBENCH_MENU_MODIFICATION.get(), containerID, inventory, data);
 
-		GunContainer = BlockEntity.GunContainer;
-		PaintCanContainer = BlockEntity.PaintCanContainer;
-		MagUpgradeContainer = BlockEntity.MagUpgradeContainer;
+		GunContainer = Workbench.GunContainer;
+		PaintCanContainer = Workbench.PaintCanContainer;
+		MagUpgradeContainer = Workbench.MagUpgradeContainer;
 		CreateSlots(inventory, 0);
 	}
 
@@ -89,14 +90,14 @@ public class WorkbenchMenuModification extends WorkbenchMenu
 		{
 			int skinIndex = buttonID - BUTTON_SELECT_SKIN_0;
 			if(!player.level().isClientSide)
-				WorkbenchBlockEntity.PaintGun(player, GunContainer, PaintCanContainer, skinIndex);
+				AbstractWorkbench.PaintGun(player, GunContainer, PaintCanContainer, skinIndex);
 			return true;
 		}
 		if(BUTTON_SELECT_MAGAZINE_0 <= buttonID && buttonID <= BUTTON_SELECT_MAGAZINE_MAX)
 		{
 			int magIndex = buttonID - BUTTON_SELECT_MAGAZINE_0;
 			if(!player.level().isClientSide)
-				WorkbenchBlockEntity.SelectMagazine(player, GunContainer, MagUpgradeContainer, magIndex);
+				AbstractWorkbench.SelectMagazine(player, GunContainer, MagUpgradeContainer, magIndex);
 			return true;
 		}
 		return false;

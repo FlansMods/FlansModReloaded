@@ -5,6 +5,7 @@ import com.flansmod.common.types.JsonDefinition;
 import com.flansmod.common.types.JsonField;
 import com.flansmod.common.types.abilities.elements.CraftingTraitProviderDefinition;
 import com.flansmod.common.types.elements.ItemDefinition;
+import com.flansmod.common.types.elements.ModifierDefinition;
 import com.flansmod.common.types.elements.PaintableDefinition;
 import com.flansmod.common.types.guns.elements.AbilityDefinition;
 import com.flansmod.common.types.guns.elements.HandlerDefinition;
@@ -27,9 +28,22 @@ public class ArmourDefinition extends JsonDefinition
 	}
 
 	@JsonField
-	public boolean enchantable = false;
+	public boolean hasDurability = false;
+	@JsonField
+	public int maxDurability = 0;
+
 	@JsonField
 	public EArmourType armourType = EArmourType.Chest;
+	@JsonField
+	public int armourToughness = 0;
+	@JsonField
+	public int damageReduction = 0;
+
+	@JsonField
+	public boolean enchantable = false;
+	@JsonField
+	public int enchantability = 0;
+
 	@JsonField
 	public ItemDefinition itemSettings = new ItemDefinition();
 	@JsonField
@@ -43,5 +57,16 @@ public class ArmourDefinition extends JsonDefinition
 	@JsonField
 	public ModeDefinition[] modes = new ModeDefinition[0];
 	@JsonField
+	public ModifierDefinition[] modifiers = new ModifierDefinition[0];
+	@JsonField
+	public String[] immunities = new String[0];
+	@JsonField
 	public String animationSet = "";
+	@JsonField
+	public String armourTextureName = "";
+
+	@JsonField
+	public boolean nightVision = false;
+	@JsonField
+	public String screenOverlay = "";
 }

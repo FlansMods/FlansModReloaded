@@ -1,0 +1,40 @@
+{
+    "classes": [
+        "germanScout",
+        "germanAssault",
+        "germanSupport",
+        "germanEngineer",
+        "germanMedic"
+    ],
+    "flagColour": {
+        "alpha": 1.0,
+        "red": 0.2509804,
+        "green": 0.2509804,
+        "blue": 0.2509804
+    },
+    "textColour": {},
+    "hat": {
+        "item": "minecraft:german_helmet",
+        "count": 1,
+        "damage": -1,
+        "tags": "{}"
+    },
+    "chest": {
+        "item": "minecraft:german_coat",
+        "count": 1,
+        "damage": -1,
+        "tags": "{}"
+    },
+    "legs": {
+        "item": "minecraft:german_pants",
+        "count": 1,
+        "damage": -1,
+        "tags": "{}"
+    },
+    "shoes": {
+        "item": "minecraft:german_boots",
+        "count": 1,
+        "damage": -1,
+        "tags": "{}"
+    }
+}

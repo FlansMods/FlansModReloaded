@@ -69,7 +69,7 @@ public class ItemCollectionDefinition
 				{
 					for(MaterialFilterDefinition matFilter : materialFilters)
 					{
-						if(matFilter.Allows(partItem.Def().material))
+						if(matFilter.Allows(partItem.Def().GetMaterial()))
 						{
 							included = true;
 							break;
@@ -89,7 +89,7 @@ public class ItemCollectionDefinition
 						return;
 				if(item instanceof PartItem partItem)
 					for(MaterialFilterDefinition matFilter : materialFilters)
-						if(matFilter.Disallows(partItem.Def().material))
+						if(matFilter.Disallows(partItem.Def().GetMaterial()))
 							return;
 
 				// We passed inclusion and exclusion checks, add the item

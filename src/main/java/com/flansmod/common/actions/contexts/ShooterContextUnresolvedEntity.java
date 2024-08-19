@@ -45,7 +45,7 @@ public class ShooterContextUnresolvedEntity extends ShooterContext
 	public UUID GetGunIDForSlot(int gunSlotIndex) { return FlanItem.InvalidGunUUID; }
 	@Override
 	@Nonnull
-	public GunContext CreateContext(UUID gunID) { return GunContext.INVALID; }
+	public GunContext CreateContext(@Nonnull UUID gunID) { return GunContext.INVALID; }
 	@Override
 	public Entity Entity()
 	{

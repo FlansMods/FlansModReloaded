@@ -89,11 +89,13 @@ public class ServerActionManager extends ActionManager
 				for (var player : level.players())
 				{
 					ShooterContext shooterContext = ShooterContext.of(player);
-					LazyOptional<INpcRelationshipsCapability> relationshipCap = player.getCapability(NpcRelationshipsCapability.INSTANCE);
-					if (relationshipCap.isPresent() && relationshipCap.resolve().isPresent())
-					{
-						relationshipCap.resolve().get().TickAllCooldowns(1);
-					}
+
+					// SEE WARNING @NpcRelationshipsCapability
+					//LazyOptional<INpcRelationshipsCapability> relationshipCap = player.getCapability(NpcRelationshipsCapability.INSTANCE);
+					//if (relationshipCap.isPresent() && relationshipCap.resolve().isPresent())
+					//{
+					//	relationshipCap.resolve().get().TickAllCooldowns(1);
+					//}
 
 					for (int i = 0; i < player.getInventory().getContainerSize(); i++)
 					{

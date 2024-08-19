@@ -1,0 +1,1500 @@
+{
+    "sequences": [
+        {
+            "name": "placerator_fire",
+            "ticks": 20,
+            "frames": [
+                {
+                    "tick": 0,
+                    "entry": "linear",
+                    "exit": "linear",
+                    "frame": "placerator_fire_tick_0"
+                },
+                {
+                    "tick": 2,
+                    "entry": "linear",
+                    "exit": "linear",
+                    "frame": "placerator_fire_tick_2"
+                },
+                {
+                    "tick": 7,
+                    "entry": "linear",
+                    "exit": "linear",
+                    "frame": "placerator_fire_tick_7"
+                },
+                {
+                    "tick": 6,
+                    "entry": "linear",
+                    "exit": "linear",
+                    "frame": "placerator_fire_tick_6"
+                }
+            ]
+        },
+        {
+            "name": "placerator_reload_start",
+            "ticks": 20,
+            "frames": [
+                {
+                    "tick": 0,
+                    "entry": "linear",
+                    "exit": "linear",
+                    "frame": "placerator_reload_start_tick_0"
+                },
+                {
+                    "tick": 5,
+                    "entry": "linear",
+                    "exit": "linear",
+                    "frame": "placerator_reload_start_tick_5"
+                }
+            ]
+        },
+        {
+            "name": "placerator_reload_end",
+            "ticks": 20,
+            "frames": [
+                {
+                    "tick": 0,
+                    "entry": "linear",
+                    "exit": "linear",
+                    "frame": "placerator_reload_end_tick_0"
+                },
+                {
+                    "tick": 8,
+                    "entry": "linear",
+                    "exit": "linear",
+                    "frame": "placerator_reload_end_tick_8"
+                }
+            ]
+        },
+        {
+            "name": "placerator_reload_eject",
+            "ticks": 20,
+            "frames": [
+                {
+                    "tick": 0,
+                    "entry": "linear",
+                    "exit": "linear",
+                    "frame": "placerator_reload_eject_tick_0"
+                },
+                {
+                    "tick": 1,
+                    "entry": "linear",
+                    "exit": "linear",
+                    "frame": "placerator_reload_eject_tick_1"
+                },
+                {
+                    "tick": 8,
+                    "entry": "linear",
+                    "exit": "linear",
+                    "frame": "placerator_reload_eject_tick_8"
+                }
+            ]
+        },
+        {
+            "name": "placerator_reload_load_one",
+            "ticks": 20,
+            "frames": [
+                {
+                    "tick": 0,
+                    "entry": "linear",
+                    "exit": "linear",
+                    "frame": "placerator_reload_load_one_tick_0"
+                },
+                {
+                    "tick": 2,
+                    "entry": "linear",
+                    "exit": "linear",
+                    "frame": "placerator_reload_load_one_tick_2"
+                },
+                {
+                    "tick": 3,
+                    "entry": "linear",
+                    "exit": "linear",
+                    "frame": "placerator_reload_load_one_tick_3"
+                }
+            ]
+        }
+    ],
+    "keyframes": [
+        {
+            "name": "placerator_fire_tick_0",
+            "poses": [
+                {
+                    "applyTo": "spring_segment_2",
+                    "position": [
+                        "0",
+                        "3.5",
+                        "-1.93649995326996"
+                    ],
+                    "rotation": [
+                        "0",
+                        "0",
+                        "0"
+                    ],
+                    "scale": [
+                        0.0,
+                        0.0,
+                        0.0
+                    ]
+                },
+                {
+                    "applyTo": "spring_segment_3",
+                    "position": [
+                        "0",
+                        "3.5",
+                        "-1.07737493515015"
+                    ],
+                    "rotation": [
+                        "0",
+                        "0",
+                        "0"
+                    ],
+                    "scale": [
+                        0.0,
+                        0.0,
+                        0.0
+                    ]
+                },
+                {
+                    "applyTo": "spring_segment_1",
+                    "position": [
+                        "0",
+                        "3.5",
+                        "-2.79562497138977"
+                    ],
+                    "rotation": [
+                        "0",
+                        "0",
+                        "0"
+                    ],
+                    "scale": [
+                        0.0,
+                        0.0,
+                        0.0
+                    ]
+                },
+                {
+                    "applyTo": "spring_segment_0",
+                    "position": [
+                        "0",
+                        "3.5",
+                        "-3.65474987030029"
+                    ],
+                    "rotation": [
+                        "0",
+                        "0",
+                        "0"
+                    ],
+                    "scale": [
+                        0.0,
+                        0.0,
+                        0.0
+                    ]
+                },
+                {
+                    "applyTo": "spring_end",
+                    "position": [
+                        "0",
+                        "3.5",
+                        "-4.08431243896484"
+                    ],
+                    "rotation": [
+                        "0",
+                        "0",
+                        "0"
+                    ],
+                    "scale": [
+                        0.0,
+                        0.0,
+                        0.0
+                    ]
+                },
+                {
+                    "applyTo": "spring_piece_3_up",
+                    "position": [
+                        "0",
+                        "0",
+                        "0"
+                    ],
+                    "rotation": [
+                        "0",
+                        "0",
+                        "0"
+                    ],
+                    "scale": [
+                        0.0,
+                        0.0,
+                        0.0
+                    ]
+                },
+                {
+                    "applyTo": "spring_piece_3_left",
+                    "position": [
+                        "0",
+                        "0",
+                        "0"
+                    ],
+                    "rotation": [
+                        "0",
+                        "0",
+                        "0"
+                    ],
+                    "scale": [
+                        0.0,
+                        0.0,
+                        0.0
+                    ]
+                },
+                {
+                    "applyTo": "spring_piece_3_right",
+                    "position": [
+                        "0",
+                        "0",
+                        "0"
+                    ],
+                    "rotation": [
+                        "0",
+                        "0",
+                        "0"
+                    ],
+                    "scale": [
+                        0.0,
+                        0.0,
+                        0.0
+                    ]
+                },
+                {
+                    "applyTo": "spring_piece_2_right",
+                    "position": [
+                        "0",
+                        "0",
+                        "0"
+                    ],
+                    "rotation": [
+                        "0",
+                        "0",
+                        "0"
+                    ],
+                    "scale": [
+                        0.0,
+                        0.0,
+                        0.0
+                    ]
+                },
+                {
+                    "applyTo": "spring_piece_2_left",
+                    "position": [
+                        "0",
+                        "0",
+                        "0"
+                    ],
+                    "rotation": [
+                        "0",
+                        "0",
+                        "0"
+                    ],
+                    "scale": [
+                        0.0,
+                        0.0,
+                        0.0
+                    ]
+                },
+                {
+                    "applyTo": "spring_piece_2_up",
+                    "position": [
+                        "0",
+                        "0",
+                        "0"
+                    ],
+                    "rotation": [
+                        "0",
+                        "0",
+                        "0"
+                    ],
+                    "scale": [
+                        0.0,
+                        0.0,
+                        0.0
+                    ]
+                },
+                {
+                    "applyTo": "spring_piece_1_right",
+                    "position": [
+                        "0",
+                        "0",
+                        "0"
+                    ],
+                    "rotation": [
+                        "0",
+                        "0",
+                        "0"
+                    ],
+                    "scale": [
+                        0.0,
+                        0.0,
+                        0.0
+                    ]
+                },
+                {
+                    "applyTo": "spring_piece_1_left",
+                    "position": [
+                        "0",
+                        "0",
+                        "0"
+                    ],
+                    "rotation": [
+                        "0",
+                        "0",
+                        "0"
+                    ],
+                    "scale": [
+                        0.0,
+                        0.0,
+                        0.0
+                    ]
+                },
+                {
+                    "applyTo": "spring_piece_1_up",
+                    "position": [
+                        "0",
+                        "0",
+                        "0"
+                    ],
+                    "rotation": [
+                        "0",
+                        "0",
+                        "0"
+                    ],
+                    "scale": [
+                        0.0,
+                        0.0,
+                        0.0
+                    ]
+                },
+                {
+                    "applyTo": "spring_piece_0_up",
+                    "position": [
+                        "0",
+                        "0",
+                        "0"
+                    ],
+                    "rotation": [
+                        "0",
+                        "0",
+                        "0"
+                    ],
+                    "scale": [
+                        0.0,
+                        0.0,
+                        0.0
+                    ]
+                },
+                {
+                    "applyTo": "spring_piece_0_left",
+                    "position": [
+                        "0",
+                        "0",
+                        "0"
+                    ],
+                    "rotation": [
+                        "0",
+                        "0",
+                        "0"
+                    ],
+                    "scale": [
+                        0.0,
+                        0.0,
+                        0.0
+                    ]
+                },
+                {
+                    "applyTo": "spring_piece_0_right",
+                    "position": [
+                        "0",
+                        "0",
+                        "0"
+                    ],
+                    "rotation": [
+                        "0",
+                        "0",
+                        "0"
+                    ],
+                    "scale": [
+                        0.0,
+                        0.0,
+                        0.0
+                    ]
+                },
+                {
+                    "applyTo": "ammo_0",
+                    "position": [
+                        "0",
+                        "2",
+                        "-2"
+                    ],
+                    "rotation": [
+                        "0",
+                        "0",
+                        "0"
+                    ],
+                    "scale": [
+                        0.0,
+                        0.0,
+                        0.0
+                    ]
+                }
+            ],
+            "parents": []
+        },
+        {
+            "name": "placerator_fire_tick_2",
+            "poses": [
+                {
+                    "applyTo": "spring_segment_2",
+                    "position": [
+                        "0",
+                        "3.5",
+                        "-1.93649995326996"
+                    ],
+                    "rotation": [
+                        "0",
+                        "0",
+                        "0"
+                    ],
+                    "scale": [
+                        0.0,
+                        0.0,
+                        0.0
+                    ]
+                },
+                {
+                    "applyTo": "spring_segment_3",
+                    "position": [
+                        "0",
+                        "3.5",
+                        "-1.07737493515015"
+                    ],
+                    "rotation": [
+                        "0",
+                        "0",
+                        "0"
+                    ],
+                    "scale": [
+                        0.0,
+                        0.0,
+                        0.0
+                    ]
+                },
+                {
+                    "applyTo": "spring_segment_1",
+                    "position": [
+                        "0",
+                        "3.5",
+                        "-2.79562497138977"
+                    ],
+                    "rotation": [
+                        "0",
+                        "0",
+                        "0"
+                    ],
+                    "scale": [
+                        0.0,
+                        0.0,
+                        0.0
+                    ]
+                },
+                {
+                    "applyTo": "spring_segment_0",
+                    "position": [
+                        "0",
+                        "3.5",
+                        "-3.65474987030029"
+                    ],
+                    "rotation": [
+                        "0",
+                        "0",
+                        "0"
+                    ],
+                    "scale": [
+                        0.0,
+                        0.0,
+                        0.0
+                    ]
+                },
+                {
+                    "applyTo": "spring_end",
+                    "position": [
+                        "0",
+                        "3.5",
+                        "-4.08431243896484"
+                    ],
+                    "rotation": [
+                        "0",
+                        "0",
+                        "0"
+                    ],
+                    "scale": [
+                        0.0,
+                        0.0,
+                        0.0
+                    ]
+                },
+                {
+                    "applyTo": "spring_piece_3_up",
+                    "position": [
+                        "0",
+                        "0",
+                        "0"
+                    ],
+                    "rotation": [
+                        "0",
+                        "0",
+                        "0"
+                    ],
+                    "scale": [
+                        0.0,
+                        0.0,
+                        0.0
+                    ]
+                },
+                {
+                    "applyTo": "spring_piece_3_left",
+                    "position": [
+                        "0",
+                        "0",
+                        "0"
+                    ],
+                    "rotation": [
+                        "0",
+                        "0",
+                        "0"
+                    ],
+                    "scale": [
+                        0.0,
+                        0.0,
+                        0.0
+                    ]
+                },
+                {
+                    "applyTo": "spring_piece_3_right",
+                    "position": [
+                        "0",
+                        "0",
+                        "0"
+                    ],
+                    "rotation": [
+                        "0",
+                        "0",
+                        "0"
+                    ],
+                    "scale": [
+                        0.0,
+                        0.0,
+                        0.0
+                    ]
+                },
+                {
+                    "applyTo": "spring_piece_2_right",
+                    "position": [
+                        "0",
+                        "0",
+                        "0"
+                    ],
+                    "rotation": [
+                        "0",
+                        "0",
+                        "0"
+                    ],
+                    "scale": [
+                        0.0,
+                        0.0,
+                        0.0
+                    ]
+                },
+                {
+                    "applyTo": "spring_piece_2_left",
+                    "position": [
+                        "0",
+                        "0",
+                        "0"
+                    ],
+                    "rotation": [
+                        "0",
+                        "0",
+                        "0"
+                    ],
+                    "scale": [
+                        0.0,
+                        0.0,
+                        0.0
+                    ]
+                },
+                {
+                    "applyTo": "spring_piece_2_up",
+                    "position": [
+                        "0",
+                        "0",
+                        "0"
+                    ],
+                    "rotation": [
+                        "0",
+                        "0",
+                        "0"
+                    ],
+                    "scale": [
+                        0.0,
+                        0.0,
+                        0.0
+                    ]
+                },
+                {
+                    "applyTo": "spring_piece_1_right",
+                    "position": [
+                        "0",
+                        "0",
+                        "0"
+                    ],
+                    "rotation": [
+                        "0",
+                        "0",
+                        "0"
+                    ],
+                    "scale": [
+                        0.0,
+                        0.0,
+                        0.0
+                    ]
+                },
+                {
+                    "applyTo": "spring_piece_1_left",
+                    "position": [
+                        "0",
+                        "0",
+                        "0"
+                    ],
+                    "rotation": [
+                        "0",
+                        "0",
+                        "0"
+                    ],
+                    "scale": [
+                        0.0,
+                        0.0,
+                        0.0
+                    ]
+                },
+                {
+                    "applyTo": "spring_piece_1_up",
+                    "position": [
+                        "0",
+                        "0",
+                        "0"
+                    ],
+                    "rotation": [
+                        "0",
+                        "0",
+                        "0"
+                    ],
+                    "scale": [
+                        0.0,
+                        0.0,
+                        0.0
+                    ]
+                },
+                {
+                    "applyTo": "spring_piece_0_up",
+                    "position": [
+                        "0",
+                        "0",
+                        "0"
+                    ],
+                    "rotation": [
+                        "0",
+                        "0",
+                        "0"
+                    ],
+                    "scale": [
+                        0.0,
+                        0.0,
+                        0.0
+                    ]
+                },
+                {
+                    "applyTo": "spring_piece_0_left",
+                    "position": [
+                        "0",
+                        "0",
+                        "0"
+                    ],
+                    "rotation": [
+                        "0",
+                        "0",
+                        "0"
+                    ],
+                    "scale": [
+                        0.0,
+                        0.0,
+                        0.0
+                    ]
+                },
+                {
+                    "applyTo": "spring_piece_0_right",
+                    "position": [
+                        "0",
+                        "0",
+                        "0"
+                    ],
+                    "rotation": [
+                        "0",
+                        "0",
+                        "0"
+                    ],
+                    "scale": [
+                        0.0,
+                        0.0,
+                        0.0
+                    ]
+                },
+                {
+                    "applyTo": "ammo_0",
+                    "position": [
+                        "0",
+                        "2",
+                        "-2.75"
+                    ],
+                    "rotation": [
+                        "0",
+                        "0",
+                        "0"
+                    ],
+                    "scale": [
+                        0.0,
+                        0.0,
+                        0.0
+                    ]
+                }
+            ],
+            "parents": []
+        },
+        {
+            "name": "placerator_fire_tick_7",
+            "poses": [
+                {
+                    "applyTo": "spring_segment_2",
+                    "position": [
+                        "0",
+                        "3.5",
+                        "-0.5"
+                    ],
+                    "rotation": [
+                        "0",
+                        "0",
+                        "0"
+                    ],
+                    "scale": [
+                        0.0,
+                        0.0,
+                        0.0
+                    ]
+                },
+                {
+                    "applyTo": "spring_segment_3",
+                    "position": [
+                        "0",
+                        "3.5",
+                        "0"
+                    ],
+                    "rotation": [
+                        "0",
+                        "0",
+                        "0"
+                    ],
+                    "scale": [
+                        0.0,
+                        0.0,
+                        0.0
+                    ]
+                },
+                {
+                    "applyTo": "spring_segment_1",
+                    "position": [
+                        "0",
+                        "3.5",
+                        "-1"
+                    ],
+                    "rotation": [
+                        "0",
+                        "0",
+                        "0"
+                    ],
+                    "scale": [
+                        0.0,
+                        0.0,
+                        0.0
+                    ]
+                },
+                {
+                    "applyTo": "spring_segment_0",
+                    "position": [
+                        "0",
+                        "3.5",
+                        "-1.5"
+                    ],
+                    "rotation": [
+                        "0",
+                        "0",
+                        "0"
+                    ],
+                    "scale": [
+                        0.0,
+                        0.0,
+                        0.0
+                    ]
+                },
+                {
+                    "applyTo": "spring_end",
+                    "position": [
+                        "0",
+                        "3.5",
+                        "-1.75"
+                    ],
+                    "rotation": [
+                        "0",
+                        "0",
+                        "0"
+                    ],
+                    "scale": [
+                        0.0,
+                        0.0,
+                        0.0
+                    ]
+                },
+                {
+                    "applyTo": "spring_piece_3_up",
+                    "position": [
+                        "0",
+                        "0",
+                        "0"
+                    ],
+                    "rotation": [
+                        "0",
+                        "0",
+                        "0"
+                    ],
+                    "scale": [
+                        0.0,
+                        0.0,
+                        0.0
+                    ]
+                },
+                {
+                    "applyTo": "spring_piece_3_left",
+                    "position": [
+                        "0",
+                        "0",
+                        "0"
+                    ],
+                    "rotation": [
+                        "0",
+                        "0",
+                        "0"
+                    ],
+                    "scale": [
+                        0.0,
+                        0.0,
+                        0.0
+                    ]
+                },
+                {
+                    "applyTo": "spring_piece_3_right",
+                    "position": [
+                        "0",
+                        "0",
+                        "0"
+                    ],
+                    "rotation": [
+                        "0",
+                        "0",
+                        "0"
+                    ],
+                    "scale": [
+                        0.0,
+                        0.0,
+                        0.0
+                    ]
+                },
+                {
+                    "applyTo": "spring_piece_2_right",
+                    "position": [
+                        "0",
+                        "0",
+                        "0"
+                    ],
+                    "rotation": [
+                        "0",
+                        "0",
+                        "0"
+                    ],
+                    "scale": [
+                        0.0,
+                        0.0,
+                        0.0
+                    ]
+                },
+                {
+                    "applyTo": "spring_piece_2_left",
+                    "position": [
+                        "0",
+                        "0",
+                        "0"
+                    ],
+                    "rotation": [
+                        "0",
+                        "0",
+                        "0"
+                    ],
+                    "scale": [
+                        0.0,
+                        0.0,
+                        0.0
+                    ]
+                },
+                {
+                    "applyTo": "spring_piece_2_up",
+                    "position": [
+                        "0",
+                        "0",
+                        "0"
+                    ],
+                    "rotation": [
+                        "0",
+                        "0",
+                        "0"
+                    ],
+                    "scale": [
+                        0.0,
+                        0.0,
+                        0.0
+                    ]
+                },
+                {
+                    "applyTo": "spring_piece_1_right",
+                    "position": [
+                        "0",
+                        "0",
+                        "0"
+                    ],
+                    "rotation": [
+                        "0",
+                        "0",
+                        "0"
+                    ],
+                    "scale": [
+                        0.0,
+                        0.0,
+                        0.0
+                    ]
+                },
+                {
+                    "applyTo": "spring_piece_1_left",
+                    "position": [
+                        "0",
+                        "0",
+                        "0"
+                    ],
+                    "rotation": [
+                        "0",
+                        "0",
+                        "0"
+                    ],
+                    "scale": [
+                        0.0,
+                        0.0,
+                        0.0
+                    ]
+                },
+                {
+                    "applyTo": "spring_piece_1_up",
+                    "position": [
+                        "0",
+                        "0",
+                        "0"
+                    ],
+                    "rotation": [
+                        "0",
+                        "0",
+                        "0"
+                    ],
+                    "scale": [
+                        0.0,
+                        0.0,
+                        0.0
+                    ]
+                },
+                {
+                    "applyTo": "spring_piece_0_up",
+                    "position": [
+                        "0",
+                        "0",
+                        "0"
+                    ],
+                    "rotation": [
+                        "0",
+                        "0",
+                        "0"
+                    ],
+                    "scale": [
+                        0.0,
+                        0.0,
+                        0.0
+                    ]
+                },
+                {
+                    "applyTo": "spring_piece_0_left",
+                    "position": [
+                        "0",
+                        "0",
+                        "0"
+                    ],
+                    "rotation": [
+                        "0",
+                        "0",
+                        "0"
+                    ],
+                    "scale": [
+                        0.0,
+                        0.0,
+                        0.0
+                    ]
+                },
+                {
+                    "applyTo": "spring_piece_0_right",
+                    "position": [
+                        "0",
+                        "0",
+                        "0"
+                    ],
+                    "rotation": [
+                        "0",
+                        "0",
+                        "0"
+                    ],
+                    "scale": [
+                        0.0,
+                        0.0,
+                        0.0
+                    ]
+                },
+                {
+                    "applyTo": "ammo_0",
+                    "position": [
+                        "0",
+                        "3",
+                        "-4"
+                    ],
+                    "rotation": [
+                        "0",
+                        "0",
+                        "0"
+                    ],
+                    "scale": [
+                        0.0,
+                        0.0,
+                        0.0
+                    ]
+                }
+            ],
+            "parents": []
+        },
+        {
+            "name": "placerator_fire_tick_6",
+            "poses": [
+                {
+                    "applyTo": "ammo_0",
+                    "position": [
+                        "0",
+                        "2.75",
+                        "-3.25"
+                    ],
+                    "rotation": [
+                        "0",
+                        "0",
+                        "0"
+                    ],
+                    "scale": [
+                        0.0,
+                        0.0,
+                        0.0
+                    ]
+                }
+            ],
+            "parents": []
+        },
+        {
+            "name": "placerator_reload_start_tick_0",
+            "poses": [
+                {
+                    "applyTo": "body",
+                    "position": [
+                        "0",
+                        "0",
+                        "0"
+                    ],
+                    "rotation": [
+                        "0",
+                        "0",
+                        "0"
+                    ],
+                    "scale": [
+                        0.0,
+                        0.0,
+                        0.0
+                    ]
+                },
+                {
+                    "applyTo": "ammo_mag_0",
+                    "position": [
+                        "0",
+                        "2",
+                        "-3"
+                    ],
+                    "rotation": [
+                        "0",
+                        "0",
+                        "0"
+                    ],
+                    "scale": [
+                        0.0,
+                        0.0,
+                        0.0
+                    ]
+                }
+            ],
+            "parents": []
+        },
+        {
+            "name": "placerator_reload_start_tick_5",
+            "poses": [
+                {
+                    "applyTo": "body",
+                    "position": [
+                        "0",
+                        "1.35000002384186",
+                        "0"
+                    ],
+                    "rotation": [
+                        "0",
+                        "0",
+                        "0"
+                    ],
+                    "scale": [
+                        0.0,
+                        0.0,
+                        0.0
+                    ]
+                },
+                {
+                    "applyTo": "ammo_mag_0",
+                    "position": [
+                        "0",
+                        "2",
+                        "-3"
+                    ],
+                    "rotation": [
+                        "0",
+                        "0",
+                        "0"
+                    ],
+                    "scale": [
+                        0.0,
+                        0.0,
+                        0.0
+                    ]
+                }
+            ],
+            "parents": []
+        },
+        {
+            "name": "placerator_reload_end_tick_0",
+            "poses": [
+                {
+                    "applyTo": "body",
+                    "position": [
+                        "-0.660000026226044",
+                        "2.71000003814697",
+                        "-0.180000007152557"
+                    ],
+                    "rotation": [
+                        "0",
+                        "0",
+                        "0"
+                    ],
+                    "scale": [
+                        0.0,
+                        0.0,
+                        0.0
+                    ]
+                }
+            ],
+            "parents": []
+        },
+        {
+            "name": "placerator_reload_end_tick_8",
+            "poses": [
+                {
+                    "applyTo": "body",
+                    "position": [
+                        "0",
+                        "0",
+                        "0"
+                    ],
+                    "rotation": [
+                        "0",
+                        "0",
+                        "0"
+                    ],
+                    "scale": [
+                        0.0,
+                        0.0,
+                        0.0
+                    ]
+                }
+            ],
+            "parents": []
+        },
+        {
+            "name": "placerator_reload_eject_tick_0",
+            "poses": [
+                {
+                    "applyTo": "body",
+                    "position": [
+                        "0",
+                        "1.35000002384186",
+                        "0"
+                    ],
+                    "rotation": [
+                        "0",
+                        "0",
+                        "0"
+                    ],
+                    "scale": [
+                        0.0,
+                        0.0,
+                        0.0
+                    ]
+                },
+                {
+                    "applyTo": "ammo_mag_0",
+                    "position": [
+                        "0",
+                        "2",
+                        "-3"
+                    ],
+                    "rotation": [
+                        "0",
+                        "0",
+                        "0"
+                    ],
+                    "scale": [
+                        0.0,
+                        0.0,
+                        0.0
+                    ]
+                }
+            ],
+            "parents": []
+        },
+        {
+            "name": "placerator_reload_eject_tick_1",
+            "poses": [
+                {
+                    "applyTo": "body",
+                    "position": [
+                        "-1.62000000476837",
+                        "0.519999980926514",
+                        "0"
+                    ],
+                    "rotation": [
+                        "0",
+                        "0",
+                        "0"
+                    ],
+                    "scale": [
+                        0.0,
+                        0.0,
+                        0.0
+                    ]
+                },
+                {
+                    "applyTo": "ammo_mag_0",
+                    "position": [
+                        "1.12000000476837",
+                        "-1.41999995708466",
+                        "-3"
+                    ],
+                    "rotation": [
+                        "0",
+                        "0",
+                        "0"
+                    ],
+                    "scale": [
+                        0.0,
+                        0.0,
+                        0.0
+                    ]
+                }
+            ],
+            "parents": []
+        },
+        {
+            "name": "placerator_reload_eject_tick_8",
+            "poses": [
+                {
+                    "applyTo": "body",
+                    "position": [
+                        "-0.660000026226044",
+                        "2.71000003814697",
+                        "-0.180000007152557"
+                    ],
+                    "rotation": [
+                        "0",
+                        "0",
+                        "0"
+                    ],
+                    "scale": [
+                        0.0,
+                        0.0,
+                        0.0
+                    ]
+                },
+                {
+                    "applyTo": "ammo_mag_0",
+                    "position": [
+                        "-9.69999980926514",
+                        "-6",
+                        "18.1000003814697"
+                    ],
+                    "rotation": [
+                        "0",
+                        "0",
+                        "0"
+                    ],
+                    "scale": [
+                        0.0,
+                        0.0,
+                        0.0
+                    ]
+                }
+            ],
+            "parents": []
+        },
+        {
+            "name": "placerator_reload_load_one_tick_0",
+            "poses": [
+                {
+                    "applyTo": "body",
+                    "position": [
+                        "-0.660000026226044",
+                        "2.71000003814697",
+                        "-0.180000007152557"
+                    ],
+                    "rotation": [
+                        "0",
+                        "0",
+                        "0"
+                    ],
+                    "scale": [
+                        0.0,
+                        0.0,
+                        0.0
+                    ]
+                },
+                {
+                    "applyTo": "ammo_mag_0",
+                    "position": [
+                        "8.10999965667725",
+                        "-3.44000005722046",
+                        "7.26000022888184"
+                    ],
+                    "rotation": [
+                        "0",
+                        "0",
+                        "0"
+                    ],
+                    "scale": [
+                        0.0,
+                        0.0,
+                        0.0
+                    ]
+                }
+            ],
+            "parents": []
+        },
+        {
+            "name": "placerator_reload_load_one_tick_2",
+            "poses": [
+                {
+                    "applyTo": "body",
+                    "position": [
+                        "-1.38999998569489",
+                        "2.88000011444092",
+                        "-0.200000002980232"
+                    ],
+                    "rotation": [
+                        "0",
+                        "0",
+                        "0"
+                    ],
+                    "scale": [
+                        0.0,
+                        0.0,
+                        0.0
+                    ]
+                },
+                {
+                    "applyTo": "ammo_mag_0",
+                    "position": [
+                        "0",
+                        "2",
+                        "-3"
+                    ],
+                    "rotation": [
+                        "0",
+                        "0",
+                        "0"
+                    ],
+                    "scale": [
+                        0.0,
+                        0.0,
+                        0.0
+                    ]
+                }
+            ],
+            "parents": []
+        },
+        {
+            "name": "placerator_reload_load_one_tick_3",
+            "poses": [
+                {
+                    "applyTo": "body",
+                    "position": [
+                        "-0.660000026226044",
+                        "2.71000003814697",
+                        "-0.180000007152557"
+                    ],
+                    "rotation": [
+                        "0",
+                        "0",
+                        "0"
+                    ],
+                    "scale": [
+                        0.0,
+                        0.0,
+                        0.0
+                    ]
+                }
+            ],
+            "parents": []
+        }
+    ]
+}

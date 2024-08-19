@@ -6,13 +6,14 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 public class GunContextPlayer extends GunContextLiving
 {
 	private final Player Player;
 	private final int InventorySlot;
 
-	public GunContextPlayer(ShooterContextPlayer shooter, int inventorySlot)
+	public GunContextPlayer(@Nonnull ShooterContextPlayer shooter, int inventorySlot)
 	{
 		super(shooter, inventorySlot == Inventory.SLOT_OFFHAND ? InteractionHand.OFF_HAND : InteractionHand.MAIN_HAND, inventorySlot);
 
@@ -21,7 +22,7 @@ public class GunContextPlayer extends GunContextLiving
 	}
 
 	@Override
-	public void OnItemStackChanged(ItemStack stack)
+	public void OnItemStackChanged(@Nonnull ItemStack stack)
 	{
 		ItemStack stackInSlot = Player.getInventory().getItem(InventorySlot);
 		Player.getInventory().setItem(InventorySlot, stack);
@@ -34,12 +35,14 @@ public class GunContextPlayer extends GunContextLiving
 	@Nonnull
 	public ItemStack GetLinkedItemStack() { return Player.getInventory().getItem(InventorySlot); }
 	@Override
+	@Nullable
 	public Inventory GetAttachedInventory()
 	{
 		return Player.getInventory();
 	}
 	@Override
 	public int GetInventorySlotIndex() { return InventorySlot; }
+	@Nonnull
 	@Override
 	public String toString()
 	{

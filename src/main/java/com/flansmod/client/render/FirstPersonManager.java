@@ -2,7 +2,10 @@ package com.flansmod.client.render;
 
 import com.flansmod.client.FlansModClient;
 import com.flansmod.client.render.animation.FlanimationDefinition;
+import com.flansmod.client.render.guns.AttachmentItemRenderer;
+import com.flansmod.client.render.guns.GunItemRenderer;
 import com.flansmod.client.render.models.FlansModelRegistry;
+import com.flansmod.client.render.models.ITurboRenderer;
 import com.flansmod.common.FlansMod;
 import com.flansmod.common.actions.ActionGroupInstance;
 import com.flansmod.common.actions.ActionInstance;
@@ -11,6 +14,7 @@ import com.flansmod.common.actions.contexts.*;
 import com.flansmod.common.actions.nodes.AimDownSightAction;
 import com.flansmod.common.gunshots.PlayerSnapshot;
 import com.flansmod.common.gunshots.Raytracer;
+import com.flansmod.common.item.GunItem;
 import com.flansmod.common.types.attachments.AttachmentDefinition;
 import com.flansmod.common.types.attachments.EAttachmentType;
 import com.flansmod.util.Maths;
@@ -299,10 +303,10 @@ public class FirstPersonManager
 										@Nonnull ItemDisplayContext transformType)
 	{
 		float dt = Minecraft.getInstance().getPartialTick();
-		FlanItemModelRenderer gunRenderer = FlansModelRegistry.forItem(gunContext.Stack);
-		if(gunRenderer != null)
+		ITurboRenderer turboRenderer = FlansModelRegistry.GetItemRenderer(gunContext.Stack);
+		if(turboRenderer instanceof GunItemRenderer gunRenderer)
 		{
-			Transform defaultPose = gunRenderer.BakedRig.GetTransform(transformType);
+			Transform defaultPose = gunRenderer.GetTurboRigWrapper().GetTransform(transformType);
 			switch(transformType)
 			{
 				case FIRST_PERSON_RIGHT_HAND, FIRST_PERSON_LEFT_HAND -> {
@@ -333,7 +337,7 @@ public class FirstPersonManager
 
 	public static void ApplyItemTransforms(@Nonnull TransformStack transformStack, @Nonnull GunContext gunContext)
 	{
-		FlanItemModelRenderer gunRenderer = FlansModelRegistry.forItem(gunContext.Stack);
+		ITurboRenderer gunRenderer = FlansModelRegistry.GetItemRenderer(gunContext.Stack);
 		if(gunRenderer != null)
 		{
 
@@ -345,8 +349,8 @@ public class FirstPersonManager
 									  @Nonnull String apName,
 									  boolean animated)
 	{
-		FlanItemModelRenderer gunRenderer = FlansModelRegistry.forItem(gunContext.Stack);
-		if(gunRenderer != null)
+		ITurboRenderer turboRenderer = FlansModelRegistry.GetItemRenderer(gunContext.Stack);
+		if(turboRenderer instanceof GunItemRenderer gunRenderer)
 		{
 			FlanimationDefinition animationSet = animated ? FlansModClient.ANIMATIONS.Get(new ResourceLocation(gunContext.Def.animationSet)) : null;
 			ActionStack actionStack = animated ? gunContext.GetActionStack() : null;
@@ -367,8 +371,8 @@ public class FirstPersonManager
 				AttachmentDefinition attachDef = gunContext.GetAttachmentDefinition(attachmentType, attachmentIndex);
 				if (attachDef.IsValid())
 				{
-					FlanItemModelRenderer attachmentRenderer = FlansModelRegistry.forItem(attachDef);
-					if (attachmentRenderer != null)
+					ITurboRenderer turboRenderer1 = FlansModelRegistry.GetItemRenderer(attachDef.Location);
+					if (turboRenderer1 instanceof AttachmentItemRenderer attachmentRenderer)
 					{
 						attachmentRenderer.ApplyAPOffsetInternal(transformStack, childAPName, null, null);
 					}

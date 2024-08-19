@@ -18,7 +18,7 @@ import com.flansmod.common.types.guns.elements.*;
 import com.flansmod.common.types.elements.ModifierDefinition;
 import com.flansmod.common.types.guns.*;
 import com.flansmod.common.types.parts.PartDefinition;
-import com.flansmod.common.types.vehicles.EPlayerInput;
+import com.flansmod.common.types.elements.EPlayerInput;
 import com.flansmod.util.MinecraftHelpers;
 import com.flansmod.util.Transform;
 import com.flansmod.util.formulae.FloatAccumulation;
@@ -46,7 +46,7 @@ public abstract class GunContext implements IStatCalculatorContext
 	public static final GunContext INVALID = new GunContext(ItemStack.EMPTY)
 	{
 		@Override
-		public void OnItemStackChanged(ItemStack stack) {}
+		public void OnItemStackChanged(@Nonnull ItemStack stack) {}
 		@Override
 		@Nonnull
 		public EItemStackLinkage CheckItemStackLink() { return EItemStackLinkage.NotConnected; }
@@ -60,6 +60,7 @@ public abstract class GunContext implements IStatCalculatorContext
 		@Nonnull
 		public ShooterContext GetShooter() { return ShooterContext.INVALID; }
 		@Override
+		@Nullable
 		public Inventory GetAttachedInventory() { return null; }
 		@Override
 		public boolean CanPerformTwoHandedAction() { return false; }
