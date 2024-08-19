@@ -12,7 +12,7 @@ public record SeparationTestResult(@Nonnull ISeparator Separator,
 {
 	public boolean IsColliding() { return Distance < 0.0f; }
 	public boolean IsNonColliding() { return Distance >= 0.0f; }
-	public double GetCollisionDepth() { return Maths.Min(-Distance, 0d); }
+	public double GetCollisionDepth() { return Maths.Min(Distance, 0d); }
 
 	@Nonnull
 	public Vec3 GetPointBetween(@Nonnull Vec3 centerA, @Nonnull Vec3 centerB)

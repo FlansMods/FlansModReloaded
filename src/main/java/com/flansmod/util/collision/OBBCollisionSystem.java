@@ -1,6 +1,7 @@
 package com.flansmod.util.collision;
 
 import com.flansmod.common.FlansMod;
+import com.flansmod.util.collision.threading.CollisionTasks;
 import com.flansmod.util.physics.*;
 import com.flansmod.util.Maths;
 import com.flansmod.util.Transform;
@@ -40,6 +41,7 @@ public class OBBCollisionSystem
 	private final CollisionGetter BlockAccess;
 	private final Map<ColliderHandle, DynamicObject> Dynamics = new HashMap<>();
 	private final List<ColliderHandle> AllHandles = new ArrayList<>();
+	private final List<ColliderHandle> InvalidatedHandles = new ArrayList<>();
 	private final Map<Pair<ColliderHandle, ColliderHandle>, ImmutableList<ISeparator>> DynamicSeparations = new HashMap<>();
 	private final Map<ColliderHandle, ImmutableList<ISeparator>> StaticSeparators = new HashMap<>();
 	private long NextID = 1L;
@@ -47,6 +49,7 @@ public class OBBCollisionSystem
 	public static final double MAX_LINEAR_BLOCKS_PER_TICK = 60d;
 	public static final double MAX_ANGULAR_MOTION_PER_TICK = 60d;
 
+	public static boolean PAUSE_PHYSICS = false;
 
 	private final boolean SINGLE_THREAD_DEBUG = true;
 	public static ColliderHandle DEBUG_HANDLE = new ColliderHandle(0L);
@@ -155,6 +158,14 @@ public class OBBCollisionSystem
 		});
 		return handle;
 	}
+	public void UnregisterDynamic(@Nonnull ColliderHandle handle)
+	{
+		DoAfterPhysics(() -> {
+			Dynamics.remove(handle);
+			AllHandles.remove(handle);
+			InvalidatedHandles.remove(handle);
+		});
+	}
 	public void UpdateColliders(@Nonnull ColliderHandle handle, @Nonnull List<AABB> localColliders)
 	{
 		// TODO:
@@ -205,6 +216,11 @@ public class OBBCollisionSystem
 		});
 	}
 
+
+	public boolean IsHandleInvalidated(@Nonnull ColliderHandle handle)
+	{
+		return InvalidatedHandles.contains(handle);
+	}
 	@Nonnull
 	public Transform ProcessEvents(@Nonnull ColliderHandle handle,
 							  @Nonnull Consumer<StaticCollisionEvent> staticFunc,
@@ -260,9 +276,20 @@ public class OBBCollisionSystem
 		{
 			try
 			{
-				for (DynamicObject dyn : Dynamics.values())
+				List<ColliderHandle> expiredHandles = new ArrayList<>();
+				for (var kvp : Dynamics.entrySet())
 				{
-					dyn.PreTick();
+					kvp.getValue().PreTick();
+					if(kvp.getValue().Invalid())
+					{
+						expiredHandles.add(kvp.getKey());
+					}
+				}
+				for(ColliderHandle handle : expiredHandles)
+				{
+					InvalidatedHandles.add(handle);
+					AllHandles.remove(handle);
+					Dynamics.remove(handle);
 				}
 
 				PhysicsStep_CreateTasks();
@@ -303,9 +330,10 @@ public class OBBCollisionSystem
 		{
 			ColliderHandle handleA = AllHandles.get(i);
 			DynamicObject objectA = Dynamics.get(handleA);
+			if(objectA == null)
+				continue;
+
 			boolean movingA = !objectA.NextFrameLinearMotion.IsApproxZero() || !objectA.NextFrameAngularMotion.IsApproxZero();
-
-
 
 			// Check against the static objects
 			AABB sweepTestAABB = objectA.GetSweepTestAABB();
@@ -320,15 +348,16 @@ public class OBBCollisionSystem
 				));
 			}
 
-
 			// Check against all other dynamic objects
 			for (int j = i + 1; j < AllHandles.size(); j++)
 			{
 				ColliderHandle handleB = AllHandles.get(j);
 				DynamicObject objectB = Dynamics.get(handleB);
+				if(objectB == null)
+					continue;
 				boolean movingB = !objectB.NextFrameLinearMotion.IsApproxZero() || !objectB.NextFrameAngularMotion.IsApproxZero();
 
-				if(movingA || movingB)
+				if (movingA || movingB)
 				{
 					Pair<ColliderHandle, ColliderHandle> key = ColliderHandle.uniquePairOf(handleA, handleB);
 
@@ -416,54 +445,44 @@ public class OBBCollisionSystem
 	{
 		for(DynamicObject dyn : Dynamics.values())
 		{
-			if(dyn.StaticCollisions.isEmpty() && dyn.DynamicCollisions.isEmpty())
+			if(dyn.NextFrameTeleport.isPresent())
 			{
 				dyn.CommitFrame();
 			}
-			else
+			else if(!PAUSE_PHYSICS)
 			{
-				// We have some collisions, we need to resolve them before committing the next frame data
-				//TransformedBBCollection pending = dyn.GetPendingColliders();
-				LinearVelocity linearV = dyn.NextFrameLinearMotion;
-				AngularVelocity angularV = dyn.NextFrameAngularMotion;
-				double maxT = 1.0d;
-
-				for(StaticCollisionEvent collision : dyn.StaticCollisions)
+				if (dyn.StaticCollisions.isEmpty() && dyn.DynamicCollisions.isEmpty())
 				{
-					double vDotN = linearV.ApplyOneTick().dot(collision.ContactNormal());
-					if(!Maths.Approx(vDotN, 0d))
+					dyn.CommitFrame();
+				}
+				else
+				{
+					// We have some collisions, we need to resolve them before committing the next frame data
+					//TransformedBBCollection pending = dyn.GetPendingColliders();
+					LinearVelocity linearV = dyn.NextFrameLinearMotion;
+					AngularVelocity angularV = dyn.NextFrameAngularMotion;
+					double maxT = 1.0d;
+
+					for (StaticCollisionEvent collision : dyn.StaticCollisions)
 					{
-						double t = (vDotN + collision.depth()) / vDotN;
-						if(t < maxT)
-							maxT = t;
+						double vDotN = linearV.ApplyOneTick().dot(collision.ContactNormal());
+						if (!Maths.Approx(vDotN, 0d))
+						{
+							double t = (vDotN + collision.depth()) / vDotN;
+							if (t < maxT)
+								maxT = t;
+							if (maxT < 0.0d)
+								maxT = 0.0d;
+						}
 					}
 
-
-
+					dyn.SetLinearVelocity(linearV.scale(maxT));
+					dyn.SetAngularVelocity(angularV.scale(maxT));
+					dyn.ExtrapolateNextFrame();
+					dyn.CommitFrame();
 				}
-
-				dyn.SetLinearVelocity(linearV.scale(maxT));
-				dyn.SetAngularVelocity(angularV.scale(maxT));
-				dyn.ExtrapolateNextFrame();
-				dyn.CommitFrame();
-
 			}
 		}
-
-		//for(int i = AllHandles.size() - 1; i >= 0 ; i--)
-		//{
-		//	ColliderHandle handle = AllHandles.get(i);
-		//	DynamicObject object = Dynamics.get(handle);
-		//	if(object != null)
-		//	{
-		//		object.GenerateNextFrame();
-		//	}
-		//	else
-		//	{
-		//		FlansMod.LOGGER.error("Lost a physics handle in the system " + handle.Handle());
-		//		AllHandles.remove(i);
-		//	}
-		//}
 	}
 
 	private void Threaded_SeparateSimpleDynamics(@Nonnull TransformedBB a, @Nonnull TransformedBB b)

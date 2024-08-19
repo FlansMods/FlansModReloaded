@@ -21,6 +21,8 @@ import java.util.Stack;
 public class DynamicObject
 {
 	public static final int MAX_HISTORY = 20;
+	public static final int KILL_VOLUME_NEGATIVE_Y = -256;
+	public static final int KILL_VOLUME_POSITIVE_Y = Short.MAX_VALUE;
 
 	private record FrameData(@Nonnull Transform Location,
 							 @Nonnull LinearVelocity linearVelocity,
@@ -174,17 +176,39 @@ public class DynamicObject
 		StaticCollisions.clear();
 		DynamicCollisions.clear();
 		PendingFrame = ExtrapolateNextFrame();
-		NextFrameTeleport = Optional.empty();
+	}
+	public boolean Invalid()
+	{
+		if(PendingFrame != null)
+		{
+			if(PendingFrame.Location.HasNaN())
+				return true;
+			Vec3 pos = PendingFrame.Location.PositionVec3();
+			if(pos.y < KILL_VOLUME_NEGATIVE_Y || pos.y > KILL_VOLUME_POSITIVE_Y)
+			{
+				return true;
+			}
+		}
+		return false;
 	}
 
 	public void CommitFrame()
 	{
-		if(!VehicleEntity.PAUSE_PHYSICS)
+		if (Frames.size() >= MAX_HISTORY)
+			Frames.remove(0);
+
+		// If we are teleporting, double push so the "last" frame is the same
+		if(NextFrameTeleport.isPresent())
 		{
-			if (Frames.size() >= MAX_HISTORY)
-				Frames.remove(0);
+			Frames.push(PendingFrame);
 			Frames.push(PendingFrame);
 		}
+		else //if(!VehicleEntity.PAUSE_PHYSICS)
+		{
+			Frames.push(PendingFrame);
+		}
+
+		NextFrameTeleport = Optional.empty();
 	}
 	@Nonnull
 	public FrameData ExtrapolateNextFrame()
@@ -200,9 +224,14 @@ public class DynamicObject
 			Vec3 deltaPos = NextFrameLinearMotion.ApplyOneTick();
 			Quaternionf deltaRot = NextFrameAngularMotion.ApplyOneTick();
 
-			Transform newLoc = Transform.Compose(
-				currentFrame.Location,
-				Transform.FromPosAndQuat(deltaPos, deltaRot, () -> "ExtrapolatePhysicsFrame"));
+			Transform newLoc = Transform.FromPosAndQuat(
+				currentFrame.Location.PositionVec3().add(deltaPos),
+				currentFrame.Location.Orientation.mul(deltaRot, new Quaternionf()),
+				() -> "");
+
+			//Transform newLoc = Transform.Compose(
+			//	currentFrame.Location,
+			//	Transform.FromPosAndQuat(deltaPos, deltaRot, () -> "ExtrapolatePhysicsFrame"));
 			return new FrameData(newLoc, NextFrameLinearMotion, NextFrameAngularMotion);
 		}
 	}

@@ -28,7 +28,6 @@ import com.flansmod.util.collision.*;
 import com.flansmod.util.physics.AngularAcceleration;
 import com.flansmod.util.physics.LinearAcceleration;
 import com.flansmod.util.physics.LinearForce;
-import com.flansmod.util.physics.OffsetForce;
 import com.google.common.collect.ImmutableList;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
@@ -46,8 +45,6 @@ import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.util.Lazy;
-import org.joml.AxisAngle4f;
-import org.joml.Quaternionf;
 import org.joml.Vector3f;
 
 import javax.annotation.Nonnull;
@@ -110,7 +107,6 @@ public class VehicleEntity extends Entity implements
 	private ResourceLocation SelectedControllerLocation = new ResourceLocation(FlansMod.MODID, "control_schemes/null");
 
 	// Physics
-	public static boolean PAUSE_PHYSICS = false;
 	//@Nullable
 	//public ColliderHandle CorePhsyicsHandle = null;
 	@Nonnull
@@ -133,6 +129,13 @@ public class VehicleEntity extends Entity implements
 
 		blocksBuilding = true;
 		InitFromDefinition();
+	}
+
+	@Override
+	public void remove(@Nonnull Entity.RemovalReason reason)
+	{
+		super.remove(reason);
+		StopPhysics();
 	}
 
 	public boolean InitFromDefinition()
@@ -190,10 +193,7 @@ public class VehicleEntity extends Entity implements
 	public void moveTo(double x, double y, double z, float xRot, float yRot) {
 		super.moveTo(x, y, z, xRot, yRot);
 
-		if(PhysicsParts.isEmpty())
-		{
-			InitPhysics();
-		}
+		CheckInitPhysics();
 		SetAllPositionsFromEntity();
 	}
 	// This is the default entity movement packet
@@ -201,6 +201,11 @@ public class VehicleEntity extends Entity implements
 	public void lerpTo(double x, double y, double z, float yaw, float pitch, int i, boolean flag)
 	{
 		super.lerpTo(x, y, z, yaw, pitch, i, flag);
+		xo = x;
+		yo = y;
+		zo = z;
+		xRotO = pitch;
+		yRotO = yaw;
 		SyncEntityToTransform();
 	}
 	@Override
@@ -382,7 +387,27 @@ public class VehicleEntity extends Entity implements
 		return GetArticulationMap().ApplyOrDefault(componentPath, ArticulationSyncState::GetVelocity, 0.0f);
 	}
 	@Nonnull
-	public Transform GetArticulationTransform(@Nonnull VehicleComponentPath partName)
+	public Transform GetArticulationTransformPrevious(@Nonnull VehicleComponentPath partName)
+	{
+		Optional<Transform> result = GetHierarchy().IfArticulated(partName, (def) ->
+		{
+			if (def != null && def.active)
+			{
+				float parameter = GetArticulationParameter(partName);
+				float velocity = GetArticulationVelocity(partName);
+				return def.Apply(parameter - velocity);
+			}
+			return null;
+		});
+		return result.orElse(Transform.IDENTITY);
+	}
+	@Nonnull
+	public Transform GetArticulationTransformPrevious(@Nonnull VehiclePartPath partPath)
+	{
+		return GetArticulationTransformPrevious(partPath.Articulation());
+	}
+	@Nonnull
+	public Transform GetArticulationTransformCurrent(@Nonnull VehicleComponentPath partName)
 	{
 		Optional<Transform> result = GetHierarchy().IfArticulated(partName, (def) ->
 		{
@@ -394,6 +419,12 @@ public class VehicleEntity extends Entity implements
 			return null;
 		});
 		return result.orElse(Transform.IDENTITY);
+	}
+	@Nonnull
+	public Transform GetArticulationTransformCurrent(@Nonnull VehiclePartPath partPath) { return GetArticulationTransformCurrent(partPath.Articulation()); }
+	public boolean IsArticulated(@Nonnull VehiclePartPath part)
+	{
+		return GetArticulationMap().TryGet(part.Articulation()).isPresent();
 	}
 
 	@Override @Nonnull
@@ -414,29 +445,74 @@ public class VehicleEntity extends Entity implements
 	{
 		stack.add(GetCorePhysics().LocationPrev);
 	}
+
 	@Override
-	public void ApplyPartToPartPrevious(@Nonnull VehicleDefinitionHierarchy.VehicleNode node, @Nonnull TransformStack stack)
+	public void ApplyPartToPartPrevious(@Nonnull VehiclePartPath partPath, @Nonnull TransformStack stack)
 	{
-		if(node.Def.IsArticulated())
+		if(IsArticulated(partPath))
 		{
-			float articulationParameter = GetArticulationParameter(node.GetPath().Articulation());
-			float articulationVelocity = GetArticulationVelocity(node.GetPath().Articulation());
-			stack.add(node.Def.articulation.Apply(articulationParameter - articulationVelocity));
+			stack.add(GetArticulationTransformPrevious(partPath));
 		}
 		else
-			stack.add(node.Def.LocalTransform.get());
+		{
+			stack.add(GetPartDef(partPath).LocalTransform.get());
+		}
 	}
 	@Override
-	public void ApplyPartToPartCurrent(@Nonnull VehicleDefinitionHierarchy.VehicleNode node, @Nonnull TransformStack stack)
+	public void ApplyPartToPartCurrent(@Nonnull VehiclePartPath partPath, @Nonnull TransformStack stack)
 	{
-		if(node.Def.IsArticulated())
+		if(IsArticulated(partPath))
 		{
-			float articulationParameter = GetArticulationParameter(node.GetPath().Articulation());
-			stack.add(node.Def.articulation.Apply(articulationParameter));
+			stack.add(GetArticulationTransformCurrent(partPath));
 		}
 		else
-			stack.add(node.Def.LocalTransform.get());
+		{
+			stack.add(GetPartDef(partPath).LocalTransform.get());
+		}
 	}
+	@Override
+	public void ApplyPartToComponentPrevious(@Nonnull VehicleComponentPath componentPath, @Nonnull TransformStack stack)
+	{
+		if(componentPath.Type() == EPartDefComponent.Wheel)
+		{
+			stack.add(GetWorldToPartPrevious(componentPath.Part()).Inverse());
+			stack.add(GetPartPhysics(componentPath).LocationPrev);
+		}
+	}
+	@Override
+	public void ApplyPartToComponentCurrent(@Nonnull VehicleComponentPath componentPath, @Nonnull TransformStack stack)
+	{
+		if(componentPath.Type() == EPartDefComponent.Wheel)
+		{
+			stack.add(GetWorldToPartCurrent(componentPath.Part()).Inverse());
+			stack.add(GetPartPhysics(componentPath).LocationCurrent);
+		}
+	}
+
+
+	//@Override
+	//public void ApplyPartToPartPrevious(@Nonnull VehicleDefinitionHierarchy.VehicleNode node, @Nonnull TransformStack stack)
+	//{
+	//	if(node.Def.IsArticulated())
+	//	{
+	//		float articulationParameter = GetArticulationParameter(node.GetPath().Articulation());
+	//		float articulationVelocity = GetArticulationVelocity(node.GetPath().Articulation());
+	//		stack.add(node.Def.articulation.Apply(articulationParameter - articulationVelocity));
+	//	}
+	//	else
+	//		stack.add(node.Def.LocalTransform.get());
+	//}
+	//@Override
+	//public void ApplyPartToPartCurrent(@Nonnull VehicleDefinitionHierarchy.VehicleNode node, @Nonnull TransformStack stack)
+	//{
+	//	if(node.Def.IsArticulated())
+	//	{
+	//		float articulationParameter = GetArticulationParameter(node.GetPath().Articulation());
+	//		stack.add(node.Def.articulation.Apply(articulationParameter));
+	//	}
+	//	else
+	//		stack.add(node.Def.LocalTransform.get());
+	//}
 	public void Raycast(@Nonnull Vec3 start,
 						@Nonnull Vec3 end,
 						float dt,
@@ -477,6 +553,10 @@ public class VehicleEntity extends Entity implements
 	public void SetDamageMap(@Nonnull PerPartMap<DamageSyncState> map) { entityData.set(DAMAGE_ACCESSOR, map); }
 	@Nonnull public DamageablePartDefinition GetDef(@Nonnull VehicleComponentPath partPath) {
 		return GetHierarchy().FindDamageable(partPath).orElse(DamageablePartDefinition.INVALID);
+	}
+	@Nonnull public VehiclePartDefinition GetPartDef(@Nonnull VehiclePartPath partPath)
+	{
+		return GetHierarchy().FindNode(partPath).flatMap(node -> Optional.of(node.Def)).orElse(VehiclePartDefinition.INVALID);
 	}
 	protected void LoadDamageState(@Nonnull CompoundTag tags)
 	{
@@ -530,7 +610,11 @@ public class VehicleEntity extends Entity implements
 
 	}
 
-
+	protected void CheckInitPhysics()
+	{
+		if(PhysicsParts.isEmpty())
+			InitPhysics();
+	}
 	protected void InitPhysics()
 	{
 		Map<VehiclePartPath, ImmutableList<AABB>> bbLists = GatherBBs();
@@ -562,28 +646,41 @@ public class VehicleEntity extends Entity implements
 			PhysicsParts.put(wheelPath, new VehiclePartPhysics(t, handle));
 		});
 	}
-	public void TeleportTo(@Nonnull Transform transform)
+	protected void StopPhysics()
 	{
-		ColliderHandle corePhysicsHandle = GetCorePhsyicsHandle();
-		if(corePhysicsHandle.IsValid())
+		OBBCollisionSystem physics = OBBCollisionSystem.ForLevel(level());
+		for(VehiclePartPhysics part : PhysicsParts.values())
 		{
-			OBBCollisionSystem physics = OBBCollisionSystem.ForLevel(level());
-			physics.Teleport(corePhysicsHandle, transform);
-
-			for(var kvp : PhysicsParts.entrySet())
+			if(part.PhysicsHandle.IsValid())
 			{
-				if(!kvp.getKey().Part().IsRoot())
-				{
-					Transform relativePos = GetRootToPart(kvp.getKey().Part()).GetCurrent();
-					physics.Teleport(kvp.getValue().PhysicsHandle, Transform.Compose(transform, relativePos));
-				}
+				physics.UnregisterDynamic(part.PhysicsHandle);
+				part.PhysicsHandle = ColliderHandle.invalid;
 			}
 		}
+		PhysicsParts.clear();
+	}
+	public void TeleportTo(@Nonnull Transform transform)
+	{
+		//ColliderHandle corePhysicsHandle = GetCorePhsyicsHandle();
+		//if(corePhysicsHandle.IsValid())
+		//{
+		//	OBBCollisionSystem physics = OBBCollisionSystem.ForLevel(level());
+		//	physics.Teleport(corePhysicsHandle, transform);
+//
+		//	for(var kvp : PhysicsParts.entrySet())
+		//	{
+		//		if(!kvp.getKey().Part().IsRoot())
+		//		{
+		//			Transform relativePos = GetRootToPart(kvp.getKey().Part()).GetCurrent();
+		//			physics.Teleport(kvp.getValue().PhysicsHandle, Transform.Compose(transform, relativePos));
+		//		}
+		//	}
+		//}
 	}
 
 	protected void CopyResponsesToForceModel(@Nonnull OBBCollisionSystem physics, @Nullable ControlLogic controller)
 	{
-		if(PAUSE_PHYSICS)
+		if(OBBCollisionSystem.PAUSE_PHYSICS)
 			return;
 
 		for(var kvp : PhysicsParts.entrySet())
@@ -599,8 +696,8 @@ public class VehicleEntity extends Entity implements
 				// TODO: If debug, show them?
 				Transform newPos =  physics.ProcessEvents(part.PhysicsHandle,
 					(collision) -> {
-						part.Forces.AddForce(
-							OffsetForce.kgBlocksPerTickSq(collision.ContactNormal(), collision.ContactPoint()));
+						//part.Forces.AddForce(
+						//	OffsetForce.kgBlocksPerTickSq(collision.ContactNormal(), collision.ContactPoint()));
 					},
 					(collision) -> {
 						//part.Forces.AddForce(OffsetForce.collision.ContactPoint(), collision.ContactNormal());
@@ -612,7 +709,7 @@ public class VehicleEntity extends Entity implements
 	}
 	protected void TickController(@Nullable ControlLogic controller)
 	{
-		if(PAUSE_PHYSICS)
+		if(OBBCollisionSystem.PAUSE_PHYSICS)
 			return;
 
 		if(controller != null)
@@ -641,17 +738,17 @@ public class VehicleEntity extends Entity implements
 		{
 			LinearForce gravity = LinearForce.kgBlocksPerSecondSq(new Vec3(0f, -9.81f * Def().physics.mass, 0f));
 
-			//GetCorePhysics().Forces.AddForce(gravity);
+			GetCorePhysics().Forces.AddForce(gravity);
 			GetCorePhysics().Forces.AddDampener(0.1f);
 			GetHierarchy().ForEachWheel((path, def) -> {
-				//GetPartPhysics(path).Forces.AddForce(gravity);
+				GetPartPhysics(path).Forces.AddForce(gravity);
 				GetPartPhysics(path).Forces.AddDampener(0.1f);
 			});
 		}
 	}
 	protected void SendNewForcesToPhysics(@Nonnull OBBCollisionSystem physics)
 	{
-		if(PAUSE_PHYSICS)
+		if(OBBCollisionSystem.PAUSE_PHYSICS)
 			return;
 
 		{
@@ -695,12 +792,47 @@ public class VehicleEntity extends Entity implements
 		//	}
 		//	return false;
 		//}));
+
+
+
 //
 		//Wheels.ForEach(wheel -> wheel.StartTick(this));
+
+
 
 		// Create a force model and load it up with forces for debug rendering
 		ControlLogic controller = CurrentController();
 		OBBCollisionSystem physics = OBBCollisionSystem.ForLevel(level());
+
+		// Check to see if the physics system killed us
+		AABB physicsBounds = null;
+		for(VehiclePartPhysics part : PhysicsParts.values())
+		{
+			if(part.PhysicsHandle.IsValid())
+			{
+				if (physics.IsHandleInvalidated(part.PhysicsHandle))
+				{
+					part.PhysicsHandle = ColliderHandle.invalid;
+				}
+				else if(physicsBounds == null)
+				{
+					physicsBounds = new AABB(part.LocationCurrent.PositionVec3(), part.LocationCurrent.PositionVec3());
+				}
+				else
+				{
+					physicsBounds = physicsBounds.expandTowards(part.LocationCurrent.PositionVec3());
+				}
+
+			}
+		}
+		if(physicsBounds != null &&
+			(physicsBounds.getXsize() > 1024d
+			|| physicsBounds.getYsize() > 1024d
+			|| physicsBounds.getZsize() > 1024d))
+		{
+			StopPhysics();
+			return;
+		}
 
 		// Respond to collision events from last frame, and update our location
 		CopyResponsesToForceModel(physics, controller);
@@ -1173,12 +1305,43 @@ public class VehicleEntity extends Entity implements
 	@Override
 	public void SyncEntityToTransform()
 	{
-		Transform rootTransform = Transform.FromPosAndEuler(getPosition(1f), getXRot(), getYRot(), 0f);
-		ColliderHandle rootHandle = GetCorePhsyicsHandle();
-		if(rootHandle.IsValid())
+		Transform coreTransformNew = Transform.FromPosAndEuler(getPosition(0f), getXRot(), getYRot(), 0f);
+
+		if(PhysicsParts.isEmpty())
 		{
+			// Init Physics should take care of all this for us.
+			CheckInitPhysics();
+		}
+		else
+		{
+			// So we want to teleport the whole vehicle
+			VehiclePartPhysics corePart = GetCorePhysics();
+			Transform coreTransformOld = corePart.LocationCurrent;
+
+			// We should move all the other parts, relative to the root
+			Map<ColliderHandle, Transform> newPartPositions = new HashMap<>();
+			for(var kvp : PhysicsParts.entrySet())
+			{
+				if(kvp.getKey().Part().IsRoot())
+					continue;
+
+				Transform relativeTransformOld = coreTransformOld.GlobalToLocalTransform(kvp.getValue().LocationCurrent);
+				Transform partTransformNew = coreTransformNew.LocalToGlobalTransform(relativeTransformOld);
+				newPartPositions.put(kvp.getValue().PhysicsHandle, partTransformNew);
+				kvp.getValue().LocationCurrent = partTransformNew;
+				kvp.getValue().LocationPrev = partTransformNew;
+			}
+
+			// And if those parts have physics handles, we should update them in the physics system too.
 			OBBCollisionSystem physics = OBBCollisionSystem.ForLevel(level());
-			physics.Teleport(rootHandle, rootTransform);
+			ColliderHandle rootHandle = GetCorePhsyicsHandle();
+			corePart.LocationPrev = coreTransformNew;
+			corePart.LocationCurrent = coreTransformNew;
+			physics.Teleport(rootHandle, coreTransformNew);
+			for(var kvp : newPartPositions.entrySet())
+			{
+				physics.Teleport(kvp.getKey(), kvp.getValue());
+			}
 		}
 	}
 	@Override public void SetWorldToEntity(@Nonnull Transform currentTransform) { TeleportTo(currentTransform); }

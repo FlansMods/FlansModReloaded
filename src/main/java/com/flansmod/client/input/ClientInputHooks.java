@@ -330,8 +330,8 @@ public class ClientInputHooks
 
 			while(KeyMappings.DEBUG_PAUSE_PHYSICS.get().consumeClick())
 			{
-				VehicleEntity.PAUSE_PHYSICS = !VehicleEntity.PAUSE_PHYSICS;
-				if(VehicleEntity.PAUSE_PHYSICS)
+				OBBCollisionSystem.PAUSE_PHYSICS = !OBBCollisionSystem.PAUSE_PHYSICS;
+				if(OBBCollisionSystem.PAUSE_PHYSICS)
 					Minecraft.getInstance().getChatListener().handleSystemMessage(Component.translatable("flansmod.debug.physics_pause.on"), false);
 				else
 					Minecraft.getInstance().getChatListener().handleSystemMessage(Component.translatable("flansmod.debug.physics_pause.off"), false);

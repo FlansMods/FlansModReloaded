@@ -8,6 +8,7 @@ import com.flansmod.common.entity.longdistance.LongDistanceVehicle;
 import com.flansmod.common.entity.vehicle.physics.*;
 import com.flansmod.common.entity.vehicle.VehicleEntity;
 import com.flansmod.common.entity.vehicle.hierarchy.VehicleComponentPath;
+import com.flansmod.util.Maths;
 import com.flansmod.util.Transform;
 import com.flansmod.util.collision.*;
 import com.flansmod.util.physics.IForce;
@@ -204,18 +205,26 @@ public class VehicleDebugRenderer
 				//DebugRenderer.RenderCube(Transform.FromPos(vehicle.position()), 1, palette.CoreCurrent, new Vector3f(0.15f, 0.1f, 0.15f));
 				//DebugRenderer.RenderAxes(vehiclePos, 1, palette.Default);
 				//DebugRenderer.RenderCube(vehiclePos, 1, palette.CoreCurrent, new Vector3f(0.6f, 0.25f, 0.6f));
-				Vec3 coreMotionNextFrame = DebugRenderForces(vehicle.GetCoreForces(), vehicle.getDeltaMovement(), vehicle.GetWorldToEntity().GetCurrent(), palette, true, vehicle.Def().physics.mass, vehicle::GetWorldToPartCurrent);
+				Vec3 coreMotionNextFrame = DebugRenderForces(
+					vehicle.GetCoreForces(),
+					vehicle.getDeltaMovement(),
+					vehicle.GetWorldToEntity().GetCurrent(),
+					palette,
+					true,
+					vehicle.Def().physics.mass,
+					vehicle::GetWorldToPartCurrent);
 				Transform vehiclePosNext = Transform.Compose(vehiclePos, Transform.FromPos(coreMotionNextFrame.scale(1f/20f)));
 				//DebugRenderer.RenderCube(vehiclePosNext, 1, palette.CoreNext,  new Vector3f(0.6f, 0.25f, 0.6f));
 
 				vehicle.GetHierarchy().ForEachNode((node) -> {
-					Transform pos = vehicle.GetWorldToPartCurrent(node.GetPath());
-					DebugRenderer.RenderPoint(pos, 1, palette.WheelCurrent);
-					if(node.ParentNode != null)
-					{
-						Transform parent = vehicle.GetWorldToPartCurrent(node.ParentNode.GetPath());
-						DebugRenderer.RenderLine(parent, 1, palette.WheelCurrent, parent.GlobalToLocalPosition(pos.PositionVec3()));
-					}
+					//Transform pos = vehicle.GetWorldToPartCurrent(node.GetPath());
+					//DebugRenderer.RenderPoint(pos, 1, palette.WheelCurrent);
+					//if(node.ParentNode != null)
+					//{
+					//	Transform parent = vehicle.GetWorldToPartCurrent(node.ParentNode.GetPath());
+					//	DebugRenderer.RenderLine(parent, 1, palette.WheelCurrent, parent.GlobalToLocalPosition(pos.PositionVec3()));
+					//}
+
 
 				});
 
@@ -229,11 +238,20 @@ public class VehicleDebugRenderer
 				//	if(wheel != null)
 				//	{
 					VehiclePartPhysics physics = vehicle.GetPartPhysics(path);
+//Transform pos = vehicle.GetWorldToPartCurrent(node.GetPath());
+					//DebugRenderer.RenderPoint(pos, 1, palette.WheelCurrent);
+					//if(node.ParentNode != null)
+					//{
+					//	Transform parent = vehicle.GetWorldToPartCurrent(node.ParentNode.GetPath());
+					//	DebugRenderer.RenderLine(parent, 1, palette.WheelCurrent, parent.GlobalToLocalPosition(pos.PositionVec3()));
+					//}
 
 					Transform wheelPos =physics.LocationCurrent;
 					Vector3f debugWheelBoxSize = new Vector3f(0.5f * def.radius, def.radius, def.radius);
 					//DebugRenderer.RenderAxes(wheel.GetWorldTransformCurrent(), 1, palette.Default);
-					//DebugRenderer.RenderCube(wheelPos, 1, palette.WheelCurrent, debugWheelBoxSize);
+					DebugRenderer.RenderRotation(wheelPos, 1, palette.WheelCurrent, wheelPos.RightVec3(), 1.0d);
+					DebugRenderer.RenderLine(vehiclePos, 1, palette.WheelCurrent, vehiclePos.GlobalToLocalPosition(wheelPos.PositionVec3()));
+
 
 					Vec3 wheelMotionNextFrame = DebugRenderForces(physics.Forces,
 						physics.GetDeltaFramePos(),
@@ -242,9 +260,8 @@ public class VehicleDebugRenderer
 						false,
 						def.mass,
 						vehicle::GetWorldToPartCurrent);
-					Transform wheelPosNext = Transform.Compose(wheelPos, Transform.FromPos(wheelMotionNextFrame.scale(1f/20f)));
-					//DebugRenderer.RenderCube(wheelPosNext, 1, palette.WheelNext, debugWheelBoxSize);
-					//}
+					//Transform wheelPosNext = Transform.Compose(wheelPos, Transform.FromPos(wheelMotionNextFrame.scale(1f/20f)));
+					//DebugRenderer.RenderRotation(wheelPosNext, 1, palette.WheelCurrent, wheelPosNext.RightVec3(), 1.0d);
 				});
 			}
 		}

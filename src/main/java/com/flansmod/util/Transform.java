@@ -277,6 +277,12 @@ public class Transform
     public static Transform FromPosAndOriTag(@Nonnull CompoundTag tags) {  return FromTag(tags, null, null, new Vector3f(1f, 1f, 1f)); }
     @Nonnull
     public static Transform FromTagWithScale(@Nonnull CompoundTag tags, @Nonnull Vector3f scale) {  return FromTag(tags, null, null, scale); }
+    @Nonnull
+    public Transform Inverse()
+    {
+        return LocalToGlobalTransform(Transform.IDENTITY);
+    }
+
     // ----------------------------------------------------------------------------------------
     // --- Minecraft RenderSystem / JOML interface ---
     // ----------------------------------------------------------------------------------------

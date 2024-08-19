@@ -78,13 +78,13 @@ public class VehicleDefinitionHierarchy
 		if(AllNodes.containsKey(path))
 			AllNodes.get(path).IterateThisToRoot(func);
 	}
-	@Nullable
-	public VehicleNode FindNode(@Nonnull VehiclePartPath partPath)
+	@Nonnull
+	public Optional<VehicleNode> FindNode(@Nonnull VehiclePartPath partPath)
 	{
-		return AllNodes.get(partPath);
+		return Optional.ofNullable(AllNodes.get(partPath));
 	}
-	@Nullable
-	public VehicleNode FindNode(@Nonnull VehicleComponentPath componentPath)
+	@Nonnull
+	public Optional<VehicleNode> FindNode(@Nonnull VehicleComponentPath componentPath)
 	{
 		return FindNode(componentPath.Part());
 	}
@@ -106,21 +106,23 @@ public class VehicleDefinitionHierarchy
 	}
 	public void IfArticulated(@Nonnull VehicleComponentPath partPath, @Nonnull Consumer<ArticulatedPartDefinition> func)
 	{
-		VehicleNode node = FindNode(partPath);
-		if (node != null && node.Def.IsArticulated())
+		FindNode(partPath).ifPresent((node) ->
 		{
-			func.accept(node.Def.articulation);
-		}
+			if (node.Def.IsArticulated())
+			{
+				func.accept(node.Def.articulation);
+			}
+		});
 	}
 	@Nonnull
 	public <T> Optional<T> IfArticulated(@Nonnull VehicleComponentPath partPath, @Nonnull Function<ArticulatedPartDefinition, T> func)
 	{
-		VehicleNode node = FindNode(partPath);
-		if (node != null && node.Def.IsArticulated())
+		return FindNode(partPath).flatMap(node ->
 		{
-			return Optional.of(func.apply(node.Def.articulation));
-		}
-		return Optional.empty();
+			if(node.Def.IsArticulated())
+				return Optional.of(func.apply(node.Def.articulation));
+			return Optional.empty();
+		});
 	}
 	public void ForEachDamageable(@Nonnull BiConsumer<VehicleComponentPath, DamageablePartDefinition> func)
 	{
@@ -131,21 +133,26 @@ public class VehicleDefinitionHierarchy
 	@Nonnull
 	public Optional<DamageablePartDefinition> FindDamageable(@Nonnull VehicleComponentPath damagePath)
 	{
-		VehicleNode node = FindNode(damagePath);
 		if(damagePath.Type() == EPartDefComponent.Damage)
-			if (node != null && node.Def.IsDamageable())
-				return Optional.of(node.Def.damage);
+			return FindNode(damagePath).flatMap(node ->
+			{
+				if(node.Def.IsDamageable())
+					return Optional.of(node.Def.damage);
+				return Optional.empty();
+			});
 		return Optional.empty();
 	}
 	public void IfDamageableExists(@Nonnull VehicleComponentPath damagePath, @Nonnull Consumer<DamageablePartDefinition> func)
 	{
 		if(damagePath.Type() == EPartDefComponent.Damage)
 		{
-			VehicleNode node = FindNode(damagePath);
-			if (node != null && node.Def.IsDamageable())
+			FindNode(damagePath).ifPresent((node) ->
 			{
-				func.accept(node.Def.damage);
-			}
+				if (node.Def.IsDamageable())
+				{
+					func.accept(node.Def.damage);
+				}
+			});
 		}
 	}
 
@@ -160,21 +167,24 @@ public class VehicleDefinitionHierarchy
 	@Nonnull
 	public Optional<SeatDefinition> FindSeat(@Nonnull VehicleComponentPath path)
 	{
-		VehicleNode node = FindNode(path.Part());
-		if(node != null)
-			if(path.Index() < node.Def.seats.length)
+		return FindNode(path.Part()).flatMap((node) ->
+		{
+			if (path.Index() < node.Def.seats.length)
 				return Optional.of(node.Def.seats[path.Index()]);
-		return Optional.empty();
+			return Optional.empty();
+		});
 	}
 	public void IfSeatExists(@Nonnull VehicleComponentPath seatPath, @Nonnull Consumer<SeatDefinition> func)
 	{
 		if(seatPath.Type() == EPartDefComponent.Seat)
 		{
-			VehicleNode node = FindNode(seatPath);
-			if (node != null && seatPath.Index() < node.Def.seats.length)
+			FindNode(seatPath).ifPresent((node) ->
 			{
-				func.accept(node.Def.seats[seatPath.Index()]);
-			}
+				if(seatPath.Index() < node.Def.seats.length)
+				{
+					func.accept(node.Def.seats[seatPath.Index()]);
+				}
+			});
 		}
 	}
 	@Nonnull
@@ -182,11 +192,15 @@ public class VehicleDefinitionHierarchy
 	{
 		if(seatPath.Type() == EPartDefComponent.Seat)
 		{
-			VehicleNode node = FindNode(seatPath);
-			if (node != null && seatPath.Index() < node.Def.seats.length)
+			final int seatIndex = seatPath.Index();
+			return FindNode(seatPath).flatMap((node) ->
 			{
-				return Optional.of(func.apply(node.Def.seats[seatPath.Index()]));
-			}
+				if (seatIndex < node.Def.seats.length)
+				{
+					return Optional.of(func.apply(node.Def.seats[seatIndex]));
+				}
+				return Optional.empty();
+			});
 		}
 		return Optional.empty();
 	}
@@ -202,11 +216,12 @@ public class VehicleDefinitionHierarchy
 	@Nonnull
 	public Optional<WheelDefinition> FindWheel(@Nonnull VehicleComponentPath path)
 	{
-		VehicleNode node = FindNode(path.Part());
-		if(node != null)
+		return FindNode(path.Part()).flatMap((node) ->
+		{
 			if(path.Index() < node.Def.wheels.length)
 				return Optional.of(node.Def.wheels[path.Index()]);
-		return Optional.empty();
+			return Optional.empty();
+		});
 	}
 	@Nonnull
 	public List<WheelDefinition> AllWheels()
@@ -226,11 +241,13 @@ public class VehicleDefinitionHierarchy
 	{
 		if(wheelPath.Type() == EPartDefComponent.Wheel)
 		{
-			VehicleNode node = FindNode(wheelPath);
-			if (node != null && wheelPath.Index() < node.Def.wheels.length)
-			{
-				func.accept(node.Def.wheels[wheelPath.Index()]);
-			}
+			final int wheelIndex = wheelPath.Index();
+			FindNode(wheelPath).ifPresent(node -> {
+				if(wheelIndex < node.Def.wheels.length)
+				{
+					func.accept(node.Def.wheels[wheelIndex]);
+				}
+			});
 		}
 	}
 	public void ForEachGun(@Nonnull BiConsumer<VehicleComponentPath, MountedGunDefinition> func)
@@ -243,11 +260,14 @@ public class VehicleDefinitionHierarchy
 	{
 		if(gunPath.Type() == EPartDefComponent.Gun)
 		{
-			VehicleNode node = FindNode(gunPath);
-			if (node != null && gunPath.Index() < node.Def.guns.length)
+			final int gunIndex = gunPath.Index();
+			FindNode(gunPath).ifPresent((node) ->
 			{
-				func.accept(node.Def.guns[gunPath.Index()]);
-			}
+				if (gunIndex < node.Def.guns.length)
+				{
+					func.accept(node.Def.guns[gunIndex]);
+				}
+			});
 		}
 	}
 	public void ForEachPropeller(@Nonnull BiConsumer<VehicleComponentPath, PropellerDefinition> func)
@@ -260,11 +280,14 @@ public class VehicleDefinitionHierarchy
 	{
 		if(propPath.Type() == EPartDefComponent.Propeller)
 		{
-			VehicleNode node = FindNode(propPath);
-			if (node != null && propPath.Index() < node.Def.propellers.length)
+			final int propIndex = propPath.Index();
+			FindNode(propPath).ifPresent((node) ->
 			{
-				func.accept(node.Def.propellers[propPath.Index()]);
-			}
+				if (propIndex < node.Def.propellers.length)
+				{
+					func.accept(node.Def.propellers[propIndex]);
+				}
+			});
 		}
 	}
 

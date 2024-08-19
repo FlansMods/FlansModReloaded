@@ -22,8 +22,18 @@ public interface IVehicleTransformHelpers
 	void SetRootTransformCurrent(@Nonnull Transform transform);
 	void ApplyWorldToRootPrevious(@Nonnull TransformStack stack);
 	void ApplyWorldToRootCurrent(@Nonnull TransformStack stack);
-	void ApplyPartToPartPrevious(@Nonnull VehicleDefinitionHierarchy.VehicleNode childPart, @Nonnull TransformStack stack);
-	void ApplyPartToPartCurrent(@Nonnull VehicleDefinitionHierarchy.VehicleNode childPart, @Nonnull TransformStack stack);
+	//void ApplyPartToPartPrevious(@Nonnull VehicleDefinitionHierarchy.VehicleNode childPart, @Nonnull TransformStack stack);
+	//void ApplyPartToPartCurrent(@Nonnull VehicleDefinitionHierarchy.VehicleNode childPart, @Nonnull TransformStack stack);
+
+
+	void ApplyPartToPartPrevious(@Nonnull VehiclePartPath childPart, @Nonnull TransformStack stack);
+	void ApplyPartToPartCurrent(@Nonnull VehiclePartPath childPart, @Nonnull TransformStack stack);
+	void ApplyPartToComponentPrevious(@Nonnull VehicleComponentPath componentPath, @Nonnull TransformStack stack);
+	void ApplyPartToComponentCurrent(@Nonnull VehicleComponentPath componentPath, @Nonnull TransformStack stack);
+
+
+
+
 
 	default void Traverse(@Nonnull VehiclePartPath path, @Nonnull Consumer<VehicleDefinitionHierarchy.VehicleNode> func)
 	{
@@ -46,15 +56,22 @@ public interface IVehicleTransformHelpers
 	@Nonnull default Transform GetWorldToRootPrevious() { return Transform.Flatten(this::ApplyWorldToRootPrevious); }
 	@Nonnull default Transform GetWorldToRootCurrent() { return Transform.Flatten(this::ApplyWorldToRootCurrent); }
 	@Nonnull default ITransformPair GetWorldToRoot() { return ITransformPair.of(this::GetWorldToRootPrevious, this::GetWorldToRootCurrent); }
-	@Nonnull default Transform GetPartToPartCurrent(@Nonnull VehicleDefinitionHierarchy.VehicleNode node) { return Transform.Flatten((stack) -> ApplyPartToPartPrevious(node, stack)); }
-	@Nonnull default Transform GetPartToPartPrevious(@Nonnull VehicleDefinitionHierarchy.VehicleNode node) { return Transform.Flatten((stack) -> ApplyPartToPartCurrent(node, stack)); }
-	@Nonnull default ITransformPair GetPartToPart(@Nonnull VehicleDefinitionHierarchy.VehicleNode node) { return ITransformPair.of(() -> GetPartToPartPrevious(node), () -> GetPartToPartCurrent(node)); }
+	//@Nonnull default Transform GetPartToPartCurrent(@Nonnull VehicleDefinitionHierarchy.VehicleNode node) { return Transform.Flatten((stack) -> ApplyPartToPartPrevious(node, stack)); }
+	//@Nonnull default Transform GetPartToPartPrevious(@Nonnull VehicleDefinitionHierarchy.VehicleNode node) { return Transform.Flatten((stack) -> ApplyPartToPartCurrent(node, stack)); }
+	//@Nonnull default ITransformPair GetPartToPart(@Nonnull VehicleDefinitionHierarchy.VehicleNode node) { return ITransformPair.of(() -> GetPartToPartPrevious(node), () -> GetPartToPartCurrent(node)); }
+	@Nonnull default Transform GetPartToPartPrevious(@Nonnull VehiclePartPath childPart) { return Transform.Flatten((stack) -> ApplyPartToPartPrevious(childPart, stack)); }
+	@Nonnull default Transform GetPartToPartCurrent(@Nonnull VehiclePartPath childPart) { return Transform.Flatten((stack) -> ApplyPartToPartCurrent(childPart, stack)); }
+	@Nonnull default Transform GetPartToComponentPrevious(@Nonnull VehicleComponentPath componentPath) { return Transform.Flatten((stack) -> ApplyPartToComponentPrevious(componentPath, stack)); }
+	@Nonnull default Transform GetPartToComponentCurrent(@Nonnull VehicleComponentPath componentPath) { return Transform.Flatten((stack) -> ApplyPartToComponentCurrent(componentPath, stack)); }
+	@Nonnull default ITransformPair GetPartToPart(@Nonnull VehiclePartPath childPart) { return ITransformPair.of(() -> GetPartToPartPrevious(childPart), () -> GetPartToPartCurrent(childPart)); }
+	@Nonnull default ITransformPair GetPartToComponent(@Nonnull VehicleComponentPath componentPath) { return ITransformPair.of(() -> GetPartToComponentPrevious(componentPath), () -> GetPartToComponentCurrent(componentPath)); }
+
 
 
 	// Root to Part
 	default void TransformRootToPartPrevious(@Nonnull VehiclePartPath vehiclePart, @Nonnull TransformStack stack)
 	{
-		Traverse(vehiclePart, (node) -> { stack.add(GetPartToPartPrevious(node)); });
+		Traverse(vehiclePart, (node) -> { stack.add(GetPartToPartPrevious(vehiclePart)); });
 	}
 	@Nonnull default Transform GetRootToPartPrevious(@Nonnull VehiclePartPath vehiclePart)
 	{
@@ -62,7 +79,7 @@ public interface IVehicleTransformHelpers
 	}
 	default void TransformRootToPartCurrent(@Nonnull VehiclePartPath vehiclePart, @Nonnull TransformStack stack)
 	{
-		Traverse(vehiclePart, (node) -> { stack.add(GetPartToPartCurrent(node)); });
+		Traverse(vehiclePart, (node) -> { stack.add(GetPartToPartCurrent(vehiclePart)); });
 	}
 	@Nonnull default Transform GetRootToPartCurrent(@Nonnull VehiclePartPath vehiclePart)
 	{
@@ -110,7 +127,7 @@ public interface IVehicleTransformHelpers
 		// If this piece is articulated, add a transform
 		if(node.Def.IsArticulated())
 		{
-			Transform articulation = GetPartToPart(node).GetDelta(dt);
+			Transform articulation = GetPartToPart(node.GetPath()).GetDelta(dt);
 			if(!articulation.IsIdentity())
 			{
 				start = articulation.GlobalToLocalPosition(start);

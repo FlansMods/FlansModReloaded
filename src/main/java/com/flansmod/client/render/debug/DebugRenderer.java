@@ -183,9 +183,9 @@ public class DebugRenderer
 
             Vec3 from = GetPoint(0);
             Vec3 to = GetPoint(1);
-            for(int i = 1; i < NUM_SEGMENTS; i++)
+            for(int i = 1; i < NUM_SEGMENTS+1; i++)
             {
-                RenderLineSegment(poseStack, tesselator, from, to.subtract(from), colour, i == NUM_SEGMENTS - 1);
+                RenderLineSegment(poseStack, tesselator, from, to.subtract(from), colour, i == NUM_SEGMENTS);
                 from = to;
                 to = GetPoint(i+1);
             }
@@ -193,9 +193,13 @@ public class DebugRenderer
 
         private Vec3 GetPoint(int index)
         {
-            AxisAngle4d axisAngle = new AxisAngle4d(0.25d * Magnitude * index * RADS_PER_SEGMENT, direction.x, direction.y, direction.z);
-            Vector3d v = axisAngle.transform(new Vector3d(1d, 0d, 0d));
-            return new Vec3(v.x, v.y, v.z);
+            AxisAngle4d axisAngle = new AxisAngle4d(Magnitude * index * RADS_PER_SEGMENT, direction.x, direction.y, direction.z);
+            Vector3d sweepVec = new Vector3d(direction.x, direction.y, direction.z);
+            sweepVec.cross(new Vector3d(0d, 1d, 0d));
+            sweepVec.normalize();
+            sweepVec.normalize(RADIUS);
+            axisAngle.transform(sweepVec);
+            return new Vec3(sweepVec.x, sweepVec.y, sweepVec.z);
         }
     }
 
@@ -298,15 +302,18 @@ public class DebugRenderer
 
     public static void RenderLine(Transform t, int ticks, Vector4f col, Vec3 ray)
     {
-        renderItems.add(new DebugRenderLine(t, ticks, col, ray, false));
+        if(!Maths.Approx(ray.lengthSqr(), 0d))
+            renderItems.add(new DebugRenderLine(t, ticks, col, ray, false));
     }
     public static void RenderArrow(Transform t, int ticks, Vector4f col, Vec3 ray)
     {
-        renderItems.add(new DebugRenderLine(t, ticks, col, ray, true));
+        if(!Maths.Approx(ray.lengthSqr(), 0d))
+            renderItems.add(new DebugRenderLine(t, ticks, col, ray, true));
     }
     public static void RenderRotation(Transform t, int ticks, Vector4f col, Vec3 axis, double magnitude)
     {
-        renderItems.add(new DebugRenderRotation(t, ticks, col, axis, magnitude, true));
+        if(!Maths.Approx(magnitude, 0d))
+            renderItems.add(new DebugRenderRotation(t, ticks, col, axis, magnitude, true));
     }
     public static void RenderAxes(Transform t, int ticks, Vector4f col)
     {
@@ -357,7 +364,7 @@ public class DebugRenderer
     {
         for(int i = renderItems.size() - 1; i >= 0; i--)
         {
-            if(renderItems.get(i).ticksLeft-- <= 0)
+            if(--renderItems.get(i).ticksLeft <= 0)
                 renderItems.remove(i);
         }
 
