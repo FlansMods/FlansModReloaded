@@ -219,20 +219,25 @@ public class DynamicObject
 		}
 		else
 		{
-			FrameData currentFrame = GetFrameNTicksAgo(0);
-
 			Vec3 deltaPos = NextFrameLinearMotion.ApplyOneTick();
 			Quaternionf deltaRot = NextFrameAngularMotion.ApplyOneTick();
 
-			Transform newLoc = Transform.FromPosAndQuat(
-				currentFrame.Location.PositionVec3().add(deltaPos),
-				currentFrame.Location.Orientation.mul(deltaRot, new Quaternionf()),
-				() -> "");
-
-			//Transform newLoc = Transform.Compose(
-			//	currentFrame.Location,
-			//	Transform.FromPosAndQuat(deltaPos, deltaRot, () -> "ExtrapolatePhysicsFrame"));
-			return new FrameData(newLoc, NextFrameLinearMotion, NextFrameAngularMotion);
+			return ExtrapolateNextFrame(deltaPos, deltaRot);
 		}
+	}
+	@Nonnull
+	public FrameData ExtrapolateNextFrame(@Nonnull Vec3 deltaPos, @Nonnull Quaternionf deltaRot)
+	{
+		FrameData currentFrame = GetFrameNTicksAgo(0);
+
+		Transform newLoc = Transform.FromPosAndQuat(
+			currentFrame.Location.PositionVec3().add(deltaPos),
+			currentFrame.Location.Orientation.mul(deltaRot, new Quaternionf()),
+			() -> "");
+
+		//Transform newLoc = Transform.Compose(
+		//	currentFrame.Location,
+		//	Transform.FromPosAndQuat(deltaPos, deltaRot, () -> "ExtrapolatePhysicsFrame"));
+		return new FrameData(newLoc, NextFrameLinearMotion, NextFrameAngularMotion);
 	}
 }

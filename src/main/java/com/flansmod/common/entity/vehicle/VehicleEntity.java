@@ -28,6 +28,7 @@ import com.flansmod.util.collision.*;
 import com.flansmod.util.physics.AngularAcceleration;
 import com.flansmod.util.physics.LinearAcceleration;
 import com.flansmod.util.physics.LinearForce;
+import com.flansmod.util.physics.LinearVelocity;
 import com.google.common.collect.ImmutableList;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
@@ -50,6 +51,7 @@ import org.joml.Vector3f;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
 
 public class VehicleEntity extends Entity implements
@@ -687,21 +689,50 @@ public class VehicleEntity extends Entity implements
 		{
 			VehicleComponentPath path = kvp.getKey();
 			VehiclePartPhysics part = kvp.getValue();
-			part.Forces.Clear();
+
 			part.LocationPrev = part.LocationCurrent;
+
+			// Sum all the non-reactionary forces of the last frame
+			LinearForce impactForce = part.Forces.SumLinearForces(part.LocationCurrent, false);
+			part.Forces.EndFrame();
+
 
 			if(part.PhysicsHandle.IsValid())
 			{
 				// Do we need to add these?
 				// TODO: If debug, show them?
+				AtomicReference<Boolean> collidedX = new AtomicReference<>(false),
+					collidedY = new AtomicReference<>(false),
+					collidedZ = new AtomicReference<>(false);
+
 				Transform newPos =  physics.ProcessEvents(part.PhysicsHandle,
 					(collision) -> {
-						//part.Forces.AddForce(
-						//	OffsetForce.kgBlocksPerTickSq(collision.ContactNormal(), collision.ContactPoint()));
+						if(!Maths.Approx(collision.ContactNormal().x, 0d))
+							collidedX.set(true);
+						if(!Maths.Approx(collision.ContactNormal().y, 0d))
+							collidedY.set(true);
+						if(!Maths.Approx(collision.ContactNormal().z, 0d))
+							collidedZ.set(true);
+
 					},
 					(collision) -> {
-						//part.Forces.AddForce(OffsetForce.collision.ContactPoint(), collision.ContactNormal());
+						if(!Maths.Approx(collision.ContactNormal().x, 0d))
+							collidedX.set(true);
+						if(!Maths.Approx(collision.ContactNormal().y, 0d))
+							collidedY.set(true);
+						if(!Maths.Approx(collision.ContactNormal().z, 0d))
+							collidedZ.set(true);
 					});
+				//LinearVelocity v1 = physics.GetLinearVelocity(part.PhysicsHandle);
+				//LinearVelocity v2 = new LinearVelocity(new Vec3(
+				//	collidedX.get() ? 0.0d : v1.Velocity().x,
+				//	collidedY.get() ? 0.0d : v1.Velocity().y,
+				//	collidedZ.get() ? 0.0d : v1.Velocity().z));
+				//physics.SetLinearVelocity(part.PhysicsHandle, v2);
+				part.Forces.AddReactionForce(new LinearForce(new Vec3(
+					collidedX.get() ? -impactForce.Force().x : 0.0d,
+					collidedY.get() ? -impactForce.Force().y : 0.0d,
+					collidedZ.get() ? -impactForce.Force().z : 0.0d)));
 
 				part.LocationCurrent = newPos;
 			}
@@ -736,12 +767,13 @@ public class VehicleEntity extends Entity implements
 		}
 		else
 		{
-			LinearForce gravity = LinearForce.kgBlocksPerSecondSq(new Vec3(0f, -9.81f * Def().physics.mass, 0f));
+			LinearForce coreGravity = LinearForce.kgBlocksPerSecondSq(new Vec3(0f, -9.81f * Def().physics.mass, 0f));
 
-			GetCorePhysics().Forces.AddForce(gravity);
+			GetCorePhysics().Forces.AddForce(coreGravity);
 			GetCorePhysics().Forces.AddDampener(0.1f);
 			GetHierarchy().ForEachWheel((path, def) -> {
-				GetPartPhysics(path).Forces.AddForce(gravity);
+				LinearForce wheelGravity = LinearForce.kgBlocksPerSecondSq(new Vec3(0f, -9.81f * def.mass, 0f));
+				GetPartPhysics(path).Forces.AddForce(wheelGravity);
 				GetPartPhysics(path).Forces.AddDampener(0.1f);
 			});
 		}
@@ -753,8 +785,8 @@ public class VehicleEntity extends Entity implements
 
 		{
 			VehiclePartPhysics corePhysics = GetCorePhysics();
-			LinearAcceleration linear = corePhysics.Forces.SumLinearAcceleration(corePhysics.LocationCurrent, Def().physics.mass);
-			AngularAcceleration angular = corePhysics.Forces.SumAngularAcceleration(corePhysics.LocationCurrent, Def().physics.MomentOfInertia());
+			LinearAcceleration linear = corePhysics.Forces.SumLinearAcceleration(corePhysics.LocationCurrent, Def().physics.mass, true);
+			AngularAcceleration angular = corePhysics.Forces.SumAngularAcceleration(corePhysics.LocationCurrent, Def().physics.MomentOfInertia(), true);
 			//float dampening = 1.0f;//part.Forces.GetDampeningRatio();
 			//if(dampening < 1.0f)
 			//{
@@ -769,8 +801,8 @@ public class VehicleEntity extends Entity implements
 		{
 			VehiclePartPhysics wheelPhysics = GetPartPhysics(path);
 
-			LinearAcceleration linear = wheelPhysics.Forces.SumLinearAcceleration(GetWorldToPartCurrent(path), def.mass);
-			AngularAcceleration angular = wheelPhysics.Forces.SumAngularAcceleration(GetWorldToPartCurrent(path), def.MomentOfInertia());
+			LinearAcceleration linear = wheelPhysics.Forces.SumLinearAcceleration(GetWorldToPartCurrent(path), def.mass, true);
+			AngularAcceleration angular = wheelPhysics.Forces.SumAngularAcceleration(GetWorldToPartCurrent(path), def.MomentOfInertia(), true);
 			//float dampening = 1.0f;//part.Forces.GetDampeningRatio();
 			//if(dampening < 1.0f)
 			//{

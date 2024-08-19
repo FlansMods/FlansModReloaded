@@ -31,12 +31,14 @@ public record SeparationManifold(@Nonnull Vec3 Axis, double Distance) implements
 
 	@Override @Nonnull
 	public Vec3 GetNormal() { return Axis; }
+	@Override
+	public double GetDistance() { return Distance; }
 
 	// The chosen definition of a plane is shown most clearly here
-	public boolean IsPointBelow(@Nonnull Vec3 point) { return Project(point) <= Distance; }
-	public boolean IsPointAbove(@Nonnull Vec3 point) { return Project(point) >= Distance; }
-	public double GetPointHeightAbove(@Nonnull Vec3 point) { return (Project(point) - Distance) / Distance; }
-	public double Project(@Nonnull Vec3 point) { return Axis.dot(point); }
+	@Override public boolean IsPointBelow(@Nonnull Vec3 point) { return Project(point) <= Distance; }
+	@Override public boolean IsPointAbove(@Nonnull Vec3 point) { return Project(point) >= Distance; }
+	@Override public double GetPointHeightAbove(@Nonnull Vec3 point) { return (Project(point) - Distance) / Distance; }
+	@Override public double Project(@Nonnull Vec3 point) { return Axis.dot(point); }
 
 	// Take a max over any of the box corners, i.e. v = (+/-1, +/-1, +/-1) * halfExtents
 	//  Say we pick vMax, then our projection onto the planar normal is as follows:
@@ -161,7 +163,7 @@ public record SeparationManifold(@Nonnull Vec3 Axis, double Distance) implements
 			maxCorner.mul(0f, 1f, 1f);
 			minCorner.mul(0f, 1f, 1f);
 		}
-		else if(xPos < xNeg)
+		else if(xPos > xNeg)
 			maxCorner.mul(-1f, 1f, 1f);
 		else
 			minCorner.mul(-1f, 1f, 1f);
@@ -178,7 +180,7 @@ public record SeparationManifold(@Nonnull Vec3 Axis, double Distance) implements
 			maxCorner.mul(1f, 0f, 1f);
 			minCorner.mul(1f, 0f, 1f);
 		}
-		else if(yPos < yNeg)
+		else if(yPos > yNeg)
 			maxCorner.mul(1f, -1f, 1f);
 		else
 			minCorner.mul(1f, -1f, 1f);
@@ -195,7 +197,7 @@ public record SeparationManifold(@Nonnull Vec3 Axis, double Distance) implements
 			maxCorner.mul(1f, 1f, 0f);
 			minCorner.mul(1f, 1f, 0f);
 		}
-		else if(zPos < zNeg)
+		else if(zPos > zNeg)
 			maxCorner.mul(1f, 1f, -1f);
 		else
 			minCorner.mul(1f, 1f, -1f);
@@ -203,7 +205,7 @@ public record SeparationManifold(@Nonnull Vec3 Axis, double Distance) implements
 		double min = minProjX + minProjY + minProjZ - Distance;
 		double max = maxProjX + maxProjY + maxProjZ - Distance;
 
-		if(Maths.Abs(min) < Maths.Abs(max))
+		if(Maths.Abs(min) > Maths.Abs(max))
 		{
 			minCorner.mul(ori);
 			return point.add(minCorner.x, minCorner.y, minCorner.z);

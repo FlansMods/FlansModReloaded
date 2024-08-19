@@ -16,6 +16,7 @@ import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import org.joml.AxisAngle4f;
+import org.joml.Quaternionf;
 
 import javax.annotation.Nonnull;
 import java.util.*;
@@ -180,6 +181,14 @@ public class OBBCollisionSystem
 			if(dyn != null)
 				dyn.AddLinearAcceleration(linearAcceleration);
 		});
+	}
+	@Nonnull
+	public LinearVelocity GetLinearVelocity(@Nonnull ColliderHandle handle)
+	{
+		DynamicObject dyn = Dynamics.get(handle);
+		if(dyn != null)
+			return dyn.NextFrameLinearMotion;
+		return LinearVelocity.Zero;
 	}
 	public void SetLinearVelocity(@Nonnull ColliderHandle handle, @Nonnull LinearVelocity linearVelocity)
 	{
@@ -449,11 +458,11 @@ public class OBBCollisionSystem
 			{
 				dyn.CommitFrame();
 			}
-			else if(!PAUSE_PHYSICS)
+			else
 			{
 				if (dyn.StaticCollisions.isEmpty() && dyn.DynamicCollisions.isEmpty())
 				{
-					dyn.CommitFrame();
+
 				}
 				else
 				{
@@ -461,24 +470,50 @@ public class OBBCollisionSystem
 					//TransformedBBCollection pending = dyn.GetPendingColliders();
 					LinearVelocity linearV = dyn.NextFrameLinearMotion;
 					AngularVelocity angularV = dyn.NextFrameAngularMotion;
-					double maxT = 1.0d;
+
+					Vec3 v = linearV.ApplyOneTick();
+					Quaternionf q = angularV.ApplyOneTick();
+					//boolean collisionX = false, collisionY = false, collisionZ = false;
 
 					for (StaticCollisionEvent collision : dyn.StaticCollisions)
 					{
-						double vDotN = linearV.ApplyOneTick().dot(collision.ContactNormal());
-						if (!Maths.Approx(vDotN, 0d))
+						Vec3 pushOutVec = collision.ContactNormal().scale(-collision.depth());
+						pushOutVec = v.subtract(pushOutVec);
+
+						if(!Maths.Approx(pushOutVec.x, 0d))
 						{
-							double t = (vDotN + collision.depth()) / vDotN;
-							if (t < maxT)
-								maxT = t;
-							if (maxT < 0.0d)
-								maxT = 0.0d;
+							//collisionX = true;
+							if (pushOutVec.x > 0d)
+								v = new Vec3(Maths.Max(pushOutVec.x, v.x), v.y, v.z);
+							else
+								v = new Vec3(Maths.Min(pushOutVec.x, v.x), v.y, v.z);
+						}
+
+						if(!Maths.Approx(pushOutVec.y, 0d))
+						{
+							//collisionY = true;
+							if (pushOutVec.y > 0d)
+								v = new Vec3(v.x, Maths.Max(pushOutVec.y, v.y), v.z);
+							else
+								v = new Vec3(v.x, Maths.Min(pushOutVec.y, v.y), v.z);
+						}
+
+						if(!Maths.Approx(pushOutVec.z, 0d))
+						{
+							//collisionZ = true;
+							if (pushOutVec.z > 0d)
+								v = new Vec3(v.x, v.y, Maths.Max(pushOutVec.z, v.z));
+							else
+								v = new Vec3(v.x, v.y, Maths.Min(pushOutVec.z, v.z));
 						}
 					}
 
-					dyn.SetLinearVelocity(linearV.scale(maxT));
-					dyn.SetAngularVelocity(angularV.scale(maxT));
-					dyn.ExtrapolateNextFrame();
+					//dyn.SetLinearVelocity(LinearVelocity.blocksPerTick(v));
+					//dyn.SetAngularVelocity(angularV.scale(maxT));
+					dyn.PendingFrame = dyn.ExtrapolateNextFrame(v, q);
+				}
+				if(!PAUSE_PHYSICS)
+				{
 					dyn.CommitFrame();
 				}
 			}

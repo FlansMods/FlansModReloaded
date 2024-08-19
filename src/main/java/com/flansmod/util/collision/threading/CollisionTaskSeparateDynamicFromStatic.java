@@ -2,8 +2,11 @@ package com.flansmod.util.collision.threading;
 
 import com.flansmod.util.collision.*;
 import com.google.common.collect.ImmutableList;
+import com.mojang.datafixers.util.Pair;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.VoxelShape;
+import org.joml.Matrix3f;
+import org.joml.Vector3f;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -78,8 +81,11 @@ public class CollisionTaskSeparateDynamicFromStatic
 			// Bounds test
 			TransformedBB boundsA = Input.ObjectA.GetPendingBB();
 
-			SeparationTestResult objectToStaticSeparation = FindClosestSeparation(boundsA);
-			if(objectToStaticSeparation == null)
+			Pair<Integer, SeparationTestResult> bestSeparator = FindClosestSeparation(boundsA);
+			int voxelIndex = bestSeparator.getFirst();
+			SeparationTestResult bestSeparationResult = bestSeparator.getSecond();
+
+			if(voxelIndex == -1 || bestSeparationResult == null)
 			{
 				// Weird, we should find some sort of separation, even if its bad.
 				Output = new Output(ImmutableList.of(), ImmutableList.of());
@@ -89,7 +95,7 @@ public class CollisionTaskSeparateDynamicFromStatic
 			ImmutableList<ISeparator> newCollidersImmutable = NewSeparators != null ? ImmutableList.copyOf(NewSeparators) : ImmutableList.of();
 
 			// Non-colliding is nice, off we go
-			if(objectToStaticSeparation.IsNonColliding())
+			if(bestSeparationResult.IsNonColliding())
 			{
 				Output = new Output(ImmutableList.of(), newCollidersImmutable);
 				return;
@@ -98,20 +104,33 @@ public class CollisionTaskSeparateDynamicFromStatic
 			// So we collided, right? Actually we might be non-colliding if we dig deeper than the bounds
 			// TODO: Fine-grain
 
-			;
+			VoxelShape shape = Input.StaticShapes.get(voxelIndex);
+			TransformedBB voxelBB = TransformedBB.Of(shape.bounds());
+			//Vec3 pointOnVoxel = bestSeparationResult.GetCollidingPoint(voxelBB);
+
+			Vec3 sepNormal = bestSeparationResult.Separator().GetNormal();
+			Vec3 voxelCenter = voxelBB.GetCenter();
+			double d = bestSeparationResult.Separator().GetDistance();
+			double cDotV = voxelCenter.dot(sepNormal) - d;
+			Vec3 intersectionPoint = voxelCenter.subtract(sepNormal.scale(cDotV));
+
+
+			//bestSeparationResult.
+			//Vec3 pointOnVoxel = voxelBB.GetCenter().add(bestSeparationResult.Separator().GetNormal().scale(bestSeparationResult.Distance()));
 
 			// Collision!
 			Output = new Output(ImmutableList.of(
 				new StaticCollisionEvent(
-					objectToStaticSeparation.GetCollidingPoint(boundsA),
-					objectToStaticSeparation.Separator().GetNormal(),
-					objectToStaticSeparation.GetCollisionDepth())),
+					intersectionPoint,
+					bestSeparationResult.Separator().GetNormal().scale(-1d),
+					bestSeparationResult.GetCollisionDepth())),
 				newCollidersImmutable);
 		}
 	}
-	@Nullable
-	private SeparationTestResult FindClosestSeparation(TransformedBB boundsA)
+	@Nonnull
+	private Pair<Integer, SeparationTestResult> FindClosestSeparation(TransformedBB boundsA)
 	{
+		int shortestIntersectionVoxelIndex = -1;
 		SeparationTestResult shortestIntersection = null;
 		double shortestIntersectionDist = Double.MAX_VALUE;
 
@@ -128,6 +147,7 @@ public class CollisionTaskSeparateDynamicFromStatic
 				{
 					shortestIntersection = new SeparationTestResult(separator, sepDistance);
 					shortestIntersectionDist = sepDistance;
+					shortestIntersectionVoxelIndex = i;
 				}
 				if (sepDistance >= 0.0f)
 				{
@@ -144,6 +164,7 @@ public class CollisionTaskSeparateDynamicFromStatic
 					{
 						shortestIntersection = new SeparationTestResult(separator, sepDistance);
 						shortestIntersectionDist = sepDistance;
+						shortestIntersectionVoxelIndex = i;
 					}
 					if (sepDistance >= 0.0f)
 					{
@@ -160,13 +181,14 @@ public class CollisionTaskSeparateDynamicFromStatic
 				{
 					shortestIntersection = test;
 					shortestIntersectionDist = test.Distance();
+					shortestIntersectionVoxelIndex = i;
 				}
 				if(NewSeparators == null)
 					NewSeparators = new ArrayList<>();
 				NewSeparators.add(test.Separator());
 			}
 		}
-		return shortestIntersection;
+		return Pair.of(shortestIntersectionVoxelIndex, shortestIntersection);
 	}
 
 	@Override

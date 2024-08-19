@@ -12,6 +12,12 @@ import java.util.Optional;
 public interface ISeparator
 {
 	@Nonnull Vec3 GetNormal();
+	double GetDistance();
+	boolean IsPointBelow(@Nonnull Vec3 point);
+	boolean IsPointAbove(@Nonnull Vec3 point);
+	double GetPointHeightAbove(@Nonnull Vec3 point);
+	double Project(@Nonnull Vec3 point);
+
 	double GetBoxHeightAbove(@Nonnull Vec3 point, @Nonnull Vector3f halfExtents, @Nonnull Matrix3f ori);
 	double GetBoxHeightBelow(@Nonnull Vec3 point, @Nonnull Vector3f halfExtents, @Nonnull Matrix3f ori);
 	@Nonnull Vec3 GetIntersectionPoint(@Nonnull Vec3 point, @Nonnull Vector3f halfExtents, @Nonnull Matrix3f ori);

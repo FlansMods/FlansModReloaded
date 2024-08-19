@@ -77,7 +77,7 @@ public class VehicleDebugRenderer
 		new Vector4f(0f, 1f, 0f, 1f),			// CoreForces
 		new Vector4f(1f, 1f, 0.125f, 0.5f),		// CoreCurrent
 		new Vector4f(1f, 1f, 0.25f, 0.25f),		// CoreNext
-		new Vector4f(1f, 1f, 0f, 1f),			// StaticCollision
+		new Vector4f(0f, 1f, 0f, 1f),			// StaticCollision
 		new Vector4f(1f, 0.75f, 0.25f, 1f)		// DynamicCollision
 	);
 
@@ -165,6 +165,7 @@ public class VehicleDebugRenderer
 
 	private void DebugRender(@Nonnull DynamicObject dynamic, @Nonnull DebugPalette palette)
 	{
+		DebugRender(dynamic.GetCurrentColliders(), palette);
 		DebugRender(dynamic.GetPendingColliders(), palette);
 		for (StaticCollisionEvent collision : dynamic.StaticCollisions)
 		{
