@@ -28,6 +28,7 @@ import net.minecraft.util.RandomSource;
 import net.minecraft.world.Container;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Inventory;
@@ -276,6 +277,8 @@ public abstract class GunContext implements IStatCalculatorContext
 	}
 
 	public ItemStack Stack;
+
+	public Entity lockedOnTarget = null;
 	@Nonnull
 	public final GunDefinition Def;
 
@@ -321,6 +324,7 @@ public abstract class GunContext implements IStatCalculatorContext
 	@Nullable
 	public Transform GetPosition() { return null; }
 
+	public float lockTime = 0;
 	// --------------------------------------------------------------------------
 	// Helpers
 	// --------------------------------------------------------------------------
@@ -330,6 +334,12 @@ public abstract class GunContext implements IStatCalculatorContext
 	{
 		Stack = stack;
 		OnItemStackChanged(stack);
+	}
+	public Entity GetLockTarget() { return lockedOnTarget; }
+	public void SetLockTarget(Entity e)
+	{
+		lockedOnTarget = e;
+		OnItemStackChanged(GetItemStack());
 	}
 	@Nonnull
 	public Transform GetShootOrigin() { return GetShooter().GetShootOrigin(0f); }

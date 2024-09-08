@@ -16,10 +16,17 @@ public final class Constants
 	// Projectiles
 	public static final String STAT_PROJECTILE_FUSE_TIME = "fuse_time";
 	public static final String STAT_PROJECTILE_LAUNCH_SPEED = "launch_speed";
+	public static final String STAT_PROJECTILE_ACCELERATION= "acceleration";
+	public static final String STAT_PROJECTILE_MAX_SPEED= "max_speed";
 	public static final String STAT_PROJECTILE_GRAVITY_FACTOR = "gravity_factor";
 	public static final String STAT_PROJECTILE_RESPONSE_TO_BLOCK = "response_to_block";
 	public static final String STAT_PROJECTILE_RESPONSE_TO_ENTITY = "response_to_entity";
 	public static final String STAT_PROJECTILE_RESPONSE_TO_VEHICLE = "response_to_vehicle";
+	public static final String STAT_PROJECTILE_GUIDANCE = "guidance_type";
+	public static final String STAT_PROJECTILE_LOCK_RANGE= "lock_range";
+	public static final String STAT_PROJECTILE_LOCK_CONE= "lock_cone";
+	public static final String STAT_PROJECTILE_TRACK_CONE = "track_cone";
+	public static final String STAT_PROJECTILE_LOCK_TIME = "track_cone";
 	public static final String STAT_PROJECTILE_TURN_RATE = "turn_rate";
 	public static final String STAT_PROJECTILE_DRAG_IN_AIR = "drag_in_air";
 	public static final String STAT_PROJECTILE_DRAG_IN_WATER = "drag_in_water";

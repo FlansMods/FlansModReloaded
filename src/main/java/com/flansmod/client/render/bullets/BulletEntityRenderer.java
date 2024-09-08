@@ -18,6 +18,7 @@ import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.block.model.ItemTransforms;
+import net.minecraft.client.renderer.culling.Frustum;
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.texture.OverlayTexture;
@@ -50,14 +51,15 @@ public class BulletEntityRenderer extends EntityRenderer<BulletEntity>
 	@Override
 	public void render(@Nonnull BulletEntity bullet, float yaw, float partialTick, @Nonnull PoseStack pose, @Nonnull MultiBufferSource buffers, int light)
 	{
-		ITurboRenderer bulletRenderer = FlansModelRegistry.GetItemRenderer(bullet.GetBulletDef().Location);
+		BulletDefinition def = bullet.GetBulletDef();
+		ResourceLocation loc = def.Location;
+		ITurboRenderer bulletRenderer = FlansModelRegistry.GetItemRenderer(loc);
 		if(bulletRenderer != null)
 		{
 			pose.pushPose();
-			pose.translate(0f, bullet.getBbHeight() * 0.5f, 0f);
+			pose.translate(0f, 0f, 0f);
 			pose.mulPose(Axis.YP.rotationDegrees(Mth.lerp(partialTick, bullet.yRotO, bullet.getYRot()) - 90.0F));
 			pose.mulPose(Axis.ZP.rotationDegrees(Mth.lerp(partialTick, bullet.xRotO, bullet.getXRot())));
-
 			bulletRenderer.RenderDirect(
 				bullet,
 				ItemStack.EMPTY,
@@ -66,7 +68,7 @@ public class BulletEntityRenderer extends EntityRenderer<BulletEntity>
 					ItemDisplayContext.FIXED,
 					pose,
 					light,
-					0));
+						655360));
 			pose.popPose();
 		}
 		else FlansMod.LOGGER.warn("Could not find bullet renderer for " + bullet);

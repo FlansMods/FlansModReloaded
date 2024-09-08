@@ -7,9 +7,11 @@ import com.flansmod.common.FlansMod;
 import com.flansmod.common.abilities.AbilityEffectProvideEnchantment;
 import com.flansmod.common.actions.*;
 import com.flansmod.common.actions.contexts.*;
+import com.flansmod.common.projectiles.BulletGuidance;
 import com.flansmod.common.types.Constants;
 import com.flansmod.common.types.abilities.elements.EAbilityTarget;
 import com.flansmod.common.types.bullets.BulletDefinition;
+import com.flansmod.common.types.bullets.elements.ProjectileDefinition;
 import com.flansmod.common.types.guns.elements.*;
 import com.flansmod.common.types.elements.ModifierDefinition;
 import com.flansmod.common.types.guns.GunDefinition;
@@ -19,6 +21,7 @@ import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.Multimap;
 import com.mojang.blaze3d.platform.InputConstants;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
@@ -60,7 +63,9 @@ import java.util.function.Consumer;
 public class GunItem extends FlanItem
 {
     public GunDefinition Def() { return FlansMod.GUNS.Get(DefinitionLocation); }
-
+    public Entity LockedOnTarget = null;
+    public float lockTime = 0;
+    public float lockTimeMax = 20;
     public GunItem(@Nonnull ResourceLocation defLoc, @Nonnull Properties properties)
     {
         super(defLoc, properties);
@@ -416,8 +421,94 @@ public class GunItem extends FlanItem
                 }
             }
         }
-
+        HandleLock(stack,level,entity,i,b);
     }
+    //TODO: Lock on while in offhand
+    public void HandleLock(@Nonnull ItemStack stack, Level level, @Nonnull Entity entity, int i, boolean b){
+        if (LockedOnTarget != null) {
+            if (LockedOnTarget.isRemoved()) {
+                GunContext gunContext = GunContext.of(stack, EContextSide.of(level));
+                gunContext.SetLockTarget(null);
+                LockedOnTarget = gunContext.GetLockTarget();
+            }
+        }
+
+        if (entity instanceof Player player) {
+            if (player.getInventory().selected == i) {
+                //Locking Logic
+                GunContext gunContext = GunContext.of(stack, EContextSide.of(level));
+                ItemStack bulletStack = GetBulletAtIndex(stack, Actions.DefaultPrimaryActionKey, 0, 0);
+                BulletItem bullet = null;
+                if(bulletStack.getItem() instanceof BulletItem){
+                    bullet = (BulletItem) bulletStack.getItem();
+                }
+                if(bullet == null){
+                    LockedOnTarget = null;
+                    lockTime = 0;
+                    gunContext.SetLockTarget(null);
+                    return;
+                }
+                if(bullet.Def().projectiles.length <= 0){
+                    LockedOnTarget = null;
+                    lockTime = 0;
+                    gunContext.SetLockTarget(null);
+                    return;
+                }
+                ProjectileDefinition def = bullet.Def().projectiles[0];
+                lockTimeMax = def.lockTime;
+                if (LockedOnTarget == null) {
+                    if (def.HasLockOn()) {
+                        Entity e = BulletGuidance.getLockOnTarget(def.Targets(), player, def);
+                        if (e != null) {
+                            LockedOnTarget = e;
+                        }
+                    } else {
+                        LockedOnTarget = null;
+                    }
+                } else {
+                    if (!BulletGuidance.checkLock(player, LockedOnTarget, def)) {
+                        LockedOnTarget = null;
+                    }
+                }
+                if (LockedOnTarget != null) {
+                    lockTime++;
+                    if (lockTime > def.lockTime){
+                        gunContext.SetLockTarget(LockedOnTarget);
+                    }
+                }   else{
+                    lockTime = 0;
+                    gunContext.SetLockTarget(null);
+                }
+            }
+            else {
+                //LockedOnTarget = null;
+                //lockTime = 0;
+            }
+
+        }
+    }
+
+    public ProjectileDefinition GetChamberProjectile(ItemStack stack, GunContext gunContext){
+        ItemStack bulletStack = GetBulletAtIndex(stack, Actions.DefaultPrimaryActionKey, 0, 0);
+        BulletItem bullet = null;
+        if(bulletStack.getItem() instanceof BulletItem){
+            bullet = (BulletItem) bulletStack.getItem();
+        }
+        if(bullet == null){
+            LockedOnTarget = null;
+            lockTime = 0;
+            gunContext.SetLockTarget(null);
+            return null;
+        }
+        if(bullet.Def().projectiles.length <= 0){
+            LockedOnTarget = null;
+            lockTime = 0;
+            gunContext.SetLockTarget(null);
+            return null;
+        }
+        return bullet.Def().projectiles[0];
+    }
+
     @Override
     public int getEnchantmentLevel(@Nonnull ItemStack stack, @Nonnull Enchantment enchantment)
     {
@@ -579,6 +670,7 @@ public class GunItem extends FlanItem
         }
         return InteractionResult.CONSUME;
     }
+
 
 
     @Override

@@ -1,6 +1,7 @@
 package com.flansmod.common.types.bullets;
 
 import com.flansmod.common.FlansMod;
+import com.flansmod.common.item.BulletItem;
 import com.flansmod.common.types.JsonDefinition;
 import com.flansmod.common.types.JsonField;
 import com.flansmod.common.types.abilities.elements.AbilityEffectDefinition;
@@ -29,6 +30,9 @@ public class BulletDefinition extends JsonDefinition
 
 	public static final String TYPE = "bullet";
 	public static final String FOLDER = "bullets";
+
+	//Trying to create way to reference bullet item/data from definition. This is stupid.
+	public BulletItem item;
 
 	@Override
 	public String GetTypeName() { return TYPE; }

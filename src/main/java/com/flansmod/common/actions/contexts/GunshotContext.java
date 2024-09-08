@@ -6,6 +6,7 @@ import com.flansmod.common.gunshots.EPlayerHitArea;
 import com.flansmod.common.gunshots.Gunshot;
 import com.flansmod.common.gunshots.PlayerHitResult;
 import com.flansmod.common.gunshots.UnresolvedEntityHitResult;
+import com.flansmod.common.projectiles.BulletGuidance;
 import com.flansmod.common.types.JsonDefinition;
 import com.flansmod.common.types.abilities.elements.AbilityEffectDefinition;
 import com.flansmod.common.types.abilities.elements.EAbilityEffect;
@@ -243,13 +244,31 @@ public class GunshotContext
 	// Projectile Settings
 	public float FuseTimeSeconds()			{ return ModifyFloat(STAT_PROJECTILE_FUSE_TIME, BaseFuseTime()); }
 	public float LaunchSpeed()				{ return ModifyFloat(STAT_PROJECTILE_LAUNCH_SPEED, BaseLaunchSpeed()); }
+	public float Acceleration()				{ return ModifyFloat(STAT_PROJECTILE_ACCELERATION, BaseAcceleration()); }
+	public float MaxSpeed()					{ return ModifyFloat(STAT_PROJECTILE_MAX_SPEED, BaseMaxSpeed()); }
 	public float GravityFactor()			{ return ModifyFloat(STAT_PROJECTILE_GRAVITY_FACTOR, BaseGravityFactor()); }
 	@Nonnull public EProjectileResponseType ResponseToBlock() { return (EProjectileResponseType)ModifyEnum(STAT_PROJECTILE_RESPONSE_TO_BLOCK, BaseResponseToBlock(), EProjectileResponseType.class); }
 	@Nonnull public EProjectileResponseType ResponseToEntity() { return (EProjectileResponseType)ModifyEnum(STAT_PROJECTILE_RESPONSE_TO_ENTITY, BaseResponseToEntity(), EProjectileResponseType.class); }
 	@Nonnull public EProjectileResponseType ResponseToVehicle() { return (EProjectileResponseType)ModifyEnum(STAT_PROJECTILE_RESPONSE_TO_VEHICLE, BaseResponseToVehicle(), EProjectileResponseType.class); }
+	public float LockRange()					{ return ModifyFloat(STAT_PROJECTILE_LOCK_RANGE, BaseLockTime()); }
+	public float LockTime()					{ return ModifyFloat(STAT_PROJECTILE_LOCK_TIME, BaseLockTime()); }
+	public float LockCone()					{ return ModifyFloat(STAT_PROJECTILE_LOCK_CONE, BaseLockCone()); }
+	public float TrackCone()				{ return ModifyFloat(STAT_PROJECTILE_TRACK_CONE, BaseTrackCone()); }
 	public float TurnRate()					{ return ModifyFloat(STAT_PROJECTILE_TURN_RATE, BaseTurnRate()); }
 	public float DragInWater()				{ return ModifyFloat(STAT_PROJECTILE_DRAG_IN_WATER, BaseDragInWater()); }
 	public float DragInAir()				{ return ModifyFloat(STAT_PROJECTILE_DRAG_IN_AIR, BaseDragInAir()); }
+
+	public BulletGuidance.GuidanceType GuidanceType(){ //Bit stinky
+		ProjectileDefinition projectileDef = GetProjectileDef();
+		if(projectileDef == null) return BulletGuidance.GuidanceType.NONE;
+
+		return switch (projectileDef.guidanceType) {
+			case "beam_riding" -> BulletGuidance.GuidanceType.BEAM_RIDING;
+			case "lock_on" -> BulletGuidance.GuidanceType.LOCKON_SIMPLE;
+			case "lock_on_predictive" -> BulletGuidance.GuidanceType.LOCKON_LEADING;
+			default -> BulletGuidance.GuidanceType.NONE;
+		};
+	}
 
 	private float BaseFuseTime() {
 		ProjectileDefinition projectileDef = GetProjectileDef();
@@ -259,9 +278,17 @@ public class GunshotContext
 		ProjectileDefinition projectileDef = GetProjectileDef();
 		return projectileDef != null ? projectileDef.launchSpeed : 0.0f;
 	}
+	private float BaseAcceleration()	{
+		ProjectileDefinition projectileDef = GetProjectileDef();
+		return projectileDef != null ? projectileDef.acceleration : 0.0f;
+	}
+	private float BaseMaxSpeed()	{
+		ProjectileDefinition projectileDef = GetProjectileDef();
+		return projectileDef != null ? projectileDef.maxSpeed : 0.0f;
+	}
 	private float BaseGravityFactor()	{
 		ProjectileDefinition projectileDef = GetProjectileDef();
-		return projectileDef != null ? projectileDef.launchSpeed : 0.0f;
+		return projectileDef != null ? projectileDef.gravityFactor : 0.0f;
 	}
 	@Nonnull
 	private EProjectileResponseType BaseResponseToBlock() {
@@ -277,6 +304,22 @@ public class GunshotContext
 	private EProjectileResponseType BaseResponseToVehicle() {
 		ProjectileDefinition projectileDef = GetProjectileDef();
 		return projectileDef != null ? projectileDef.responseToVehicle : EProjectileResponseType.Detonate;
+	}
+	private float BaseLockRange()	{
+		ProjectileDefinition projectileDef = GetProjectileDef();
+		return projectileDef != null ? projectileDef.lockRange : 0.0f;
+	}
+	private float BaseLockTime()	{
+		ProjectileDefinition projectileDef = GetProjectileDef();
+		return projectileDef != null ? projectileDef.lockTime : 0.0f;
+	}
+	private float BaseLockCone()	{
+		ProjectileDefinition projectileDef = GetProjectileDef();
+		return projectileDef != null ? projectileDef.lockCone : 0.0f;
+	}
+	private float BaseTrackCone()	{
+		ProjectileDefinition projectileDef = GetProjectileDef();
+		return projectileDef != null ? projectileDef.trackCone : 0.0f;
 	}
 	private float BaseTurnRate()	{
 		ProjectileDefinition projectileDef = GetProjectileDef();

@@ -6,25 +6,34 @@ import com.flansmod.common.actions.ActionStack;
 import com.flansmod.common.actions.contexts.ActionGroupContext;
 import com.flansmod.common.actions.contexts.GunContext;
 import com.flansmod.common.actions.contexts.ShooterContext;
+import com.flansmod.common.entity.ShopkeeperEntity;
 import com.flansmod.common.gunshots.Gunshot;
 import com.flansmod.common.actions.contexts.GunshotContext;
+import com.flansmod.common.item.GunItem;
 import com.flansmod.common.network.FlansEntityDataSerializers;
 import com.flansmod.common.types.bullets.BulletDefinition;
 import com.flansmod.common.types.bullets.elements.EProjectileResponseType;
 import com.flansmod.common.types.bullets.elements.ProjectileDefinition;
 import com.flansmod.util.Maths;
+import net.minecraft.client.Minecraft;
 import net.minecraft.core.Direction;
+import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.Component;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.MoverType;
+import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.effect.MobEffects;
+import net.minecraft.world.entity.*;
+import net.minecraft.world.entity.monster.Phantom;
+import net.minecraft.world.entity.monster.Ravager;
 import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.world.entity.projectile.ProjectileUtil;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
@@ -42,11 +51,13 @@ public class BulletEntity extends Projectile
 	private static final EntityDataAccessor<BulletDefinition> DATA_BULLET_DEF = SynchedEntityData.defineId(BulletEntity.class, FlansEntityDataSerializers.BULLET_DEF);
 	private static final EntityDataAccessor<Integer> DATA_ACTION_GROUP_PATH_HASH = SynchedEntityData.defineId(BulletEntity.class, EntityDataSerializers.INT);
 	private static final EntityDataAccessor<Integer> DATA_SHOT_INDEX = SynchedEntityData.defineId(BulletEntity.class, EntityDataSerializers.INT);
+	private static final EntityDataAccessor<Integer> DATA_LOCK_ID = SynchedEntityData.defineId(BulletEntity.class, EntityDataSerializers.INT);
 
 	@Nullable
 	public Entity LockedOnTo = null;
 	public float RemainingPenetratingPower = 0.0f;
 	public int FuseRemaining = 0;
+	public int lockId = 0;
 	public boolean Stuck = false;
 	public boolean Detonated = false;
 	public final ActionStack Actions;
@@ -57,6 +68,7 @@ public class BulletEntity extends Projectile
 	public void SetActionGroupPathHash(int hash) { entityData.set(DATA_ACTION_GROUP_PATH_HASH, hash); }
 	public void SetBulletDef(@Nonnull BulletDefinition bulletDef) { entityData.set(DATA_BULLET_DEF, bulletDef); }
 	public void SetShotIndex(int index) { entityData.set(DATA_SHOT_INDEX, index); }
+	public void SetLockID(int index) { entityData.set(DATA_LOCK_ID, index); }
 
 	@Nonnull
 	public UUID GetOwnerID() { return entityData.get(DATA_OWNER_UUID).orElse(ShooterContext.InvalidID); }
@@ -68,6 +80,7 @@ public class BulletEntity extends Projectile
 	@Nonnull
 	public BulletDefinition GetBulletDef() { return entityData.get(DATA_BULLET_DEF); }
 	public int GetShotIndex() { return entityData.get(DATA_SHOT_INDEX); }
+	public int GetLockID() { return entityData.get(DATA_LOCK_ID); }
 	@Nullable
 	public ProjectileDefinition GetProjectileDef()
 	{
@@ -96,6 +109,7 @@ public class BulletEntity extends Projectile
 
 	public BulletEntity(EntityType<? extends BulletEntity> entityType, Level level)
 	{
+
 		super(entityType, level);
 		Actions = new ActionStack(level.isClientSide);
 	}
@@ -108,7 +122,13 @@ public class BulletEntity extends Projectile
 		entityData.define(DATA_GUN_ID, Optional.empty());
 		entityData.define(DATA_BULLET_DEF, BulletDefinition.INVALID);
 		entityData.define(DATA_SHOT_INDEX, 0);
+		entityData.define(DATA_LOCK_ID, -1);
 		entityData.define(DATA_ACTION_GROUP_PATH_HASH, 0);
+
+	}
+
+	public void SetLockOnTarget(Entity e){
+		LockedOnTo = e;
 	}
 
 	public void InitContext(@Nonnull GunshotContext context)
@@ -119,7 +139,10 @@ public class BulletEntity extends Projectile
 		SetActionGroupPathHash(context.ActionGroup.GroupPath.hashCode());
 		SetBulletDef(context.Bullet);
 		SetShotIndex(context.DefIndex);
-
+		Entity e = context.ActionGroup.Gun.GetLockTarget();
+		LockedOnTo = e; //This is messy
+		if(e != null)
+		SetLockID(e.getId());
 		float fuseTime = context.FuseTimeSeconds();
 		if(fuseTime > 0.0f)
 		{
@@ -138,7 +161,7 @@ public class BulletEntity extends Projectile
 
 		setOldPosAndRot();
 
-		RefreshLockOnTarget();
+		//RefreshLockOnTarget();
 	}
 
 
@@ -149,19 +172,18 @@ public class BulletEntity extends Projectile
 		double xz = Maths.Sqrt(motion.x * motion.x + motion.z * motion.z);
 		float yawDeg = (float)Maths.Atan2(motion.x, motion.z) * Maths.RadToDegF;
 		float pitchDeg = (float)Maths.Atan2(motion.y, xz) * Maths.RadToDegF;
-
 		// Slerp
 		float turnRate = GetContext().TurnRate();
-		pitchDeg = Maths.LerpDegrees(getXRot(), pitchDeg, turnRate);
-		yawDeg = Maths.LerpDegrees(getYRot(), yawDeg, turnRate);
+		pitchDeg = Maths.LerpDegrees(getXRot(), pitchDeg, Math.min(turnRate*20f,1.0f));
+		yawDeg = Maths.LerpDegrees(getYRot(), yawDeg, Math.min(turnRate*20f,1.0f));
 
 		setXRot(pitchDeg);
 		setYRot(yawDeg);
 	}
-
 	private void RefreshLockOnTarget()
 	{
 		// TODO:
+
 	}
 
 	@Override
@@ -173,16 +195,69 @@ public class BulletEntity extends Projectile
 			setDeltaMovement(Vec3.ZERO);
 
 		Vec3 motion = getDeltaMovement();
+		motion = Accelerate(motion);
 		motion = ApplyDrag(motion);
 		motion = ApplyGravity(motion);
 		setDeltaMovement(motion);
 		motion = OnImpact(motion);
-		move(MoverType.SELF, motion);
 
+		ProjectileDefinition def = GetContext().GetProjectileDef();
+
+		if(GetLockID() != -1){
+			LockedOnTo = level().getEntity(GetLockID());
+		}
+
+		switch(def.GetGuidanceMode())
+		{
+			case LOCKON_SIMPLE -> RefreshLockOnTarget();
+			case LOCKON_LEADING -> RefreshLockOnTarget();
+		}
+
+		if(LockedOnTo != null){
+			if(LockedOnTo.isRemoved()){
+				LockedOnTo = null;
+			}
+		}
+
+		switch(def.GetGuidanceMode())
+		{
+			case BEAM_RIDING -> motion = BulletGuidance.BeamRide(this,motion);
+			case BEAM_RIDING_TOP -> motion = BulletGuidance.BeamRideTop(this,motion);
+			case BEAM_AND_LOCK -> {
+				if(LockedOnTo == null)
+				motion = BulletGuidance.BeamRide(this, motion);
+				else motion = BulletGuidance.RotateTowardsProportional(this,motion);
+			}
+			case BEAM_AND_LOCK_TOP -> {
+				if(LockedOnTo == null)
+					motion = BulletGuidance.BeamRideTop(this, motion);
+				else motion = BulletGuidance.TopAttackLocked(this,motion);
+			}
+			case LOCKON_SIMPLE -> motion = BulletGuidance.RotateTowards(this,motion);
+			case LOCKON_LEADING -> motion = BulletGuidance.RotateTowardsProportional(this,motion);
+			case LOCKON_TOP -> motion = BulletGuidance.TopAttackLocked(this,motion);
+		}
+
+		move(MoverType.SELF, motion);
 
 		setDeltaMovement(motion);
 		RecalculateFacing(motion);
 		UpdateFuse();
+		Vec3 origin = position();
+		Vec3 look = motion.normalize();
+		if(level().isClientSide() && def.GetGuidanceMode() != BulletGuidance.GuidanceType.NONE) //TODO: Proper particle spawning (action maybe)
+			Minecraft.getInstance().level.addParticle(ParticleTypes.POOF, origin.x() + look.x * 0.1f, origin.y() + look.y * 0.1f, origin.z() + look.z * 0.1f, (look.x() * 0.3) , (look.y() * 0.3), (look.z() * 0.3));
+	}
+
+	protected Vec3 Accelerate(Vec3 motion){
+		if(GetContext().Acceleration() > 0) {
+			double currSpeed = motion.length();
+			if(currSpeed < GetContext().MaxSpeed()/20d) {
+				float acc = GetContext().Acceleration();
+				motion = motion.normalize().scale(currSpeed+GetContext().Acceleration());
+			}
+		}
+		return motion;
 	}
 
 	protected Vec3 ApplyDrag(Vec3 motion)
@@ -297,6 +372,7 @@ public class BulletEntity extends Projectile
 		tags.putString("bullet", GetBulletDef().Location.toString());
 		tags.putInt("fuse", FuseRemaining);
 		tags.putBoolean("stuck", Stuck);
+		tags.putInt("lockTarget",lockId);
 		CompoundTag contextTags = new CompoundTag();
 		GetContext().Save(contextTags);
 		tags.put("context", contextTags);
@@ -310,8 +386,10 @@ public class BulletEntity extends Projectile
 		}
 		FuseRemaining = tags.getInt("fuse");
 		Stuck = tags.getBoolean("stuck");
+		lockId = tags.getInt("lockTarget");
 		GunshotContext context = GunshotContext.Load(tags.getCompound("context"), level().isClientSide);
 		InitContext(context);
+		LockedOnTo = level().getEntity(tags.getInt("lockTarget"));
 	}
 
 

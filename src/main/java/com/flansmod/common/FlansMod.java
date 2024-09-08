@@ -98,8 +98,7 @@ import net.minecraftforge.registries.RegistryObject;
 import org.slf4j.Logger;
 
 import javax.annotation.Nonnull;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 import java.util.function.Consumer;
 
 @SuppressWarnings("unused")
@@ -127,9 +126,9 @@ public class FlansMod
         "bullet",
         () -> EntityType.Builder.of(
             BulletEntity::new,
-            MobCategory.MISC)
-            .sized(0.5f, 0.5f)
-            .build("bullet"));
+                        MobCategory.CREATURE)
+            .sized(0.5f, 0.5f).setTrackingRange(256).clientTrackingRange(256)
+            .build("bullet")); //Trying to extend render range for bullets but it's not working
     public static final RegistryObject<EntityType<WheelEntity>> ENT_TYPE_WHEEL = ENTITY_TYPES.register(
         "wheel",
         () -> EntityType.Builder.of(

@@ -1,6 +1,7 @@
 package com.flansmod.client.render;
 
 import com.flansmod.client.FlansModClient;
+import com.flansmod.client.render.debug.DebugRenderer;
 import com.flansmod.common.FlansMod;
 import com.flansmod.common.actions.*;
 import com.flansmod.common.actions.contexts.ActionGroupContext;
@@ -9,13 +10,18 @@ import com.flansmod.common.actions.nodes.AimDownSightAction;
 import com.flansmod.common.actions.nodes.ScopeAction;
 import com.flansmod.common.actions.contexts.ShooterContext;
 import com.flansmod.common.effects.FlansMobEffect;
+import com.flansmod.common.item.GunItem;
+import com.flansmod.common.projectiles.BulletGuidance;
+import com.flansmod.common.types.bullets.elements.ProjectileDefinition;
 import com.flansmod.common.types.guns.elements.ModeDefinition;
 import com.flansmod.common.types.magazines.MagazineDefinition;
 import com.flansmod.util.Maths;
 import com.flansmod.util.MinecraftHelpers;
+import com.flansmod.util.Transform;
 import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.*;
+import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.renderer.GameRenderer;
@@ -35,10 +41,14 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.levelgen.LegacyRandomSource;
 import net.minecraft.world.phys.Vec2;
+import net.minecraft.world.phys.Vec3;
+import net.minecraftforge.client.ForgeHooksClient;
 import net.minecraftforge.client.event.*;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
+import org.joml.Vector3f;
+import org.joml.Vector4f;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
@@ -292,9 +302,57 @@ public class ClientRenderHooks
 		GunContext[] gunContexts = shooterContext.GetAllGunContexts(true);
 		GunContext mainContext = gunContexts[0];
 		GunContext offContext = gunContexts[1];
+
 		if(gunContexts[0].IsValid())
 		{
-			RenderUntexturedQuad(anchorX + 94, anchorY - 20, 300, 18, 0x80808080);
+			GunItem item = (GunItem)mainContext.Stack.getItem();
+			int a = 0x80808080;
+			int b = 0xffffff;
+			int c = 0x3f808080;
+			Vector4f lockCol = new Vector4f(128f/255f,128f/255f,128f/255f,128f/255f);
+			if(item.lockTime > 0){
+				a = 0x80fec710;
+				b = 0xfffec710;
+				c = 0x80fec710;
+				lockCol = new Vector4f(254f/255f,199f/255f,16f/255f,1);
+			}
+			if(item.lockTime > item.lockTimeMax){
+				a = 0x80fe1010;
+				b = 0xfffe1010;
+				c = 0x80fe1010;
+				lockCol = new Vector4f(254f/255f,16f/255f,16f/255f,1);
+			}
+
+			ProjectileDefinition def = item.GetChamberProjectile(mainContext.Stack,mainContext);
+
+			if(def != null){
+				if(def.HasLockOn()){
+					int i = MinecraftHelpers.GetClient().getWindow().getGuiScaledWidth();
+					int j = MinecraftHelpers.GetClient().getWindow().getGuiScaledHeight();
+					double size = ((def.lockCone/ Minecraft.getInstance().options.fov().get())*i)/2d;
+					RenderUntexturedCircle(i*0.5f, j*0.5f ,
+							32, (float)size,
+
+							(float)size-1, c);
+
+					if(item.LockedOnTarget != null){
+						Vector3f view = new Vector3f(mainContext.GetShooter().Entity().getLookAngle().toVector3f());
+						Transform t = Transform.FromPos(item.LockedOnTarget.position());
+						float rot = Minecraft.getInstance().cameraEntity.getYRot();
+						t = t.RotateYaw(rot);
+						t = t.RotatePitch(-Minecraft.getInstance().cameraEntity.getXRot());
+
+						Vector3f bounds = new Vector3f((float) item.LockedOnTarget.getBoundingBox().getSize(), (float) item.LockedOnTarget.getBoundingBox().getSize(),0);
+						t = t.Translated(new Vec3(0,item.LockedOnTarget.getBoundingBox().getSize()/2,0));
+						DebugRenderer.RenderCube(t,1,lockCol,bounds);
+
+
+					}
+				}
+			}
+
+
+			RenderUntexturedQuad(anchorX + 94, anchorY - 20, 300, 18, a);
 
 			RenderItem(graphics, mainContext.GetItemStack(), anchorX + 95, anchorY - 19, false);
 
@@ -347,7 +405,8 @@ public class ClientRenderHooks
 				}
 			}
 
-			RenderString(graphics, anchorX + 96, anchorY - 29, mainContext.GetItemStack().getHoverName(), 0xffffff);
+
+			RenderString(graphics, anchorX + 96, anchorY - 29, mainContext.GetItemStack().getHoverName(), b);
 
 			// Render stacks of effects
 			int xOffset = 0;
@@ -393,8 +452,52 @@ public class ClientRenderHooks
 
 		if(gunContexts[1].IsValid())
 		{
+			GunItem item = (GunItem)offContext.Stack.getItem();
+			int a = 0x80808080;
+			int b = 0xffffff;
+			int c = 0x3f808080;
+			Vector4f lockCol = new Vector4f(128f/255f,128f/255f,128f/255f,128f/255f);
+			if(item.lockTime > 0){
+				a = 0x80fec710;
+				b = 0xfffec710;
+				c = 0x80fec710;
+				lockCol = new Vector4f(254f/255f,199f/255f,16f/255f,1);
+			}
+			if(item.lockTime > item.lockTimeMax){
+				a = 0x80fe1010;
+				b = 0xfffe1010;
+				c = 0x80fe1010;
+				lockCol = new Vector4f(254f/255f,16f/255f,16f/255f,1);
+			}
+
+			ProjectileDefinition def = item.GetChamberProjectile(offContext.Stack,mainContext);
+
+			if(def != null){
+				if(def.HasLockOn()){
+					int i = MinecraftHelpers.GetClient().getWindow().getGuiScaledWidth();
+					int j = MinecraftHelpers.GetClient().getWindow().getGuiScaledHeight();
+					double size = ((def.lockCone/ Minecraft.getInstance().options.fov().get())*i)/2d;
+					RenderUntexturedCircle(i*0.5f, j*0.5f ,
+							32, (float)size,
+
+							(float)size-1, c);
+
+					if(item.LockedOnTarget != null){
+						Vector3f view = new Vector3f(offContext.GetShooter().Entity().getLookAngle().toVector3f());
+						Transform t = Transform.FromPos(item.LockedOnTarget.position());
+						float rot = Minecraft.getInstance().cameraEntity.getYRot();
+						t = t.RotateYaw(rot);
+						t = t.RotatePitch(-Minecraft.getInstance().cameraEntity.getXRot());
+
+						Vector3f bounds = new Vector3f((float) item.LockedOnTarget.getBoundingBox().getSize(), (float) item.LockedOnTarget.getBoundingBox().getSize(),0);
+						t = t.Translated(new Vec3(0,item.LockedOnTarget.getBoundingBox().getSize()/2,0));
+						DebugRenderer.RenderCube(t,1,lockCol,bounds);
+					}
+				}
+			}
+
 			RenderSystem.enableBlend();
-			RenderUntexturedQuad(anchorX - 94 - 308, anchorY - 20, 300, 18, 0x80808080);
+			RenderUntexturedQuad(anchorX - 94 - 308, anchorY - 20, 300, 18, a);
 
 			//Minecraft.getInstance().getItemRenderer().renderGuiItem(offContext.GetItemStack(), anchorX - 95 - 16, anchorY - 19);
 
@@ -450,7 +553,7 @@ public class ClientRenderHooks
 				anchorX - 98 - Minecraft.getInstance().font.width(offContext.GetItemStack().getHoverName()),
 				anchorY - 31,
 				offContext.GetItemStack().getHoverName(),
-				0xffffff);
+				b);
 
 			if(offHandPrimaryContext.Def.twoHanded && !player.getItemInHand(InteractionHand.MAIN_HAND).isEmpty())
 			{
@@ -519,6 +622,73 @@ public class ClientRenderHooks
 		builder.vertex(x + w, y, -90f)		.color(colour)	.endVertex();
 		builder.vertex(x, y, -90f)			.color(colour)	.endVertex();
 		tesselator.end();
+	}
+
+	private void RenderUntexturedCircle(float x, float y, int sides, float outerRadius, float innerRadius, int colour)
+	{
+		RenderSystem.setShader(GameRenderer::getPositionColorShader);
+		Tesselator tesselator = Tesselator.getInstance();
+		BufferBuilder builder = tesselator.getBuilder();
+		builder.begin(VertexFormat.Mode.TRIANGLES, DefaultVertexFormat.POSITION_COLOR);
+
+		ArrayList<Vec2>  pointsList = new ArrayList<Vec2> ();
+		ArrayList<Vec2>  outerPoints = GetCircumferencePoints(sides,outerRadius);
+		pointsList.addAll(outerPoints);
+		ArrayList<Vec2>  innerPoints = GetCircumferencePoints(sides,innerRadius);
+		pointsList.addAll(innerPoints);
+
+		//DrawHollowTriangles(pointsList);
+
+		int sides2 = pointsList.size()/2;
+		//int triangleAmount = sides*2;
+
+		for(int i = 0; i < sides2;i++){
+			Vec2 p = pointsList.get(i);
+			//p.add(new Vec2(x,y));
+			//pointsList.set(i,p);
+		}
+
+		for(int i = 0; i<sides2;i++)
+		{
+			int outerIndex = i;
+			int innerIndex = i+sides;
+
+			//first triangle starting at outer edge i
+			//newTriangles.Add(outerIndex);
+			//newTriangles.Add(innerIndex);
+			//newTriangles.Add((i+1)%sides);
+
+			builder.vertex(pointsList.get(outerIndex).x+x, pointsList.get(outerIndex).y+y, -90f)		.color(colour)	.endVertex();
+			builder.vertex(pointsList.get(innerIndex).x+x, pointsList.get(innerIndex).y+y, -90f)	.color(colour)	.endVertex();
+			builder.vertex(pointsList.get((i+1)%sides).x+x, pointsList.get((i+1)%sides).y+y, -90f)		.color(colour)	.endVertex();
+
+			//second triangle starting at outer edge i
+			//newTriangles.Add(outerIndex);
+			//newTriangles.Add(sides+((sides+i-1)%sides));
+			//newTriangles.Add(outerIndex+sides);
+
+			builder.vertex(pointsList.get(outerIndex).x+x, pointsList.get(outerIndex).y+y, -90f)		.color(colour)	.endVertex();
+			builder.vertex(pointsList.get(sides+((sides+i-1)%sides)).x+x, pointsList.get(sides+((sides+i-1)%sides)).y+y, -90f)	.color(colour)	.endVertex();
+			builder.vertex(pointsList.get(outerIndex+sides).x+x, pointsList.get(outerIndex+sides).y+y, -90f)		.color(colour)	.endVertex();
+
+		}
+
+		tesselator.end();
+	}
+
+	ArrayList<Vec2> GetCircumferencePoints(int sides, float radius)
+	{
+		ArrayList<Vec2> points = new ArrayList<Vec2>();
+		float circumferenceProgressPerStep = (float)1/sides;
+		float TAU = (float) (2*Math.PI);
+		float radianProgressPerStep = circumferenceProgressPerStep*TAU;
+
+		for(int i = 0; i<sides; i++)
+		{
+			float currentRadian = radianProgressPerStep*i;
+			points.add(new Vec2((float)Math.cos(currentRadian)*radius, (float)Math.sin(currentRadian)*radius));
+		}
+		return points;
 	}
 
 	private void RenderString(@Nonnull GuiGraphics graphics, float x, float y, @Nonnull Component content, int colour)
