@@ -9,6 +9,7 @@ import net.minecraft.world.entity.FlyingMob;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.boss.enderdragon.EnderDragon;
 import net.minecraft.world.entity.boss.wither.WitherBoss;
+import net.minecraft.world.entity.monster.Blaze;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.raid.Raider;
@@ -101,6 +102,7 @@ public class ProjectileDefinition
 					result.add(FlyingMob.class);
 					result.add(EnderDragon.class);
 					result.add(WitherBoss.class);
+					result.add(Blaze.class);
 				}
 				case "monster" 		-> {
 					result.add(Monster.class);

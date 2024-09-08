@@ -424,6 +424,7 @@ public class GunItem extends FlanItem
         HandleLock(stack,level,entity,i,b);
     }
     //TODO: Lock on while in offhand
+    //TODO: Multi-Lock???
     public void HandleLock(@Nonnull ItemStack stack, Level level, @Nonnull Entity entity, int i, boolean b){
         if (LockedOnTarget != null) {
             if (LockedOnTarget.isRemoved()) {

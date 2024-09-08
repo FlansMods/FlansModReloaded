@@ -117,8 +117,8 @@ public class BulletGuidance {
 
         Vec3 predicted = bullet.LockedOnTo.position().add(bullet.LockedOnTo.getDeltaMovement().scale(timeToReach)); //Could use average delta movement to smooth out??
 
-        Vec3 dir2 = predicted.subtract(bullet.position());
-        DebugRenderer.RenderLine(Transform.FromPos(bullet.position()),1,new Vector4f(1,0,0,1),dir2);
+        //Vec3 dir2 = predicted.subtract(bullet.position());
+        //DebugRenderer.RenderLine(Transform.FromPos(bullet.position()),1,new Vector4f(1,0,0,1),dir2);
         //DebugRenderer.RenderPoint(Transform.FromPos(initTarget),1,new Vector4f(1,0,0,1));
 
         return RotateTo(bullet, motionIn,predicted);
@@ -292,7 +292,7 @@ public class BulletGuidance {
     }
 
     public static boolean CanSeeEntity(Entity e1, Entity e2){
-        return CanSee(e1.position(),e2.position(),e1.level());
+        return CanSee(e1.getEyePosition(),e2.position(),e1.level());
     }
 
     public static boolean CanSee(Vec3 v1, Vec3 v2, Level level){

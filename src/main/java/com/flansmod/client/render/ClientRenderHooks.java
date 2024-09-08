@@ -336,17 +336,18 @@ public class ClientRenderHooks
 							(float)size-1, c);
 
 					if(item.LockedOnTarget != null){
-						Vector3f view = new Vector3f(mainContext.GetShooter().Entity().getLookAngle().toVector3f());
 						Transform t = Transform.FromPos(item.LockedOnTarget.position());
 						float rot = Minecraft.getInstance().cameraEntity.getYRot();
 						t = t.RotateYaw(rot);
 						t = t.RotatePitch(-Minecraft.getInstance().cameraEntity.getXRot());
+						t = t.RotateRoll(45f*Math.min(item.lockTime/item.lockTimeMax,1f));
 
 						Vector3f bounds = new Vector3f((float) item.LockedOnTarget.getBoundingBox().getSize(), (float) item.LockedOnTarget.getBoundingBox().getSize(),0);
 						t = t.Translated(new Vec3(0,item.LockedOnTarget.getBoundingBox().getSize()/2,0));
-						DebugRenderer.RenderCube(t,1,lockCol,bounds);
-
-
+						DebugRenderer.RenderCube(t,1,lockCol,bounds.mul(2f-Math.min(item.lockTime/item.lockTimeMax,1f)));
+						//Transform t2 = t;
+						//Vector3f bounds2 = bounds;
+						//DebugRenderer.RenderCube(t2,2,lockCol,bounds2.mul(0.5f));
 					}
 				}
 			}
@@ -488,10 +489,11 @@ public class ClientRenderHooks
 						float rot = Minecraft.getInstance().cameraEntity.getYRot();
 						t = t.RotateYaw(rot);
 						t = t.RotatePitch(-Minecraft.getInstance().cameraEntity.getXRot());
+						t = t.RotateRoll(45f*Math.min(item.lockTime/item.lockTimeMax,1f));
 
 						Vector3f bounds = new Vector3f((float) item.LockedOnTarget.getBoundingBox().getSize(), (float) item.LockedOnTarget.getBoundingBox().getSize(),0);
 						t = t.Translated(new Vec3(0,item.LockedOnTarget.getBoundingBox().getSize()/2,0));
-						DebugRenderer.RenderCube(t,1,lockCol,bounds);
+						DebugRenderer.RenderCube(t,1,lockCol,bounds.mul(2f-Math.min(item.lockTime/item.lockTimeMax,1f)));
 					}
 				}
 			}
