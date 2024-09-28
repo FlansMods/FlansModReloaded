@@ -364,6 +364,10 @@ public class WorkbenchBlockEntity extends BlockEntity implements WorldlyContaine
 	@Nonnull
 	public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> cap, Direction side)
 	{
+		if (side == null)
+		{
+			return LazyOptional.empty();
+		}
 		if (cap == ForgeCapabilities.ITEM_HANDLER)
 		{
 			LazyOptional<IItemHandler> lazyOptional = DirectionalItemCapLazyOptionals.get(side.ordinal());
