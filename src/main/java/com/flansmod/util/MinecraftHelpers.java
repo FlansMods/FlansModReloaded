@@ -31,21 +31,39 @@ import java.util.ArrayList;
 public class MinecraftHelpers
 {
 	@Nullable
-	public static Level GetLevel(ResourceKey<Level> dimension)
+	public static Level GetLevel(@Nonnull ResourceKey<Level> dimension)
 	{
-		// Try getting from the running server
-		MinecraftServer server = GetServer();
-		if(server != null && server.isRunning())
+		if(IsClientThread())
 		{
-			return server.getLevel(dimension);
+			// Failing that, there is a chance this is our current loaded client level
+			if(IsClientDist())
+			{
+				Level clientLevel = DistExecutor.unsafeCallWhenOn(Dist.CLIENT, () -> MinecraftHelpers::Client_GetCurrentLevel);
+				if (clientLevel.dimension().equals(dimension))
+					return clientLevel;
+				else
+				{
+                    FlansMod.LOGGER.warn("Tried to access non-loaded client dimension: {}", dimension);
+					return null;
+				}
+			}
+			else
+			{
+				FlansMod.LOGGER.error("How are we on a client thread outside of a client dist???");
+				return null;
+			}
 		}
 
-		// Failing that, there is a chance this is our current loaded client level
-		if(IsClientDist())
+		// Try getting from the running server
+		if(!IsServerThread())
 		{
-			Level clientLevel = DistExecutor.safeCallWhenOn(Dist.CLIENT, () -> MinecraftHelpers::Client_GetCurrentLevel);
-			if (clientLevel.dimension().equals(dimension))
-				return clientLevel;
+			FlansMod.LOGGER.error("What thread are you trying to get the level on?");
+		}
+
+		MinecraftServer server = GetServer();
+		if (server != null && server.isRunning())
+		{
+			return server.getLevel(dimension);
 		}
 
 		return null;

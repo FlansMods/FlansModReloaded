@@ -452,18 +452,18 @@ public class ActionStack
 		}
 		return result;
 	}
-	@OnlyIn(Dist.CLIENT)
-	public EActionResult Client_TryUpdateGroupInstanceHeld(ActionGroupContext groupContext)
+	@OnlyIn(Dist.CLIENT) @Nonnull
+	public EActionResult Client_TryUpdateGroupInstanceHeld(@Nonnull ActionGroupContext groupContext)
 	{
 		return Client_TryUpdateGroupInstance(groupContext, true);
 	}
-	@OnlyIn(Dist.CLIENT)
-	public EActionResult Client_TryUpdateGroupInstanceNotHeld(ActionGroupContext groupContext)
+	@OnlyIn(Dist.CLIENT) @Nonnull
+	public EActionResult Client_TryUpdateGroupInstanceNotHeld(@Nonnull ActionGroupContext groupContext)
 	{
 		return Client_TryUpdateGroupInstance(groupContext, false);
 	}
-	@OnlyIn(Dist.CLIENT)
-	public EActionResult Client_TryUpdateGroupInstance(ActionGroupContext groupContext, boolean held)
+	@OnlyIn(Dist.CLIENT) @Nonnull
+	public EActionResult Client_TryUpdateGroupInstance(@Nonnull ActionGroupContext groupContext, boolean held)
 	{
 		if(!IsClient)
 		{
@@ -494,7 +494,8 @@ public class ActionStack
 	// -------------------------------------------------------------------------------------------------
 	// SERVER
 	// -------------------------------------------------------------------------------------------------
-	public EActionResult Server_TryHandleMessage(ActionUpdateMessage.ToServer msg, ServerPlayer from)
+	@Nonnull
+	public EActionResult Server_TryHandleMessage(@Nonnull ActionUpdateMessage.ToServer msg, @Nonnull ServerPlayer from)
 	{
 		if (IsClient)
 		{
@@ -579,24 +580,7 @@ public class ActionStack
 
 			if (groupInstance.PropogateToServer() || groupInstance.NeedsNetSync())
 			{
-				double radius = groupInstance.GetPropogationRadius();
-
-				// Find out which positions we want to map around
-				List<Vec3> positions = new ArrayList<>(2);
-				for (var kvp : msg.Data.GetTriggers())
-				{
-					groupInstance.AddExtraPositionsForNetSync(kvp.getKey(), positions);
-				}
-				if (groupInstance.ShouldAddPlayerPosForNetSync())
-					positions.add(groupContext.Gun.GetShootOrigin().PositionVec3());
-
-				// Then send them some messages about the shot
-				FlansModPacketHandler.SendToAllAroundPoints(
-					new ActionUpdateMessage.ToClient(msg.Data),
-					from.level().dimension(),
-					positions,
-					radius,
-					groupContext.Gun.GetShooter().Owner());
+				Send_ServerToClient(groupContext, groupInstance, msg.Data, from);
 			}
 		}
 		else
@@ -609,7 +593,8 @@ public class ActionStack
 
 		return startResult;
 	}
-	public EActionResult Server_TryStartGroupInstance(ActionGroupContext groupContext)
+	@Nonnull
+	public EActionResult Server_TryStartGroupInstance(@Nonnull ActionGroupContext groupContext)
 	{
 		if(IsClient)
 		{
@@ -625,33 +610,105 @@ public class ActionStack
 		// Send a message to the nearby clients about these actions if required
 		if (result == EActionResult.CanProcess && (groupInstance.PropogateToServer() || groupInstance.NeedsNetSync()))
 		{
-			Level level = groupContext.Gun.GetLevel();
-			if (level != null)
-			{
-				double radius = groupInstance.GetPropogationRadius();
+			Send_ServerToClient_ActionGroupStart(groupContext, groupInstance, null);
+		}
+		return result;
+	}
+	@Nonnull
+	public EActionResult Server_TryUpdateGroupInstanceHeld(@Nonnull ActionGroupContext groupContext)
+	{
+		return Server_TryUpdateGroupInstance(groupContext, true);
+	}
+	@Nonnull
+	public EActionResult Server_TryUpdateGroupInstanceNotHeld(@Nonnull ActionGroupContext groupContext)
+	{
+		return Server_TryUpdateGroupInstance(groupContext, false);
+	}
+	@Nonnull
+	public EActionResult Server_TryUpdateGroupInstance(@Nonnull ActionGroupContext groupContext, boolean held)
+	{
+		if(IsClient)
+		{
+			FlansMod.LOGGER.error("Called Server function on client in ActionStack!");
+			return EActionResult.TryNextAction;
+		}
+		// Start the instance
+		ActionGroupInstance groupInstance = TryGetGroupInstance(groupContext);
+		if(groupInstance == null || (!groupInstance.HasStarted() && groupInstance.RepeatMode() == ERepeatMode.FullAuto))
+		{
+			if(held)
+				return Server_TryStartGroupInstance(groupContext);
+			else
+				return EActionResult.TryNextAction;
+		}
 
-				ActionUpdateMessage updateMsg = new ActionUpdateMessage(groupContext, EPressType.Press, groupInstance.GetStartedTick());
-				updateMsg.AddTriggers(groupInstance, groupInstance.GetRequiredNetSyncMin(), groupInstance.GetRequiredNetSyncMax());
+		EActionResult result = TryUpdateInputHeld(groupContext, held);
+		// Send a message to the clients about these actions if required
+		if (result == EActionResult.CanProcess && (groupInstance.NeedsNetSync() || !held))
+		{
+			if(held)
+				Send_ServerToClient_ActionGroupHeld(groupContext, groupInstance, null);
+			else
+				Send_ServerToClient_ActionGroupReleased(groupContext, groupInstance, null);
+		}
+		return result;
+	}
 
-				// Find out which positions we want to map around
-				List<Vec3> positions = new ArrayList<>(2);
-				for (var kvp : updateMsg.GetTriggers())
-				{
-					groupInstance.AddExtraPositionsForNetSync(kvp.getKey(), positions);
-				}
-				if (groupInstance.ShouldAddPlayerPosForNetSync())
-					positions.add(groupContext.Gun.GetShootOrigin().PositionVec3());
+	// -------------------------------------------------------------------------------------------------
+	// NET-SYNC
+	// -------------------------------------------------------------------------------------------------
+	protected void Send_ServerToClient_ActionGroupStart(@Nonnull ActionGroupContext groupContext,
+														@Nonnull ActionGroupInstance groupInstance,
+														@Nullable ServerPlayer triggeredByPlayer)
+	{
+		Send_ServerToClient(groupContext, groupInstance, EPressType.Press, triggeredByPlayer);
+	}
+	protected void Send_ServerToClient_ActionGroupHeld(@Nonnull ActionGroupContext groupContext,
+													   @Nonnull ActionGroupInstance groupInstance,
+													   @Nullable ServerPlayer triggeredByPlayer)
+	{
+		Send_ServerToClient(groupContext, groupInstance, EPressType.Hold, triggeredByPlayer);
+	}
+	protected void Send_ServerToClient_ActionGroupReleased(@Nonnull ActionGroupContext groupContext,
+													       @Nonnull ActionGroupInstance groupInstance,
+													       @Nullable ServerPlayer triggeredByPlayer)
+	{
+		Send_ServerToClient(groupContext, groupInstance, EPressType.Release, triggeredByPlayer);
+	}
+	protected void Send_ServerToClient(@Nonnull ActionGroupContext groupContext,
+									   @Nonnull ActionGroupInstance groupInstance,
+									   @Nonnull EPressType pressType,
+									   @Nullable ServerPlayer triggeredByPlayer)
+	{
+		ActionUpdateMessage updateMsg = new ActionUpdateMessage(groupContext, pressType, groupInstance.GetStartedTick());
+		updateMsg.AddTriggers(groupInstance, groupInstance.GetRequiredNetSyncMin(), groupInstance.GetRequiredNetSyncMax());
+		Send_ServerToClient(groupContext, groupInstance, updateMsg, triggeredByPlayer);
+	}
+	protected void Send_ServerToClient(@Nonnull ActionGroupContext groupContext,
+									   @Nonnull ActionGroupInstance groupInstance,
+									   @Nonnull ActionUpdateMessage updateMsg,
+									   @Nullable ServerPlayer triggeredByPlayer)
+	{
+		Level level = groupContext.Gun.GetLevel();
+		if (level != null) {
+			double radius = groupInstance.GetPropogationRadius();
 
-				// Then send them some messages about the shot
-				FlansModPacketHandler.SendToAllAroundPoints(
+			// Find out which positions we want to map around
+			List<Vec3> positions = new ArrayList<>(2);
+			for (var kvp : updateMsg.GetTriggers()) {
+				groupInstance.AddExtraPositionsForNetSync(kvp.getKey(), positions);
+			}
+			if (groupInstance.ShouldAddPlayerPosForNetSync())
+				positions.add(groupContext.Gun.GetShootOrigin().PositionVec3());
+
+			// Then send them some messages about the shot
+			FlansModPacketHandler.SendToAllAroundPoints(
 					new ActionUpdateMessage.ToClient(updateMsg),
 					level.dimension(),
 					positions,
 					radius,
-					groupContext.Gun.GetShooter().Owner());
-			}
+					triggeredByPlayer);
 		}
-		return result;
 	}
 
 

@@ -18,14 +18,13 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 
+import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-public class ClientActionManager extends ActionManager
-{
-	public ClientActionManager()
-	{
+public class ClientActionManager extends ActionManager {
+	public ClientActionManager() {
 		super(true);
 	}
 
@@ -33,70 +32,44 @@ public class ClientActionManager extends ActionManager
 	// CLIENT
 	// ----------------------------------------------------------------------------------------------------------------
 
-	public void HookClient(IEventBus modEventBus)
-	{
+	public void HookClient(IEventBus modEventBus) {
 		MinecraftForge.EVENT_BUS.addListener(this::ClientTick);
 	}
 
-	@OnlyIn(Dist.CLIENT)
-	public void ClientKeyPressed(Player player, EPlayerInput inputType)
+	@Override
+	@Nonnull
+	protected EActionResult TryStartGroupInstance(@Nonnull ActionStack actionStack, @Nonnull ActionGroupContext context)
 	{
-		// See if pressing this button should trigger any actions
-		// First on our main hand, then on our off hand
-		ShooterContext shooter = ShooterContext.of(player);
-		if (!shooter.IsValid())
-			return;
+		return actionStack.Client_TryStartGroupInstance(context);
+	}
+	@Override @Nonnull
+	protected EActionResult TryUpdateGroupInstanceHeld(@Nonnull ActionStack actionStack, @Nonnull ActionGroupContext context)
+	{
+		return actionStack.Client_TryUpdateGroupInstanceHeld(context);
+	}
+	@Override @Nonnull
+	protected EActionResult TryUpdateGroupInstanceNotHeld(@Nonnull ActionStack actionStack, @Nonnull ActionGroupContext context)
+	{
+		return actionStack.Client_TryUpdateGroupInstanceNotHeld(context);
+	}
 
-		// Ask the ShooterContext which Guns to use
-		for (GunContext gunContext : shooter.GetAllGunContexts(true))
-		{
-			if (!gunContext.IsValid())
-				continue;
 
-			ActionStack actionStack = gunContext.GetActionStack();
-			GunInputContext inputContext = GunInputContext.CreateFrom(gunContext, inputType);
-			IteratePossibleActionGroups(inputContext, actionStack::Client_TryStartGroupInstance);
-		}
+	@OnlyIn(Dist.CLIENT)
+	public void ClientKeyPressed(@Nonnull Player player, @Nonnull EPlayerInput inputType)
+	{
+		KeyPressed(ShooterContext.of(player), inputType);
 	}
 
 	@OnlyIn(Dist.CLIENT)
-	public void ClientKeyHeld(Player player, EPlayerInput inputType)
+	public void ClientKeyHeld(@Nonnull Player player, @Nonnull EPlayerInput inputType)
 	{
-		// See if any of the in-progress actions on this gun should stop on release
-		ShooterContext shooter = ShooterContext.of(player);
-		if (!shooter.IsValid())
-			return;
-
-		// Ask the ShooterContext which Guns to use
-		for (GunContext gunContext : shooter.GetAllGunContexts(true))
-		{
-			if (!gunContext.IsValid())
-				continue;
-
-			ActionStack actionStack = gunContext.GetActionStack();
-			GunInputContext inputContext = GunInputContext.CreateFrom(gunContext, inputType);
-			IterateActionGroupsThatRespondToHeld(inputContext, actionStack::Client_TryUpdateGroupInstanceHeld);
-		}
+		KeyHeld(ShooterContext.of(player), inputType);
 	}
 
 	@OnlyIn(Dist.CLIENT)
-	public void ClientKeyReleased(Player player, EPlayerInput inputType, int ticksSinceHeld)
+	public void ClientKeyReleased(@Nonnull Player player, @Nonnull EPlayerInput inputType, int ticksSinceHeld)
 	{
-		// See if any of the in-progress actions on this gun should stop on release
-		ShooterContext shooter = ShooterContext.of(player);
-		if (!shooter.IsValid())
-			return;
-
-		// Ask the ShooterContext which Guns to use
-		for (GunContext gunContext : shooter.GetAllGunContexts(true))
-		{
-			if (!gunContext.IsValid())
-				continue;
-
-			ActionStack actionStack = gunContext.GetActionStack();
-			GunInputContext inputContext = GunInputContext.CreateFrom(gunContext, inputType);
-			IterateActiveActionGroups(inputContext, actionStack::Client_TryUpdateGroupInstanceNotHeld);
-		}
+		KeyReleased(ShooterContext.of(player), inputType, ticksSinceHeld);
 	}
 
 	// This will only be sent to you when someone else fires a shot. This is where you play various actions in response
@@ -126,48 +99,48 @@ public class ClientActionManager extends ActionManager
 				}
 				groupInstance = actionStack.GetOrCreateGroupInstance(groupContext);
 				groupInstance.OnStartClientFromNetwork(msg.Data.GetStartTick());
-			}
 
-			// Now run through all the triggers that are bundled in this message and run any client side effects
-			switch(pressTypeToProcess)
-			{
-				case Press ->
+				// Now run through all the triggers that are bundled in this message and run any client side effects
+				switch(pressTypeToProcess)
 				{
-					for(var kvp : msg.Data.GetTriggers())
+					case Press ->
 					{
-						int triggerIndex = kvp.getKey();
-						int actionIndex = 0;
-						for(ActionInstance action : groupInstance.GetActions())
+						for(var kvp : msg.Data.GetTriggers())
 						{
-							ActionInstance.NetData netData = msg.Data.GetNetData(triggerIndex, actionIndex);
-							action.UpdateFromNetData(netData, triggerIndex);
-							action.OnTriggerClient(triggerIndex);
-							actionIndex++;
+							int triggerIndex = kvp.getKey();
+							int actionIndex = 0;
+							for(ActionInstance action : groupInstance.GetActions())
+							{
+								ActionInstance.NetData netData = msg.Data.GetNetData(triggerIndex, actionIndex);
+								action.UpdateFromNetData(netData, triggerIndex);
+								action.OnTriggerClient(triggerIndex);
+								actionIndex++;
+							}
 						}
 					}
-				}
-				case Release ->
-				{
-					// Check the action stack for this action/gun pairing and see if any of them are waiting for mouse release
-					switch(groupContext.RepeatMode())
+					case Release ->
 					{
-						case FullAuto, Minigun -> {
-							long numTicks = msg.Data.GetLastTriggerTick() - groupInstance.GetStartedTick();
-							int expectedTriggerCount = Maths.Floor(numTicks / groupContext.RepeatDelayTicks()) + 1;
-							int serverTriggerCount = groupInstance.GetTriggerCount();
-							if(expectedTriggerCount > serverTriggerCount)
-							{
-								FlansMod.LOGGER.info("Client expected to trigger " + expectedTriggerCount + " repeat(s), but server only triggered " + serverTriggerCount + " repeat(s)");
-							}
-							else if(expectedTriggerCount < serverTriggerCount)
-							{
-								FlansMod.LOGGER.info("Client expected to trigger " + expectedTriggerCount + " repeat(s), but server triggered " + serverTriggerCount + " many repeat(s)");
+						// Check the action stack for this action/gun pairing and see if any of them are waiting for mouse release
+						switch(groupContext.RepeatMode())
+						{
+							case FullAuto, Minigun -> {
+								long numTicks = msg.Data.GetLastTriggerTick() - groupInstance.GetStartedTick();
+								int expectedTriggerCount = Maths.Floor(numTicks / groupContext.RepeatDelayTicks()) + 1;
+								int serverTriggerCount = groupInstance.GetTriggerCount();
+								if(expectedTriggerCount > serverTriggerCount)
+								{
+									FlansMod.LOGGER.info("Client expected to trigger " + expectedTriggerCount + " repeat(s), but server only triggered " + serverTriggerCount + " repeat(s)");
+								}
+								else if(expectedTriggerCount < serverTriggerCount)
+								{
+									FlansMod.LOGGER.info("Client expected to trigger " + expectedTriggerCount + " repeat(s), but server triggered " + serverTriggerCount + " many repeat(s)");
+								}
 							}
 						}
-					}
 
-					groupInstance.UpdateInputHeld(false);
-					groupInstance.OnFinishClient();
+						groupInstance.UpdateInputHeld(false);
+						groupInstance.OnFinishClient();
+					}
 				}
 			}
 		}

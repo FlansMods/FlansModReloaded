@@ -1,6 +1,5 @@
 package com.flansmod.client.render;
 
-import com.flansmod.client.FlansModClient;
 import com.flansmod.client.render.debug.DebugRenderer;
 import com.flansmod.common.FlansMod;
 import com.flansmod.common.actions.*;
@@ -11,7 +10,6 @@ import com.flansmod.common.actions.nodes.ScopeAction;
 import com.flansmod.common.actions.contexts.ShooterContext;
 import com.flansmod.common.effects.FlansMobEffect;
 import com.flansmod.common.item.GunItem;
-import com.flansmod.common.projectiles.BulletGuidance;
 import com.flansmod.common.types.bullets.elements.ProjectileDefinition;
 import com.flansmod.common.types.guns.elements.ModeDefinition;
 import com.flansmod.common.types.magazines.MagazineDefinition;
@@ -21,12 +19,9 @@ import com.flansmod.util.Transform;
 import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.*;
-import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.renderer.GameRenderer;
-import net.minecraft.client.renderer.Rect2i;
-import net.minecraft.client.renderer.block.model.ItemTransforms;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.network.chat.Component;
@@ -36,13 +31,11 @@ import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.levelgen.LegacyRandomSource;
 import net.minecraft.world.phys.Vec2;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.client.ForgeHooksClient;
 import net.minecraftforge.client.event.*;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.TickEvent;
@@ -89,7 +82,7 @@ public class ClientRenderHooks
 		float totalFOVModifier = 0.0f;
 		int FOVModifierCount = 0;
 
-		GunContext[] gunContexts = shooterContext.GetAllGunContexts(true);
+		GunContext[] gunContexts = shooterContext.GetAllGunContexts();
 		for(GunContext gunContext : gunContexts)
 		{
 			if(!gunContext.IsValid())
@@ -123,7 +116,7 @@ public class ClientRenderHooks
 		if(!shooterContext.IsValid())
 			return;
 
-		GunContext[] gunContexts = shooterContext.GetAllGunContexts(true);
+		GunContext[] gunContexts = shooterContext.GetAllGunContexts();
 		GunContext mainContext = gunContexts[0];
 		GunContext offContext = gunContexts[1];
 		if (event instanceof RenderGuiOverlayEvent.Pre)
@@ -299,7 +292,7 @@ public class ClientRenderHooks
 		if(player == null || !shooterContext.IsValid())
 			return;
 
-		GunContext[] gunContexts = shooterContext.GetAllGunContexts(true);
+		GunContext[] gunContexts = shooterContext.GetAllGunContexts();
 		GunContext mainContext = gunContexts[0];
 		GunContext offContext = gunContexts[1];
 

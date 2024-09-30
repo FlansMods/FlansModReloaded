@@ -1,5 +1,6 @@
 package com.flansmod.common.actions.contexts;
 
+import com.flansmod.common.actions.ActionStack;
 import com.flansmod.util.Transform;
 import net.minecraft.world.Container;
 import net.minecraft.world.level.Level;
@@ -7,25 +8,35 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import org.jetbrains.annotations.Nullable;
 
 import javax.annotation.Nonnull;
+import java.util.Optional;
 
 public class GunContextTileEntity extends GunContextInventoryItem
 {
 	@Nonnull
-	public final BlockEntity TileEntity;
+	public final ShooterContextBlockEntity ShooterContext;
 
 	public GunContextTileEntity(
-		@Nonnull BlockEntity tileEntity,
-		@Nonnull Container container,
+		@Nonnull ShooterContextBlockEntity parent,
 		int slot)
 	{
-		super(container, slot);
-		TileEntity = tileEntity;
+		super(parent.GetAttachedInventory(), slot);
+		ShooterContext = parent;
 	}
 
 	@Override
-	@Nullable
-	public Level GetLevel() { return TileEntity.getLevel(); }
+	@Nonnull
+	public ActionStack GetActionStack()
+	{
+		Optional<ShooterBlockEntity> blockEntity = ShooterContext.GetBlockEntity();
+        return blockEntity.map(shooterBlockEntity -> shooterBlockEntity.GetActionStack(GetInventorySlotIndex())).orElse(ActionStack.Invalid);
+    }
+	@Override
+	@Nonnull
+	public ShooterContext GetShooter() { return ShooterContext; }
 	@Override
 	@Nullable
-	public Transform GetPosition() { return Transform.FromBlockPos(TileEntity.getBlockPos(), () -> "\"BlockPos\""); }
+	public Level GetLevel() { return ShooterContext.Level(); }
+	@Override
+	@Nullable
+	public Transform GetPosition() { return Transform.FromBlockPos(ShooterContext.Pos, () -> "\"BlockPos\""); }
 }

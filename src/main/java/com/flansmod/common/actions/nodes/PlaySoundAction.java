@@ -32,7 +32,7 @@ public class PlaySoundAction extends ActionInstance
 		{
 			float volume = Group.Context.Volume();
 			float pitch = Group.Context.Pitch();
-			SoundLODManager.PlaySound(soundDef, Group.Context.Gun.GetShooter().Entity(), volume, pitch);
+			SoundLODManager.PlaySound(soundDef, Group.Context.Gun.GetShooter().GetShootOrigin(0f), volume, pitch);
 		}
 	}
 }

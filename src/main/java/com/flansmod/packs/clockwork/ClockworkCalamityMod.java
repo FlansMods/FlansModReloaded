@@ -1,6 +1,9 @@
 package com.flansmod.packs.clockwork;
 
+import com.flansmod.client.render.tile.TurretBlockEntityRenderer;
 import com.flansmod.common.FlansMod;
+import com.flansmod.common.blocks.TurretBlockEntity;
+import com.flansmod.common.crafting.WorkbenchBlockEntity;
 import com.flansmod.packs.clockwork.client.ChipModel;
 import com.flansmod.packs.clockwork.client.ChipRenderer;
 import com.flansmod.packs.clockwork.client.SadieModel;
@@ -31,6 +34,8 @@ import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
 import org.slf4j.Logger;
+
+import javax.annotation.Nonnull;
 
 @Mod(ClockworkCalamityMod.MODID)
 public class ClockworkCalamityMod
@@ -89,6 +94,17 @@ public class ClockworkCalamityMod
 	public static final RegistryObject<Item> PART_BRASS_GRIP = 									FlansMod.Part(ITEMS, MODID, "brass_grip");
 
 
+	// Clockwork Workbench
+	public static final RegistryObject<Block> WORKBENCH_BLOCK_CLOCKWORK = 						FlansMod.Workbench_Block(BLOCKS, MODID, "clockwork_workbench");
+	public static final RegistryObject<Item> WORKBENCH_ITEM_CLOCKWORK = 						FlansMod.Workbench_Item(ITEMS, MODID, "clockwork_workbench", WORKBENCH_BLOCK_CLOCKWORK);
+	public static final RegistryObject<BlockEntityType<WorkbenchBlockEntity>> WORKBENCH_TILE_ENTITY_CLOCKWORK =
+			FlansMod.Workbench_TileEntityType(TILE_ENTITIES, MODID, "clockwork_workbench");
+
+	// Auto-turrets
+	public static final RegistryObject<Block> TURRET_BLOCK_STATIC = 							FlansMod.Turret_Block(BLOCKS, MODID, "turret_static");
+	public static final RegistryObject<Item> TURRET_ITEM_STATIC = 								FlansMod.Turret_Item(ITEMS, MODID, "turret_static", TURRET_BLOCK_STATIC);
+	public static final RegistryObject<BlockEntityType<TurretBlockEntity>> TURRET_TILE_ENTITY_STATIC =
+			FlansMod.Turret_TileEntityType(TILE_ENTITIES, MODID, "turret_static");
 
 
 	// Sadie NPC
@@ -151,6 +167,7 @@ public class ClockworkCalamityMod
 		@SubscribeEvent
 		public static void EntityRenderEvent(EntityRenderersEvent.RegisterRenderers event)
 		{
+			event.registerBlockEntityRenderer(TURRET_TILE_ENTITY_STATIC.get(), TurretBlockEntityRenderer::new);
 			event.registerEntityRenderer(ENTITY_TYPE_CHIP.get(), ChipRenderer::new);
 			event.registerEntityRenderer(ENTITY_TYPE_SADIE.get(), SadieRenderer::new);
 		}

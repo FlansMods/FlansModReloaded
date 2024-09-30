@@ -56,7 +56,7 @@ public class ShooterContextPlayer extends ShooterContextLiving
 
 	@Nonnull
 	@Override
-	public GunContext[] GetAllGunContexts(boolean client)
+	public GunContext[] GetAllGunContexts()
 	{
 		GunContext[] contexts = new GunContext[2];
 		contexts[0] = GunContext.of(this, Player.getInventory().selected);

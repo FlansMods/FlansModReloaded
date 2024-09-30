@@ -170,7 +170,7 @@ public class Raytracer
                         BlockHitResult blockHit = (BlockHitResult) hit;
                         if(World.isAreaLoaded(blockHit.getBlockPos(), 1))
                         {
-                            bCanPenetrate = penetrationPowerVsBlocks >= from.level().getBlockState(blockHit.getBlockPos()).getBlock().defaultDestroyTime();
+                            bCanPenetrate = penetrationPowerVsBlocks >= World.getBlockState(blockHit.getBlockPos()).getBlock().defaultDestroyTime();
                         }
                         else bCanPenetrate = false;
                     }

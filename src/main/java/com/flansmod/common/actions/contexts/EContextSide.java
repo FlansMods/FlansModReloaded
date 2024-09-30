@@ -35,4 +35,12 @@ public enum EContextSide
 		return blockEntity.getLevel().isClientSide ? Client : Server;
 	}
 
+	public boolean IsClient()
+	{
+		return this == Client;
+	}
+	public boolean IsServer()
+	{
+		return this == Server;
+	}
 }

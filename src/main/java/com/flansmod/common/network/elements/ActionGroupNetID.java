@@ -6,7 +6,7 @@ import java.util.UUID;
 
 public class ActionGroupNetID
 {
-	public UUID EntityUUID;
+	public UUID ShooterID;
 	public int GroupPathHash;
 	public int InventorySlotIndex;
 	public UUID GunID;
@@ -18,7 +18,7 @@ public class ActionGroupNetID
 
 	public ActionGroupNetID(UUID entityUUID, int groupPathHash, int inventorySlotIndex, UUID gunID)
 	{
-		EntityUUID = entityUUID;
+		ShooterID = entityUUID;
 		GroupPathHash = groupPathHash;
 		InventorySlotIndex = inventorySlotIndex;
 		GunID = gunID;
@@ -28,7 +28,7 @@ public class ActionGroupNetID
 	{
 		buf.writeShort(InventorySlotIndex);
 		buf.writeInt(GroupPathHash);
-		buf.writeUUID(EntityUUID);
+		buf.writeUUID(ShooterID);
 		buf.writeUUID(GunID);
 	}
 
@@ -36,7 +36,7 @@ public class ActionGroupNetID
 	{
 		InventorySlotIndex = buf.readShort();
 		GroupPathHash = buf.readInt();
-		EntityUUID = buf.readUUID();
+		ShooterID = buf.readUUID();
 		GunID = buf.readUUID();
 	}
 }

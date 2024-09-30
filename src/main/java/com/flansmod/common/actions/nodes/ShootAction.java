@@ -266,7 +266,7 @@ public class ShootAction extends ActionInstance
 						transformStack.add(Group.Context.Gun.GetShootOrigin());
 						RandomizeVectorDirection(
 							transformStack,
-							Group.Context.Gun.GetShooter().Entity().level().random,
+							Group.Context.Gun.GetShooter().Level().random,
 							bulletSpread,
 							Group.Context.SpreadPattern());
 
@@ -290,7 +290,7 @@ public class ShootAction extends ActionInstance
 							// Hitscan: Use the raytracer on client, find our hits and let the server know what they were
 							// Server will verify these results
 							List<HitResult> hits = new ArrayList<HitResult>(8);
-							Raytracer.ForLevel(Group.Context.Gun.GetShooter().Entity().level()).CastBullet(
+							Raytracer.ForLevel(Group.Context.Gun.GetShooter().Level()).CastBullet(
 								Group.Context.Gun.GetShooter().Entity(),
 								randomizedDirection.PositionVec3(),
 								randomizedDirection.ForwardVec3().scale(RAYCAST_LENGTH),
@@ -384,6 +384,14 @@ public class ShootAction extends ActionInstance
 		{
 			Group.SetFinished();
 			return;
+		}
+
+		if(Results.isEmpty())
+		{
+			if (!Group.Context.Gun.GetShooter().IsPlayerOwner())
+			{
+				Calculate(triggerIndex);
+			}
 		}
 
 		Level level = Group.Context.Gun.GetLevel();

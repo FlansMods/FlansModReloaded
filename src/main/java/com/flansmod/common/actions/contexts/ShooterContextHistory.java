@@ -11,6 +11,7 @@ import net.minecraftforge.common.util.NonNullSupplier;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Collection;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.function.Function;
 
@@ -33,18 +34,17 @@ public class ShooterContextHistory extends ContextHistory<ShooterContext>
 	}
 
 	@Nonnull
-	public ShooterContext ContextualizeWith(@Nonnull UUID ownerUUID, @Nonnull UUID shooterUUID, @Nullable Level checkLevel, @Nonnull Function<UUID, Entity> entityResolveFunc)
+	public ShooterContext ContextualizeWith(@Nonnull UUID ownerUUID,
+											@Nonnull UUID shooterUUID,
+											@Nullable Level checkLevel,
+											@Nonnull Function<UUID, Entity> entityResolveFunc,
+											@Nonnull Function<UUID, Optional<ShooterBlockEntity>> blockEntityResolveFunc)
 	{
 		return GetOrCreate(
-			(check) -> check.EntityUUID().equals(shooterUUID)
+			(check) -> check.ShooterID().equals(shooterUUID)
 					&& check.OwnerUUID().equals(ownerUUID)
 					&& (checkLevel == null || check.Level() == checkLevel),
-			() -> {
-				Entity owner = entityResolveFunc.apply(ownerUUID);
-				Entity shooter = entityResolveFunc.apply(shooterUUID);
-
-				return CreateFor(owner, shooter);
-			},
+			() -> CreateFor(ownerUUID, shooterUUID, entityResolveFunc, blockEntityResolveFunc),
 			MinecraftHelpers::GetTick);
 	}
 
@@ -52,7 +52,7 @@ public class ShooterContextHistory extends ContextHistory<ShooterContext>
 	public ShooterContext ContextualizeWith(@Nonnull UUID ownerUUID, @Nonnull UUID shooterUUID, @Nullable Level checkLevel)
 	{
 		return GetOrCreate(
-			(check) -> check.EntityUUID().equals(shooterUUID)
+			(check) -> check.ShooterID().equals(shooterUUID)
 				&& check.OwnerUUID().equals(ownerUUID)
 				&& (checkLevel == null || check.Level() == checkLevel),
 			() -> new ShooterContextUnresolvedEntity(ownerUUID, shooterUUID, MinecraftHelpers.GetLogicalSide()),
@@ -82,6 +82,15 @@ public class ShooterContextHistory extends ContextHistory<ShooterContext>
 	}
 
 	@Nonnull
+	public ShooterContext ContextualizeWith(@Nonnull ShooterBlockEntity blockShooter)
+	{
+		return GetOrCreate(
+				(check) -> check instanceof ShooterContextBlockEntity shooterBE && shooterBE.GetBlockEntity().equals(Optional.of(blockShooter)),
+				() -> new ShooterContextBlockEntity(blockShooter),
+				MinecraftHelpers::GetTick);
+	}
+
+	@Nonnull
 	public ShooterContext ContextualizeWith(@Nonnull Player playerShooter)
 	{
 		return GetOrCreate(
@@ -91,25 +100,38 @@ public class ShooterContextHistory extends ContextHistory<ShooterContext>
 	}
 
 	@Nonnull
-	private ShooterContext CreateFor(@Nullable Entity owner, @Nonnull Entity shooter)
+	private ShooterContext CreateFor(@Nonnull UUID ownerUUID,
+									 @Nonnull UUID shooterUUID,
+									 @Nonnull Function<UUID, Entity> entityResolveFunc,
+									 @Nonnull Function<UUID, Optional<ShooterBlockEntity>> blockEntityResolveFunc)
 	{
-		if(shooter instanceof Player player)
+		Entity shooter = entityResolveFunc.apply(shooterUUID);
+		if(shooter != null)
 		{
-			return new ShooterContextPlayer(player);
+			if (shooter instanceof Player player)
+			{
+				return new ShooterContextPlayer(player);
+			}
+			else if (shooter instanceof LivingEntity living)
+			{
+				return new ShooterContextLiving(living);
+			}
+			else if (shooter instanceof VehicleEntity vehicle)
+			{
+				return new ShooterContextVehicleRoot(vehicle);
+			}
 		}
-		else if(shooter instanceof LivingEntity living)
+
+		Optional<ShooterBlockEntity> blockEntity = blockEntityResolveFunc.apply(shooterUUID);
+		if(blockEntity.isPresent())
 		{
-			return new ShooterContextLiving(living);
-		}
-		else if(shooter instanceof VehicleEntity vehicle)
-		{
-			return new ShooterContextVehicleRoot(vehicle);
+			return new ShooterContextBlockEntity(blockEntity.get());
 		}
 
 		return new ShooterContextUnresolvedEntity(
-			owner != null ? owner.getUUID() : ShooterContext.InvalidID,
-			shooter.getUUID(),
-			MinecraftHelpers.GetLogicalSide(shooter));
+			ownerUUID,
+			shooterUUID,
+			MinecraftHelpers.GetLogicalSide());
 	}
 
 	@Override

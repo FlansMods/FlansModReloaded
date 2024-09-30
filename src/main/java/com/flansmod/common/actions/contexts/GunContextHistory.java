@@ -72,11 +72,20 @@ public class GunContextHistory extends ContextHistory<GunContext>
 		return GetOrCreate(
 			(check) -> {
 				return check instanceof GunContextTileEntity teContext
-					&& teContext.TileEntity == blockEntity
-					&& check.GetAttachedInventory() == container
+					&& teContext.ShooterContext.Dimension == blockEntity.getLevel().dimension()
+					&& teContext.ShooterContext.Pos == blockEntity.getBlockPos()
 					&& check.GetInventorySlotIndex() == slot;
 			},
-			() -> new GunContextTileEntity(blockEntity, container, slot),
+			() ->
+			{
+				if(blockEntity instanceof ShooterBlockEntity shooterBlockEntity)
+				{
+					ShooterContext shooterContext = ShooterContext.of(shooterBlockEntity);
+					if(shooterContext.IsValid() && shooterContext instanceof ShooterContextBlockEntity shooterContextBlockEntity)
+						return new GunContextTileEntity(shooterContextBlockEntity , slot);
+				}
+				return GunContext.INVALID;
+			},
 			MinecraftHelpers::GetTick);
 	}
 

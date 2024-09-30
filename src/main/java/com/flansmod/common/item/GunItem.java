@@ -2,7 +2,6 @@ package com.flansmod.common.item;
 
 import com.flansmod.client.FlansModClient;
 import com.flansmod.client.render.guns.GunItemClientExtension;
-import com.flansmod.client.render.guns.GunItemRenderer;
 import com.flansmod.common.FlansMod;
 import com.flansmod.common.abilities.AbilityEffectProvideEnchantment;
 import com.flansmod.common.actions.*;
@@ -13,7 +12,6 @@ import com.flansmod.common.types.abilities.elements.EAbilityTarget;
 import com.flansmod.common.types.bullets.BulletDefinition;
 import com.flansmod.common.types.bullets.elements.ProjectileDefinition;
 import com.flansmod.common.types.guns.elements.*;
-import com.flansmod.common.types.elements.ModifierDefinition;
 import com.flansmod.common.types.guns.GunDefinition;
 import com.flansmod.common.types.magazines.MagazineDefinition;
 import com.flansmod.util.Maths;
@@ -21,7 +19,6 @@ import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.Multimap;
 import com.mojang.blaze3d.platform.InputConstants;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
@@ -40,7 +37,6 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.*;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.item.enchantment.Enchantment;
-import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
@@ -332,7 +328,7 @@ public class GunItem extends FlanItem
         ShooterContext shooterContext = ShooterContext.of(player);
         if(shooterContext.IsValid())
         {
-            for(GunContext gunContext : shooterContext.GetAllGunContexts(world.isClientSide))
+            for(GunContext gunContext : shooterContext.GetAllGunContexts())
             {
                 for (ActionDefinition actionDef : gunContext.GetPotentialPrimaryActions())
                 {

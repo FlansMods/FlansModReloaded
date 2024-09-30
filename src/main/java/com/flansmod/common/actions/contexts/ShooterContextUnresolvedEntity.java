@@ -25,6 +25,8 @@ public class ShooterContextUnresolvedEntity extends ShooterContext
 		EntityUUID = entityUUID;
 	}
 
+	@Override @Nonnull
+	public UUID ShooterID() { return EntityUUID; }
 	@Override
 	@Nonnull
 	public EContextSide GetSide() { return Side; }

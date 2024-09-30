@@ -41,6 +41,9 @@ public class ShooterContextLiving extends ShooterContext implements Container
 			return GunContext.of(this, gunID);
 		return GunContext.INVALID;
 	}
+
+	@Override @Nonnull
+	public UUID ShooterID() { return EntityUUID(); }
 	@Override
 	@Nonnull
 	public UUID[] GetAllGunIDs()
@@ -138,7 +141,7 @@ public class ShooterContextLiving extends ShooterContext implements Container
 							int stackCount = 0;
 							if(abilityDef.IsStackable())
 							{
-								for(GunContext gunContext : GetAllGunContexts(GetSide() == EContextSide.Client))
+								for(GunContext gunContext : GetAllGunContexts())
 								{
 									AbilityStack stacks = gunContext.GetActionStack().GetStacks(abilityDef.stacking);
 									if(stacks != null)

@@ -1,46 +1,30 @@
 package com.flansmod.client.render.effects;
 
 import com.flansmod.client.render.FirstPersonManager;
-import com.flansmod.client.render.FlanItemModelRenderer;
-import com.flansmod.client.render.PartialRenderUtility;
 import com.flansmod.client.render.RenderContext;
 import com.flansmod.client.render.models.FlansModelRegistry;
 import com.flansmod.client.render.models.ITurboRenderer;
-import com.flansmod.common.FlansMod;
 import com.flansmod.common.actions.ActionGroupInstance;
 import com.flansmod.common.actions.ActionInstance;
-import com.flansmod.common.actions.contexts.ActionGroupContext;
 import com.flansmod.common.actions.contexts.GunContext;
 import com.flansmod.common.actions.contexts.GunContextPlayer;
 import com.flansmod.common.actions.contexts.ShooterContext;
 import com.flansmod.common.actions.nodes.AttachEffectAction;
-import com.flansmod.common.actions.nodes.LaserAction;
-import com.flansmod.common.types.attachments.EAttachmentType;
 import com.flansmod.util.MinecraftHelpers;
 import com.flansmod.util.Transform;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.model.Model;
 import net.minecraft.client.renderer.GameRenderer;
-import net.minecraft.client.renderer.RenderType;
-import net.minecraft.client.renderer.entity.ItemRenderer;
-import net.minecraft.client.resources.model.BakedModel;
-import net.minecraft.client.resources.model.ModelResourceLocation;
-import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemDisplayContext;
-import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.client.event.RenderHandEvent;
 import net.minecraftforge.client.event.RenderLevelStageEvent;
-import net.minecraftforge.client.model.data.ModelData;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
-import org.joml.Vector4f;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -61,7 +45,7 @@ public class FlashEffectRenderer
 		if (!playerContext.IsValid())
 			return;
 
-		for (GunContext gunContext : playerContext.GetAllGunContexts(true))
+		for (GunContext gunContext : playerContext.GetAllGunContexts())
 		{
 			if (!gunContext.IsValid())
 				continue;
@@ -109,7 +93,7 @@ public class FlashEffectRenderer
 			if(playerContext.IsLocalPlayerOwner() && Minecraft.getInstance().options.getCameraType().isFirstPerson())
 				continue;
 
-			for (GunContext gunContext : playerContext.GetAllGunContexts(true))
+			for (GunContext gunContext : playerContext.GetAllGunContexts())
 			{
 				if (!gunContext.IsValid())
 					continue;

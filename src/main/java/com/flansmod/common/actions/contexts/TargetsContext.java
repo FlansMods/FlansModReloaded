@@ -11,7 +11,6 @@ import net.minecraft.world.phys.Vec3;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.lang.annotation.Target;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -102,7 +101,7 @@ public class TargetsContext
 			ShooterContext shooterContext = ShooterContext.of(entity);
 			if(shooterContext.IsValid())
 			{
-				for(GunContext gunContext : shooterContext.GetAllGunContexts(entity.level().isClientSide))
+				for(GunContext gunContext : shooterContext.GetAllGunContexts())
 				{
 					func.accept(gunContext);
 				}

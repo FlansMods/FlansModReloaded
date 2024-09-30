@@ -39,6 +39,8 @@ public abstract class ShooterContextVehicle extends ShooterContext
 		return new ShooterContextVehicleSeat(Vehicle, seatPath);
 	}
 
+	@Override @Nonnull
+	public UUID ShooterID() { return EntityUUID(); }
 	@Override
 	@Nonnull
 	public Entity Entity()

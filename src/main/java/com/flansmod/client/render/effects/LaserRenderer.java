@@ -58,7 +58,7 @@ public class LaserRenderer
 			if (!playerContext.IsValid())
 				continue;
 
-			for (GunContext gunContext : playerContext.GetAllGunContexts(true))
+			for (GunContext gunContext : playerContext.GetAllGunContexts())
 			{
 				if (!gunContext.IsValid())
 					continue;

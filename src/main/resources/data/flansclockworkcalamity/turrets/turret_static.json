@@ -1,0 +1,11 @@
+{
+	"defaultSideSettings": {
+		"redstoneResponses": [
+			{
+				"minRedstoneLevel": 1,
+				"allowIndirectPower": true,
+				"simulateInput": "Fire1"
+			}
+		]
+	}
+}

@@ -13,10 +13,7 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 public abstract class ContextCache
 {
@@ -58,7 +55,7 @@ public abstract class ContextCache
 	@Nonnull
 	private ShooterContextHistory HistoryOfShooter(@Nonnull UUID shooterID)
 	{
-		if(shooterID.equals(ShooterContext.INVALID.EntityUUID()))
+		if(shooterID.equals(ShooterContext.InvalidID))
 			return ShooterContextHistory.INVALID;
 
 		ShooterContextHistory history = ShooterContexts.get(shooterID);
@@ -76,6 +73,11 @@ public abstract class ContextCache
 		return HistoryOfShooter(shooter.getUUID()).ContextualizeWith(shooter);
 	}
 	@Nonnull
+	public ShooterContext GetShooter(@Nonnull ShooterBlockEntity shooter)
+	{
+		return HistoryOfShooter(shooter.GetShooterID()).ContextualizeWith(shooter);
+	}
+	@Nonnull
 	public ShooterContext GetShooter(@Nonnull Entity shooter, @Nullable Entity owner)
 	{
 		return GetShooter(shooter.getUUID(), owner != null ? owner.getUUID() : ShooterContext.InvalidID, null);
@@ -83,7 +85,7 @@ public abstract class ContextCache
 	@Nonnull
 	public ShooterContext GetShooter(@Nonnull UUID shooterID, @Nonnull UUID ownerID, @Nullable Level checkLevel)
 	{
-		return HistoryOfShooter(shooterID).ContextualizeWith(ownerID, shooterID, checkLevel, this::TryFindEntity);
+		return HistoryOfShooter(shooterID).ContextualizeWith(ownerID, shooterID, checkLevel, this::TryFindEntity, this::TryFindBlockEntity);
 	}
 	//@Nonnull
 	//private ShooterContext TryGetExistingShooter(@Nonnull UUID shooterID, @Nonnull UUID ownerID)
@@ -92,7 +94,8 @@ public abstract class ContextCache
 	//}
 	@Nullable
 	protected abstract Entity TryFindEntity(@Nonnull UUID entityID);
-
+	@Nonnull
+	protected abstract Optional<ShooterBlockEntity> TryFindBlockEntity(@Nonnull UUID blockEntityID);
 
 	// ---------------------------------------------------------------------------------------------------
 	// GUN CONTEXT CACHE

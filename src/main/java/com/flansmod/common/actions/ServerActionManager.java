@@ -19,6 +19,7 @@ import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 
+import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -37,6 +38,23 @@ public class ServerActionManager extends ActionManager
 	public void HookServer(IEventBus modEventBus)
 	{
 		MinecraftForge.EVENT_BUS.register(this);
+	}
+
+	@Override
+	@Nonnull
+	protected EActionResult TryStartGroupInstance(@Nonnull ActionStack actionStack, @Nonnull ActionGroupContext context)
+	{
+		return actionStack.Server_TryStartGroupInstance(context);
+	}
+	@Override @Nonnull
+	protected EActionResult TryUpdateGroupInstanceHeld(@Nonnull ActionStack actionStack, @Nonnull ActionGroupContext context)
+	{
+		return actionStack.Server_TryUpdateGroupInstanceHeld(context);
+	}
+	@Override @Nonnull
+	protected EActionResult TryUpdateGroupInstanceNotHeld(@Nonnull ActionStack actionStack, @Nonnull ActionGroupContext context)
+	{
+		return actionStack.Server_TryUpdateGroupInstanceNotHeld(context);
 	}
 
 	// When a client tells us they want to reload, we need to process their items

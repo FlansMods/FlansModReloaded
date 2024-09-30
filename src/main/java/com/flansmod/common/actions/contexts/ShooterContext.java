@@ -33,6 +33,8 @@ public abstract class ShooterContext
 	public static final UUID InvalidID = new UUID(0L, 0L);
 	public static final ShooterContext INVALID = new ShooterContext()
 	{
+		@Override @Nonnull
+		public UUID ShooterID() { return InvalidID; }
 		@Override
 		public int GetNumValidContexts() { return 0; }
 		@Override
@@ -44,9 +46,9 @@ public abstract class ShooterContext
 		@Override
 		@Nonnull
 		public GunContext CreateContext(@Nonnull UUID gunID) { return GunContext.INVALID; }
-		@Override
+		@Override @Nullable
 		public Entity Entity() { return null; }
-		@Override
+		@Override @Nullable
 		public Entity Owner() { return null; }
 		@Override
 		@Nonnull
@@ -57,7 +59,7 @@ public abstract class ShooterContext
 		public boolean IsCreative() { return false; }
 		@Override
 		public int hashCode() { return 0; }
-		@Override
+		@Override @Nullable
 		public Container GetAttachedInventory() { return null; }
 		@Override
 		public void BakeModifiers(@Nonnull IModifierBaker baker) {}
@@ -69,6 +71,17 @@ public abstract class ShooterContext
 		if(shooter != null)
 		{
 			if (shooter.level().isClientSide)
+				return client(shooter);
+			return server(shooter);
+		}
+		return INVALID;
+	}
+	@Nonnull
+	public static ShooterContext of(@Nullable ShooterBlockEntity shooter)
+	{
+		if(shooter != null)
+		{
+			if (shooter.getLevel().isClientSide)
 				return client(shooter);
 			return server(shooter);
 		}
@@ -98,6 +111,8 @@ public abstract class ShooterContext
 	@Nonnull
 	public static ShooterContext server(@Nonnull Entity shooter) { return FlansMod.CONTEXT_CACHE.GetShooter(shooter); }
 	@Nonnull
+	public static ShooterContext server(@Nonnull ShooterBlockEntity shooter) { return FlansMod.CONTEXT_CACHE.GetShooter(shooter); }
+	@Nonnull
 	public static ShooterContext server(@Nonnull Entity shooter, @Nullable Entity owner) { return FlansMod.CONTEXT_CACHE.GetShooter(shooter, owner); }
 	@Nonnull
 	public static ShooterContext server(@Nonnull UUID shooterID, @Nonnull UUID ownerID) { return FlansMod.CONTEXT_CACHE.GetShooter(shooterID, ownerID, null); }
@@ -105,6 +120,9 @@ public abstract class ShooterContext
 	@OnlyIn(Dist.CLIENT)
 	@Nonnull
 	public static ShooterContext client(@Nonnull Entity shooter) { return FlansModClient.CONTEXT_CACHE.GetShooter(shooter); }
+	@OnlyIn(Dist.CLIENT)
+	@Nonnull
+	public static ShooterContext client(@Nonnull ShooterBlockEntity shooter) { return FlansModClient.CONTEXT_CACHE.GetShooter(shooter); }
 	@OnlyIn(Dist.CLIENT)
 	@Nonnull
 	public static ShooterContext client(@Nonnull Entity shooter, @Nullable Entity owner) { return FlansModClient.CONTEXT_CACHE.GetShooter(shooter, owner); }
@@ -123,8 +141,9 @@ public abstract class ShooterContext
 	}
 
 
-
-
+	// Provides the netsync UUID. Can be exactly an Entity UUID or a constructed one for a block entity
+	@Nonnull
+	public abstract UUID ShooterID();
 
 	public boolean IsPlayerOwner()
 	{
@@ -229,7 +248,7 @@ public abstract class ShooterContext
 	}
 
 	@Nonnull
-	public GunContext[] GetAllGunContexts(boolean client)
+	public GunContext[] GetAllGunContexts()
 	{
 		UUID[] ids = GetAllGunIDs();
 		GunContext[] contexts = new GunContext[ids.length];

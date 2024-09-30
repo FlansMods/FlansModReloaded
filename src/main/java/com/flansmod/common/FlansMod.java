@@ -3,6 +3,8 @@ package com.flansmod.common;
 import com.flansmod.client.FlansModClient;
 import com.flansmod.common.actions.contexts.*;
 import com.flansmod.common.actions.ServerActionManager;
+import com.flansmod.common.blocks.TurretBlock;
+import com.flansmod.common.blocks.TurretBlockEntity;
 import com.flansmod.common.crafting.*;
 import com.flansmod.common.crafting.ingredients.StackedVanillaIngredient;
 import com.flansmod.common.crafting.ingredients.TieredMaterialIngredient;
@@ -29,6 +31,8 @@ import com.flansmod.common.types.abilities.elements.EAbilityEffect;
 import com.flansmod.common.types.armour.ArmourDefinitions;
 import com.flansmod.common.types.attachments.AttachmentDefinitions;
 import com.flansmod.common.types.attachments.EAttachmentType;
+import com.flansmod.common.types.blocks.TurretBlockDefinitions;
+import com.flansmod.common.blocks.TurretContainerMenu;
 import com.flansmod.common.types.crafting.MaterialDefinitions;
 import com.flansmod.common.types.crafting.WorkbenchDefinitions;
 import com.flansmod.common.types.grenades.GrenadeDefinitions;
@@ -169,6 +173,7 @@ public class FlansMod
     public static final RegistryObject<MenuType<WorkbenchMenuMaterials>> WORKBENCH_MENU_MATERIALS = MENUS.register("workbench_materials", () -> IForgeMenuType.create(WorkbenchMenuMaterials::new));
     public static final RegistryObject<MenuType<WorkbenchMenuModification>> WORKBENCH_MENU_MODIFICATION  = MENUS.register("workbench_modification", () -> IForgeMenuType.create(WorkbenchMenuModification::new));
     public static final RegistryObject<MenuType<WorkbenchMenuPartCrafting>> WORKBENCH_MENU_PART_CRAFTING = MENUS.register("workbench_part_crafting", () -> IForgeMenuType.create(WorkbenchMenuPartCrafting::new));
+    public static final RegistryObject<MenuType<TurretContainerMenu>> TURRET_MENU = MENUS.register("turret", () -> IForgeMenuType.create(TurretContainerMenu::new));
 
     // Recipes
     public static final RegistryObject<RecipeType<PartFabricationRecipe>> PART_FABRICATION_RECIPE_TYPE = RECIPE_TYPES.register("part_fabrication", () -> RecipeType.simple(new ResourceLocation(MODID, "part_fabrication")));
@@ -295,6 +300,7 @@ public class FlansMod
     public static final ArmourDefinitions ARMOURS = new ArmourDefinitions();
     public static final VehicleDefinitions VEHICLES = new VehicleDefinitions();
     public static final ControlSchemeDefinitions CONTROL_SCHEMES = new ControlSchemeDefinitions();
+    public static final TurretBlockDefinitions TURRETS = new TurretBlockDefinitions();
 
     // Server handlers
     public static final ServerActionManager ACTIONS_SERVER = new ServerActionManager();
@@ -333,13 +339,14 @@ public class FlansMod
         return itemRegister.register(name, () -> new PartItem(loc, new Item.Properties()));
     }
 
-    public static RegistryObject<Block> Workbench_Block(DeferredRegister<Block> blockRegister, String modID, String name)
+    @Nonnull
+    public static RegistryObject<Block> Workbench_Block(@Nonnull DeferredRegister<Block> blockRegister, @Nonnull String modID, @Nonnull String name)
     {
         ResourceLocation loc = new ResourceLocation(modID, name);
         return blockRegister.register(name, () -> new WorkbenchBlock(loc, BlockBehaviour.Properties.copy(Blocks.IRON_BLOCK).dynamicShape()));
     }
-
-    public static RegistryObject<Item> Workbench_Item(DeferredRegister<Item> itemRegister, String modID, String name, RegistryObject<Block> block)
+    @Nonnull
+    public static RegistryObject<Item> Workbench_Item(@Nonnull DeferredRegister<Item> itemRegister, @Nonnull String modID, @Nonnull String name, @Nonnull RegistryObject<Block> block)
     {
         ResourceLocation loc = new ResourceLocation(modID, name);
         return itemRegister.register(name, () -> new BlockItem(block.get(), new Item.Properties()));
@@ -350,20 +357,41 @@ public class FlansMod
         ResourceLocation loc = new ResourceLocation(modID, name);
         return itemRegister.register(name, () -> new TemporaryWorkbenchItem(loc));
     }
-
-    public static RegistryObject<BlockEntityType<WorkbenchBlockEntity>> Workbench_TileEntityType(DeferredRegister<BlockEntityType<?>> tileEntityTypeRegister, String modID, String name)
+    @Nonnull
+    public static RegistryObject<BlockEntityType<WorkbenchBlockEntity>> Workbench_TileEntityType(@Nonnull DeferredRegister<BlockEntityType<?>> tileEntityTypeRegister, @Nonnull String modID, @Nonnull String name)
     {
         ResourceLocation loc = new ResourceLocation(modID, name);
         return tileEntityTypeRegister.register(name, () -> new WorkbenchBlockEntity.WorkbenchBlockEntityTypeHolder(loc).CreateType());
     }
 
-    public static RegistryObject<Item> Vehicle_Item(DeferredRegister<Item> itemRegister, String modID, String name)
+    @Nonnull
+    public static RegistryObject<Block> Turret_Block(@Nonnull DeferredRegister<Block> blockRegister, @Nonnull String modID, @Nonnull String name)
+    {
+        ResourceLocation loc = new ResourceLocation(modID, name);
+        return blockRegister.register(name, () -> new TurretBlock(loc, BlockBehaviour.Properties.copy(Blocks.IRON_BLOCK).dynamicShape()));
+    }
+    @Nonnull
+    public static RegistryObject<Item> Turret_Item(@Nonnull DeferredRegister<Item> itemRegister, @Nonnull String modID, @Nonnull String name, @Nonnull RegistryObject<Block> block)
+    {
+        ResourceLocation loc = new ResourceLocation(modID, name);
+        return itemRegister.register(name, () -> new BlockItem(block.get(), new Item.Properties()));
+    }
+    @Nonnull
+    public static RegistryObject<BlockEntityType<TurretBlockEntity>> Turret_TileEntityType(@Nonnull DeferredRegister<BlockEntityType<?>> tileEntityTypeRegister, @Nonnull String modID, @Nonnull String name)
+    {
+        ResourceLocation loc = new ResourceLocation(modID, name);
+        return tileEntityTypeRegister.register(name, () -> new TurretBlockEntity.TurretBlockEntityTypeHolder(loc).CreateType());
+    }
+
+
+    // -----------------------------------------------------------------------------------------------------------------
+    // Vehicle Registration Helpers
+    @Nonnull
+    public static RegistryObject<Item> Vehicle_Item(@Nonnull DeferredRegister<Item> itemRegister, @Nonnull String modID, @Nonnull String name)
     {
         ResourceLocation loc = new ResourceLocation(modID, name);
         return itemRegister.register(name, () -> new VehicleItem(loc, new Item.Properties()));
     }
-
-
     private record VehicleFactory(@Nonnull ResourceLocation Loc)
     {
         @Nonnull
@@ -514,7 +542,7 @@ public class FlansMod
             if(target instanceof ServerPlayer player)
             {
                 ShooterContext shooterContext = CONTEXT_CACHE.GetShooter(player);
-                for(GunContext gunContext : shooterContext.GetAllGunContexts(false))
+                for(GunContext gunContext : shooterContext.GetAllGunContexts())
                 {
                     if(gunContext.IsValid() && gunContext instanceof GunContextPlayer gunContextPlayer)
                     {
@@ -579,5 +607,6 @@ public class FlansMod
         registerFunc.accept(ARMOURS);
         registerFunc.accept(VEHICLES);
         registerFunc.accept(CONTROL_SCHEMES);
+        registerFunc.accept(TURRETS);
     }
 }

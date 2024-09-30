@@ -24,6 +24,8 @@ import net.minecraftforge.network.PacketDistributor;
 import net.minecraftforge.network.simple.SimpleChannel;
 import net.minecraftforge.server.ServerLifecycleHooks;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.Collection;
 import java.util.List;
 import java.util.function.BiConsumer;
@@ -60,9 +62,9 @@ public class FlansModPacketHandler
 	}
 
 	public static <TMessage extends FlansModMessage> void RegisterServerHandler(
-		Class<TMessage> clazz,
-		Factory<TMessage> factory,
-		BiConsumer<TMessage, ServerPlayer> handler)
+		@Nonnull Class<TMessage> clazz,
+		@Nonnull Factory<TMessage> factory,
+		@Nonnull BiConsumer<TMessage, ServerPlayer> handler)
 	{
 		INSTANCE.registerMessage(
 			NextMessageID,
@@ -88,9 +90,9 @@ public class FlansModPacketHandler
 	}
 
 	public static <TMessage extends FlansModMessage> void RegisterClientHandler(
-		Class<TMessage> clazz,
-		Factory<TMessage> factory,
-		Supplier<Consumer<TMessage>> handlerSupplier
+		@Nonnull Class<TMessage> clazz,
+		@Nonnull Factory<TMessage> factory,
+		@Nonnull Supplier<Consumer<TMessage>> handlerSupplier
 	)
 	{
 		DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> {
@@ -133,26 +135,30 @@ public class FlansModPacketHandler
 		NextMessageID++;
 	}
 
-	public static <MSG> void SendToPlayer(ServerPlayer player, MSG message)
+	public static <MSG> void SendToPlayer(@Nonnull ServerPlayer player, @Nonnull MSG message)
 	{
 		INSTANCE.send(PacketDistributor.PLAYER.with(() -> player), message);
 	}
 
-	public static <MSG> void SendToChunk(LevelChunk levelChunk, MSG message)
+	public static <MSG> void SendToChunk(@Nonnull LevelChunk levelChunk, @Nonnull MSG message)
 	{
 		INSTANCE.send(PacketDistributor.TRACKING_CHUNK.with(() -> levelChunk), message);
 	}
 
-	public static <MSG> void SendToAll(MSG message)
+	public static <MSG> void SendToAll(@Nonnull MSG message)
 	{
 		INSTANCE.send(PacketDistributor.ALL.noArg(), message);
 	}
 
-	public static <MSG> void SendToAllAroundPoint(MSG message, ResourceKey<Level> dimension, Vec3 point, double radius, Entity excluding)
+	public static <MSG> void SendToAllAroundPoint(@Nonnull MSG message,
+												  @Nonnull ResourceKey<Level> dimension,
+												  @Nonnull Vec3 point,
+												  double radius,
+												  @Nullable Entity excluding)
 	{
 		for(ServerPlayer player : getServer().getPlayerList().getPlayers())
 		{
-			if(excluding.equals(player))
+			if(player.equals(excluding))
 				continue;
 			if(player.level().dimension().equals(dimension))
 			{
@@ -166,11 +172,15 @@ public class FlansModPacketHandler
 		}
 	}
 
-	public static <MSG> void SendToAllAroundPoints(MSG message, ResourceKey<Level> dimension, Collection<Vec3> points, double radius, Entity excluding)
+	public static <MSG> void SendToAllAroundPoints(@Nonnull MSG message,
+												   @Nonnull ResourceKey<Level> dimension,
+												   @Nonnull Collection<Vec3> points,
+												   double radius,
+												   @Nullable Entity excluding)
 	{
 		for(ServerPlayer player : getServer().getPlayerList().getPlayers())
 		{
-			if(excluding.equals(player))
+			if(player.equals(excluding))
 				continue;
 			if(player.level().dimension().equals(dimension))
 			{
@@ -187,6 +197,7 @@ public class FlansModPacketHandler
 		}
 	}
 
+	@Nullable
 	private static MinecraftServer getServer()
 	{
 		return ServerLifecycleHooks.getCurrentServer();

@@ -1,6 +1,5 @@
 package com.flansmod.mixin;
 
-import com.flansmod.common.FlansMod;
 import com.flansmod.common.actions.ActionGroupInstance;
 import com.flansmod.common.actions.ActionInstance;
 import com.flansmod.common.actions.ActionStack;
@@ -28,7 +27,7 @@ public class MixinMouseHandler
 			ShooterContext shooterContext = ShooterContext.of(player);
 			if(shooterContext.IsValid())
 			{
-				for(GunContext gunContext : shooterContext.GetAllGunContexts(true))
+				for(GunContext gunContext : shooterContext.GetAllGunContexts())
 				{
 					ActionStack actionStack = gunContext.GetActionStack();
 					for(ActionGroupInstance actionGroupInstance : actionStack.GetActiveActionGroups())
