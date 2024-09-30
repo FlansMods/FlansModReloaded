@@ -231,8 +231,6 @@ public class ShootAction extends ActionInstance
 		{
 			Results.put(repeatIndex, shots = new GunshotCollection()
 				.FromActionGroup(Group.Context.GroupPath)
-				.WithOwner(Group.Context.Gun.GetShooter().Owner())
-				.WithShooter(Group.Context.Gun.GetShooter().Entity())
 				.WithGun(Group.Context.Gun.Def)
 				.FiredOnTick(Group.GetProgressTicks()));
 		}
