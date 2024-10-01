@@ -29,6 +29,7 @@ import net.minecraft.core.Vec3i;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.util.RandomSource;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.boss.EnderDragonPart;
 import net.minecraft.world.entity.boss.enderdragon.EnderDragon;
@@ -543,39 +544,50 @@ public class ShootAction extends ActionInstance
 					{
 						if (hit.getType() == HitResult.Type.ENTITY)
 						{
-							// Check bullet invulnerability
-							if (!((EntityHitResult) hit).getEntity().isAttackable())
-								continue;
-
-							hitEntity = true;
-
-
-							if (((EntityHitResult) hit).getEntity() instanceof EnderDragon dragon)
+							Entity entity = null;
+							if(hit instanceof EntityHitResult entityHitResult)
 							{
-								float damage = gunshotContext.EstimateImpactDamage(EAbilityTarget.ShotEntity);
-								damage = damage / 4.0F + Math.min(damage, 1.0F);
-								if (dragon.getHealth() <= damage)
-								{
-									hitMLG = true;
-									hitFatal = true;
-								}
+								entity = entityHitResult.getEntity();
 							}
-							else if (((EntityHitResult) hit).getEntity() instanceof EnderDragonPart part)
+							else if(hit instanceof UnresolvedEntityHitResult unresolved)
 							{
-								float damage = gunshotContext.EstimateImpactDamage(EAbilityTarget.ShotEntity);
-								if (part != part.parentMob.head)
+								entity = Group.Context.Gun.GetLevel().getEntity(unresolved.EntityID());
+							}
+
+							if(entity != null)
+							{
+								// Check bullet invulnerability
+								if (!entity.isAttackable())
+									continue;
+
+								hitEntity = true;
+								if (entity instanceof EnderDragon dragon)
+								{
+									float damage = gunshotContext.EstimateImpactDamage(EAbilityTarget.ShotEntity);
 									damage = damage / 4.0F + Math.min(damage, 1.0F);
-								if (part.parentMob.getHealth() <= damage)
-								{
-									hitMLG = true;
-									hitFatal = true;
+									if (dragon.getHealth() <= damage)
+									{
+										hitMLG = true;
+										hitFatal = true;
+									}
 								}
-							}
-							else if (((EntityHitResult) hit).getEntity() instanceof LivingEntity living)
-							{
-								float damage = gunshotContext.EstimateImpactDamage(EAbilityTarget.ShotEntity);
-								if(living.getHealth() < damage)
-									hitFatal = true;
+								else if (entity instanceof EnderDragonPart part)
+								{
+									float damage = gunshotContext.EstimateImpactDamage(EAbilityTarget.ShotEntity);
+									if (part != part.parentMob.head)
+										damage = damage / 4.0F + Math.min(damage, 1.0F);
+									if (part.parentMob.getHealth() <= damage)
+									{
+										hitMLG = true;
+										hitFatal = true;
+									}
+								}
+								else if (entity instanceof LivingEntity living)
+								{
+									float damage = gunshotContext.EstimateImpactDamage(EAbilityTarget.ShotEntity);
+									if(living.getHealth() < damage)
+										hitFatal = true;
+								}
 							}
 						}
 					}
@@ -667,19 +679,32 @@ public class ShootAction extends ActionInstance
 										.scale(0.5f));
 								}
 							}
-							case ENTITY -> {
-								EntityHitResult entityHitResult = (EntityHitResult)hit;
-								if(entityHitResult.getEntity().isAttackable())
+							case ENTITY ->
+							{
+								Entity entity = null;
+								if(hit instanceof EntityHitResult entityHitResult)
 								{
-									Vec3 shotMotion = shot.trajectory.normalize().scale(GetDurationPerTriggerTicks());
-									particleEngine.createParticle(
-										ParticleTypes.DAMAGE_INDICATOR,
-										hit.getLocation().x,
-										hit.getLocation().y,
-										hit.getLocation().z,
-										shotMotion.x,
-										shotMotion.y,
-										shotMotion.z);
+									entity = entityHitResult.getEntity();
+								}
+								else if(hit instanceof UnresolvedEntityHitResult unresolved)
+								{
+									entity = Group.Context.Gun.GetLevel().getEntity(unresolved.EntityID());
+								}
+
+								if(entity != null)
+								{
+									if(entity.isAttackable())
+									{
+										Vec3 shotMotion = shot.trajectory.normalize().scale(GetDurationPerTriggerTicks());
+										particleEngine.createParticle(
+											ParticleTypes.DAMAGE_INDICATOR,
+											hit.getLocation().x,
+											hit.getLocation().y,
+											hit.getLocation().z,
+											shotMotion.x,
+											shotMotion.y,
+											shotMotion.z);
+									}
 								}
 							}
 						}

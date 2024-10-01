@@ -471,7 +471,7 @@ public class FirstPersonManager
 	}
 
 	// Calculate in world coords
-	private static Transform CalculateADSPosition(@Nonnull Transform defaultPose,
+	public static Transform CalculateADSPosition(@Nonnull Transform defaultPose,
 												  @Nonnull GunContext gunContext,
 												  @Nonnull ItemDisplayContext transformType)
 	{

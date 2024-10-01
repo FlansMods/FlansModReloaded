@@ -10,6 +10,7 @@ import com.flansmod.common.gunshots.PlayerHitResult;
 import com.flansmod.common.types.Constants;
 import com.flansmod.common.types.abilities.elements.AbilityEffectDefinition;
 import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.damagesource.DamageSources;
 import net.minecraft.world.entity.LivingEntity;
 
 import javax.annotation.Nonnull;
@@ -35,20 +36,24 @@ public class AbilityEffectApplyDamage implements IAbilityEffect
 		// ------------------
 
 		DamageSource dmgSource = actionGroup.Gun.CreateDamageSource();
-		targets.ForEachEntity((triggerOn) ->
-			{
-				float headshotMulti = (trigger.Hit instanceof PlayerHitResult playerHit && playerHit.GetHitbox().area == EPlayerHitArea.HEAD)
-					? globalHeadshotMulti
-					: 1.0f;
+		if(dmgSource == null)
+			dmgSource = actionGroup.Gun.GetLevel().damageSources().generic();
 
-				triggerOn.hurt(dmgSource, globalDmgMulti * headshotMulti * DamageAmount(actionGroup, stacks));
-				if(PreventDamageCooldown && triggerOn instanceof LivingEntity living)
-				{
-					living.hurtTime = 0;
-					living.hurtDuration = 0;
-					living.invulnerableTime = 0;
-				}
-			});
+		final DamageSource dmg = dmgSource;
+		targets.ForEachEntity((triggerOn) ->
+		{
+			float headshotMulti = (trigger.Hit instanceof PlayerHitResult playerHit && playerHit.GetHitbox().area == EPlayerHitArea.HEAD)
+				? globalHeadshotMulti
+				: 1.0f;
+
+			triggerOn.hurt(dmg, globalDmgMulti * headshotMulti * DamageAmount(actionGroup, stacks));
+			if(PreventDamageCooldown && triggerOn instanceof LivingEntity living)
+			{
+				living.hurtTime = 0;
+				living.hurtDuration = 0;
+				living.invulnerableTime = 0;
+			}
+		});
 	}
 
 	public float DamageAmount(@Nonnull ActionGroupContext actionGroup, @Nullable AbilityStack stacks)

@@ -1,5 +1,6 @@
 {
 	"credit": "Made with Blockbench",
+	"render_type": "cutout",
 	"textures": {
 		"0": "flansclockworkcalamity:block/turret_casing",
 		"2": "flansclockworkcalamity:block/turret_structure",

@@ -2,29 +2,29 @@
     "variants": {
         "facing=north": {
             "model": "flansclockworkcalamity:block/turret_static",
-            "y": 90
+            "y": 0
         },
         "facing=east": {
             "model": "flansclockworkcalamity:block/turret_static",
-            "y": 180
+            "y": 90
         },
         "facing=south": {
             "model": "flansclockworkcalamity:block/turret_static",
-            "y": 270
+            "y": 180
         },
         "facing=west": {
             "model": "flansclockworkcalamity:block/turret_static",
-            "y": 0
+            "y": 270
         },
 		"facing=up": {
             "model": "flansclockworkcalamity:block/turret_static",
             "y": 0,
-			"x": 90
+			"x": 270
         },
 		"facing=down": {
             "model": "flansclockworkcalamity:block/turret_static",
             "y": 0,
-			"x": 270
+			"x": 90
         }
     }
 }

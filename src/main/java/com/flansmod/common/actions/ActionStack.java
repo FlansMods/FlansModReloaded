@@ -338,7 +338,7 @@ public class ActionStack
 			.GetActionGroupContextSibling(triggeringActionGroup, reload.GetReloadActionKey(reloadStage));
 		ActionGroupInstance groupInstance = GetOrCreateGroupInstance(newGroupContext);
 		TryStartGroupInstance(newGroupContext, true);
-		if (reloadStage == EReloadStage.LoadOne && !IsClient)
+		if (reloadStage == EReloadStage.LoadOne)// && !IsClient)
 		{
 			newGroupContext.LoadOne(0, newGroupContext.Gun.GetAttachedInventory());
 		}

@@ -2,12 +2,12 @@ package com.flansmod.common.actions.contexts;
 
 import com.flansmod.common.actions.ActionStack;
 import com.flansmod.util.Transform;
-import net.minecraft.world.Container;
+import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.entity.BlockEntity;
-import org.jetbrains.annotations.Nullable;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.Optional;
 
 public class GunContextTileEntity extends GunContextInventoryItem
@@ -23,6 +23,12 @@ public class GunContextTileEntity extends GunContextInventoryItem
 		ShooterContext = parent;
 	}
 
+	@Override
+	@Nullable
+	public DamageSource CreateDamageSource()
+	{
+		return ShooterContext.Level().damageSources().generic();
+	}
 	@Override
 	@Nonnull
 	public ActionStack GetActionStack()

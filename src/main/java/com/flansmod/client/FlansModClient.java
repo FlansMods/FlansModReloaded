@@ -1,6 +1,7 @@
 package com.flansmod.client;
 
 import com.flansmod.client.gui.crafting.*;
+import com.flansmod.client.gui.turret.TurretScreen;
 import com.flansmod.client.render.ClientRenderHooks;
 import com.flansmod.client.input.ClientInputHooks;
 import com.flansmod.client.render.FirstPersonManager;
@@ -120,6 +121,7 @@ public class FlansModClient
 		MenuScreens.register(FlansMod.WORKBENCH_MENU_PART_CRAFTING.get(), WorkbenchScreenTabPartCrafting::new);
 		MenuScreens.register(FlansMod.WORKBENCH_MENU_POWER.get(), WorkbenchScreenTabPower::new);
 		MenuScreens.register(FlansMod.WORKBENCH_MENU_MATERIALS.get(), WorkbenchScreenTabMaterials::new);
+		MenuScreens.register(FlansMod.TURRET_MENU.get(), TurretScreen::new);
 
 		// Entity Renderers
 		EntityRenderers.register(FlansMod.ENT_TYPE_BULLET.get(), BulletEntityRenderer::new);
@@ -336,7 +338,7 @@ public class FlansModClient
 				}
 				Transform laserOrigin = FirstPersonManager.GetWorldSpaceAPTransform(gunContext, transformType, ActionGroupContext.CreateGroupPath("shoot_origin"));
 				origin = laserOrigin.PositionVec3();
-				Vec3 look = gunshotContext.ActionGroup.Gun.GetShooter().Entity().getLookAngle();
+				Vec3 look = gunshotContext.ActionGroup.Gun.GetShooter().GetShootOrigin(0f).ForwardVec3();
 				if(count > 1)
 					Minecraft.getInstance().level.addParticle(ParticleTypes.POOF, origin.x() + look.x * 0.1f, origin.y() + look.y * 0.1f, origin.z() + look.z * 0.1f, (look.x() * 0.3) + random( count), (look.y() * 0.3) + random( count), (look.z() * 0.3) + random( count));
 				else {

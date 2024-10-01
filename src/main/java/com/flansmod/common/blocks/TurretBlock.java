@@ -1,6 +1,7 @@
 package com.flansmod.common.blocks;
 
 import com.flansmod.common.FlansMod;
+import com.flansmod.common.crafting.WorkbenchBlockEntity;
 import com.flansmod.common.item.BulletItem;
 import com.flansmod.common.item.GunItem;
 import com.flansmod.common.types.LazyDefinition;
@@ -10,10 +11,13 @@ import com.flansmod.common.types.blocks.elements.TurretSideDefinition;
 import com.flansmod.common.types.elements.EPlayerInput;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.MenuProvider;
+import net.minecraft.world.SimpleMenuProvider;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.BlockPlaceContext;
@@ -106,29 +110,42 @@ public class TurretBlock extends BaseEntityBlock
     }
 
     @Override
+    public MenuProvider getMenuProvider(@Nonnull BlockState state, @Nonnull Level level, @Nonnull BlockPos pos)
+    {
+        return new SimpleMenuProvider(
+                (containerID, inventory, playerEntity) ->
+                {
+                    BlockEntity blockEntity = level.getBlockEntity(pos);
+                    if(blockEntity instanceof TurretBlockEntity turretBlockEntity)
+                        return turretBlockEntity.createMenu(containerID, inventory, playerEntity);
+                    return null;
+                },
+                Component.translatable("menu.title.flansmod.turret_menu"));
+    }
+    @Override
     @Nonnull
     public InteractionResult use(@Nonnull BlockState state, Level level, @Nonnull BlockPos pos, @Nonnull Player player, @Nonnull InteractionHand hand, @Nonnull BlockHitResult hit)
     {
         BlockEntity blockEntity = level.getBlockEntity(pos);
         if(!level.isClientSide && blockEntity instanceof TurretBlockEntity turretBlockEntity && player instanceof ServerPlayer serverPlayer)
         {
-            ItemStack withItem = player.getItemInHand(hand);
-            if(withItem.isEmpty() && player.isCrouching() && !turretBlockEntity.isEmpty())
-            {
-                player.setItemInHand(hand, turretBlockEntity.TakeFirstStack());
-            }
-            else if(withItem.getItem() instanceof GunItem)
-            {
-                player.setItemInHand(hand, turretBlockEntity.SwapGun(withItem));
-            }
-            else if(withItem.getItem() instanceof BulletItem)
-            {
-                player.setItemInHand(hand, turretBlockEntity.QuickStackBullets(withItem));
-            }
-            else
-            {
+            //ItemStack withItem = player.getItemInHand(hand);
+            //if(withItem.isEmpty() && player.isCrouching() && !turretBlockEntity.isEmpty())
+            //{
+            //    player.setItemInHand(hand, turretBlockEntity.TakeFirstStack());
+            //}
+            //else if(withItem.getItem() instanceof GunItem)
+            //{
+            //    player.setItemInHand(hand, turretBlockEntity.SwapGun(withItem));
+            //}
+            //else if(withItem.getItem() instanceof BulletItem)
+            //{
+            //    player.setItemInHand(hand, turretBlockEntity.QuickStackBullets(withItem));
+            //}
+            //else
+            //{
                 NetworkHooks.openScreen(serverPlayer, getMenuProvider(state, level, pos), pos);
-            }
+            //}
         }
         return InteractionResult.sidedSuccess(level.isClientSide);
     }
@@ -176,7 +193,7 @@ public class TurretBlock extends BaseEntityBlock
     {
         return stateDefinition.any()
                 .setValue(TRIGGERED, false)
-                .setValue(FACING, context.getNearestLookingDirection().getOpposite());
+                .setValue(FACING, context.getNearestLookingDirection());
     }
     @Override @Nonnull
     public RenderShape getRenderShape(@Nonnull BlockState state) {

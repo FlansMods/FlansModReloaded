@@ -75,7 +75,10 @@ public class TurretBlockEntity extends ShooterBlockEntity implements WorldlyCont
         return GunContext.INVALID;
     }
     @Override @Nonnull
-    public Transform GetShootOrigin(float deltaTick) { return Transform.FromPos(getBlockPos().getCenter()); }
+    public Transform GetShootOrigin(float deltaTick)
+    {
+        return Transform.FromPosAndQuat(getBlockPos().getCenter(), getBlockState().getValue(TurretBlock.FACING).getRotation().rotateX(Maths.TauF / 4f), ()->"");
+    }
     @Nonnull
     public UUID GetGunID() { return GunItem.GetGunID(GunStack); }
     @Nonnull
