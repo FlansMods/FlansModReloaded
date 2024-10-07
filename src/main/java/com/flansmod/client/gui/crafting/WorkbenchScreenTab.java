@@ -1,14 +1,12 @@
 package com.flansmod.client.gui.crafting;
 
-import com.flansmod.client.FlansModClient;
 import com.flansmod.client.gui.FMScreen;
-import com.flansmod.client.render.FlanItemModelRenderer;
 import com.flansmod.client.render.RenderContext;
 import com.flansmod.client.render.models.FlansModelRegistry;
 import com.flansmod.client.render.models.ITurboRenderer;
 import com.flansmod.common.FlansMod;
 import com.flansmod.common.crafting.menus.WorkbenchMenu;
-import com.flansmod.util.Maths;
+import com.flansmod.physics.common.util.Maths;
 import com.flansmod.util.MinecraftHelpers;
 import com.mojang.blaze3d.platform.Lighting;
 import net.minecraft.client.Minecraft;

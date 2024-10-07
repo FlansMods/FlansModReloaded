@@ -1,27 +1,17 @@
 package com.flansmod.client.sound;
 
-import com.flansmod.common.FlansMod;
 import com.flansmod.common.types.elements.SoundDefinition;
 import com.flansmod.common.types.elements.SoundLODDefinition;
-import com.flansmod.util.Maths;
-import com.flansmod.util.Transform;
+import com.flansmod.physics.common.util.Maths;
+import com.flansmod.physics.common.util.Transform;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.resources.sounds.EntityBoundSoundInstance;
-import net.minecraft.client.resources.sounds.SimpleSoundInstance;
-import net.minecraft.client.resources.sounds.Sound;
-import net.minecraft.client.resources.sounds.SoundInstance;
-import net.minecraft.client.sounds.SoundManager;
-import net.minecraft.client.sounds.WeighedSoundEvents;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundSource;
-import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.phys.Vec3;
-import org.jetbrains.annotations.Nullable;
 
 import javax.annotation.Nonnull;
-import java.util.Random;
 
 public class SoundLODManager
 {

@@ -1,17 +1,14 @@
 package com.flansmod.client.render.models;
 
-import com.flansmod.util.Maths;
+import com.flansmod.physics.common.util.Maths;
 import com.google.gson.*;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.block.model.BlockFaceUV;
-import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.GsonHelper;
-import net.minecraft.util.Mth;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.client.textures.UnitTextureAtlasSprite;
 import org.joml.Vector3f;
 
 import javax.annotation.Nullable;

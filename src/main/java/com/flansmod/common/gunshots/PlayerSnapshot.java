@@ -1,26 +1,18 @@
 package com.flansmod.common.gunshots;
 
-import com.flansmod.common.FlansMod;
-import com.flansmod.util.Maths;
-import com.flansmod.util.Transform;
-import com.flansmod.util.TransformStack;
-import com.mojang.math.Transformation;
-import net.minecraft.core.Direction;
+import com.flansmod.physics.common.util.Maths;
+import com.flansmod.physics.common.util.Transform;
 import net.minecraft.world.entity.HumanoidArm;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.Pose;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import org.joml.Quaternionf;
 import org.joml.Vector3d;
 import org.joml.Vector3f;
 import org.joml.Vector4f;
 
 import javax.annotation.Nonnull;
-import java.util.ArrayList;
 import java.util.List;
 
 public class PlayerSnapshot

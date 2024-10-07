@@ -6,12 +6,10 @@ import com.flansmod.common.types.JsonDefinition;
 import com.flansmod.common.types.JsonField;
 import com.flansmod.common.types.elements.EDamageSourceType;
 import com.flansmod.common.types.elements.ItemStackDefinition;
-import com.flansmod.common.types.elements.SoundDefinition;
 import com.flansmod.common.types.npc.elements.ENpcActionType;
 import com.flansmod.common.types.npc.elements.MerchantOfferDefinition;
 import com.flansmod.common.types.npc.elements.VoiceLineDefinition;
-import com.flansmod.common.types.teams.ClassDefinition;
-import com.flansmod.util.Maths;
+import com.flansmod.physics.common.util.Maths;
 import net.minecraft.resources.ResourceLocation;
 
 public class NpcDefinition extends JsonDefinition

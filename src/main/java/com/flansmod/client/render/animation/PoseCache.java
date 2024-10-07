@@ -7,14 +7,11 @@ import com.flansmod.client.render.animation.elements.PoseDefinition;
 import com.flansmod.client.render.models.FlansModelRegistry;
 import com.flansmod.client.render.models.ITurboRenderer;
 import com.flansmod.common.FlansMod;
-import com.flansmod.common.types.JsonDefinition;
-import com.flansmod.util.Maths;
-import com.flansmod.util.Transform;
-import net.minecraft.client.animation.Keyframe;
+import com.flansmod.physics.common.util.Maths;
+import com.flansmod.physics.common.util.Transform;
 import net.minecraft.resources.ResourceLocation;
 
 import javax.annotation.Nonnull;
-import javax.json.Json;
 import java.util.*;
 
 public class PoseCache

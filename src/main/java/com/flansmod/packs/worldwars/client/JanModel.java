@@ -1,7 +1,7 @@
 package com.flansmod.packs.worldwars.client;
 
 import com.flansmod.packs.worldwars.WorldWarsMod;
-import com.flansmod.util.Maths;
+import com.flansmod.physics.common.util.Maths;
 import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.client.model.geom.ModelLayerLocation;
 import net.minecraft.client.model.geom.ModelPart;

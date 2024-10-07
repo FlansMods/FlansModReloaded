@@ -1,9 +1,5 @@
 package com.flansmod.common.entity.vehicle;
 
-import com.flansmod.util.Maths;
-import com.flansmod.util.Transform;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.world.Container;
 
 import javax.annotation.Nonnull;

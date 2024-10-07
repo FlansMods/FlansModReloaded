@@ -2,8 +2,8 @@ package com.flansmod.client.render.models;
 
 import com.flansmod.common.FlansMod;
 import com.flansmod.common.types.attachments.EAttachmentType;
-import com.flansmod.util.Transform;
-import com.flansmod.util.TransformStack;
+import com.flansmod.physics.common.util.Transform;
+import com.flansmod.physics.common.util.TransformStack;
 import com.google.common.collect.Maps;
 import com.google.gson.*;
 import com.mojang.datafixers.util.Either;
@@ -22,7 +22,6 @@ import net.minecraftforge.client.model.geometry.IGeometryLoader;
 import net.minecraftforge.client.model.geometry.IUnbakedGeometry;
 import net.minecraftforge.client.textures.UnitTextureAtlasSprite;
 import org.jetbrains.annotations.Nullable;
-import org.joml.Quaternionf;
 import org.joml.Vector3f;
 
 import javax.annotation.Nonnull;

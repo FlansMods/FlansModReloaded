@@ -1,7 +1,6 @@
 package com.flansmod.client.particle;
 
-import com.flansmod.common.FlansMod;
-import com.flansmod.util.Maths;
+import com.flansmod.physics.common.util.Maths;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.particle.TerrainParticle;
 import net.minecraft.core.BlockPos;

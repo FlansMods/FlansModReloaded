@@ -6,8 +6,8 @@ import com.flansmod.common.types.vehicles.ControlSchemeDefinition;
 import com.flansmod.common.types.vehicles.EVehicleAxis;
 import com.flansmod.common.types.vehicles.VehicleDefinition;
 import com.flansmod.common.types.vehicles.elements.ControlSchemeAxisDefinition;
-import com.flansmod.util.collision.DynamicCollisionEvent;
-import com.flansmod.util.collision.StaticCollisionEvent;
+import com.flansmod.physics.common.collision.DynamicCollisionEvent;
+import com.flansmod.physics.common.collision.StaticCollisionEvent;
 
 import javax.annotation.Nonnull;
 

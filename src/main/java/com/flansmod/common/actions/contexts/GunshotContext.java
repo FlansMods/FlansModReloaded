@@ -17,7 +17,7 @@ import com.flansmod.common.types.bullets.elements.EProjectileResponseType;
 import com.flansmod.common.types.bullets.elements.HitscanDefinition;
 import com.flansmod.common.types.bullets.elements.ImpactDefinition;
 import com.flansmod.common.types.bullets.elements.ProjectileDefinition;
-import com.flansmod.util.Maths;
+import com.flansmod.physics.common.util.Maths;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;

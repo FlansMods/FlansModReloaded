@@ -1,6 +1,6 @@
 package com.flansmod.client.render.effects;
 
-import com.flansmod.util.Maths;
+import com.flansmod.physics.common.util.Maths;
 import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.*;

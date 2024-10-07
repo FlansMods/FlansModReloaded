@@ -2,14 +2,14 @@ package com.flansmod.common.entity.vehicle;
 
 import com.flansmod.client.input.ClientInputHooks;
 import com.flansmod.common.FlansMod;
-import com.flansmod.common.entity.ITransformPair;
+import com.flansmod.physics.common.util.ITransformPair;
 import com.flansmod.common.entity.vehicle.controls.ControlLogic;
 import com.flansmod.common.entity.vehicle.controls.ControlLogics;
 import com.flansmod.common.entity.vehicle.controls.VehicleInputState;
 import com.flansmod.common.entity.vehicle.modules.IVehicleEngineModule;
 import com.flansmod.common.entity.vehicle.modules.IVehicleTransformHelpers;
-import com.flansmod.common.entity.vehicle.physics.ForcesOnPart;
-import com.flansmod.common.entity.vehicle.physics.VehiclePartPhysics;
+import com.flansmod.physics.common.entity.ForcesOnPart;
+import com.flansmod.physics.common.entity.PhysicsComponent;
 import com.flansmod.common.entity.vehicle.save.*;
 import com.flansmod.common.entity.vehicle.modules.IVehicleDamageHelper;
 import com.flansmod.common.entity.vehicle.hierarchy.*;
@@ -21,14 +21,15 @@ import com.flansmod.common.types.parts.elements.EngineDefinition;
 import com.flansmod.common.types.vehicles.ControlSchemeDefinition;
 import com.flansmod.common.types.vehicles.VehicleDefinition;
 import com.flansmod.common.types.vehicles.elements.*;
-import com.flansmod.util.Maths;
-import com.flansmod.util.Transform;
-import com.flansmod.util.TransformStack;
-import com.flansmod.util.collision.*;
-import com.flansmod.util.physics.AngularAcceleration;
-import com.flansmod.util.physics.LinearAcceleration;
-import com.flansmod.util.physics.LinearForce;
-import com.flansmod.util.physics.LinearVelocity;
+import com.flansmod.physics.common.collision.ColliderHandle;
+import com.flansmod.physics.common.collision.OBBCollisionSystem;
+import com.flansmod.physics.common.util.ITransformEntity;
+import com.flansmod.physics.common.util.Maths;
+import com.flansmod.physics.common.util.Transform;
+import com.flansmod.physics.common.util.TransformStack;
+import com.flansmod.physics.common.units.AngularAcceleration;
+import com.flansmod.physics.common.units.LinearAcceleration;
+import com.flansmod.physics.common.units.LinearForce;
 import com.google.common.collect.ImmutableList;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
@@ -55,7 +56,7 @@ import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
 
 public class VehicleEntity extends Entity implements
-	ITransformEntity,
+		ITransformEntity,
 	IVehicleEngineModule,
 	IVehicleTransformHelpers,
 	IVehicleSeatHelper,
@@ -112,7 +113,7 @@ public class VehicleEntity extends Entity implements
 	//@Nullable
 	//public ColliderHandle CorePhsyicsHandle = null;
 	@Nonnull
-	public final Map<VehicleComponentPath, VehiclePartPhysics> PhysicsParts = new HashMap<>();
+	public final Map<VehicleComponentPath, PhysicsComponent> PhysicsParts = new HashMap<>();
 
 
 	//@Nonnull
@@ -590,14 +591,14 @@ public class VehicleEntity extends Entity implements
 	// ---------------------------------------------------------------------------------------------------------
 	// PHYSICS MODULE
 	@Nonnull
-	public VehiclePartPhysics GetPartPhysics(@Nonnull VehicleComponentPath path)
+	public PhysicsComponent GetPartPhysics(@Nonnull VehicleComponentPath path)
 	{
-		return PhysicsParts.getOrDefault(path, VehiclePartPhysics.invalid);
+		return PhysicsParts.getOrDefault(path, PhysicsComponent.invalid);
 	}
 	@Nonnull
-	public VehiclePartPhysics GetCorePhysics()
+	public PhysicsComponent GetCorePhysics()
 	{
-		return PhysicsParts.getOrDefault(VehicleComponentPath.coreArticulation, VehiclePartPhysics.invalid);
+		return PhysicsParts.getOrDefault(VehicleComponentPath.coreArticulation, PhysicsComponent.invalid);
 	}
 	@Nonnull
 	public ForcesOnPart GetCoreForces() { return GetCorePhysics().Forces; }
@@ -628,13 +629,13 @@ public class VehicleEntity extends Entity implements
 			{
 				Transform spawnedTransform = Transform.FromEntity(this);
 				ColliderHandle handle = physics.RegisterDynamic(kvp.getValue(), spawnedTransform);
-				PhysicsParts.put(VehicleComponentPath.coreArticulation, new VehiclePartPhysics(spawnedTransform, handle));
+				PhysicsParts.put(VehicleComponentPath.coreArticulation, new PhysicsComponent(spawnedTransform, handle));
 			}
 			else
 			{
 				Transform t = GetWorldToPartCurrent(kvp.getKey());
 				ColliderHandle handle = physics.RegisterDynamic(kvp.getValue(), t);
-				PhysicsParts.put(kvp.getKey().Articulation(), new VehiclePartPhysics(t, handle));
+				PhysicsParts.put(kvp.getKey().Articulation(), new PhysicsComponent(t, handle));
 			}
 		}
 
@@ -645,13 +646,13 @@ public class VehicleEntity extends Entity implements
 			//wheel.SetLinkToVehicle(this, wheelPath);
 			Transform t = GetWorldToPartCurrent(wheelPath);
 			ColliderHandle handle = physics.RegisterDynamic(List.of(new AABB(-wheelDef.radius, -wheelDef.radius, -wheelDef.radius, wheelDef.radius, wheelDef.radius, wheelDef.radius)), t);
-			PhysicsParts.put(wheelPath, new VehiclePartPhysics(t, handle));
+			PhysicsParts.put(wheelPath, new PhysicsComponent(t, handle));
 		});
 	}
 	protected void StopPhysics()
 	{
 		OBBCollisionSystem physics = OBBCollisionSystem.ForLevel(level());
-		for(VehiclePartPhysics part : PhysicsParts.values())
+		for(PhysicsComponent part : PhysicsParts.values())
 		{
 			if(part.PhysicsHandle.IsValid())
 			{
@@ -688,7 +689,7 @@ public class VehicleEntity extends Entity implements
 		for(var kvp : PhysicsParts.entrySet())
 		{
 			VehicleComponentPath path = kvp.getKey();
-			VehiclePartPhysics part = kvp.getValue();
+			PhysicsComponent part = kvp.getValue();
 
 			part.LocationPrev = part.LocationCurrent;
 
@@ -784,7 +785,7 @@ public class VehicleEntity extends Entity implements
 			return;
 
 		{
-			VehiclePartPhysics corePhysics = GetCorePhysics();
+			PhysicsComponent corePhysics = GetCorePhysics();
 			LinearAcceleration linear = corePhysics.Forces.SumLinearAcceleration(corePhysics.LocationCurrent, Def().physics.mass, true);
 			AngularAcceleration angular = corePhysics.Forces.SumAngularAcceleration(corePhysics.LocationCurrent, Def().physics.MomentOfInertia(), true);
 			//float dampening = 1.0f;//part.Forces.GetDampeningRatio();
@@ -799,7 +800,7 @@ public class VehicleEntity extends Entity implements
 
 		GetHierarchy().ForEachWheel((path, def) ->
 		{
-			VehiclePartPhysics wheelPhysics = GetPartPhysics(path);
+			PhysicsComponent wheelPhysics = GetPartPhysics(path);
 
 			LinearAcceleration linear = wheelPhysics.Forces.SumLinearAcceleration(GetWorldToPartCurrent(path), def.mass, true);
 			AngularAcceleration angular = wheelPhysics.Forces.SumAngularAcceleration(GetWorldToPartCurrent(path), def.MomentOfInertia(), true);
@@ -838,7 +839,7 @@ public class VehicleEntity extends Entity implements
 
 		// Check to see if the physics system killed us
 		AABB physicsBounds = null;
-		for(VehiclePartPhysics part : PhysicsParts.values())
+		for(PhysicsComponent part : PhysicsParts.values())
 		{
 			if(part.PhysicsHandle.IsValid())
 			{
@@ -1347,7 +1348,7 @@ public class VehicleEntity extends Entity implements
 		else
 		{
 			// So we want to teleport the whole vehicle
-			VehiclePartPhysics corePart = GetCorePhysics();
+			PhysicsComponent corePart = GetCorePhysics();
 			Transform coreTransformOld = corePart.LocationCurrent;
 
 			// We should move all the other parts, relative to the root

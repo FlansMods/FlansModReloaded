@@ -11,7 +11,7 @@ import com.flansmod.common.types.elements.ModifierDefinition;
 import com.flansmod.common.types.elements.PaintableDefinition;
 import com.flansmod.common.types.guns.GunDefinition;
 import com.flansmod.common.types.parts.PartDefinition;
-import com.flansmod.util.Maths;
+import com.flansmod.physics.common.util.Maths;
 import com.mojang.blaze3d.platform.InputConstants;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.registries.Registries;

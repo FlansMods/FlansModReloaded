@@ -49,6 +49,7 @@ public class TurretBlock extends BaseEntityBlock
     public static final DirectionProperty FACING = BlockStateProperties.FACING;
     public static final BooleanProperty TRIGGERED  = BlockStateProperties.TRIGGERED;
     private static final int TRIGGER_DURATION = 4;
+
     @Nonnull
     public final LazyDefinition<TurretBlockDefinition> DefRef;
     @Nonnull
@@ -193,15 +194,16 @@ public class TurretBlock extends BaseEntityBlock
     {
         return stateDefinition.any()
                 .setValue(TRIGGERED, false)
-                .setValue(FACING, context.getNearestLookingDirection());
+                .setValue(FACING, Def().blockSettings.GetPlacementFacing(context.getNearestLookingDirection()));
     }
     @Override @Nonnull
-    public RenderShape getRenderShape(@Nonnull BlockState state) {
+    public RenderShape getRenderShape(@Nonnull BlockState state)
+    {
         return RenderShape.MODEL;
     }
     @Override @Nonnull
     public VoxelShape getShape(@Nonnull BlockState state, @Nonnull BlockGetter getter, @Nonnull BlockPos pos, @Nonnull CollisionContext context)
     {
-        return DEFAULT_SHAPE;
+        return Def().blockSettings.CreateVoxelShape();
     }
 }

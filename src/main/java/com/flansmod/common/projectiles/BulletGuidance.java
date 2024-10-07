@@ -1,9 +1,6 @@
 package com.flansmod.common.projectiles;
 
-import com.flansmod.client.render.debug.DebugRenderer;
 import com.flansmod.common.types.bullets.elements.ProjectileDefinition;
-import com.flansmod.util.Transform;
-import net.minecraft.client.Minecraft;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.Level;
@@ -11,7 +8,6 @@ import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
-import org.joml.Vector4f;
 
 import java.util.ArrayList;
 

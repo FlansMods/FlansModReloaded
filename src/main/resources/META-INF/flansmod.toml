@@ -26,6 +26,12 @@ issueTrackerURL="https://github.com/FlansMods/FlansModReloaded/issues"
     '''
 
 [[dependencies.flansmod]]
+    modId="flansphysicsmod"
+    mandatory=true
+    versionRange="${flansmodversion}"
+    ordering="NONE"
+    side="BOTH"
+[[dependencies.flansmod]]
     modId="forge"
     mandatory=true
     versionRange="${forgeversionrange}"

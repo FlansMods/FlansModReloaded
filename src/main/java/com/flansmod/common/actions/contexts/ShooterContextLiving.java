@@ -7,7 +7,7 @@ import com.flansmod.common.item.FlanItem;
 import com.flansmod.common.types.abilities.elements.AbilityEffectDefinition;
 import com.flansmod.common.types.elements.ModifierDefinition;
 import com.flansmod.common.types.guns.elements.AbilityDefinition;
-import com.flansmod.util.Transform;
+import com.flansmod.physics.common.util.Transform;
 import net.minecraft.world.Container;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.effect.MobEffectInstance;

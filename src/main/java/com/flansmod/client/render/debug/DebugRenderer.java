@@ -1,26 +1,19 @@
 package com.flansmod.client.render.debug;
 
-import com.flansmod.common.actions.contexts.GunContext;
-import com.flansmod.common.actions.contexts.ShooterContext;
-import com.flansmod.util.Maths;
+import com.flansmod.physics.common.util.Maths;
 import com.flansmod.util.MinecraftHelpers;
-import com.flansmod.util.Transform;
+import com.flansmod.physics.common.util.Transform;
 import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.*;
 import net.minecraft.client.Camera;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GameRenderer;
-import net.minecraft.client.renderer.LevelRenderer;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.client.event.RenderLevelStageEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.TickEvent;
-import net.minecraftforge.eventbus.api.IEventBus;
 import org.joml.*;
 
-import javax.swing.*;
 import java.util.ArrayList;
 import java.util.function.BiConsumer;
 

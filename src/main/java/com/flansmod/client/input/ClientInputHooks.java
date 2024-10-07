@@ -1,13 +1,12 @@
 package com.flansmod.client.input;
 
 import com.flansmod.client.FlansModClient;
-import com.flansmod.common.entity.vehicle.VehicleEntity;
 import com.flansmod.common.item.GunItem;
 import com.flansmod.common.types.vehicles.EVehicleAxis;
 import com.flansmod.common.types.elements.EPlayerInput;
-import com.flansmod.util.Maths;
-import com.flansmod.util.collision.ColliderHandle;
-import com.flansmod.util.collision.OBBCollisionSystem;
+import com.flansmod.physics.common.util.Maths;
+import com.flansmod.physics.common.collision.ColliderHandle;
+import com.flansmod.physics.common.collision.OBBCollisionSystem;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.Options;
 import net.minecraft.network.chat.Component;

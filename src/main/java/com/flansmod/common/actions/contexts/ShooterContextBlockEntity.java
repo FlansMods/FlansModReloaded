@@ -2,19 +2,15 @@ package com.flansmod.common.actions.contexts;
 
 import com.flansmod.common.actions.stats.IModifierBaker;
 import com.flansmod.util.MinecraftHelpers;
-import com.flansmod.util.Transform;
+import com.flansmod.physics.common.util.Transform;
 import com.mojang.datafixers.util.Pair;
-import cpw.mods.util.Lazy;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.Container;
 import net.minecraft.world.WorldlyContainer;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraftforge.registries.ForgeRegistries;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;

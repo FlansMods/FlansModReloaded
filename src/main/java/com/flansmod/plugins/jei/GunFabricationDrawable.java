@@ -2,9 +2,8 @@ package com.flansmod.plugins.jei;
 
 import com.flansmod.common.crafting.ingredients.TieredPartIngredient;
 import com.flansmod.common.crafting.recipes.GunFabricationRecipe;
-import com.flansmod.common.crafting.recipes.PartFabricationRecipe;
 import com.flansmod.common.types.crafting.EMaterialType;
-import com.flansmod.util.Maths;
+import com.flansmod.physics.common.util.Maths;
 import mezz.jei.api.gui.ingredient.IRecipeSlotsView;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;

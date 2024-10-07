@@ -1,21 +1,16 @@
 package com.flansmod.client.render.models;
 
-import com.flansmod.util.Maths;
+import com.flansmod.physics.common.util.Maths;
 import com.google.common.collect.Maps;
 import com.google.gson.*;
-import net.minecraft.client.renderer.block.model.*;
-import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.core.Direction;
 import net.minecraft.util.GsonHelper;
-import net.minecraft.util.Mth;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
 
-import javax.annotation.Nullable;
 import java.lang.reflect.Type;
-import java.util.Locale;
 import java.util.Map;
 
 @OnlyIn(Dist.CLIENT)

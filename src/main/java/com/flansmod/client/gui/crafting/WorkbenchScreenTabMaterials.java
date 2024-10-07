@@ -1,11 +1,8 @@
 package com.flansmod.client.gui.crafting;
 
-import com.flansmod.client.gui.FMScreen;
 import com.flansmod.common.FlansMod;
-import com.flansmod.common.crafting.menus.WorkbenchMenu;
 import com.flansmod.common.crafting.menus.WorkbenchMenuMaterials;
-import com.flansmod.common.crafting.menus.WorkbenchMenuModification;
-import com.flansmod.util.Maths;
+import com.flansmod.physics.common.util.Maths;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;

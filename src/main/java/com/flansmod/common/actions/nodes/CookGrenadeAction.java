@@ -4,8 +4,7 @@ import com.flansmod.common.actions.*;
 import com.flansmod.common.actions.contexts.ActionGroupContext;
 import com.flansmod.common.types.Constants;
 import com.flansmod.common.types.guns.elements.ActionDefinition;
-import com.flansmod.common.types.elements.ModifierDefinition;
-import com.flansmod.util.Maths;
+import com.flansmod.physics.common.util.Maths;
 import org.jetbrains.annotations.NotNull;
 
 public class CookGrenadeAction extends ActionInstance

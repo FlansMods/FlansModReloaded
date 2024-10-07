@@ -15,7 +15,7 @@ import com.flansmod.common.types.abilities.elements.AbilityStackingDefinition;
 import com.flansmod.common.types.abilities.elements.EAbilityTrigger;
 import com.flansmod.common.types.guns.elements.*;
 import com.flansmod.common.types.magazines.EAmmoLoadMode;
-import com.flansmod.util.Maths;
+import com.flansmod.physics.common.util.Maths;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;

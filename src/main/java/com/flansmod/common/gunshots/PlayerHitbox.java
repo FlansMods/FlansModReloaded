@@ -1,10 +1,8 @@
 package com.flansmod.common.gunshots;
 
 import com.flansmod.client.render.debug.DebugRenderer;
-import com.flansmod.util.Maths;
-import com.flansmod.util.Transform;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.level.Level;
+import com.flansmod.physics.common.util.Maths;
+import com.flansmod.physics.common.util.Transform;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;

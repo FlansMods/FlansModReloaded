@@ -20,7 +20,7 @@ import com.flansmod.common.types.guns.*;
 import com.flansmod.common.types.parts.PartDefinition;
 import com.flansmod.common.types.elements.EPlayerInput;
 import com.flansmod.util.MinecraftHelpers;
-import com.flansmod.util.Transform;
+import com.flansmod.physics.common.util.Transform;
 import com.flansmod.util.formulae.FloatAccumulation;
 import com.mojang.datafixers.util.Pair;
 import net.minecraft.nbt.CompoundTag;

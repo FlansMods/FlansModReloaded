@@ -6,15 +6,12 @@ import com.flansmod.common.FlansMod;
 import com.flansmod.common.entity.vehicle.VehicleEntity;
 import com.flansmod.common.types.LazyDefinition;
 import com.flansmod.common.types.vehicles.VehicleDefinition;
-import com.flansmod.util.Transform;
+import com.flansmod.physics.common.util.Transform;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.block.model.BlockModel;
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.texture.TextureManager;
-import net.minecraft.client.resources.model.BakedModel;
-import net.minecraft.client.resources.model.UnbakedModel;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.item.ItemDisplayContext;
@@ -87,6 +84,6 @@ public class VehicleRenderer extends EntityRenderer<VehicleEntity> implements IT
 					   int light)
 	{
 		RenderContext renderContext = new RenderContext(buffers, ItemDisplayContext.FIXED, poseStack, light, 0);
-		//DoRender(vehicle, renderContext, dt);
+		DoRender(vehicle, renderContext, dt);
 	}
 }

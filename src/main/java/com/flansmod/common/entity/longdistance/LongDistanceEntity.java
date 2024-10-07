@@ -1,8 +1,7 @@
 package com.flansmod.common.entity.longdistance;
 
-import com.flansmod.util.Transform;
+import com.flansmod.physics.common.util.Transform;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.player.Player;

@@ -1,7 +1,7 @@
 package com.flansmod.common.types.vehicles.elements;
 
 import com.flansmod.common.types.JsonField;
-import com.flansmod.util.Maths;
+import com.flansmod.physics.common.util.Maths;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.common.util.Lazy;

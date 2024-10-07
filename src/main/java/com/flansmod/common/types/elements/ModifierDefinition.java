@@ -4,12 +4,11 @@ import com.flansmod.common.item.FlanItem;
 import com.flansmod.common.types.JsonField;
 import com.flansmod.common.types.abilities.elements.EAccumulationSource;
 import com.flansmod.common.types.abilities.elements.StatAccumulatorDefinition;
-import com.flansmod.util.Maths;
+import com.flansmod.physics.common.util.Maths;
 import net.minecraft.network.chat.Component;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 public class ModifierDefinition

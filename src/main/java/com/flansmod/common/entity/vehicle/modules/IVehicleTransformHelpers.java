@@ -1,12 +1,12 @@
 package com.flansmod.common.entity.vehicle.modules;
 
-import com.flansmod.common.entity.ITransformPair;
+import com.flansmod.physics.common.util.ITransformPair;
 import com.flansmod.common.entity.vehicle.hierarchy.VehicleComponentPath;
 import com.flansmod.common.entity.vehicle.hierarchy.VehicleDefinitionHierarchy;
 import com.flansmod.common.entity.vehicle.hierarchy.VehiclePartPath;
-import com.flansmod.util.Maths;
-import com.flansmod.util.Transform;
-import com.flansmod.util.TransformStack;
+import com.flansmod.physics.common.util.Maths;
+import com.flansmod.physics.common.util.Transform;
+import com.flansmod.physics.common.util.TransformStack;
 import net.minecraft.world.phys.Vec3;
 import org.joml.Vector3d;
 

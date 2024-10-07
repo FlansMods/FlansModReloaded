@@ -1,16 +1,16 @@
 package com.flansmod.common.entity.vehicle.hierarchy;
 
 import com.flansmod.common.FlansMod;
-import com.flansmod.common.entity.ITransformChildEntity;
-import com.flansmod.common.entity.ITransformPair;
-import com.flansmod.common.entity.vehicle.ITransformEntity;
+import com.flansmod.physics.common.util.ITransformChildEntity;
+import com.flansmod.physics.common.util.ITransformPair;
+import com.flansmod.physics.common.util.ITransformEntity;
 import com.flansmod.common.entity.vehicle.VehicleEntity;
 import com.flansmod.common.network.FlansEntityDataSerializers;
 import com.flansmod.common.types.vehicles.VehicleDefinition;
 import com.flansmod.common.types.vehicles.elements.EControlLogicHint;
 import com.flansmod.common.types.vehicles.elements.WheelDefinition;
-import com.flansmod.util.Maths;
-import com.flansmod.util.Transform;
+import com.flansmod.physics.common.util.Maths;
+import com.flansmod.physics.common.util.Transform;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientGamePacketListener;

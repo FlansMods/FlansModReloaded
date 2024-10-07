@@ -4,8 +4,7 @@ import com.flansmod.common.actions.contexts.GunContext;
 import com.flansmod.common.actions.stats.StatCalculationContext;
 import com.flansmod.common.types.Constants;
 import com.flansmod.common.types.abilities.elements.AbilityStackingDefinition;
-import com.flansmod.common.types.elements.ModifierDefinition;
-import com.flansmod.util.Maths;
+import com.flansmod.physics.common.util.Maths;
 
 import javax.annotation.Nonnull;
 

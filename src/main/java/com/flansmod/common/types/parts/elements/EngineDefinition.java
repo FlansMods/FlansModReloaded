@@ -1,10 +1,9 @@
 package com.flansmod.common.types.parts.elements;
 
 import com.flansmod.common.types.JsonField;
-import com.flansmod.util.Maths;
+import com.flansmod.physics.common.util.Maths;
 import com.flansmod.util.MinecraftHelpers;
 import net.minecraft.network.chat.Component;
-import net.minecraft.world.entity.player.Player;
 
 import javax.annotation.Nonnull;
 

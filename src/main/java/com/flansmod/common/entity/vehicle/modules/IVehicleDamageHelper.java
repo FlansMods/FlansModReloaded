@@ -5,7 +5,7 @@ import com.flansmod.common.entity.vehicle.hierarchy.VehicleDefinitionHierarchy;
 import com.flansmod.common.entity.vehicle.hierarchy.VehicleComponentPath;
 import com.flansmod.common.entity.vehicle.save.DamageSyncState;
 import com.flansmod.common.types.vehicles.elements.DamageablePartDefinition;
-import com.flansmod.util.Maths;
+import com.flansmod.physics.common.util.Maths;
 import net.minecraft.world.damagesource.DamageSource;
 
 import javax.annotation.Nonnull;

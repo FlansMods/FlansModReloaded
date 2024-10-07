@@ -6,7 +6,7 @@ import com.flansmod.common.actions.nodes.ShootAction;
 import com.flansmod.common.types.guns.elements.ActionDefinition;
 import com.flansmod.common.types.guns.elements.ActionGroupDefinition;
 import com.flansmod.common.types.guns.elements.ERepeatMode;
-import com.flansmod.util.Maths;
+import com.flansmod.physics.common.util.Maths;
 import com.flansmod.util.MinecraftHelpers;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.material.Fluids;

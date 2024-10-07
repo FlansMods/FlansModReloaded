@@ -1,12 +1,9 @@
 package com.flansmod.client.render;
 
-import com.flansmod.util.Transform;
-import com.flansmod.util.TransformStack;
-import com.mojang.blaze3d.systems.RenderSystem;
+import com.flansmod.physics.common.util.Transform;
+import com.flansmod.physics.common.util.TransformStack;
 import com.mojang.blaze3d.vertex.PoseStack;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.block.model.ItemTransforms;
 import net.minecraft.world.item.ItemDisplayContext;
 
 import javax.annotation.Nonnull;

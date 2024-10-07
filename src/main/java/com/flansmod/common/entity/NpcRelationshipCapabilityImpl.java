@@ -1,6 +1,5 @@
 package com.flansmod.common.entity;
 
-import com.flansmod.util.Maths;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 

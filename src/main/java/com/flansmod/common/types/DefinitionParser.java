@@ -1,9 +1,8 @@
 package com.flansmod.common.types;
 
 import com.flansmod.common.FlansMod;
-import com.flansmod.common.types.elements.ColourDefinition;
 import com.flansmod.common.types.elements.VecWithOverride;
-import com.flansmod.util.Maths;
+import com.flansmod.physics.common.util.Maths;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -13,7 +12,6 @@ import org.joml.Vector3f;
 
 import java.lang.reflect.*;
 import java.util.HashMap;
-import java.util.Locale;
 import java.util.Optional;
 
 public class DefinitionParser

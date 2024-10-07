@@ -5,7 +5,7 @@ import com.flansmod.common.entity.vehicle.VehicleEntity;
 import com.flansmod.common.item.PartItem;
 import com.flansmod.common.types.parts.PartDefinition;
 import com.flansmod.common.types.parts.elements.EngineDefinition;
-import com.flansmod.util.Maths;
+import com.flansmod.physics.common.util.Maths;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.RecipeType;

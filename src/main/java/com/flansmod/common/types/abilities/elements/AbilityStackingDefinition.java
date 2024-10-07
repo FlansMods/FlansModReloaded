@@ -2,7 +2,7 @@ package com.flansmod.common.types.abilities.elements;
 
 import com.flansmod.common.actions.stats.StatCalculationContext;
 import com.flansmod.common.types.JsonField;
-import com.flansmod.util.Maths;
+import com.flansmod.physics.common.util.Maths;
 
 import javax.annotation.Nonnull;
 

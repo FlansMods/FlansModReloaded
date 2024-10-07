@@ -1,18 +1,14 @@
 package com.flansmod.common.gunshots;
 
-import com.flansmod.common.FlansMod;
 import com.flansmod.common.gunshots.snapshots.CommonPlayerModel;
-import com.flansmod.util.Maths;
-import com.flansmod.util.MinecraftHelpers;
+import com.flansmod.physics.common.util.Maths;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.joml.Vector4f;
 
 import javax.annotation.Nonnull;
-import java.util.Enumeration;
 
 public class PlayerMovementHistory
 {

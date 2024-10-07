@@ -13,7 +13,8 @@ import com.flansmod.common.actions.contexts.EContextSide;
 import com.flansmod.common.actions.contexts.GunContext;
 import com.flansmod.common.item.FlanItem;
 import com.flansmod.common.types.attachments.EAttachmentType;
-import com.flansmod.util.*;
+import com.flansmod.physics.common.util.Transform;
+import com.flansmod.physics.common.util.TransformStack;
 import com.mojang.blaze3d.platform.Lighting;
 import com.mojang.blaze3d.vertex.*;
 

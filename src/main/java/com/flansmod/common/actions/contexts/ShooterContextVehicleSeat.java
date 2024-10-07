@@ -3,16 +3,12 @@ package com.flansmod.common.actions.contexts;
 import com.flansmod.common.actions.stats.IModifierBaker;
 import com.flansmod.common.entity.vehicle.VehicleEntity;
 import com.flansmod.common.entity.vehicle.hierarchy.VehicleComponentPath;
-import com.flansmod.common.types.vehicles.VehicleDefinition;
 import com.flansmod.common.types.vehicles.elements.SeatDefinition;
-import com.flansmod.util.Transform;
-import net.minecraft.world.Container;
+import com.flansmod.physics.common.util.Transform;
 import net.minecraft.world.entity.Entity;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.List;
-import java.util.UUID;
 
 public class ShooterContextVehicleSeat extends ShooterContextVehicle
 {

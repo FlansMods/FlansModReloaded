@@ -5,15 +5,15 @@ import com.flansmod.client.render.debug.DebugRenderer;
 import com.flansmod.common.FlansMod;
 import com.flansmod.common.entity.longdistance.LongDistanceEntity;
 import com.flansmod.common.entity.longdistance.LongDistanceVehicle;
-import com.flansmod.common.entity.vehicle.physics.*;
 import com.flansmod.common.entity.vehicle.VehicleEntity;
 import com.flansmod.common.entity.vehicle.hierarchy.VehicleComponentPath;
-import com.flansmod.util.Maths;
-import com.flansmod.util.Transform;
-import com.flansmod.util.collision.*;
-import com.flansmod.util.physics.IForce;
-import com.flansmod.util.physics.LinearForce;
-import com.flansmod.util.physics.Torque;
+import com.flansmod.physics.common.entity.PhysicsComponent;
+import com.flansmod.physics.common.collision.*;
+import com.flansmod.physics.common.entity.ForcesOnPart;
+import com.flansmod.physics.common.util.Transform;
+import com.flansmod.physics.common.util.IForce;
+import com.flansmod.physics.common.units.LinearForce;
+import com.flansmod.physics.common.units.Torque;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.server.MinecraftServer;
@@ -85,7 +85,8 @@ public class VehicleDebugRenderer
 
 	public VehicleDebugRenderer()
 	{
-		MinecraftForge.EVENT_BUS.addListener(this::ClientTick);
+		// TODO: Re-enable for vehicle specifics
+		//  MinecraftForge.EVENT_BUS.addListener(this::ClientTick);
 	}
 
 	public void ClientTick(@Nonnull TickEvent.ClientTickEvent event)
@@ -130,59 +131,59 @@ public class VehicleDebugRenderer
 
 	private void DebugRenderSeparations(@Nonnull OBBCollisionSystem physics, @Nonnull DebugPalette palettte)
 	{
-		if(OBBCollisionSystem.DEBUG_HANDLE.Handle() != 0L)
-		{
-			List<Vec3> staticCollisionPoints = new ArrayList<>();
-			List<Vec3> dynamicCollisionPoints = new ArrayList<>();
-			Transform position = physics.ProcessEvents(OBBCollisionSystem.DEBUG_HANDLE,
-				(stat) -> {
-					Vec3 normal = stat.ContactNormal();
-					Vec3 up = new Vec3(normal.z, -normal.x, -normal.y);
-					Transform collisionFrame = Transform.FromPositionAndLookDirection(stat.ContactPoint(), normal, up);
-					DebugRenderer.RenderPoint(collisionFrame, 1, palettte.WheelCurrent);
-					DebugRenderer.RenderArrow(collisionFrame, 1, palettte.WheelCurrent, new Vec3(0d,0d,-1d));
-					DebugRenderer.RenderCube(collisionFrame, 1, palettte.WheelCurrent, new Vector3f(1f, 1f, 0f));
-					staticCollisionPoints.add(collisionFrame.PositionVec3());
-				},
-				(dyn) -> {
-					Vec3 normal = dyn.ContactNormal();
-					Vec3 up = new Vec3(normal.z, -normal.x, -normal.y);
-					Transform collisionFrame = Transform.FromPositionAndLookDirection(dyn.ContactPoint(), normal, up);
-					DebugRenderer.RenderPoint(collisionFrame, 1, palettte.WheelNext);
-					DebugRenderer.RenderArrow(collisionFrame, 1, palettte.WheelNext, new Vec3(0d,0d,-1d));
-					DebugRenderer.RenderCube(collisionFrame, 1, palettte.WheelNext, new Vector3f(1f, 1f, 0f));
-					dynamicCollisionPoints.add(collisionFrame.PositionVec3());
-				});
-			DebugRenderer.RenderAxes(position, 1, palettte.WheelForces);
-
-			for(Vec3 point : staticCollisionPoints)
-				DebugRenderer.RenderLine(position, 1, palettte.Default, point.subtract(position.PositionVec3()));
-			for(Vec3 point : dynamicCollisionPoints)
-				DebugRenderer.RenderLine(position, 1, palettte.CoreCurrent, point.subtract(position.PositionVec3()));
-
-		}
+		//if(OBBCollisionSystem.DEBUG_HANDLE.Handle() != 0L)
+		//{
+		//	List<Vec3> staticCollisionPoints = new ArrayList<>();
+		//	List<Vec3> dynamicCollisionPoints = new ArrayList<>();
+		//	Transform position = physics.ProcessEvents(OBBCollisionSystem.DEBUG_HANDLE,
+		//		(stat) -> {
+		//			Vec3 normal = stat.ContactNormal();
+		//			Vec3 up = new Vec3(normal.z, -normal.x, -normal.y);
+		//			Transform collisionFrame = Transform.FromPositionAndLookDirection(stat.ContactPoint(), normal, up);
+		//			DebugRenderer.RenderPoint(collisionFrame, 1, palettte.WheelCurrent);
+		//			DebugRenderer.RenderArrow(collisionFrame, 1, palettte.WheelCurrent, new Vec3(0d,0d,-1d));
+		//			DebugRenderer.RenderCube(collisionFrame, 1, palettte.WheelCurrent, new Vector3f(1f, 1f, 0f));
+		//			staticCollisionPoints.add(collisionFrame.PositionVec3());
+		//		},
+		//		(dyn) -> {
+		//			Vec3 normal = dyn.ContactNormal();
+		//			Vec3 up = new Vec3(normal.z, -normal.x, -normal.y);
+		//			Transform collisionFrame = Transform.FromPositionAndLookDirection(dyn.ContactPoint(), normal, up);
+		//			DebugRenderer.RenderPoint(collisionFrame, 1, palettte.WheelNext);
+		//			DebugRenderer.RenderArrow(collisionFrame, 1, palettte.WheelNext, new Vec3(0d,0d,-1d));
+		//			DebugRenderer.RenderCube(collisionFrame, 1, palettte.WheelNext, new Vector3f(1f, 1f, 0f));
+		//			dynamicCollisionPoints.add(collisionFrame.PositionVec3());
+		//		});
+		//	DebugRenderer.RenderAxes(position, 1, palettte.WheelForces);
+//
+		//	for(Vec3 point : staticCollisionPoints)
+		//		DebugRenderer.RenderLine(position, 1, palettte.Default, point.subtract(position.PositionVec3()));
+		//	for(Vec3 point : dynamicCollisionPoints)
+		//		DebugRenderer.RenderLine(position, 1, palettte.CoreCurrent, point.subtract(position.PositionVec3()));
+//
+		//}
 	}
 
 	private void DebugRender(@Nonnull DynamicObject dynamic, @Nonnull DebugPalette palette)
 	{
-		DebugRender(dynamic.GetCurrentColliders(), palette);
-		DebugRender(dynamic.GetPendingColliders(), palette);
-		for (StaticCollisionEvent collision : dynamic.StaticCollisions)
-		{
-			Vec3 normal = collision.ContactNormal();
-			Vec3 up = new Vec3(normal.z, -normal.x, -normal.y);
-			Transform collisionFrame = Transform.FromPositionAndLookDirection(collision.ContactPoint(), normal, up);
-			DebugRenderer.RenderCube(collisionFrame, 1, palette.StaticCollision, new Vector3f(0.25f, 0.25f, 0f));
-			DebugRenderer.RenderArrow(collisionFrame, 1, palette.StaticCollision, new Vec3(0d,0d,-1d));
-		}
-		for (DynamicCollisionEvent collision : dynamic.DynamicCollisions)
-		{
-			Vec3 normal = collision.ContactNormal();
-			Vec3 up = new Vec3(normal.z, -normal.x, -normal.y);
-			Transform collisionFrame = Transform.FromPositionAndLookDirection(collision.ContactPoint(), normal, up);
-			DebugRenderer.RenderCube(collisionFrame, 1, palette.DynamicCollision, new Vector3f(0.25f, 0.25f, 0f));
-			DebugRenderer.RenderArrow(collisionFrame, 1, palette.DynamicCollision, new Vec3(0d,0d,-1d));
-		}
+		//DebugRender(dynamic.GetCurrentColliders(), palette);
+		//DebugRender(dynamic.GetPendingColliders(), palette);
+		//for (StaticCollisionEvent collision : dynamic.StaticCollisions)
+		//{
+		//	Vec3 normal = collision.ContactNormal();
+		//	Vec3 up = new Vec3(normal.z, -normal.x, -normal.y);
+		//	Transform collisionFrame = Transform.FromPositionAndLookDirection(collision.ContactPoint(), normal, up);
+		//	DebugRenderer.RenderCube(collisionFrame, 1, palette.StaticCollision, new Vector3f(0.25f, 0.25f, 0f));
+		//	DebugRenderer.RenderArrow(collisionFrame, 1, palette.StaticCollision, new Vec3(0d,0d,-1d));
+		//}
+		//for (DynamicCollisionEvent collision : dynamic.DynamicCollisions)
+		//{
+		//	Vec3 normal = collision.ContactNormal();
+		//	Vec3 up = new Vec3(normal.z, -normal.x, -normal.y);
+		//	Transform collisionFrame = Transform.FromPositionAndLookDirection(collision.ContactPoint(), normal, up);
+		//	DebugRenderer.RenderCube(collisionFrame, 1, palette.DynamicCollision, new Vector3f(0.25f, 0.25f, 0f));
+		//	DebugRenderer.RenderArrow(collisionFrame, 1, palette.DynamicCollision, new Vec3(0d,0d,-1d));
+		//}
 	}
 
 	private void DebugRender(@Nonnull TransformedBBCollection bbs, @Nonnull DebugPalette palette)
@@ -238,7 +239,7 @@ public class VehicleDebugRenderer
 				//	WheelEntity wheel = vehicle.Wheels.ByIndex(wheelIndex);
 				//	if(wheel != null)
 				//	{
-					VehiclePartPhysics physics = vehicle.GetPartPhysics(path);
+					PhysicsComponent physics = vehicle.GetPartPhysics(path);
 //Transform pos = vehicle.GetWorldToPartCurrent(node.GetPath());
 					//DebugRenderer.RenderPoint(pos, 1, palette.WheelCurrent);
 					//if(node.ParentNode != null)

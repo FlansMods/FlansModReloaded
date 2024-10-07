@@ -2,8 +2,8 @@ package com.flansmod.common.types.vehicles.elements;
 
 import com.flansmod.common.types.JsonField;
 import com.flansmod.common.types.elements.SoundDefinition;
-import com.flansmod.util.Maths;
-import com.flansmod.util.Transform;
+import com.flansmod.physics.common.util.Maths;
+import com.flansmod.physics.common.util.Transform;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.common.util.Lazy;
 

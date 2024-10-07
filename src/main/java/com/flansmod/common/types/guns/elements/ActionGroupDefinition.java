@@ -2,10 +2,7 @@ package com.flansmod.common.types.guns.elements;
 
 import com.flansmod.common.types.JsonField;
 import com.flansmod.common.types.elements.ModifierDefinition;
-import com.flansmod.util.Maths;
-import net.minecraft.network.chat.Component;
-
-import javax.annotation.Nonnull;
+import com.flansmod.physics.common.util.Maths;
 
 public class ActionGroupDefinition
 {

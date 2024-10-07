@@ -11,7 +11,7 @@ import com.flansmod.common.actions.contexts.GunContextPlayer;
 import com.flansmod.common.actions.contexts.ShooterContext;
 import com.flansmod.common.actions.nodes.AttachEffectAction;
 import com.flansmod.util.MinecraftHelpers;
-import com.flansmod.util.Transform;
+import com.flansmod.physics.common.util.Transform;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Camera;

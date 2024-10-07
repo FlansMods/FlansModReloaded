@@ -5,9 +5,8 @@ import com.flansmod.common.actions.ActionGroupInstance;
 import com.flansmod.common.actions.ActionInstance;
 import com.flansmod.common.actions.EActionResult;
 import com.flansmod.common.types.Constants;
-import com.flansmod.common.types.elements.ModifierDefinition;
 import com.flansmod.common.types.guns.elements.ActionDefinition;
-import com.flansmod.util.Maths;
+import com.flansmod.physics.common.util.Maths;
 
 import javax.annotation.Nonnull;
 

@@ -6,7 +6,7 @@
 
 package com.simibubi.create.foundation.collision.copy;
 
-import com.flansmod.util.Transform;
+import com.flansmod.physics.common.util.Transform;
 import net.minecraft.util.Mth;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.api.distmarker.Dist;

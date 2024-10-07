@@ -1,11 +1,10 @@
 package com.flansmod.common.gunshots.snapshots;
 
-import com.flansmod.client.render.debug.DebugRenderer;
 import com.flansmod.common.gunshots.EPlayerHitArea;
 import com.flansmod.common.gunshots.PlayerSnapshot;
 import com.flansmod.common.item.GunItem;
-import com.flansmod.util.Transform;
-import com.flansmod.util.TransformStack;
+import com.flansmod.physics.common.util.Transform;
+import com.flansmod.physics.common.util.TransformStack;
 import com.mojang.math.Axis;
 import net.minecraft.core.Direction;
 import net.minecraft.util.Mth;

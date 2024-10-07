@@ -9,8 +9,8 @@ import com.flansmod.common.types.parts.elements.EngineDefinition;
 import com.flansmod.common.types.vehicles.ControlSchemeDefinition;
 import com.flansmod.common.types.vehicles.VehicleDefinition;
 import com.flansmod.common.types.vehicles.elements.EControlLogicHint;
-import com.flansmod.util.Maths;
-import com.flansmod.util.Transform;
+import com.flansmod.physics.common.util.Maths;
+import com.flansmod.physics.common.util.Transform;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.phys.Vec3;
 

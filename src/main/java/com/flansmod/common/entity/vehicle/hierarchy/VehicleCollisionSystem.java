@@ -1,11 +1,11 @@
 package com.flansmod.common.entity.vehicle.hierarchy;
 
-import com.flansmod.common.entity.ITransformPair;
+import com.flansmod.physics.common.util.ITransformPair;
 import com.flansmod.common.entity.vehicle.VehicleEntity;
-import com.flansmod.util.Maths;
-import com.flansmod.util.Transform;
-import com.flansmod.util.collision.ContinuousSeparationManifold;
-import com.flansmod.util.collision.TransformedBB;
+import com.flansmod.physics.common.util.Maths;
+import com.flansmod.physics.common.util.Transform;
+import com.flansmod.physics.common.collision.ContinuousSeparationManifold;
+import com.flansmod.physics.common.collision.TransformedBB;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;

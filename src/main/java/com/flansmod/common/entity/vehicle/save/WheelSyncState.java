@@ -2,9 +2,8 @@ package com.flansmod.common.entity.vehicle.save;
 
 import com.flansmod.common.entity.vehicle.IVehicleSaveNode;
 import com.flansmod.common.entity.vehicle.VehicleEntity;
-import com.flansmod.util.Transform;
+import com.flansmod.physics.common.util.Transform;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.world.item.ItemStack;
 
 import javax.annotation.Nonnull;
 

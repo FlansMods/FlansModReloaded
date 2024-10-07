@@ -12,7 +12,7 @@ import com.flansmod.common.types.elements.ModifierDefinition;
 import com.flansmod.common.types.magazines.EAmmoConsumeMode;
 import com.flansmod.common.types.magazines.EAmmoLoadMode;
 import com.flansmod.common.types.magazines.MagazineDefinition;
-import com.flansmod.util.Maths;
+import com.flansmod.physics.common.util.Maths;
 import com.flansmod.util.formulae.FloatAccumulation;
 import com.mojang.datafixers.util.Pair;
 import net.minecraft.nbt.CompoundTag;

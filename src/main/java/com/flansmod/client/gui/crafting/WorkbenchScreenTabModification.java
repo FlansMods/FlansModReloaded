@@ -1,12 +1,9 @@
 package com.flansmod.client.gui.crafting;
 
 import com.flansmod.client.FlansModClient;
-import com.flansmod.client.gui.FMScreen;
 import com.flansmod.common.FlansMod;
 import com.flansmod.common.actions.Actions;
 import com.flansmod.common.crafting.AbstractWorkbench;
-import com.flansmod.common.crafting.WorkbenchBlockEntity;
-import com.flansmod.common.crafting.menus.WorkbenchMenu;
 import com.flansmod.common.crafting.menus.WorkbenchMenuModification;
 import com.flansmod.common.item.FlanItem;
 import com.flansmod.common.item.GunItem;
@@ -17,7 +14,7 @@ import com.flansmod.common.types.elements.PaintableDefinition;
 import com.flansmod.common.types.guns.GunDefinition;
 import com.flansmod.common.types.guns.elements.MagazineSlotSettingsDefinition;
 import com.flansmod.common.types.magazines.MagazineDefinition;
-import com.flansmod.util.Maths;
+import com.flansmod.physics.common.util.Maths;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;

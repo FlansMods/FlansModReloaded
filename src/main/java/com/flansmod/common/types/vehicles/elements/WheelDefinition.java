@@ -1,8 +1,7 @@
 package com.flansmod.common.types.vehicles.elements;
 
 import com.flansmod.common.types.JsonField;
-import com.flansmod.util.Maths;
-import jdk.jfr.Label;
+import com.flansmod.physics.common.util.Maths;
 import net.minecraft.world.phys.Vec3;
 
 import javax.annotation.Nonnull;

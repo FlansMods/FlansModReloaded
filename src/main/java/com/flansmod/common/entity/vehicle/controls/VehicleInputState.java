@@ -6,7 +6,7 @@ import com.flansmod.common.types.vehicles.ControlSchemeDefinition;
 import com.flansmod.common.types.vehicles.EVehicleAxis;
 import com.flansmod.common.types.vehicles.elements.ControlSchemeAxisDefinition;
 import com.flansmod.common.types.vehicles.elements.EAxisBehaviourType;
-import com.flansmod.util.Maths;
+import com.flansmod.physics.common.util.Maths;
 
 import javax.annotation.Nonnull;
 import java.util.HashMap;

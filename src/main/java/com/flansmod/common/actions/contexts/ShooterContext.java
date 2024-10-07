@@ -6,7 +6,7 @@ import com.flansmod.common.actions.stats.*;
 import com.flansmod.common.item.FlanItem;
 import com.flansmod.common.types.Constants;
 import com.flansmod.util.MinecraftHelpers;
-import com.flansmod.util.Transform;
+import com.flansmod.physics.common.util.Transform;
 import com.flansmod.util.formulae.FloatAccumulation;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;

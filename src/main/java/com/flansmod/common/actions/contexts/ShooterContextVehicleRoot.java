@@ -2,13 +2,11 @@ package com.flansmod.common.actions.contexts;
 
 import com.flansmod.common.actions.stats.IModifierBaker;
 import com.flansmod.common.entity.vehicle.VehicleEntity;
-import com.flansmod.util.Transform;
-import net.minecraft.world.Container;
+import com.flansmod.physics.common.util.Transform;
 import net.minecraft.world.entity.Entity;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.UUID;
 
 public class ShooterContextVehicleRoot extends ShooterContextVehicle
 {

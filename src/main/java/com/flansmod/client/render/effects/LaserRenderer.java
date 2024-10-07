@@ -10,7 +10,7 @@ import com.flansmod.common.actions.nodes.LaserAction;
 import com.flansmod.common.gunshots.Raytracer;
 import com.flansmod.common.types.attachments.EAttachmentType;
 import com.flansmod.util.MinecraftHelpers;
-import com.flansmod.util.Transform;
+import com.flansmod.physics.common.util.Transform;
 import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.*;

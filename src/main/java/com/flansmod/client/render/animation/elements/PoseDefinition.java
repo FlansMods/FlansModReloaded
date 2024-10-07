@@ -2,9 +2,7 @@ package com.flansmod.client.render.animation.elements;
 
 import com.flansmod.common.types.JsonField;
 import com.flansmod.common.types.elements.VecWithOverride;
-import com.flansmod.util.Maths;
-import com.flansmod.util.Transform;
-import org.joml.Quaternionf;
+import com.flansmod.physics.common.util.Transform;
 import org.joml.Vector3f;
 
 import javax.annotation.Nonnull;
