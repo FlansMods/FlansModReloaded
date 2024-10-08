@@ -74,7 +74,7 @@ public class CollisionTasks
 		public abstract Vec3 getAxisA(int index);
 		public abstract Vec3 getAxisB(int index);
 
-		public boolean hasNext() { return IterIndex < NUM_TESTS; }
+		public boolean hasNext() { return IterIndex < NUM_TESTS - 1; }
 		public Vec3 next()
 		{
 			IterIndex++;
@@ -101,14 +101,9 @@ public class CollisionTasks
 		return Separate(
 				new AxisPermutationIterator3D() {
 					@Override
-					public Vec3 getAxisA(int index) {
-						return aCollider.GetAxis(DIRECTIONS[index]);
-					}
-
+					public Vec3 getAxisA(int index) { return aCollider.GetAxis(DIRECTIONS[index]); }
 					@Override
-					public Vec3 getAxisB(int index) {
-						return GLOBAL_AXES[index];
-					}
+					public Vec3 getAxisB(int index) { return bCollider.GetAxis(DIRECTIONS[index]); }
 				},
 				(normal) -> ProjectionUtil.ProjectOBBMinMax(normal, aCollider),
 				(normal) -> ProjectionUtil.ProjectOBBMinMax(normal, bCollider));

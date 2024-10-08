@@ -2,8 +2,7 @@ package com.flansmod.physics.common.collision;
 
 import com.flansmod.physics.common.util.Maths;
 import com.flansmod.physics.common.util.Transform;
-import com.flansmod.physics.common.util.shapes.CollisionManifold;
-import com.flansmod.physics.common.util.shapes.CubeCornerSelection;
+import com.flansmod.physics.common.util.shapes.VertexIndex;
 import com.flansmod.physics.common.util.shapes.IPolygon;
 import com.flansmod.physics.common.util.shapes.Polygon;
 import net.minecraft.core.Direction;
@@ -92,7 +91,7 @@ public record TransformedBB(@Nonnull Transform Loc, @Nonnull Vector3f HalfExtent
 	@Nonnull
 	public Vec3 GetCenter() { return Loc.PositionVec3(); }
 	@Nonnull
-	public Vec3 GetCorner(@Nonnull CubeCornerSelection corner) {
+	public Vec3 GetCorner(@Nonnull VertexIndex corner) {
 		return switch(corner)
 		{
 			case NegX_NegY_NegZ -> Loc.LocalToGlobalPosition(new Vec3(-HalfExtents.x, -HalfExtents.y, -HalfExtents.z));
@@ -115,12 +114,12 @@ public record TransformedBB(@Nonnull Transform Loc, @Nonnull Vector3f HalfExtent
 	{
 		return switch (dir)
 		{
-			case UP -> Polygon.square(GetCorner(CubeCornerSelection.UP[0]), GetCorner(CubeCornerSelection.UP[1]), GetCorner(CubeCornerSelection.UP[2]), GetCorner(CubeCornerSelection.UP[3]));
-			case DOWN -> Polygon.square(GetCorner(CubeCornerSelection.DOWN[0]), GetCorner(CubeCornerSelection.DOWN[1]), GetCorner(CubeCornerSelection.DOWN[2]), GetCorner(CubeCornerSelection.DOWN[3]));
-			case NORTH -> Polygon.square(GetCorner(CubeCornerSelection.NORTH[0]), GetCorner(CubeCornerSelection.NORTH[1]), GetCorner(CubeCornerSelection.NORTH[2]), GetCorner(CubeCornerSelection.NORTH[3]));
-			case EAST -> Polygon.square(GetCorner(CubeCornerSelection.EAST[0]), GetCorner(CubeCornerSelection.EAST[1]), GetCorner(CubeCornerSelection.EAST[2]), GetCorner(CubeCornerSelection.EAST[3]));
-			case SOUTH -> Polygon.square(GetCorner(CubeCornerSelection.SOUTH[0]), GetCorner(CubeCornerSelection.SOUTH[1]), GetCorner(CubeCornerSelection.SOUTH[2]), GetCorner(CubeCornerSelection.SOUTH[3]));
-			case WEST -> Polygon.square(GetCorner(CubeCornerSelection.WEST[0]), GetCorner(CubeCornerSelection.WEST[1]), GetCorner(CubeCornerSelection.WEST[2]), GetCorner(CubeCornerSelection.WEST[3]));
+			case UP -> Polygon.square(GetCorner(VertexIndex.UP[0]), GetCorner(VertexIndex.UP[1]), GetCorner(VertexIndex.UP[2]), GetCorner(VertexIndex.UP[3]));
+			case DOWN -> Polygon.square(GetCorner(VertexIndex.DOWN[0]), GetCorner(VertexIndex.DOWN[1]), GetCorner(VertexIndex.DOWN[2]), GetCorner(VertexIndex.DOWN[3]));
+			case NORTH -> Polygon.square(GetCorner(VertexIndex.NORTH[0]), GetCorner(VertexIndex.NORTH[1]), GetCorner(VertexIndex.NORTH[2]), GetCorner(VertexIndex.NORTH[3]));
+			case EAST -> Polygon.square(GetCorner(VertexIndex.EAST[0]), GetCorner(VertexIndex.EAST[1]), GetCorner(VertexIndex.EAST[2]), GetCorner(VertexIndex.EAST[3]));
+			case SOUTH -> Polygon.square(GetCorner(VertexIndex.SOUTH[0]), GetCorner(VertexIndex.SOUTH[1]), GetCorner(VertexIndex.SOUTH[2]), GetCorner(VertexIndex.SOUTH[3]));
+			case WEST -> Polygon.square(GetCorner(VertexIndex.WEST[0]), GetCorner(VertexIndex.WEST[1]), GetCorner(VertexIndex.WEST[2]), GetCorner(VertexIndex.WEST[3]));
 		};
 	}
 

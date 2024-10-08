@@ -13,6 +13,8 @@ import com.flansmod.physics.common.units.Torque;
 import com.flansmod.physics.common.util.IForce;
 import com.flansmod.physics.common.util.Transform;
 import com.flansmod.physics.common.util.shapes.IPolygon;
+import com.flansmod.physics.common.util.shapes.ISeparationAxis;
+import com.google.common.collect.ImmutableList;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.server.MinecraftServer;
@@ -129,6 +131,12 @@ public class PhysicsDebugRenderer
                         dynamicCollisionPoints.add(collisionFrame.PositionVec3());
                     });
             //DebugRenderer.RenderAxes(position, 1, palettte.WheelForces);
+            //ImmutableList<ISeparationAxis> separators = physics.Debug_GetSeparatorsFor(OBBCollisionSystem.DEBUG_HANDLE);
+            //for(ISeparationAxis separator : separators) {
+            //    //Vec3 pos = position.PositionVec3();
+            //    //DebugRender(position.PositionVec3(), separator, palette);
+            //}
+
 
             for(Vec3 point : staticCollisionPoints)
                 DebugRenderer.RenderLine(position, 1, palette.CollisionStatic, point.subtract(position.PositionVec3()));
@@ -136,6 +144,15 @@ public class PhysicsDebugRenderer
                 DebugRenderer.RenderLine(position, 1, palette.CollisionDynamic, point.subtract(position.PositionVec3()));
 
         }
+    }
+
+    private void DebugRender(@Nonnull Vec3 position, @Nonnull ISeparationAxis axis, @Nonnull DebugPalette palette)
+    {
+        Vec3 normal = axis.GetNormal();
+        Vec3 up = new Vec3(normal.z, -normal.x, -normal.y);
+        Transform frame = Transform.FromPositionAndLookDirection(position, axis.GetNormal(), up);
+        DebugRenderer.RenderArrow(frame, 2, palette.CollisionStatic, new Vec3(0d, 0d, -1d));
+        DebugRenderer.RenderCube(frame, 2, palette.CollisionStatic, new Vector3f(0.25f, 0.25f, 0f));
     }
 
     private void DebugRender(@Nonnull DynamicObject dynamic, @Nonnull DebugPalette palette)

@@ -326,26 +326,6 @@ public class ClientInputHooks
 				ProcessPressHoldRelease(player, Use, EPlayerInput.Fire2);
 
 			}
-
-			while(KeyMappings.DEBUG_PAUSE_PHYSICS.get().consumeClick())
-			{
-				OBBCollisionSystem.PAUSE_PHYSICS = !OBBCollisionSystem.PAUSE_PHYSICS;
-				if(OBBCollisionSystem.PAUSE_PHYSICS)
-					Minecraft.getInstance().getChatListener().handleSystemMessage(Component.translatable("flansmod.debug.physics_pause.on"), false);
-				else
-					Minecraft.getInstance().getChatListener().handleSystemMessage(Component.translatable("flansmod.debug.physics_pause.off"), false);
-			}
-			while(KeyMappings.DEBUG_CYCLE_PHYSICS_INSPECT.get().consumeClick())
-			{
-				if(Minecraft.getInstance().level != null)
-				{
-					ColliderHandle handle = OBBCollisionSystem.CycleDebugHandle(Minecraft.getInstance().level);
-					if(handle.Handle() == 0L)
-						Minecraft.getInstance().getChatListener().handleSystemMessage(Component.translatable("flansmod.debug.physics_handle_inspect.off"), false);
-					else
-						Minecraft.getInstance().getChatListener().handleSystemMessage(Component.literal(""+handle.Handle()), false);
-				}
-			}
 		}
 	}
 }

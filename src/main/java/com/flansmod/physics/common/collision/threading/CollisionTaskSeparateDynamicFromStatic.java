@@ -3,10 +3,7 @@ package com.flansmod.physics.common.collision.threading;
 import com.flansmod.physics.common.FlansPhysicsMod;
 import com.flansmod.physics.common.collision.*;
 import com.flansmod.physics.common.util.ProjectedRange;
-import com.flansmod.physics.common.util.shapes.IPlane;
-import com.flansmod.physics.common.util.shapes.IPolygon;
-import com.flansmod.physics.common.util.shapes.ISeparationAxis;
-import com.flansmod.physics.common.util.shapes.Plane;
+import com.flansmod.physics.common.util.shapes.*;
 import com.google.common.collect.ImmutableList;
 import com.mojang.datafixers.util.Pair;
 import net.minecraft.core.Direction;
@@ -182,7 +179,7 @@ public class CollisionTaskSeparateDynamicFromStatic
 
 			// Let's process it
 			VoxelShape shape = Input.StaticShapes.get(indexToProcess);
-			TransformedBB voxelBB = TransformedBB.Of(shape.bounds());
+			AABB voxelBB = shape.bounds();
 			SeparationResult separationResult = CollisionTasks.Separate(boundsA, voxelBB);
 
 			// Directly place it in the array, so we don't test it again
@@ -202,10 +199,10 @@ public class CollisionTaskSeparateDynamicFromStatic
 				// The separating axis theorem tells us that this means our cubes collide, BUT not where.
 
 				// Step 1. Identify the incident and reference faces
-				Direction referenceSide = separationResult.separator().SelectFaceOBBMin(voxelBB);
+				Direction referenceSide = separationResult.separator().SelectFaceAABBMin(voxelBB);
 				Direction incidentSide = separationResult.separator().SelectFaceOBBMax(boundsA);
 
-				IPolygon referencePoly = voxelBB.GetFace(referenceSide);
+				IPolygon referencePoly = Polygon.of(voxelBB, referenceSide);
 				IPolygon incidentPoly = boundsA.GetFace(incidentSide);
 
 				IPolygon collisionPoly = separationResult.separator().CollisionClip(incidentPoly, referencePoly);
@@ -231,8 +228,8 @@ public class CollisionTaskSeparateDynamicFromStatic
 				continue;
 
 			VoxelShape shape = Input.StaticShapes.get(i);
-			ProjectedRange projectionShapeI = separator.ProjectAABBMinMax(shape.bounds());
-			if(projectionShapeI.min() >= 0.0f) {
+			double heightAbove = separator.GetAABBHeightAbove(shape.bounds());
+			if(heightAbove >= 0.0f) {
 				results[i] = SeparationResult.successful(separator);
 				numSeparated++;
 			}
@@ -327,6 +324,11 @@ public class CollisionTaskSeparateDynamicFromStatic
 	public Output GetResult()
 	{
 		return Output;
+	}
+	@Nullable
+	public Input Debug_GetInput()
+	{
+		return Input;
 	}
 
 }

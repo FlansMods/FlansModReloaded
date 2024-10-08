@@ -47,23 +47,6 @@ public class KeyMappings
 	}
 	public static final IKeyConflictContext HOLDING_GUN = new KeyConflictContextHoldingGun();
 	public static final IKeyConflictContext IN_VEHICLE = new KeyConflictContextInVehicle();
-
-	public static final Lazy<KeyMapping> DEBUG_PAUSE_PHYSICS = Lazy.of(() -> new KeyMapping(
-		"key.flansmod.debug.pause_physics",
-		KeyConflictContext.UNIVERSAL,
-		InputConstants.Type.KEYSYM,
-		GLFW.GLFW_KEY_F10,
-		"key.categories.flansmod.debug"
-	));
-	public static final Lazy<KeyMapping> DEBUG_CYCLE_PHYSICS_INSPECT = Lazy.of(() -> new KeyMapping(
-		"key.flansmod.debug.cycle_inspect",
-		KeyConflictContext.UNIVERSAL,
-		InputConstants.Type.KEYSYM,
-		GLFW.GLFW_KEY_F9,
-		"key.categories.flansmod.debug"
-	));
-
-
 	public static final Lazy<KeyMapping> LOOK_AT_MAPPING = Lazy.of(() -> new KeyMapping(
 		"key.flansmod.look_at",
 		HOLDING_GUN,

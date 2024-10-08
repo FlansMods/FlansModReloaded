@@ -56,13 +56,13 @@ public interface IPlane extends ISeparationAxis
     @Nonnull default Optional<Vec3> LinePlaneIntersect(@Nonnull Vec3 pointA, @Nonnull Vec3 pointB) { return RayPlaneIntersect(pointA, pointB.subtract(pointA)); }
 
     @Nonnull
-    default CubeCornerSelection SelectCornerOBBMax(@Nonnull Vec3 center, @Nonnull Vector3f halfExtents, @Nonnull Matrix3f ori) { return ProjectionUtil.SelectCornerOBBMax(GetNormal(), center, halfExtents, ori); }
+    default VertexIndex SelectCornerOBBMax(@Nonnull Vec3 center, @Nonnull Vector3f halfExtents, @Nonnull Matrix3f ori) { return ProjectionUtil.SelectCornerOBBMax(GetNormal(), center, halfExtents, ori); }
     @Nonnull
-    default CubeCornerSelection SelectCornerOBBMin(@Nonnull Vec3 center, @Nonnull Vector3f halfExtents, @Nonnull Matrix3f ori) { return ProjectionUtil.SelectCornerOBBMin(GetNormal(), center, halfExtents, ori); }
+    default VertexIndex SelectCornerOBBMin(@Nonnull Vec3 center, @Nonnull Vector3f halfExtents, @Nonnull Matrix3f ori) { return ProjectionUtil.SelectCornerOBBMin(GetNormal(), center, halfExtents, ori); }
     @Nonnull
     default Direction SelectFaceOBBMax(@Nonnull Vec3 center, @Nonnull Vector3f halfExtents, @Nonnull Matrix3f ori)
     {
-        CubeCornerSelection corner = SelectCornerOBBMax(center, halfExtents, ori);
+        VertexIndex corner = SelectCornerOBBMax(center, halfExtents, ori);
         Direction bestDir = null;
         double mostParallel = -1.0d;
         for(Direction dir : corner.getPossibleFaces())
@@ -90,6 +90,10 @@ public interface IPlane extends ISeparationAxis
     @Nonnull
     default Direction SelectFaceOBBMin(@Nonnull TransformedBB obb) { return SelectFaceOBBMax(obb).getOpposite(); }
 
+    @Nonnull
+    default Direction SelectFaceAABBMin(@Nonnull AABB aabb) { return Direction.getNearest(GetNormal().x, GetNormal().y, GetNormal().z).getOpposite(); }
+    @Nonnull
+    default Direction SelectFaceAABBMax(@Nonnull AABB aabb) { return Direction.getNearest(GetNormal().x, GetNormal().y, GetNormal().z); }
 
     // This does not return the true Box-Plane intersection, rather a useful incident face to consider for collision
     @Nonnull

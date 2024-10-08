@@ -1,11 +1,14 @@
 package com.flansmod.physics.common.collision;
 
+import com.flansmod.client.render.debug.DebugRenderer;
 import com.flansmod.common.FlansMod;
 import com.flansmod.physics.common.units.AngularAcceleration;
 import com.flansmod.physics.common.units.AngularVelocity;
 import com.flansmod.physics.common.units.LinearAcceleration;
 import com.flansmod.physics.common.units.LinearVelocity;
 import com.flansmod.physics.common.util.Maths;
+import com.flansmod.physics.common.util.ProjectedRange;
+import com.flansmod.physics.common.util.ProjectionUtil;
 import com.flansmod.physics.common.util.Transform;
 import com.flansmod.physics.common.collision.threading.CollisionTaskSeparateDynamicFromStatic;
 import com.flansmod.physics.common.collision.threading.CollisionTaskSeparateDynamicPair;
@@ -19,6 +22,8 @@ import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import org.joml.Quaternionf;
+import org.joml.Vector3f;
+import org.joml.Vector4f;
 
 import javax.annotation.Nonnull;
 import java.util.*;
@@ -56,20 +61,26 @@ public class OBBCollisionSystem
 
 	private final boolean SINGLE_THREAD_DEBUG = true;
 	public static ColliderHandle DEBUG_HANDLE = new ColliderHandle(0L);
-	public static ColliderHandle CycleDebugHandle(@Nonnull Level level)
+	public static ColliderHandle CycleDebugHandle(@Nonnull Level level, int delta)
 	{
 		OBBCollisionSystem system = ForLevel(level);
 		int index = system.AllHandles.indexOf(DEBUG_HANDLE);
-		if(index == system.AllHandles.size() - 1)
+		int newIndex = index + delta;
+		if(newIndex >= system.AllHandles.size() || newIndex < 0)
 		{
 			DEBUG_HANDLE = new ColliderHandle(0L);
 			return DEBUG_HANDLE;
 		}
 		else
 		{
-			DEBUG_HANDLE = system.AllHandles.get(index + 1);
+			DEBUG_HANDLE = system.AllHandles.get(newIndex);
 			return DEBUG_HANDLE;
 		}
+	}
+	public static int GetNumHandles(@Nonnull Level level)
+	{
+		OBBCollisionSystem system = ForLevel(level);
+		return system.AllHandles.size();
 	}
 	private final List<CollisionTaskSeparateDynamicPair> DynamicSeparationTasks = new ArrayList<>();
 	private final List<CollisionTaskSeparateDynamicFromStatic> StaticSeparationTasks = new ArrayList<>();
@@ -357,7 +368,18 @@ public class OBBCollisionSystem
 					worldBBs,
 					StaticSeparators.getOrDefault(handleA, ImmutableList.of())
 				));
+
+				//if(DEBUG_HANDLE.Handle() == handleA.Handle())
+				//{
+				//	for(VoxelShape shape : worldBBs) {
+				//		Transform pos = Transform.FromPos(shape.bounds().getCenter());
+				//		Vector3f half = new Vector3f((float)shape.bounds().getXsize()*0.5f, (float)shape.bounds().getYsize()*0.5f, (float)shape.bounds().getZsize()*0.5f);
+				//		DebugRenderer.RenderCube(pos, 3, new Vector4f(1.0f, 0.8f, 0.6f, 1.0f), half);
+				//	}
+				//}
 			}
+
+
 
 			// Check against all other dynamic objects
 			for (int j = i + 1; j < AllHandles.size(); j++)
@@ -418,8 +440,64 @@ public class OBBCollisionSystem
 					{
 						object.StaticCollisions.addAll(output.EventsA());
 						if(output.NewSeparatorList() != null && !output.NewSeparatorList().isEmpty())
+						{
 							StaticSeparators.put(task.Handle, output.NewSeparatorList());
+
+							if(DEBUG_HANDLE.Handle() == task.Handle.Handle())
+							{
+								List<VoxelShape> statics = new ArrayList<>(task.Debug_GetInput().StaticShapes());
+								float blue = 1.0f;
+								for(ISeparationAxis axis : output.NewSeparatorList())
+								{
+									Vec3 normal = axis.GetNormal();
+									Vec3 up = new Vec3(normal.z, -normal.x, -normal.y);
+
+									TransformedBB obb = object.GetPendingBB();
+									ProjectedRange range = axis.ProjectOBBMinMax(obb);
+									double center = axis.Project(obb.GetCenter());
+
+									Transform pos = Transform.FromPositionAndLookDirection(obb.GetCenter().add(normal.scale(range.max() - center)), normal, up);
+									DebugRenderer.RenderArrow(pos, 3, new Vector4f(1.0f, 1.0f, blue, 1.0f), new Vec3(0d, 0d, -1d));
+
+									for(int j = statics.size() - 1; j >= 0; j--)
+									{
+										AABB aabb = statics.get(j).bounds();
+										ProjectedRange boxProj = axis.ProjectAABBMinMax(aabb);
+										if(ProjectionUtil.SeparatedAThenB(range, boxProj))
+										{
+											Transform staticPos = Transform.FromPos(aabb.getCenter());
+											DebugRenderer.RenderCube(staticPos, 3, new Vector4f(1.0f, 1.0f, blue, 1.0f), new Vector3f((float)aabb.getXsize()*0.5f, (float)aabb.getYsize()*0.5f, (float)aabb.getZsize()*0.5f));
+
+											statics.remove(j);
+										}
+									}
+									blue *= 0.66f;
+								}
+								for(int j = statics.size() - 1; j >= 0; j--)
+								{
+									AABB aabb = statics.get(j).bounds();
+									Transform staticPos = Transform.FromPos(aabb.getCenter());
+									DebugRenderer.RenderCube(staticPos, 3, new Vector4f(1.0f, 0.0f, 0.0f, 1.0f), new Vector3f((float)aabb.getXsize()*0.5f, (float)aabb.getYsize()*0.5f, (float)aabb.getZsize()*0.5f));
+								}
+
+								//for(VoxelShape shape : task.GetResult()) {
+								//	Transform pos = Transform.FromPos(shape.bounds().getCenter());
+								//	Vector3f half = new Vector3f((float)shape.bounds().getXsize()*0.5f, (float)shape.bounds().getYsize()*0.5f, (float)shape.bounds().getZsize()*0.5f);
+								//	DebugRenderer.RenderCube(pos, 3, new Vector4f(1.0f, 0.8f, 0.6f, 1.0f), half);
+								//}
+							}
+						}
+
 					}
+				}
+
+				if(DEBUG_HANDLE.Handle() == task.Handle.Handle())
+				{
+					//for(VoxelShape shape : task.GetResult()) {
+					//	Transform pos = Transform.FromPos(shape.bounds().getCenter());
+					//	Vector3f half = new Vector3f((float)shape.bounds().getXsize()*0.5f, (float)shape.bounds().getYsize()*0.5f, (float)shape.bounds().getZsize()*0.5f);
+					//	DebugRenderer.RenderCube(pos, 3, new Vector4f(1.0f, 0.8f, 0.6f, 1.0f), half);
+					//}
 				}
 			}
 		}
@@ -552,6 +630,12 @@ public class OBBCollisionSystem
 		}
 
 		return builder.build();
+	}
+
+	@Nonnull
+	public ImmutableList<ISeparationAxis> Debug_GetSeparatorsFor(@Nonnull ColliderHandle handle)
+	{
+		return StaticSeparators.getOrDefault(handle, ImmutableList.of());
 	}
 
 	//private Vec3 SimpleAABBTest(@Nonnull AABB sweepAABB, @Nonnull List<VoxelShape> shapes)

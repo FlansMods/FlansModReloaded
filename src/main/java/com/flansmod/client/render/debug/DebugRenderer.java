@@ -14,7 +14,10 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.TickEvent;
 import org.joml.*;
 
+import java.util.ArrayDeque;
 import java.util.ArrayList;
+import java.util.Queue;
+import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.function.BiConsumer;
 
 public class DebugRenderer
@@ -281,36 +284,37 @@ public class DebugRenderer
         }
     }
 
-    public static ArrayList<DebugRenderItem> renderItems = new ArrayList<>();
+    private static final Queue<DebugRenderItem> itemsToAdd = new ConcurrentLinkedQueue<>();
+    private static final ArrayList<DebugRenderItem> renderItems = new ArrayList<>();
 
     public static void RenderCube(Transform t, int ticks, Vector4f col, Vector3f h)
     {
-        renderItems.add(new DebugRenderCube(t, ticks, col, h));
+        itemsToAdd.add(new DebugRenderCube(t, ticks, col, h));
     }
 
     public static void RenderPoint(Transform t, int ticks, Vector4f col)
     {
-        renderItems.add(new DebugRenderPoint(t, ticks, col));
+        itemsToAdd.add(new DebugRenderPoint(t, ticks, col));
     }
 
     public static void RenderLine(Transform t, int ticks, Vector4f col, Vec3 ray)
     {
         if(!Maths.Approx(ray.lengthSqr(), 0d))
-            renderItems.add(new DebugRenderLine(t, ticks, col, ray, false));
+            itemsToAdd.add(new DebugRenderLine(t, ticks, col, ray, false));
     }
     public static void RenderArrow(Transform t, int ticks, Vector4f col, Vec3 ray)
     {
         if(!Maths.Approx(ray.lengthSqr(), 0d))
-            renderItems.add(new DebugRenderLine(t, ticks, col, ray, true));
+            itemsToAdd.add(new DebugRenderLine(t, ticks, col, ray, true));
     }
     public static void RenderRotation(Transform t, int ticks, Vector4f col, Vec3 axis, double magnitude)
     {
         if(!Maths.Approx(magnitude, 0d))
-            renderItems.add(new DebugRenderRotation(t, ticks, col, axis, magnitude, true));
+            itemsToAdd.add(new DebugRenderRotation(t, ticks, col, axis, magnitude, true));
     }
     public static void RenderAxes(Transform t, int ticks, Vector4f col)
     {
-        renderItems.add(new DebugRenderAxes(t, ticks, col));
+        itemsToAdd.add(new DebugRenderAxes(t, ticks, col));
     }
 
 
@@ -336,10 +340,17 @@ public class DebugRenderer
             
             Camera camera = event.getCamera();
             Vec3 pos = camera.getPosition();
-            
-            
-            for (DebugRenderItem item : renderItems)
+
+            while(!itemsToAdd.isEmpty())
             {
+                DebugRenderItem item = itemsToAdd.poll();
+                renderItems.add(item);
+            }
+            
+            for(int i = 0; i < renderItems.size(); i++)
+            {
+                DebugRenderItem item = renderItems.get(i);
+
                 poseStack.pushPose();
                 poseStack.translate(item.transform.Position.x - pos.x, item.transform.Position.y - pos.y, item.transform.Position.z - pos.z);
                 poseStack.mulPose(item.transform.Orientation);

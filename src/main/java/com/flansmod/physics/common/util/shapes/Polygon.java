@@ -1,8 +1,11 @@
 package com.flansmod.physics.common.util.shapes;
 
 import com.flansmod.physics.common.FlansPhysicsMod;
+import com.flansmod.physics.common.collision.TransformedBB;
 import com.flansmod.physics.common.util.Maths;
 import com.google.common.collect.ImmutableList;
+import net.minecraft.core.Direction;
+import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 
 import javax.annotation.Nonnull;
@@ -25,14 +28,19 @@ public record Polygon(@Nonnull ImmutableList<Vec3> vertices) implements IPolygon
     @Nonnull
     public static Polygon ofLoopedVerts(@Nonnull ImmutableList<Vec3> vertices)
     {
-        if(vertices.get(0).equals(vertices.get(vertices.size() - 1)))
-            return new Polygon(ImmutableList.copyOf(vertices.subList(0, vertices.size() - 1)));
+        if(!vertices.isEmpty()) {
+            if (vertices.get(0).equals(vertices.get(vertices.size() - 1)))
+                return new Polygon(ImmutableList.copyOf(vertices.subList(0, vertices.size() - 1)));
+        }
         return new Polygon(vertices);
     }
     @Nonnull
     public static Polygon ofNonLoopedVerts(@Nonnull ImmutableList<Vec3> vertices) { return new Polygon(vertices); }
 
-
+    @Nonnull
+    public static IPolygon of(@Nonnull AABB aabb, @Nonnull Direction dir) { return new Polygon(VertexIndex.getAABBFace(aabb, dir)); }
+    @Nonnull
+    public static IPolygon of(@Nonnull TransformedBB obb, @Nonnull Direction dir) { return obb.GetFace(dir); }
 
     @Override @Nonnull
     public List<Vec3> GetVertices() { return vertices; }

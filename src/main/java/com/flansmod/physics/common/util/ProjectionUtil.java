@@ -1,7 +1,7 @@
 package com.flansmod.physics.common.util;
 
 import com.flansmod.physics.common.collision.TransformedBB;
-import com.flansmod.physics.common.util.shapes.CubeCornerSelection;
+import com.flansmod.physics.common.util.shapes.VertexIndex;
 import com.mojang.datafixers.util.Pair;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
@@ -138,18 +138,18 @@ public class ProjectionUtil
         return ProjectedRange.preSorted(minProjX + minProjY + minProjZ, maxProjX + maxProjY + maxProjZ);
     }
     @Nonnull
-    public static CubeCornerSelection SelectCornerOBBMin(@Nonnull Vec3 projAxis,
-                                                         @Nonnull Vec3 boxCenter,
-                                                         @Nonnull Vector3f halfExtents,
-                                                         @Nonnull Matrix3f ori)
+    public static VertexIndex SelectCornerOBBMin(@Nonnull Vec3 projAxis,
+                                                 @Nonnull Vec3 boxCenter,
+                                                 @Nonnull Vector3f halfExtents,
+                                                 @Nonnull Matrix3f ori)
     {
         return SelectCornerOBBMax(projAxis, boxCenter, halfExtents, ori).opposite();
     }
     @Nonnull
-    public static CubeCornerSelection SelectCornerOBBMax(@Nonnull Vec3 projAxis,
-                                                         @Nonnull Vec3 boxCenter,
-                                                         @Nonnull Vector3f halfExtents,
-                                                         @Nonnull Matrix3f ori)
+    public static VertexIndex SelectCornerOBBMax(@Nonnull Vec3 projAxis,
+                                                 @Nonnull Vec3 boxCenter,
+                                                 @Nonnull Vector3f halfExtents,
+                                                 @Nonnull Matrix3f ori)
     {
         double orientedHalfX = halfExtents.x * (projAxis.x * ori.m00 + projAxis.y * ori.m10 + projAxis.z * ori.m20); // * v.x either -1 or 1
         boolean positiveX = orientedHalfX > 0.0f;
@@ -157,7 +157,7 @@ public class ProjectionUtil
         boolean positiveY = orientedHalfY > 0.0f;
         double orientedHalfZ = halfExtents.z * (projAxis.x * ori.m02 + projAxis.y * ori.m12 + projAxis.z * ori.m22); // * v.z either -1 or 1
         boolean positiveZ = orientedHalfZ > 0.0f;
-        return CubeCornerSelection.of(positiveX, positiveY, positiveZ);
+        return VertexIndex.of(positiveX, positiveY, positiveZ);
     }
     public static double GetSeparationDistance(@Nonnull ProjectedRange a, @Nonnull ProjectedRange b)
     {
@@ -199,6 +199,14 @@ public class ProjectionUtil
             return Pair.of(clipDepthAthenB, ProjectionComparison.Colliding_A_Then_B);
         else
             return Pair.of(clipDepthBthenA, ProjectionComparison.Colliding_B_Then_A);
+    }
+    public static boolean SeparatedAThenB(@Nonnull ProjectedRange a, @Nonnull ProjectedRange b)
+    {
+        return a.max() <= b.min();
+    }
+    public static boolean SeparatedBThenA(@Nonnull ProjectedRange a, @Nonnull ProjectedRange b)
+    {
+        return b.max() <= a.min();
     }
     public static boolean Separated(@Nonnull ProjectedRange a, @Nonnull ProjectedRange b)
     {

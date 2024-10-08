@@ -15,8 +15,18 @@ public interface IPolygon
 
     default int GetNumVertices() { return GetVertices().size(); }
     @Nonnull
+    default Vec3 GetVertex(int index)
+    {
+        if(0 <= index && index < GetVertices().size())
+            return GetVertices().get(index);
+        return Vec3.ZERO;
+    }
+    @Nonnull
     default Vec3 GetVertexLooped(int index)
     {
+        if(GetVertices().isEmpty())
+            return Vec3.ZERO;
+
         index = Maths.Modulo(index, GetVertices().size());
         return GetVertices().get(index);
     }
