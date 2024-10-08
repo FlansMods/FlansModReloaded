@@ -1,16 +1,19 @@
 package com.flansmod.physics.common.util.shapes;
 
+import com.flansmod.client.render.debug.DebugRenderer;
 import com.flansmod.physics.common.FlansPhysicsMod;
 import com.flansmod.physics.common.collision.TransformedBB;
 import com.flansmod.physics.common.collision.TransformedBBCollection;
 import com.flansmod.physics.common.util.Maths;
 import com.flansmod.physics.common.util.ProjectionUtil;
+import com.flansmod.physics.common.util.Transform;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Vec3i;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import org.joml.Matrix3f;
 import org.joml.Vector3f;
+import org.joml.Vector4f;
 
 import javax.annotation.Nonnull;
 import java.util.Optional;
@@ -68,7 +71,9 @@ public interface IPlane extends ISeparationAxis
         for(Direction dir : corner.getPossibleFaces())
         {
             Vec3i dirNormal = dir.getNormal();
-            Vec3 faceNormal = new Vec3(dirNormal.getX() * ori.m00, dirNormal.getY() * ori.m10, dirNormal.getZ() * ori.m20);
+            Vector3f dirNormalF = new Vector3f(dirNormal.getX(), dirNormal.getY(), dirNormal.getZ());
+            dirNormalF.mul(ori);
+            Vec3 faceNormal = new Vec3(dirNormalF);
             double parallelity = faceNormal.dot(GetNormal());
             if(parallelity > mostParallel)
             {
@@ -100,6 +105,21 @@ public interface IPlane extends ISeparationAxis
     default IPolygon CollisionClip(@Nonnull IPolygon incident, @Nonnull IPolygon reference)
     {
         //https://research.ncl.ac.uk/game/mastersdegree/gametechnologies/previousinformation/physics5collisionmanifolds/2017%20Tutorial%205%20-%20Collision%20Manifolds.pdf
+
+        for(int i = 0; i < incident.GetNumVertices(); i++)
+        {
+            Transform vCurrent = Transform.FromPos(incident.GetVertex(i));
+            Vec3 vEdge = incident.GetEdgeVector(i);
+            DebugRenderer.RenderLine(vCurrent, 2, new Vector4f(1.0f, 0.0f, 0.0f, 1.0f), vEdge);
+            DebugRenderer.RenderPoint(vCurrent, 2, new Vector4f(1.0f, 0.0f, 0.0f, 1.0f));
+        }
+        for(int i = 0; i < reference.GetNumVertices(); i++)
+        {
+            Transform vCurrent = Transform.FromPos(reference.GetVertex(i));
+            Vec3 vEdge = reference.GetEdgeVector(i);
+            DebugRenderer.RenderLine(vCurrent, 2, new Vector4f(0.0f, 1.0f, 0.0f, 1.0f), vEdge);
+            DebugRenderer.RenderPoint(vCurrent, 2, new Vector4f(0.0f, 1.0f, 0.0f, 1.0f));
+        }
 
         // Adjacent Face Clipping
         int refVertexCount = reference.GetNumVertices();

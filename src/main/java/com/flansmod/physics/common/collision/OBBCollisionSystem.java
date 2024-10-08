@@ -555,38 +555,40 @@ public class OBBCollisionSystem
 					Quaternionf q = angularV.ApplyOneTick();
 					//boolean collisionX = false, collisionY = false, collisionZ = false;
 
+					ProjectedRange xMoveReq = null, yMoveReq = null, zMoveReq = null;
 					for (StaticCollisionEvent collision : dyn.StaticCollisions)
 					{
-						Vec3 pushOutVec = collision.ContactNormal().scale(collision.depth());
+						Vec3 pushOutVec = collision.ContactNormal().scale(-collision.depth());
 						pushOutVec = v.subtract(pushOutVec);
-
 						if(!Maths.Approx(pushOutVec.x, 0d))
 						{
-							//collisionX = true;
-							if (pushOutVec.x > 0d)
-								v = new Vec3(Maths.Max(pushOutVec.x, v.x), v.y, v.z);
-							else
-								v = new Vec3(Maths.Min(pushOutVec.x, v.x), v.y, v.z);
+							xMoveReq = ProjectedRange.add(xMoveReq, pushOutVec.x);
 						}
-
 						if(!Maths.Approx(pushOutVec.y, 0d))
 						{
-							//collisionY = true;
-							if (pushOutVec.y > 0d)
-								v = new Vec3(v.x, Maths.Max(pushOutVec.y, v.y), v.z);
-							else
-								v = new Vec3(v.x, Maths.Min(pushOutVec.y, v.y), v.z);
+							yMoveReq = ProjectedRange.add(yMoveReq, pushOutVec.y);
 						}
-
 						if(!Maths.Approx(pushOutVec.z, 0d))
 						{
-							//collisionZ = true;
-							if (pushOutVec.z > 0d)
-								v = new Vec3(v.x, v.y, Maths.Max(pushOutVec.z, v.z));
-							else
-								v = new Vec3(v.x, v.y, Maths.Min(pushOutVec.z, v.z));
+							zMoveReq = ProjectedRange.add(zMoveReq, pushOutVec.z);
 						}
 					}
+
+					double xRange = ProjectedRange.width(xMoveReq);
+					double yRange = ProjectedRange.width(yMoveReq);
+					double zRange = ProjectedRange.width(zMoveReq);
+
+					// Clamp on the smallest axis
+					if(xRange < yRange && xRange < zRange)
+						v = new Vec3(ProjectedRange.clamp(xMoveReq, v.x), v.y, v.z);
+					else if(yRange < zRange)
+						v = new Vec3(v.x, ProjectedRange.clamp(yMoveReq, v.y), v.z);
+					else
+						v = new Vec3(v.x, v.y, ProjectedRange.clamp(zMoveReq, v.z));
+
+					// TODO: Check if this resolves all collisions
+					// If not, clamp another axis
+
 
 					//dyn.SetLinearVelocity(LinearVelocity.blocksPerTick(v));
 					//dyn.SetAngularVelocity(angularV.scale(maxT));

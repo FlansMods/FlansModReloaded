@@ -55,8 +55,8 @@ public record Polygon(@Nonnull ImmutableList<Vec3> vertices) implements IPolygon
             Vec3 vCurr = vertices.get(i);
             Vec3 vNext = GetVertexLooped(i + 1);
 
-            double dCurr = clipPlane.Project(vCurr);
-            double dNext = clipPlane.Project(vNext);
+            double dCurr = clipPlane.GetPointHeightAbove(vCurr);
+            double dNext = clipPlane.GetPointHeightAbove(vNext);
 
             if(dCurr <= 0d && dNext <= 0d)
             {
@@ -102,7 +102,7 @@ public record Polygon(@Nonnull ImmutableList<Vec3> vertices) implements IPolygon
         for(int i = 0; i < vertices.size(); i++)
         {
             Vec3 vCurr = vertices.get(i);
-            double dCurr = clipPlane.Project(vCurr);
+            double dCurr = clipPlane.GetPointHeightAbove(vCurr);
             if(dCurr >= 0d)
                 builder.add(vCurr);
         }

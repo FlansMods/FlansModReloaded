@@ -27,7 +27,7 @@ public record SeparationResult(boolean success, @Nonnull IPlane separator, doubl
 
 		double previousDist = previousBestResult.depth();
 		double newDist = newResult.depth();
-		if(newDist < previousDist)
+		if(newDist > previousDist)
 			return newResult;
 		else
 			return previousBestResult;
