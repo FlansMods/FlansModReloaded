@@ -148,6 +148,9 @@ public class Units
 		public static final double Radians_To_Degrees = Maths.RadToDeg;
 		public static final double Degrees_To_Radians = Maths.DegToRad;
 
+		public static double Radians_To_Degrees(double in) { return in * Maths.RadToDeg; }
+		public static double Degrees_To_Radians(double in) { return in * Maths.DegToRad; }
+
 		public static double Convert(double in, @Nonnull Angle from, @Nonnull Angle to) {
 			if(from == to)
 				return in;
@@ -190,6 +193,10 @@ public class Units
 		public static final double RadiansPerSecond_To_RadiansPerTick = Time.PerSecond_To_PerTick;
 		public static double RadiansPerTick_To_RadiansPerSecond(double in) { return in * Time.PerTick_To_PerSecond; }
 		public static double RadiansPerSecond_To_RadiansPerTick(double in) { return in * Time.PerSecond_To_PerTick; }
+
+		public static double DegreesPerTick_To_RadiansPerTick(double in) { return in * Angle.Degrees_To_Radians; }
+		public static double DegreesPerSecond_To_RadiansPerTick(double in) { return in * Angle.Degrees_To_Radians * Time.PerSecond_To_PerTick; }
+
 
 		public static double Convert(double in, @Nonnull AngularSpeed from, @Nonnull AngularSpeed to)
 		{

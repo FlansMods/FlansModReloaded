@@ -1,20 +1,15 @@
 package com.flansmod.physics.client;
 
 import com.flansmod.client.render.debug.DebugRenderer;
-import com.flansmod.client.render.vehicles.VehicleDebugRenderer;
-import com.flansmod.common.entity.vehicle.VehicleEntity;
-import com.flansmod.common.entity.vehicle.hierarchy.VehicleComponentPath;
 import com.flansmod.physics.common.collision.*;
 import com.flansmod.physics.common.entity.ForcesOnPart;
-import com.flansmod.physics.common.entity.PhysicsComponent;
 import com.flansmod.physics.common.entity.PhysicsEntity;
 import com.flansmod.physics.common.units.LinearForce;
 import com.flansmod.physics.common.units.Torque;
-import com.flansmod.physics.common.util.IForce;
+import com.flansmod.physics.common.units.IForce;
 import com.flansmod.physics.common.util.Transform;
 import com.flansmod.physics.common.util.shapes.IPolygon;
 import com.flansmod.physics.common.util.shapes.ISeparationAxis;
-import com.google.common.collect.ImmutableList;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.server.MinecraftServer;
@@ -24,15 +19,11 @@ import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.server.ServerLifecycleHooks;
-import org.jetbrains.annotations.Debug;
 import org.joml.Vector3f;
 import org.joml.Vector4f;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.function.Function;
 
 public class PhysicsDebugRenderer
 {

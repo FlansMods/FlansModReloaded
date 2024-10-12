@@ -37,6 +37,19 @@ public interface IPolygon
         Vec3 v2 = GetVertexLooped(edgeIndex + 1);
         return v2.subtract(v1);
     }
+    @Nonnull
+    default Vec3 GetAveragePos()
+    {
+        int numVerts = GetVertices().size();
+        if(numVerts == 0)
+            return Vec3.ZERO;
+
+        Vec3 pos = Vec3.ZERO;
+
+        for(int i = 0; i < numVerts; i++)
+            pos = pos.add(GetVertices().get(i));
+        return pos.scale(1d / numVerts);
+    }
 
     @Nonnull
     default IPolygon Clip(@Nonnull List<IPlane> clipPlanes)

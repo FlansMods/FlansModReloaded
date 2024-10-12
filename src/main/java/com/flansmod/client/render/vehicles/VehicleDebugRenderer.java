@@ -11,7 +11,7 @@ import com.flansmod.physics.common.entity.PhysicsComponent;
 import com.flansmod.physics.common.collision.*;
 import com.flansmod.physics.common.entity.ForcesOnPart;
 import com.flansmod.physics.common.util.Transform;
-import com.flansmod.physics.common.util.IForce;
+import com.flansmod.physics.common.units.IForce;
 import com.flansmod.physics.common.units.LinearForce;
 import com.flansmod.physics.common.units.Torque;
 import net.minecraft.client.Minecraft;
@@ -20,7 +20,6 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.server.ServerLifecycleHooks;
 import org.joml.Vector3f;
@@ -28,8 +27,6 @@ import org.joml.Vector4f;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.function.Function;
 
 public class VehicleDebugRenderer

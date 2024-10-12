@@ -8,6 +8,7 @@ import com.flansmod.physics.common.collision.OBBCollisionSystem;
 import com.flansmod.physics.common.tests.TestCubeEntity;
 import com.flansmod.physics.common.util.Transform;
 
+import com.flansmod.physics.server.command.CommandPhysicsDebug;
 import com.mojang.logging.LogUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.entity.EntityRenderers;
@@ -17,6 +18,7 @@ import net.minecraft.world.entity.MobCategory;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.RegisterKeyMappingsEvent;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.event.RegisterCommandsEvent;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -62,6 +64,11 @@ public class FlansPhysicsMod
             physics.PreTick();
         if(levelTick.phase == TickEvent.Phase.END)
             physics.PhysicsTick();
+    }
+    @SubscribeEvent
+    public void OnRegisterCommands(@Nonnull RegisterCommandsEvent event)
+    {
+        CommandPhysicsDebug.register(event.getDispatcher(), event.getBuildContext());
     }
 
     @Mod.EventBusSubscriber(value = Dist.CLIENT, bus = Mod.EventBusSubscriber.Bus.MOD, modid = MODID)
@@ -112,8 +119,8 @@ public class FlansPhysicsMod
         {
             if(Minecraft.getInstance().level != null)
             {
-                ColliderHandle handle = OBBCollisionSystem.CycleDebugHandle(Minecraft.getInstance().level, delta);
-                int numHandles = OBBCollisionSystem.GetNumHandles(Minecraft.getInstance().level);
+                ColliderHandle handle = OBBCollisionSystem.Debug_CycleInspectHandle(Minecraft.getInstance().level, delta);
+                int numHandles = OBBCollisionSystem.Debug_GetNumHandles(Minecraft.getInstance().level);
                 if(handle.Handle() == 0L)
                     Minecraft.getInstance().getChatListener().handleSystemMessage(Component.translatable("No Debug"), false);
                 else

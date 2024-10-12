@@ -1,12 +1,17 @@
 package com.flansmod.physics.common.units;
 
 import com.flansmod.physics.common.util.Maths;
+import net.minecraft.network.chat.Component;
 import net.minecraft.world.phys.Vec3;
+import org.joml.AxisAngle4f;
+import org.joml.Quaternionf;
 
 import javax.annotation.Nonnull;
 
 public record AngularAcceleration(@Nonnull Vec3 Axis, double Magnitude)
 {
+	public static final AngularAcceleration Zero = new AngularAcceleration(new Vec3(0d, 1d, 0d), 0d);
+
 	@Nonnull
 	public static AngularAcceleration radiansPerSecondSq(@Nonnull Vec3 axis, double radsPerSecSq)
 	{
@@ -30,6 +35,22 @@ public record AngularAcceleration(@Nonnull Vec3 Axis, double Magnitude)
 
 
 	@Nonnull
+	public static AngularAcceleration fromUtoVinTicks(@Nonnull AngularVelocity u, @Nonnull AngularVelocity v, int ticks)
+	{
+		if(ticks == 0)
+			return Zero;
+
+		Quaternionf uPerT = new Quaternionf().setAngleAxis(u.Magnitude(), u.Axis().x, u.Axis().y, u.Axis().z);
+		Quaternionf vPerT = new Quaternionf().setAngleAxis(v.Magnitude(), v.Axis().x, v.Axis().y, v.Axis().z);
+		uPerT.invert();
+		Quaternionf composed = vPerT.mul(uPerT); // VU^-1
+		AxisAngle4f axisAngle = new AxisAngle4f().set(composed);
+
+		// v = u+at, a=(v-u)/t, or in this case A = [VU^-1] / t
+		return new AngularAcceleration(new Vec3(axisAngle.x, axisAngle.y, axisAngle.z), axisAngle.angle / ticks);
+	}
+
+	@Nonnull
 	public Torque MultiplyBy(double mass) { return new Torque(Axis, Magnitude * mass); }
 	@Nonnull
 	public Units.AngularAcceleration GetDefaultUnits() { return Units.AngularAcceleration.RadiansPerTickSq; }
@@ -44,4 +65,8 @@ public record AngularAcceleration(@Nonnull Vec3 Axis, double Magnitude)
 
 
 	public boolean IsApproxZero() { return Maths.Approx(Magnitude, 0d); }
+	@Override
+	public String toString() { return "AngularAcceleration ["+Units.Angle.Radians_To_Degrees(Magnitude)+"] degrees/tick^2 around ["+Axis+"]"; }
+	public Component toFancyString() { return Component.translatable("flansphysicsmod.angular_acceleration", Units.Angle.Radians_To_Degrees(Magnitude), Axis.x, Axis.y, Axis.z); }
+
 }

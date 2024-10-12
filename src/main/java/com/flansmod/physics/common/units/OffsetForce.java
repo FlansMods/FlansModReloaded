@@ -1,6 +1,5 @@
 package com.flansmod.physics.common.units;
 
-import com.flansmod.physics.common.util.IForce;
 import com.flansmod.physics.common.util.Transform;
 import net.minecraft.world.phys.Vec3;
 import org.joml.Quaternionf;
@@ -18,6 +17,11 @@ public record OffsetForce(@Nonnull Vec3 Force, @Nonnull Vec3 Offset) implements 
 	public static OffsetForce kgBlocksPerTickSq(@Nonnull Vec3 kgBlocksPerTickSq, @Nonnull Vec3 offset)
 	{
 		return new OffsetForce(kgBlocksPerTickSq, offset);
+	}
+	@Nonnull
+	public static OffsetForce offset(@Nonnull LinearForce force, @Nonnull Vec3 offset)
+	{
+		return new OffsetForce(force.Force(), offset);
 	}
 
 	@Nonnull

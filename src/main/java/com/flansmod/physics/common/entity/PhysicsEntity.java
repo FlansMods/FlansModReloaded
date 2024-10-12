@@ -56,6 +56,8 @@ public abstract class PhysicsEntity extends Entity
         setPos(worldRoot.PositionVec3());
         yRotO = euler.y;
         xRotO = euler.x;
+        setXRot(euler.x);
+        setYRot(euler.y);
     }
     @Nonnull
     protected Transform getEntityRootAsTransform()

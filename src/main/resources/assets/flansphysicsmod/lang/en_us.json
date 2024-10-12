@@ -1,0 +1,12 @@
+{
+  "flansphysicsmod.linear_acceleration": "(%f, %f, %f) blocks/tick^2",
+  "flansphysicsmod.linear_velocity": "(%f, %f, %f) blocks/tick",
+  "flansphysicsmod.angular_acceleration": "%f degrees/tick around (%f, %f, %f)",
+  "flansphysicsmod.command.physics_pause": "Physics Paused",
+  "flansphysicsmod.command.physics_resume": "Physics Resumed",
+  "flansphysicsmod.command.cycle_inspect": "Physics Inspector: Dynamic[%d]",
+  "flansphysicsmod.command.select_handle": "Physics Inspector: Dynamic[%d] (%d/%d)",
+  "flansphysicsmod.command.select_closest": "Physics Inspector: Dynamic[%d] (closest to player)",
+  "flansphysicsmod.command.yeet_single": "Applied Acceleration of %s to Dynamic[%d]",
+  "flansphysicsmod.command.yeet_multiple": "Applied Acceleration of %s to %d Dynamic Objects"
+}

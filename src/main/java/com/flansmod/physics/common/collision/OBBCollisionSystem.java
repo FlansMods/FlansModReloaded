@@ -2,10 +2,7 @@ package com.flansmod.physics.common.collision;
 
 import com.flansmod.client.render.debug.DebugRenderer;
 import com.flansmod.common.FlansMod;
-import com.flansmod.physics.common.units.AngularAcceleration;
-import com.flansmod.physics.common.units.AngularVelocity;
-import com.flansmod.physics.common.units.LinearAcceleration;
-import com.flansmod.physics.common.units.LinearVelocity;
+import com.flansmod.physics.common.units.*;
 import com.flansmod.physics.common.util.Maths;
 import com.flansmod.physics.common.util.ProjectedRange;
 import com.flansmod.physics.common.util.ProjectionUtil;
@@ -58,26 +55,62 @@ public class OBBCollisionSystem
 	public static final double MAX_ANGULAR_MOTION_PER_TICK = 60d;
 
 	public static boolean PAUSE_PHYSICS = false;
+	public static boolean DEBUG_SETTING_ONLY_LINEAR_REACTIONS = false;
 
 	private final boolean SINGLE_THREAD_DEBUG = true;
 	public static ColliderHandle DEBUG_HANDLE = new ColliderHandle(0L);
-	public static ColliderHandle CycleDebugHandle(@Nonnull Level level, int delta)
+	public static ColliderHandle Debug_CycleInspectHandle(@Nonnull Level level, int delta)
 	{
 		OBBCollisionSystem system = ForLevel(level);
 		int index = system.AllHandles.indexOf(DEBUG_HANDLE);
 		int newIndex = index + delta;
+
 		if(newIndex >= system.AllHandles.size() || newIndex < 0)
-		{
 			DEBUG_HANDLE = new ColliderHandle(0L);
-			return DEBUG_HANDLE;
-		}
 		else
-		{
 			DEBUG_HANDLE = system.AllHandles.get(newIndex);
-			return DEBUG_HANDLE;
-		}
+
+		return DEBUG_HANDLE;
 	}
-	public static int GetNumHandles(@Nonnull Level level)
+	public static ColliderHandle Debug_SetInspectHandleIndex(@Nonnull Level level, int index)
+	{
+		OBBCollisionSystem system = ForLevel(level);
+
+		if(index >= system.AllHandles.size() || index < 0)
+			DEBUG_HANDLE = new ColliderHandle(0L);
+		else
+			DEBUG_HANDLE = system.AllHandles.get(index);
+
+		return DEBUG_HANDLE;
+	}
+	public static ColliderHandle Debug_SetNearestInspectHandle(@Nonnull Level level, @Nonnull Vec3 pos)
+	{
+		double closestDistSq = Double.MAX_VALUE;
+		ColliderHandle closest = new ColliderHandle(0L);
+		OBBCollisionSystem system = ForLevel(level);
+		for(ColliderHandle handle : system.AllHandles)
+		{
+			if(handle.IsValid())
+			{
+				DynamicObject dynamic = system.Dynamics.get(handle);
+				if(dynamic != null)
+				{
+					double distSq = dynamic.GetCurrentLocation().PositionVec3().distanceToSqr(pos);
+					if(distSq < closestDistSq) {
+						closestDistSq = distSq;
+						closest = handle;
+					}
+				}
+			}
+		}
+		if(closest.IsValid())
+			DEBUG_HANDLE = closest;
+		else
+			DEBUG_HANDLE = new ColliderHandle(0L);
+
+		return DEBUG_HANDLE;
+	}
+	public static int Debug_GetNumHandles(@Nonnull Level level)
 	{
 		OBBCollisionSystem system = ForLevel(level);
 		return system.AllHandles.size();
@@ -556,6 +589,7 @@ public class OBBCollisionSystem
 					//boolean collisionX = false, collisionY = false, collisionZ = false;
 
 					ProjectedRange xMoveReq = null, yMoveReq = null, zMoveReq = null;
+					List<StaticCollisionEvent> relevantX = new ArrayList<>(), relevantY = new ArrayList<>(), relevantZ = new ArrayList<>();
 					for (StaticCollisionEvent collision : dyn.StaticCollisions)
 					{
 						Vec3 pushOutVec = collision.ContactNormal().scale(-collision.depth());
@@ -563,14 +597,17 @@ public class OBBCollisionSystem
 						if(!Maths.Approx(pushOutVec.x, 0d))
 						{
 							xMoveReq = ProjectedRange.add(xMoveReq, pushOutVec.x);
+							relevantX.add(collision);
 						}
 						if(!Maths.Approx(pushOutVec.y, 0d))
 						{
 							yMoveReq = ProjectedRange.add(yMoveReq, pushOutVec.y);
+							relevantY.add(collision);
 						}
 						if(!Maths.Approx(pushOutVec.z, 0d))
 						{
 							zMoveReq = ProjectedRange.add(zMoveReq, pushOutVec.z);
+							relevantZ.add(collision);
 						}
 					}
 
@@ -578,21 +615,53 @@ public class OBBCollisionSystem
 					double yRange = ProjectedRange.width(yMoveReq);
 					double zRange = ProjectedRange.width(zMoveReq);
 
+					Vec3 forceOrigin = null;
+
 					// Clamp on the smallest axis
 					if(xRange < yRange && xRange < zRange)
+					{
 						v = new Vec3(ProjectedRange.clamp(xMoveReq, v.x), v.y, v.z);
+
+						forceOrigin = Vec3.ZERO;
+                        for (StaticCollisionEvent x : relevantX)
+							forceOrigin.add(x.ContactSurface().GetAveragePos());
+						forceOrigin = forceOrigin.scale(1d / relevantX.size());
+					}
 					else if(yRange < zRange)
+					{
 						v = new Vec3(v.x, ProjectedRange.clamp(yMoveReq, v.y), v.z);
+						forceOrigin = Vec3.ZERO;
+						for (StaticCollisionEvent y : relevantY)
+							forceOrigin.add(y.ContactSurface().GetAveragePos());
+						forceOrigin = forceOrigin.scale(1d / relevantY.size());
+					}
 					else
+					{
 						v = new Vec3(v.x, v.y, ProjectedRange.clamp(zMoveReq, v.z));
+						forceOrigin = Vec3.ZERO;
+						for (StaticCollisionEvent z : relevantZ)
+							forceOrigin.add(z.ContactSurface().GetAveragePos());
+						forceOrigin = forceOrigin.scale(1d / relevantZ.size());
+					}
 
 					// TODO: Check if this resolves all collisions
 					// If not, clamp another axis
 
+					// Now, we know what the maximum v is, we need to work out what the reaction force is that results in this v
+					LinearVelocity maxV = LinearVelocity.blocksPerTick(v);
+					LinearAcceleration reactionAcc = LinearAcceleration.reaction(linearV, maxV);
+
+					if(DEBUG_SETTING_ONLY_LINEAR_REACTIONS)
+						dyn.ReactionAcceleration = OffsetAcceleration.offset(reactionAcc, dyn.GetCurrentLocation().PositionVec3());
+					else
+						dyn.ReactionAcceleration = OffsetAcceleration.offset(reactionAcc, forceOrigin);
+					dyn.ExtrapolateNextFrameWithReaction();
 
 					//dyn.SetLinearVelocity(LinearVelocity.blocksPerTick(v));
 					//dyn.SetAngularVelocity(angularV.scale(maxT));
-					dyn.PendingFrame = dyn.ExtrapolateNextFrame(v, q);
+
+					// TODO: CHECK, we used to set the v/q direct, now we apply reaction
+					// dyn.ExtrapolateNextFrame(v, q);
 				}
 				if(!PAUSE_PHYSICS)
 				{

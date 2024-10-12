@@ -1,6 +1,5 @@
 package com.flansmod.physics.common.units;
 
-import com.flansmod.physics.common.util.IForce;
 import com.flansmod.physics.common.util.Transform;
 import net.minecraft.world.phys.Vec3;
 import org.apache.commons.lang3.NotImplementedException;

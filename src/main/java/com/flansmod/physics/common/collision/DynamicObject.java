@@ -1,11 +1,8 @@
 package com.flansmod.physics.common.collision;
 
+import com.flansmod.physics.common.units.*;
 import com.flansmod.physics.common.util.Maths;
 import com.flansmod.physics.common.util.Transform;
-import com.flansmod.physics.common.units.AngularAcceleration;
-import com.flansmod.physics.common.units.AngularVelocity;
-import com.flansmod.physics.common.units.LinearAcceleration;
-import com.flansmod.physics.common.units.LinearVelocity;
 import com.google.common.collect.ImmutableList;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
@@ -35,8 +32,8 @@ public class DynamicObject
 	@Nonnull
 	public final AABB LocalBounds;
 	@Nonnull
-	public final Stack<FrameData> Frames = new Stack<>();
-	public FrameData PendingFrame = null;
+	private final Stack<FrameData> Frames = new Stack<>();
+	private FrameData PendingFrame = null;
 
 	// Next Frame Inputs
 
@@ -46,12 +43,13 @@ public class DynamicObject
 	@Nonnull
 	public AngularVelocity NextFrameAngularMotion;
 	@Nonnull
+	public OffsetAcceleration ReactionAcceleration;
+	@Nonnull
 	public Optional<Transform> NextFrameTeleport;
 	@Nonnull
 	public final List<DynamicCollisionEvent> DynamicCollisions;
 	@Nonnull
 	public final List<StaticCollisionEvent> StaticCollisions;
-
 
 
 
@@ -63,6 +61,7 @@ public class DynamicObject
 		Frames.add(new FrameData(Transform.Copy(initialLocation), LinearVelocity.Zero, AngularVelocity.Zero));
 		NextFrameLinearMotion = LinearVelocity.Zero;
 		NextFrameAngularMotion = AngularVelocity.Zero;
+		ReactionAcceleration = OffsetAcceleration.Zero;
 		NextFrameTeleport = Optional.empty();
 		DynamicCollisions = new ArrayList<>();
 		StaticCollisions = new ArrayList<>();
@@ -157,6 +156,11 @@ public class DynamicObject
 		return TransformedBB.Of(GetFrameNTicksAgo(0).Location, LocalBounds);
 	}
 	@Nonnull
+	public Transform GetCurrentLocation()
+	{
+		return GetFrameNTicksAgo(0).Location;
+	}
+	@Nonnull
 	public TransformedBBCollection GetPendingColliders()
 	{
 		if(PendingFrame != null)
@@ -170,11 +174,18 @@ public class DynamicObject
 			return TransformedBB.Of(PendingFrame.Location, LocalBounds);
 		return GetCurrentBB();
 	}
+	@Nonnull
+	public Transform GetPendingLocation()
+	{
+		if(PendingFrame != null)
+			return PendingFrame.Location;
+		return GetCurrentLocation();
+	}
 	public void PreTick()
 	{
 		StaticCollisions.clear();
 		DynamicCollisions.clear();
-		PendingFrame = ExtrapolateNextFrame();
+		ExtrapolateNextFrame();
 	}
 	public boolean Invalid()
 	{
@@ -209,23 +220,28 @@ public class DynamicObject
 
 		NextFrameTeleport = Optional.empty();
 	}
-	@Nonnull
-	public FrameData ExtrapolateNextFrame()
+	public void ExtrapolateNextFrame(boolean withReactionForce)
 	{
 		if(NextFrameTeleport.isPresent())
 		{
-			return new FrameData(NextFrameTeleport.get(), NextFrameLinearMotion, NextFrameAngularMotion);
+			PendingFrame = new FrameData(NextFrameTeleport.get(), NextFrameLinearMotion, NextFrameAngularMotion);
 		}
 		else
 		{
 			Vec3 deltaPos = NextFrameLinearMotion.ApplyOneTick();
 			Quaternionf deltaRot = NextFrameAngularMotion.ApplyOneTick();
 
-			return ExtrapolateNextFrame(deltaPos, deltaRot);
+			if(withReactionForce)
+			{
+				var reaction = ReactionAcceleration.ApplyOneTick(GetCurrentLocation());
+				deltaPos = deltaPos.add(reaction.getFirst().ApplyOneTick());
+				deltaRot.mul(reaction.getSecond().ApplyOneTick());
+			}
+
+			ExtrapolateNextFrame(deltaPos, deltaRot);
 		}
 	}
-	@Nonnull
-	public FrameData ExtrapolateNextFrame(@Nonnull Vec3 deltaPos, @Nonnull Quaternionf deltaRot)
+	public void ExtrapolateNextFrame(@Nonnull Vec3 deltaPos, @Nonnull Quaternionf deltaRot)
 	{
 		FrameData currentFrame = GetFrameNTicksAgo(0);
 
@@ -237,6 +253,8 @@ public class DynamicObject
 		//Transform newLoc = Transform.Compose(
 		//	currentFrame.Location,
 		//	Transform.FromPosAndQuat(deltaPos, deltaRot, () -> "ExtrapolatePhysicsFrame"));
-		return new FrameData(newLoc, NextFrameLinearMotion, NextFrameAngularMotion);
+		PendingFrame = new FrameData(newLoc, NextFrameLinearMotion, NextFrameAngularMotion);
 	}
+	public void ExtrapolateNextFrame() { ExtrapolateNextFrame(false); }
+	public void ExtrapolateNextFrameWithReaction() { ExtrapolateNextFrame(true); }
 }

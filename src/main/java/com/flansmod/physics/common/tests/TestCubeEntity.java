@@ -1,5 +1,6 @@
 package com.flansmod.physics.common.tests;
 
+import com.flansmod.physics.common.entity.CenteredEntityDimensions;
 import com.flansmod.physics.common.entity.PhysicsEntity;
 import com.flansmod.physics.common.util.ITransformPair;
 import com.flansmod.physics.common.util.ITransformEntity;
@@ -14,7 +15,9 @@ import com.flansmod.physics.common.units.LinearAcceleration;
 import com.flansmod.physics.common.units.LinearForce;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityDimensions;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.Pose;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
@@ -30,8 +33,14 @@ public class TestCubeEntity extends PhysicsEntity // implements ITransformEntity
     public TestCubeEntity(@Nonnull EntityType<? extends Entity> type, @Nonnull Level world)
     {
         super(type, world);
+        refreshDimensions();
     }
 
+    @Override @Nonnull
+    public EntityDimensions getDimensions(@Nonnull Pose pose)
+    {
+        return CenteredEntityDimensions.fixed(1.0f, 1.0f);
+    }
 
     @Override
     protected void tickPhysics()

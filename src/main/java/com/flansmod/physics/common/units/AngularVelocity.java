@@ -21,6 +21,11 @@ public record AngularVelocity(@Nonnull Vec3 Axis, double Magnitude)
 	{
 		return new AngularVelocity(axis, radiansPerTick);
 	}
+	@Nonnull
+	public static AngularVelocity degreesPerSecond(@Nonnull Vec3 axis, double degressPerSecond)
+	{
+		return new AngularVelocity(axis, Units.AngularSpeed.DegreesPerSecond_To_RadiansPerTick(degressPerSecond));
+	}
 
 	@Nonnull
 	public AngularVelocity compose(@Nonnull AngularVelocity other)
