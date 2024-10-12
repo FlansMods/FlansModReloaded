@@ -32,7 +32,7 @@ public class ShooterContextVehicleRoot extends ShooterContextVehicle
 	@Override
 	public Transform GetShootOrigin(float deltaTick)
 	{
-		return Transform.FromPos(Vehicle.position());
+		return Transform.fromPos(Vehicle.position());
 	}
 
 	@Override

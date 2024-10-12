@@ -25,8 +25,8 @@ public abstract class LongDistanceEntity
 	{
 		Type = type;
 		Dimension = Level.OVERWORLD;
-		RootTransformCurrent = Transform.Identity();
-		RootTransformPrevious = Transform.Identity();
+		RootTransformCurrent = Transform.identity();
+		RootTransformPrevious = Transform.identity();
 	}
 
 	public void AfterEntityLoaded(@Nonnull Entity entity) { }
@@ -36,6 +36,6 @@ public abstract class LongDistanceEntity
 	public abstract boolean ShouldBeTrackedBy(@Nonnull Transform observerPosition, @Nonnull Vec3 observerVelocity);
 	public boolean ShouldBeTrackedBy(@Nonnull Player player)
 	{
-		return ShouldBeTrackedBy(Transform.FromEntity(player), player.getDeltaMovement());
+		return ShouldBeTrackedBy(Transform.fromEntity(player), player.getDeltaMovement());
 	}
 }

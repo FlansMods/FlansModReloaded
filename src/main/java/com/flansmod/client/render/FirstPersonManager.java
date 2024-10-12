@@ -108,17 +108,17 @@ public class FirstPersonManager
 				ApplyModelToAP(inScreenSpace, gunContext, apName, true);
 
 				Transform eyeToAP = inScreenSpace.Top();
-				Vec3 eyePos = eyeToAP.PositionVec3();
+				Vec3 eyePos = eyeToAP.positionVec3();
 
 				// Project out of First Person space, and into World space
 				Matrix4f firstPersonProjection = GetFirstPersonProjection();
 				Matrix4f levelProjectionInv = GetLevelProjection().invert();
 
 				Vec3 pos = ReprojectVector(eyePos, firstPersonProjection, levelProjectionInv);
-				Vec3 fwd = ReprojectVector(eyeToAP.ForwardVec3().add(eyePos), firstPersonProjection, levelProjectionInv).subtract(pos).normalize();
-				Vec3 up  = ReprojectVector(eyeToAP.UpVec3().add(eyePos), firstPersonProjection, levelProjectionInv).subtract(pos).normalize();
+				Vec3 fwd = ReprojectVector(eyeToAP.forward().add(eyePos), firstPersonProjection, levelProjectionInv).subtract(pos).normalize();
+				Vec3 up  = ReprojectVector(eyeToAP.up().add(eyePos), firstPersonProjection, levelProjectionInv).subtract(pos).normalize();
 
-				transformStack.add(Transform.FromPositionAndLookDirection(
+				transformStack.add(Transform.fromPositionAndLookDirection(
 					pos, fwd, up,
 					() -> "{\"EyeToAP\":"+eyeToAP.DebugInfo+",\"FromProjection\":\""+firstPersonProjection+"\",\"ToProjectionInv\":\""+levelProjectionInv+"\"}"));
 
@@ -150,11 +150,11 @@ public class FirstPersonManager
 							Transform currentArmRoot = currentSnap.GetArmTransform(MinecraftHelpers.GetArm(transformType));
 							Transform previousArmRoot = prevSnap.GetArmTransform(MinecraftHelpers.GetArm(transformType));
 
-							transformStack.push(Transform.Interpolate(previousArmRoot, currentArmRoot, dt));
+							transformStack.push(Transform.interpolate(previousArmRoot, currentArmRoot, dt));
 							// 3.0F, 12.0F, 4.0F
-							transformStack.push(Transform.FromEuler(-90f, 0f, 180f));
-							transformStack.push(Transform.FromPos(-0.5d/16d, 2d/16d, -6d/16d));
-							transformStack.push(Transform.FromPos(-0.5d, -0.5d, -0.5d));
+							transformStack.push(Transform.fromEuler(-90f, 0f, 180f));
+							transformStack.push(Transform.fromPos(-0.5d/16d, 2d/16d, -6d/16d));
+							transformStack.push(Transform.fromPos(-0.5d, -0.5d, -0.5d));
 							//transformStack.push(Transform.FromPos(0d, 0d, -0.75d));
 							ApplyRootToModel(transformStack, gunContext, transformType);
 							ApplyModelToAP(transformStack, gunContext, apName, true);
@@ -251,8 +251,8 @@ public class FirstPersonManager
 					// World space, so we want to put this just in front of the player
 					// This is like shooterContext.GetShootOrigin, just with dt passed in
 
-					transformStack.add(Transform.FromPos(player.getEyePosition(dt), () -> "\"PlayerEye\""));
-					transformStack.add(Transform.FromEuler(player.getViewXRot(dt), 180f + player.getViewYRot(dt), 0f, () -> "\"PlayerLook\""));
+					transformStack.add(Transform.fromPos(player.getEyePosition(dt), () -> "\"PlayerEye\""));
+					transformStack.add(Transform.fromEuler(player.getViewXRot(dt), 180f + player.getViewYRot(dt), 0f, () -> "\"PlayerLook\""));
 				}
 			}
 			default -> {
@@ -280,17 +280,17 @@ public class FirstPersonManager
 					Vanilla_ApplyWalkBobbing(transformStack, dt);
 					Vanilla_ApplyViewBobbing(transformStack, dt);
 					Vanilla_ApplyHandAnimation(transformStack, transformType, dt);
-					transformStack.add(Transform.FromPos(new Vec3(-0.5d, -0.5d, -0.5d), () -> "\"ItemRenderer.render\""));
+					transformStack.add(Transform.fromPos(new Vec3(-0.5d, -0.5d, -0.5d), () -> "\"ItemRenderer.render\""));
 				}
-				else transformStack.add(Transform.Error("Trying to render first person with no current player"));
+				else transformStack.add(Transform.error("Trying to render first person with no current player"));
 			}
 		}
 	}
 
-	private static final Transform MC_FIRST_PERSON_OFFSET_RIGHT = Transform.FromPos(new Vec3(-0.06d, 1.0d, 1.0d), () -> "\"MC 1st person R\"");
-	private static final Transform MC_FIRST_PERSON_OFFSET_LEFT = Transform.FromPos(new Vec3(1.06d, 1.0d, 1.0d), () -> "\"MC 1st person L\"");
-	private static final Transform MC_THIRD_PERSON_OFFSET = Transform.FromPosAndEuler(new Vec3(0.5d, 0.5d, 0.5d), new Vector3f(0f, 90f, 0f), () -> "\"MC 3rd person\"");
-	private static final Transform MC_GROUND_OFFSET = Transform.FromPos(new Vec3(0.5d, 0.5d, 0.5d), () -> "\"MC ground\"");
+	private static final Transform MC_FIRST_PERSON_OFFSET_RIGHT = Transform.fromPos(new Vec3(-0.06d, 1.0d, 1.0d), () -> "\"MC 1st person R\"");
+	private static final Transform MC_FIRST_PERSON_OFFSET_LEFT = Transform.fromPos(new Vec3(1.06d, 1.0d, 1.0d), () -> "\"MC 1st person L\"");
+	private static final Transform MC_THIRD_PERSON_OFFSET = Transform.fromPosAndEuler(new Vec3(0.5d, 0.5d, 0.5d), new Vector3f(0f, 90f, 0f), () -> "\"MC 3rd person\"");
+	private static final Transform MC_GROUND_OFFSET = Transform.fromPos(new Vec3(0.5d, 0.5d, 0.5d), () -> "\"MC ground\"");
 
 	// This takes us from the Minecraft "Model Root" to the "body" piece of this model
 	public static void ApplyRootToModel(@Nonnull TransformStack transformStack,
@@ -326,7 +326,7 @@ public class FirstPersonManager
 				}
 			}
 		}
-		else transformStack.add(Transform.Error("Could not find gun renderer for " + gunContext));
+		else transformStack.add(Transform.error("Could not find gun renderer for " + gunContext));
 	}
 
 
@@ -371,12 +371,12 @@ public class FirstPersonManager
 					{
 						attachmentRenderer.ApplyAPOffsetInternal(transformStack, childAPName, null, null);
 					}
-					else transformStack.add(Transform.Error("Could not find attachment renderer for " + attachDef + " at '" + attachDef + "'"));
+					else transformStack.add(Transform.error("Could not find attachment renderer for " + attachDef + " at '" + attachDef + "'"));
 				}
-				else transformStack.add(Transform.Error("There is no attachment at path " + attachmentType + "/" + attachmentIndex));
+				else transformStack.add(Transform.error("There is no attachment at path " + attachmentType + "/" + attachmentIndex));
 			}
 		}
-		else transformStack.add(Transform.Error("Could not find gun renderer for " + gunContext.Def));
+		else transformStack.add(Transform.error("Could not find gun renderer for " + gunContext.Def));
 	}
 
 	private static void Vanilla_ApplyViewBobbing(@Nonnull TransformStack transformStack, float dt)
@@ -392,7 +392,7 @@ public class FirstPersonManager
 				final float xAngle = (playerCamera.getViewXRot(dt) - f2) * 0.1F;
 				final float yAngle = (playerCamera.getViewYRot(dt) - f3) * 0.1F;
 				if(!Maths.Approx(xAngle, 0.0f) && !Maths.Approx(yAngle, 0.0f))
-					transformStack.add(Transform.FromEuler(-xAngle, -yAngle, 0f, () -> "\"ItemInHandRenderer.renderHandsWithItems["+xAngle+", "+yAngle+"]\""));
+					transformStack.add(Transform.fromEuler(-xAngle, -yAngle, 0f, () -> "\"ItemInHandRenderer.renderHandsWithItems["+xAngle+", "+yAngle+"]\""));
 			}
 		}
 	}
@@ -404,7 +404,7 @@ public class FirstPersonManager
 			final float hurtTime = (float)livingCamera.hurtTime - dt;
 			if (livingCamera.isDeadOrDying()) {
 				float f1 = Math.min((float)livingCamera.deathTime + dt, 20.0F);
-				transformStack.add(Transform.FromEuler(0f, 0f, 40.0F - 8000.0F / (f1 + 200.0F), () -> "\"GameRenderer.bobHurt["+hurtTime+"]\""));
+				transformStack.add(Transform.fromEuler(0f, 0f, 40.0F - 8000.0F / (f1 + 200.0F), () -> "\"GameRenderer.bobHurt["+hurtTime+"]\""));
 			}
 
 			if (hurtTime < 0.0F) {
@@ -414,9 +414,9 @@ public class FirstPersonManager
 			final float hurtParameter = hurtTime / (float)livingCamera.hurtDuration;
 			final float f = Mth.sin(hurtParameter * hurtParameter * hurtParameter * hurtParameter * (float)Math.PI);
 			float f2 = livingCamera.getHurtDir();
-			transformStack.add(Transform.FromEuler(0f, -f2, 0f, () -> "\"GameRenderer.bobHurt["+f+"]\""));
-			transformStack.add(Transform.FromEuler(0f, 0f, -f * 14.0F, () -> "\"GameRenderer.bobHurt["+f+"]\""));
-			transformStack.add(Transform.FromEuler(0f, f2, 0f, () -> "\"GameRenderer.bobHurt["+ f +"]\""));
+			transformStack.add(Transform.fromEuler(0f, -f2, 0f, () -> "\"GameRenderer.bobHurt["+f+"]\""));
+			transformStack.add(Transform.fromEuler(0f, 0f, -f * 14.0F, () -> "\"GameRenderer.bobHurt["+f+"]\""));
+			transformStack.add(Transform.fromEuler(0f, f2, 0f, () -> "\"GameRenderer.bobHurt["+ f +"]\""));
 		}
 	}
 
@@ -428,9 +428,9 @@ public class FirstPersonManager
 			float f1 = -(player.walkDist + f * dt);
 			final float f2 = Mth.lerp(dt, player.oBob, player.bob);
 
-			transformStack.add(Transform.FromPos(Mth.sin(f1 * Maths.PiF) * f2 * 0.5F, -Math.abs(Mth.cos(f1 * Maths.PiF) * f2), 0.0F, () -> "\"GameRenderer.bobView["+f2+"]\""));
-			transformStack.add(Transform.FromEuler(0F, 0f, Mth.sin(f1 * Maths.PiF) * f2 * 3.0F, () -> "\"GameRenderer.bobView["+f2+"]\""));
-			transformStack.add(Transform.FromEuler(Math.abs(Mth.cos(f1 * Maths.PiF - 0.2F) * f2) * 5.0F, 0f, 0f, () -> "\"GameRenderer.bobView["+f2+"]\""));
+			transformStack.add(Transform.fromPos(Mth.sin(f1 * Maths.PiF) * f2 * 0.5F, -Math.abs(Mth.cos(f1 * Maths.PiF) * f2), 0.0F, () -> "\"GameRenderer.bobView["+f2+"]\""));
+			transformStack.add(Transform.fromEuler(0F, 0f, Mth.sin(f1 * Maths.PiF) * f2 * 3.0F, () -> "\"GameRenderer.bobView["+f2+"]\""));
+			transformStack.add(Transform.fromEuler(Math.abs(Mth.cos(f1 * Maths.PiF - 0.2F) * f2) * 5.0F, 0f, 0f, () -> "\"GameRenderer.bobView["+f2+"]\""));
 		}
 
 	}
@@ -455,18 +455,18 @@ public class FirstPersonManager
 		float f5 = -0.4F * Mth.sin(Mth.sqrt(handRaise) * (float) Math.PI);
 		float f6 = 0.2F * Mth.sin(Mth.sqrt(handRaise) * ((float) Math.PI * 2F));
 		float f10 = -0.2F * Mth.sin(handRaise * (float) Math.PI);
-		transformStack.add(Transform.FromPos(i * f5, f6, f10, () -> "\"ItemInHandRenderer.renderArmWithItem["+handRaise+"]\""));
+		transformStack.add(Transform.fromPos(i * f5, f6, f10, () -> "\"ItemInHandRenderer.renderArmWithItem["+handRaise+"]\""));
 
 		// ItemInHandRenderer::applyItemArmTransform(p_109378_)
-		transformStack.add(Transform.FromPos(i * 0.56F, -0.52F + handRaise * -0.6F, -0.72F, () -> "\"ItemInHandRenderer.applyItemArmTransform["+handRaise+"]\""));
+		transformStack.add(Transform.fromPos(i * 0.56F, -0.52F + handRaise * -0.6F, -0.72F, () -> "\"ItemInHandRenderer.applyItemArmTransform["+handRaise+"]\""));
 
 		// ItemInHandRenderer::applyItemArmAttackTransform
 		// handRaise = p_109376_
 		{
 			float f = Mth.sin(attackSwing * attackSwing * (float)Math.PI);
-			transformStack.add(Transform.FromEuler(0f, i * (45.0F + f * -20.0F), 0f, () -> "\"ItemInHandRenderer.applyItemArmAttackTransform["+attackSwing+"]\""));
+			transformStack.add(Transform.fromEuler(0f, i * (45.0F + f * -20.0F), 0f, () -> "\"ItemInHandRenderer.applyItemArmAttackTransform["+attackSwing+"]\""));
 			float f1 = Mth.sin(Mth.sqrt(attackSwing) * (float)Math.PI);
-			transformStack.add(Transform.FromEuler(f1 * -80.0F, i * -45.0F, i * f1 * -20.0F, () -> "\"ItemInHandRenderer.applyItemArmAttackTransform["+attackSwing+"]\""));
+			transformStack.add(Transform.fromEuler(f1 * -80.0F, i * -45.0F, i * f1 * -20.0F, () -> "\"ItemInHandRenderer.applyItemArmAttackTransform["+attackSwing+"]\""));
 		}
 	}
 
@@ -507,27 +507,27 @@ public class FirstPersonManager
 
 		// Blend together all contributing ADS actions - in theory this should only really be one per gun at once
 		TransformStack eyeLineStack = new TransformStack();
-		Transform eyeLinePos = Transform.Interpolate(posesAppliedToMe, weightArray);
+		Transform eyeLinePos = Transform.interpolate(posesAppliedToMe, weightArray);
 
 		float blendWeight = Maths.Clamp(totalWeight, 0f, 1f);
 		if(posesAppliedToOthers.size() > 0)
 		{
 			blendWeight *= 0.5f;
 			boolean leftHanded = transformType == ItemDisplayContext.FIRST_PERSON_LEFT_HAND;
-			eyeLineStack.add(Transform.FromEuler(0f, 0f, leftHanded ? 30f : -30f, () -> leftHanded ? "\"DualWieldTiltLeft\"" : "\"DualWieldTiltRight\""));
+			eyeLineStack.add(Transform.fromEuler(0f, 0f, leftHanded ? 30f : -30f, () -> leftHanded ? "\"DualWieldTiltLeft\"" : "\"DualWieldTiltRight\""));
 		}
 
 		// Push it forwards, so there's some gap between the "eye" and the "eye_line" AP
-		eyeLineStack.add(Transform.FromPos(new Vec3(0f, 0f, -0.5f), () -> "\"EyeToEyeLineGap\""));
+		eyeLineStack.add(Transform.fromPos(new Vec3(0f, 0f, -0.5f), () -> "\"EyeToEyeLineGap\""));
 		// Hmm, use default orientation
-		eyeLineStack.add(Transform.ExtractOrientation(defaultPose, false, () -> "\"DefaultOri\""));
-		eyeLineStack.add(Transform.ExtractOrientation(eyeLinePos, true, () -> "\"InvEyeLineOri\""));
+		eyeLineStack.add(Transform.extractOrientation(defaultPose, false, () -> "\"DefaultOri\""));
+		eyeLineStack.add(Transform.extractOrientation(eyeLinePos, true, () -> "\"InvEyeLineOri\""));
 		// Then, offset by the "eye_line" in world space
-		eyeLineStack.add(Transform.ExtractPosition(eyeLinePos, -1d, () -> "\"EyeLinePos\""));
+		eyeLineStack.add(Transform.extractPosition(eyeLinePos, -1d, () -> "\"EyeLinePos\""));
 
 		Transform lookDownEyeLineTransform = eyeLineStack.Top();
 
-		return Transform.Interpolate(defaultPose, lookDownEyeLineTransform, blendWeight);
+		return Transform.interpolate(defaultPose, lookDownEyeLineTransform, blendWeight);
 	}
 
 

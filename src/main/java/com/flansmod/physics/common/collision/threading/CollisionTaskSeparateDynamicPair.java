@@ -76,9 +76,9 @@ public class CollisionTaskSeparateDynamicPair
 			{
 				if (separator.SeparatesWithMotion(
 					boundsA,
-					Input.ObjectA.NextFrameLinearMotion.ApplyOneTick(),
+					Input.ObjectA.NextFrameLinearMotion.applyOneTick(),
 					boundsB,
-					Input.ObjectB.NextFrameLinearMotion.ApplyOneTick()))
+					Input.ObjectB.NextFrameLinearMotion.applyOneTick()))
 				{
 					// We are separated easily, done.
 					Output = new Output(ImmutableList.of(), ImmutableList.of(), null);

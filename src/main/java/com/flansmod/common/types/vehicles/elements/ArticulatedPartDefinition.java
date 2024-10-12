@@ -58,14 +58,14 @@ public class ArticulatedPartDefinition
 
 
 	@Nonnull
-	public Lazy<Transform> StartPose = Lazy.of(() -> Transform.FromPosAndEuler(minOffset, minYaw, minPitch, minRoll));
+	public Lazy<Transform> StartPose = Lazy.of(() -> Transform.fromPosAndEuler(minOffset, minYaw, minPitch, minRoll));
 	@Nonnull
-	public Lazy<Transform> EndPose = Lazy.of(() -> Transform.FromPosAndEuler(maxOffset, maxYaw, maxPitch, maxRoll));
+	public Lazy<Transform> EndPose = Lazy.of(() -> Transform.fromPosAndEuler(maxOffset, maxYaw, maxPitch, maxRoll));
 
 	@Nonnull
 	public Transform Apply(float parameter)
 	{
-		return Transform.Interpolate(StartPose.get(),
+		return Transform.interpolate(StartPose.get(),
 							 		 EndPose.get(),
 							 		 Maths.Clamp(parameter, minParameter, maxParameter));
 	}

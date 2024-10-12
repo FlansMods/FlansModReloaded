@@ -27,7 +27,7 @@ public class ContinuousCollisionUtility
 		return SeparateContinuous(a.HalfExtents(),
 			new Vector3f((float)b.getXsize()/2f, (float)b.getYsize()/2f, (float)b.getZsize()/2f),
 			a.Loc(),
-			Transform.FromPos(b.getCenter()),
+			Transform.fromPos(b.getCenter()),
 			motionA,
 			Vec3.ZERO);
 	}
@@ -40,7 +40,7 @@ public class ContinuousCollisionUtility
 		return SeparateContinuous(a.HalfExtents(),
 								  new Vector3f((float)sizeB.getXsize()/2f, (float)sizeB.getYsize()/2f, (float)sizeB.getZsize()/2f),
 			 				      a.Loc(),
-								  Transform.FromPos(posB.add(sizeB.getCenter())),
+								  Transform.fromPos(posB.add(sizeB.getCenter())),
 								  motionA,
 								  Vec3.ZERO);
 	}
@@ -53,8 +53,8 @@ public class ContinuousCollisionUtility
 																  @Nonnull Vec3 localMotionA,
 																  @Nonnull Vec3 localMotionB)
 	{
-		Transform AtoB = locA.GlobalToLocalTransform(locB);
-		return SeparateContinuous(halfA, halfB, localMotionA.add(AtoB.LocalToGlobalVelocity(localMotionB)), AtoB);
+		Transform AtoB = locA.globalToLocalTransform(locB);
+		return SeparateContinuous(halfA, halfB, localMotionA.add(AtoB.localToGlobalVelocity(localMotionB)), AtoB);
 	}
 
 	// A is an Axis-Aligned box centered at 0,0,0 with half extents halfA
@@ -67,8 +67,8 @@ public class ContinuousCollisionUtility
 																  @Nonnull Vec3 motionA, // motion OF A, relative to A
 																  @Nonnull Transform AtoB)
 	{
-		Vec3 t = AtoB.PositionVec3();
-		Matrix3f m = AtoB.OriMatrix();
+		Vec3 t = AtoB.positionVec3();
+		Matrix3f m = AtoB.oriMatrix();
 
 		// A dodgy "absolute rotation" matrix that will give you always positive values,
 		// but guarantees to give the max possible value of a specific axis
@@ -92,8 +92,8 @@ public class ContinuousCollisionUtility
 		if(selector.Try(t.z, halfA.z, halfBMax.z, motionA.z, true, ()->uA2))
 			return null;
 
-		Vec3 tBRelative = AtoB.GlobalToLocalPosition(Vec3.ZERO);
-		Vec3 motionBRelative = AtoB.GlobalToLocalDirection(motionA);
+		Vec3 tBRelative = AtoB.globalToLocalPosition(Vec3.ZERO);
+		Vec3 motionBRelative = AtoB.globalToLocalDirection(motionA);
 		Vector3f halfAMax = halfA.mul(maxMatrix, new Vector3f());
 
 		// Now test local axes of box B

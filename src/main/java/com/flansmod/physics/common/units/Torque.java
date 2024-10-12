@@ -1,6 +1,8 @@
 package com.flansmod.physics.common.units;
 
+import com.flansmod.physics.common.util.Maths;
 import com.flansmod.physics.common.util.Transform;
+import net.minecraft.network.chat.Component;
 import net.minecraft.world.phys.Vec3;
 import org.apache.commons.lang3.NotImplementedException;
 import org.joml.AxisAngle4f;
@@ -35,24 +37,32 @@ public record Torque(@Nonnull Vec3 Axis, double Magnitude) implements IForce
 	}
 
 	@Nonnull
-	public Units.Torque GetDefaultUnits() { return Units.Torque.KgBlocksSqPerTickSq; }
-	public double ConvertToUnits(@Nonnull Units.Torque toUnits) { return Units.Torque.Convert(Magnitude, Units.Torque.KgBlocksSqPerTickSq, toUnits); }
+	public Units.Torque getDefaultUnits() { return Units.Torque.KgBlocksSqPerTickSq; }
+	public double convertToUnits(@Nonnull Units.Torque toUnits) { return Units.Torque.Convert(Magnitude, Units.Torque.KgBlocksSqPerTickSq, toUnits); }
 	@Nonnull
-	public AngularAcceleration SumTorqueActingOn(double mass) { return new AngularAcceleration(Axis, Magnitude / mass); }
+	public AngularAcceleration sumTorqueActingOn(double mass) { return new AngularAcceleration(Axis, Magnitude / mass); }
 	@Nonnull
-	public AngularAcceleration ActingOn(Vec3 momentOfInertia)
+	public AngularAcceleration actingOn(Vec3 momentOfInertia)
 	{
 		// TODO: Moment of inertia
 	 	return new AngularAcceleration(Axis, Magnitude / momentOfInertia.x);
 	}
 
+	@Override
+	public boolean isApproxZero() { return Maths.Approx(Magnitude, 0d); }
+	@Override @Nonnull
+	public Torque inverse() { return new Torque(Axis, -Magnitude); }
+	@Override
+	public boolean hasLinearComponent(@Nonnull Transform actingOn) { return false; }
+	@Override @Nonnull
+	public LinearForce getLinearComponent(@Nonnull Transform actingOn) { throw new NotImplementedException(); }
+	@Override
+	public boolean hasAngularComponent(@Nonnull Transform actingOn) { return true; }
+	@Override @Nonnull
+	public Torque getTorqueComponent(@Nonnull Transform actingOn) { return this; }
+	@Override
+	public String toString() { return "Torque ["+Magnitude+"] around ["+Axis+"]"; }
+	@Override @Nonnull
+	public Component toFancyString() { return Component.translatable("flansphysicsmod.torque", Magnitude, Axis.x, Axis.y, Axis.z); }
 
-	@Override
-	public boolean HasLinearComponent(@Nonnull Transform actingOn) { return false; }
-	@Override @Nonnull
-	public LinearForce GetLinearComponent(@Nonnull Transform actingOn) { throw new NotImplementedException(); }
-	@Override
-	public boolean HasAngularComponent(@Nonnull Transform actingOn) { return true; }
-	@Override @Nonnull
-	public Torque GetTorqueComponent(@Nonnull Transform actingOn) { return this; }
 }

@@ -88,7 +88,7 @@ public class ShooterContextLiving extends ShooterContext implements Container
 	@Nonnull
 	public Transform GetShootOrigin(float deltaTick)
 	{
-		return Transform.FromPosAndEuler(
+		return Transform.fromPosAndEuler(
 			Shooter.getEyePosition(deltaTick),
 			Shooter.getViewXRot(deltaTick),
 			180f + Shooter.getViewYRot(deltaTick),

@@ -25,7 +25,7 @@ public class SoundLODManager
 	}
 	public static void PlaySound(@Nonnull SoundDefinition soundDef, @Nonnull Transform transform, float volumeMulti, float pitchMulti)
 	{
-		PlaySound(soundDef, transform.PositionVec3(), volumeMulti, pitchMulti);
+		PlaySound(soundDef, transform.positionVec3(), volumeMulti, pitchMulti);
 	}
 	public static void PlaySound(@Nonnull SoundDefinition soundDef, @Nonnull Vec3 position, float volumeMulti, float pitchMulti)
 	{

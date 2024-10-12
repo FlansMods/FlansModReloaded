@@ -244,14 +244,14 @@ public class PhysicsDebugRenderer
 
             for(IForce force : forces.Debug_GetForces())
             {
-                if(force.HasLinearComponent(worldTransform))
+                if(force.hasLinearComponent(worldTransform))
                 {
-                    LinearForce linear = force.GetLinearComponent(worldTransform);
+                    LinearForce linear = force.getLinearComponent(worldTransform);
                     DebugRenderer.RenderArrow(worldTransform, 1, forceColour, linear.Force().scale(forceArrowScale));
                 }
-                if(force.HasAngularComponent(worldTransform))
+                if(force.hasAngularComponent(worldTransform))
                 {
-                    Torque torque = force.GetTorqueComponent(worldTransform);
+                    Torque torque = force.getTorqueComponent(worldTransform);
                     DebugRenderer.RenderRotation(worldTransform, 1, forceColour, torque.Axis(), torque.Magnitude());
                     //Quaternionf angular = force.GetAngularComponentRadiansPerSecondSq(worldTransform);
                     //forceTotal = forceTotal.add(global.Vector());

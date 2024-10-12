@@ -1,7 +1,12 @@
 {
   "flansphysicsmod.linear_acceleration": "(%f, %f, %f) blocks/tick^2",
   "flansphysicsmod.linear_velocity": "(%f, %f, %f) blocks/tick",
-  "flansphysicsmod.angular_acceleration": "%f degrees/tick around (%f, %f, %f)",
+  "flansphysicsmod.angular_acceleration": "%f degrees/tick^2 around (%f, %f, %f)",
+  "flansphysicsmod.angular_velocity": "%f degrees/tick around (%f, %f, %f)",
+  "flansphysicsmod.offset_acceleration": "(%f, %f, %f) blocks/tick^2 applied at (%f, %f, %f)",
+  "flansphysicsmod.linear_force": "(%f, %f, %f) kgm/tick^2",
+  "flansphysicsmod.torque": "%f kgm^2/tick^2 around (%f, %f, %f)",
+  "flansphysicsmod.offset_force": "(%f, %f, %f) kgm/tick^2 applied at (%f, %f, %f)",
   "flansphysicsmod.command.physics_pause": "Physics Paused",
   "flansphysicsmod.command.physics_resume": "Physics Resumed",
   "flansphysicsmod.command.cycle_inspect": "Physics Inspector: Dynamic[%d]",

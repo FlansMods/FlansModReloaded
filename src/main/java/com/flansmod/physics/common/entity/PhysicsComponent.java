@@ -27,16 +27,16 @@ public class PhysicsComponent
 
 	public PhysicsComponent()
 	{
-		LocationCurrent = Transform.Identity();
-		LocationPrev = Transform.Identity();
+		LocationCurrent = Transform.identity();
+		LocationPrev = Transform.identity();
 		Forces = new ForcesOnPart();
 		PhysicsHandle = ColliderHandle.invalid;
 	}
 
 	public PhysicsComponent(@Nonnull ColliderHandle physicsHandle)
 	{
-		LocationCurrent = Transform.Identity();
-		LocationPrev = Transform.Identity();
+		LocationCurrent = Transform.identity();
+		LocationPrev = Transform.identity();
 		Forces = new ForcesOnPart();
 		PhysicsHandle = physicsHandle;
 	}
@@ -58,7 +58,7 @@ public class PhysicsComponent
 	@Nonnull
 	public Vec3 GetDeltaFramePos()
 	{
-		return LocationCurrent.PositionVec3().subtract(LocationPrev.PositionVec3());
+		return LocationCurrent.positionVec3().subtract(LocationPrev.positionVec3());
 	}
 	@Nonnull
 	public Vec3 GetVelocityMS()

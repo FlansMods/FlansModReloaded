@@ -41,28 +41,28 @@ public interface IVehicleTransformHelpers
 	}
 
 	// Root Transform settings
-	default void SetPosition(double x, double y, double z) { SetRootTransformCurrent(GetRootTransformCurrent().WithPosition(x, y, z)); }
-	default void SetPosition(@Nonnull Vec3 pos) { SetRootTransformCurrent(GetRootTransformCurrent().WithPosition(pos)); }
-	default void SetYaw(float yaw) { SetRootTransformCurrent(GetRootTransformCurrent().WithYaw(yaw)); }
-	default void SetPitch(float pitch) { SetRootTransformCurrent(GetRootTransformCurrent().WithPitch(pitch)); }
-	default void SetRoll(float roll) { SetRootTransformCurrent(GetRootTransformCurrent().WithRoll(roll)); }
-	default void RotateYaw(float yaw) { SetRootTransformCurrent(GetRootTransformCurrent().RotateYaw(yaw)); }
-	default void RotatePitch(float pitch) { SetRootTransformCurrent(GetRootTransformCurrent().RotatePitch(pitch)); }
-	default void RotateRoll(float roll) { SetRootTransformCurrent(GetRootTransformCurrent().RotateRoll(roll)); }
-	default void SetEulerAngles(float pitch, float yaw, float roll) { SetRootTransformCurrent(GetRootTransformCurrent().WithEulerAngles(pitch, yaw, roll)); }
+	default void SetPosition(double x, double y, double z) { SetRootTransformCurrent(GetRootTransformCurrent().withPosition(x, y, z)); }
+	default void SetPosition(@Nonnull Vec3 pos) { SetRootTransformCurrent(GetRootTransformCurrent().withPosition(pos)); }
+	default void SetYaw(float yaw) { SetRootTransformCurrent(GetRootTransformCurrent().withYaw(yaw)); }
+	default void SetPitch(float pitch) { SetRootTransformCurrent(GetRootTransformCurrent().withPitch(pitch)); }
+	default void SetRoll(float roll) { SetRootTransformCurrent(GetRootTransformCurrent().withRoll(roll)); }
+	default void RotateYaw(float yaw) { SetRootTransformCurrent(GetRootTransformCurrent().rotateYaw(yaw)); }
+	default void RotatePitch(float pitch) { SetRootTransformCurrent(GetRootTransformCurrent().rotatePitch(pitch)); }
+	default void RotateRoll(float roll) { SetRootTransformCurrent(GetRootTransformCurrent().rotateRoll(roll)); }
+	default void SetEulerAngles(float pitch, float yaw, float roll) { SetRootTransformCurrent(GetRootTransformCurrent().withEulerAngles(pitch, yaw, roll)); }
 
 
 
-	@Nonnull default Transform GetWorldToRootPrevious() { return Transform.Flatten(this::ApplyWorldToRootPrevious); }
-	@Nonnull default Transform GetWorldToRootCurrent() { return Transform.Flatten(this::ApplyWorldToRootCurrent); }
+	@Nonnull default Transform GetWorldToRootPrevious() { return Transform.flatten(this::ApplyWorldToRootPrevious); }
+	@Nonnull default Transform GetWorldToRootCurrent() { return Transform.flatten(this::ApplyWorldToRootCurrent); }
 	@Nonnull default ITransformPair GetWorldToRoot() { return ITransformPair.of(this::GetWorldToRootPrevious, this::GetWorldToRootCurrent); }
 	//@Nonnull default Transform GetPartToPartCurrent(@Nonnull VehicleDefinitionHierarchy.VehicleNode node) { return Transform.Flatten((stack) -> ApplyPartToPartPrevious(node, stack)); }
 	//@Nonnull default Transform GetPartToPartPrevious(@Nonnull VehicleDefinitionHierarchy.VehicleNode node) { return Transform.Flatten((stack) -> ApplyPartToPartCurrent(node, stack)); }
 	//@Nonnull default ITransformPair GetPartToPart(@Nonnull VehicleDefinitionHierarchy.VehicleNode node) { return ITransformPair.of(() -> GetPartToPartPrevious(node), () -> GetPartToPartCurrent(node)); }
-	@Nonnull default Transform GetPartToPartPrevious(@Nonnull VehiclePartPath childPart) { return Transform.Flatten((stack) -> ApplyPartToPartPrevious(childPart, stack)); }
-	@Nonnull default Transform GetPartToPartCurrent(@Nonnull VehiclePartPath childPart) { return Transform.Flatten((stack) -> ApplyPartToPartCurrent(childPart, stack)); }
-	@Nonnull default Transform GetPartToComponentPrevious(@Nonnull VehicleComponentPath componentPath) { return Transform.Flatten((stack) -> ApplyPartToComponentPrevious(componentPath, stack)); }
-	@Nonnull default Transform GetPartToComponentCurrent(@Nonnull VehicleComponentPath componentPath) { return Transform.Flatten((stack) -> ApplyPartToComponentCurrent(componentPath, stack)); }
+	@Nonnull default Transform GetPartToPartPrevious(@Nonnull VehiclePartPath childPart) { return Transform.flatten((stack) -> ApplyPartToPartPrevious(childPart, stack)); }
+	@Nonnull default Transform GetPartToPartCurrent(@Nonnull VehiclePartPath childPart) { return Transform.flatten((stack) -> ApplyPartToPartCurrent(childPart, stack)); }
+	@Nonnull default Transform GetPartToComponentPrevious(@Nonnull VehicleComponentPath componentPath) { return Transform.flatten((stack) -> ApplyPartToComponentPrevious(componentPath, stack)); }
+	@Nonnull default Transform GetPartToComponentCurrent(@Nonnull VehicleComponentPath componentPath) { return Transform.flatten((stack) -> ApplyPartToComponentCurrent(componentPath, stack)); }
 	@Nonnull default ITransformPair GetPartToPart(@Nonnull VehiclePartPath childPart) { return ITransformPair.of(() -> GetPartToPartPrevious(childPart), () -> GetPartToPartCurrent(childPart)); }
 	@Nonnull default ITransformPair GetPartToComponent(@Nonnull VehicleComponentPath componentPath) { return ITransformPair.of(() -> GetPartToComponentPrevious(componentPath), () -> GetPartToComponentCurrent(componentPath)); }
 
@@ -75,7 +75,7 @@ public interface IVehicleTransformHelpers
 	}
 	@Nonnull default Transform GetRootToPartPrevious(@Nonnull VehiclePartPath vehiclePart)
 	{
-		return Transform.Flatten((stack) -> TransformRootToPartPrevious(vehiclePart, stack));
+		return Transform.flatten((stack) -> TransformRootToPartPrevious(vehiclePart, stack));
 	}
 	default void TransformRootToPartCurrent(@Nonnull VehiclePartPath vehiclePart, @Nonnull TransformStack stack)
 	{
@@ -83,7 +83,7 @@ public interface IVehicleTransformHelpers
 	}
 	@Nonnull default Transform GetRootToPartCurrent(@Nonnull VehiclePartPath vehiclePart)
 	{
-		return Transform.Flatten((stack) -> TransformRootToPartCurrent(vehiclePart, stack));
+		return Transform.flatten((stack) -> TransformRootToPartCurrent(vehiclePart, stack));
 	}
 	@Nonnull default ITransformPair GetRootToPart(@Nonnull VehiclePartPath vehiclePart)
 	{
@@ -128,10 +128,10 @@ public interface IVehicleTransformHelpers
 		if(node.Def.IsArticulated())
 		{
 			Transform articulation = GetPartToPart(node.GetPath()).GetDelta(dt);
-			if(!articulation.IsIdentity())
+			if(!articulation.isIdentity())
 			{
-				start = articulation.GlobalToLocalPosition(start);
-				end = articulation.GlobalToLocalPosition(end);
+				start = articulation.globalToLocalPosition(start);
+				end = articulation.globalToLocalPosition(end);
 				stack.add(articulation);
 			}
 		}
@@ -146,7 +146,7 @@ public interface IVehicleTransformHelpers
 		if(node.Def.IsDamageable())
 		{
 			stack.PushSaveState();
-			stack.add(Transform.FromPos(node.Def.damage.hitboxCenter));
+			stack.add(Transform.fromPos(node.Def.damage.hitboxCenter));
 			Vector3d hitPos = new Vector3d();
 			if(Maths.RayBoxIntersect(start, end, stack.Top(), node.Def.damage.hitboxHalfExtents.toVector3f(), hitPos))
 			{

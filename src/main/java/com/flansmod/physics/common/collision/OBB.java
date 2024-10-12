@@ -59,7 +59,7 @@ public class OBB extends AABB
 		{
 			return Loc.equals(otherOBB.Loc) && super.equals(other);
 		}
-		else if(Loc.IsIdentity() && other instanceof AABB)
+		else if(Loc.isIdentity() && other instanceof AABB)
 		{
 			return super.equals(other);
 		}
@@ -162,7 +162,7 @@ public class OBB extends AABB
 	public OBB move(BlockPos pos) { return move(pos.getX(), pos.getY(), pos.getZ()); }
 	@Override @Nonnull
 	public OBB move(@Nonnull Vec3 v) {
-		return new OBB(Loc.Translated(v), minX, minY, minZ, maxX, maxY, maxZ);
+		return new OBB(Loc.translated(v), minX, minY, minZ, maxX, maxY, maxZ);
 	}
 
 	public boolean intersects(@Nonnull OBB other)
@@ -170,8 +170,8 @@ public class OBB extends AABB
 		return CollisionUtility.Separate(
 			new Vector3f((float)getXsize(), (float)getYsize(), (float)getZsize()),
 			new Vector3f((float)other.getXsize(), (float)other.getYsize(), (float)other.getZsize()),
-			Transform.Compose(Loc, Transform.FromPos(getCenter())),
-			Transform.Compose(other.Loc, Transform.FromPos(other.getCenter()))) != null;
+			Transform.compose(Loc, Transform.fromPos(getCenter())),
+			Transform.compose(other.Loc, Transform.fromPos(other.getCenter()))) != null;
 	}
 	@Override
 	public boolean intersects(@Nonnull AABB other)
@@ -179,8 +179,8 @@ public class OBB extends AABB
 		return CollisionUtility.Separate(
 			new Vector3f((float)getXsize(), (float)getYsize(), (float)getZsize()),
 			new Vector3f((float)other.getXsize(), (float)other.getYsize(), (float)other.getZsize()),
-			Transform.Compose(Loc, Transform.FromPos(getCenter())),
-			Transform.FromPos(other.getCenter())) != null;
+			Transform.compose(Loc, Transform.fromPos(getCenter())),
+			Transform.fromPos(other.getCenter())) != null;
 	}
 	@Override
 	public boolean intersects(double xMin, double yMin, double zMin, double xMax, double yMax, double zMax)
@@ -188,8 +188,8 @@ public class OBB extends AABB
 		return CollisionUtility.Separate(
 			new Vector3f((float)getXsize(), (float)getYsize(), (float)getZsize()),
 			new Vector3f((float)(xMax - xMin), (float)(yMax - yMin), (float)(zMax - zMin)),
-			Transform.Compose(Loc, Transform.FromPos(getCenter())),
-			Transform.FromPos((xMin + xMax)/2, (yMin+yMax)/2, (zMin+zMax)/2)) != null;
+			Transform.compose(Loc, Transform.fromPos(getCenter())),
+			Transform.fromPos((xMin + xMax)/2, (yMin+yMax)/2, (zMin+zMax)/2)) != null;
 	}
 	//public boolean intersects(Vec3 p_82336_, Vec3 p_82337_) {
 	//	return this.intersects(Math.min(p_82336_.x, p_82337_.x), Math.min(p_82336_.y, p_82337_.y), Math.min(p_82336_.z, p_82337_.z), Math.max(p_82336_.x, p_82337_.x), Math.max(p_82336_.y, p_82337_.y), Math.max(p_82336_.z, p_82337_.z));
@@ -200,12 +200,12 @@ public class OBB extends AABB
 	@Override
 	public boolean contains(@Nonnull Vec3 v)
 	{
-		return containsLocal(Loc.GlobalToLocalPosition(v));
+		return containsLocal(Loc.globalToLocalPosition(v));
 	}
 	@Override
 	public boolean contains(double x, double y, double z)
 	{
-		return containsLocal(Loc.GlobalToLocalPosition(new Vec3(x, y, z)));
+		return containsLocal(Loc.globalToLocalPosition(new Vec3(x, y, z)));
 	}
 	public boolean containsLocal(@Nonnull Vec3 v)
 	{
@@ -224,10 +224,10 @@ public class OBB extends AABB
 	@Override @Nonnull
 	public Optional<Vec3> clip(@Nonnull Vec3 from, @Nonnull Vec3 to)
 	{
-		Vec3 localFrom = Loc.GlobalToLocalPosition(from);
-		Vec3 localTo = Loc.GlobalToLocalPosition(to);
+		Vec3 localFrom = Loc.globalToLocalPosition(from);
+		Vec3 localTo = Loc.globalToLocalPosition(to);
 		Optional<Vec3> clipped = clipLocal(localFrom, localTo);
-		return clipped.map(Loc::LocalToGlobalPosition);
+		return clipped.map(Loc::localToGlobalPosition);
 	}
 	@Nonnull
 	public Optional<Vec3> clipLocal(@Nonnull Vec3 from, @Nonnull Vec3 to)
@@ -237,7 +237,7 @@ public class OBB extends AABB
 	@Override
 	public double distanceToSqr(@Nonnull Vec3 v)
 	{
-		return super.distanceToSqr(Loc.GlobalToLocalPosition(v));
+		return super.distanceToSqr(Loc.globalToLocalPosition(v));
 	}
 	@Override @Nonnull
 	public String toString()
@@ -246,10 +246,10 @@ public class OBB extends AABB
 	}
 	@Override
 	public boolean hasNaN() {
-		return super.hasNaN() || Loc.HasNaN();
+		return super.hasNaN() || Loc.hasNaN();
 	}
 	@Override @Nonnull
 	public Vec3 getCenter() {
-		return Loc.LocalToGlobalPosition(super.getCenter());
+		return Loc.localToGlobalPosition(super.getCenter());
 	}
 }

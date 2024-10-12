@@ -1,6 +1,7 @@
 package com.flansmod.physics.common.units;
 
 import com.flansmod.physics.common.util.Maths;
+import com.flansmod.physics.common.util.Transform;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.phys.Vec3;
 import org.joml.AxisAngle4f;
@@ -8,7 +9,7 @@ import org.joml.Quaternionf;
 
 import javax.annotation.Nonnull;
 
-public record AngularAcceleration(@Nonnull Vec3 Axis, double Magnitude)
+public record AngularAcceleration(@Nonnull Vec3 Axis, double Magnitude) implements IAcceleration
 {
 	public static final AngularAcceleration Zero = new AngularAcceleration(new Vec3(0d, 1d, 0d), 0d);
 
@@ -51,22 +52,33 @@ public record AngularAcceleration(@Nonnull Vec3 Axis, double Magnitude)
 	}
 
 	@Nonnull
-	public Torque MultiplyBy(double mass) { return new Torque(Axis, Magnitude * mass); }
+	public Torque multiplyBy(double mass) { return new Torque(Axis, Magnitude * mass); }
 	@Nonnull
-	public Units.AngularAcceleration GetDefaultUnits() { return Units.AngularAcceleration.RadiansPerTickSq; }
-	public double GetInUnits(@Nonnull Units.AngularAcceleration toUnit)
+	public Units.AngularAcceleration getDefaultUnits() { return Units.AngularAcceleration.RadiansPerTickSq; }
+	public double getInUnits(@Nonnull Units.AngularAcceleration toUnit)
 	{
 		return Units.AngularAcceleration.Convert(Magnitude, Units.AngularAcceleration.RadiansPerTickSq, toUnit);
 	}
 	@Nonnull
-	public AngularVelocity ApplyOverTicks(double ticks) { return new AngularVelocity(Axis, Magnitude * ticks); }
+	public AngularVelocity applyOverTicks(double ticks) { return new AngularVelocity(Axis, Magnitude * ticks); }
 	@Nonnull
-	public AngularVelocity ApplyOneTick() { return new AngularVelocity(Axis, Magnitude); }
+	public AngularVelocity applyOneTick() { return new AngularVelocity(Axis, Magnitude); }
 
-
+	@Override
+	public boolean isApproxZero() { return Maths.Approx(Magnitude, 0d); }
+	@Override @Nonnull
+	public AngularAcceleration inverse() { return new AngularAcceleration(Axis, -Magnitude); }
+	@Override
+	public boolean hasLinearComponent(@Nonnull Transform actingOn) { return false; }
+	@Override @Nonnull
+	public LinearAcceleration getLinearComponent(@Nonnull Transform actingOn) { return LinearAcceleration.Zero; }
+	@Override
+	public boolean hasAngularComponent(@Nonnull Transform actingOn) { return true; }
+	@Override @Nonnull
+	public AngularAcceleration getAngularComponent(@Nonnull Transform actingOn) { return this; }
 	public boolean IsApproxZero() { return Maths.Approx(Magnitude, 0d); }
 	@Override
 	public String toString() { return "AngularAcceleration ["+Units.Angle.Radians_To_Degrees(Magnitude)+"] degrees/tick^2 around ["+Axis+"]"; }
+	@Override @Nonnull
 	public Component toFancyString() { return Component.translatable("flansphysicsmod.angular_acceleration", Units.Angle.Radians_To_Degrees(Magnitude), Axis.x, Axis.y, Axis.z); }
-
 }

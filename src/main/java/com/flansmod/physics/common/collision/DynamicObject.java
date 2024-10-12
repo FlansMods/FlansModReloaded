@@ -58,7 +58,7 @@ public class DynamicObject
 		ImmutableList.Builder<AABB> builder = ImmutableList.builder();
 		Colliders = builder.addAll(localColliders).build();
 		LocalBounds = GetLocalBounds();
-		Frames.add(new FrameData(Transform.Copy(initialLocation), LinearVelocity.Zero, AngularVelocity.Zero));
+		Frames.add(new FrameData(Transform.copy(initialLocation), LinearVelocity.Zero, AngularVelocity.Zero));
 		NextFrameLinearMotion = LinearVelocity.Zero;
 		NextFrameAngularMotion = AngularVelocity.Zero;
 		ReactionAcceleration = OffsetAcceleration.Zero;
@@ -71,15 +71,15 @@ public class DynamicObject
 	public AABB GetCurrentWorldBounds()
 	{
 		FrameData frame = GetFrameNTicksAgo(0);
-		return frame.Location.LocalToGlobalBounds(GetLocalBounds());
+		return frame.Location.localToGlobalBounds(GetLocalBounds());
 	}
 
 	@Nonnull
 	public AABB GetSweepTestAABB()
 	{
 		FrameData frame = GetFrameNTicksAgo(0);
-		AABB globalAABB = frame.Location.LocalToGlobalBounds(GetLocalBounds());
-		return globalAABB.expandTowards(NextFrameLinearMotion.ApplyOneTick()).inflate(LocalBounds.getSize());
+		AABB globalAABB = frame.Location.localToGlobalBounds(GetLocalBounds());
+		return globalAABB.expandTowards(NextFrameLinearMotion.applyOneTick()).inflate(LocalBounds.getSize());
 	}
 
 	@Nonnull
@@ -109,7 +109,7 @@ public class DynamicObject
 	}
 	public void AddLinearAcceleration(@Nonnull LinearAcceleration linearAcceleration)
 	{
-		NextFrameLinearMotion = NextFrameLinearMotion.add(linearAcceleration.ApplyOneTick());
+		NextFrameLinearMotion = NextFrameLinearMotion.add(linearAcceleration.applyOneTick());
 	}
 	//public void AddOneTickOfLinearAcceleration(@Nonnull LinearAcceleration linearMotionDelta)
 	//{
@@ -125,7 +125,7 @@ public class DynamicObject
 	}
 	public void AddAngularAcceleration(@Nonnull AngularAcceleration angularAcceleration)
 	{
-		NextFrameAngularMotion = NextFrameAngularMotion.compose(angularAcceleration.ApplyOneTick());
+		NextFrameAngularMotion = NextFrameAngularMotion.compose(angularAcceleration.applyOneTick());
 	}
 	//public void AddAngularAccelerationPerTick(@Nonnull AxisAngle4f angularMotionDelta)
 	//{
@@ -191,9 +191,9 @@ public class DynamicObject
 	{
 		if(PendingFrame != null)
 		{
-			if(PendingFrame.Location.HasNaN())
+			if(PendingFrame.Location.hasNaN())
 				return true;
-			Vec3 pos = PendingFrame.Location.PositionVec3();
+			Vec3 pos = PendingFrame.Location.positionVec3();
 			if(pos.y < KILL_VOLUME_NEGATIVE_Y || pos.y > KILL_VOLUME_POSITIVE_Y)
 			{
 				return true;
@@ -228,14 +228,14 @@ public class DynamicObject
 		}
 		else
 		{
-			Vec3 deltaPos = NextFrameLinearMotion.ApplyOneTick();
-			Quaternionf deltaRot = NextFrameAngularMotion.ApplyOneTick();
+			Vec3 deltaPos = NextFrameLinearMotion.applyOneTick();
+			Quaternionf deltaRot = NextFrameAngularMotion.applyOneTick();
 
 			if(withReactionForce)
 			{
-				var reaction = ReactionAcceleration.ApplyOneTick(GetCurrentLocation());
-				deltaPos = deltaPos.add(reaction.getFirst().ApplyOneTick());
-				deltaRot.mul(reaction.getSecond().ApplyOneTick());
+				var reaction = ReactionAcceleration.applyOneTick(GetCurrentLocation());
+				deltaPos = deltaPos.add(reaction.getFirst().applyOneTick());
+				deltaRot.mul(reaction.getSecond().applyOneTick());
 			}
 
 			ExtrapolateNextFrame(deltaPos, deltaRot);
@@ -245,8 +245,8 @@ public class DynamicObject
 	{
 		FrameData currentFrame = GetFrameNTicksAgo(0);
 
-		Transform newLoc = Transform.FromPosAndQuat(
-			currentFrame.Location.PositionVec3().add(deltaPos),
+		Transform newLoc = Transform.fromPosAndQuat(
+			currentFrame.Location.positionVec3().add(deltaPos),
 			currentFrame.Location.Orientation.mul(deltaRot, new Quaternionf()),
 			() -> "");
 

@@ -35,7 +35,7 @@ public class CollisionUtility
 	{
 		return Separate(new Vector3f((float)a.getXsize()/2f, (float)a.getYsize()/2f, (float)a.getZsize()/2f),
 						b.HalfExtents(),
-						Transform.FromPos(a.getCenter()),
+						Transform.fromPos(a.getCenter()),
 						b.Loc());
 	}
 	@Nullable
@@ -45,7 +45,7 @@ public class CollisionUtility
 		return Separate(a.HalfExtents(),
 						new Vector3f((float)b.getXsize()/2f, (float)b.getYsize()/2f, (float)b.getZsize()/2f),
 						a.Loc(),
-						Transform.FromPos(b.getCenter()));
+						Transform.fromPos(b.getCenter()));
 	}
 
 	@Nullable
@@ -54,7 +54,7 @@ public class CollisionUtility
 								@Nonnull Transform locA,
 								@Nonnull Transform locB)
 	{
-		return Separate(halfA, halfB, locA.GlobalToLocalTransform(locB));
+		return Separate(halfA, halfB, locA.globalToLocalTransform(locB));
 	}
 
 	// A is an Axis-Aligned box centered at 0,0,0 with half extents halfA
@@ -66,8 +66,8 @@ public class CollisionUtility
 								@Nonnull Vector3f halfB,
 								@Nonnull Transform AtoB)
 	{
-		Vec3 t = AtoB.PositionVec3();
-		Matrix3f m = AtoB.OriMatrix();
+		Vec3 t = AtoB.positionVec3();
+		Matrix3f m = AtoB.oriMatrix();
 
 		// A dodgy "absolute rotation" matrix that will give you always positive values,
 		// but guarantees to give the max possible value of a specific axis

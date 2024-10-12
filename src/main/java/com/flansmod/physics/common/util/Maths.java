@@ -2,10 +2,8 @@ package com.flansmod.physics.common.util;
 
 import com.flansmod.common.FlansMod;
 import com.flansmod.util.Orientation;
-import com.mojang.datafixers.util.Pair;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import org.joml.Quaternionf;
 import org.joml.Vector3d;
@@ -266,8 +264,8 @@ public class Maths
                                           @Nullable Vector3d outPos)
     {
         // Localise
-        startPos = boxCenterTransform.GlobalToLocalPosition(startPos);
-        endPos = boxCenterTransform.GlobalToLocalPosition(endPos);
+        startPos = boxCenterTransform.globalToLocalPosition(startPos);
+        endPos = boxCenterTransform.globalToLocalPosition(endPos);
         Vec3 motion = endPos.subtract(startPos);
 
         // We now have an AABB starting at -halfExtents and with dimensions 2*halfExtents and our ray in the same coordinate system
@@ -286,7 +284,7 @@ public class Maths
                 {
                     if(outPos != null)
                     {
-                        Vec3 globalIntersect = boxCenterTransform.LocalToGlobalPosition(new Vec3(-boxHalfExtents.x, intersectY, intersectZ));
+                        Vec3 globalIntersect = boxCenterTransform.localToGlobalPosition(new Vec3(-boxHalfExtents.x, intersectY, intersectZ));
                         outPos.set(globalIntersect.x, globalIntersect.y, globalIntersect.z);
                     }
                     return true;
@@ -302,7 +300,7 @@ public class Maths
                 {
                     if (outPos != null)
                     {
-                        Vec3 globalIntersect = boxCenterTransform.LocalToGlobalPosition(new Vec3(boxHalfExtents.x, intersectY, intersectZ));
+                        Vec3 globalIntersect = boxCenterTransform.localToGlobalPosition(new Vec3(boxHalfExtents.x, intersectY, intersectZ));
                         outPos.set(globalIntersect.x, globalIntersect.y, globalIntersect.z);
                     }
                     return true;
@@ -323,7 +321,7 @@ public class Maths
                 {
                     if (outPos != null)
                     {
-                        Vec3 globalIntersect = boxCenterTransform.LocalToGlobalPosition(new Vec3(intersectX, intersectY, -boxHalfExtents.z));
+                        Vec3 globalIntersect = boxCenterTransform.localToGlobalPosition(new Vec3(intersectX, intersectY, -boxHalfExtents.z));
                         outPos.set(globalIntersect.x, globalIntersect.y, globalIntersect.z);
                     }
                     return true;
@@ -339,7 +337,7 @@ public class Maths
                 {
                     if (outPos != null)
                     {
-                        Vec3 globalIntersect = boxCenterTransform.LocalToGlobalPosition(new Vec3(intersectX, intersectY, boxHalfExtents.z));
+                        Vec3 globalIntersect = boxCenterTransform.localToGlobalPosition(new Vec3(intersectX, intersectY, boxHalfExtents.z));
                         outPos.set(globalIntersect.x, globalIntersect.y, globalIntersect.z);
                     }
                     return true;
@@ -360,7 +358,7 @@ public class Maths
                 {
                     if (outPos != null)
                     {
-                        Vec3 globalIntersect = boxCenterTransform.LocalToGlobalPosition(new Vec3(intersectX, -boxHalfExtents.y, intersectZ));
+                        Vec3 globalIntersect = boxCenterTransform.localToGlobalPosition(new Vec3(intersectX, -boxHalfExtents.y, intersectZ));
                         outPos.set(globalIntersect.x, globalIntersect.y, globalIntersect.z);
                     }
                     return true;
@@ -376,7 +374,7 @@ public class Maths
                 {
                     if (outPos != null)
                     {
-                        Vec3 globalIntersect = boxCenterTransform.LocalToGlobalPosition(new Vec3(intersectX, boxHalfExtents.y, intersectZ));
+                        Vec3 globalIntersect = boxCenterTransform.localToGlobalPosition(new Vec3(intersectX, boxHalfExtents.y, intersectZ));
                         outPos.set(globalIntersect.x, globalIntersect.y, globalIntersect.z);
                     }
                     return true;

@@ -84,49 +84,49 @@ public class TransformStack extends Stack<Transform>
 	public Vec3 LocalToGlobalDirection(@Nonnull Vec3 localDirection)
 	{
 		for(int i = size() - 1; i >= 0; i--)
-			localDirection = get(i).LocalToGlobalDirection(localDirection);
+			localDirection = get(i).localToGlobalDirection(localDirection);
 		return localDirection;
 	}
 	@Nonnull
 	public Vec3 GlobalToLocalDirection(@Nonnull Vec3 globalDirection)
 	{
 		for(int i = 0; i < size(); i++)
-			globalDirection = get(i).GlobalToLocalDirection(globalDirection);
+			globalDirection = get(i).globalToLocalDirection(globalDirection);
 		return globalDirection;
 	}
 	@Nonnull
 	public Vec3 LocalToGlobalPosition(@Nonnull Vec3 localPosition)
 	{
 		for(int i = size() - 1; i >= 0; i--)
-			localPosition = get(i).LocalToGlobalPosition(localPosition);
+			localPosition = get(i).localToGlobalPosition(localPosition);
 		return localPosition;
 	}
 	@Nonnull
 	public Vec3 GlobalToLocalPosition(@Nonnull Vec3 globalPosition)
 	{
 		for(int i = 0; i < size(); i++)
-			globalPosition = get(i).GlobalToLocalPosition(globalPosition);
+			globalPosition = get(i).globalToLocalPosition(globalPosition);
 		return globalPosition;
 	}
 	@Nonnull
 	public Quaternionf LocalToGlobalOrientation(@Nonnull Quaternionf localOri)
 	{
 		for(int i = size() - 1; i >= 0; i--)
-			localOri = get(i).LocalToGlobalOrientation(localOri);
+			localOri = get(i).localToGlobalOrientation(localOri);
 		return localOri;
 	}
 	@Nonnull
 	public Quaternionf GlobalToLocalOrientation(@Nonnull Quaternionf globalOri)
 	{
 		for(int i = 0; i < size(); i++)
-			globalOri = get(i).GlobalToLocalOrientation(globalOri);
+			globalOri = get(i).globalToLocalOrientation(globalOri);
 		return globalOri;
 	}
 	@Nonnull
 	public Transform LocalToGlobalTransform(@Nonnull Transform localTransform)
 	{
 		for(int i = size() - 1; i >= 0; i--)
-			localTransform = get(i).LocalToGlobalTransform(localTransform);
+			localTransform = get(i).localToGlobalTransform(localTransform);
 		return localTransform;
 	}
 	@Nonnull
@@ -134,7 +134,7 @@ public class TransformStack extends Stack<Transform>
 	{
 
 		for(int i = 0; i < size(); i++)
-			globalTransform = get(i).GlobalToLocalTransform(globalTransform);
+			globalTransform = get(i).globalToLocalTransform(globalTransform);
 		return globalTransform;
 	}
 
@@ -149,14 +149,14 @@ public class TransformStack extends Stack<Transform>
 		}
 	}
 
-	public void scale(float x, float y, float z) { add(Transform.FromScale(new Vector3f(x, y, z), () -> "scale")); }
+	public void scale(float x, float y, float z) { add(Transform.fromScale(new Vector3f(x, y, z), () -> "scale")); }
 	public void translate(double x, double y, double z)
 	{
-		add(Transform.FromPos(x, y, z, () -> "translate"));
+		add(Transform.fromPos(x, y, z, () -> "translate"));
 	}
 	public void mulPose(@Nonnull Quaternionf rot)
 	{
-		add(Transform.FromPosAndQuat(new Vector3d(), rot, () -> "mulPose"));
+		add(Transform.fromPosAndQuat(new Vector3d(), rot, () -> "mulPose"));
 	}
 
 	@OnlyIn(Dist.CLIENT)
@@ -168,11 +168,11 @@ public class TransformStack extends Stack<Transform>
 			Transform debug = Transform.IDENTITY;
 			for(int j = i; j >= 0; j--)
 			{
-				debug = get(j).LocalToGlobalTransform(debug);
+				debug = get(j).localToGlobalTransform(debug);
 			}
 			DebugRenderer.RenderAxes(debug, ticks, new Vector4f());
 			//DebugRenderer.RenderLine(prevAxesPos, 1, new Vector4f(1f, 1f, 0f, 1f), debug.PositionVec3().subtract(prevAxesPos));
-			prevAxesPos = debug.PositionVec3();
+			prevAxesPos = debug.positionVec3();
 		}
 	}
 }

@@ -303,12 +303,12 @@ public class FlansModClient
 
 					Vec3 look = playerGunContext.GetShooter().Entity().getLookAngle();
 					if(count > 1)
-						Minecraft.getInstance().level.addParticle(ParticleTypes.POOF, shootOrigin.PositionVec3().x() + look.x * 0.1f, shootOrigin.PositionVec3().y() + look.y * 0.1f, shootOrigin.PositionVec3().z() + look.z * 0.1f, (look.x() * 0.3) + random( count), (look.y() * 0.3) + random( count), (look.z() * 0.3) + random( count));
+						Minecraft.getInstance().level.addParticle(ParticleTypes.POOF, shootOrigin.positionVec3().x() + look.x * 0.1f, shootOrigin.positionVec3().y() + look.y * 0.1f, shootOrigin.positionVec3().z() + look.z * 0.1f, (look.x() * 0.3) + random( count), (look.y() * 0.3) + random( count), (look.z() * 0.3) + random( count));
 					else {
-						Minecraft.getInstance().level.addParticle(ParticleTypes.SMOKE, shootOrigin.PositionVec3().x() + look.x * 0.1f, shootOrigin.PositionVec3().y() + look.y * 0.1f, shootOrigin.PositionVec3().z() + look.z * 0.1f, (look.x() * 0.3) + random( count), (look.y() * 0.3) + random( count), (look.z() * 0.3) + random( count));
+						Minecraft.getInstance().level.addParticle(ParticleTypes.SMOKE, shootOrigin.positionVec3().x() + look.x * 0.1f, shootOrigin.positionVec3().y() + look.y * 0.1f, shootOrigin.positionVec3().z() + look.z * 0.1f, (look.x() * 0.3) + random( count), (look.y() * 0.3) + random( count), (look.z() * 0.3) + random( count));
 					}
 					if (i == 1) {
-						Minecraft.getInstance().level.addParticle(ParticleTypes.FLAME, shootOrigin.PositionVec3().x(), shootOrigin.PositionVec3().y(), shootOrigin.PositionVec3().z(), look.x, look.y, look.z);
+						Minecraft.getInstance().level.addParticle(ParticleTypes.FLAME, shootOrigin.positionVec3().x(), shootOrigin.positionVec3().y(), shootOrigin.positionVec3().z(), look.x, look.y, look.z);
 					}
 				}
 			}
@@ -335,8 +335,8 @@ public class FlansModClient
 
 				}
 				Transform laserOrigin = FirstPersonManager.GetWorldSpaceAPTransform(gunContext, transformType, ActionGroupContext.CreateGroupPath("shoot_origin"));
-				origin = laserOrigin.PositionVec3();
-				Vec3 look = gunshotContext.ActionGroup.Gun.GetShooter().GetShootOrigin(0f).ForwardVec3();
+				origin = laserOrigin.positionVec3();
+				Vec3 look = gunshotContext.ActionGroup.Gun.GetShooter().GetShootOrigin(0f).forward();
 				if(count > 1)
 					Minecraft.getInstance().level.addParticle(ParticleTypes.POOF, origin.x() + look.x * 0.1f, origin.y() + look.y * 0.1f, origin.z() + look.z * 0.1f, (look.x() * 0.3) + random( count), (look.y() * 0.3) + random( count), (look.z() * 0.3) + random( count));
 				else {

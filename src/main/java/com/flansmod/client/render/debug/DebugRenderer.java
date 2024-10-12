@@ -14,7 +14,6 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.TickEvent;
 import org.joml.*;
 
-import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
@@ -269,7 +268,7 @@ public class DebugRenderer
     {
         public DebugRenderAxes(Transform t, int ticks, Vector4f col)
         {
-            super(t, ticks, col, t.ForwardVec3(), false);
+            super(t, ticks, col, t.forward(), false);
         }
 
         @Override
@@ -278,9 +277,9 @@ public class DebugRenderer
             if(MinecraftHelpers.GetCamera() == null)
                 return;
 
-            RenderLineSegment(poseStack, tesselator, Vec3.ZERO, transform.ForwardVec3(), new Vector4f(1f, 0f, 0f, 1f), false);
-            RenderLineSegment(poseStack, tesselator, Vec3.ZERO, transform.UpVec3(), new Vector4f(0f, 1f, 0f, 1f), false);
-            RenderLineSegment(poseStack, tesselator, Vec3.ZERO, transform.RightVec3(), new Vector4f(0f, 0f, 1f, 1f), false);
+            RenderLineSegment(poseStack, tesselator, Vec3.ZERO, transform.forward(), new Vector4f(1f, 0f, 0f, 1f), false);
+            RenderLineSegment(poseStack, tesselator, Vec3.ZERO, transform.up(), new Vector4f(0f, 1f, 0f, 1f), false);
+            RenderLineSegment(poseStack, tesselator, Vec3.ZERO, transform.right(), new Vector4f(0f, 0f, 1f, 1f), false);
         }
     }
 

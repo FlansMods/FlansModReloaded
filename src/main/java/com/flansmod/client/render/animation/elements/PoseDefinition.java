@@ -24,7 +24,7 @@ public class PoseDefinition
 	@Nonnull
 	public Transform Resolve(@Nonnull Map<String, Float> parameters)
 	{
-		return Transform.FromPosAndEuler(
+		return Transform.fromPosAndEuler(
 			position.ResolveF(parameters).mul(1f/16f),
 			rotation.ResolveF(parameters),
 			() -> "{\"Pose\":\""+applyTo+"\"}");

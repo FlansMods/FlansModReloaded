@@ -96,7 +96,7 @@ public class WheelEntity extends Entity implements ITransformChildEntity
 		WheelDefinition def = GetWheelDef();
 		Size = EntityDimensions.fixed(def.radius, def.radius);
 		Vehicle = Optional.of(vehicle);
-		setPos(vehicle.GetWorldToAP(GetWheelPath().Part()).GetCurrent().PositionVec3());
+		setPos(vehicle.GetWorldToAP(GetWheelPath().Part()).GetCurrent().positionVec3());
 	}
 	private void SetVehicleDef(@Nonnull VehicleDefinition def) { entityData.set(VEHICLE_DEF, def); }
 	private void SetVehicleEntityID(int entityID) { entityData.set(VEHICLE_ENTITY_ID, entityID); }
@@ -200,9 +200,9 @@ public class WheelEntity extends Entity implements ITransformChildEntity
 	}
 
 	@Nonnull
-	public Transform GetWorldTransformPrevious() { return Transform.FromPos(getPosition(0f)); }
+	public Transform GetWorldTransformPrevious() { return Transform.fromPos(getPosition(0f)); }
 	@Nonnull
-	public Transform GetWorldTransformCurrent() { return Transform.FromPos(getPosition(1f)); }
+	public Transform GetWorldTransformCurrent() { return Transform.fromPos(getPosition(1f)); }
 	@Nonnull
 	@Override
 	public ITransformPair GetWorldTransform()
@@ -212,7 +212,7 @@ public class WheelEntity extends Entity implements ITransformChildEntity
 	@Override
 	public void SetWorldTransform(@Nonnull Transform currentWorldTransform)
 	{
-		setPos(currentWorldTransform.PositionVec3());
+		setPos(currentWorldTransform.positionVec3());
 	}
 
 	@Override
@@ -362,14 +362,14 @@ public class WheelEntity extends Entity implements ITransformChildEntity
 	public void SyncTransformToEntity()
 	{
 		Transform worldRoot = GetWorldTransformCurrent();
-		Vector3f euler = worldRoot.Euler();
-		setPos(worldRoot.PositionVec3());
+		Vector3f euler = worldRoot.euler();
+		setPos(worldRoot.positionVec3());
 		setYRot(euler.y);
 		setXRot(euler.x);
 	}
 	public void SyncEntityToTransform()
 	{
-		SetWorldTransform(Transform.FromPosAndEuler(getPosition(1f), getXRot(), getYRot(), 0f));
+		SetWorldTransform(Transform.fromPosAndEuler(getPosition(1f), getXRot(), getYRot(), 0f));
 	}
 	@Nonnull
 	public Vec3 GetVelocity() { return getDeltaMovement().scale(20f); }

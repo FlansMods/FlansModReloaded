@@ -122,7 +122,7 @@ public class VehicleCollisionSystem
 		// CollisionUtility should support OBB to OBB, but we have an array of BBs at this orientation
 		TransformedBB entityTransformLocal = TransformedBB.EntityInSpace(entityBounds, entityPosGlobal, partTransform);
 		// Motion is part-motion-relative
-		Vec3 motionLocal = partTransform.GlobalToLocalVelocity(motionGlobal).subtract(partMotion);
+		Vec3 motionLocal = partTransform.globalToLocalVelocity(motionGlobal).subtract(partMotion);
 
 
 		// Apply separation maths
@@ -143,11 +143,11 @@ public class VehicleCollisionSystem
 		boolean temporalCollision = !Maths.Approx(resolver.TemporalResponse, 1f);
 		Vec3 motionResponse = temporalCollision ? motionLocal.scale(resolver.TemporalResponse) : motionLocal;
 
-		Vec3 globalMotionResponse = partTransform.LocalToGlobalVelocity(motionResponse).add(partMotion);
-		Vec3 globalTotalResponse = partTransform.LocalToGlobalVelocity(totalResponse);
+		Vec3 globalMotionResponse = partTransform.localToGlobalVelocity(motionResponse).add(partMotion);
+		Vec3 globalTotalResponse = partTransform.localToGlobalVelocity(totalResponse);
 		// Not sure we need to do this wacky stuff VecHelper.rotate(yawOffset, Axis.Y)
-		Vec3 globalNormal = partTransform.LocalToGlobalDirection(resultNormal).normalize();
-		Vec3 globalPosition = partTransform.LocalToGlobalPosition(resultPosition);
+		Vec3 globalNormal = partTransform.localToGlobalDirection(resultNormal).normalize();
+		Vec3 globalPosition = partTransform.localToGlobalPosition(resultPosition);
 
 		//double bounce = 0d;
 		double slide = 0d;
@@ -295,8 +295,8 @@ public class VehicleCollisionSystem
 	private static Vec3 GetMovementOfPointOnPart(@Nonnull Vec3 globalPointPrevious, @Nonnull ITransformPair partTransformPair)
 	{
 		// Not sure why but AbstractContraptionEntity.java takes the globalPoint as a point from last frame
-		Vec3 partLocalPos = partTransformPair.GetPrevious().GlobalToLocalPosition(globalPointPrevious);
-		Vec3 globalPosCurrent = partTransformPair.GetCurrent().LocalToGlobalPosition(partLocalPos);
+		Vec3 partLocalPos = partTransformPair.GetPrevious().globalToLocalPosition(globalPointPrevious);
+		Vec3 globalPosCurrent = partTransformPair.GetCurrent().localToGlobalPosition(partLocalPos);
 		return globalPosCurrent.subtract(partLocalPos);
 	}
 
@@ -377,7 +377,7 @@ public class VehicleCollisionSystem
 				if (dZ > bb.getZsize() / 2d)
 					continue;
 
-				RelativeEntity = RelativeEntity.Move(t -> t.WithPosition(currentCenter));
+				RelativeEntity = RelativeEntity.Move(t -> t.withPosition(currentCenter));
 				ContinuousSeparationManifold intersection = RelativeEntity.Intersect(bb, RelativeMotion);
 				if(intersection != null)
 				{

@@ -5,13 +5,13 @@ import net.minecraft.network.chat.Component;
 
 import javax.annotation.Nonnull;
 
-public interface IAcceleration
+public interface IVelocity
 {
     boolean isApproxZero();
-    @Nonnull IAcceleration inverse();
+    @Nonnull IVelocity inverse();
     boolean hasLinearComponent(@Nonnull Transform actingOn);
-    @Nonnull LinearAcceleration getLinearComponent(@Nonnull Transform actingOn);
+    @Nonnull LinearVelocity getLinearComponent(@Nonnull Transform actingOn);
     boolean hasAngularComponent(@Nonnull Transform actingOn);
-    @Nonnull AngularAcceleration getAngularComponent(@Nonnull Transform actingOn);
+    @Nonnull AngularVelocity getAngularComponent(@Nonnull Transform actingOn);
     @Nonnull Component toFancyString();
 }

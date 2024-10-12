@@ -28,7 +28,7 @@ public class PoseCache
 	{
 		Transform poseA = GetPose(itemID, animationID, keyframeA, partName);
 		Transform poseB = GetPose(itemID, animationID, keyframeB, partName);
-		return Transform.Interpolate(poseA, poseB, Maths.Clamp(t, 0f, 1f));
+		return Transform.interpolate(poseA, poseB, Maths.Clamp(t, 0f, 1f));
 	}
 
 	@Nonnull

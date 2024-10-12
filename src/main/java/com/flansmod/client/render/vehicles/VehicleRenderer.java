@@ -53,11 +53,11 @@ public class VehicleRenderer extends EntityRenderer<VehicleEntity> implements IT
 	private void DoRender(@Nullable VehicleEntity vehicle, @Nonnull RenderContext renderContext, float deltaTick)
 	{
 		// Minecraft rendering starts upside down for legacy reasons
-		renderContext.Transforms.add(Transform.FromEuler(0f, 0f, 180f));
+		renderContext.Transforms.add(Transform.fromEuler(0f, 0f, 180f));
 		ResourceLocation skin = vehicle != null ? getTextureLocation(vehicle) : TextureManager.INTENTIONAL_MISSING_TEXTURE;
 		if(vehicle != null)
 		{
-			renderContext.Transforms.add(Transform.ExtractOrientation(vehicle.RootTransform(deltaTick), false, () -> "RootOri"));
+			renderContext.Transforms.add(Transform.extractOrientation(vehicle.RootTransform(deltaTick), false, () -> "RootOri"));
 		}
 		GetTurboRigWrapper().RenderPartIteratively(renderContext,
 			"body",

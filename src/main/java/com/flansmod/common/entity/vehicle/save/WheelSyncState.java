@@ -18,15 +18,15 @@ public class WheelSyncState implements IVehicleSaveNode
 
 	public WheelSyncState()
 	{
-		LocationCurrent = Transform.Identity();
-		LocationPrevious = Transform.Identity();
+		LocationCurrent = Transform.identity();
+		LocationPrevious = Transform.identity();
 	}
 
 	public void Load(@Nonnull VehicleEntity vehicle, @Nonnull CompoundTag tags)
 	{
 		if(tags.contains("loc"))
 		{
-			LocationCurrent = Transform.FromPosAndOriTag(tags.getCompound("loc"));
+			LocationCurrent = Transform.fromPosAndOriTag(tags.getCompound("loc"));
 			LocationPrevious = LocationCurrent;
 		}
 	}
@@ -35,7 +35,7 @@ public class WheelSyncState implements IVehicleSaveNode
 	public CompoundTag Save(@Nonnull VehicleEntity vehicle)
 	{
 		CompoundTag tags = new CompoundTag();
-		tags.put("loc", LocationCurrent.ToPosAndOriTag());
+		tags.put("loc", LocationCurrent.toPosAndOriTag());
 		return tags;
 	}
 }

@@ -1,6 +1,8 @@
 package com.flansmod.physics.common.units;
 
+import com.flansmod.physics.common.util.Maths;
 import com.flansmod.physics.common.util.Transform;
+import net.minecraft.network.chat.Component;
 import net.minecraft.world.phys.Vec3;
 import org.joml.Quaternionf;
 
@@ -25,13 +27,13 @@ public record OffsetForce(@Nonnull Vec3 Force, @Nonnull Vec3 Offset) implements 
 	}
 
 	@Nonnull
-	public Units.Force GetDefaultUnits() { return Units.Force.KgBlocksPerTickSquared; }
+	public Units.Force getDefaultUnits() { return Units.Force.KgBlocksPerTickSquared; }
 	@Nonnull
-	public Vec3 ConvertToUnits(@Nonnull Units.Force toUnits) { return Units.Force.Convert(Force, Units.Force.KgBlocksPerTickSquared, toUnits); }
+	public Vec3 convertToUnits(@Nonnull Units.Force toUnits) { return Units.Force.Convert(Force, Units.Force.KgBlocksPerTickSquared, toUnits); }
 	@Nonnull
-	public OffsetAcceleration ActingOn(double mass) { return new OffsetAcceleration(Force.scale(1d / mass), Offset); }
+	public OffsetAcceleration actingOn(double mass) { return new OffsetAcceleration(Force.scale(1d / mass), Offset); }
 	@Nonnull
-	public Quaternionf GetAngularComponentRadiansPerSecondSq(@Nonnull Transform actingOn)
+	public Quaternionf getAngularComponentRadiansPerSecondSq(@Nonnull Transform actingOn)
 	{
 		//Vec3 relativeOffset = Offset.subtract(actingOn.PositionVec3());
 		//double radiusSq = relativeOffset.lengthSqr();
@@ -53,19 +55,27 @@ public record OffsetForce(@Nonnull Vec3 Force, @Nonnull Vec3 Offset) implements 
 		return new Quaternionf();
 	}
 
-	@Override
-	public boolean HasLinearComponent(@Nonnull Transform actingOn) { return true; }
 	@Override @Nonnull
-	public LinearForce GetLinearComponent(@Nonnull Transform actingOn) { return new LinearForce(Force); }
+	public OffsetForce inverse() { return new OffsetForce(Force.scale(-1d), Offset); }
 	@Override
-	public boolean HasAngularComponent(@Nonnull Transform actingOn) { return true; }
+	public boolean isApproxZero() { return Force.lengthSqr() < Maths.EpsilonSq; }
+	@Override
+	public boolean hasLinearComponent(@Nonnull Transform actingOn) { return true; }
 	@Override @Nonnull
-	public Torque GetTorqueComponent(@Nonnull Transform actingOn)
+	public LinearForce getLinearComponent(@Nonnull Transform actingOn) { return new LinearForce(Force); }
+	@Override
+	public boolean hasAngularComponent(@Nonnull Transform actingOn) { return true; }
+	@Override @Nonnull
+	public Torque getTorqueComponent(@Nonnull Transform actingOn)
 	{
 		Vec3 relativeOffset = Offset.subtract(actingOn.positionVec3());
 		Vec3 axis = relativeOffset.cross(Force).normalize();
 		double magnitude = Force.length() * relativeOffset.length();
 		return new Torque(axis, magnitude);
 	}
+	@Override
+	public String toString() { return "OffsetForce ["+Force+"] at ["+Offset+"]"; }
+	@Override @Nonnull
+	public Component toFancyString() { return Component.translatable("flansphysicsmod.offset_force", Force.x, Force.y, Force.z, Offset.x, Offset.y, Offset.z); }
 
 }

@@ -112,7 +112,7 @@ public class ProjectionUtil
     public static ProjectedRange ProjectOBBMinMax(@Nonnull Vec3 projAxis,
                                                         @Nonnull TransformedBB obb)
     {
-        return ProjectOBBMinMax(projAxis, obb.GetCenter(), obb.HalfExtents(), obb.Loc().OriMatrix());
+        return ProjectOBBMinMax(projAxis, obb.GetCenter(), obb.HalfExtents(), obb.Loc().oriMatrix());
     }
     @Nonnull
     public static ProjectedRange ProjectOBBMinMax(@Nonnull Vec3 projAxis,

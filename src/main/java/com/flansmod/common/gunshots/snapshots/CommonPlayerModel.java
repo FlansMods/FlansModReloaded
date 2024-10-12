@@ -105,9 +105,9 @@ public class CommonPlayerModel
 
 		public void Pose(@Nonnull TransformStack stack)
 		{
-			stack.add(Transform.FromPos(x / 16f, y / 16f, z / 16f));
-			stack.add(Transform.FromPosAndQuat(Vec3.ZERO, (new Quaternionf()).rotationZYX(zRot, yRot, xRot), () -> "ZYX Rot"));
-			stack.add(Transform.FromPos(BoxMin.x / 16f + BoxDims.x / 32f, BoxMin.y / 16f + BoxDims.y / 32f, BoxMin.z / 16f + BoxDims.z / 32f));
+			stack.add(Transform.fromPos(x / 16f, y / 16f, z / 16f));
+			stack.add(Transform.fromPosAndQuat(Vec3.ZERO, (new Quaternionf()).rotationZYX(zRot, yRot, xRot), () -> "ZYX Rot"));
+			stack.add(Transform.fromPos(BoxMin.x / 16f + BoxDims.x / 32f, BoxMin.y / 16f + BoxDims.y / 32f, BoxMin.z / 16f + BoxDims.z / 32f));
 
 		}
 

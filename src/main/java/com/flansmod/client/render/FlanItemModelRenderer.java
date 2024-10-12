@@ -69,7 +69,7 @@ public abstract class FlanItemModelRenderer extends BlockEntityWithoutLevelRende
                              int light,
                              int overlay)
     {
-        TransformStack transformStack = new TransformStack(Transform.FromPose(ms));
+        TransformStack transformStack = new TransformStack(Transform.fromPose(ms));
         boolean shouldRenderIcon = false;
         if(stack.getItem() instanceof FlanItem flanItem && flanItem.ShouldRenderAsIcon(transformType))
             shouldRenderIcon = true;
@@ -83,15 +83,15 @@ public abstract class FlanItemModelRenderer extends BlockEntityWithoutLevelRende
                 switch(transformType)
                 {
                     case GUI -> {
-                        transformStack.add(Transform.FromEuler(0f, 0f, 180f));
-                        transformStack.add(Transform.FromPos(1d, 0d, 0d));
+                        transformStack.add(Transform.fromEuler(0f, 0f, 180f));
+                        transformStack.add(Transform.fromPos(1d, 0d, 0d));
                         //transformStack.add(Transform.FromScale(new Vector3f(-2.0f, -2.0f, 2.0f), () -> "\"Scale to GUI size\""));
-                        poseStack = transformStack.Top().ToNewPoseStack();
+                        poseStack = transformStack.Top().toNewPoseStack();
                         poseStack.scale(-1f, 1f, 1f);
                         Lighting.setupForFlatItems();
                     }
                     default -> {
-                        poseStack = transformStack.Top().ToNewPoseStack();
+                        poseStack = transformStack.Top().toNewPoseStack();
                         poseStack.scale(0.55f, 0.55f, 0.55f);
                         poseStack.translate(0.4f, 0.5f, 0.5f);
                     }
@@ -235,7 +235,7 @@ public abstract class FlanItemModelRenderer extends BlockEntityWithoutLevelRende
         }
         else
         {
-            transformStack.add(Transform.Error("Could not find AP '" + apName + "'"));
+            transformStack.add(Transform.error("Could not find AP '" + apName + "'"));
         }
     }
 

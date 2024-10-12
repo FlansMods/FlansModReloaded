@@ -904,7 +904,7 @@ public abstract class GunContext implements IStatCalculatorContext
 		{
 			ItemEntity itemEntity = new ItemEntity(EntityType.ITEM, level);
 			itemEntity.setItem(stack);
-			itemEntity.setPos(GetShootOrigin().PositionVec3());
+			itemEntity.setPos(GetShootOrigin().positionVec3());
 			level.addFreshEntity(itemEntity);
 		}
 

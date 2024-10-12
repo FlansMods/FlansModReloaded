@@ -21,22 +21,22 @@ public record TransformedBB(@Nonnull Transform Loc, @Nonnull Vector3f HalfExtent
 											  @Nonnull Vec3 entityPos,
 											  @Nonnull Transform space)
 	{
-		return new TransformedBB(space.GlobalToLocalTransform(Transform.FromPos(entityPos)),
+		return new TransformedBB(space.globalToLocalTransform(Transform.fromPos(entityPos)),
 			new Vector3f((float)entityBounds.getXsize()/2f, (float)entityBounds.getYsize()/2f, (float)entityBounds.getZsize()/2f));
 	}
 	@Nonnull
 	public static TransformedBB Of(@Nonnull Transform location, @Nonnull AABB aabb)
 	{
-		Transform centerLoc = Transform.Compose(
+		Transform centerLoc = Transform.compose(
 			location,
-			Transform.FromPos(aabb.getCenter()));
+			Transform.fromPos(aabb.getCenter()));
 		return new TransformedBB(centerLoc,
 			new Vector3f((float)aabb.getXsize()/2f, (float)aabb.getYsize()/2f, (float)aabb.getZsize()/2f));
 	}
 	@Nonnull
 	public static TransformedBB Of(@Nonnull AABB aabb)
 	{
-		return new TransformedBB(Transform.FromPos(aabb.getCenter()), new Vector3f((float)aabb.getXsize()/2f, (float)aabb.getYsize()/2f, (float)aabb.getZsize()/2f));
+		return new TransformedBB(Transform.fromPos(aabb.getCenter()), new Vector3f((float)aabb.getXsize()/2f, (float)aabb.getYsize()/2f, (float)aabb.getZsize()/2f));
 	}
 
 
@@ -52,7 +52,7 @@ public record TransformedBB(@Nonnull Transform Loc, @Nonnull Vector3f HalfExtent
 
 	public boolean Contains(@Nonnull Vec3 point)
 	{
-		Vec3 local = Loc.GlobalToLocalPosition(point);
+		Vec3 local = Loc.globalToLocalPosition(point);
 		return Maths.Abs(local.x) <= HalfExtents.x
 			&& Maths.Abs(local.y) <= HalfExtents.y
 			&& Maths.Abs(local.z) <= HalfExtents.z;
@@ -60,7 +60,7 @@ public record TransformedBB(@Nonnull Transform Loc, @Nonnull Vector3f HalfExtent
 	public boolean ApproxContains(@Nonnull Vec3 point) { return ApproxContains(point, 0.01d); }
 	public boolean ApproxContains(@Nonnull Vec3 point, double epsilon)
 	{
-		Vec3 local = Loc.GlobalToLocalPosition(point);
+		Vec3 local = Loc.globalToLocalPosition(point);
 		return Maths.Abs(local.x) <= HalfExtents.x + epsilon
 			&& Maths.Abs(local.y) <= HalfExtents.y + epsilon
 			&& Maths.Abs(local.z) <= HalfExtents.z + epsilon;
@@ -89,25 +89,25 @@ public record TransformedBB(@Nonnull Transform Loc, @Nonnull Vector3f HalfExtent
 	//	};
 	//}
 	@Nonnull
-	public Vec3 GetCenter() { return Loc.PositionVec3(); }
+	public Vec3 GetCenter() { return Loc.positionVec3(); }
 	@Nonnull
 	public Vec3 GetCorner(@Nonnull VertexIndex corner) {
 		return switch(corner)
 		{
-			case NegX_NegY_NegZ -> Loc.LocalToGlobalPosition(new Vec3(-HalfExtents.x, -HalfExtents.y, -HalfExtents.z));
-			case NegX_NegY_PosZ -> Loc.LocalToGlobalPosition(new Vec3(-HalfExtents.x, -HalfExtents.y, HalfExtents.z));
-			case NegX_PosY_NegZ -> Loc.LocalToGlobalPosition(new Vec3(-HalfExtents.x, HalfExtents.y, -HalfExtents.z));
-			case NegX_PosY_PosZ -> Loc.LocalToGlobalPosition(new Vec3(-HalfExtents.x, HalfExtents.y, HalfExtents.z));
-			case PosX_NegY_NegZ -> Loc.LocalToGlobalPosition(new Vec3(HalfExtents.x, -HalfExtents.y, -HalfExtents.z));
-			case PosX_NegY_PosZ -> Loc.LocalToGlobalPosition(new Vec3(HalfExtents.x, -HalfExtents.y, HalfExtents.z));
-			case PosX_PosY_NegZ -> Loc.LocalToGlobalPosition(new Vec3(HalfExtents.x, HalfExtents.y, -HalfExtents.z));
-			case PosX_PosY_PosZ -> Loc.LocalToGlobalPosition(new Vec3(HalfExtents.x, HalfExtents.y, HalfExtents.z));
+			case NegX_NegY_NegZ -> Loc.localToGlobalPosition(new Vec3(-HalfExtents.x, -HalfExtents.y, -HalfExtents.z));
+			case NegX_NegY_PosZ -> Loc.localToGlobalPosition(new Vec3(-HalfExtents.x, -HalfExtents.y, HalfExtents.z));
+			case NegX_PosY_NegZ -> Loc.localToGlobalPosition(new Vec3(-HalfExtents.x, HalfExtents.y, -HalfExtents.z));
+			case NegX_PosY_PosZ -> Loc.localToGlobalPosition(new Vec3(-HalfExtents.x, HalfExtents.y, HalfExtents.z));
+			case PosX_NegY_NegZ -> Loc.localToGlobalPosition(new Vec3(HalfExtents.x, -HalfExtents.y, -HalfExtents.z));
+			case PosX_NegY_PosZ -> Loc.localToGlobalPosition(new Vec3(HalfExtents.x, -HalfExtents.y, HalfExtents.z));
+			case PosX_PosY_NegZ -> Loc.localToGlobalPosition(new Vec3(HalfExtents.x, HalfExtents.y, -HalfExtents.z));
+			case PosX_PosY_PosZ -> Loc.localToGlobalPosition(new Vec3(HalfExtents.x, HalfExtents.y, HalfExtents.z));
 		};
 	}
 	@Nonnull
 	public Vec3 GetAxis(@Nonnull Direction dir)
 	{
-		return Loc.DirectionVec3(dir);
+		return Loc.directionVec(dir);
 	}
 	@Nonnull
 	public IPolygon GetFace(@Nonnull Direction dir)

@@ -187,8 +187,8 @@ public class VehicleEntity extends Entity implements
 
 	// -------------------------------------------------------------------------------------------
 	// Transform and some vanilla overrides. We want to use Quaternions, pleassse Minecraft
-	@Override public float getYRot() { return GetWorldToEntity().GetCurrent().Yaw(); }
-	@Override public float getXRot() { return GetWorldToEntity().GetCurrent().Pitch(); }
+	@Override public float getYRot() { return GetWorldToEntity().GetCurrent().yaw(); }
+	@Override public float getXRot() { return GetWorldToEntity().GetCurrent().pitch(); }
 	@Override public void setYRot(float yaw) { SetYaw(yaw); }
 	@Override public void setXRot(float pitch) { SetPitch(pitch); }
 	//@Override public void setPos(double x, double y, double z) { SetPosition(x, y, z); }
@@ -478,7 +478,7 @@ public class VehicleEntity extends Entity implements
 	{
 		if(componentPath.Type() == EPartDefComponent.Wheel)
 		{
-			stack.add(GetWorldToPartPrevious(componentPath.Part()).Inverse());
+			stack.add(GetWorldToPartPrevious(componentPath.Part()).inverse());
 			stack.add(GetPartPhysics(componentPath).LocationPrev);
 		}
 	}
@@ -487,7 +487,7 @@ public class VehicleEntity extends Entity implements
 	{
 		if(componentPath.Type() == EPartDefComponent.Wheel)
 		{
-			stack.add(GetWorldToPartCurrent(componentPath.Part()).Inverse());
+			stack.add(GetWorldToPartCurrent(componentPath.Part()).inverse());
 			stack.add(GetPartPhysics(componentPath).LocationCurrent);
 		}
 	}
@@ -627,7 +627,7 @@ public class VehicleEntity extends Entity implements
 		{
 			if(kvp.getKey().IsRoot())
 			{
-				Transform spawnedTransform = Transform.FromEntity(this);
+				Transform spawnedTransform = Transform.fromEntity(this);
 				ColliderHandle handle = physics.RegisterDynamic(kvp.getValue(), spawnedTransform);
 				PhysicsParts.put(VehicleComponentPath.coreArticulation, new PhysicsComponent(spawnedTransform, handle));
 			}
@@ -849,11 +849,11 @@ public class VehicleEntity extends Entity implements
 				}
 				else if(physicsBounds == null)
 				{
-					physicsBounds = new AABB(part.LocationCurrent.PositionVec3(), part.LocationCurrent.PositionVec3());
+					physicsBounds = new AABB(part.LocationCurrent.positionVec3(), part.LocationCurrent.positionVec3());
 				}
 				else
 				{
-					physicsBounds = physicsBounds.expandTowards(part.LocationCurrent.PositionVec3());
+					physicsBounds = physicsBounds.expandTowards(part.LocationCurrent.positionVec3());
 				}
 
 			}
@@ -1330,15 +1330,15 @@ public class VehicleEntity extends Entity implements
 	public void SyncTransformToEntity()
 	{
 		Transform worldRoot = GetWorldToEntity().GetCurrent();
-		Vector3f euler = worldRoot.Euler();
-		setPos(worldRoot.PositionVec3());
+		Vector3f euler = worldRoot.euler();
+		setPos(worldRoot.positionVec3());
 		yRotO = euler.y;
 		xRotO = euler.x;
 	}
 	@Override
 	public void SyncEntityToTransform()
 	{
-		Transform coreTransformNew = Transform.FromPosAndEuler(getPosition(0f), getXRot(), getYRot(), 0f);
+		Transform coreTransformNew = Transform.fromPosAndEuler(getPosition(0f), getXRot(), getYRot(), 0f);
 
 		if(PhysicsParts.isEmpty())
 		{
@@ -1358,8 +1358,8 @@ public class VehicleEntity extends Entity implements
 				if(kvp.getKey().Part().IsRoot())
 					continue;
 
-				Transform relativeTransformOld = coreTransformOld.GlobalToLocalTransform(kvp.getValue().LocationCurrent);
-				Transform partTransformNew = coreTransformNew.LocalToGlobalTransform(relativeTransformOld);
+				Transform relativeTransformOld = coreTransformOld.globalToLocalTransform(kvp.getValue().LocationCurrent);
+				Transform partTransformNew = coreTransformNew.localToGlobalTransform(relativeTransformOld);
 				newPartPositions.put(kvp.getValue().PhysicsHandle, partTransformNew);
 				kvp.getValue().LocationCurrent = partTransformNew;
 				kvp.getValue().LocationPrev = partTransformNew;

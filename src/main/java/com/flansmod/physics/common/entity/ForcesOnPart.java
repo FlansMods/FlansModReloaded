@@ -62,12 +62,12 @@ public class ForcesOnPart
 	@Nonnull
 	public LinearVelocity ApplyLinearAcceleration(@Nonnull LinearVelocity motion, @Nonnull Transform partTransform, float mass, boolean includeReactions)
 	{
-		return motion.add(SumLinearAcceleration(partTransform, mass, includeReactions).ApplyOneTick());
+		return motion.add(SumLinearAcceleration(partTransform, mass, includeReactions).applyOneTick());
 	}
 	@Nonnull
 	public LinearAcceleration SumLinearAcceleration(@Nonnull Transform partTransform, double mass, boolean includeReactions)
 	{
-		return SumLinearForces(partTransform, includeReactions).ActingOn(mass);
+		return SumLinearForces(partTransform, includeReactions).actingOn(mass);
 	}
 	@Nonnull
 	public LinearForce SumLinearForces(@Nonnull Transform partTransform, boolean includeReactions)
@@ -76,18 +76,18 @@ public class ForcesOnPart
 
 		for(IForce force : Forces)
 		{
-			if(force.HasLinearComponent(partTransform))
+			if(force.hasLinearComponent(partTransform))
 			{
-				motion = motion.add(force.GetLinearComponent(partTransform));
+				motion = motion.add(force.getLinearComponent(partTransform));
 			}
 		}
 		if(includeReactions)
 		{
 			for(IForce force : ReactionForces)
 			{
-				if(force.HasLinearComponent(partTransform))
+				if(force.hasLinearComponent(partTransform))
 				{
-					motion = motion.add(force.GetLinearComponent(partTransform));
+					motion = motion.add(force.getLinearComponent(partTransform));
 				}
 			}
 		}
@@ -107,7 +107,7 @@ public class ForcesOnPart
 	@Nonnull
 	public AngularAcceleration SumAngularAcceleration(@Nonnull Transform partTransform, @Nonnull Vec3 momentOfInertia, boolean includeReactions)
 	{
-		return SumTorque(partTransform, includeReactions).ActingOn(momentOfInertia);
+		return SumTorque(partTransform, includeReactions).actingOn(momentOfInertia);
 	}
 
 	@Nonnull
@@ -117,18 +117,18 @@ public class ForcesOnPart
 
 		for (IForce force : Forces)
 		{
-			if (force.HasAngularComponent(partTransform))
+			if (force.hasAngularComponent(partTransform))
 			{
-				sum = sum.compose(force.GetTorqueComponent(partTransform));
+				sum = sum.compose(force.getTorqueComponent(partTransform));
 			}
 		}
 		if (includeReactions)
 		{
 			for (IForce force : ReactionForces)
 			{
-				if (force.HasAngularComponent(partTransform))
+				if (force.hasAngularComponent(partTransform))
 				{
-					sum = sum.compose(force.GetTorqueComponent(partTransform));
+					sum = sum.compose(force.getTorqueComponent(partTransform));
 				}
 			}
 		}

@@ -49,7 +49,7 @@ public class FlansPhysicsMod
 
     public FlansPhysicsMod()
     {
-        Transform.RunTests();
+        Transform.runTests();
         MinecraftForge.EVENT_BUS.register(this);
 
         IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();

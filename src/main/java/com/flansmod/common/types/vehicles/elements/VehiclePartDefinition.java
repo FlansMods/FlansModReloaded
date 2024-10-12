@@ -52,5 +52,5 @@ public class VehiclePartDefinition
 	public boolean IsDamageable() { return damage.IsActive(); }
 	public boolean IsArticulated() { return articulation.active; }
 	@Nonnull
-	public Lazy<Transform> LocalTransform = Lazy.of(() -> Transform.FromPosAndEuler(localPosition, localEulerAngles.toVector3f(), () -> "Default Pose:" + partName));
+	public Lazy<Transform> LocalTransform = Lazy.of(() -> Transform.fromPosAndEuler(localPosition, localEulerAngles.toVector3f(), () -> "Default Pose:" + partName));
 }

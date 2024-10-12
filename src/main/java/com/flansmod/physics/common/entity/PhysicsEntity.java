@@ -52,8 +52,8 @@ public abstract class PhysicsEntity extends Entity
     protected void syncTransformToEntity()
     {
         Transform worldRoot = getRootComponent().getCurrentTransform();
-        Vector3f euler = worldRoot.Euler();
-        setPos(worldRoot.PositionVec3());
+        Vector3f euler = worldRoot.euler();
+        setPos(worldRoot.positionVec3());
         yRotO = euler.y;
         xRotO = euler.x;
         setXRot(euler.x);
@@ -62,7 +62,7 @@ public abstract class PhysicsEntity extends Entity
     @Nonnull
     protected Transform getEntityRootAsTransform()
     {
-        return Transform.FromEntity(this);
+        return Transform.fromEntity(this);
     }
 
     protected abstract void tickPhysics();

@@ -46,8 +46,8 @@ public class RaycastAction extends ActionInstance
 	public void OnTriggerServer(int triggerIndex)
 	{
 		Transform ray = Group.Context.Gun.GetShootOrigin();
-		Vec3 origin = ray.PositionVec3();
-		Vec3 direction = ray.ForwardVec3();
+		Vec3 origin = ray.positionVec3();
+		Vec3 direction = ray.forward();
 		float reach = Reach();
 		Level level = Group.Context.Gun.GetLevel();
 		if(level != null)

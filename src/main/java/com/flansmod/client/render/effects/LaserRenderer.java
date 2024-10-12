@@ -130,8 +130,8 @@ public class LaserRenderer
 		{
 			switch(playerGunContext.GetHand())
 			{
-				case MAIN_HAND -> { laserOrigin = Transform.Compose(laserOrigin, Transform.FromEuler(1f, 1f, 0f)); }
-				case OFF_HAND -> { laserOrigin = Transform.Compose(laserOrigin, Transform.FromEuler(1f, -1f, 0f)); }
+				case MAIN_HAND -> { laserOrigin = Transform.compose(laserOrigin, Transform.fromEuler(1f, 1f, 0f)); }
+				case OFF_HAND -> { laserOrigin = Transform.compose(laserOrigin, Transform.fromEuler(1f, -1f, 0f)); }
 			}
 		}
 
@@ -168,25 +168,25 @@ public class LaserRenderer
 			List<HitResult> hits = new ArrayList<>();
 
 			// Cast to center screen
-			HitResult castFromEye = raytracer.CastBullet(ignoreEntity, eyeOrigin.PositionVec3(), laserOrigin.ForwardVec3().scale(100d));
+			HitResult castFromEye = raytracer.CastBullet(ignoreEntity, eyeOrigin.positionVec3(), laserOrigin.forward().scale(100d));
 			if(castFromEye != null)
 			{
 				// Then cast from the laser origin to that point, unless it would be completely nonsense
-				Vec3 laserRay = castFromEye.getLocation().subtract(laserOrigin.PositionVec3());
+				Vec3 laserRay = castFromEye.getLocation().subtract(laserOrigin.positionVec3());
 				Vec3 laserRayDir = laserRay.normalize();
-				double dot = laserOrigin.ForwardVec3().dot(laserRayDir);
+				double dot = laserOrigin.forward().dot(laserRayDir);
 				if (dot > 0.5d)
 				{
-					HitResult castFromLaser = raytracer.CastBullet(ignoreEntity, laserOrigin.PositionVec3(), laserRay.scale(1.02d));
+					HitResult castFromLaser = raytracer.CastBullet(ignoreEntity, laserOrigin.positionVec3(), laserRay.scale(1.02d));
 					if(castFromLaser != null)
 					{
-						Vec3 normal = laserOrigin.ForwardVec3().scale(-1f);
+						Vec3 normal = laserOrigin.forward().scale(-1f);
 						if(castFromLaser instanceof BlockHitResult blockHit)
 							normal = new Vec3(blockHit.getDirection().getNormal().getX(),
 								blockHit.getDirection().getNormal().getY(),
 								blockHit.getDirection().getNormal().getZ());
 
-						RenderLaserBeam(poseStack, camera, laserOrigin.PositionVec3(), castFromLaser.getLocation(), colour);
+						RenderLaserBeam(poseStack, camera, laserOrigin.positionVec3(), castFromLaser.getLocation(), colour);
 						FlansModClient.DECAL_RENDERER.AddOrUpdateDecal(LaserTexture, id, castFromLaser.getLocation(),
 							normal, colour, 0.0f, 2);
 						return;
@@ -194,12 +194,12 @@ public class LaserRenderer
 				}
 
 
-				Vec3 normal = laserOrigin.ForwardVec3().scale(-1f);
+				Vec3 normal = laserOrigin.forward().scale(-1f);
 				if(castFromEye instanceof BlockHitResult blockHit)
 					normal = new Vec3(blockHit.getDirection().getNormal().getX(),
 						blockHit.getDirection().getNormal().getY(),
 						blockHit.getDirection().getNormal().getZ());
-				RenderLaserBeam(poseStack, camera, laserOrigin.PositionVec3(), castFromEye.getLocation(), colour);
+				RenderLaserBeam(poseStack, camera, laserOrigin.positionVec3(), castFromEye.getLocation(), colour);
 				FlansModClient.DECAL_RENDERER.AddOrUpdateDecal(LaserTexture, id, castFromEye.getLocation(),
 					normal, colour, 0.0f, 2);
 				return;
@@ -207,8 +207,8 @@ public class LaserRenderer
 
 			RenderLaserBeam(poseStack,
 				camera,
-				laserOrigin.PositionVec3(),
-				laserOrigin.PositionVec3().add(laserOrigin.ForwardVec3().scale(100d)),
+				laserOrigin.positionVec3(),
+				laserOrigin.positionVec3().add(laserOrigin.forward().scale(100d)),
 				colour);
 		}
 	}

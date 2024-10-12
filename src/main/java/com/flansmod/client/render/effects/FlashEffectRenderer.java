@@ -156,14 +156,14 @@ public class FlashEffectRenderer
 			renderContext.Transforms.PushSaveState();
 
 			if(camera != null)
-				renderContext.Transforms.add(Transform.FromPos(camera.getPosition().scale(-1d)));
+				renderContext.Transforms.add(Transform.fromPos(camera.getPosition().scale(-1d)));
 
 			if(transformType.firstPerson())
 			{
 				FirstPersonManager.ApplyEyeToRoot(renderContext.Transforms, gunContext, transformType);
 				FirstPersonManager.ApplyRootToModel(renderContext.Transforms, gunContext, transformType);
 				FirstPersonManager.ApplyModelToAP(renderContext.Transforms, gunContext, relativeAPName, true);
-				renderContext.Transforms.add(Transform.FromScale(2.0f));
+				renderContext.Transforms.add(Transform.fromScale(2.0f));
 			}
 			else
 			{
@@ -172,7 +172,7 @@ public class FlashEffectRenderer
 			}
 
 
-			renderContext.Transforms.add(Transform.FromPos(0d, 0d, -1d/16d));
+			renderContext.Transforms.add(Transform.fromPos(0d, 0d, -1d/16d));
 			renderer.RenderDirect(null, null, renderContext);
 			renderContext.Transforms.PopSaveState();
 		}

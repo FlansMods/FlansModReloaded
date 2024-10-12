@@ -1,11 +1,13 @@
 package com.flansmod.physics.common.units;
 
 import com.flansmod.physics.common.util.Maths;
+import com.flansmod.physics.common.util.Transform;
+import net.minecraft.network.chat.Component;
 import net.minecraft.world.phys.Vec3;
 
 import javax.annotation.Nonnull;
 
-public record LinearVelocity(@Nonnull Vec3 Velocity)
+public record LinearVelocity(@Nonnull Vec3 Velocity) implements IVelocity
 {
 	public static final LinearVelocity Zero = new LinearVelocity(Vec3.ZERO);
 
@@ -26,17 +28,31 @@ public record LinearVelocity(@Nonnull Vec3 Velocity)
 	public LinearVelocity scale(double scale) { return new LinearVelocity(Velocity.scale(scale)); }
 
 	@Nonnull
-	public Units.Speed GetDefaultUnits() { return Units.Speed.BlocksPerTick; }
+	public Units.Speed getDefaultUnits() { return Units.Speed.BlocksPerTick; }
 	@Nonnull
-	public Vec3 ConvertToUnits(@Nonnull Units.Speed toUnits) { return Units.Speed.Convert(Velocity, Units.Speed.BlocksPerTick, toUnits); }
+	public Vec3 convertToUnits(@Nonnull Units.Speed toUnits) { return Units.Speed.Convert(Velocity, Units.Speed.BlocksPerTick, toUnits); }
 
 	@Nonnull
-	public Vec3 ApplyOverTicks(double ticks) { return Velocity.scale(ticks); }
+	public Vec3 applyOverTicks(double ticks) { return Velocity.scale(ticks); }
 	@Nonnull
-	public Vec3 ApplyOneTick() { return Velocity; }
+	public Vec3 applyOneTick() { return Velocity; }
 
 
+	@Override @Nonnull
+	public LinearVelocity inverse() { return new LinearVelocity(Velocity.scale(-1d)); }
+	@Override
+	public boolean isApproxZero() { return Velocity.lengthSqr() < Maths.EpsilonSq; }
+	@Override
+	public boolean hasLinearComponent(@Nonnull Transform actingOn) { return false; }
+	@Override @Nonnull
+	public LinearVelocity getLinearComponent(@Nonnull Transform actingOn) { return this; }
+	@Override
+	public boolean hasAngularComponent(@Nonnull Transform actingOn) { return true; }
+	@Override @Nonnull
+	public AngularVelocity getAngularComponent(@Nonnull Transform actingOn) { return AngularVelocity.Zero; }
+	@Override
+	public String toString() { return "LinearVelocity ["+Velocity+"]"; }
+	@Override @Nonnull
+	public Component toFancyString() { return Component.translatable("flansphysicsmod.linear_velocity", Velocity.x, Velocity.y, Velocity.z); }
 
-
-	public boolean IsApproxZero() { return Velocity.lengthSqr() < Maths.EpsilonSq; }
 }

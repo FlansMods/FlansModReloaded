@@ -9,9 +9,9 @@ public interface ITransformPair
 	ITransformPair Identity = new ITransformPair()
 	{
 		@Override @Nonnull
-		public Transform GetPrevious() { return Transform.Identity(); }
+		public Transform GetPrevious() { return Transform.identity(); }
 		@Override @Nonnull
-		public Transform GetCurrent() { return Transform.Identity(); }
+		public Transform GetCurrent() { return Transform.identity(); }
 	};
 
 	@Nonnull Transform GetPrevious();
@@ -24,7 +24,7 @@ public interface ITransformPair
 			return GetPrevious();
 		if(Maths.Approx(dt, 1f))
 			return GetCurrent();
-		return Transform.Interpolate(GetPrevious(), GetCurrent(), dt);
+		return Transform.interpolate(GetPrevious(), GetCurrent(), dt);
 	}
 
 	@Nonnull
@@ -41,8 +41,8 @@ public interface ITransformPair
 	{
 		return new ITransformPair()
 		{
-			@Override @Nonnull public Transform GetPrevious() { return Transform.Compose(a.GetPrevious(), b.GetPrevious()); }
-			@Override @Nonnull public Transform GetCurrent() { return Transform.Compose(a.GetCurrent(), b.GetCurrent()); }
+			@Override @Nonnull public Transform GetPrevious() { return Transform.compose(a.GetPrevious(), b.GetPrevious()); }
+			@Override @Nonnull public Transform GetCurrent() { return Transform.compose(a.GetCurrent(), b.GetCurrent()); }
 		};
 	}
 }

@@ -699,7 +699,7 @@ public class ActionStack
 				groupInstance.AddExtraPositionsForNetSync(kvp.getKey(), positions);
 			}
 			if (groupInstance.ShouldAddPlayerPosForNetSync())
-				positions.add(groupContext.Gun.GetShootOrigin().PositionVec3());
+				positions.add(groupContext.Gun.GetShootOrigin().positionVec3());
 
 			// Then send them some messages about the shot
 			FlansModPacketHandler.SendToAllAroundPoints(

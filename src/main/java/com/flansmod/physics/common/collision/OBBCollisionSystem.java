@@ -388,7 +388,7 @@ public class OBBCollisionSystem
 			if(objectA == null)
 				continue;
 
-			boolean movingA = !objectA.NextFrameLinearMotion.IsApproxZero() || !objectA.NextFrameAngularMotion.IsApproxZero();
+			boolean movingA = !objectA.NextFrameLinearMotion.isApproxZero() || !objectA.NextFrameAngularMotion.isApproxZero();
 
 			// Check against the static objects
 			AABB sweepTestAABB = objectA.GetSweepTestAABB();
@@ -421,7 +421,7 @@ public class OBBCollisionSystem
 				DynamicObject objectB = Dynamics.get(handleB);
 				if(objectB == null)
 					continue;
-				boolean movingB = !objectB.NextFrameLinearMotion.IsApproxZero() || !objectB.NextFrameAngularMotion.IsApproxZero();
+				boolean movingB = !objectB.NextFrameLinearMotion.isApproxZero() || !objectB.NextFrameAngularMotion.isApproxZero();
 
 				if (movingA || movingB)
 				{
@@ -584,8 +584,8 @@ public class OBBCollisionSystem
 					LinearVelocity linearV = dyn.NextFrameLinearMotion;
 					AngularVelocity angularV = dyn.NextFrameAngularMotion;
 
-					Vec3 v = linearV.ApplyOneTick();
-					Quaternionf q = angularV.ApplyOneTick();
+					Vec3 v = linearV.applyOneTick();
+					Quaternionf q = angularV.applyOneTick();
 					//boolean collisionX = false, collisionY = false, collisionZ = false;
 
 					ProjectedRange xMoveReq = null, yMoveReq = null, zMoveReq = null;

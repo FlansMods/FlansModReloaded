@@ -43,5 +43,5 @@ public class GunContextTileEntity extends GunContextInventoryItem
 	public Level GetLevel() { return ShooterContext.Level(); }
 	@Override
 	@Nullable
-	public Transform GetPosition() { return Transform.FromBlockPos(ShooterContext.Pos, () -> "\"BlockPos\""); }
+	public Transform GetPosition() { return Transform.fromBlockPos(ShooterContext.Pos, () -> "\"BlockPos\""); }
 }
