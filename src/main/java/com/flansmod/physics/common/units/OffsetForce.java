@@ -62,7 +62,7 @@ public record OffsetForce(@Nonnull Vec3 Force, @Nonnull Vec3 Offset) implements 
 	@Override @Nonnull
 	public Torque GetTorqueComponent(@Nonnull Transform actingOn)
 	{
-		Vec3 relativeOffset = Offset.subtract(actingOn.PositionVec3());
+		Vec3 relativeOffset = Offset.subtract(actingOn.positionVec3());
 		Vec3 axis = relativeOffset.cross(Force).normalize();
 		double magnitude = Force.length() * relativeOffset.length();
 		return new Torque(axis, magnitude);

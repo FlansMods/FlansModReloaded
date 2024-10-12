@@ -51,10 +51,10 @@ public interface IPlane extends ISeparationAxis
     default boolean IsOBBFullyAbove(@Nonnull Vec3 point, @Nonnull Vector3f halfExtents, @Nonnull Matrix3f ori) { return ProjectOBBMax(point, halfExtents, ori) >= GetDistance(); }
     default double GetOBBHeightAbove(@Nonnull Vec3 point, @Nonnull Vector3f halfExtents, @Nonnull Matrix3f ori) { return ProjectOBBMin(point, halfExtents, ori) - GetDistance(); }
     default double GetOBBHeightBelow(@Nonnull Vec3 point, @Nonnull Vector3f halfExtents, @Nonnull Matrix3f ori) { return ProjectOBBMax(point, halfExtents, ori) - GetDistance(); }
-    default boolean IsOBBFullyBelow(@Nonnull TransformedBB bb) { return IsOBBFullyBelow(bb.GetCenter(), bb.HalfExtents(), bb.Loc().OriMatrix()); }
-    default boolean IsOBBFullyAbove(@Nonnull TransformedBB bb) { return IsOBBFullyAbove(bb.GetCenter(), bb.HalfExtents(), bb.Loc().OriMatrix()); }
-    default double GetOBBHeightAbove(@Nonnull TransformedBB bb) { return GetOBBHeightAbove(bb.GetCenter(), bb.HalfExtents(), bb.Loc().OriMatrix()); }
-    default double GetOBBHeightBelow(@Nonnull TransformedBB bb) { return GetOBBHeightBelow(bb.GetCenter(), bb.HalfExtents(), bb.Loc().OriMatrix()); }
+    default boolean IsOBBFullyBelow(@Nonnull TransformedBB bb) { return IsOBBFullyBelow(bb.GetCenter(), bb.HalfExtents(), bb.Loc().oriMatrix()); }
+    default boolean IsOBBFullyAbove(@Nonnull TransformedBB bb) { return IsOBBFullyAbove(bb.GetCenter(), bb.HalfExtents(), bb.Loc().oriMatrix()); }
+    default double GetOBBHeightAbove(@Nonnull TransformedBB bb) { return GetOBBHeightAbove(bb.GetCenter(), bb.HalfExtents(), bb.Loc().oriMatrix()); }
+    default double GetOBBHeightBelow(@Nonnull TransformedBB bb) { return GetOBBHeightBelow(bb.GetCenter(), bb.HalfExtents(), bb.Loc().oriMatrix()); }
 
     @Nonnull default Optional<Vec3> LinePlaneIntersect(@Nonnull Vec3 pointA, @Nonnull Vec3 pointB) { return RayPlaneIntersect(pointA, pointB.subtract(pointA)); }
 
@@ -89,7 +89,7 @@ public interface IPlane extends ISeparationAxis
         return bestDir;
     }
     @Nonnull
-    default Direction SelectFaceOBBMax(@Nonnull TransformedBB obb) { return SelectFaceOBBMax(obb.GetCenter(), obb.HalfExtents(), obb.Loc().OriMatrix()); }
+    default Direction SelectFaceOBBMax(@Nonnull TransformedBB obb) { return SelectFaceOBBMax(obb.GetCenter(), obb.HalfExtents(), obb.Loc().oriMatrix()); }
     @Nonnull
     default Direction SelectFaceOBBMin(@Nonnull Vec3 center, @Nonnull Vector3f halfExtents, @Nonnull Matrix3f ori) { return SelectFaceOBBMax(center, halfExtents, ori).getOpposite(); }
     @Nonnull
@@ -108,14 +108,14 @@ public interface IPlane extends ISeparationAxis
 
         for(int i = 0; i < incident.GetNumVertices(); i++)
         {
-            Transform vCurrent = Transform.FromPos(incident.GetVertex(i));
+            Transform vCurrent = Transform.fromPos(incident.GetVertex(i));
             Vec3 vEdge = incident.GetEdgeVector(i);
             DebugRenderer.RenderLine(vCurrent, 2, new Vector4f(1.0f, 0.0f, 0.0f, 1.0f), vEdge);
             DebugRenderer.RenderPoint(vCurrent, 2, new Vector4f(1.0f, 0.0f, 0.0f, 1.0f));
         }
         for(int i = 0; i < reference.GetNumVertices(); i++)
         {
-            Transform vCurrent = Transform.FromPos(reference.GetVertex(i));
+            Transform vCurrent = Transform.fromPos(reference.GetVertex(i));
             Vec3 vEdge = reference.GetEdgeVector(i);
             DebugRenderer.RenderLine(vCurrent, 2, new Vector4f(0.0f, 1.0f, 0.0f, 1.0f), vEdge);
             DebugRenderer.RenderPoint(vCurrent, 2, new Vector4f(0.0f, 1.0f, 0.0f, 1.0f));
@@ -137,17 +137,17 @@ public interface IPlane extends ISeparationAxis
 
     default boolean AreOBBsFullyBelow(@Nonnull TransformedBBCollection set)
     {
-        Matrix3f mat = set.Location().OriMatrix();
-        for(int i = 0; i < set.GetCount(); i++)
-            if(!IsOBBFullyBelow(set.GetCenter(i), set.GetHalfExtents(i), mat))
+        Matrix3f mat = set.Location().oriMatrix();
+        for(int i = 0; i < set.getCount(); i++)
+            if(!IsOBBFullyBelow(set.getCenter(i), set.getHalfExtents(i), mat))
                 return false;
         return true;
     }
     default boolean AreOBBsFullyAbove(@Nonnull TransformedBBCollection set)
     {
-        Matrix3f mat = set.Location().OriMatrix();
-        for(int i = 0; i < set.GetCount(); i++)
-            if(!IsOBBFullyAbove(set.GetCenter(i), set.GetHalfExtents(i), mat))
+        Matrix3f mat = set.Location().oriMatrix();
+        for(int i = 0; i < set.getCount(); i++)
+            if(!IsOBBFullyAbove(set.getCenter(i), set.getHalfExtents(i), mat))
                 return false;
         return true;
     }

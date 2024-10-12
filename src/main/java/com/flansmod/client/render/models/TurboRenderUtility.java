@@ -238,12 +238,12 @@ public class TurboRenderUtility
 							 @Nullable ActionStack actionStack)
 	{
 		if(Unbaked == null)
-			return Transform.Error("Unbaked Rig Missing");
+			return Transform.error("Unbaked Rig Missing");
 
 		if(actionStack != null)
 		{
 			if(!animationSet.IsValid())
-				return Transform.Error("Missing animation set");
+				return Transform.error("Missing animation set");
 
 			List<AnimationAction> animActions = new ArrayList<>();
 			for(ActionGroupInstance group : actionStack.GetActiveActionGroups())
@@ -316,7 +316,7 @@ public class TurboRenderUtility
 				}
 			}
 
-			Transform resultPose = poses.size() > 0 ? Transform.Interpolate(poses) : Transform.Identity(() -> "\"Anim no-op\"");
+			Transform resultPose = poses.size() > 0 ? Transform.interpolate(poses) : Transform.identity(() -> "\"Anim no-op\"");
 			TurboModel model = Unbaked.GetPart(partName);
 			if (model != null)
 			{
@@ -326,7 +326,7 @@ public class TurboRenderUtility
 			return resultPose;
 		}
 
-		return Transform.Identity(() -> "\"No Anims\"");
+		return Transform.identity(() -> "\"No Anims\"");
 	}
 	public void RenderPartIteratively(@Nonnull RenderContext renderContext,
 										 @Nonnull String partName,
@@ -393,7 +393,7 @@ public class TurboRenderUtility
 	public void RenderPart(@Nonnull TurboModel.Baked bakedModel, @Nonnull VertexConsumer vc, @Nonnull TransformStack transformStack, int light, int overlay)
 	{
 		Minecraft.getInstance().getItemRenderer().renderQuadList(
-			transformStack.Top().ToNewPoseStack(),
+			transformStack.Top().toNewPoseStack(),
 			vc,
 			bakedModel.getQuads(
 				null,
@@ -414,7 +414,7 @@ public class TurboRenderUtility
 			PoseStack modelViewStack = RenderSystem.getModelViewStack();
 			modelViewStack.pushPose();
 			modelViewStack.setIdentity();
-			modelViewStack.mulPoseMatrix(transformStack.Top().ToNewPoseStack().last().pose());
+			modelViewStack.mulPoseMatrix(transformStack.Top().toNewPoseStack().last().pose());
 			RenderSystem.applyModelViewMatrix();
 
 			// Render without transformation on the CPU
@@ -436,11 +436,11 @@ public class TurboRenderUtility
 					TurboFace face = element.GetFace(direction);
 					Vector3f[] positions = element.GetFaceVertices(direction, true);
 					Vector3f normal = element.GetNormal(direction, true);
-					Vec3 nPosed = topPose.LocalToGlobalDirection(new Vec3(normal.x, normal.y, normal.z));
+					Vec3 nPosed = topPose.localToGlobalDirection(new Vec3(normal.x, normal.y, normal.z));
 
 					for (int i = 0; i < 4; i++)
 					{
-						Vec3 vPosed = topPose.LocalToGlobalPosition(new Vec3(
+						Vec3 vPosed = topPose.localToGlobalPosition(new Vec3(
 							positions[i].x * scale,
 							positions[i].y * scale,
 							positions[i].z * scale));

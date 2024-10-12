@@ -150,7 +150,7 @@ public class PhysicsDebugRenderer
     {
         Vec3 normal = axis.GetNormal();
         Vec3 up = new Vec3(normal.z, -normal.x, -normal.y);
-        Transform frame = Transform.FromPositionAndLookDirection(position, axis.GetNormal(), up);
+        Transform frame = Transform.fromPositionAndLookDirection(position, axis.GetNormal(), up);
         DebugRenderer.RenderArrow(frame, 2, palette.CollisionStatic, new Vec3(0d, 0d, -1d));
         DebugRenderer.RenderCube(frame, 2, palette.CollisionStatic, new Vector3f(0.25f, 0.25f, 0f));
     }
@@ -170,17 +170,17 @@ public class PhysicsDebugRenderer
             {
                 Vec3 vCurrent = collisionSurface.GetVertexLooped(i);
                 Vec3 vNext = collisionSurface.GetVertexLooped(i + 1);
-                DebugRenderer.RenderPoint(Transform.FromPos(vCurrent), 2, palette.CollisionStatic);
-                DebugRenderer.RenderLine(Transform.FromPos(vCurrent), 2, palette.CollisionStatic, vNext.subtract(vCurrent));
+                DebugRenderer.RenderPoint(Transform.fromPos(vCurrent), 2, palette.CollisionStatic);
+                DebugRenderer.RenderLine(Transform.fromPos(vCurrent), 2, palette.CollisionStatic, vNext.subtract(vCurrent));
                 avgPos = avgPos.add(vCurrent);
             }
             if(numVerts > 0) {
-                Transform collisionFrame = Transform.FromPositionAndLookDirection(avgPos.scale(1d / numVerts), normal, up);
+                Transform collisionFrame = Transform.fromPositionAndLookDirection(avgPos.scale(1d / numVerts), normal, up);
                 DebugRenderer.RenderArrow(collisionFrame, 2, palette.CollisionStatic, new Vec3(0d, 0d, -1d));
                 //staticCollisionPoints.add(collisionFrame.PositionVec3());
             }
             else {
-                Transform collisionFrame = Transform.FromPositionAndLookDirection(dynamic.GetCurrentWorldBounds().getCenter(), normal, up);
+                Transform collisionFrame = Transform.fromPositionAndLookDirection(dynamic.GetCurrentWorldBounds().getCenter(), normal, up);
                 DebugRenderer.RenderArrow(collisionFrame, 2, palette.CollisionStatic.mul(1.0f, 0.5f, 0.5f, 1.0f, new Vector4f()), new Vec3(0d, 0d, -1d));
                 //staticCollisionPoints.add(collisionFrame.PositionVec3());
             }
@@ -191,16 +191,16 @@ public class PhysicsDebugRenderer
         {
             Vec3 normal = collision.ContactNormal();
             Vec3 up = new Vec3(normal.z, -normal.x, -normal.y);
-            Transform collisionFrame = Transform.FromPositionAndLookDirection(collision.ContactPoint(), normal, up);
+            Transform collisionFrame = Transform.fromPositionAndLookDirection(collision.ContactPoint(), normal, up);
             DebugRenderer.RenderCube(collisionFrame, 2, palette.CollisionDynamic, new Vector3f(0.25f, 0.25f, 0f));
             DebugRenderer.RenderArrow(collisionFrame, 2, palette.CollisionDynamic, new Vec3(0d,0d,-1d));
         }
     }
     private void DebugRender(@Nonnull TransformedBBCollection bbs, @Nonnull DebugPalette palette, boolean predicted)
     {
-        for(int i = 0; i < bbs.GetCount(); i++)
+        for(int i = 0; i < bbs.getCount(); i++)
         {
-            TransformedBB bb = bbs.GetColliderBB(i);
+            TransformedBB bb = bbs.getColliderBB(i);
             DebugRenderer.RenderCube(bb.Loc(), 2, predicted ? palette.PositionCurrent : palette.PositionPrevious, bb.HalfExtents());
         }
     }
@@ -221,7 +221,7 @@ public class PhysicsDebugRenderer
                             palette,
                             true,
                             (float) component.mass);
-                    Transform componentPosNext = Transform.Compose(componentPos, Transform.FromPos(coreMotionNextFrame.scale(1f/20f)));
+                    Transform componentPosNext = Transform.compose(componentPos, Transform.fromPos(coreMotionNextFrame.scale(1f/20f)));
                 });
             }
         }
@@ -238,7 +238,7 @@ public class PhysicsDebugRenderer
         float motionArrowScale = 1.0f;
         if(forces != null)
         {
-            Vec3 origin = worldTransform.PositionVec3();
+            Vec3 origin = worldTransform.positionVec3();
             Vec3 forceTotal = new Vec3(0d, 0d, 0d);
             Vector4f forceColour = isReactionForce ? palette.ForceInputs : palette.ForceReactions;
 
@@ -261,7 +261,7 @@ public class PhysicsDebugRenderer
             Vec3 motionNext = motion.add(forceTotal.scale(inertia));
             DebugRenderer.RenderArrow(worldTransform, 1, palette.MotionCurrent, motion.scale(motionArrowScale));
             //DebugRenderer.RenderArrow(worldTransform, 1, palette.MotionCurrent, motionNext.scale(motionArrowScale));
-            DebugRenderer.RenderArrow(worldTransform.Translated(motion.scale(motionArrowScale)), 1, palette.ForceInputs, forceTotal.scale(motionArrowScale));
+            DebugRenderer.RenderArrow(worldTransform.translated(motion.scale(motionArrowScale)), 1, palette.ForceInputs, forceTotal.scale(motionArrowScale));
             return motionNext;
         }
         return Vec3.ZERO;

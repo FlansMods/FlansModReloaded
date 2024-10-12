@@ -185,9 +185,9 @@ public class VehicleDebugRenderer
 
 	private void DebugRender(@Nonnull TransformedBBCollection bbs, @Nonnull DebugPalette palette)
 	{
-		for(int i = 0; i < bbs.GetCount(); i++)
+		for(int i = 0; i < bbs.getCount(); i++)
 		{
-			TransformedBB bb = bbs.GetColliderBB(i);
+			TransformedBB bb = bbs.getColliderBB(i);
 			DebugRenderer.RenderCube(bb.Loc(), 1, palette.CoreCurrent, bb.HalfExtents());
 		}
 	}
@@ -212,7 +212,7 @@ public class VehicleDebugRenderer
 					true,
 					vehicle.Def().physics.mass,
 					vehicle::GetWorldToPartCurrent);
-				Transform vehiclePosNext = Transform.Compose(vehiclePos, Transform.FromPos(coreMotionNextFrame.scale(1f/20f)));
+				Transform vehiclePosNext = Transform.compose(vehiclePos, Transform.fromPos(coreMotionNextFrame.scale(1f/20f)));
 				//DebugRenderer.RenderCube(vehiclePosNext, 1, palette.CoreNext,  new Vector3f(0.6f, 0.25f, 0.6f));
 
 				vehicle.GetHierarchy().ForEachNode((node) -> {
@@ -248,8 +248,8 @@ public class VehicleDebugRenderer
 					Transform wheelPos =physics.LocationCurrent;
 					Vector3f debugWheelBoxSize = new Vector3f(0.5f * def.radius, def.radius, def.radius);
 					//DebugRenderer.RenderAxes(wheel.GetWorldTransformCurrent(), 1, palette.Default);
-					DebugRenderer.RenderRotation(wheelPos, 1, palette.WheelCurrent, wheelPos.RightVec3(), 1.0d);
-					DebugRenderer.RenderLine(vehiclePos, 1, palette.WheelCurrent, vehiclePos.GlobalToLocalPosition(wheelPos.PositionVec3()));
+					DebugRenderer.RenderRotation(wheelPos, 1, palette.WheelCurrent, wheelPos.right(), 1.0d);
+					DebugRenderer.RenderLine(vehiclePos, 1, palette.WheelCurrent, vehiclePos.globalToLocalPosition(wheelPos.positionVec3()));
 
 
 					Vec3 wheelMotionNextFrame = DebugRenderForces(physics.Forces,
@@ -281,7 +281,7 @@ public class VehicleDebugRenderer
 		float motionArrowScale = 1.0f;
 		if(forces != null)
 		{
-			Vec3 origin = worldTransform.PositionVec3();
+			Vec3 origin = worldTransform.positionVec3();
 			Vec3 forceTotal = new Vec3(0d, 0d, 0d);
 			Vector4f forceColour = isCore ? palette.CoreForces : palette.WheelForces;
 
@@ -347,7 +347,7 @@ public class VehicleDebugRenderer
 			Vec3 motionNext = motion.add(forceTotal.scale(inertia));
 			DebugRenderer.RenderArrow(worldTransform, 1, palette.MotionCurrent, motion.scale(motionArrowScale));
 			DebugRenderer.RenderArrow(worldTransform, 1, palette.MotionNext, motionNext.scale(motionArrowScale));
-			DebugRenderer.RenderArrow(worldTransform.Translated(motion.scale(motionArrowScale)), 1, palette.TotalForce, forceTotal.scale(motionArrowScale));
+			DebugRenderer.RenderArrow(worldTransform.translated(motion.scale(motionArrowScale)), 1, palette.TotalForce, forceTotal.scale(motionArrowScale));
 			return motionNext;
 		}
 		return Vec3.ZERO;

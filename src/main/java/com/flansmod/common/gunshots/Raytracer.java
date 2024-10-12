@@ -194,7 +194,7 @@ public class Raytracer
                 if(World.isClientSide())
                 {
                     DebugRenderer.RenderLine(
-                        Transform.FromPos(origin),
+                        Transform.fromPos(origin),
                         100,
                         new Vector4f(1.0f, 1.0f, 1.0f, 1.0f),
                         endPoint.subtract(origin));

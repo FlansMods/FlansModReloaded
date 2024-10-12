@@ -280,8 +280,8 @@ public class ShootAction extends ActionInstance
 								.FromShot(repeatIndex)
 								.FromBulletIndex(shotsFired.get(j).getSecond())
 								.FromProjectile(gunshotContext.DefIndex)
-								.WithOrigin(randomizedDirection.PositionVec3())
-								.WithTrajectory(randomizedDirection.ForwardVec3().scale(gunshotContext.LaunchSpeed()))
+								.WithOrigin(randomizedDirection.positionVec3())
+								.WithTrajectory(randomizedDirection.forward().scale(gunshotContext.LaunchSpeed()))
 								.WithBullet(gunshotContext.Bullet));
 						}
 						else
@@ -291,8 +291,8 @@ public class ShootAction extends ActionInstance
 							List<HitResult> hits = new ArrayList<HitResult>(8);
 							Raytracer.ForLevel(Group.Context.Gun.GetShooter().Level()).CastBullet(
 								Group.Context.Gun.GetShooter().Entity(),
-								randomizedDirection.PositionVec3(),
-								randomizedDirection.ForwardVec3().scale(RAYCAST_LENGTH),
+								randomizedDirection.positionVec3(),
+								randomizedDirection.forward().scale(RAYCAST_LENGTH),
 								penetrationPower,
 								penetrationPower,
 								hits
@@ -304,8 +304,8 @@ public class ShootAction extends ActionInstance
 								.FromShot(repeatIndex)
 								.FromBulletIndex(shotsFired.get(j).getSecond())
 								.FromHitscan(gunshotContext.DefIndex)
-								.WithOrigin(randomizedDirection.PositionVec3())
-								.WithTrajectory(randomizedDirection.ForwardVec3().scale(RAYCAST_LENGTH))
+								.WithOrigin(randomizedDirection.positionVec3())
+								.WithTrajectory(randomizedDirection.forward().scale(RAYCAST_LENGTH))
 								.WithHits(hitArray)
 								.WithBullet(gunshotContext.Bullet));
 						}
@@ -373,7 +373,7 @@ public class ShootAction extends ActionInstance
 		float yaw = Maths.AtanF(xComponent);
 		float pitch = Maths.AtanF(yComponent);
 
-		transformStack.add(Transform.FromEuler(pitch, yaw, 0f, () -> "{\"Spread\":"+spread+", \"Pattern\":\""+spreadPattern+"\"}"));
+		transformStack.add(Transform.fromEuler(pitch, yaw, 0f, () -> "{\"Spread\":"+spread+", \"Pattern\":\""+spreadPattern+"\"}"));
 	}
 
 	@Override
@@ -475,7 +475,7 @@ public class ShootAction extends ActionInstance
 
 		float loudness = Group.Context.Loudness();
 		if(loudness >= 30.0f)
-			level.gameEvent(Group.Context.Gun.GetShooter().Entity(), GameEvent.EXPLODE, Group.Context.Gun.GetShootOrigin().BlockPos());
+			level.gameEvent(Group.Context.Gun.GetShooter().Entity(), GameEvent.EXPLODE, Group.Context.Gun.GetShootOrigin().blockPos());
 
 	}
 

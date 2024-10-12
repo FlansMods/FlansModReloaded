@@ -24,7 +24,7 @@ public class AbilityEffectKnockback implements IAbilityEffect
 	public void TriggerServer(@Nonnull ActionGroupContext actionGroup, @Nonnull TriggerContext trigger, @Nonnull TargetsContext targets, @Nullable AbilityStack stacks)
 	{
 		targets.ForEachEntity((entity) -> {
-			Vec3 pushDir = entity.position().subtract(actionGroup.Gun.GetShootOrigin().PositionVec3());
+			Vec3 pushDir = entity.position().subtract(actionGroup.Gun.GetShootOrigin().positionVec3());
 			pushDir = pushDir.normalize();
 			pushDir.scale(PushAmount.Get(actionGroup, stacks));
 

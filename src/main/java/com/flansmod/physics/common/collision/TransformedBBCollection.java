@@ -11,26 +11,26 @@ import javax.annotation.Nonnull;
 
 public record TransformedBBCollection(@Nonnull Transform Location, @Nonnull ImmutableList<AABB> Colliders)
 {
-	public int GetCount() { return Colliders.size(); }
-	@Nonnull public Vec3 GetCenter(int index) { return Location.PositionVec3().add(Colliders.get(index).getCenter()); }
-	@Nonnull public Vector3f GetHalfExtents(int index)
+	public int getCount() { return Colliders.size(); }
+	@Nonnull public Vec3 getCenter(int index) { return Location.positionVec3().add(Colliders.get(index).getCenter()); }
+	@Nonnull public Vector3f getHalfExtents(int index)
 	{
 		AABB aabb = Colliders.get(index);
 		return new Vector3f((float)aabb.getXsize()/2f, (float)aabb.getYsize()/2f, (float)aabb.getZsize()/2f);
 	}
 
 	@Nonnull
-	public TransformedBB GetColliderBB(int index)
+	public TransformedBB getColliderBB(int index)
 	{
-		return new TransformedBB(Transform.FromPosAndQuat(GetCenter(index), Location.Orientation, ()->""), GetHalfExtents(index));
+		return new TransformedBB(Transform.fromPosAndQuat(getCenter(index), Location.Orientation, ()->""), getHalfExtents(index));
 	}
 	@Nonnull
-	public TransformedBB GetBoundingBB()
+	public TransformedBB getBoundingBB()
 	{
-		return TransformedBB.Of(Location, GetLocalBounds());
+		return TransformedBB.Of(Location, getLocalBounds());
 	}
 	@Nonnull
-	public AABB GetLocalBounds()
+	public AABB getLocalBounds()
 	{
 		double xMin = Double.MAX_VALUE;
 		double yMin = Double.MAX_VALUE;

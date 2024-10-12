@@ -78,12 +78,12 @@ public interface ISeparationAxis
     @Nonnull
     default ProjectedRange ProjectOBBsMinMax(@Nonnull TransformedBBCollection set)
     {
-        Matrix3f matrix = set.Location().OriMatrix();
+        Matrix3f matrix = set.Location().oriMatrix();
         double min = Double.MAX_VALUE;
         double max = -Double.MAX_VALUE;
-        for(int i = 0; i < set.GetCount(); i++)
+        for(int i = 0; i < set.getCount(); i++)
         {
-            ProjectedRange projection = ProjectOBBMinMax(set.GetCenter(i), set.GetHalfExtents(i), matrix);
+            ProjectedRange projection = ProjectOBBMinMax(set.getCenter(i), set.getHalfExtents(i), matrix);
             min = Maths.Min(projection.min(), min);
             max = Maths.Min(projection.max(), max);
         }

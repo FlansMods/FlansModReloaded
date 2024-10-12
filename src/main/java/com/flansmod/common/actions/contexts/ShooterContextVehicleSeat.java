@@ -44,9 +44,9 @@ public class ShooterContextVehicleSeat extends ShooterContextVehicle
 		Entity passenger = EntityInThisSeat();
 		if(passenger != null)
 		{
-			return Transform.FromPos(passenger.position());
+			return Transform.fromPos(passenger.position());
 		}
-		return Transform.FromPos(Vehicle.position());
+		return Transform.fromPos(Vehicle.position());
 	}
 
 	@Override

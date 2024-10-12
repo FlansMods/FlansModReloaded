@@ -95,7 +95,7 @@ public class OBBCollisionSystem
 				DynamicObject dynamic = system.Dynamics.get(handle);
 				if(dynamic != null)
 				{
-					double distSq = dynamic.GetCurrentLocation().PositionVec3().distanceToSqr(pos);
+					double distSq = dynamic.GetCurrentLocation().positionVec3().distanceToSqr(pos);
 					if(distSq < closestDistSq) {
 						closestDistSq = distSq;
 						closest = handle;
@@ -489,7 +489,7 @@ public class OBBCollisionSystem
 									ProjectedRange range = axis.ProjectOBBMinMax(obb);
 									double center = axis.Project(obb.GetCenter());
 
-									Transform pos = Transform.FromPositionAndLookDirection(obb.GetCenter().add(normal.scale(range.max() - center)), normal, up);
+									Transform pos = Transform.fromPositionAndLookDirection(obb.GetCenter().add(normal.scale(range.max() - center)), normal, up);
 									DebugRenderer.RenderArrow(pos, 3, new Vector4f(1.0f, 1.0f, blue, 1.0f), new Vec3(0d, 0d, -1d));
 
 									for(int j = statics.size() - 1; j >= 0; j--)
@@ -498,7 +498,7 @@ public class OBBCollisionSystem
 										ProjectedRange boxProj = axis.ProjectAABBMinMax(aabb);
 										if(ProjectionUtil.SeparatedAThenB(range, boxProj))
 										{
-											Transform staticPos = Transform.FromPos(aabb.getCenter());
+											Transform staticPos = Transform.fromPos(aabb.getCenter());
 											DebugRenderer.RenderCube(staticPos, 3, new Vector4f(1.0f, 1.0f, blue, 1.0f), new Vector3f((float)aabb.getXsize()*0.5f, (float)aabb.getYsize()*0.5f, (float)aabb.getZsize()*0.5f));
 
 											statics.remove(j);
@@ -509,7 +509,7 @@ public class OBBCollisionSystem
 								for(int j = statics.size() - 1; j >= 0; j--)
 								{
 									AABB aabb = statics.get(j).bounds();
-									Transform staticPos = Transform.FromPos(aabb.getCenter());
+									Transform staticPos = Transform.fromPos(aabb.getCenter());
 									DebugRenderer.RenderCube(staticPos, 3, new Vector4f(1.0f, 0.0f, 0.0f, 1.0f), new Vector3f((float)aabb.getXsize()*0.5f, (float)aabb.getYsize()*0.5f, (float)aabb.getZsize()*0.5f));
 								}
 
@@ -652,7 +652,7 @@ public class OBBCollisionSystem
 					LinearAcceleration reactionAcc = LinearAcceleration.reaction(linearV, maxV);
 
 					if(DEBUG_SETTING_ONLY_LINEAR_REACTIONS)
-						dyn.ReactionAcceleration = OffsetAcceleration.offset(reactionAcc, dyn.GetCurrentLocation().PositionVec3());
+						dyn.ReactionAcceleration = OffsetAcceleration.offset(reactionAcc, dyn.GetCurrentLocation().positionVec3());
 					else
 						dyn.ReactionAcceleration = OffsetAcceleration.offset(reactionAcc, forceOrigin);
 					dyn.ExtrapolateNextFrameWithReaction();
