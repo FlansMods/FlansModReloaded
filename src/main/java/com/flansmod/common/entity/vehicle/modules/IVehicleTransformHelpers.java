@@ -93,11 +93,11 @@ public interface IVehicleTransformHelpers
 
 	// World to Part
 	@Nonnull default ITransformPair GetWorldToPart(@Nonnull VehiclePartPath apPath) { return ITransformPair.compose(GetWorldToRoot(), GetRootToPart(apPath)); }
-	@Nonnull default Transform GetWorldToPartPrevious(@Nonnull VehiclePartPath apPath) { return GetWorldToPart(apPath).GetPrevious(); }
-	@Nonnull default Transform GetWorldToPartCurrent(@Nonnull VehiclePartPath apPath) { return GetWorldToPart(apPath).GetCurrent(); }
+	@Nonnull default Transform GetWorldToPartPrevious(@Nonnull VehiclePartPath apPath) { return GetWorldToPart(apPath).previous(); }
+	@Nonnull default Transform GetWorldToPartCurrent(@Nonnull VehiclePartPath apPath) { return GetWorldToPart(apPath).current(); }
 	@Nonnull default ITransformPair GetWorldToPart(@Nonnull VehicleComponentPath apPath) { return ITransformPair.compose(GetWorldToRoot(), GetRootToPart(apPath.Part())); }
-	@Nonnull default Transform GetWorldToPartPrevious(@Nonnull VehicleComponentPath apPath) { return GetWorldToPart(apPath.Part()).GetPrevious(); }
-	@Nonnull default Transform GetWorldToPartCurrent(@Nonnull VehicleComponentPath apPath) { return GetWorldToPart(apPath.Part()).GetCurrent(); }
+	@Nonnull default Transform GetWorldToPartPrevious(@Nonnull VehicleComponentPath apPath) { return GetWorldToPart(apPath.Part()).previous(); }
+	@Nonnull default Transform GetWorldToPartCurrent(@Nonnull VehicleComponentPath apPath) { return GetWorldToPart(apPath.Part()).current(); }
 
 
 
@@ -111,7 +111,7 @@ public interface IVehicleTransformHelpers
 	{
 		if(GetHierarchy().RootNode != null)
 		{
-			TransformStack stack = TransformStack.of(GetWorldToRoot().GetDelta(dt));
+			TransformStack stack = TransformStack.of(GetWorldToRoot().delta(dt));
 			Raycast(stack, GetHierarchy().RootNode, start, end, dt, func);
 		}
 	}
@@ -127,7 +127,7 @@ public interface IVehicleTransformHelpers
 		// If this piece is articulated, add a transform
 		if(node.Def.IsArticulated())
 		{
-			Transform articulation = GetPartToPart(node.GetPath()).GetDelta(dt);
+			Transform articulation = GetPartToPart(node.GetPath()).delta(dt);
 			if(!articulation.isIdentity())
 			{
 				start = articulation.globalToLocalPosition(start);

@@ -199,7 +199,7 @@ public class VehicleDebugRenderer
 			// Render a regular entity debug view
 			if(entity instanceof VehicleEntity vehicle)
 			{
-				Transform vehiclePos = vehicle.GetWorldToEntity().GetCurrent();
+				Transform vehiclePos = vehicle.GetWorldToEntity().current();
 
 				//DebugRenderer.RenderCube(Transform.FromPos(vehicle.position()), 1, palette.CoreCurrent, new Vector3f(0.15f, 0.1f, 0.15f));
 				//DebugRenderer.RenderAxes(vehiclePos, 1, palette.Default);
@@ -207,7 +207,7 @@ public class VehicleDebugRenderer
 				Vec3 coreMotionNextFrame = DebugRenderForces(
 					vehicle.GetCoreForces(),
 					vehicle.getDeltaMovement(),
-					vehicle.GetWorldToEntity().GetCurrent(),
+					vehicle.GetWorldToEntity().current(),
 					palette,
 					true,
 					vehicle.Def().physics.mass,

@@ -111,7 +111,7 @@ public class VehicleCollisionSystem
 
 		//Matrix3d rotationMatrix = new Matrix3d().fromTransform();
 
-		Transform partTransform = partTransformPair.GetCurrent();
+		Transform partTransform = partTransformPair.current();
 
 		// Get the entity pos and motion in vehicle space
 		Vec3 entityPosGlobal = entity.position();
@@ -295,8 +295,8 @@ public class VehicleCollisionSystem
 	private static Vec3 GetMovementOfPointOnPart(@Nonnull Vec3 globalPointPrevious, @Nonnull ITransformPair partTransformPair)
 	{
 		// Not sure why but AbstractContraptionEntity.java takes the globalPoint as a point from last frame
-		Vec3 partLocalPos = partTransformPair.GetPrevious().globalToLocalPosition(globalPointPrevious);
-		Vec3 globalPosCurrent = partTransformPair.GetCurrent().localToGlobalPosition(partLocalPos);
+		Vec3 partLocalPos = partTransformPair.previous().globalToLocalPosition(globalPointPrevious);
+		Vec3 globalPosCurrent = partTransformPair.current().localToGlobalPosition(partLocalPos);
 		return globalPosCurrent.subtract(partLocalPos);
 	}
 

@@ -187,8 +187,8 @@ public class VehicleEntity extends Entity implements
 
 	// -------------------------------------------------------------------------------------------
 	// Transform and some vanilla overrides. We want to use Quaternions, pleassse Minecraft
-	@Override public float getYRot() { return GetWorldToEntity().GetCurrent().yaw(); }
-	@Override public float getXRot() { return GetWorldToEntity().GetCurrent().pitch(); }
+	@Override public float getYRot() { return GetWorldToEntity().current().yaw(); }
+	@Override public float getXRot() { return GetWorldToEntity().current().pitch(); }
 	@Override public void setYRot(float yaw) { SetYaw(yaw); }
 	@Override public void setXRot(float pitch) { SetPitch(pitch); }
 	//@Override public void setPos(double x, double y, double z) { SetPosition(x, y, z); }
@@ -225,9 +225,9 @@ public class VehicleEntity extends Entity implements
 	}
 
 	public void SetEulerAngles(float pitch, float yaw, float roll) { SetEulerAngles(pitch, yaw, roll); }
-	@Nonnull public Transform RootTransformCurrent() { return GetWorldToRoot().GetCurrent(); }
-	@Nonnull public Transform RootTransformPrevious() { return GetWorldToRoot().GetPrevious(); }
-	@Nonnull public Transform RootTransform(float dt) { return GetWorldToRoot().GetDelta(dt); }
+	@Nonnull public Transform RootTransformCurrent() { return GetWorldToRoot().current(); }
+	@Nonnull public Transform RootTransformPrevious() { return GetWorldToRoot().previous(); }
+	@Nonnull public Transform RootTransform(float dt) { return GetWorldToRoot().delta(dt); }
 	// -------------------------------------------------------------------------------------------
 
 	@Nonnull
@@ -1329,7 +1329,7 @@ public class VehicleEntity extends Entity implements
 	@Override
 	public void SyncTransformToEntity()
 	{
-		Transform worldRoot = GetWorldToEntity().GetCurrent();
+		Transform worldRoot = GetWorldToEntity().current();
 		Vector3f euler = worldRoot.euler();
 		setPos(worldRoot.positionVec3());
 		yRotO = euler.y;

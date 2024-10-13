@@ -157,8 +157,8 @@ public class PhysicsDebugRenderer
 
     private void DebugRender(@Nonnull DynamicObject dynamic, @Nonnull DebugPalette palette)
     {
-        DebugRender(dynamic.GetCurrentColliders(), palette, false);
-        DebugRender(dynamic.GetPendingColliders(), palette, true);
+        DebugRender(dynamic.getCurrentColliders(), palette, false);
+        DebugRender(dynamic.getPendingColliders(), palette, true);
         for (StaticCollisionEvent collision : dynamic.StaticCollisions)
         {
             Vec3 normal = collision.ContactNormal();
@@ -180,7 +180,7 @@ public class PhysicsDebugRenderer
                 //staticCollisionPoints.add(collisionFrame.PositionVec3());
             }
             else {
-                Transform collisionFrame = Transform.fromPositionAndLookDirection(dynamic.GetCurrentWorldBounds().getCenter(), normal, up);
+                Transform collisionFrame = Transform.fromPositionAndLookDirection(dynamic.getCurrentWorldBounds().getCenter(), normal, up);
                 DebugRenderer.RenderArrow(collisionFrame, 2, palette.CollisionStatic.mul(1.0f, 0.5f, 0.5f, 1.0f, new Vector4f()), new Vec3(0d, 0d, -1d));
                 //staticCollisionPoints.add(collisionFrame.PositionVec3());
             }

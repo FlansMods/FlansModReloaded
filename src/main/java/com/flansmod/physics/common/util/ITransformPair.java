@@ -9,22 +9,22 @@ public interface ITransformPair
 	ITransformPair Identity = new ITransformPair()
 	{
 		@Override @Nonnull
-		public Transform GetPrevious() { return Transform.identity(); }
+		public Transform previous() { return Transform.identity(); }
 		@Override @Nonnull
-		public Transform GetCurrent() { return Transform.identity(); }
+		public Transform current() { return Transform.identity(); }
 	};
 
-	@Nonnull Transform GetPrevious();
-	@Nonnull Transform GetCurrent();
+	@Nonnull Transform previous();
+	@Nonnull Transform current();
 
 	@Nonnull
-	default Transform GetDelta(float dt)
+	default Transform delta(float dt)
 	{
 		if(Maths.Approx(dt, 0f))
-			return GetPrevious();
+			return previous();
 		if(Maths.Approx(dt, 1f))
-			return GetCurrent();
-		return Transform.interpolate(GetPrevious(), GetCurrent(), dt);
+			return current();
+		return Transform.interpolate(previous(), current(), dt);
 	}
 
 	@Nonnull
@@ -32,8 +32,8 @@ public interface ITransformPair
 	{
 		return new ITransformPair()
 		{
-			@Override @Nonnull public Transform GetPrevious() { return prev.get(); }
-			@Override @Nonnull public Transform GetCurrent() { return current.get(); }
+			@Override @Nonnull public Transform previous() { return prev.get(); }
+			@Override @Nonnull public Transform current() { return current.get(); }
 		};
 	}
 	@Nonnull
@@ -41,8 +41,8 @@ public interface ITransformPair
 	{
 		return new ITransformPair()
 		{
-			@Override @Nonnull public Transform GetPrevious() { return Transform.compose(a.GetPrevious(), b.GetPrevious()); }
-			@Override @Nonnull public Transform GetCurrent() { return Transform.compose(a.GetCurrent(), b.GetCurrent()); }
+			@Override @Nonnull public Transform previous() { return Transform.compose(a.previous(), b.previous()); }
+			@Override @Nonnull public Transform current() { return Transform.compose(a.current(), b.current()); }
 		};
 	}
 }

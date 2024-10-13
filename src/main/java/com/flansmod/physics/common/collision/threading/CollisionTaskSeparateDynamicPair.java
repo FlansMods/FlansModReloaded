@@ -12,8 +12,8 @@ import java.util.Optional;
 public class CollisionTaskSeparateDynamicPair
 	implements ICollisionTask<CollisionTaskSeparateDynamicPair.Input, CollisionTaskSeparateDynamicPair.Output>
 {
-	public record Input(@Nonnull DynamicObject ObjectA,
-						@Nonnull DynamicObject ObjectB,
+	public record Input(@Nonnull IConstDynamicObject ObjectA,
+						@Nonnull IConstDynamicObject ObjectB,
 						@Nonnull ImmutableList<ISeparationAxis> ExistingSeparators)
 	{
 
@@ -27,13 +27,13 @@ public class CollisionTaskSeparateDynamicPair
 
 	@Nonnull
 	public static CollisionTaskSeparateDynamicPair of(@Nonnull ColliderHandle handleA,
-													  @Nonnull DynamicObject objectA,
+													  @Nonnull IConstDynamicObject objectA,
 													  @Nonnull ColliderHandle handleB,
-													  @Nonnull DynamicObject objectB,
+													  @Nonnull IConstDynamicObject objectB,
 													  @Nonnull ImmutableList<ISeparationAxis> existingSeparators)
 	{
 		CollisionTaskSeparateDynamicPair task = new CollisionTaskSeparateDynamicPair(handleA, handleB);
-		task.Prepare(new Input(objectA, objectB, existingSeparators));
+		task.prepare(new Input(objectA, objectB, existingSeparators));
 		return task;
 	}
 
@@ -54,31 +54,31 @@ public class CollisionTaskSeparateDynamicPair
 	}
 
 	@Override
-	public void Prepare(@Nonnull Input input)
+	public void prepare(@Nonnull Input input)
 	{
 		Input = input;
 	}
 	@Override
-	public boolean CanRun()
+	public boolean canRun()
 	{
 		return Input != null;
 	}
 	@Override
-	public void Run()
+	public void run()
 	{
 		if(Input != null)
 		{
 			// Bounds test
-			TransformedBB boundsA = Input.ObjectA.GetPendingBB();
-			TransformedBB boundsB = Input.ObjectB.GetPendingBB();
+			TransformedBB boundsA = Input.ObjectA.getPendingBB();
+			TransformedBB boundsB = Input.ObjectB.getPendingBB();
 
 			for (ISeparationAxis separator : Input.ExistingSeparators)
 			{
 				if (separator.SeparatesWithMotion(
 					boundsA,
-					Input.ObjectA.NextFrameLinearMotion.applyOneTick(),
+					Input.ObjectA.getNextFrameLinearVelocity().applyOneTick(),
 					boundsB,
-					Input.ObjectB.NextFrameLinearMotion.applyOneTick()))
+					Input.ObjectB.getNextFrameLinearVelocity().applyOneTick()))
 				{
 					// We are separated easily, done.
 					Output = new Output(ImmutableList.of(), ImmutableList.of(), null);
@@ -87,7 +87,7 @@ public class CollisionTaskSeparateDynamicPair
 			}
 
 			// So we didn't separate with our existing separators. Maybe we need a new one. Maybe we intersected.
-			SeparationResult test = CollisionTasks.Separate(boundsA, boundsB);
+			SeparationResult test = CollisionTasks.separate(boundsA, boundsB);
 
 			// If this test did not collide, then we can just report this new separator as worth keeping
 			if(test.success())
@@ -111,24 +111,24 @@ public class CollisionTaskSeparateDynamicPair
 	}
 
 	@Override
-	public boolean CanCancel()
+	public boolean canCancel()
 	{
 		return true;
 	}
 	@Override
-	public void Cancel()
+	public void cancel()
 	{
 		Cancelled = true;
 	}
 
 	@Override
-	public boolean IsComplete()
+	public boolean isComplete()
 	{
 		return Cancelled || Output != null;
 	}
 	@Nullable
 	@Override
-	public Output GetResult()
+	public Output getResult()
 	{
 		return Output;
 	}

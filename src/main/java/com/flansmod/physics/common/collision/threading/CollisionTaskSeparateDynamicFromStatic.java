@@ -8,7 +8,6 @@ import com.google.common.collect.ImmutableList;
 import com.mojang.datafixers.util.Pair;
 import net.minecraft.core.Direction;
 import net.minecraft.world.phys.AABB;
-import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
 import javax.annotation.Nonnull;
@@ -20,7 +19,7 @@ public class CollisionTaskSeparateDynamicFromStatic
 	implements ICollisionTask<CollisionTaskSeparateDynamicFromStatic.Input, CollisionTaskSeparateDynamicFromStatic.Output>
 {
 	public record Input(
-						@Nonnull DynamicObject ObjectA,
+						@Nonnull IConstDynamicObject ObjectA,
 						@Nonnull ImmutableList<VoxelShape> StaticShapes,
 						@Nonnull ImmutableList<ISeparationAxis> ExistingSeparators)
 	{
@@ -35,12 +34,12 @@ public class CollisionTaskSeparateDynamicFromStatic
 
 	@Nonnull
 	public static CollisionTaskSeparateDynamicFromStatic of(@Nonnull ColliderHandle handleA,
-															@Nonnull DynamicObject objectA,
+															@Nonnull IConstDynamicObject objectA,
 															@Nonnull ImmutableList<VoxelShape> staticShapes,
 															@Nonnull ImmutableList<ISeparationAxis> existingSeparators)
 	{
 		CollisionTaskSeparateDynamicFromStatic task = new CollisionTaskSeparateDynamicFromStatic(handleA);
-		task.Prepare(new CollisionTaskSeparateDynamicFromStatic.Input(objectA, staticShapes, existingSeparators));
+		task.prepare(new CollisionTaskSeparateDynamicFromStatic.Input(objectA, staticShapes, existingSeparators));
 		return task;
 	}
 
@@ -60,17 +59,17 @@ public class CollisionTaskSeparateDynamicFromStatic
 		Handle = handle;
 	}
 	@Override
-	public void Prepare(@Nonnull Input input)
+	public void prepare(@Nonnull Input input)
 	{
 		Input = input;
 	}
 	@Override
-	public boolean CanRun()
+	public boolean canRun()
 	{
 		return Input != null && Input.StaticShapes.size() > 0;
 	}
 	@Override
-	public void Run()
+	public void run()
 	{
 		if(Input != null)
 		{
@@ -141,7 +140,7 @@ public class CollisionTaskSeparateDynamicFromStatic
 	private void SeparateStaticAABBs()
 	{
 		SeparationResult[] results = new SeparationResult[Input.StaticShapes.size()];
-		TransformedBB boundsA = Input.ObjectA.GetPendingBB();
+		TransformedBB boundsA = Input.ObjectA.getPendingBB();
 		List<ISeparationAxis> newSeparatorList = new ArrayList<>();
 		ImmutableList.Builder<StaticCollisionEvent> collisions = ImmutableList.builder();
 
@@ -180,7 +179,7 @@ public class CollisionTaskSeparateDynamicFromStatic
 			// Let's process it
 			VoxelShape shape = Input.StaticShapes.get(indexToProcess);
 			AABB voxelBB = shape.bounds();
-			SeparationResult separationResult = CollisionTasks.Separate(boundsA, voxelBB);
+			SeparationResult separationResult = CollisionTasks.separate(boundsA, voxelBB);
 
 			// Directly place it in the array, so we don't test it again
 			results[indexToProcess] = separationResult;
@@ -289,7 +288,7 @@ public class CollisionTaskSeparateDynamicFromStatic
 
 			if(!isSeparated)
 			{
-				SeparationResult result = CollisionTasks.Separate(boundsA, aabb);
+				SeparationResult result = CollisionTasks.separate(boundsA, aabb);
 				if(result.depth() < shortestIntersectionDist)
 				{
 					shortestIntersection = result;
@@ -305,23 +304,23 @@ public class CollisionTaskSeparateDynamicFromStatic
 	}
 
 	@Override
-	public boolean CanCancel()
+	public boolean canCancel()
 	{
 		return true;
 	}
 	@Override
-	public void Cancel()
+	public void cancel()
 	{
 		Cancelled = true;
 	}
 	@Override
-	public boolean IsComplete()
+	public boolean isComplete()
 	{
 		return Cancelled || Output != null;
 	}
 	@Nullable
 	@Override
-	public Output GetResult()
+	public Output getResult()
 	{
 		return Output;
 	}

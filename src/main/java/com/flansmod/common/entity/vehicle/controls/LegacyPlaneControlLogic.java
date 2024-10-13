@@ -169,7 +169,7 @@ public class LegacyPlaneControlLogic extends ControlLogic
 				numPropsWorking--;
 
 
-		Transform root = vehicle.GetWorldToEntity().GetCurrent();
+		Transform root = vehicle.GetWorldToEntity().current();
 		Vec3 up = root.up();
 
 		throttleScaled *= numProps == 0 ? 0 : (float)numPropsWorking / numProps * 2F;
@@ -221,7 +221,7 @@ public class LegacyPlaneControlLogic extends ControlLogic
 
 		//Apply forces
 
-		Transform root = vehicle.GetWorldToEntity().GetCurrent();
+		Transform root = vehicle.GetWorldToEntity().current();
 		Vec3 forwards = root.forward();
 
 

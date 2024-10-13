@@ -14,7 +14,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Stack;
 
-public class DynamicObject
+public class DynamicObject implements IConstDynamicObject
 {
 	public static final int MAX_HISTORY = 20;
 	public static final int KILL_VOLUME_NEGATIVE_Y = -256;
@@ -57,7 +57,7 @@ public class DynamicObject
 	{
 		ImmutableList.Builder<AABB> builder = ImmutableList.builder();
 		Colliders = builder.addAll(localColliders).build();
-		LocalBounds = GetLocalBounds();
+		LocalBounds = getLocalBounds();
 		Frames.add(new FrameData(Transform.copy(initialLocation), LinearVelocity.Zero, AngularVelocity.Zero));
 		NextFrameLinearMotion = LinearVelocity.Zero;
 		NextFrameAngularMotion = AngularVelocity.Zero;
@@ -67,23 +67,35 @@ public class DynamicObject
 		StaticCollisions = new ArrayList<>();
 	}
 
-	@Nonnull
-	public AABB GetCurrentWorldBounds()
-	{
-		FrameData frame = GetFrameNTicksAgo(0);
-		return frame.Location.localToGlobalBounds(GetLocalBounds());
-	}
+	@Override @Nonnull
+	public Optional<Transform> getNextFrameTeleport() { return NextFrameTeleport; }
+	@Override @Nonnull
+	public LinearVelocity getNextFrameLinearVelocity() { return NextFrameLinearMotion; }
+	@Override @Nonnull
+	public AngularVelocity getNextFrameAngularVelocity() { return NextFrameAngularMotion; }
 
 	@Nonnull
-	public AABB GetSweepTestAABB()
+	public AABB getCurrentWorldBounds()
 	{
-		FrameData frame = GetFrameNTicksAgo(0);
-		AABB globalAABB = frame.Location.localToGlobalBounds(GetLocalBounds());
+		FrameData frame = getFrameNTicksAgo(0);
+		return frame.Location.localToGlobalBounds(getLocalBounds());
+	}
+	@Nonnull
+	public AABB getPendingWorldBounds()
+	{
+		FrameData frame = PendingFrame;
+		return frame.Location.localToGlobalBounds(getLocalBounds());
+	}
+	@Nonnull
+	public AABB getSweepTestAABB()
+	{
+		FrameData frame = getFrameNTicksAgo(0);
+		AABB globalAABB = frame.Location.localToGlobalBounds(getLocalBounds());
 		return globalAABB.expandTowards(NextFrameLinearMotion.applyOneTick()).inflate(LocalBounds.getSize());
 	}
 
 	@Nonnull
-	public AABB GetLocalBounds()
+	public AABB getLocalBounds()
 	{
 		double xMin = Double.MAX_VALUE;
 		double yMin = Double.MAX_VALUE;
@@ -103,11 +115,11 @@ public class DynamicObject
 		return new AABB(xMin, yMin, zMin, xMax, yMax, zMax);
 	}
 
-	public void SetLinearVelocity(@Nonnull LinearVelocity linearVelocity)
+	public void setLinearVelocity(@Nonnull LinearVelocity linearVelocity)
 	{
 		NextFrameLinearMotion = linearVelocity;
 	}
-	public void AddLinearAcceleration(@Nonnull LinearAcceleration linearAcceleration)
+	public void addLinearAcceleration(@Nonnull LinearAcceleration linearAcceleration)
 	{
 		NextFrameLinearMotion = NextFrameLinearMotion.add(linearAcceleration.applyOneTick());
 	}
@@ -119,11 +131,11 @@ public class DynamicObject
 	//		OBBCollisionSystem.MAX_LINEAR_BLOCKS_PER_TICK);
 	//}
 
-	public void SetAngularVelocity(@Nonnull AngularVelocity angularVelocity)
+	public void setAngularVelocity(@Nonnull AngularVelocity angularVelocity)
 	{
 		NextFrameAngularMotion = angularVelocity;
 	}
-	public void AddAngularAcceleration(@Nonnull AngularAcceleration angularAcceleration)
+	public void addAngularAcceleration(@Nonnull AngularAcceleration angularAcceleration)
 	{
 		NextFrameAngularMotion = NextFrameAngularMotion.compose(angularAcceleration.applyOneTick());
 	}
@@ -135,59 +147,59 @@ public class DynamicObject
 	//	// TODO: If AngularMotion.angle > Pi, does quaternion composition not have the chance of going backwards?
 	//	nextFrameQ.get(NextFrameAngularMotion);
 	//}
-	public void TeleportTo(@Nonnull Transform location)
+	public void teleportTo(@Nonnull Transform location)
 	{
 		NextFrameTeleport = Optional.of(location);
 	}
 
 	@Nonnull
-	private FrameData GetFrameNTicksAgo(int n)
+	private FrameData getFrameNTicksAgo(int n)
 	{
 		return Frames.get(Frames.size() - n - 1);
 	}
 	@Nonnull
-	public TransformedBBCollection GetCurrentColliders()
+	public TransformedBBCollection getCurrentColliders()
 	{
-		return new TransformedBBCollection(GetFrameNTicksAgo(0).Location, Colliders);
+		return new TransformedBBCollection(getFrameNTicksAgo(0).Location, Colliders);
 	}
 	@Nonnull
-	public TransformedBB GetCurrentBB()
+	public TransformedBB getCurrentBB()
 	{
-		return TransformedBB.Of(GetFrameNTicksAgo(0).Location, LocalBounds);
+		return TransformedBB.Of(getFrameNTicksAgo(0).Location, LocalBounds);
 	}
 	@Nonnull
-	public Transform GetCurrentLocation()
+	public Transform getCurrentLocation()
 	{
-		return GetFrameNTicksAgo(0).Location;
+		return getFrameNTicksAgo(0).Location;
 	}
 	@Nonnull
-	public TransformedBBCollection GetPendingColliders()
+	public TransformedBBCollection getPendingColliders()
 	{
 		if(PendingFrame != null)
 			return new TransformedBBCollection(PendingFrame.Location, Colliders);
-		return GetCurrentColliders();
+		return getCurrentColliders();
 	}
 	@Nonnull
-	public TransformedBB GetPendingBB()
+	public TransformedBB getPendingBB()
 	{
 		if(PendingFrame != null)
 			return TransformedBB.Of(PendingFrame.Location, LocalBounds);
-		return GetCurrentBB();
+		return getCurrentBB();
 	}
 	@Nonnull
-	public Transform GetPendingLocation()
+	public Transform getPendingLocation()
 	{
 		if(PendingFrame != null)
 			return PendingFrame.Location;
-		return GetCurrentLocation();
+		return getCurrentLocation();
 	}
-	public void PreTick()
+	public void preTick()
 	{
 		StaticCollisions.clear();
 		DynamicCollisions.clear();
-		ExtrapolateNextFrame();
+		extrapolateNextFrame();
 	}
-	public boolean Invalid()
+	public boolean isInvalid()
 	{
 		if(PendingFrame != null)
 		{
@@ -202,7 +214,7 @@ public class DynamicObject
 		return false;
 	}
 
-	public void CommitFrame()
+	public void commitFrame()
 	{
 		if (Frames.size() >= MAX_HISTORY)
 			Frames.remove(0);
@@ -220,7 +232,7 @@ public class DynamicObject
 
 		NextFrameTeleport = Optional.empty();
 	}
-	public void ExtrapolateNextFrame(boolean withReactionForce)
+	public void extrapolateNextFrame(boolean withReactionForce)
 	{
 		if(NextFrameTeleport.isPresent())
 		{
@@ -233,17 +245,17 @@ public class DynamicObject
 
 			if(withReactionForce)
 			{
-				var reaction = ReactionAcceleration.applyOneTick(GetCurrentLocation());
+				var reaction = ReactionAcceleration.applyOneTick(getCurrentLocation());
 				deltaPos = deltaPos.add(reaction.getFirst().applyOneTick());
 				deltaRot.mul(reaction.getSecond().applyOneTick());
 			}
 
-			ExtrapolateNextFrame(deltaPos, deltaRot);
+			extrapolateNextFrame(deltaPos, deltaRot);
 		}
 	}
-	public void ExtrapolateNextFrame(@Nonnull Vec3 deltaPos, @Nonnull Quaternionf deltaRot)
+	public void extrapolateNextFrame(@Nonnull Vec3 deltaPos, @Nonnull Quaternionf deltaRot)
 	{
-		FrameData currentFrame = GetFrameNTicksAgo(0);
+		FrameData currentFrame = getFrameNTicksAgo(0);
 
 		Transform newLoc = Transform.fromPosAndQuat(
 			currentFrame.Location.positionVec3().add(deltaPos),
@@ -255,6 +267,6 @@ public class DynamicObject
 		//	Transform.FromPosAndQuat(deltaPos, deltaRot, () -> "ExtrapolatePhysicsFrame"));
 		PendingFrame = new FrameData(newLoc, NextFrameLinearMotion, NextFrameAngularMotion);
 	}
-	public void ExtrapolateNextFrame() { ExtrapolateNextFrame(false); }
-	public void ExtrapolateNextFrameWithReaction() { ExtrapolateNextFrame(true); }
+	public void extrapolateNextFrame() { extrapolateNextFrame(false); }
+	public void extrapolateNextFrameWithReaction() { extrapolateNextFrame(true); }
 }

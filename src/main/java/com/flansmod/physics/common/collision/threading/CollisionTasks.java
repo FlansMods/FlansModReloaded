@@ -3,7 +3,6 @@ package com.flansmod.physics.common.collision.threading;
 import com.flansmod.physics.common.FlansPhysicsMod;
 import com.flansmod.physics.common.collision.SeparationResult;
 import com.flansmod.physics.common.util.Maths;
-import com.flansmod.physics.common.util.shapes.CollisionManifold;
 import com.flansmod.physics.common.collision.TransformedBB;
 import com.flansmod.physics.common.util.ProjectedRange;
 import com.flansmod.physics.common.util.ProjectionUtil;
@@ -20,7 +19,7 @@ import java.util.function.Function;
 public class CollisionTasks
 {
 	@Nullable
-	private static SeparationResult QuickSeparateSpheres(@Nonnull Vec3 aCenter, double aRadius, @Nonnull Vec3 bCenter, double bRadius)
+	private static SeparationResult quickSeparateSpheres(@Nonnull Vec3 aCenter, double aRadius, @Nonnull Vec3 bCenter, double bRadius)
 	{
 		Vec3 deltaPos = bCenter.subtract(aCenter);
 		double deltaLengthSq = deltaPos.lengthSqr();
@@ -37,7 +36,7 @@ public class CollisionTasks
 	}
 
 	@Nonnull
-	public static SeparationResult SeparateSpheres(@Nonnull Vec3 aCenter, double aRadius, @Nonnull Vec3 bCenter, double bRadius)
+	public static SeparationResult separateSpheres(@Nonnull Vec3 aCenter, double aRadius, @Nonnull Vec3 bCenter, double bRadius)
 	{
 		Vec3 deltaPos = bCenter.subtract(aCenter);
 		double deltaLengthSq = deltaPos.lengthSqr();
@@ -96,9 +95,9 @@ public class CollisionTasks
 
 
 	@Nonnull
-	public static SeparationResult Separate(@Nonnull TransformedBB aCollider, @Nonnull TransformedBB bCollider)
+	public static SeparationResult separate(@Nonnull TransformedBB aCollider, @Nonnull TransformedBB bCollider)
 	{
-		return Separate(
+		return separate(
 				new AxisPermutationIterator3D() {
 					@Override
 					public Vec3 getAxisA(int index) { return aCollider.GetAxis(DIRECTIONS[index]); }
@@ -110,9 +109,9 @@ public class CollisionTasks
 	}
 
 	@Nonnull
-	public static SeparationResult Separate(@Nonnull TransformedBB aCollider, @Nonnull AABB bCollider)
+	public static SeparationResult separate(@Nonnull TransformedBB aCollider, @Nonnull AABB bCollider)
 	{
-		return Separate(
+		return separate(
 				new AxisPermutationIterator3D()
 				{
 					@Override
@@ -289,7 +288,7 @@ public class CollisionTasks
 
 
 	@Nonnull
-	private static SeparationResult Separate(@Nonnull AxisPermutationIterator testAxes,
+	private static SeparationResult separate(@Nonnull AxisPermutationIterator testAxes,
 											 @Nonnull Function<Vec3, ProjectedRange> projectFuncA,
 											 @Nonnull Function<Vec3, ProjectedRange> projectFuncB)
 	{
@@ -300,7 +299,7 @@ public class CollisionTasks
         while (testAxes.hasNext())
 		{
             Vec3 axis = testAxes.next();
-			bestResult = Test(projectFuncA, projectFuncB, axis, testedNormals, bestResult);
+			bestResult = test(projectFuncA, projectFuncB, axis, testedNormals, bestResult);
             if(bestResult != null)
             {
                 if (bestResult.success())
@@ -318,11 +317,11 @@ public class CollisionTasks
 	}
 
 	@Nullable
-	private static SeparationResult Test(@Nonnull Function<Vec3, ProjectedRange> projectFuncA,
-												   @Nonnull Function<Vec3, ProjectedRange> projectFuncB,
-												   @Nonnull Vec3 normal,
-												   @Nonnull List<Vec3> testedNormals,
-												   @Nullable SeparationResult previousBestResult)
+	private static SeparationResult test(@Nonnull Function<Vec3, ProjectedRange> projectFuncA,
+										 @Nonnull Function<Vec3, ProjectedRange> projectFuncB,
+										 @Nonnull Vec3 normal,
+										 @Nonnull List<Vec3> testedNormals,
+										 @Nullable SeparationResult previousBestResult)
 	{
 		if(normal.lengthSqr() <= Maths.Epsilon)
 			return previousBestResult;

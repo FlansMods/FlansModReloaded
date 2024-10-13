@@ -2,6 +2,7 @@ package com.flansmod.physics.common.collision;
 
 import com.flansmod.client.render.debug.DebugRenderer;
 import com.flansmod.common.FlansMod;
+import com.flansmod.physics.common.collision.threading.CollisionTaskResolveDynamic;
 import com.flansmod.physics.common.units.*;
 import com.flansmod.physics.common.util.Maths;
 import com.flansmod.physics.common.util.ProjectedRange;
@@ -51,6 +52,18 @@ public class OBBCollisionSystem
 	private final Map<ColliderHandle, ImmutableList<ISeparationAxis>> StaticSeparators = new HashMap<>();
 	private long NextID = 1L;
 
+	private final List<CollisionTaskSeparateDynamicPair> DynamicSeparationTasks = new ArrayList<>();
+	private final List<CollisionTaskSeparateDynamicFromStatic> StaticSeparationTasks = new ArrayList<>();
+	private final List<CollisionTaskResolveDynamic> ResolverTasks = new ArrayList<>();
+
+	private boolean DoingPhysics = false;
+	private final Queue<Runnable> DoAfterPhysics = new ArrayDeque<>();
+
+	private static final int PHYSICS_LOCK_MS_TIMEOUT = 16;
+	private final Lock DynamicsLock = new ReentrantLock();
+	private final Lock TasksLock = new ReentrantLock();
+
+
 	public static final double MAX_LINEAR_BLOCKS_PER_TICK = 60d;
 	public static final double MAX_ANGULAR_MOTION_PER_TICK = 60d;
 
@@ -95,7 +108,7 @@ public class OBBCollisionSystem
 				DynamicObject dynamic = system.Dynamics.get(handle);
 				if(dynamic != null)
 				{
-					double distSq = dynamic.GetCurrentLocation().positionVec3().distanceToSqr(pos);
+					double distSq = dynamic.getCurrentLocation().positionVec3().distanceToSqr(pos);
 					if(distSq < closestDistSq) {
 						closestDistSq = distSq;
 						closest = handle;
@@ -115,15 +128,6 @@ public class OBBCollisionSystem
 		OBBCollisionSystem system = ForLevel(level);
 		return system.AllHandles.size();
 	}
-	private final List<CollisionTaskSeparateDynamicPair> DynamicSeparationTasks = new ArrayList<>();
-	private final List<CollisionTaskSeparateDynamicFromStatic> StaticSeparationTasks = new ArrayList<>();
-
-	private boolean DoingPhysics = false;
-	private final Queue<Runnable> DoAfterPhysics = new ArrayDeque<>();
-
-	private static final int PHYSICS_LOCK_MS_TIMEOUT = 16;
-	private final Lock DynamicsLock = new ReentrantLock();
-	private final Lock TasksLock = new ReentrantLock();
 
 	public OBBCollisionSystem(@Nonnull Level level)
 	{
@@ -225,7 +229,7 @@ public class OBBCollisionSystem
 		DoAfterPhysics(() -> {
 			DynamicObject dyn = Dynamics.get(handle);
 			if(dyn != null)
-				dyn.AddLinearAcceleration(linearAcceleration);
+				dyn.addLinearAcceleration(linearAcceleration);
 		});
 	}
 	@Nonnull
@@ -241,7 +245,7 @@ public class OBBCollisionSystem
 		DoAfterPhysics(() -> {
 			DynamicObject dyn = Dynamics.get(handle);
 			if(dyn != null)
-				dyn.SetLinearVelocity(linearVelocity);
+				dyn.setLinearVelocity(linearVelocity);
 		});
 	}
 	public void AddAngularAcceleration(@Nonnull ColliderHandle handle, @Nonnull AngularAcceleration angularAcceleration)
@@ -249,7 +253,7 @@ public class OBBCollisionSystem
 		DoAfterPhysics(() -> {
 			DynamicObject dyn = Dynamics.get(handle);
 			if(dyn != null)
-				dyn.AddAngularAcceleration(angularAcceleration);
+				dyn.addAngularAcceleration(angularAcceleration);
 		});
 	}
 	public void SetAngularVelocity(@Nonnull ColliderHandle handle, @Nonnull AngularVelocity angularVelocity)
@@ -257,7 +261,7 @@ public class OBBCollisionSystem
 		DoAfterPhysics(() -> {
 			DynamicObject dyn = Dynamics.get(handle);
 			if(dyn != null)
-				dyn.SetAngularVelocity(angularVelocity);
+				dyn.setAngularVelocity(angularVelocity);
 		});
 	}
 	public void Teleport(@Nonnull ColliderHandle handle, @Nonnull Transform to)
@@ -266,7 +270,7 @@ public class OBBCollisionSystem
 			DynamicObject dyn = Dynamics.get(handle);
 			if(dyn != null)
 			{
-				dyn.TeleportTo(to);
+				dyn.teleportTo(to);
 			}
 		});
 	}
@@ -288,7 +292,7 @@ public class OBBCollisionSystem
 				staticFunc.accept(collision);
 			for(DynamicCollisionEvent collision : obj.DynamicCollisions)
 				dynamicFunc.accept(collision);
-			return obj.GetCurrentColliders().Location();
+			return obj.getCurrentColliders().Location();
 		}
 		return Transform.IDENTITY;
 	}
@@ -334,8 +338,8 @@ public class OBBCollisionSystem
 				List<ColliderHandle> expiredHandles = new ArrayList<>();
 				for (var kvp : Dynamics.entrySet())
 				{
-					kvp.getValue().PreTick();
-					if(kvp.getValue().Invalid())
+					kvp.getValue().preTick();
+					if(kvp.getValue().isInvalid())
 					{
 						expiredHandles.add(kvp.getKey());
 					}
@@ -347,15 +351,25 @@ public class OBBCollisionSystem
 					Dynamics.remove(handle);
 				}
 
-				PhysicsStep_CreateTasks();
-
 				if(SINGLE_THREAD_DEBUG)
 				{
-					UnthreadedPhysics_ProcessTasks();
-				}
+					// Run separation logic
+					physicsStep_createSeparationTasks();
+					physicsStep_unthreaded_processSeparationTasks();
+					physicsStep_collectSeparationTasks();
 
-				PhysicsStep_CollectTasks();
-				PhysicsStep_ResolveTransforms();
+					// Run resolver logic
+					physicsStep_createResolverTasks();
+					physicsStep_unthreaded_processResolverTasks();
+					physicsStep_collectResolverTasks();
+
+					// And done
+					physicsStep_commitFrame();
+				}
+				else
+				{
+					// TODO: Threaded physics
+				}
 
 				while(!DoAfterPhysics.isEmpty())
 				{
@@ -379,7 +393,7 @@ public class OBBCollisionSystem
 
 	}
 
-	private void PhysicsStep_CreateTasks()
+	private void physicsStep_createSeparationTasks()
 	{
 		for (int i = 0; i < AllHandles.size(); i++)
 		{
@@ -391,7 +405,7 @@ public class OBBCollisionSystem
 			boolean movingA = !objectA.NextFrameLinearMotion.isApproxZero() || !objectA.NextFrameAngularMotion.isApproxZero();
 
 			// Check against the static objects
-			AABB sweepTestAABB = objectA.GetSweepTestAABB();
+			AABB sweepTestAABB = objectA.getSweepTestAABB();
 			ImmutableList<VoxelShape> worldBBs = GetWorldColliders(sweepTestAABB);
 			if(!worldBBs.isEmpty())
 			{
@@ -439,36 +453,36 @@ public class OBBCollisionSystem
 		}
 	}
 
-	private void UnthreadedPhysics_ProcessTasks()
+	private void physicsStep_unthreaded_processSeparationTasks()
 	{
 		for(int i = 0; i < StaticSeparationTasks.size(); i++)
 		{
 			CollisionTaskSeparateDynamicFromStatic task = StaticSeparationTasks.get(i);
-			task.Run();
-			if(!task.IsComplete())
+			task.run();
+			if(!task.isComplete())
 				FlansMod.LOGGER.error("SINGLE_THREAD_PHYSICS: Failed to complete static task");
 		}
 
 		for(int i = 0; i < DynamicSeparationTasks.size(); i++)
 		{
 			CollisionTaskSeparateDynamicPair task = DynamicSeparationTasks.get(i);
-			task.Run();
-			if(!task.IsComplete())
+			task.run();
+			if(!task.isComplete())
 				FlansMod.LOGGER.error("SINGLE_THREAD_PHYSICS: Failed to complete dynamic task");
 		}
 	}
 
-	private void PhysicsStep_CollectTasks()
+	private void physicsStep_collectSeparationTasks()
 	{
 		for(int i = 0; i < StaticSeparationTasks.size(); i++)
 		{
 			CollisionTaskSeparateDynamicFromStatic task = StaticSeparationTasks.get(i);
-			if(task.IsComplete())
+			if(task.isComplete())
 			{
 				DynamicObject object = Dynamics.get(task.Handle);
 				if(object != null)
 				{
-					var output = task.GetResult();
+					var output = task.getResult();
 					if(output != null)
 					{
 						object.StaticCollisions.addAll(output.EventsA());
@@ -485,7 +499,7 @@ public class OBBCollisionSystem
 									Vec3 normal = axis.GetNormal();
 									Vec3 up = new Vec3(normal.z, -normal.x, -normal.y);
 
-									TransformedBB obb = object.GetPendingBB();
+									TransformedBB obb = object.getPendingBB();
 									ProjectedRange range = axis.ProjectOBBMinMax(obb);
 									double center = axis.Project(obb.GetCenter());
 
@@ -539,9 +553,9 @@ public class OBBCollisionSystem
 		for(int i = 0; i < DynamicSeparationTasks.size(); i++)
 		{
 			CollisionTaskSeparateDynamicPair task = DynamicSeparationTasks.get(i);
-			if(task.IsComplete())
+			if(task.isComplete())
 			{
-				var output = task.GetResult();
+				var output = task.getResult();
 				if(output != null)
 				{
 					DynamicObject objectA = Dynamics.get(task.HandleA);
@@ -560,120 +574,55 @@ public class OBBCollisionSystem
 			}
 		}
 		DynamicSeparationTasks.clear();
-
-
 	}
-	private void PhysicsStep_ResolveTransforms()
+
+ 	private void physicsStep_createResolverTasks()
 	{
-		for(DynamicObject dyn : Dynamics.values())
+		for(var kvp : Dynamics.entrySet())
 		{
+			ColliderHandle handle = kvp.getKey();
+			DynamicObject dyn = kvp.getValue();
 			if(dyn.NextFrameTeleport.isPresent())
+				continue;
+			if (dyn.StaticCollisions.isEmpty() && dyn.DynamicCollisions.isEmpty())
+				continue;
+
+			ResolverTasks.add(CollisionTaskResolveDynamic.of(handle, dyn, dyn.DynamicCollisions, dyn.StaticCollisions));
+		}
+	}
+
+	private void physicsStep_unthreaded_processResolverTasks()
+	{
+		for(int i = 0; i < ResolverTasks.size(); i++)
+		{
+			CollisionTaskResolveDynamic task = ResolverTasks.get(i);
+			task.run();
+			if(!task.isComplete())
+				FlansMod.LOGGER.error("SINGLE_THREAD_PHYSICS: Failed to complete resolver task");
+		}
+	}
+
+	private void physicsStep_collectResolverTasks()
+	{
+		for(int i = 0; i < ResolverTasks.size(); i++)
+		{
+			CollisionTaskResolveDynamic task = ResolverTasks.get(i);
+			DynamicObject dyn = Dynamics.get(task.Handle);
+			if(dyn != null && task.getResult() != null)
 			{
-				dyn.CommitFrame();
-			}
-			else
-			{
-				if (dyn.StaticCollisions.isEmpty() && dyn.DynamicCollisions.isEmpty())
-				{
-
-				}
-				else
-				{
-					// We have some collisions, we need to resolve them before committing the next frame data
-					//TransformedBBCollection pending = dyn.GetPendingColliders();
-					LinearVelocity linearV = dyn.NextFrameLinearMotion;
-					AngularVelocity angularV = dyn.NextFrameAngularMotion;
-
-					Vec3 v = linearV.applyOneTick();
-					Quaternionf q = angularV.applyOneTick();
-					//boolean collisionX = false, collisionY = false, collisionZ = false;
-
-					ProjectedRange xMoveReq = null, yMoveReq = null, zMoveReq = null;
-					List<StaticCollisionEvent> relevantX = new ArrayList<>(), relevantY = new ArrayList<>(), relevantZ = new ArrayList<>();
-					for (StaticCollisionEvent collision : dyn.StaticCollisions)
-					{
-						Vec3 pushOutVec = collision.ContactNormal().scale(-collision.depth());
-						pushOutVec = v.subtract(pushOutVec);
-						if(!Maths.Approx(pushOutVec.x, 0d))
-						{
-							xMoveReq = ProjectedRange.add(xMoveReq, pushOutVec.x);
-							relevantX.add(collision);
-						}
-						if(!Maths.Approx(pushOutVec.y, 0d))
-						{
-							yMoveReq = ProjectedRange.add(yMoveReq, pushOutVec.y);
-							relevantY.add(collision);
-						}
-						if(!Maths.Approx(pushOutVec.z, 0d))
-						{
-							zMoveReq = ProjectedRange.add(zMoveReq, pushOutVec.z);
-							relevantZ.add(collision);
-						}
-					}
-
-					double xRange = ProjectedRange.width(xMoveReq);
-					double yRange = ProjectedRange.width(yMoveReq);
-					double zRange = ProjectedRange.width(zMoveReq);
-
-					Vec3 forceOrigin = null;
-
-					// Clamp on the smallest axis
-					if(xRange < yRange && xRange < zRange)
-					{
-						v = new Vec3(ProjectedRange.clamp(xMoveReq, v.x), v.y, v.z);
-
-						forceOrigin = Vec3.ZERO;
-                        for (StaticCollisionEvent x : relevantX)
-							forceOrigin.add(x.ContactSurface().GetAveragePos());
-						forceOrigin = forceOrigin.scale(1d / relevantX.size());
-					}
-					else if(yRange < zRange)
-					{
-						v = new Vec3(v.x, ProjectedRange.clamp(yMoveReq, v.y), v.z);
-						forceOrigin = Vec3.ZERO;
-						for (StaticCollisionEvent y : relevantY)
-							forceOrigin.add(y.ContactSurface().GetAveragePos());
-						forceOrigin = forceOrigin.scale(1d / relevantY.size());
-					}
-					else
-					{
-						v = new Vec3(v.x, v.y, ProjectedRange.clamp(zMoveReq, v.z));
-						forceOrigin = Vec3.ZERO;
-						for (StaticCollisionEvent z : relevantZ)
-							forceOrigin.add(z.ContactSurface().GetAveragePos());
-						forceOrigin = forceOrigin.scale(1d / relevantZ.size());
-					}
-
-					// TODO: Check if this resolves all collisions
-					// If not, clamp another axis
-
-					// Now, we know what the maximum v is, we need to work out what the reaction force is that results in this v
-					LinearVelocity maxV = LinearVelocity.blocksPerTick(v);
-					LinearAcceleration reactionAcc = LinearAcceleration.reaction(linearV, maxV);
-
-					if(DEBUG_SETTING_ONLY_LINEAR_REACTIONS)
-						dyn.ReactionAcceleration = OffsetAcceleration.offset(reactionAcc, dyn.GetCurrentLocation().positionVec3());
-					else
-						dyn.ReactionAcceleration = OffsetAcceleration.offset(reactionAcc, forceOrigin);
-					dyn.ExtrapolateNextFrameWithReaction();
-
-					//dyn.SetLinearVelocity(LinearVelocity.blocksPerTick(v));
-					//dyn.SetAngularVelocity(angularV.scale(maxT));
-
-					// TODO: CHECK, we used to set the v/q direct, now we apply reaction
-					// dyn.ExtrapolateNextFrame(v, q);
-				}
-				if(!PAUSE_PHYSICS)
-				{
-					dyn.CommitFrame();
-				}
+				dyn.ReactionAcceleration = task.getResult().ReactionAcceleration();
+				dyn.extrapolateNextFrameWithReaction();
 			}
 		}
 	}
 
-	private void Threaded_SeparateSimpleDynamics(@Nonnull TransformedBB a, @Nonnull TransformedBB b)
+	private void physicsStep_commitFrame()
 	{
+		if(PAUSE_PHYSICS)
+			return;
 
+		for (DynamicObject dyn : Dynamics.values())
+			dyn.commitFrame();
 	}
 
 	@Nonnull
