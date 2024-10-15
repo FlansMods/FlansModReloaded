@@ -90,6 +90,7 @@ public abstract class PhysicsEntity extends Entity
     @Override
     public void tick()
     {
+        super.tick();
         checkPhysicsActivate();
         if(physicsActive)
         {

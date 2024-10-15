@@ -123,6 +123,21 @@ public class CollisionTasks
 				(normal) -> ProjectionUtil.ProjectAABBMinMax(normal, bCollider));
 	}
 
+	@Nonnull
+	public static SeparationResult separate(@Nonnull AABB aCollider, @Nonnull AABB bCollider)
+	{
+		return separate(
+				new AxisPermutationIterator3D()
+				{
+					@Override
+					public Vec3 getAxisA(int index) { return GLOBAL_AXES[index]; }
+					@Override
+					public Vec3 getAxisB(int index) { return GLOBAL_AXES[index]; }
+				},
+				(normal) -> ProjectionUtil.ProjectAABBMinMax(normal, aCollider),
+				(normal) -> ProjectionUtil.ProjectAABBMinMax(normal, bCollider));
+	}
+
 
 	/*
 		// AABB.radius???

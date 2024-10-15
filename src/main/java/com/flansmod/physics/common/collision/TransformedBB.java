@@ -45,11 +45,6 @@ public record TransformedBB(@Nonnull Transform Loc, @Nonnull Vector3f HalfExtent
 	public ContinuousSeparationManifold Intersect(@Nonnull AABB bb, @Nonnull Vec3 motion) {
 		return ContinuousCollisionUtility.SeparateContinuous(this, motion, bb);
 	}
-	@Nullable
-	public Vec3 Intersect(@Nonnull AABB bb) { return CollisionUtility.Separate(this, bb); }
-	@Nullable
-	public Vec3 Intersect(@Nonnull TransformedBB other) { return CollisionUtility.Separate(this, other); }
-
 	public boolean Contains(@Nonnull Vec3 point)
 	{
 		Vec3 local = Loc.globalToLocalPosition(point);

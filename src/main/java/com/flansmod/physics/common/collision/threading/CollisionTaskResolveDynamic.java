@@ -55,15 +55,21 @@ public class CollisionTaskResolveDynamic
     @Override
     public void prepare(@Nonnull CollisionTaskResolveDynamic.Input input)
     {
-
+        Input = input;
     }
 
     @Override
-    public boolean canRun() { return true; }
+    public boolean canRun() { return Input != null; }
 
     @Override
     public void run()
     {
+        if(Input == null)
+        {
+            Output = new Output(OffsetAcceleration.Zero);
+            return;
+        }
+
         LinearVelocity linearV = Input.Dynamic.getNextFrameLinearVelocity();
         AngularVelocity angularV = Input.Dynamic.getNextFrameAngularVelocity();
 
@@ -97,33 +103,41 @@ public class CollisionTaskResolveDynamic
         double yRange = ProjectedRange.width(yMoveReq);
         double zRange = ProjectedRange.width(zMoveReq);
 
-        Vec3 forceOrigin = null;
+        Vec3 forceOrigin = Input.Dynamic.getCurrentLocation().positionVec3();
 
         // Clamp on the smallest axis
-        if(xRange < yRange && xRange < zRange)
+        if(xRange <= yRange && xRange <= zRange)
         {
             v = new Vec3(ProjectedRange.clamp(xMoveReq, v.x), v.y, v.z);
-
-            forceOrigin = Vec3.ZERO;
-            for (StaticCollisionEvent x : relevantX)
-                forceOrigin.add(x.ContactSurface().GetAveragePos());
-            forceOrigin = forceOrigin.scale(1d / relevantX.size());
+            if(!relevantX.isEmpty())
+            {
+                forceOrigin = Vec3.ZERO;
+                for (StaticCollisionEvent x : relevantX)
+                    forceOrigin.add(x.ContactSurface().GetAveragePos());
+                forceOrigin = forceOrigin.scale(1d / relevantX.size());
+            }
         }
-        else if(yRange < zRange)
+        else if(yRange <= zRange)
         {
             v = new Vec3(v.x, ProjectedRange.clamp(yMoveReq, v.y), v.z);
-            forceOrigin = Vec3.ZERO;
-            for (StaticCollisionEvent y : relevantY)
-                forceOrigin.add(y.ContactSurface().GetAveragePos());
-            forceOrigin = forceOrigin.scale(1d / relevantY.size());
+            if(!relevantY.isEmpty())
+            {
+                forceOrigin = Vec3.ZERO;
+                for (StaticCollisionEvent y : relevantY)
+                    forceOrigin.add(y.ContactSurface().GetAveragePos());
+                forceOrigin = forceOrigin.scale(1d / relevantY.size());
+            }
         }
         else
         {
             v = new Vec3(v.x, v.y, ProjectedRange.clamp(zMoveReq, v.z));
-            forceOrigin = Vec3.ZERO;
-            for (StaticCollisionEvent z : relevantZ)
-                forceOrigin.add(z.ContactSurface().GetAveragePos());
-            forceOrigin = forceOrigin.scale(1d / relevantZ.size());
+            if(!relevantZ.isEmpty())
+            {
+                forceOrigin = Vec3.ZERO;
+                for (StaticCollisionEvent z : relevantZ)
+                    forceOrigin.add(z.ContactSurface().GetAveragePos());
+                forceOrigin = forceOrigin.scale(1d / relevantZ.size());
+            }
         }
 
         // TODO: Check if this resolves all collisions
@@ -144,6 +158,8 @@ public class CollisionTaskResolveDynamic
 
         // TODO: CHECK, we used to set the v/q direct, now we apply reaction
         // dyn.ExtrapolateNextFrame(v, q);
+
+
     }
 
     @Override
