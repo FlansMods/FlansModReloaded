@@ -1,6 +1,7 @@
 package com.flansmod.physics.common.util;
 
 import com.flansmod.physics.common.FlansPhysicsMod;
+import com.flansmod.physics.common.entity.ForcesOnPart;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.renderer.block.model.ItemTransform;
 import net.minecraft.core.BlockPos;
@@ -158,6 +159,9 @@ public class Transform
     @Nonnull public static Transform fromScale(float scale)                                                                   { return new Transform(scale, null);  }
     @Nonnull public static Transform fromPos(@Nonnull Vec3 pos)                                                               { return new Transform(pos.x, pos.y, pos.z, 1f, null); }
     @Nonnull public static Transform fromPos(double x, double y, double z)                                                    { return new Transform(x, y, z, 1f, null); }
+    @Nonnull public static Transform fromPosAndQuat(double x, double y, double z, @Nonnull Quaternionf ori)                   { return new Transform(x, y, z, ori, 1f, null); }
+    @Nonnull public static Transform fromPosAndQuat(@Nonnull Vector3d pos, @Nonnull Quaternionf ori)                          { return new Transform(pos.x, pos.y, pos.z, ori, 1f, null); }
+    @Nonnull public static Transform fromPosAndQuat(@Nonnull Vec3 pos, @Nonnull Quaternionf ori)                              { return new Transform(pos.x, pos.y, pos.z, ori, 1f, null); }
     @Nonnull public static Transform fromPosAndEuler(@Nonnull Vec3 pos, @Nonnull Vector3f euler)                              { return new Transform(pos.x, pos.y, pos.z, euler.x, euler.y, euler.z, 1f, null); }
     @Nonnull public static Transform fromPosAndEuler(@Nonnull Vector3f pos, @Nonnull Vector3f euler)                          { return new Transform(pos.x, pos.y, pos.z, euler.x, euler.y, euler.z, 1f, null);}
     @Nonnull public static Transform fromPosAndEuler(@Nonnull Vec3 pos, float pitch, float yaw, float roll)                   { return new Transform(pos.x, pos.y, pos.z, pitch, yaw, roll, 1f, null);}
@@ -178,6 +182,7 @@ public class Transform
     @Nonnull public static Transform fromPos(@Nonnull Vec3 pos, @Nullable Supplier<String> debugFunc)                                                               { return new Transform(pos.x, pos.y, pos.z, 1f, debugFunc); }
     @Nonnull public static Transform fromPos(double x, double y, double z, @Nullable Supplier<String> debugFunc)                                                    { return new Transform(x, y, z, 1f, debugFunc); }
     @Nonnull public static Transform fromPosAndEuler(@Nonnull Vec3 pos, @Nonnull Vector3f euler, @Nullable Supplier<String> debugFunc)                              { return new Transform(pos.x, pos.y, pos.z, euler.x, euler.y, euler.z, 1f, debugFunc); }
+    @Nonnull public static Transform fromPosAndQuat(double x, double y, double z, @Nonnull Quaternionf ori, @Nullable Supplier<String> debugFunc)                   { return new Transform(x, y, z, ori, 1f, debugFunc); }
     @Nonnull public static Transform fromPosAndQuat(@Nonnull Vector3d pos, @Nonnull Quaternionf ori, @Nullable Supplier<String> debugFunc)                          { return new Transform(pos.x, pos.y, pos.z, ori, 1f, debugFunc); }
     @Nonnull public static Transform fromPosAndQuat(@Nonnull Vec3 pos, @Nonnull Quaternionf ori, @Nullable Supplier<String> debugFunc)                              { return new Transform(pos.x, pos.y, pos.z, ori, 1f, debugFunc); }
     @Nonnull public static Transform fromPosAndEuler(@Nonnull Vector3f pos, @Nonnull Vector3f euler, @Nullable Supplier<String> debugFunc)                          { return new Transform(pos.x, pos.y, pos.z, euler.x, euler.y, euler.z, 1f, debugFunc);}
@@ -479,7 +484,29 @@ public class Transform
             Double.isNaN(Orientation.x) || Double.isNaN(Orientation.y) || Double.isNaN(Orientation.z) || Double.isNaN(Orientation.w) ||
             Double.isNaN(Scale.x) || Double.isNaN(Scale.y) || Double.isNaN(Scale.z);
     }
-
+    @Override
+    public boolean equals(Object other)
+    {
+        if(other instanceof Transform otherT)
+        {
+            return otherT.Position.equals(Position)
+                    && otherT.Orientation.equals(Orientation)
+                    && otherT.Scale.equals(Scale);
+        }
+        return false;
+    }
+    public boolean isApprox(@Nonnull Transform other, double posEpsilon, float angleEpsilon, float scaleEpsilon)
+    {
+        return Position.distanceSquared(other.Position) < posEpsilon * posEpsilon
+                && Orientation.equals(other.Orientation, (float)angleEpsilon)
+                && Scale.equals(other.Scale, (float)scaleEpsilon);
+    }
+    public boolean isApprox(@Nonnull Transform other, double epsilon)
+    {
+        return Position.distanceSquared(other.Position) < epsilon * epsilon
+                && Orientation.equals(other.Orientation, (float)epsilon)
+                && Scale.equals(other.Scale, (float)epsilon);
+    }
 
     // ----------------------------------------------------------------------------------------
     // -------- Transformations i.e. Convert between this space and the parent space ----------

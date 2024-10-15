@@ -8,9 +8,9 @@ import com.flansmod.physics.common.collision.OBBCollisionSystem;
 import com.flansmod.physics.common.tests.CollisionTests;
 import com.flansmod.physics.common.tests.TestCubeEntity;
 import com.flansmod.physics.common.tests.TransformTests;
-import com.flansmod.physics.common.util.Transform;
-
+import com.flansmod.physics.network.PhysicsPacketHandler;
 import com.flansmod.physics.server.command.CommandPhysicsDebug;
+
 import com.mojang.logging.LogUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.entity.EntityRenderers;
@@ -53,6 +53,7 @@ public class FlansPhysicsMod
     {
         TransformTests.runTests();
         CollisionTests.runTests();
+        PhysicsPacketHandler.registerMessages();
         MinecraftForge.EVENT_BUS.register(this);
 
         IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();

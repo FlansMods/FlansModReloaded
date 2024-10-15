@@ -65,4 +65,14 @@ public record Torque(@Nonnull Vec3 Axis, double Magnitude) implements IForce
 	@Override @Nonnull
 	public Component toFancyString() { return Component.translatable("flansphysicsmod.torque", Magnitude, Axis.x, Axis.y, Axis.z); }
 
+	@Override
+	public boolean equals(Object other)
+	{
+		if(other instanceof Torque otherForce)
+			return otherForce.Axis.equals(Axis) && Maths.Approx(Magnitude, otherForce.Magnitude);
+		return false;
+	}
+	public boolean isApprox(@Nonnull Torque other) { return Maths.Approx(other.Axis, Axis) && Maths.Approx(other.Magnitude, Magnitude); }
+	public boolean isApprox(@Nonnull Torque other, double epsilon) { return Maths.Approx(other.Axis, Axis, epsilon) && Maths.Approx(other.Magnitude, Magnitude, epsilon); }
+
 }

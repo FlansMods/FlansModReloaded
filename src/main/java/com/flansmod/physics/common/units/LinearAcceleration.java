@@ -85,4 +85,13 @@ public record LinearAcceleration(@Nonnull Vec3 Acceleration) implements IAcceler
 	public String toString() { return "LinearAcceleration ["+Acceleration+"] blocks/tick^2"; }
 	@Override @Nonnull
 	public Component toFancyString() { return Component.translatable("flansphysicsmod.linear_acceleration", Acceleration.x, Acceleration.y, Acceleration.z); }
+	@Override
+	public boolean equals(Object other)
+	{
+		if(other instanceof LinearAcceleration otherLinearA)
+			return otherLinearA.Acceleration.equals(Acceleration);
+		return false;
+	}
+	public boolean isApprox(@Nonnull LinearAcceleration other) { return Maths.Approx(other.Acceleration, Acceleration); }
+	public boolean isApprox(@Nonnull LinearAcceleration other, double epsilon) { return Maths.Approx(other.Acceleration, Acceleration, epsilon); }
 }

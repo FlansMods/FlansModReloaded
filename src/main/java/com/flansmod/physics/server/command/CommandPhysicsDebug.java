@@ -140,7 +140,7 @@ public class CommandPhysicsDebug
                 OBBCollisionSystem system = OBBCollisionSystem.ForLevel(entity.level());
                 physicsEntity.forEachPhysicsComponent((component) ->
                 {
-                    system.AddLinearAcceleration(component.PhysicsHandle, acc);
+                    system.AddLinearAcceleration(component.physicsHandle, acc);
                 });
                 entityCount++;
             }
@@ -174,7 +174,7 @@ public class CommandPhysicsDebug
                 OBBCollisionSystem system = OBBCollisionSystem.ForLevel(entity.level());
                 physicsEntity.forEachPhysicsComponent((component) ->
                 {
-                    system.AddAngularAcceleration(component.PhysicsHandle, acc);
+                    system.AddAngularAcceleration(component.physicsHandle, acc);
                 });
                 entityCount++;
             }

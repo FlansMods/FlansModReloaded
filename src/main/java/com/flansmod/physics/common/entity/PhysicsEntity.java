@@ -7,6 +7,8 @@ import com.flansmod.physics.common.units.LinearAcceleration;
 import com.flansmod.physics.common.units.LinearForce;
 import com.flansmod.physics.common.util.Maths;
 import com.flansmod.physics.common.util.Transform;
+import com.flansmod.physics.network.PhysicsPacketHandler;
+import com.flansmod.physics.network.PhysicsSyncMessage;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.level.Level;
@@ -17,6 +19,7 @@ import org.joml.Vector3f;
 import javax.annotation.Nonnull;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
 public abstract class PhysicsEntity extends Entity
@@ -26,6 +29,8 @@ public abstract class PhysicsEntity extends Entity
 
     private boolean physicsActive = false;
     private Map<UUID, PhysicsComponent> physicsComponents = new HashMap<>();
+    private boolean scheduledFullPhysicsUpdate = false;
+
     public double physicsRange = DEFAULT_PHYSICS_RANGE;
 
 
@@ -38,6 +43,11 @@ public abstract class PhysicsEntity extends Entity
     {
         for(final PhysicsComponent component : physicsComponents.values())
             action.accept(component);
+    }
+    public void forEachPhysicsComponent(@Nonnull BiConsumer<UUID, PhysicsComponent> action)
+    {
+        for(var kvp : physicsComponents.entrySet())
+            action.accept(kvp.getKey(), kvp.getValue());
     }
     @Nonnull
     public PhysicsComponent getRootComponent()
@@ -98,84 +108,25 @@ public abstract class PhysicsEntity extends Entity
 
             // Respond to collision events from last frame, and update our location
             for(PhysicsComponent component : physicsComponents.values())
-                copyResponsesFromCollision(physics, component);
+                component.syncCollisionToComponent(physics);
 
             // For any vanilla calls that want to check in on this object, we keep the pos/yaw/pitch in sync
             syncTransformToEntity();
+            if(isControlledByLocalInstance())
+                sendPhysicsSync();
 
             // Let the entity handle these responses and build new forces
             tickPhysics();
 
             // Now send the results of the Force Model to the collision engine
             for(PhysicsComponent component : physicsComponents.values())
-                sendForcesToCollision(physics, component);
+                component.syncComponentToCollision(physics);
         }
         else
         {
             tickOutsidePhysicsRange();
         }
     }
-    private void copyResponsesFromCollision(@Nonnull OBBCollisionSystem physics, @Nonnull PhysicsComponent component)
-    {
-        component.LocationPrev = component.LocationCurrent;
-        // Sum all the non-reactionary forces of the last frame
-        LinearForce impactForce = component.Forces.SumLinearForces(component.LocationCurrent, false);
-        component.Forces.EndFrame();
-
-        if(component.PhysicsHandle.IsValid())
-        {
-            // Do we need to add these?
-            // TODO: If debug, show them?
-            AtomicReference<Boolean> collidedX = new AtomicReference<>(false),
-                    collidedY = new AtomicReference<>(false),
-                    collidedZ = new AtomicReference<>(false);
-
-            Transform newPos =  physics.ProcessEvents(component.PhysicsHandle,
-                    (collision) -> {
-                        if(!Maths.Approx(collision.ContactNormal().x, 0d))
-                            collidedX.set(true);
-                        if(!Maths.Approx(collision.ContactNormal().y, 0d))
-                            collidedY.set(true);
-                        if(!Maths.Approx(collision.ContactNormal().z, 0d))
-                            collidedZ.set(true);
-
-                    },
-                    (collision) -> {
-                        if(!Maths.Approx(collision.ContactNormal().x, 0d))
-                            collidedX.set(true);
-                        if(!Maths.Approx(collision.ContactNormal().y, 0d))
-                            collidedY.set(true);
-                        if(!Maths.Approx(collision.ContactNormal().z, 0d))
-                            collidedZ.set(true);
-                    });
-            //LinearVelocity v1 = physics.GetLinearVelocity(part.PhysicsHandle);
-            //LinearVelocity v2 = new LinearVelocity(new Vec3(
-            //	collidedX.get() ? 0.0d : v1.Velocity().x,
-            //	collidedY.get() ? 0.0d : v1.Velocity().y,
-            //	collidedZ.get() ? 0.0d : v1.Velocity().z));
-            //physics.SetLinearVelocity(part.PhysicsHandle, v2);
-            component.Forces.AddReactionForce(new LinearForce(new Vec3(
-                    collidedX.get() ? -impactForce.Force().x : 0.0d,
-                    collidedY.get() ? -impactForce.Force().y : 0.0d,
-                    collidedZ.get() ? -impactForce.Force().z : 0.0d)));
-
-            component.LocationCurrent = newPos;
-        }
-
-    }
-    private void sendForcesToCollision(@Nonnull OBBCollisionSystem physics, @Nonnull PhysicsComponent component)
-    {
-        LinearAcceleration linear = component.Forces.SumLinearAcceleration(component.LocationCurrent, component.mass, true);
-        AngularAcceleration angular = component.Forces.SumAngularAcceleration(component.LocationCurrent, component.momentOfInertia, true);
-        //float dampening = 1.0f;//part.Forces.GetDampeningRatio();
-        //if(dampening < 1.0f)
-        //{
-        //	linear = linear.subtract(part.GetVelocityMS().scale(1.0f - dampening));
-        //}
-        physics.AddLinearAcceleration(component.PhysicsHandle, linear);
-        physics.AddAngularAcceleration(component.PhysicsHandle, angular);
-    }
-
     private void checkPhysicsActivate()
     {
         if(physicsActive)
@@ -187,7 +138,7 @@ public abstract class PhysicsEntity extends Entity
             OBBCollisionSystem physics = OBBCollisionSystem.ForLevel(level());
             for(PhysicsComponent component : physicsComponents.values())
             {
-                if(physics.IsHandleInvalidated(component.PhysicsHandle))
+                if(physics.IsHandleInvalidated(component.getPhysicsHandle()))
                     shouldDeactivate = true;
             }
 
@@ -198,7 +149,7 @@ public abstract class PhysicsEntity extends Entity
                 stopPhysics();
                 for(PhysicsComponent component : physicsComponents.values())
                 {
-                    physics.UnregisterDynamic(component.PhysicsHandle);
+                    physics.UnregisterDynamic(component.getPhysicsHandle());
                 }
                 physicsComponents.clear();
                 physicsActive = false;
@@ -222,5 +173,34 @@ public abstract class PhysicsEntity extends Entity
                 }
             }
         }
+    }
+    private void sendPhysicsSync()
+    {
+        if(level().isClientSide)
+        {
+            PhysicsPacketHandler.sendToServer(createSyncMessage());
+        }
+        else
+        {
+            PhysicsPacketHandler.sendToAllAroundPoint(createSyncMessage(), level().dimension(), position(), 100d, null);
+        }
+    }
+    @Nonnull
+    private PhysicsSyncMessage createSyncMessage()
+    {
+        PhysicsSyncMessage message = new PhysicsSyncMessage();
+
+        forEachPhysicsComponent((id, physicsComponent) -> {
+            if(scheduledFullPhysicsUpdate || physicsComponent.needsUpdate())
+            {
+                message.addStateChange(
+                        id,
+                        physicsComponent.getCurrentTransform(),
+                        physicsComponent.getCurrentLinearVelocity(),
+                        physicsComponent.getCurrentAngularVelocity());
+            }
+        });
+
+        return message;
     }
 }

@@ -78,4 +78,13 @@ public record OffsetForce(@Nonnull Vec3 Force, @Nonnull Vec3 Offset) implements 
 	@Override @Nonnull
 	public Component toFancyString() { return Component.translatable("flansphysicsmod.offset_force", Force.x, Force.y, Force.z, Offset.x, Offset.y, Offset.z); }
 
+	@Override
+	public boolean equals(Object other)
+	{
+		if(other instanceof OffsetForce otherForce)
+			return otherForce.Force.equals(Force) && otherForce.Offset.equals(Offset);
+		return false;
+	}
+	public boolean isApprox(@Nonnull OffsetForce other) { return Maths.Approx(other.Force, Force) && Maths.Approx(other.Offset, Offset); }
+	public boolean isApprox(@Nonnull OffsetForce other, double epsilon) { return Maths.Approx(other.Force, Force, epsilon) && Maths.Approx(other.Offset, Offset, epsilon); }
 }

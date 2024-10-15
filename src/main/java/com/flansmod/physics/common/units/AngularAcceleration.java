@@ -81,4 +81,13 @@ public record AngularAcceleration(@Nonnull Vec3 Axis, double Magnitude) implemen
 	public String toString() { return "AngularAcceleration ["+Units.Angle.Radians_To_Degrees(Magnitude)+"] degrees/tick^2 around ["+Axis+"]"; }
 	@Override @Nonnull
 	public Component toFancyString() { return Component.translatable("flansphysicsmod.angular_acceleration", Units.Angle.Radians_To_Degrees(Magnitude), Axis.x, Axis.y, Axis.z); }
+	@Override
+	public boolean equals(Object other)
+	{
+		if(other instanceof AngularAcceleration otherAngularA)
+			return otherAngularA.Axis.equals(Axis) && Maths.Approx(Magnitude, otherAngularA.Magnitude);
+		return false;
+	}
+	public boolean isApprox(@Nonnull AngularAcceleration other) { return Maths.Approx(other.Axis, Axis) && Maths.Approx(other.Magnitude, Magnitude); }
+	public boolean isApprox(@Nonnull AngularAcceleration other, double epsilon) { return Maths.Approx(other.Axis, Axis, epsilon) && Maths.Approx(other.Magnitude, Magnitude, epsilon); }
 }

@@ -75,5 +75,13 @@ public record OffsetAcceleration(@Nonnull Vec3 Acceleration, @Nonnull Vec3 Origi
 	public String toString() { return "OffsetAcceleration ["+Acceleration+"] at ["+Origin+"]"; }
 	@Override @Nonnull
 	public Component toFancyString() { return Component.translatable("flansphysicsmod.offset_acceleration", Acceleration.x, Acceleration.y, Acceleration.z, Origin.x, Origin.y, Origin.z); }
-
+	@Override
+	public boolean equals(Object other)
+	{
+		if(other instanceof OffsetAcceleration otherOffsetA)
+			return otherOffsetA.Acceleration.equals(Acceleration) && otherOffsetA.Origin.equals(Origin);
+		return false;
+	}
+	public boolean isApprox(@Nonnull OffsetAcceleration other) { return Maths.Approx(other.Acceleration, Acceleration) && Maths.Approx(other.Origin, Origin); }
+	public boolean isApprox(@Nonnull OffsetAcceleration other, double epsilon) { return Maths.Approx(other.Acceleration, Acceleration, epsilon) && Maths.Approx(other.Origin, Origin, epsilon); }
 }

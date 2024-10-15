@@ -213,9 +213,9 @@ public class PhysicsDebugRenderer
             {
                 //Transform vehiclePos = vehicle.getCurrentRootTransform();
                 vehicle.forEachPhysicsComponent((component) -> {
-                    Transform componentPos = component.LocationCurrent;
+                    Transform componentPos = component.getCurrentTransform();
                     Vec3 coreMotionNextFrame = DebugRenderForces(
-                            component.Forces,
+                            component.getCurrentForces(),
                             vehicle.getDeltaMovement(),
                             componentPos,
                             palette,

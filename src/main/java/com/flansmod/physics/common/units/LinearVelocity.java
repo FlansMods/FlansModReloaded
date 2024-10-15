@@ -1,7 +1,9 @@
 package com.flansmod.physics.common.units;
 
+import com.flansmod.physics.common.entity.ForcesOnPart;
 import com.flansmod.physics.common.util.Maths;
 import com.flansmod.physics.common.util.Transform;
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.phys.Vec3;
 
@@ -55,4 +57,22 @@ public record LinearVelocity(@Nonnull Vec3 Velocity) implements IVelocity
 	@Override @Nonnull
 	public Component toFancyString() { return Component.translatable("flansphysicsmod.linear_velocity", Velocity.x, Velocity.y, Velocity.z); }
 
+	public boolean isApprox(@Nonnull LinearVelocity other) { return Maths.Approx(other.Velocity, Velocity); }
+	public boolean isApprox(@Nonnull LinearVelocity other, double epsilon) { return Maths.Approx(other.Velocity, Velocity, epsilon); }
+	@Override
+	public boolean equals(Object other)
+	{
+		if(other instanceof LinearVelocity otherLinearV)
+			return otherLinearV.Velocity.equals(Velocity);
+		return false;
+	}
+	public void toBuf(@Nonnull FriendlyByteBuf buf)
+	{
+		buf.writeVector3f(Velocity.toVector3f());
+	}
+	@Nonnull
+	public static LinearVelocity fromBuf(@Nonnull FriendlyByteBuf buf)
+	{
+		return new LinearVelocity(new Vec3(buf.readVector3f()));
+	}
 }

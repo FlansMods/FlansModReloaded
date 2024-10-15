@@ -433,20 +433,20 @@ public class VehicleEntity extends Entity implements
 	@Override @Nonnull
 	public VehicleDefinitionHierarchy GetHierarchy() { return Def().AsHierarchy(); }
 	@Override @Nonnull
-	public Transform GetRootTransformCurrent() { return GetCorePhysics().LocationCurrent; }
+	public Transform GetRootTransformCurrent() { return GetCorePhysics().getCurrentTransform(); }
 	@Override @Nonnull
-	public Transform GetRootTransformPrevious() { return GetCorePhysics().LocationPrev; }
+	public Transform GetRootTransformPrevious() { return GetCorePhysics().getPreviousTransform(); }
 	@Override
 	public void SetRootTransformCurrent(@Nonnull Transform transform) { TeleportTo(transform); }
 	@Override
 	public void ApplyWorldToRootPrevious(@Nonnull TransformStack stack)
 	{
-		stack.add(GetCorePhysics().LocationCurrent);
+		stack.add(GetCorePhysics().getCurrentTransform());
 	}
 	@Override
 	public void ApplyWorldToRootCurrent(@Nonnull TransformStack stack)
 	{
-		stack.add(GetCorePhysics().LocationPrev);
+		stack.add(GetCorePhysics().getPreviousTransform());
 	}
 
 	@Override
@@ -479,7 +479,7 @@ public class VehicleEntity extends Entity implements
 		if(componentPath.Type() == EPartDefComponent.Wheel)
 		{
 			stack.add(GetWorldToPartPrevious(componentPath.Part()).inverse());
-			stack.add(GetPartPhysics(componentPath).LocationPrev);
+			stack.add(GetPartPhysics(componentPath).getPreviousTransform());
 		}
 	}
 	@Override
@@ -488,7 +488,7 @@ public class VehicleEntity extends Entity implements
 		if(componentPath.Type() == EPartDefComponent.Wheel)
 		{
 			stack.add(GetWorldToPartCurrent(componentPath.Part()).inverse());
-			stack.add(GetPartPhysics(componentPath).LocationCurrent);
+			stack.add(GetPartPhysics(componentPath).getCurrentTransform());
 		}
 	}
 
@@ -601,13 +601,13 @@ public class VehicleEntity extends Entity implements
 		return PhysicsParts.getOrDefault(VehicleComponentPath.coreArticulation, PhysicsComponent.invalid);
 	}
 	@Nonnull
-	public ForcesOnPart GetCoreForces() { return GetCorePhysics().Forces; }
+	public ForcesOnPart GetCoreForces() { return GetCorePhysics().getCurrentForces(); }
 	@Nonnull
-	public ForcesOnPart GetForcesOn(@Nonnull VehicleComponentPath path) { return GetPartPhysics(path).Forces; }
+	public ForcesOnPart GetForcesOn(@Nonnull VehicleComponentPath path) { return GetPartPhysics(path).getCurrentForces(); }
 	@Nonnull
-	public ColliderHandle GetCorePhsyicsHandle() { return GetCorePhysics().PhysicsHandle; }
+	public ColliderHandle GetCorePhsyicsHandle() { return GetCorePhysics().getPhysicsHandle(); }
 	@Nonnull
-	public ColliderHandle GetPhysicsHandle(@Nonnull VehicleComponentPath path) { return GetPartPhysics(path).PhysicsHandle; }
+	public ColliderHandle GetPhysicsHandle(@Nonnull VehicleComponentPath path) { return GetPartPhysics(path).getPhysicsHandle(); }
 	public void AddForceTo(@Nonnull VehicleComponentPath path)
 	{
 
@@ -654,11 +654,7 @@ public class VehicleEntity extends Entity implements
 		OBBCollisionSystem physics = OBBCollisionSystem.ForLevel(level());
 		for(PhysicsComponent part : PhysicsParts.values())
 		{
-			if(part.PhysicsHandle.IsValid())
-			{
-				physics.UnregisterDynamic(part.PhysicsHandle);
-				part.PhysicsHandle = ColliderHandle.invalid;
-			}
+			part.unregister(physics);
 		}
 		PhysicsParts.clear();
 	}
@@ -691,52 +687,7 @@ public class VehicleEntity extends Entity implements
 			VehicleComponentPath path = kvp.getKey();
 			PhysicsComponent part = kvp.getValue();
 
-			part.LocationPrev = part.LocationCurrent;
-
-			// Sum all the non-reactionary forces of the last frame
-			LinearForce impactForce = part.Forces.SumLinearForces(part.LocationCurrent, false);
-			part.Forces.EndFrame();
-
-
-			if(part.PhysicsHandle.IsValid())
-			{
-				// Do we need to add these?
-				// TODO: If debug, show them?
-				AtomicReference<Boolean> collidedX = new AtomicReference<>(false),
-					collidedY = new AtomicReference<>(false),
-					collidedZ = new AtomicReference<>(false);
-
-				Transform newPos =  physics.ProcessEvents(part.PhysicsHandle,
-					(collision) -> {
-						if(!Maths.Approx(collision.ContactNormal().x, 0d))
-							collidedX.set(true);
-						if(!Maths.Approx(collision.ContactNormal().y, 0d))
-							collidedY.set(true);
-						if(!Maths.Approx(collision.ContactNormal().z, 0d))
-							collidedZ.set(true);
-
-					},
-					(collision) -> {
-						if(!Maths.Approx(collision.ContactNormal().x, 0d))
-							collidedX.set(true);
-						if(!Maths.Approx(collision.ContactNormal().y, 0d))
-							collidedY.set(true);
-						if(!Maths.Approx(collision.ContactNormal().z, 0d))
-							collidedZ.set(true);
-					});
-				//LinearVelocity v1 = physics.GetLinearVelocity(part.PhysicsHandle);
-				//LinearVelocity v2 = new LinearVelocity(new Vec3(
-				//	collidedX.get() ? 0.0d : v1.Velocity().x,
-				//	collidedY.get() ? 0.0d : v1.Velocity().y,
-				//	collidedZ.get() ? 0.0d : v1.Velocity().z));
-				//physics.SetLinearVelocity(part.PhysicsHandle, v2);
-				part.Forces.AddReactionForce(new LinearForce(new Vec3(
-					collidedX.get() ? -impactForce.Force().x : 0.0d,
-					collidedY.get() ? -impactForce.Force().y : 0.0d,
-					collidedZ.get() ? -impactForce.Force().z : 0.0d)));
-
-				part.LocationCurrent = newPos;
-			}
+			part.syncCollisionToComponent(physics);
 		}
 	}
 	protected void TickController(@Nullable ControlLogic controller)
@@ -770,12 +721,12 @@ public class VehicleEntity extends Entity implements
 		{
 			LinearForce coreGravity = LinearForce.kgBlocksPerSecondSq(new Vec3(0f, -9.81f * Def().physics.mass, 0f));
 
-			GetCorePhysics().Forces.AddForce(coreGravity);
-			GetCorePhysics().Forces.AddDampener(0.1f);
+			GetCorePhysics().getCurrentForces().addForce(coreGravity);
+			GetCorePhysics().getCurrentForces().addDampener(0.1f);
 			GetHierarchy().ForEachWheel((path, def) -> {
 				LinearForce wheelGravity = LinearForce.kgBlocksPerSecondSq(new Vec3(0f, -9.81f * def.mass, 0f));
-				GetPartPhysics(path).Forces.AddForce(wheelGravity);
-				GetPartPhysics(path).Forces.AddDampener(0.1f);
+				GetPartPhysics(path).getCurrentForces().addForce(wheelGravity);
+				GetPartPhysics(path).getCurrentForces().addDampener(0.1f);
 			});
 		}
 	}
@@ -786,32 +737,13 @@ public class VehicleEntity extends Entity implements
 
 		{
 			PhysicsComponent corePhysics = GetCorePhysics();
-			LinearAcceleration linear = corePhysics.Forces.SumLinearAcceleration(corePhysics.LocationCurrent, Def().physics.mass, true);
-			AngularAcceleration angular = corePhysics.Forces.SumAngularAcceleration(corePhysics.LocationCurrent, Def().physics.MomentOfInertia(), true);
-			//float dampening = 1.0f;//part.Forces.GetDampeningRatio();
-			//if(dampening < 1.0f)
-			//{
-			//	linear = linear.subtract(part.GetVelocityMS().scale(1.0f - dampening));
-			//}
-
-			physics.AddLinearAcceleration(corePhysics.PhysicsHandle, linear);
-			physics.AddAngularAcceleration(corePhysics.PhysicsHandle, angular);
+			corePhysics.syncComponentToCollision(physics);
 		}
 
 		GetHierarchy().ForEachWheel((path, def) ->
 		{
 			PhysicsComponent wheelPhysics = GetPartPhysics(path);
-
-			LinearAcceleration linear = wheelPhysics.Forces.SumLinearAcceleration(GetWorldToPartCurrent(path), def.mass, true);
-			AngularAcceleration angular = wheelPhysics.Forces.SumAngularAcceleration(GetWorldToPartCurrent(path), def.MomentOfInertia(), true);
-			//float dampening = 1.0f;//part.Forces.GetDampeningRatio();
-			//if(dampening < 1.0f)
-			//{
-			//	linear = linear.subtract(part.GetVelocityMS().scale(1.0f - dampening));
-			//}
-
-			physics.AddLinearAcceleration(wheelPhysics.PhysicsHandle, linear);
-			physics.AddAngularAcceleration(wheelPhysics.PhysicsHandle, angular);
+			wheelPhysics.syncComponentToCollision(physics);
 		});
 	}
 	protected void TickPhysics()
@@ -841,19 +773,19 @@ public class VehicleEntity extends Entity implements
 		AABB physicsBounds = null;
 		for(PhysicsComponent part : PhysicsParts.values())
 		{
-			if(part.PhysicsHandle.IsValid())
+			if(part.getPhysicsHandle().IsValid())
 			{
-				if (physics.IsHandleInvalidated(part.PhysicsHandle))
+				if (physics.IsHandleInvalidated(part.getPhysicsHandle()))
 				{
-					part.PhysicsHandle = ColliderHandle.invalid;
+					part.unregister(physics);
 				}
 				else if(physicsBounds == null)
 				{
-					physicsBounds = new AABB(part.LocationCurrent.positionVec3(), part.LocationCurrent.positionVec3());
+					physicsBounds = new AABB(part.getCurrentTransform().positionVec3(), part.getCurrentTransform().positionVec3());
 				}
 				else
 				{
-					physicsBounds = physicsBounds.expandTowards(part.LocationCurrent.positionVec3());
+					physicsBounds = physicsBounds.expandTowards(part.getCurrentTransform().positionVec3());
 				}
 
 			}
@@ -1349,7 +1281,7 @@ public class VehicleEntity extends Entity implements
 		{
 			// So we want to teleport the whole vehicle
 			PhysicsComponent corePart = GetCorePhysics();
-			Transform coreTransformOld = corePart.LocationCurrent;
+			Transform coreTransformOld = corePart.getCurrentTransform();
 
 			// We should move all the other parts, relative to the root
 			Map<ColliderHandle, Transform> newPartPositions = new HashMap<>();
@@ -1358,18 +1290,18 @@ public class VehicleEntity extends Entity implements
 				if(kvp.getKey().Part().IsRoot())
 					continue;
 
-				Transform relativeTransformOld = coreTransformOld.globalToLocalTransform(kvp.getValue().LocationCurrent);
+				Transform relativeTransformOld = coreTransformOld.globalToLocalTransform(kvp.getValue().locationCurrent);
 				Transform partTransformNew = coreTransformNew.localToGlobalTransform(relativeTransformOld);
-				newPartPositions.put(kvp.getValue().PhysicsHandle, partTransformNew);
-				kvp.getValue().LocationCurrent = partTransformNew;
-				kvp.getValue().LocationPrev = partTransformNew;
+				newPartPositions.put(kvp.getValue().physicsHandle, partTransformNew);
+				kvp.getValue().locationCurrent = partTransformNew;
+				kvp.getValue().locationPrev = partTransformNew;
 			}
 
 			// And if those parts have physics handles, we should update them in the physics system too.
 			OBBCollisionSystem physics = OBBCollisionSystem.ForLevel(level());
 			ColliderHandle rootHandle = GetCorePhsyicsHandle();
-			corePart.LocationPrev = coreTransformNew;
-			corePart.LocationCurrent = coreTransformNew;
+			corePart.locationPrev = coreTransformNew;
+			corePart.locationCurrent = coreTransformNew;
 			physics.Teleport(rootHandle, coreTransformNew);
 			for(var kvp : newPartPositions.entrySet())
 			{

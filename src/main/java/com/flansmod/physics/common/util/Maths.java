@@ -122,6 +122,7 @@ public class Maths
     public static double LengthXYZ(Vec3 v) { return v.length(); }
     public static double LengthXZ(Vec3 v) { return Sqrt(v.x * v.x + v.z * v.z); }
     public static boolean Approx(Vec3 a, Vec3 b) { return (a.x-b.x)*(a.x-b.x)+(a.y-b.y)*(a.y-b.y)+(a.z-b.z)*(a.z-b.z) < EpsilonSq; }
+    public static boolean Approx(Vec3 a, Vec3 b, double epsilon) { return (a.x-b.x)*(a.x-b.x)+(a.y-b.y)*(a.y-b.y)+(a.z-b.z)*(a.z-b.z) < epsilon * epsilon; }
     public static Vec3 Clamp(Vec3 v, double min, double max) { return new Vec3(Clamp(v.x, min, max), Clamp(v.y, min, max), Clamp(v.z, min, max)); }
 
 

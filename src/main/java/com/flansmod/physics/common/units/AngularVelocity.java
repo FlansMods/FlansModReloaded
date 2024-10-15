@@ -2,6 +2,7 @@ package com.flansmod.physics.common.units;
 
 import com.flansmod.physics.common.util.Maths;
 import com.flansmod.physics.common.util.Transform;
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.phys.Vec3;
 import org.joml.AxisAngle4f;
@@ -74,5 +75,25 @@ public record AngularVelocity(@Nonnull Vec3 Axis, double Magnitude) implements I
 	public String toString() { return "AngularVelocity ["+Units.Angle.Radians_To_Degrees(Magnitude)+"] degrees/tick around ["+Axis+"]"; }
 	@Override @Nonnull
 	public Component toFancyString() { return Component.translatable("flansphysicsmod.angular_velocity", Units.Angle.Radians_To_Degrees(Magnitude), Axis.x, Axis.y, Axis.z); }
-
+	@Override
+	public boolean equals(Object other)
+	{
+		if(other instanceof AngularVelocity otherAngularV)
+			return otherAngularV.Axis.equals(Axis) && Maths.Approx(Magnitude, otherAngularV.Magnitude);
+		return false;
+	}
+	public boolean isApprox(@Nonnull AngularVelocity other) { return Maths.Approx(other.Axis, Axis) && Maths.Approx(other.Magnitude, Magnitude); }
+	public boolean isApprox(@Nonnull AngularVelocity other, double epsilon) { return Maths.Approx(other.Axis, Axis, epsilon) && Maths.Approx(other.Magnitude, Magnitude, epsilon); }
+	public void toBuf(@Nonnull FriendlyByteBuf buf)
+	{
+		buf.writeVector3f(Axis.toVector3f());
+		buf.writeFloat((float)Magnitude);
+	}
+	@Nonnull
+	public static AngularVelocity fromBuf(@Nonnull FriendlyByteBuf buf)
+	{
+		Vec3 axis = new Vec3(buf.readVector3f());
+		double mag = buf.readFloat();
+		return new AngularVelocity(axis, mag);
+	}
 }

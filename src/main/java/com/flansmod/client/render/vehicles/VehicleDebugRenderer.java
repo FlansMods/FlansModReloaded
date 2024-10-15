@@ -245,15 +245,15 @@ public class VehicleDebugRenderer
 					//	DebugRenderer.RenderLine(parent, 1, palette.WheelCurrent, parent.GlobalToLocalPosition(pos.PositionVec3()));
 					//}
 
-					Transform wheelPos =physics.LocationCurrent;
+					Transform wheelPos =physics.getCurrentTransform();
 					Vector3f debugWheelBoxSize = new Vector3f(0.5f * def.radius, def.radius, def.radius);
 					//DebugRenderer.RenderAxes(wheel.GetWorldTransformCurrent(), 1, palette.Default);
 					DebugRenderer.RenderRotation(wheelPos, 1, palette.WheelCurrent, wheelPos.right(), 1.0d);
 					DebugRenderer.RenderLine(vehiclePos, 1, palette.WheelCurrent, vehiclePos.globalToLocalPosition(wheelPos.positionVec3()));
 
 
-					Vec3 wheelMotionNextFrame = DebugRenderForces(physics.Forces,
-						physics.GetDeltaFramePos(),
+					Vec3 wheelMotionNextFrame = DebugRenderForces(physics.getCurrentForces(),
+						physics.getDeltaFramePos(),
 						wheelPos,
 						palette,
 						false,

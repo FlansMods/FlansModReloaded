@@ -12,69 +12,55 @@ import java.util.List;
 // Force model is in Newtons or kgms^-2
 public class ForcesOnPart
 {
-	//public final List<LinearForce> LocalForces = new ArrayList<>();
-	//public final List<LinearForce> GlobalForces = new ArrayList<>();
-	//public final List<OffsetForce> OffsetLocalForces = new ArrayList<>();
-	//public final List<OffsetForce> OffsetGlobalForces = new ArrayList<>();
-	//public final List<AngularForce> Angulars = new ArrayList<>();
-	private final List<IForce> Forces = new ArrayList<>();
-	private final List<IForce> ReactionForces = new ArrayList<>();
-	private final List<IForce> ForcesLastFrame = new ArrayList<>();
-	public float Dampening = 1.0f;
+	private final List<IForce> forces = new ArrayList<>();
+	private final List<IForce> reactionForces = new ArrayList<>();
+	public float dampening = 1.0f;
 
-
-	public void EndFrame()
+	public void endFrame()
 	{
-		//LocalForces.clear();
-		//GlobalForces.clear();
-		//OffsetLocalForces.clear();
-		//OffsetGlobalForces.clear();
-		//Angulars.clear();
-		ReactionForces.clear();
-		ForcesLastFrame.clear();
-		ForcesLastFrame.addAll(Forces);
-		Forces.clear();
-		Dampening = 1.0f;
+		reactionForces.clear();
+		forces.clear();
+		dampening = 1.0f;
 	}
 
 	@Nonnull
 	public List<IForce> Debug_GetForces()
 	{
-		return ForcesLastFrame;
+		return forces;
 	}
 
-	public void AddReactionForce(@Nonnull IForce force)
+	public void addReactionForce(@Nonnull IForce force)
 	{
-		ReactionForces.add(force);
+		reactionForces.add(force);
 	}
-	public void AddForce(@Nonnull IForce force)
+	public void addForce(@Nonnull IForce force)
 	{
-		Forces.add(force);
+		forces.add(force);
 	}
-	public void AddDampener(float dampening)
+	public void addDampener(float dampening)
 	{
-		Dampening *= (1.0f - Maths.Clamp(dampening, 0f, 1f));
+		this.dampening *= (1.0f - Maths.Clamp(dampening, 0f, 1f));
 	}
 
-	public float GetDampeningRatio() { return Dampening; }
+	public float getDampeningRatio() { return dampening; }
 
 
 	@Nonnull
-	public LinearVelocity ApplyLinearAcceleration(@Nonnull LinearVelocity motion, @Nonnull Transform partTransform, float mass, boolean includeReactions)
+	public LinearVelocity applyLinearAcceleration(@Nonnull LinearVelocity motion, @Nonnull Transform partTransform, float mass, boolean includeReactions)
 	{
-		return motion.add(SumLinearAcceleration(partTransform, mass, includeReactions).applyOneTick());
+		return motion.add(sumLinearAcceleration(partTransform, mass, includeReactions).applyOneTick());
 	}
 	@Nonnull
-	public LinearAcceleration SumLinearAcceleration(@Nonnull Transform partTransform, double mass, boolean includeReactions)
+	public LinearAcceleration sumLinearAcceleration(@Nonnull Transform partTransform, double mass, boolean includeReactions)
 	{
-		return SumLinearForces(partTransform, includeReactions).actingOn(mass);
+		return sumLinearForces(partTransform, includeReactions).actingOn(mass);
 	}
 	@Nonnull
-	public LinearForce SumLinearForces(@Nonnull Transform partTransform, boolean includeReactions)
+	public LinearForce sumLinearForces(@Nonnull Transform partTransform, boolean includeReactions)
 	{
 		LinearForce motion = LinearForce.Zero;
 
-		for(IForce force : Forces)
+		for(IForce force : forces)
 		{
 			if(force.hasLinearComponent(partTransform))
 			{
@@ -83,7 +69,7 @@ public class ForcesOnPart
 		}
 		if(includeReactions)
 		{
-			for(IForce force : ReactionForces)
+			for(IForce force : reactionForces)
 			{
 				if(force.hasLinearComponent(partTransform))
 				{
@@ -92,30 +78,20 @@ public class ForcesOnPart
 			}
 		}
 
-		//for(LinearForce local : LocalForces)
-		//	motion = motion.add(partTransform.LocalToGlobalDirection(local.Vector()));
-		//for(LinearForce global : GlobalForces)
-		//	motion = motion.add(global.Vector());
-		//
-		//for(OffsetForce local : OffsetLocalForces)
-		//	motion = motion.add(partTransform.LocalToGlobalDirection(local.Vector()));
-		//for(OffsetForce global : OffsetGlobalForces)
-		//	motion = motion.add(global.Vector());
-
 		return motion;
 	}
 	@Nonnull
-	public AngularAcceleration SumAngularAcceleration(@Nonnull Transform partTransform, @Nonnull Vec3 momentOfInertia, boolean includeReactions)
+	public AngularAcceleration sumAngularAcceleration(@Nonnull Transform partTransform, @Nonnull Vec3 momentOfInertia, boolean includeReactions)
 	{
-		return SumTorque(partTransform, includeReactions).actingOn(momentOfInertia);
+		return sumTorque(partTransform, includeReactions).actingOn(momentOfInertia);
 	}
 
 	@Nonnull
-	public Torque SumTorque(@Nonnull Transform partTransform, boolean includeReactions)
+	public Torque sumTorque(@Nonnull Transform partTransform, boolean includeReactions)
 	{
 		Torque sum = Torque.Zero;
 
-		for (IForce force : Forces)
+		for (IForce force : forces)
 		{
 			if (force.hasAngularComponent(partTransform))
 			{
@@ -124,7 +100,7 @@ public class ForcesOnPart
 		}
 		if (includeReactions)
 		{
-			for (IForce force : ReactionForces)
+			for (IForce force : reactionForces)
 			{
 				if (force.hasAngularComponent(partTransform))
 				{
@@ -133,5 +109,17 @@ public class ForcesOnPart
 			}
 		}
 		return sum;
+	}
+
+	@Override
+	public boolean equals(Object other)
+	{
+		if(other instanceof ForcesOnPart otherForces)
+		{
+			return otherForces.forces.equals(forces)
+					&& otherForces.reactionForces.equals(reactionForces)
+					&& Maths.Approx(dampening, otherForces.dampening);
+		}
+		return false;
 	}
 }

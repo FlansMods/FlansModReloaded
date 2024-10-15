@@ -47,4 +47,14 @@ public record LinearForce(@Nonnull Vec3 Force) implements IForce
 	@Override @Nonnull
 	public Component toFancyString() { return Component.translatable("flansphysicsmod.linear_force", Force.x, Force.y, Force.z); }
 
+	@Override
+	public boolean equals(Object other)
+	{
+		if(other instanceof LinearForce otherForce)
+			return otherForce.Force.equals(Force);
+		return false;
+	}
+	public boolean isApprox(@Nonnull LinearForce other) { return Maths.Approx(other.Force, Force); }
+	public boolean isApprox(@Nonnull LinearForce other, double epsilon) { return Maths.Approx(other.Force, Force, epsilon); }
+
 }
