@@ -106,7 +106,7 @@ public class VehicleDebugRenderer
 				}
 
 				OBBCollisionSystem physics = OBBCollisionSystem.ForLevel(level);
-				physics.TryForEachDynamic((dynamic) -> DebugRender(dynamic, Client));
+				physics.tryForEachDynamic((dynamic) -> DebugRender(dynamic, Client));
 				DebugRenderSeparations(physics, Client);
 
 				DebugRender(level.entitiesForRendering(), Client);
@@ -119,7 +119,7 @@ public class VehicleDebugRenderer
 				{
 					DebugRender(loadedLevel.getAllEntities(), Server);
 					OBBCollisionSystem physics = OBBCollisionSystem.ForLevel(loadedLevel);
-					physics.TryForEachDynamic((dynamic) -> DebugRender(dynamic, Server));
+					physics.tryForEachDynamic((dynamic) -> DebugRender(dynamic, Server));
 					DebugRenderSeparations(physics, Server);
 				}
 			}
@@ -199,7 +199,7 @@ public class VehicleDebugRenderer
 			// Render a regular entity debug view
 			if(entity instanceof VehicleEntity vehicle)
 			{
-				Transform vehiclePos = vehicle.GetWorldToEntity().current();
+				Transform vehiclePos = vehicle.getRootTransform().current();
 
 				//DebugRenderer.RenderCube(Transform.FromPos(vehicle.position()), 1, palette.CoreCurrent, new Vector3f(0.15f, 0.1f, 0.15f));
 				//DebugRenderer.RenderAxes(vehiclePos, 1, palette.Default);
@@ -207,7 +207,7 @@ public class VehicleDebugRenderer
 				Vec3 coreMotionNextFrame = DebugRenderForces(
 					vehicle.GetCoreForces(),
 					vehicle.getDeltaMovement(),
-					vehicle.GetWorldToEntity().current(),
+					vehicle.getRootTransform().current(),
 					palette,
 					true,
 					vehicle.Def().physics.mass,
@@ -253,7 +253,7 @@ public class VehicleDebugRenderer
 
 
 					Vec3 wheelMotionNextFrame = DebugRenderForces(physics.getCurrentForces(),
-						physics.getDeltaFramePos(),
+						physics.getCurrentLinearVelocity().applyOneTick(),
 						wheelPos,
 						palette,
 						false,

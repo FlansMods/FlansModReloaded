@@ -4,7 +4,6 @@ import com.flansmod.client.render.debug.DebugRenderer;
 import com.flansmod.common.FlansMod;
 import com.flansmod.physics.common.collision.threading.CollisionTaskResolveDynamic;
 import com.flansmod.physics.common.units.*;
-import com.flansmod.physics.common.util.Maths;
 import com.flansmod.physics.common.util.ProjectedRange;
 import com.flansmod.physics.common.util.ProjectionUtil;
 import com.flansmod.physics.common.util.Transform;
@@ -13,13 +12,11 @@ import com.flansmod.physics.common.collision.threading.CollisionTaskSeparateDyna
 import com.flansmod.physics.common.util.shapes.ISeparationAxis;
 import com.google.common.collect.ImmutableList;
 import com.mojang.datafixers.util.Pair;
-import net.minecraft.world.level.CollisionGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.border.WorldBorder;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.VoxelShape;
-import org.joml.Quaternionf;
 import org.joml.Vector3f;
 import org.joml.Vector4f;
 
@@ -44,7 +41,7 @@ public class OBBCollisionSystem
 
 	private Map<ColliderHandle, IStaticObject> Statics = new HashMap<>();
 
-	private final CollisionGetter BlockAccess;
+	private final Level BlockAccess;
 	private final Map<ColliderHandle, DynamicObject> Dynamics = new HashMap<>();
 	private final List<ColliderHandle> AllHandles = new ArrayList<>();
 	private final List<ColliderHandle> InvalidatedHandles = new ArrayList<>();
@@ -134,7 +131,12 @@ public class OBBCollisionSystem
 		BlockAccess = level;
 	}
 
-	private boolean LockDynamics(int msTimeout)
+	public long getGameTick()
+	{
+		return BlockAccess.getGameTime();
+	}
+
+	private boolean lockDynamics(int msTimeout)
 	{
 		int msElapsed = 0;
 		for(;;)
@@ -157,19 +159,19 @@ public class OBBCollisionSystem
 			}
 		}
 	}
-	private boolean TryLockDynamics()
+	private boolean tryLockDynamics()
 	{
-		return LockDynamics(0);
+		return lockDynamics(0);
 	}
-	private void UnlockDynamics()
+	private void unlockDynamics()
 	{
 		DoingPhysics = false;
 		DynamicsLock.unlock();
 	}
 
-	public boolean WaitForEachDynamic(@Nonnull Consumer<DynamicObject> func, int msTimeout)
+	public boolean waitForEachDynamic(@Nonnull Consumer<DynamicObject> func, int msTimeout)
 	{
-		if(LockDynamics(msTimeout))
+		if(lockDynamics(msTimeout))
 		{
 			try
 			{
@@ -178,18 +180,18 @@ public class OBBCollisionSystem
 			}
 			finally
 			{
-				UnlockDynamics();
+				unlockDynamics();
 			}
 			return true;
 		}
 		return false;
 	}
-	public boolean TryForEachDynamic(@Nonnull Consumer<DynamicObject> func)
+	public boolean tryForEachDynamic(@Nonnull Consumer<DynamicObject> func)
 	{
-		return WaitForEachDynamic(func, 0);
+		return waitForEachDynamic(func, 0);
 	}
 
-	private void DoAfterPhysics(@Nonnull Runnable func)
+	private void doAfterPhysics(@Nonnull Runnable func)
 	{
 		if(DoingPhysics)
 			DoAfterPhysics.add(func);
@@ -198,75 +200,75 @@ public class OBBCollisionSystem
 	}
 
 	@Nonnull
-	public ColliderHandle RegisterDynamic(@Nonnull List<AABB> localColliders, @Nonnull Transform initialTransform)
+	public ColliderHandle registerDynamic(@Nonnull List<AABB> localColliders, @Nonnull Transform initialTransform)
 	{
 		ColliderHandle handle = new ColliderHandle(NextID);
 		DynamicObject dynObj = new DynamicObject(localColliders, initialTransform);
 		NextID++;
-		DoAfterPhysics(() -> {
+		doAfterPhysics(() -> {
 			AllHandles.add(handle);
 			Dynamics.put(handle, dynObj);
 		});
 		return handle;
 	}
-	public void UnregisterDynamic(@Nonnull ColliderHandle handle)
+	public void unregisterDynamic(@Nonnull ColliderHandle handle)
 	{
-		DoAfterPhysics(() -> {
+		doAfterPhysics(() -> {
 			Dynamics.remove(handle);
 			AllHandles.remove(handle);
 			InvalidatedHandles.remove(handle);
 		});
 	}
-	public void UpdateColliders(@Nonnull ColliderHandle handle, @Nonnull List<AABB> localColliders)
+	public void updateColliders(@Nonnull ColliderHandle handle, @Nonnull List<AABB> localColliders)
 	{
 		// TODO:
 		//DoAfterPhysics.add(() -> {
 		//	Dynamics.put(handle, dynObj);
 		//});
 	}
-	public void AddLinearAcceleration(@Nonnull ColliderHandle handle, @Nonnull LinearAcceleration linearAcceleration)
+	public void addLinearAcceleration(@Nonnull ColliderHandle handle, @Nonnull LinearAcceleration linearAcceleration)
 	{
-		DoAfterPhysics(() -> {
+		doAfterPhysics(() -> {
 			DynamicObject dyn = Dynamics.get(handle);
 			if(dyn != null)
 				dyn.addLinearAcceleration(linearAcceleration);
 		});
 	}
 	@Nonnull
-	public LinearVelocity GetLinearVelocity(@Nonnull ColliderHandle handle)
+	public LinearVelocity getLinearVelocity(@Nonnull ColliderHandle handle)
 	{
 		DynamicObject dyn = Dynamics.get(handle);
 		if(dyn != null)
 			return dyn.NextFrameLinearMotion;
 		return LinearVelocity.Zero;
 	}
-	public void SetLinearVelocity(@Nonnull ColliderHandle handle, @Nonnull LinearVelocity linearVelocity)
+	public void setLinearVelocity(@Nonnull ColliderHandle handle, @Nonnull LinearVelocity linearVelocity)
 	{
-		DoAfterPhysics(() -> {
+		doAfterPhysics(() -> {
 			DynamicObject dyn = Dynamics.get(handle);
 			if(dyn != null)
 				dyn.setLinearVelocity(linearVelocity);
 		});
 	}
-	public void AddAngularAcceleration(@Nonnull ColliderHandle handle, @Nonnull AngularAcceleration angularAcceleration)
+	public void addAngularAcceleration(@Nonnull ColliderHandle handle, @Nonnull AngularAcceleration angularAcceleration)
 	{
-		DoAfterPhysics(() -> {
+		doAfterPhysics(() -> {
 			DynamicObject dyn = Dynamics.get(handle);
 			if(dyn != null)
 				dyn.addAngularAcceleration(angularAcceleration);
 		});
 	}
-	public void SetAngularVelocity(@Nonnull ColliderHandle handle, @Nonnull AngularVelocity angularVelocity)
+	public void setAngularVelocity(@Nonnull ColliderHandle handle, @Nonnull AngularVelocity angularVelocity)
 	{
-		DoAfterPhysics(() -> {
+		doAfterPhysics(() -> {
 			DynamicObject dyn = Dynamics.get(handle);
 			if(dyn != null)
 				dyn.setAngularVelocity(angularVelocity);
 		});
 	}
-	public void Teleport(@Nonnull ColliderHandle handle, @Nonnull Transform to)
+	public void teleport(@Nonnull ColliderHandle handle, @Nonnull Transform to)
 	{
-		DoAfterPhysics(() -> {
+		doAfterPhysics(() -> {
 			DynamicObject dyn = Dynamics.get(handle);
 			if(dyn != null)
 			{
@@ -276,14 +278,14 @@ public class OBBCollisionSystem
 	}
 
 
-	public boolean IsHandleInvalidated(@Nonnull ColliderHandle handle)
+	public boolean isHandleInvalidated(@Nonnull ColliderHandle handle)
 	{
 		return InvalidatedHandles.contains(handle);
 	}
 	@Nonnull
-	public Transform ProcessEvents(@Nonnull ColliderHandle handle,
-							  @Nonnull Consumer<StaticCollisionEvent> staticFunc,
-							  @Nonnull Consumer<DynamicCollisionEvent> dynamicFunc)
+	public Transform processEvents(@Nonnull ColliderHandle handle,
+								   @Nonnull Consumer<StaticCollisionEvent> staticFunc,
+								   @Nonnull Consumer<DynamicCollisionEvent> dynamicFunc)
 	{
 		DynamicObject obj = Dynamics.get(handle);
 		if(obj != null)
@@ -310,9 +312,9 @@ public class OBBCollisionSystem
 //
 	//}
 
-	public void PreTick()
+	public void preTick()
 	{
-		if(LockDynamics(PHYSICS_LOCK_MS_TIMEOUT))
+		if(lockDynamics(PHYSICS_LOCK_MS_TIMEOUT))
 		{
 			try
 			{
@@ -320,7 +322,7 @@ public class OBBCollisionSystem
 			}
 			finally
 			{
-				UnlockDynamics();
+				unlockDynamics();
 			}
 		}
 		else
@@ -329,9 +331,9 @@ public class OBBCollisionSystem
 		}
 	}
 
-	public void PhysicsTick()
+	public void physicsTick()
 	{
-		if(LockDynamics(PHYSICS_LOCK_MS_TIMEOUT))
+		if(lockDynamics(PHYSICS_LOCK_MS_TIMEOUT))
 		{
 			try
 			{
@@ -378,19 +380,13 @@ public class OBBCollisionSystem
 			}
 			finally
 			{
-				UnlockDynamics();
+				unlockDynamics();
 			}
 		}
 		else
 		{
 			FlansMod.LOGGER.warn("Physics could not lock after " + PHYSICS_LOCK_MS_TIMEOUT + "ms");
 		}
-	}
-
-
-	private void PhysicsStep_CacheStaticGeom()
-	{
-
 	}
 
 	private void physicsStep_createSeparationTasks()
@@ -406,7 +402,7 @@ public class OBBCollisionSystem
 
 			// Check against the static objects
 			AABB sweepTestAABB = objectA.getSweepTestAABB();
-			ImmutableList<VoxelShape> worldBBs = GetWorldColliders(sweepTestAABB);
+			ImmutableList<VoxelShape> worldBBs = getWorldColliders(sweepTestAABB);
 			if(!worldBBs.isEmpty())
 			{
 				StaticSeparationTasks.add(CollisionTaskSeparateDynamicFromStatic.of(
@@ -626,7 +622,7 @@ public class OBBCollisionSystem
 	}
 
 	@Nonnull
-	private ImmutableList<VoxelShape> GetWorldColliders(@Nonnull AABB sweepAABB)
+	private ImmutableList<VoxelShape> getWorldColliders(@Nonnull AABB sweepAABB)
 	{
 		ImmutableList.Builder<VoxelShape> builder = ImmutableList.builder();
 

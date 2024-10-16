@@ -70,7 +70,7 @@ public class PhysicsDebugRenderer
             if (clientLevel != null)
             {
                 OBBCollisionSystem clientPhysics = OBBCollisionSystem.ForLevel(clientLevel);
-                clientPhysics.TryForEachDynamic((dynamic) -> DebugRender(dynamic, CLIENT_PALETTE));
+                clientPhysics.tryForEachDynamic((dynamic) -> DebugRender(dynamic, CLIENT_PALETTE));
                 DebugRenderSeparations(clientPhysics, CLIENT_PALETTE);
                 DebugRender(clientLevel.entitiesForRendering(), CLIENT_PALETTE);
 
@@ -82,7 +82,7 @@ public class PhysicsDebugRenderer
                         if(loadedLevel.dimension() == clientLevel.dimension())
                             DebugRender(loadedLevel.getAllEntities(), SERVER_PALETTE);
                         OBBCollisionSystem serverPhysics = OBBCollisionSystem.ForLevel(loadedLevel);
-                        serverPhysics.TryForEachDynamic((dynamic) -> DebugRender(dynamic, SERVER_PALETTE));
+                        serverPhysics.tryForEachDynamic((dynamic) -> DebugRender(dynamic, SERVER_PALETTE));
                         DebugRenderSeparations(serverPhysics, SERVER_PALETTE);
                     }
                 }

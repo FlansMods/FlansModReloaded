@@ -96,7 +96,7 @@ public class WheelEntity extends Entity implements ITransformChildEntity
 		WheelDefinition def = GetWheelDef();
 		Size = EntityDimensions.fixed(def.radius, def.radius);
 		Vehicle = Optional.of(vehicle);
-		setPos(vehicle.GetWorldToAP(GetWheelPath().Part()).current().positionVec3());
+		setPos(vehicle.getWorldToAP(GetWheelPath().Part()).current().positionVec3());
 	}
 	private void SetVehicleDef(@Nonnull VehicleDefinition def) { entityData.set(VEHICLE_DEF, def); }
 	private void SetVehicleEntityID(int entityID) { entityData.set(VEHICLE_ENTITY_ID, entityID); }

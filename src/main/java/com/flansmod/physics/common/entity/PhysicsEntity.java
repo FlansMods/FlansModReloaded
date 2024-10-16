@@ -1,11 +1,10 @@
 package com.flansmod.physics.common.entity;
 
 import com.flansmod.physics.common.FlansPhysicsMod;
+import com.flansmod.physics.common.collision.ColliderHandle;
 import com.flansmod.physics.common.collision.OBBCollisionSystem;
-import com.flansmod.physics.common.units.AngularAcceleration;
-import com.flansmod.physics.common.units.LinearAcceleration;
-import com.flansmod.physics.common.units.LinearForce;
-import com.flansmod.physics.common.util.Maths;
+import com.flansmod.physics.common.util.ITransformEntity;
+import com.flansmod.physics.common.util.ITransformPair;
 import com.flansmod.physics.common.util.Transform;
 import com.flansmod.physics.network.PhysicsPacketHandler;
 import com.flansmod.physics.network.PhysicsSyncMessage;
@@ -13,16 +12,14 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.AABB;
-import net.minecraft.world.phys.Vec3;
 import org.joml.Vector3f;
 
 import javax.annotation.Nonnull;
 import java.util.*;
-import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
-public abstract class PhysicsEntity extends Entity
+public abstract class PhysicsEntity extends Entity implements ITransformEntity
 {
     public static final double DEFAULT_PHYSICS_RANGE = 128d;
     public static final UUID CORE_PHYSICS = new UUID(0xc07ec07ec07ec07eL, 0xc07ec07ec07ec07eL);
@@ -59,7 +56,8 @@ public abstract class PhysicsEntity extends Entity
     @Nonnull
     public Transform getPreviousRootTransform() { return getRootComponent().getPreviousTransform(); }
 
-    protected void syncTransformToEntity()
+    @Override
+    public void syncTransformToEntity()
     {
         Transform worldRoot = getRootComponent().getCurrentTransform();
         Vector3f euler = worldRoot.euler();
@@ -68,6 +66,35 @@ public abstract class PhysicsEntity extends Entity
         xRotO = euler.x;
         setXRot(euler.x);
         setYRot(euler.y);
+    }
+    @Override
+    public void syncEntityToTransform()
+    {
+        Transform coreTransformNew = Transform.fromPosAndEuler(getPosition(0f), getXRot(), getYRot(), 0f);
+        teleportTo(coreTransformNew);
+    }
+    @Override @Nonnull
+    public ITransformPair getRootTransform() { return ITransformPair.of(this::getPreviousRootTransform, this::getCurrentRootTransform); }
+    @Override
+    public void teleportTo(@Nonnull Transform coreTransformNew)
+    {
+        // So we want to teleport the whole vehicle
+        PhysicsComponent corePart = getRootComponent();
+        Transform coreTransformOld = corePart.getCurrentTransform();
+
+        // We should move all the other parts, relative to the root
+        // And if those parts have physics handles, we should update them in the physics system too.
+        OBBCollisionSystem physics = OBBCollisionSystem.ForLevel(level());
+        Map<ColliderHandle, Transform> newPartPositions = new HashMap<>();
+        for (var kvp : physicsComponents.entrySet())
+        {
+            if (kvp.getKey().equals(CORE_PHYSICS))
+                continue;
+
+            Transform relativeTransformOld = coreTransformOld.globalToLocalTransform(kvp.getValue().getCurrentTransform());
+            Transform partTransformNew = coreTransformNew.localToGlobalTransform(relativeTransformOld);
+            kvp.getValue().teleportTo(physics, partTransformNew);
+        }
     }
     @Nonnull
     protected Transform getEntityRootAsTransform()
@@ -94,7 +121,7 @@ public abstract class PhysicsEntity extends Entity
     protected void addPhysicsComponent(@Nonnull UUID id, @Nonnull Transform worldPos, @Nonnull List<AABB> aabbs)
     {
         OBBCollisionSystem physics = OBBCollisionSystem.ForLevel(level());
-        physicsComponents.put(id, new PhysicsComponent(worldPos, physics.RegisterDynamic(aabbs, worldPos)));
+        physicsComponents.put(id, new PhysicsComponent(worldPos, level().getGameTime(), physics.registerDynamic(aabbs, worldPos)));
     }
 
     @Override
@@ -138,7 +165,7 @@ public abstract class PhysicsEntity extends Entity
             OBBCollisionSystem physics = OBBCollisionSystem.ForLevel(level());
             for(PhysicsComponent component : physicsComponents.values())
             {
-                if(physics.IsHandleInvalidated(component.getPhysicsHandle()))
+                if(physics.isHandleInvalidated(component.getPhysicsHandle()))
                     shouldDeactivate = true;
             }
 
@@ -149,7 +176,7 @@ public abstract class PhysicsEntity extends Entity
                 stopPhysics();
                 for(PhysicsComponent component : physicsComponents.values())
                 {
-                    physics.UnregisterDynamic(component.getPhysicsHandle());
+                    physics.unregisterDynamic(component.getPhysicsHandle());
                 }
                 physicsComponents.clear();
                 physicsActive = false;

@@ -1,42 +1,12 @@
 package com.flansmod.physics.common.util;
 
-import com.flansmod.common.entity.vehicle.hierarchy.VehicleComponentPath;
-import com.flansmod.common.entity.vehicle.hierarchy.VehiclePartPath;
-import net.minecraft.world.phys.Vec3;
-
 import javax.annotation.Nonnull;
 
 public interface ITransformEntity
 {
-	void SyncTransformToEntity();
-	void SyncEntityToTransform();
+	void syncTransformToEntity();
+	void syncEntityToTransform();
 
-	void SetWorldToEntity(@Nonnull Transform transform);
-	@Nonnull ITransformPair GetWorldToEntity();
-	@Nonnull ITransformPair GetEntityToAP(@Nonnull VehiclePartPath apPath);
-
-	// Velocity handling
-	@Nonnull Vec3 GetVelocity();
-	void SetVelocity(@Nonnull Vec3 velocityMetersPerSecond);
-	void ApplyVelocity();
-
-
-
-	// Lots of default getters for quick access
-	//@Nonnull default Transform GetWorldToEntityPrevious() { return GetWorldToEntity().GetPrevious(); }
-	//@Nonnull default Transform GetWorldToEntityCurrent() { return GetWorldToEntity().GetCurrent(); }
-	//@Nonnull default Transform GetWorldToEntity(float dt) { return GetWorldToEntity().GetDelta(dt); }
-	//@Nonnull default Transform GetEntityToAPPrevious(@Nonnull String apPath) { return GetEntityToAP(apPath).GetPrevious(); }
-	//@Nonnull default Transform GetEntityToAPCurrent(@Nonnull String apPath) { return GetEntityToAP(apPath).GetCurrent(); }
-	//@Nonnull default Transform GetEntityToAP(@Nonnull String apPath, float dt) { return GetEntityToAP(apPath).GetDelta(dt); }
-	@Nonnull default ITransformPair GetWorldToAP(@Nonnull VehiclePartPath apPath) {
-		return ITransformPair.compose(GetWorldToEntity(), GetEntityToAP(apPath));
-	}
-	@Nonnull default ITransformPair GetWorldToAP(@Nonnull VehicleComponentPath apPath) {
-		return ITransformPair.compose(GetWorldToEntity(), GetEntityToAP(apPath.Part()));
-	}
-	//@Nonnull default Transform GetWorldToAPPrevious(@Nonnull String apPath) { return GetWorldToAP(apPath).GetPrevious(); }
-	//@Nonnull default Transform GetWorldToAPCurrent(@Nonnull String apPath) { return GetWorldToAP(apPath).GetCurrent(); }
-	//@Nonnull default Transform GetWorldToAP(@Nonnull String apPath, float dt) { return GetWorldToAP(apPath).GetDelta(dt);
-
+	void teleportTo(@Nonnull Transform transform);
+	@Nonnull ITransformPair getRootTransform();
 }

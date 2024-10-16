@@ -7,9 +7,7 @@ import com.flansmod.physics.common.util.ITransformPair;
 import com.flansmod.physics.common.util.Maths;
 import com.flansmod.physics.common.util.Transform;
 import com.flansmod.physics.common.collision.ColliderHandle;
-import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
-import org.jetbrains.annotations.NotNull;
 import org.joml.Quaternionf;
 
 import javax.annotation.Nonnull;
@@ -93,6 +91,8 @@ public class PhysicsComponent
 
 	@Nonnull public ColliderHandle getPhysicsHandle() { return physicsHandle; }
 
+	@Nonnull public ForcesOnPart getPendingForces() { return pendingForces; }
+
 	@Nonnull public ForcesOnPart getCurrentForces() { return getCurrentFrame().forces; }
 	@Nonnull public Transform getCurrentTransform() { return getCurrentFrame().location; }
 	@Nonnull public LinearVelocity getCurrentLinearVelocity() { return getCurrentFrame().linearVelocity; }
@@ -111,10 +111,10 @@ public class PhysicsComponent
 		frameHistory = new DeltaRingBuffer<>(MAX_HISTORY_FRAMES, new Frame());
 		pendingForces = new ForcesOnPart();
 	}
-	public PhysicsComponent(@Nonnull Transform initialTransform, @Nonnull ColliderHandle handle)
+	public PhysicsComponent(@Nonnull Transform initialTransform, long gameTick, @Nonnull ColliderHandle handle)
 	{
 		physicsHandle = handle;
-		frameHistory = new DeltaRingBuffer<>(MAX_HISTORY_FRAMES, new Frame(0L, initialTransform));
+		frameHistory = new DeltaRingBuffer<>(MAX_HISTORY_FRAMES, new Frame(gameTick, initialTransform));
 		pendingForces = new ForcesOnPart();
 	}
 
@@ -122,7 +122,7 @@ public class PhysicsComponent
 	{
 		if(physicsHandle.IsValid())
 		{
-			system.UnregisterDynamic(getPhysicsHandle());
+			system.unregisterDynamic(getPhysicsHandle());
 			physicsHandle = ColliderHandle.invalid;
 		}
 	}
@@ -130,7 +130,7 @@ public class PhysicsComponent
 	{
 		Frame pendingFrame = new Frame();
 
-		pendingFrame.gameTick = 0L // TODO: Ticks
+		pendingFrame.gameTick = system.getGameTick();
 
 		// Sum all the non-reactionary forces of the last frame
 		LinearForce impactForce = pendingForces.sumLinearForces(getCurrentTransform(), false);
@@ -144,7 +144,7 @@ public class PhysicsComponent
 					collidedY = new AtomicReference<>(false),
 					collidedZ = new AtomicReference<>(false);
 
-			Transform newPos = system.ProcessEvents(physicsHandle,
+			Transform newPos = system.processEvents(physicsHandle,
 					(collision) -> {
 						if(!Maths.Approx(collision.ContactNormal().x, 0d))
 							collidedX.set(true);
@@ -190,8 +190,8 @@ public class PhysicsComponent
 			//{
 			//	linear = linear.subtract(part.GetVelocityMS().scale(1.0f - dampening));
 			//}
-			physics.AddLinearAcceleration(physicsHandle, linear);
-			physics.AddAngularAcceleration(physicsHandle, angular);
+			physics.addLinearAcceleration(physicsHandle, linear);
+			physics.addAngularAcceleration(physicsHandle, angular);
 		}
 	}
 	@Nonnull
@@ -211,6 +211,26 @@ public class PhysicsComponent
 	{
 		Frame frame = frameHistory.getOldEntry(1);
 		return frame == null ? getCurrentFrame() : frame;
+	}
+	public void teleportTo(@Nonnull OBBCollisionSystem system, @Nonnull Transform newLocation)
+	{
+		if(physicsHandle.IsValid())
+		{
+			system.teleport(physicsHandle, newLocation);
+		}
+		else
+		{
+			Frame pendingFrame = new Frame();
+			pendingFrame.gameTick = system.getGameTick();
+			pendingFrame.location = newLocation;
+			pendingFrame.linearVelocity = getCurrentLinearVelocity();
+			pendingFrame.angularVelocity = getCurrentAngularVelocity();
+			pendingFrame.forces = getCurrentForces();
+
+			// Add twice to remove teleport artifacts
+			frameHistory.add(pendingFrame);
+			frameHistory.add(pendingFrame);
+		}
 	}
 
 	@Nonnull
@@ -249,12 +269,12 @@ public class PhysicsComponent
 			return false;
 
 		long deltaT = newSyncFrame.gameTick - lastSyncFrame.gameTick;
-		Frame clientExtrapolation = createExtrapolatedFrame(lastSyncFrame, deltaT);
-		if(!clientExtrapolation.linearVelocity.isApprox(newSyncFrame.linearVelocity, LINEAR_VELOCITY_SYNC_THRESHOLD))
+		Frame remotePredicition = createExtrapolatedFrame(lastSyncFrame, deltaT);
+		if(!remotePredicition.linearVelocity.isApprox(newSyncFrame.linearVelocity, LINEAR_VELOCITY_SYNC_THRESHOLD))
 			return true;
-		if(!clientExtrapolation.angularVelocity.isApprox(newSyncFrame.angularVelocity, ANGULAR_VELOCITY_SYNC_THRESHOLD))
+		if(!remotePredicition.angularVelocity.isApprox(newSyncFrame.angularVelocity, ANGULAR_VELOCITY_SYNC_THRESHOLD))
 			return true;
-		if(!clientExtrapolation.location.isApprox(newSyncFrame.location, POSITION_SYNC_THRESHOLD, ORIENTATION_SYNC_THRESHOLD, SCALE_SYNC_THRESHOLD))
+		if(!remotePredicition.location.isApprox(newSyncFrame.location, POSITION_SYNC_THRESHOLD, ORIENTATION_SYNC_THRESHOLD, SCALE_SYNC_THRESHOLD))
 			return true;
 
 		return false;

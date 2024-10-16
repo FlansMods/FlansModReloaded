@@ -65,9 +65,9 @@ public class FlansPhysicsMod
         OBBCollisionSystem physics = OBBCollisionSystem.ForLevel(levelTick.level);
 
         if(levelTick.phase == TickEvent.Phase.START)
-            physics.PreTick();
+            physics.preTick();
         if(levelTick.phase == TickEvent.Phase.END)
-            physics.PhysicsTick();
+            physics.physicsTick();
     }
     @SubscribeEvent
     public void OnRegisterCommands(@Nonnull RegisterCommandsEvent event)

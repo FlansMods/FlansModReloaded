@@ -2,6 +2,7 @@ package com.flansmod.common.entity.vehicle;
 
 import com.flansmod.client.input.ClientInputHooks;
 import com.flansmod.common.FlansMod;
+import com.flansmod.physics.common.entity.PhysicsEntity;
 import com.flansmod.physics.common.util.ITransformPair;
 import com.flansmod.common.entity.vehicle.controls.ControlLogic;
 import com.flansmod.common.entity.vehicle.controls.ControlLogics;
@@ -23,12 +24,9 @@ import com.flansmod.common.types.vehicles.VehicleDefinition;
 import com.flansmod.common.types.vehicles.elements.*;
 import com.flansmod.physics.common.collision.ColliderHandle;
 import com.flansmod.physics.common.collision.OBBCollisionSystem;
-import com.flansmod.physics.common.util.ITransformEntity;
 import com.flansmod.physics.common.util.Maths;
 import com.flansmod.physics.common.util.Transform;
 import com.flansmod.physics.common.util.TransformStack;
-import com.flansmod.physics.common.units.AngularAcceleration;
-import com.flansmod.physics.common.units.LinearAcceleration;
 import com.flansmod.physics.common.units.LinearForce;
 import com.google.common.collect.ImmutableList;
 import net.minecraft.nbt.CompoundTag;
@@ -47,21 +45,18 @@ import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.util.Lazy;
-import org.joml.Vector3f;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.*;
-import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
 
-public class VehicleEntity extends Entity implements
-		ITransformEntity,
-	IVehicleEngineModule,
-	IVehicleTransformHelpers,
-	IVehicleSeatHelper,
-	IVehicleDamageHelper
-
+public class VehicleEntity extends PhysicsEntity implements
+		ISegmentedEntity,
+		IVehicleEngineModule,
+		IVehicleTransformHelpers,
+		IVehicleSeatHelper,
+		IVehicleDamageHelper
 {
 	// Data Synchronizer Accessors
 	public static final EntityDataAccessor<PerPartMap<EngineSyncState>> ENGINES_ACCESSOR =
@@ -187,8 +182,8 @@ public class VehicleEntity extends Entity implements
 
 	// -------------------------------------------------------------------------------------------
 	// Transform and some vanilla overrides. We want to use Quaternions, pleassse Minecraft
-	@Override public float getYRot() { return GetWorldToEntity().current().yaw(); }
-	@Override public float getXRot() { return GetWorldToEntity().current().pitch(); }
+	@Override public float getYRot() { return getRootTransform().current().yaw(); }
+	@Override public float getXRot() { return getRootTransform().current().pitch(); }
 	@Override public void setYRot(float yaw) { SetYaw(yaw); }
 	@Override public void setXRot(float pitch) { SetPitch(pitch); }
 	//@Override public void setPos(double x, double y, double z) { SetPosition(x, y, z); }
@@ -209,7 +204,7 @@ public class VehicleEntity extends Entity implements
 		zo = z;
 		xRotO = pitch;
 		yRotO = yaw;
-		SyncEntityToTransform();
+		syncEntityToTransform();
 	}
 	@Override
 	protected void reapplyPosition()
@@ -219,7 +214,7 @@ public class VehicleEntity extends Entity implements
 	}
 	private void SetAllPositionsFromEntity()
 	{
-		SyncEntityToTransform();
+		syncEntityToTransform();
 		//for(WheelEntity wheel : Wheels.All())
 		//	wheel.setPos(GetWorldToAP(wheel.GetWheelPath().Part()).GetCurrent().PositionVec3());
 	}
@@ -613,6 +608,18 @@ public class VehicleEntity extends Entity implements
 
 	}
 
+	@Override
+	protected void tickPhysics()
+	{
+
+	}
+	@Override
+	protected void tickOutsidePhysicsRange()
+	{
+
+	}
+
+
 	protected void CheckInitPhysics()
 	{
 		if(PhysicsParts.isEmpty())
@@ -628,14 +635,14 @@ public class VehicleEntity extends Entity implements
 			if(kvp.getKey().IsRoot())
 			{
 				Transform spawnedTransform = Transform.fromEntity(this);
-				ColliderHandle handle = physics.RegisterDynamic(kvp.getValue(), spawnedTransform);
-				PhysicsParts.put(VehicleComponentPath.coreArticulation, new PhysicsComponent(spawnedTransform, handle));
+				ColliderHandle handle = physics.registerDynamic(kvp.getValue(), spawnedTransform);
+				PhysicsParts.put(VehicleComponentPath.coreArticulation, new PhysicsComponent(spawnedTransform, level().getGameTime(), handle));
 			}
 			else
 			{
 				Transform t = GetWorldToPartCurrent(kvp.getKey());
-				ColliderHandle handle = physics.RegisterDynamic(kvp.getValue(), t);
-				PhysicsParts.put(kvp.getKey().Articulation(), new PhysicsComponent(t, handle));
+				ColliderHandle handle = physics.registerDynamic(kvp.getValue(), t);
+				PhysicsParts.put(kvp.getKey().Articulation(), new PhysicsComponent(t, level().getGameTime(), handle));
 			}
 		}
 
@@ -645,8 +652,8 @@ public class VehicleEntity extends Entity implements
 			//int wheelIndex = Wheels.Add(wheel, wheelPath, wheelDef.controlHints);
 			//wheel.SetLinkToVehicle(this, wheelPath);
 			Transform t = GetWorldToPartCurrent(wheelPath);
-			ColliderHandle handle = physics.RegisterDynamic(List.of(new AABB(-wheelDef.radius, -wheelDef.radius, -wheelDef.radius, wheelDef.radius, wheelDef.radius, wheelDef.radius)), t);
-			PhysicsParts.put(wheelPath, new PhysicsComponent(t, handle));
+			ColliderHandle handle = physics.registerDynamic(List.of(new AABB(-wheelDef.radius, -wheelDef.radius, -wheelDef.radius, wheelDef.radius, wheelDef.radius, wheelDef.radius)), t);
+			PhysicsParts.put(wheelPath, new PhysicsComponent(t, level().getGameTime(), handle));
 		});
 	}
 	protected void StopPhysics()
@@ -775,7 +782,7 @@ public class VehicleEntity extends Entity implements
 		{
 			if(part.getPhysicsHandle().IsValid())
 			{
-				if (physics.IsHandleInvalidated(part.getPhysicsHandle()))
+				if (physics.isHandleInvalidated(part.getPhysicsHandle()))
 				{
 					part.unregister(physics);
 				}
@@ -801,7 +808,7 @@ public class VehicleEntity extends Entity implements
 
 		// Respond to collision events from last frame, and update our location
 		CopyResponsesToForceModel(physics, controller);
-		SyncTransformToEntity();
+		syncTransformToEntity();
 
 		// Apply one frame of control logic
 		TickController(controller);
@@ -1257,90 +1264,10 @@ public class VehicleEntity extends Entity implements
 
 
 	/// --------------------------------------------------------------------------
-	// ITransformEntity
-	@Override
-	public void SyncTransformToEntity()
-	{
-		Transform worldRoot = GetWorldToEntity().current();
-		Vector3f euler = worldRoot.euler();
-		setPos(worldRoot.positionVec3());
-		yRotO = euler.y;
-		xRotO = euler.x;
-	}
-	@Override
-	public void SyncEntityToTransform()
-	{
-		Transform coreTransformNew = Transform.fromPosAndEuler(getPosition(0f), getXRot(), getYRot(), 0f);
 
-		if(PhysicsParts.isEmpty())
-		{
-			// Init Physics should take care of all this for us.
-			CheckInitPhysics();
-		}
-		else
-		{
-			// So we want to teleport the whole vehicle
-			PhysicsComponent corePart = GetCorePhysics();
-			Transform coreTransformOld = corePart.getCurrentTransform();
-
-			// We should move all the other parts, relative to the root
-			Map<ColliderHandle, Transform> newPartPositions = new HashMap<>();
-			for(var kvp : PhysicsParts.entrySet())
-			{
-				if(kvp.getKey().Part().IsRoot())
-					continue;
-
-				Transform relativeTransformOld = coreTransformOld.globalToLocalTransform(kvp.getValue().locationCurrent);
-				Transform partTransformNew = coreTransformNew.localToGlobalTransform(relativeTransformOld);
-				newPartPositions.put(kvp.getValue().physicsHandle, partTransformNew);
-				kvp.getValue().locationCurrent = partTransformNew;
-				kvp.getValue().locationPrev = partTransformNew;
-			}
-
-			// And if those parts have physics handles, we should update them in the physics system too.
-			OBBCollisionSystem physics = OBBCollisionSystem.ForLevel(level());
-			ColliderHandle rootHandle = GetCorePhsyicsHandle();
-			corePart.locationPrev = coreTransformNew;
-			corePart.locationCurrent = coreTransformNew;
-			physics.Teleport(rootHandle, coreTransformNew);
-			for(var kvp : newPartPositions.entrySet())
-			{
-				physics.Teleport(kvp.getKey(), kvp.getValue());
-			}
-		}
-	}
-	@Override public void SetWorldToEntity(@Nonnull Transform currentTransform) { TeleportTo(currentTransform); }
-	@Override @Nonnull public ITransformPair GetWorldToEntity() { return GetWorldToRoot(); }
-	@Override @Nonnull public ITransformPair GetEntityToAP(@Nonnull VehiclePartPath apPath) { return GetRootToPart(apPath); }
-	@Override @Nonnull
-	public Vec3 GetVelocity() { return getDeltaMovement().scale(20f); }
-	@Override
-	public void SetVelocity(@Nonnull Vec3 velocityMetersPerSecond) { setDeltaMovement(velocityMetersPerSecond.scale(1f/20f)); }
-	@Override
-	public void ApplyVelocity()
-	{
-		// Stash pre-values
-		Vec3 prePos = position();
-		Vec3 expectedMovement = getDeltaMovement();
-
-		// Apply the movement
-		move(MoverType.SELF, getDeltaMovement());
-		CheckCollisions();
-
-		// Check where we ended up
-		Vec3 postPos = position();
-		Vec3 actualMovement = postPos.subtract(prePos);
-
-		// If we collided, add a normal reaction "force".
-		// This should not actually be applied in the force model (we are after application now),
-		// but it is useful to render it
-		if(verticalCollision || horizontalCollision)
-		{
-			//ForcesLastFrame.AddGlobalForce(VehiclePartPath.Core,
-			//	actualMovement.subtract(expectedMovement).scale(20f * 20f * Def().physics.mass),
-			//	() -> "Normal reaction force");
-		}
-	}
+	@Override public void teleportTo(@Nonnull Transform currentTransform) { TeleportTo(currentTransform); }
+	@Override @Nonnull public ITransformPair getRootTransform() { return GetWorldToRoot(); }
+	@Override @Nonnull public ITransformPair getEntityToAP(@Nonnull VehiclePartPath apPath) { return GetRootToPart(apPath); }
 	/// --------------------------------------------------------------------------------
 
 
