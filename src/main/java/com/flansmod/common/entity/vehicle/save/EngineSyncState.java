@@ -104,11 +104,11 @@ public class EngineSyncState implements IVehicleSaveNode
 	public void SetFull() { Throttle = ENGINE_MAX; }
 	public void SetBetweenOffAndFull(float parameter)
 	{
-		Throttle = Maths.LerpF(ENGINE_OFF, ENGINE_MAX, parameter);
+		Throttle = Maths.lerpF(ENGINE_OFF, ENGINE_MAX, parameter);
 	}
 	public void SetBetweenIdleAndFull(float parameter)
 	{
-		Throttle = Maths.LerpF(ENGINE_IDLE, ENGINE_MAX, parameter);
+		Throttle = Maths.lerpF(ENGINE_IDLE, ENGINE_MAX, parameter);
 	}
 
 	@Override

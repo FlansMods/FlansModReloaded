@@ -140,7 +140,7 @@ public class VehicleCollisionSystem
 		Vec3 resultPosition = resolver.CollisionPosition;
 		Vec3 totalResponse = resolver.CollisionResponse;
 		boolean hardCollision = !totalResponse.equals(Vec3.ZERO);
-		boolean temporalCollision = !Maths.Approx(resolver.TemporalResponse, 1f);
+		boolean temporalCollision = !Maths.approx(resolver.TemporalResponse, 1f);
 		Vec3 motionResponse = temporalCollision ? motionLocal.scale(resolver.TemporalResponse) : motionLocal;
 
 		Vec3 globalMotionResponse = partTransform.localToGlobalVelocity(motionResponse).add(partMotion);
@@ -153,7 +153,7 @@ public class VehicleCollisionSystem
 		double slide = 0d;
 
 		// This is sus. What if it happens at ZERO. ZERO is not a good null
-		if(!Maths.Approx(globalPosition, Vec3.ZERO))
+		if(!Maths.approx(globalPosition, Vec3.ZERO))
 		{
 			// This is where we get into Collider specifics
 			// Create (ContraptionCollider.java) now tests against the block grid
@@ -185,7 +185,7 @@ public class VehicleCollisionSystem
 		if(temporalCollision)
 		{
 			double idealVerticalMotion = globalMotionResponse.y;
-			if(Maths.Approx(idealVerticalMotion, entityMotion.y))
+			if(Maths.approx(idealVerticalMotion, entityMotion.y))
 			{
 				entity.setDeltaMovement(entityMotion.multiply(1d, 0d, 1d).add(0d, idealVerticalMotion, 0d));
 				entityMotion = entity.getDeltaMovement();

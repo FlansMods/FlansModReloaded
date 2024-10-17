@@ -42,9 +42,9 @@ public class LaserAction extends ActionInstance
 
 	}
 
-	public float Red() { return Maths.Clamp(GetFloat(Constants.STAT_LASER_RED), 0f, 1f); }
-	public float Green() { return Maths.Clamp(GetFloat(Constants.STAT_LASER_GREEN), 0f, 1f); }
-	public float Blue() { return Maths.Clamp(GetFloat(Constants.STAT_LASER_BLUE), 0f, 1f); }
+	public float Red() { return Maths.clamp(GetFloat(Constants.STAT_LASER_RED), 0f, 1f); }
+	public float Green() { return Maths.clamp(GetFloat(Constants.STAT_LASER_GREEN), 0f, 1f); }
+	public float Blue() { return Maths.clamp(GetFloat(Constants.STAT_LASER_BLUE), 0f, 1f); }
 	public String LaserOrigin() { return ModifyString(Constants.STAT_LASER_ORIGIN, "laser_origin"); }
 	public boolean FixedLaserDirection() { return Group.Context.GetBoolean(Constants.MODAL_FIXED_LASER_DIRECTION); }
 }

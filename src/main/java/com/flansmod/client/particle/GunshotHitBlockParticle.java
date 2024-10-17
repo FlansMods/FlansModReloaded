@@ -19,7 +19,7 @@ public class GunshotHitBlockParticle extends TerrainParticle
 		yd = dy;
 		zd = dz;
 
-		lifetime = (int)(Maths.SqrtF((float)(dx*dx+dy*dy+dz*dz)) * 10.0f);
+		lifetime = (int)(Maths.sqrtF((float)(dx*dx+dy*dy+dz*dz)) * 10.0f);
 	}
 
 	public void tick()

@@ -40,6 +40,17 @@ public record AngularVelocity(@Nonnull Vec3 Axis, double Magnitude) implements I
 		return new AngularVelocity(new Vec3(axisAngle.x, axisAngle.y, axisAngle.z), axisAngle.angle);
 	}
 	@Nonnull
+	public AngularVelocity lerp(@Nonnull AngularVelocity other, float t)
+	{
+		Quaternionf angularA = new Quaternionf().setAngleAxis(Magnitude, Axis.x, Axis.y, Axis.z);
+		Quaternionf angularB = new Quaternionf().setAngleAxis(other.Magnitude, other.Axis.x, other.Axis.y, other.Axis.z);
+		Quaternionf slerp = angularA.slerp(angularB, t);
+		AxisAngle4f axisAngle = new AxisAngle4f().set(slerp);
+		return new AngularVelocity(new Vec3(axisAngle.x, axisAngle.y, axisAngle.z), axisAngle.angle);
+	}
+	@Nonnull
+	public static AngularVelocity interpolate(@Nonnull AngularVelocity a, @Nonnull AngularVelocity b, float t) { return a.lerp(b, t); }
+	@Nonnull
 	public AngularVelocity scale(double scale)
 	{
 		return new AngularVelocity(Axis, Magnitude * scale);
@@ -62,7 +73,7 @@ public record AngularVelocity(@Nonnull Vec3 Axis, double Magnitude) implements I
 	@Override @Nonnull
 	public AngularVelocity inverse() { return new AngularVelocity(Axis, -Magnitude); }
 	@Override
-	public boolean isApproxZero() { return Maths.Approx(Magnitude, 0d); }
+	public boolean isApproxZero() { return Maths.approx(Magnitude, 0d); }
 	@Override
 	public boolean hasLinearComponent(@Nonnull Transform actingOn) { return false; }
 	@Override @Nonnull
@@ -79,11 +90,11 @@ public record AngularVelocity(@Nonnull Vec3 Axis, double Magnitude) implements I
 	public boolean equals(Object other)
 	{
 		if(other instanceof AngularVelocity otherAngularV)
-			return otherAngularV.Axis.equals(Axis) && Maths.Approx(Magnitude, otherAngularV.Magnitude);
+			return otherAngularV.Axis.equals(Axis) && Maths.approx(Magnitude, otherAngularV.Magnitude);
 		return false;
 	}
-	public boolean isApprox(@Nonnull AngularVelocity other) { return Maths.Approx(other.Axis, Axis) && Maths.Approx(other.Magnitude, Magnitude); }
-	public boolean isApprox(@Nonnull AngularVelocity other, double epsilon) { return Maths.Approx(other.Axis, Axis, epsilon) && Maths.Approx(other.Magnitude, Magnitude, epsilon); }
+	public boolean isApprox(@Nonnull AngularVelocity other) { return Maths.approx(other.Axis, Axis) && Maths.approx(other.Magnitude, Magnitude); }
+	public boolean isApprox(@Nonnull AngularVelocity other, double epsilon) { return Maths.approx(other.Axis, Axis, epsilon) && Maths.approx(other.Magnitude, Magnitude, epsilon); }
 	public void toBuf(@Nonnull FriendlyByteBuf buf)
 	{
 		buf.writeVector3f(Axis.toVector3f());

@@ -30,7 +30,7 @@ public class PlayerSnapshot
         hitboxes = new PlayerHitbox[EPlayerHitArea.NUM_AREAS];
         for(int i = 0; i < EPlayerHitArea.NUM_AREAS; i++)
         {
-            hitboxes[i] = new PlayerHitbox(EPlayerHitArea.values()[i], Transform.IDENTITY, Maths.IdentityPosF());
+            hitboxes[i] = new PlayerHitbox(EPlayerHitArea.values()[i], Transform.IDENTITY, Maths.identityPosF());
         }
     }
 

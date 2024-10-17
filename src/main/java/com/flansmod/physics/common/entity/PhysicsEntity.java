@@ -15,6 +15,7 @@ import net.minecraft.world.phys.AABB;
 import org.joml.Vector3f;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.*;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
@@ -50,6 +51,16 @@ public abstract class PhysicsEntity extends Entity implements ITransformEntity
     public PhysicsComponent getRootComponent()
     {
         return physicsComponents.getOrDefault(CORE_PHYSICS, PhysicsComponent.invalid);
+    }
+    @Nullable
+    public PhysicsComponent getComponent(@Nonnull UUID componentID)
+    {
+        return physicsComponents.get(componentID);
+    }
+    @Nonnull
+    public PhysicsComponent getComponentOrDefault(@Nonnull UUID componentID)
+    {
+        return physicsComponents.getOrDefault(componentID, PhysicsComponent.invalid);
     }
     @Nonnull
     public Transform getCurrentRootTransform() { return getRootComponent().getCurrentTransform(); }
@@ -133,21 +144,32 @@ public abstract class PhysicsEntity extends Entity implements ITransformEntity
         {
             OBBCollisionSystem physics = OBBCollisionSystem.ForLevel(level());
 
-            // Respond to collision events from last frame, and update our location
-            for(PhysicsComponent component : physicsComponents.values())
-                component.syncCollisionToComponent(physics);
-
-            // For any vanilla calls that want to check in on this object, we keep the pos/yaw/pitch in sync
-            syncTransformToEntity();
             if(isControlledByLocalInstance())
+            {
+                // Respond to collision events from last frame, and update our location
+                for(PhysicsComponent component : physicsComponents.values())
+                    component.syncCollisionToComponent(physics);
+
+                // For any vanilla calls that want to check in on this object, we keep the pos/yaw/pitch in sync
+                syncTransformToEntity();
                 sendPhysicsSync();
 
-            // Let the entity handle these responses and build new forces
-            tickPhysics();
+                // Let the entity handle these responses and build new forces
+                tickPhysics();
 
-            // Now send the results of the Force Model to the collision engine
-            for(PhysicsComponent component : physicsComponents.values())
-                component.syncComponentToCollision(physics);
+                // Now send the results of the Force Model to the collision engine
+                for(PhysicsComponent component : physicsComponents.values())
+                    component.syncComponentToCollision(physics);
+            }
+            else
+            {
+                for(PhysicsComponent component : physicsComponents.values())
+                    component.syncAndLerpToComponent(physics);
+                syncTransformToEntity();
+                tickPhysics();
+                for(PhysicsComponent component : physicsComponents.values())
+                    component.syncComponentToCollision(physics);
+            }
         }
         else
         {
@@ -205,18 +227,18 @@ public abstract class PhysicsEntity extends Entity implements ITransformEntity
     {
         if(level().isClientSide)
         {
-            PhysicsPacketHandler.sendToServer(createSyncMessage());
+            PhysicsPacketHandler.sendToServer(createSyncMessage(new PhysicsSyncMessage.ToServer()));
         }
         else
         {
-            PhysicsPacketHandler.sendToAllAroundPoint(createSyncMessage(), level().dimension(), position(), 100d, null);
+            PhysicsPacketHandler.sendToAllAroundPoint(createSyncMessage(new PhysicsSyncMessage.ToClient()), level().dimension(), position(), 100d, null);
         }
     }
     @Nonnull
-    private PhysicsSyncMessage createSyncMessage()
+    private PhysicsSyncMessage createSyncMessage(@Nonnull PhysicsSyncMessage message)
     {
-        PhysicsSyncMessage message = new PhysicsSyncMessage();
-
+        message.EntityID = getId();
+        message.GameTick = level().getGameTime();
         forEachPhysicsComponent((id, physicsComponent) -> {
             if(scheduledFullPhysicsUpdate || physicsComponent.needsUpdate())
             {
@@ -229,5 +251,19 @@ public abstract class PhysicsEntity extends Entity implements ITransformEntity
         });
 
         return message;
+    }
+    public void handleSyncMessage(@Nonnull PhysicsSyncMessage syncMessage)
+    {
+        if(isControlledByLocalInstance())
+            return;
+
+        for(var stateChange : syncMessage.StateChanges)
+        {
+            PhysicsComponent component = getComponent(stateChange.PhysicsComponentID);
+            if(component != null)
+            {
+                component.receiveUpdate(syncMessage.GameTick, stateChange);
+            }
+        }
     }
 }

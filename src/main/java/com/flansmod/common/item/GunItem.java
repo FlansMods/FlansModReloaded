@@ -351,7 +351,7 @@ public class GunItem extends FlanItem
         GunContext gunContext = ContextCache.CreateWithoutCaching(stack);
         for (ActionDefinition actionDef : gunContext.GetPotentialPrimaryActions())
         {
-            int harvestLevel = Maths.Ceil(gunContext.ModifyFloat(Constants.STAT_TOOL_HARVEST_LEVEL).get());
+            int harvestLevel = Maths.ceil(gunContext.ModifyFloat(Constants.STAT_TOOL_HARVEST_LEVEL).get());
             switch (actionDef.actionType)
             {
                 case Melee -> { return blockState.is(Blocks.COBWEB); }
@@ -527,7 +527,7 @@ public class GunItem extends FlanItem
             }
         }
 
-        return Maths.Max(highestLevel, super.getEnchantmentLevel(stack, enchantment));
+        return Maths.max(highestLevel, super.getEnchantmentLevel(stack, enchantment));
     }
     @Override
     public Multimap<Attribute, AttributeModifier> getAttributeModifiers(EquipmentSlot slot, ItemStack stack)

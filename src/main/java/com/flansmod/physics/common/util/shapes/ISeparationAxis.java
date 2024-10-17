@@ -84,8 +84,8 @@ public interface ISeparationAxis
         for(int i = 0; i < set.getCount(); i++)
         {
             ProjectedRange projection = ProjectOBBMinMax(set.getCenter(i), set.getHalfExtents(i), matrix);
-            min = Maths.Min(projection.min(), min);
-            max = Maths.Min(projection.max(), max);
+            min = Maths.min(projection.min(), min);
+            max = Maths.min(projection.max(), max);
         }
         return ProjectedRange.preSorted(min, max);
     }

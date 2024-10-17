@@ -31,7 +31,7 @@ public class AbilityEffectFeedEntity implements IAbilityEffect
 		{
 			if (entity instanceof Player player)
 			{
-				player.getFoodData().eat(Maths.Ceil(FeedAmount.Get(actionGroup, stacks)), FeedSaturation.Get(actionGroup, stacks));
+				player.getFoodData().eat(Maths.ceil(FeedAmount.Get(actionGroup, stacks)), FeedSaturation.Get(actionGroup, stacks));
 			}
 		});
 	}

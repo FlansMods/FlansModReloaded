@@ -53,9 +53,9 @@ public class VehicleInputState
 		float axisValue = GetValue(axisDef.axisType);
 
 		// For resting sliders, we need to move back to rest if the input is not pressed
-		if(Maths.Approx(axisInput, 0f) && axisDef.axisBehaviour == EAxisBehaviourType.SliderWithRestPosition)
+		if(Maths.approx(axisInput, 0f) && axisDef.axisBehaviour == EAxisBehaviourType.SliderWithRestPosition)
 		{
-			axisInput = Maths.Sign(axisDef.restingPosition - axisValue);
+			axisInput = Maths.sign(axisDef.restingPosition - axisValue);
 		}
 
 		// Apply the change
@@ -73,7 +73,7 @@ public class VehicleInputState
 			}
 		}
 
-		newValue = Maths.Clamp(newValue, axisDef.minValue, axisDef.maxValue);
+		newValue = Maths.clamp(newValue, axisDef.minValue, axisDef.maxValue);
 		SetValue(axisDef.axisType, newValue);
 		return newValue;
 	}

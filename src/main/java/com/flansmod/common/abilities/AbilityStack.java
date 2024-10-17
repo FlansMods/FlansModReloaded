@@ -40,7 +40,7 @@ public class AbilityStack
 	{
 		TicksSinceStackedOrDecayed = 0;
 		StackCount++;
-		StackCount = Maths.Clamp(StackCount, 0, Def.maxStacks);
+		StackCount = Maths.clamp(StackCount, 0, Def.maxStacks);
 	}
 
 	public void Tick(@Nonnull GunContext gunContext)

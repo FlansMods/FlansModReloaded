@@ -62,11 +62,11 @@ public record Polygon(@Nonnull ImmutableList<Vec3> vertices) implements IPolygon
             {
                 builder.add(vNext);
             }
-            else if(dCurr > 0d && Maths.Approx(dNext, 0d))
+            else if(dCurr > 0d && Maths.approx(dNext, 0d))
             {
                 builder.add(vNext);
             }
-            else if(Maths.Approx(dCurr, 0d) && dNext > 0d)
+            else if(Maths.approx(dCurr, 0d) && dNext > 0d)
             {
                 continue;
             }

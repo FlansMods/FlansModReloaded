@@ -220,15 +220,15 @@ public class DecalRenderer
 		public void Render(@Nonnull Tesselator tesselator, @Nonnull PoseStack poseStack, @Nonnull Vec3 cameraPos, float dt)
 		{
 			poseStack.pushPose();
-			Vec3 toCamera = Maths.Sub(Position, cameraPos);
+			Vec3 toCamera = Maths.sub(Position, cameraPos);
 			poseStack.translate(toCamera.x, toCamera.y, toCamera.z);
 			poseStack.mulPose(new Quaternionf().rotateAxis(Yaw, Normal.toVector3f()));
 
-			Vec3 xAxis = Maths.Cross(Normal, new Vec3(1d, 0d, 0d));
+			Vec3 xAxis = Maths.cross(Normal, new Vec3(1d, 0d, 0d));
 			if(xAxis.lengthSqr() < 0.01d)
-				xAxis = Maths.Cross(Normal, new Vec3(0d, 0d, 1d));
+				xAxis = Maths.cross(Normal, new Vec3(0d, 0d, 1d));
 
-			Vec3 yAxis = Maths.Cross(xAxis, Normal);
+			Vec3 yAxis = Maths.cross(xAxis, Normal);
 
 			BufferBuilder buf = tesselator.getBuilder();
 			buf.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX_COLOR);
@@ -238,10 +238,10 @@ public class DecalRenderer
 
 			Vec3 smolNormal = Normal.normalize().scale(0.001d * toCamera.length());
 
-			Vec3 v0 = Maths.Add(smolNormal, Maths.Add(xAxis, yAxis));
-			Vec3 v1 = Maths.Add(smolNormal, Maths.Sub(xAxis, yAxis));
-			Vec3 v2 = Maths.Add(smolNormal, Maths.Sub(xAxis.scale(-1d), yAxis));
-			Vec3 v3 = Maths.Add(smolNormal, Maths.Add(xAxis.scale(-1d), yAxis));
+			Vec3 v0 = Maths.add(smolNormal, Maths.add(xAxis, yAxis));
+			Vec3 v1 = Maths.add(smolNormal, Maths.sub(xAxis, yAxis));
+			Vec3 v2 = Maths.add(smolNormal, Maths.sub(xAxis.scale(-1d), yAxis));
+			Vec3 v3 = Maths.add(smolNormal, Maths.add(xAxis.scale(-1d), yAxis));
 
 			buf.vertex(poseStack.last().pose(), (float)v0.x, (float)v0.y, (float)v0.z)
 				.uv(0f, 0f)

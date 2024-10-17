@@ -44,7 +44,7 @@ public class VehicleSubContainer implements Container
 	public ItemStack removeItem(int index, int count)
 	{
 		ItemStack stackInSlot = Contents[index];
-		int countToRemove = Maths.Min(count, stackInSlot.getCount());
+		int countToRemove = Maths.min(count, stackInSlot.getCount());
 		ItemStack returnStack = Contents[index].copyWithCount(countToRemove);
 		Contents[index].setCount(Contents[index].getCount() - countToRemove);
 		return returnStack;

@@ -116,7 +116,7 @@ public class Gunshot
 		buf.writeInt(gunshot.hits.length);
 		for(int j = 0; j < gunshot.hits.length; j++)
 		{
-			float t = (float)Maths.CalculateParameter(gunshot.origin, end, gunshot.hits[j].getLocation());
+			float t = (float)Maths.calculateParameter(gunshot.origin, end, gunshot.hits[j].getLocation());
 			buf.writeFloat(t);
 
 			// Always write two ints.
@@ -127,7 +127,7 @@ public class Gunshot
 					buf.writeInt(-1); // block
 					BlockHitResult blockHit = (BlockHitResult) gunshot.hits[j];
 					// The parametric hit time will give us a rough position, so we just need to pin it down within the very local area
-					int localBlockPos = Maths.BlockPosToPinpointData(blockHit.getBlockPos(), blockHit.getDirection().ordinal());
+					int localBlockPos = Maths.blockPosToPinpointData(blockHit.getBlockPos(), blockHit.getDirection().ordinal());
 					buf.writeInt(localBlockPos);
 				}
 				case ENTITY ->
@@ -186,7 +186,7 @@ public class Gunshot
 				case -1 -> // block
 				{
 					BlockPos roughBlockPos = BlockPos.containing(hitPos);
-					BlockPos exactBlockPos = Maths.ResolveBlockPos(roughBlockPos, extraData);
+					BlockPos exactBlockPos = Maths.resolveBlockPos(roughBlockPos, extraData);
 
 					hits[i] = new BlockHitResult(
 						hitPos,

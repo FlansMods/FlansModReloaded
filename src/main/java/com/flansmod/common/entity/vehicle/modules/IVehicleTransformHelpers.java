@@ -148,7 +148,7 @@ public interface IVehicleTransformHelpers
 			stack.PushSaveState();
 			stack.add(Transform.fromPos(node.Def.damage.hitboxCenter));
 			Vector3d hitPos = new Vector3d();
-			if(Maths.RayBoxIntersect(start, end, stack.Top(), node.Def.damage.hitboxHalfExtents.toVector3f(), hitPos))
+			if(Maths.rayBoxIntersect(start, end, stack.Top(), node.Def.damage.hitboxHalfExtents.toVector3f(), hitPos))
 			{
 				func.accept(node.GetPath(), new Vec3(hitPos.x, hitPos.y, hitPos.z));
 			}

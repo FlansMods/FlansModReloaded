@@ -69,9 +69,9 @@ public interface IVehicleEngineModule
 		EngineDefinition engine = GetEngineDef(enginePath);
 		float throttle = GetThrottle(enginePath);
 		if(throttle <= EngineSyncState.ENGINE_IDLE)
-			return Maths.LerpF(0f, engine.fuelConsumptionIdle, throttle);
+			return Maths.lerpF(0f, engine.fuelConsumptionIdle, throttle);
 		else
-			return Maths.LerpF(engine.fuelConsumptionIdle, engine.fuelConsumptionFull, throttle - 1f);
+			return Maths.lerpF(engine.fuelConsumptionIdle, engine.fuelConsumptionFull, throttle - 1f);
 	}
 	default boolean CanThrust(@Nullable Player player, @Nonnull VehicleComponentPath enginePath)
 	{

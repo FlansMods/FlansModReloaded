@@ -22,6 +22,6 @@ public class AbilityStackingDefinition
 	@JsonField
 	public float decayTime = 0.0f;
 
-	public int GetDecayTimeTicks(@Nonnull StatCalculationContext ctx) { return Maths.Ceil(GetDecayTimeSeconds(ctx) * 20.0f); }
+	public int GetDecayTimeTicks(@Nonnull StatCalculationContext ctx) { return Maths.ceil(GetDecayTimeSeconds(ctx) * 20.0f); }
 	public float GetDecayTimeSeconds(@Nonnull StatCalculationContext ctx) { return decayTime; }
 }

@@ -114,7 +114,7 @@ public class WorkbenchScreenTabModification extends WorkbenchScreenTab<Workbench
 	@Override
 	protected void UpdateTab(boolean selected)
 	{
-		GunAngularVelocity *= Maths.ExpF(-FlansModClient.FrameDeltaSeconds() * 0.25f);
+		GunAngularVelocity *= Maths.expF(-FlansModClient.FrameDeltaSeconds() * 0.25f);
 		GunAngle += FlansModClient.FrameDeltaSeconds() * GunAngularVelocity;
 
 		if(IsTabPresent())

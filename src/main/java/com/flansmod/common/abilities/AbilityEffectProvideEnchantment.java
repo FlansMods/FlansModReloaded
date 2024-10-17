@@ -26,7 +26,7 @@ public class AbilityEffectProvideEnchantment implements IAbilityEffect
 
 	public int GetLevel(@Nonnull ActionGroupContext context, @Nullable AbilityStack stacks)
 	{
-		return Maths.Ceil(EnchantLevel.Get(context, stacks));
+		return Maths.ceil(EnchantLevel.Get(context, stacks));
 	}
 
 	// No "active" effects from this one

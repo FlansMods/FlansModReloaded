@@ -1,24 +1,14 @@
 package com.flansmod.physics.common.util.shapes;
 
 import com.flansmod.physics.common.FlansPhysicsMod;
-import com.flansmod.physics.common.collision.TransformedBB;
-import com.flansmod.physics.common.collision.TransformedBBCollection;
 import com.flansmod.physics.common.util.Maths;
-import com.flansmod.physics.common.util.ProjectedRange;
-import com.flansmod.physics.common.util.ProjectionUtil;
 import com.google.common.collect.ImmutableList;
-import com.mojang.datafixers.util.Pair;
-import net.minecraft.core.Direction;
 import net.minecraft.world.phys.Vec3;
-import org.joml.Matrix3f;
-import org.joml.Vector3f;
 
 import javax.annotation.Nonnull;
 
 import java.util.List;
 import java.util.Optional;
-
-import static java.lang.Math.*;
 
 
 public record CollisionManifold(@Nonnull Vec3 Normal, double Distance, @Nonnull ImmutableList<Vec3> BoundingVertices)
@@ -65,7 +55,7 @@ public record CollisionManifold(@Nonnull Vec3 Normal, double Distance, @Nonnull 
 		// Solve for t
 		// (R.V)t = d - O.V
 		double rDotV = ray.dot(Normal);
-		if(Maths.Approx(rDotV, 0d))
+		if(Maths.approx(rDotV, 0d))
 			return Optional.empty();
 
 		double oDotV = origin.dot(Normal);
@@ -96,11 +86,11 @@ public record CollisionManifold(@Nonnull Vec3 Normal, double Distance, @Nonnull 
 			{
 				builder.add(vNext);
 			}
-			else if(dCurr > 0d && Maths.Approx(dNext, 0d))
+			else if(dCurr > 0d && Maths.approx(dNext, 0d))
 			{
 				builder.add(vNext);
 			}
-			else if(Maths.Approx(dCurr, 0d) && dNext > 0d)
+			else if(Maths.approx(dCurr, 0d) && dNext > 0d)
 			{
 				continue;
 			}

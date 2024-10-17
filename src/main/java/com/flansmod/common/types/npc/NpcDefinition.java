@@ -80,7 +80,7 @@ public class NpcDefinition extends JsonDefinition
 		double extraCooldown = FlansModConfig.SummonNpcExtraCooldown.get();
 		// ------------------
 
-		return Maths.Ceil((extraCooldown + (friendly ? cooldownSecondsFriendly : cooldownSecondsHostile)) * 20.0f);
+		return Maths.ceil((extraCooldown + (friendly ? cooldownSecondsFriendly : cooldownSecondsHostile)) * 20.0f);
 	}
 
 	public boolean Can(ENpcActionType actionType)

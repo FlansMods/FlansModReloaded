@@ -67,6 +67,6 @@ public class ArticulatedPartDefinition
 	{
 		return Transform.interpolate(StartPose.get(),
 							 		 EndPose.get(),
-							 		 Maths.Clamp(parameter, minParameter, maxParameter));
+							 		 Maths.clamp(parameter, minParameter, maxParameter));
 	}
 }

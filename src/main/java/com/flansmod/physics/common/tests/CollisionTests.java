@@ -66,7 +66,7 @@ public class CollisionTests
     }
     private static void assertEqual(@Nonnull ProjectedRange range, double min, double max, @Nonnull String error)
     {
-        if(!Maths.Approx(range.min(), min) || !Maths.Approx(range.max(), max))
+        if(!Maths.approx(range.min(), min) || !Maths.approx(range.max(), max))
             FlansPhysicsMod.LOGGER.error(error);
     }
     private static void assertCollides(@Nonnull AABB a, @Nonnull AABB b, @Nonnull String error)

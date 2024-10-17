@@ -147,7 +147,7 @@ public class ShotRenderer
 			bulletSpeed = speed;// * 0.001d; // <- Do this if you want to test trails
 			trailTexture = trail;
 			distanceToTarget = start.distanceTo(end);
-			lifetime = bulletSpeed <= 0.0001d ? 1 : Maths.Floor((distanceToTarget - length) / bulletSpeed);
+			lifetime = bulletSpeed <= 0.0001d ? 1 : Maths.floor((distanceToTarget - length) / bulletSpeed);
 			bulletModel = model;
 		}
 

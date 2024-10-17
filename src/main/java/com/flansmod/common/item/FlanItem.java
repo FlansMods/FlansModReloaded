@@ -336,7 +336,7 @@ public abstract class FlanItem extends Item implements IForgeItem
                 if(ability.IsValid())
                 {
                     int newLevel = abilityMap.getOrDefault(ability, 0) + abilityProvider.level;
-                    newLevel = Maths.Min(newLevel, ability.maxLevel);
+                    newLevel = Maths.min(newLevel, ability.maxLevel);
                     abilityMap.put(ability, newLevel);
                 }
             }
@@ -349,7 +349,7 @@ public abstract class FlanItem extends Item implements IForgeItem
                 if(ability.IsValid())
                 {
                     int newLevel = abilityMap.getOrDefault(ability, 0) + abilityProvider.level;
-                    newLevel = Maths.Min(newLevel, ability.maxLevel);
+                    newLevel = Maths.min(newLevel, ability.maxLevel);
                     abilityMap.put(ability, newLevel);
                 }
             }
@@ -410,7 +410,7 @@ public abstract class FlanItem extends Item implements IForgeItem
             Component.translatable("ability." + trait.Location.getNamespace() + "." + trait.Location.getPath())))
             : (Component.translatable("tooltip.ability_with_level",
             Component.translatable("ability." + trait.Location.getNamespace() + "." + trait.Location.getPath()),
-            Component.translatable(Maths.ToRomanNumerals(level))));
+            Component.translatable(Maths.toRomanNumerals(level))));
 
         Component abilityColour = Component.translatable("ability." + trait.Location.getNamespace() + "." + trait.Location.getPath() + ".colour");
 

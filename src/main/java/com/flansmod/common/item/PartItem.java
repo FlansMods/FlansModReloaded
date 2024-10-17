@@ -73,15 +73,15 @@ public class PartItem extends FlanItem
 
 					// Max speed
 					if(Def().engine.maxSpeed != 1.0f)
-						tooltips.add(Component.translatable("tooltip.format.engine_speed_modifier", Maths.Floor(Def().engine.maxSpeed * 100.0f)));
+						tooltips.add(Component.translatable("tooltip.format.engine_speed_modifier", Maths.floor(Def().engine.maxSpeed * 100.0f)));
 
 					// Acceleration / Deceleration
 					if(Def().engine.maxAcceleration != 1.0f && Def().engine.maxAcceleration == Def().engine.maxDeceleration)
-						tooltips.add(Component.translatable("tooltip.format.engine_acceleration_and_deceleration_modifier", Maths.Floor(Def().engine.maxAcceleration * 100.0f)));
+						tooltips.add(Component.translatable("tooltip.format.engine_acceleration_and_deceleration_modifier", Maths.floor(Def().engine.maxAcceleration * 100.0f)));
 					else if(Def().engine.maxAcceleration != 1.0f)
-						tooltips.add(Component.translatable("tooltip.format.engine_acceleration_modifier", Maths.Floor(Def().engine.maxAcceleration * 100.0f)));
+						tooltips.add(Component.translatable("tooltip.format.engine_acceleration_modifier", Maths.floor(Def().engine.maxAcceleration * 100.0f)));
 					else if(Def().engine.maxDeceleration != 1.0f)
-						tooltips.add(Component.translatable("tooltip.format.engine_deceleration_modifier", Maths.Floor(Def().engine.maxDeceleration * 100.0f)));
+						tooltips.add(Component.translatable("tooltip.format.engine_deceleration_modifier", Maths.floor(Def().engine.maxDeceleration * 100.0f)));
 
 					break;
 				}

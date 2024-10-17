@@ -29,7 +29,7 @@ public record Plane(@Nonnull Vec3 Normal, double Distance) implements IPlane
         // Solve for t
         // (R.V)t = d - O.V
         double rDotV = ray.dot(Normal);
-        if(Maths.Approx(rDotV, 0d))
+        if(Maths.approx(rDotV, 0d))
             return Optional.empty();
 
         double oDotV = origin.dot(Normal);

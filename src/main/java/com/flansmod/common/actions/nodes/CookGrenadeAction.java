@@ -27,7 +27,7 @@ public class CookGrenadeAction extends ActionInstance
 	public void OnStartClient()
 	{
 		super.OnStartClient();
-		TotalTicks = TicksRemaining = Maths.Ceil(Fuse() * 20.0f);
+		TotalTicks = TicksRemaining = Maths.ceil(Fuse() * 20.0f);
 	}
 
 	@Override
@@ -56,7 +56,7 @@ public class CookGrenadeAction extends ActionInstance
 	public void OnStartServer()
 	{
 		super.OnStartServer();
-		TotalTicks = TicksRemaining = Maths.Ceil(Fuse() * 20.0f);
+		TotalTicks = TicksRemaining = Maths.ceil(Fuse() * 20.0f);
 	}
 
 	@Override

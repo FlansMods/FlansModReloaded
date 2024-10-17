@@ -53,7 +53,7 @@ public class WorkbenchScreenTabMaterials extends WorkbenchScreenTab<WorkbenchMen
 		graphics.blit(MATERIALS_BG, xOrigin, yOrigin, 0, 0, imageWidth, imageHeight, MATERIALS_W, MATERIALS_H);
 		for(int j = 0; j < MAX_ROWS; j++)
 		{
-			int numSlotsOnThisRow = Maths.Min(Workbench.MaterialContainer.getContainerSize() - j * SLOTS_PER_ROW, SLOTS_PER_ROW);
+			int numSlotsOnThisRow = Maths.min(Workbench.MaterialContainer.getContainerSize() - j * SLOTS_PER_ROW, SLOTS_PER_ROW);
 			if (numSlotsOnThisRow > 0)
 			{
 				graphics.blit(MATERIALS_BG, xOrigin + SLOTS_ORIGIN_X, yOrigin + SLOTS_ORIGIN_Y + 18 * j, 5, 136, 18 * numSlotsOnThisRow, 18, MATERIALS_W, MATERIALS_H);

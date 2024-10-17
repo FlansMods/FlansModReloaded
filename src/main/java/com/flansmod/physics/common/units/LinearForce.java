@@ -54,7 +54,7 @@ public record LinearForce(@Nonnull Vec3 Force) implements IForce
 			return otherForce.Force.equals(Force);
 		return false;
 	}
-	public boolean isApprox(@Nonnull LinearForce other) { return Maths.Approx(other.Force, Force); }
-	public boolean isApprox(@Nonnull LinearForce other, double epsilon) { return Maths.Approx(other.Force, Force, epsilon); }
+	public boolean isApprox(@Nonnull LinearForce other) { return Maths.approx(other.Force, Force); }
+	public boolean isApprox(@Nonnull LinearForce other, double epsilon) { return Maths.approx(other.Force, Force, epsilon); }
 
 }

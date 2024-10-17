@@ -197,9 +197,9 @@ public class WorkbenchScreenTabGunCrafting extends WorkbenchScreenTab<WorkbenchM
 	{
 		if(InBox(xMouse, yMouse, xOrigin + GUN_SELECTOR_X_ORIGIN, 18 * GUN_SELECTOR_COLUMNS + 6, yOrigin + GUN_SELECTOR_Y_ORIGIN, 18 * GUN_SELECTOR_ROWS))
 		{
-			int numRows = Maths.Max(FilteredGunsList.size() / GUN_SELECTOR_COLUMNS - GUN_SELECTOR_ROWS + 1, 0);
+			int numRows = Maths.max(FilteredGunsList.size() / GUN_SELECTOR_COLUMNS - GUN_SELECTOR_ROWS + 1, 0);
 			gunSelectorScrollOffset -= scroll;
-			gunSelectorScrollOffset = Maths.Clamp(gunSelectorScrollOffset, 0, numRows);
+			gunSelectorScrollOffset = Maths.clamp(gunSelectorScrollOffset, 0, numRows);
 			UpdateActiveGunSelectionButtons();
 			return true;
 		}
@@ -210,11 +210,11 @@ public class WorkbenchScreenTabGunCrafting extends WorkbenchScreenTab<WorkbenchM
 			{
 				GunFabricationRecipe gunFabRecipe = Workbench.Workbench.GetSelectedGunRecipe(level);
 				int numSlots = gunFabRecipe != null ? gunFabRecipe.InputIngredients.size() : 0;
-				int numRows = Maths.Max(numSlots / GUN_RECIPE_VIEWER_COLUMNS - GUN_RECIPE_VIEWER_ROWS + 1, 0);
+				int numRows = Maths.max(numSlots / GUN_RECIPE_VIEWER_COLUMNS - GUN_RECIPE_VIEWER_ROWS + 1, 0);
 				recipeSelectorScrollOffset -= scroll;
-				recipeSelectorScrollOffset = Maths.Clamp(recipeSelectorScrollOffset, 0, numRows);
+				recipeSelectorScrollOffset = Maths.clamp(recipeSelectorScrollOffset, 0, numRows);
 				UpdateActiveRecipeButtons();
-				NetworkedButtonPress(WorkbenchMenuGunCrafting.BUTTON_SET_RECIPE_SCROLL_0 + Maths.Floor(recipeSelectorScrollOffset));
+				NetworkedButtonPress(WorkbenchMenuGunCrafting.BUTTON_SET_RECIPE_SCROLL_0 + Maths.floor(recipeSelectorScrollOffset));
 				return true;
 			}
 		}
@@ -231,7 +231,7 @@ public class WorkbenchScreenTabGunCrafting extends WorkbenchScreenTab<WorkbenchM
 		GunFabricationRecipe gunFabRecipe = Workbench.Workbench.GetSelectedGunRecipe(level);
 		int numSlots = gunFabRecipe != null ? gunFabRecipe.InputIngredients.size() : 0;
 
-		int firstRow = Maths.Floor(recipeSelectorScrollOffset);
+		int firstRow = Maths.floor(recipeSelectorScrollOffset);
 		for (int j = 0; j < GUN_RECIPE_VIEWER_ROWS; j++)
 		{
 			for (int i = 0; i < GUN_RECIPE_VIEWER_COLUMNS; i++)
@@ -285,7 +285,7 @@ public class WorkbenchScreenTabGunCrafting extends WorkbenchScreenTab<WorkbenchM
 		}
 
 		List<GunFabricationRecipe> matchingGunRecipes = Workbench.Workbench.GetMatchingGunRecipes(level);
-		firstRow = Maths.Floor(gunSelectorScrollOffset);
+		firstRow = Maths.floor(gunSelectorScrollOffset);
 		for (int row = 0; row < GUN_SELECTOR_ROWS; row++)
 		{
 			int firstIndexInRow = (firstRow + row) * GUN_SELECTOR_COLUMNS;
@@ -356,7 +356,7 @@ public class WorkbenchScreenTabGunCrafting extends WorkbenchScreenTab<WorkbenchM
 		{
 			graphics.blit(GUN_FABRICATION_BG, x, y, iconX, iconY, 5, 4, FAB_W, FAB_H);
 			if (InBox(mouseX, mouseY, x, 5, y, 4))
-				graphics.renderTooltip(Minecraft.getInstance().font, materialType.ToComponent(), Maths.Floor(mouseX), Maths.Floor(mouseY));
+				graphics.renderTooltip(Minecraft.getInstance().font, materialType.ToComponent(), Maths.floor(mouseX), Maths.floor(mouseY));
 		}
 	}
 
@@ -389,7 +389,7 @@ public class WorkbenchScreenTabGunCrafting extends WorkbenchScreenTab<WorkbenchM
 			if (gunFabRecipe != null)
 			{
 				int numSlots = gunFabRecipe.InputIngredients.size();
-				int firstRow = Maths.Floor(recipeSelectorScrollOffset);
+				int firstRow = Maths.floor(recipeSelectorScrollOffset);
 				int lastRow = firstRow + GUN_RECIPE_VIEWER_ROWS - 1;
 				for (int y = 0; y < GUN_RECIPE_VIEWER_ROWS; y++)
 				{
@@ -434,7 +434,7 @@ public class WorkbenchScreenTabGunCrafting extends WorkbenchScreenTab<WorkbenchM
 								graphics.blit(GUN_FABRICATION_BG, slotX, slotY, 257, 95, 22, 47, FAB_W, FAB_H);
 								if (ingredient.getItems().length > 0)
 								{
-									int potentialMatch = Maths.Floor(ShowPotentialMatchTicker) % ingredient.getItems().length;
+									int potentialMatch = Maths.floor(ShowPotentialMatchTicker) % ingredient.getItems().length;
 									graphics.renderItem(ingredient.getItems()[potentialMatch], slotX + 3, slotY + 28);
 								}
 							}
@@ -468,11 +468,11 @@ public class WorkbenchScreenTabGunCrafting extends WorkbenchScreenTab<WorkbenchM
 			{
 				List<GunFabricationRecipe> matchingGunRecipes = Workbench.Workbench.GetMatchingGunRecipes(level);
 
-				int firstRow = Maths.Floor(gunSelectorScrollOffset);
+				int firstRow = Maths.floor(gunSelectorScrollOffset);
 				for (int row = 0; row < GUN_SELECTOR_ROWS; row++)
 				{
 					int firstIndexInRow = (firstRow + row) * GUN_SELECTOR_COLUMNS;
-					int numEntriesInRow = Maths.Min(GUN_SELECTOR_COLUMNS, FilteredGunsList.size() - firstIndexInRow);
+					int numEntriesInRow = Maths.min(GUN_SELECTOR_COLUMNS, FilteredGunsList.size() - firstIndexInRow);
 
 					graphics.blit(GUN_FABRICATION_BG, xOrigin + GUN_SELECTOR_X_ORIGIN, yOrigin + GUN_SELECTOR_Y_ORIGIN + row * 18, 172, 0, 18 * numEntriesInRow, 18, FAB_W, FAB_H);
 
@@ -516,7 +516,7 @@ public class WorkbenchScreenTabGunCrafting extends WorkbenchScreenTab<WorkbenchM
 			// Render all ItemStacks into the menu
 			if (gunFabRecipe != null)
 			{
-				int firstRow = Maths.Floor(recipeSelectorScrollOffset);
+				int firstRow = Maths.floor(recipeSelectorScrollOffset);
 				for (int y = 0; y < GUN_RECIPE_VIEWER_ROWS; y++)
 				{
 					for (int x = 0; x < GUN_RECIPE_VIEWER_COLUMNS; x++)
@@ -533,7 +533,7 @@ public class WorkbenchScreenTabGunCrafting extends WorkbenchScreenTab<WorkbenchM
 			}
 
 			// Render gun icons into the selector scrollbar
-			int firstRow = Maths.Floor(gunSelectorScrollOffset);
+			int firstRow = Maths.floor(gunSelectorScrollOffset);
 			for (int row = 0; row < GUN_SELECTOR_ROWS; row++)
 			{
 				int firstIndexInRow = (firstRow + row) * GUN_SELECTOR_COLUMNS;
@@ -566,7 +566,7 @@ public class WorkbenchScreenTabGunCrafting extends WorkbenchScreenTab<WorkbenchM
 			{
 				for (int i = 0; i < GUN_SELECTOR_COLUMNS; i++)
 				{
-					final int firstIndex = Maths.Floor(gunSelectorScrollOffset) * GUN_SELECTOR_COLUMNS;
+					final int firstIndex = Maths.floor(gunSelectorScrollOffset) * GUN_SELECTOR_COLUMNS;
 					final int relativeIndex = i + GUN_SELECTOR_COLUMNS * j;
 					GunSelectionButtons[relativeIndex].active = IsActive && (firstIndex + relativeIndex < FilteredGunsList.size());
 				}
@@ -579,7 +579,7 @@ public class WorkbenchScreenTabGunCrafting extends WorkbenchScreenTab<WorkbenchM
 		Level level = Minecraft.getInstance().level;
 		if(level != null)
 		{
-			final int firstIndex = Maths.Floor(recipeSelectorScrollOffset) * GUN_RECIPE_VIEWER_COLUMNS;
+			final int firstIndex = Maths.floor(recipeSelectorScrollOffset) * GUN_RECIPE_VIEWER_COLUMNS;
 			GunFabricationRecipe gunFabRecipe = Workbench.Workbench.GetSelectedGunRecipe(level);
 			int numSlots = gunFabRecipe != null ? gunFabRecipe.InputIngredients.size() : 0;
 			for (int j = 0; j < GUN_RECIPE_VIEWER_ROWS; j++)
@@ -618,7 +618,7 @@ public class WorkbenchScreenTabGunCrafting extends WorkbenchScreenTab<WorkbenchM
 	}
 	private void SelectRecipe(int relativeIndex)
 	{
-		int filteredIndex = Maths.Floor(gunSelectorScrollOffset) * GUN_SELECTOR_COLUMNS + relativeIndex;
+		int filteredIndex = Maths.floor(gunSelectorScrollOffset) * GUN_SELECTOR_COLUMNS + relativeIndex;
 		if(filteredIndex < FilteredGunsList.size())
 		{
 			int absoluteIndex = FilteredGunsList.get(filteredIndex).getFirst();
@@ -631,11 +631,11 @@ public class WorkbenchScreenTabGunCrafting extends WorkbenchScreenTab<WorkbenchM
 	}
 	private void AutoFillCraftingSlot(int relativeIndex)
 	{
-		NetworkedButtonPress(WorkbenchMenuGunCrafting.BUTTON_AUTO_FILL_INGREDIENT_0 + relativeIndex + Maths.Floor(recipeSelectorScrollOffset));
+		NetworkedButtonPress(WorkbenchMenuGunCrafting.BUTTON_AUTO_FILL_INGREDIENT_0 + relativeIndex + Maths.floor(recipeSelectorScrollOffset));
 	}
 	private void GoToPartCrafting(int relativeIndex)
 	{
-		int partIndex = Maths.Floor(recipeSelectorScrollOffset) + relativeIndex;
+		int partIndex = Maths.floor(recipeSelectorScrollOffset) + relativeIndex;
 		//if(partIndex < CachedSlotInfo.size())
 		//{
 		//	//SelectTab(WorkbenchScreen.Tab.PART_CRAFTING);

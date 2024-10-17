@@ -1,6 +1,5 @@
 package com.flansmod.physics.common.units;
 
-import com.flansmod.physics.common.entity.ForcesOnPart;
 import com.flansmod.physics.common.util.Maths;
 import com.flansmod.physics.common.util.Transform;
 import net.minecraft.network.FriendlyByteBuf;
@@ -28,6 +27,11 @@ public record LinearVelocity(@Nonnull Vec3 Velocity) implements IVelocity
 	public LinearVelocity add(@Nonnull LinearVelocity other) { return new LinearVelocity(Velocity.add(other.Velocity)); }
 	@Nonnull
 	public LinearVelocity scale(double scale) { return new LinearVelocity(Velocity.scale(scale)); }
+	@Nonnull
+	public static LinearVelocity interpolate(LinearVelocity a, LinearVelocity b, double t)
+	{
+		return new LinearVelocity(a.Velocity.lerp(b.Velocity, t));
+	}
 
 	@Nonnull
 	public Units.Speed getDefaultUnits() { return Units.Speed.BlocksPerTick; }
@@ -57,8 +61,8 @@ public record LinearVelocity(@Nonnull Vec3 Velocity) implements IVelocity
 	@Override @Nonnull
 	public Component toFancyString() { return Component.translatable("flansphysicsmod.linear_velocity", Velocity.x, Velocity.y, Velocity.z); }
 
-	public boolean isApprox(@Nonnull LinearVelocity other) { return Maths.Approx(other.Velocity, Velocity); }
-	public boolean isApprox(@Nonnull LinearVelocity other, double epsilon) { return Maths.Approx(other.Velocity, Velocity, epsilon); }
+	public boolean isApprox(@Nonnull LinearVelocity other) { return Maths.approx(other.Velocity, Velocity); }
+	public boolean isApprox(@Nonnull LinearVelocity other, double epsilon) { return Maths.approx(other.Velocity, Velocity, epsilon); }
 	@Override
 	public boolean equals(Object other)
 	{

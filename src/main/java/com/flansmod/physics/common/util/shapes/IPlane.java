@@ -27,8 +27,8 @@ public interface IPlane extends ISeparationAxis
 
     // Some defaults to give more accessors
     default double GetPointHeightAbove(@Nonnull Vec3 point) { return Project(point) - GetDistance(); }
-    default boolean IsPointOn(@Nonnull Vec3 point) { return Maths.Approx(GetPointHeightAbove(point), 0d); }
-    default boolean IsPointOn(@Nonnull Vec3 point, double epsilon) { return Maths.Approx(GetPointHeightAbove(point), 0d, epsilon); }
+    default boolean IsPointOn(@Nonnull Vec3 point) { return Maths.approx(GetPointHeightAbove(point), 0d); }
+    default boolean IsPointOn(@Nonnull Vec3 point, double epsilon) { return Maths.approx(GetPointHeightAbove(point), 0d, epsilon); }
     default boolean IsPointOnOrBelow(@Nonnull Vec3 point) { return GetPointHeightAbove(point) <= 0d; }
     default boolean IsPointOnOrAbove(@Nonnull Vec3 point) { return GetPointHeightAbove(point) >= 0d; }
     default boolean IsPointApproxBelow(@Nonnull Vec3 point) { return GetPointHeightAbove(point) < -Maths.Epsilon; }

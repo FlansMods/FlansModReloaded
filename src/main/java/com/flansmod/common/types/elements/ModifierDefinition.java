@@ -77,9 +77,9 @@ public class ModifierDefinition
 	}
 	private String PrintIntOrFloat(float value)
 	{
-		if(Maths.Approx(value, Maths.Round(value)))
+		if(Maths.approx(value, Maths.round(value)))
 		{
-			return Integer.toString(Maths.Round(value));
+			return Integer.toString(Maths.round(value));
 		}
 		return Float.toString(value);
 	}

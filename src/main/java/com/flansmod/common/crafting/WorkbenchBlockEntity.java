@@ -196,7 +196,7 @@ public class WorkbenchBlockEntity extends BlockEntity implements WorldlyContaine
 			{
 				if(slot < container.getContainerSize())
 				{
-					int maxCount = Maths.Min(container.getMaxStackSize(), stack.getCount());
+					int maxCount = Maths.min(container.getMaxStackSize(), stack.getCount());
 					if(!simulate)
 						container.setItem(slot, stack.copyWithCount(maxCount));
 					return stack.copyWithCount(stack.getCount() - maxCount);
@@ -247,7 +247,7 @@ public class WorkbenchBlockEntity extends BlockEntity implements WorldlyContaine
 			ItemStack existingStack = getStackInSlot(slot);
 			if(!existingStack.isEmpty())
 			{
-				int amountToTake = Maths.Min(existingStack.getCount(), amount);
+				int amountToTake = Maths.min(existingStack.getCount(), amount);
 				ItemStack returnStack = existingStack.copyWithCount(amountToTake);
 				if(!simulate)
 					existingStack.setCount(existingStack.getCount() - amountToTake);

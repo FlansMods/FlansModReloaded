@@ -51,7 +51,7 @@ public class TurretScreen extends FMScreen<TurretContainerMenu>
         int ammoSlotCount = menu.TurretContainer.getContainerSize() - gunSlotCount;
         for(int j = 0; j < MAX_ROWS; j++)
         {
-            int numSlotsOnThisRow = Maths.Min(ammoSlotCount - j * SLOTS_PER_ROW, SLOTS_PER_ROW);
+            int numSlotsOnThisRow = Maths.min(ammoSlotCount - j * SLOTS_PER_ROW, SLOTS_PER_ROW);
             if (numSlotsOnThisRow > 0)
             {
                 graphics.blit(TURRET_BG, xOrigin + SLOTS_ORIGIN_X, yOrigin + SLOTS_ORIGIN_Y + 18 * j, 5, 136, 18 * numSlotsOnThisRow, 18, TURRET_BG_W, TURRET_BG_H);

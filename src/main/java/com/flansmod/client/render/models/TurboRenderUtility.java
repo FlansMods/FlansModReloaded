@@ -280,7 +280,7 @@ public class TurboRenderUtility
 					if (from != null && to != null)
 					{
 						float linearParameter = (progress - segment[0].tick) / segmentDuration;
-						linearParameter = Maths.Clamp(linearParameter, 0f, 1f);
+						linearParameter = Maths.clamp(linearParameter, 0f, 1f);
 						float outputParameter = linearParameter;
 
 						// Instant transitions take priority first

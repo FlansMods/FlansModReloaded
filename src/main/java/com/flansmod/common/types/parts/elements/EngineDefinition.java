@@ -37,14 +37,14 @@ public class EngineDefinition
 
 
 	// For solid fuel engines
-	public int GetCoalPerHourIdle() { return Maths.Ceil(fuelConsumptionIdle * (20 * 60 * 60) / 800f); }
-	public int GetCoalPerHourFull() { return Maths.Ceil(fuelConsumptionFull * (20 * 60 * 60) / 800f); }
+	public int GetCoalPerHourIdle() { return Maths.ceil(fuelConsumptionIdle * (20 * 60 * 60) / 800f); }
+	public int GetCoalPerHourFull() { return Maths.ceil(fuelConsumptionFull * (20 * 60 * 60) / 800f); }
 	// For liquid engines
-	public int GetMilliBucketsPerTickIdle() { return Maths.Ceil(fuelConsumptionIdle); }
-	public int GetMilliBucketsPerTickFull() { return Maths.Ceil(fuelConsumptionFull); }
+	public int GetMilliBucketsPerTickIdle() { return Maths.ceil(fuelConsumptionIdle); }
+	public int GetMilliBucketsPerTickFull() { return Maths.ceil(fuelConsumptionFull); }
 	// For electric engines
-	public int GetForgeEnergyPerTickIdle() { return Maths.Ceil(fuelConsumptionIdle); }
-	public int GetForgeEnergyPerTickFull() { return Maths.Ceil(fuelConsumptionFull); }
+	public int GetForgeEnergyPerTickIdle() { return Maths.ceil(fuelConsumptionIdle); }
+	public int GetForgeEnergyPerTickFull() { return Maths.ceil(fuelConsumptionFull); }
 
 	@Nonnull
 	public Component GetFuelConsumptionTooltip()

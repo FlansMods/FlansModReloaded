@@ -20,8 +20,8 @@ public class RecoilManager
 	private float RecoilStacksYawLast = 0.0f;
 	private float RecoilStacksPitchLast = 0.0f;
 
-	public float GetRecoilYaw(float dt) { return Maths.LerpF(RecoilStacksYawLast, RecoilStacksYaw, dt); }
-	public float GetRecoilPitch(float dt) { return Maths.LerpF(RecoilStacksPitchLast, RecoilStacksPitch, dt); }
+	public float GetRecoilYaw(float dt) { return Maths.lerpF(RecoilStacksYawLast, RecoilStacksYaw, dt); }
+	public float GetRecoilPitch(float dt) { return Maths.lerpF(RecoilStacksPitchLast, RecoilStacksPitch, dt); }
 
 	public RecoilManager()
 	{

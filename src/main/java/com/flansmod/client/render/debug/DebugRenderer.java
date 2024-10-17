@@ -56,7 +56,7 @@ public class DebugRenderer
 
             Vec3 toCamera = MinecraftHelpers.GetCamera().getForward().normalize();
             Vec3 verticalAxis = MinecraftHelpers.GetCamera().getUpVector(0f).normalize();
-            Vec3 lateralAxis = Maths.Cross(toCamera, verticalAxis).normalize();
+            Vec3 lateralAxis = Maths.cross(toCamera, verticalAxis).normalize();
 
 
             BufferBuilder buf = tesselator.getBuilder();
@@ -65,8 +65,8 @@ public class DebugRenderer
             buf.vertex(poseStack.last().pose(), 0f, 0f, 0f).color(colour.x, colour.y, colour.z, 1.0f).endVertex();
             for(int i = 0; i <= NUM_SEGMENTS; i++)
             {
-                Vec3 pos = lateralAxis.scale(RADIUS * Maths.SinF(i * RADS_PER_SEGMENT));
-                pos = pos.add(verticalAxis.scale(RADIUS * Maths.CosF(i * RADS_PER_SEGMENT)));
+                Vec3 pos = lateralAxis.scale(RADIUS * Maths.sinF(i * RADS_PER_SEGMENT));
+                pos = pos.add(verticalAxis.scale(RADIUS * Maths.cosF(i * RADS_PER_SEGMENT)));
                 buf.vertex(poseStack.last().pose(), (float)pos.x, (float)pos.y, (float)pos.z)
                     .color(colour.x, colour.y, colour.z, 1.0f).endVertex();
             }
@@ -298,17 +298,17 @@ public class DebugRenderer
 
     public static void RenderLine(Transform t, int ticks, Vector4f col, Vec3 ray)
     {
-        if(!Maths.Approx(ray.lengthSqr(), 0d))
+        if(!Maths.approx(ray.lengthSqr(), 0d))
             itemsToAdd.add(new DebugRenderLine(t, ticks, col, ray, false));
     }
     public static void RenderArrow(Transform t, int ticks, Vector4f col, Vec3 ray)
     {
-        if(!Maths.Approx(ray.lengthSqr(), 0d))
+        if(!Maths.approx(ray.lengthSqr(), 0d))
             itemsToAdd.add(new DebugRenderLine(t, ticks, col, ray, true));
     }
     public static void RenderRotation(Transform t, int ticks, Vector4f col, Vec3 axis, double magnitude)
     {
-        if(!Maths.Approx(magnitude, 0d))
+        if(!Maths.approx(magnitude, 0d))
             itemsToAdd.add(new DebugRenderRotation(t, ticks, col, axis, magnitude, true));
     }
     public static void RenderAxes(Transform t, int ticks, Vector4f col)

@@ -215,7 +215,7 @@ public class GunshotContext
 
 	// ----------------------------------------------------------------------------------------------------
 	// Shared shot settings
-	public int BulletCount() 				{ return Maths.Ceil(ModifyFloat(STAT_SHOOT_SHOT_COUNT, BaseBulletCount())); }
+	public int BulletCount() 				{ return Maths.ceil(ModifyFloat(STAT_SHOOT_SHOT_COUNT, BaseBulletCount())); }
 	private float BaseBulletCount()	{
 		ProjectileDefinition projectileDef = GetProjectileDef();
 		HitscanDefinition hitscanDef = GetHitscanDef();

@@ -1,25 +1,27 @@
 package com.flansmod.physics.network;
 
-import com.flansmod.physics.common.entity.PhysicsComponent;
 import com.flansmod.physics.common.units.AngularVelocity;
 import com.flansmod.physics.common.units.LinearVelocity;
 import com.flansmod.physics.common.util.Transform;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.world.phys.Vec3;
 import org.joml.Quaternionf;
-import org.joml.Vector3d;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 public class PhysicsSyncMessage extends PhysicsMessage
 {
     public static final UUID INVALID_ID = new UUID(0L, 0L);
 
+    public static class ToServer extends PhysicsSyncMessage
+    {
+    }
+    public static class ToClient extends PhysicsSyncMessage
+    {
+    }
 
     public static class PhysicsStateChange
     {
@@ -39,6 +41,7 @@ public class PhysicsSyncMessage extends PhysicsMessage
     public static final int ANGULAR_VELOCITY_FLAG = 0x8;
 
     public int EntityID;
+    public long GameTick;
     public List<PhysicsStateChange> StateChanges = new ArrayList<PhysicsStateChange>();
 
     public void addStateChange(@Nonnull UUID id,
@@ -58,6 +61,7 @@ public class PhysicsSyncMessage extends PhysicsMessage
     public void encode(@Nonnull FriendlyByteBuf buf)
     {
         buf.writeInt(EntityID);
+        buf.writeLong(GameTick);
         buf.writeInt(StateChanges.size());
         for(int i = 0; i < StateChanges.size(); i++)
         {
@@ -93,6 +97,7 @@ public class PhysicsSyncMessage extends PhysicsMessage
     public void decode(@Nonnull FriendlyByteBuf buf)
     {
         EntityID = buf.readInt();
+        GameTick = buf.readLong();
         int numStateChanges = buf.readInt();
         for(int i = 0; i < numStateChanges; i++)
         {
@@ -115,6 +120,7 @@ public class PhysicsSyncMessage extends PhysicsMessage
             {
                 change.AngularVelocityUpdate = AngularVelocity.fromBuf(buf);
             }
+            StateChanges.add(change);
         }
     }
 }

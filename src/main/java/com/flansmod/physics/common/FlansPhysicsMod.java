@@ -5,16 +5,20 @@ import com.flansmod.physics.client.PhysicsKeyMappings;
 import com.flansmod.physics.client.TestCubeEntityRenderer;
 import com.flansmod.physics.common.collision.ColliderHandle;
 import com.flansmod.physics.common.collision.OBBCollisionSystem;
+import com.flansmod.physics.common.entity.PhysicsEntity;
 import com.flansmod.physics.common.tests.CollisionTests;
 import com.flansmod.physics.common.tests.TestCubeEntity;
 import com.flansmod.physics.common.tests.TransformTests;
 import com.flansmod.physics.network.PhysicsPacketHandler;
+import com.flansmod.physics.network.PhysicsSyncMessage;
 import com.flansmod.physics.server.command.CommandPhysicsDebug;
 
 import com.mojang.logging.LogUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.entity.EntityRenderers;
 import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobCategory;
 import net.minecraftforge.api.distmarker.Dist;
@@ -75,6 +79,20 @@ public class FlansPhysicsMod
         CommandPhysicsDebug.register(event.getDispatcher(), event.getBuildContext());
     }
 
+    public static void HandlePhysicsSync(@Nonnull PhysicsSyncMessage syncMessage, @Nonnull ServerPlayer player)
+    {
+        Entity entity = player.level().getEntity(syncMessage.EntityID);
+        if (entity instanceof PhysicsEntity physicsEntity)
+        {
+            if(physicsEntity.getControllingPassenger() == player)
+            {
+                physicsEntity.handleSyncMessage(syncMessage);
+            }
+            else
+                LOGGER.warn("Player "+player+" tried to send physics packet for server-controlled entity "+entity);
+        }
+    }
+
     @Mod.EventBusSubscriber(value = Dist.CLIENT, bus = Mod.EventBusSubscriber.Bus.MOD, modid = MODID)
     public static class ClientMod
     {
@@ -129,6 +147,18 @@ public class FlansPhysicsMod
                     Minecraft.getInstance().getChatListener().handleSystemMessage(Component.translatable("No Debug"), false);
                 else
                     Minecraft.getInstance().getChatListener().handleSystemMessage(Component.literal("Debug handle:"+handle.Handle()+"/"+numHandles), false);
+            }
+        }
+
+        public static void HandlePhysicsSync(@Nonnull PhysicsSyncMessage syncMessage)
+        {
+            if(Minecraft.getInstance().level != null)
+            {
+                Entity entity = Minecraft.getInstance().level.getEntity(syncMessage.EntityID);
+                if (entity instanceof PhysicsEntity physicsEntity)
+                {
+                    physicsEntity.handleSyncMessage(syncMessage);
+                }
             }
         }
     }

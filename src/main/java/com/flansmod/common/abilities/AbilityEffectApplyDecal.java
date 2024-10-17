@@ -46,7 +46,7 @@ public class AbilityEffectApplyDecal implements IAbilityEffect
 				blockHit.getLocation(),
 				normal,
 				RandomizeRotation ? (actionGroup.Gun.GetRandom().nextFloat() * 360.0f) : 0f,
-				Maths.Ceil(duration * 20f));
+				Maths.ceil(duration * 20f));
 
 		}
 		else
@@ -58,7 +58,7 @@ public class AbilityEffectApplyDecal implements IAbilityEffect
 					triggerAt,
 					Direction.UP,
 					RandomizeRotation ? (actionGroup.Gun.GetRandom().nextFloat() * 360.0f) : 0f,
-					Maths.Ceil(duration * 20f));
+					Maths.ceil(duration * 20f));
 			});
 		}
 	}

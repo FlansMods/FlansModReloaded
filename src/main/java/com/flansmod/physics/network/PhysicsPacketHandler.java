@@ -37,15 +37,9 @@ public class PhysicsPacketHandler
 
     public static void registerMessages()
     {
-        //FlansModPacketHandler.RegisterClientHandler(
-        //        ActionUpdateMessage.ToClient.class,
-        //        ActionUpdateMessage.ToClient::new,
-        //        () -> FlansModClient.ACTIONS_CLIENT::OnClientReceivedActionUpdate);
-//
-        //FlansModPacketHandler.RegisterServerHandler(
-        //        ActionUpdateMessage.ToServer.class,
-        //        ActionUpdateMessage.ToServer::new,
-        //        FlansMod.ACTIONS_SERVER::OnServerReceivedActionUpdate);
+
+        registerClientHandler(PhysicsSyncMessage.ToClient.class, PhysicsSyncMessage.ToClient::new, () -> FlansPhysicsMod.ClientMod::HandlePhysicsSync);
+        registerServerHandler(PhysicsSyncMessage.ToServer.class, PhysicsSyncMessage.ToServer::new, FlansPhysicsMod::HandlePhysicsSync);
     }
 
     public interface Factory<TMessage>

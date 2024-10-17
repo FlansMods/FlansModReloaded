@@ -183,7 +183,7 @@ public class FirstPersonManager
 
 			// Unproject to world space
 			scratch.mul(toInverse);
-			if (!Maths.Approx(scratch.w, 1.0f, 0.001f))
+			if (!Maths.approx(scratch.w, 1.0f, 0.001f))
 				FlansMod.LOGGER.warn("Un-projection to world space was not normalized. w=" + scratch.w);
 
 			return new Vec3(scratch.x, scratch.y, scratch.z);
@@ -391,7 +391,7 @@ public class FirstPersonManager
 				float f3 = Mth.lerp(dt, playerCamera.yBobO, playerCamera.yBob);
 				final float xAngle = (playerCamera.getViewXRot(dt) - f2) * 0.1F;
 				final float yAngle = (playerCamera.getViewYRot(dt) - f3) * 0.1F;
-				if(!Maths.Approx(xAngle, 0.0f) && !Maths.Approx(yAngle, 0.0f))
+				if(!Maths.approx(xAngle, 0.0f) && !Maths.approx(yAngle, 0.0f))
 					transformStack.add(Transform.fromEuler(-xAngle, -yAngle, 0f, () -> "\"ItemInHandRenderer.renderHandsWithItems["+xAngle+", "+yAngle+"]\""));
 			}
 		}
@@ -509,7 +509,7 @@ public class FirstPersonManager
 		TransformStack eyeLineStack = new TransformStack();
 		Transform eyeLinePos = Transform.interpolate(posesAppliedToMe, weightArray);
 
-		float blendWeight = Maths.Clamp(totalWeight, 0f, 1f);
+		float blendWeight = Maths.clamp(totalWeight, 0f, 1f);
 		if(posesAppliedToOthers.size() > 0)
 		{
 			blendWeight *= 0.5f;
@@ -592,9 +592,9 @@ public class FirstPersonManager
 			{
 				AdsInstance instance = ADS_INSTANCES.get(key);
 				if(instance.IsActive)
-					instance.BlendAmount = Maths.LerpF(instance.BlendAmount, 1.0f, FlansModClient.FrameDeltaSeconds() * 8.0f);
+					instance.BlendAmount = Maths.lerpF(instance.BlendAmount, 1.0f, FlansModClient.FrameDeltaSeconds() * 8.0f);
 				else
-					instance.BlendAmount = Maths.LerpF(instance.BlendAmount, 0.0f, FlansModClient.FrameDeltaSeconds() * 10.0f);
+					instance.BlendAmount = Maths.lerpF(instance.BlendAmount, 0.0f, FlansModClient.FrameDeltaSeconds() * 10.0f);
 
 				if(instance.BlendAmount < 0.01f && !instance.IsActive)
 					ADS_INSTANCES.remove(key);

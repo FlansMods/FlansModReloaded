@@ -5,11 +5,8 @@ import com.flansmod.common.item.GunItem;
 import com.flansmod.common.types.vehicles.EVehicleAxis;
 import com.flansmod.common.types.elements.EPlayerInput;
 import com.flansmod.physics.common.util.Maths;
-import com.flansmod.physics.common.collision.ColliderHandle;
-import com.flansmod.physics.common.collision.OBBCollisionSystem;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.Options;
-import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.client.event.InputEvent;
@@ -94,27 +91,27 @@ public class ClientInputHooks
 	public static float Positive(@Nonnull HoldableInput input) { return input.IsHeld() ? 1.0f : 0.0f; }
 	public static float Negative(@Nonnull HoldableInput input) { return input.IsHeld() ? -1.0f : 0.0f; }
 	// Right is positive, left is negative
-	public static float GetYaw() { return Maths.Clamp(MouseYaw.Value
+	public static float GetYaw() { return Maths.clamp(MouseYaw.Value
 													+ GamepadYaw.Value
 													+ Positive(YawRight)
 													+ Negative(YawLeft), -1f, 1f); }
 	// Up is positive, down is negative
-	public static float GetPitch() { return Maths.Clamp(MousePitch.Value
+	public static float GetPitch() { return Maths.clamp(MousePitch.Value
 													+ GamepadPitch.Value
 													+ Positive(PitchUp)
 													+ Negative(PitchDown), -1f, 1f); }
 	// Right is positive, left is negative
-	public static float GetRoll() { return Maths.Clamp(MouseRoll.Value
+	public static float GetRoll() { return Maths.clamp(MouseRoll.Value
 													+ GamepadRoll.Value
 													+ Positive(RollRight)
 													+ Negative(RollLeft), -1f, 1f); }
-	public static float GetMoveForward() { return Maths.Clamp(GamepadForward.Value
+	public static float GetMoveForward() { return Maths.clamp(GamepadForward.Value
 													+ Positive(MoveForward)
 													+ Negative(MoveBack), -1f, 1f); }
-	public static float GetMoveRight() { return Maths.Clamp(GamepadRight.Value
+	public static float GetMoveRight() { return Maths.clamp(GamepadRight.Value
 													+ Positive(MoveRight)
 													+ Negative(MoveLeft), -1f, 1f); }
-	public static float GetMoveUp() { return Maths.Clamp(GamepadUp.Value
+	public static float GetMoveUp() { return Maths.clamp(GamepadUp.Value
 													+ Positive(MoveUp)
 													+ Negative(MoveDown), -1f, 1f); }
 

@@ -48,17 +48,17 @@ public record TransformedBB(@Nonnull Transform Loc, @Nonnull Vector3f HalfExtent
 	public boolean Contains(@Nonnull Vec3 point)
 	{
 		Vec3 local = Loc.globalToLocalPosition(point);
-		return Maths.Abs(local.x) <= HalfExtents.x
-			&& Maths.Abs(local.y) <= HalfExtents.y
-			&& Maths.Abs(local.z) <= HalfExtents.z;
+		return Maths.abs(local.x) <= HalfExtents.x
+			&& Maths.abs(local.y) <= HalfExtents.y
+			&& Maths.abs(local.z) <= HalfExtents.z;
 	}
 	public boolean ApproxContains(@Nonnull Vec3 point) { return ApproxContains(point, 0.01d); }
 	public boolean ApproxContains(@Nonnull Vec3 point, double epsilon)
 	{
 		Vec3 local = Loc.globalToLocalPosition(point);
-		return Maths.Abs(local.x) <= HalfExtents.x + epsilon
-			&& Maths.Abs(local.y) <= HalfExtents.y + epsilon
-			&& Maths.Abs(local.z) <= HalfExtents.z + epsilon;
+		return Maths.abs(local.x) <= HalfExtents.x + epsilon
+			&& Maths.abs(local.y) <= HalfExtents.y + epsilon
+			&& Maths.abs(local.z) <= HalfExtents.z + epsilon;
 	}
 
 	public double XSize() { return HalfExtents.x * 2d; }
@@ -66,7 +66,7 @@ public record TransformedBB(@Nonnull Transform Loc, @Nonnull Vector3f HalfExtent
 	public double ZSize() { return HalfExtents.z * 2d; }
 
 	public double GetMaxRadiusBound() {
-		return Maths.Max(HalfExtents.x, HalfExtents.y, HalfExtents.z) * Maths.Root2;
+		return Maths.max(HalfExtents.x, HalfExtents.y, HalfExtents.z) * Maths.Root2;
 	}
 
 	@Nonnull

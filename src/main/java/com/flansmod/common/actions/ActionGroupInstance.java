@@ -25,7 +25,7 @@ public class ActionGroupInstance
 	private static final long TIMEOUT_AUTO_RATIO = 2;
 	private static final long TIMEOUT_AUTO_MIN = 20; // 1s
 	private static final long TIMEOUT_AFTER_NO_NETSYNC = 20 * 5; // 5s
-	private long FullAutoTimeout() { return Maths.Max(RepeatDelayTicks()*TIMEOUT_AUTO_RATIO, TIMEOUT_AUTO_MIN); }
+	private long FullAutoTimeout() { return Maths.max(RepeatDelayTicks()*TIMEOUT_AUTO_RATIO, TIMEOUT_AUTO_MIN); }
 
 
 	private final List<ActionInstance> Actions;
@@ -74,10 +74,10 @@ public class ActionGroupInstance
 	{
 		Context = context;
 		Def = context.Def;
-		Duration = Maths.Floor(Def.repeatDelay * 20.0f);
+		Duration = Maths.floor(Def.repeatDelay * 20.0f);
 		for(ActionDefinition actionDefinition : Def.actions)
 			if(actionDefinition.duration * 20.0f > Duration)
-				Duration = Maths.Floor(actionDefinition.duration * 20.0f);
+				Duration = Maths.floor(actionDefinition.duration * 20.0f);
 		Actions = new ArrayList<>();
 	}
 

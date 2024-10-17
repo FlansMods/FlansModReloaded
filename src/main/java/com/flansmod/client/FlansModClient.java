@@ -250,13 +250,13 @@ public class FlansModClient
 			{
 				case MAIN_HAND -> {
 					return
-						Maths.LerpF((float)ITEM_IN_HAND_RENDERER_O_MAIN_HAND_HEIGHT.get(iihr),
+						Maths.lerpF((float)ITEM_IN_HAND_RENDERER_O_MAIN_HAND_HEIGHT.get(iihr),
 									(float)ITEM_IN_HAND_RENDERER_MAIN_HAND_HEIGHT.get(iihr),
 								    dt);
 				}
 				case OFF_HAND -> {
 					return
-						Maths.LerpF((float)ITEM_IN_HAND_RENDERER_O_OFF_HAND_HEIGHT.get(iihr),
+						Maths.lerpF((float)ITEM_IN_HAND_RENDERER_O_OFF_HAND_HEIGHT.get(iihr),
 							(float)ITEM_IN_HAND_RENDERER_OFF_HAND_HEIGHT.get(iihr),
 							dt);
 				}

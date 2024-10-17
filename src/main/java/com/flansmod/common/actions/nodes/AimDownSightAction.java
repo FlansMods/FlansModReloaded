@@ -33,7 +33,7 @@ public class AimDownSightAction extends ActionInstance
 	@Override
 	public void OnTickClient()
 	{
-		Magnitude = Maths.LerpF(Magnitude, 1.0f, 1f/20f);
+		Magnitude = Maths.lerpF(Magnitude, 1.0f, 1f/20f);
 
 	}
 

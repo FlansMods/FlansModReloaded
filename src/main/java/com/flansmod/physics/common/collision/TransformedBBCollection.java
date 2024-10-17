@@ -40,12 +40,12 @@ public record TransformedBBCollection(@Nonnull Transform Location, @Nonnull Immu
 		double zMax = -Double.MAX_VALUE;
 		for(AABB aabb : Colliders)
 		{
-			xMax = Maths.Max(aabb.maxX, xMax);
-			yMax = Maths.Max(aabb.maxY, yMax);
-			zMax = Maths.Max(aabb.maxZ, zMax);
-			xMin = Maths.Min(aabb.minX, xMin);
-			yMin = Maths.Min(aabb.minY, yMin);
-			zMin = Maths.Min(aabb.minZ, zMin);
+			xMax = Maths.max(aabb.maxX, xMax);
+			yMax = Maths.max(aabb.maxY, yMax);
+			zMax = Maths.max(aabb.maxZ, zMax);
+			xMin = Maths.min(aabb.minX, xMin);
+			yMin = Maths.min(aabb.minY, yMin);
+			zMin = Maths.min(aabb.minZ, zMin);
 		}
 		return new AABB(xMin, yMin, zMin, xMax, yMax, zMax);
 	}

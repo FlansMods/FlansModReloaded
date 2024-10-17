@@ -91,7 +91,7 @@ public abstract class WorkbenchScreenTab<T extends WorkbenchMenu> extends FMScre
 	@Override
 	protected void containerTick() { UpdateTab(true); }
 	@Override
-	public boolean mouseScrolled(double x, double y, double scroll) { return OnMouseScroll(Maths.Floor(x), Maths.Floor(y), scroll); }
+	public boolean mouseScrolled(double x, double y, double scroll) { return OnMouseScroll(Maths.floor(x), Maths.floor(y), scroll); }
 	@Override
 	protected void renderBg(@Nonnull GuiGraphics graphics, float f, int xMouse, int yMouse)
 	{
@@ -203,7 +203,7 @@ public abstract class WorkbenchScreenTab<T extends WorkbenchMenu> extends FMScre
 	public void RenderPowerBarFG(@Nonnull GuiGraphics graphics, int x, int y, int fe, int feMax)
 	{
 		String storedEnergyAmount = MinecraftHelpers.GetFEString(fe) + " / " + MinecraftHelpers.GetFEString(feMax);
-		graphics.drawString(font, storedEnergyAmount, Maths.Floor(x - (font.width(storedEnergyAmount) / 2f)), y, 0x505050, false);
+		graphics.drawString(font, storedEnergyAmount, Maths.floor(x - (font.width(storedEnergyAmount) / 2f)), y, 0x505050, false);
 	}
 	protected void RenderGUIItem(@Nonnull GuiGraphics graphics, int x, int y, @Nonnull ItemStack stack, boolean withText)
 	{
@@ -258,8 +258,8 @@ public abstract class WorkbenchScreenTab<T extends WorkbenchMenu> extends FMScre
 		float valueParam = (value - minValue) / (maxValue - minValue);
 		float compareToParam = (compareTo - minValue) / (maxValue - minValue);
 
-		int valuePx = Maths.Floor(20f * Maths.Clamp(valueParam, 0f, 1f));
-		int compareToPx = Maths.Floor(20f * Maths.Clamp(compareToParam, 0f, 1f));
+		int valuePx = Maths.floor(20f * Maths.clamp(valueParam, 0f, 1f));
+		int compareToPx = Maths.floor(20f * Maths.clamp(compareToParam, 0f, 1f));
 
 		// Fill
 		if(value > compareTo)
@@ -284,14 +284,14 @@ public abstract class WorkbenchScreenTab<T extends WorkbenchMenu> extends FMScre
 	}
 	protected void RenderScrollbar(@Nonnull GuiGraphics graphics, int x, int y, int scrollbarPxWidth, int scrollbarPxHeight, float value, float min, float max)
 	{
-		if(max < 0.0f || Maths.Approx(min, max))
+		if(max < 0.0f || Maths.approx(min, max))
 			return;
 
 		graphics.blit(FM_SHARED_GUI, x, y, 214, 18, scrollbarPxWidth, 8, SHARED_W, SHARED_H);
 		for(int i = 8; i < scrollbarPxHeight; i += 32)
 		{
 			int tileMin = i;
-			int tileMax = Maths.Min(i + 32, scrollbarPxHeight - 8);
+			int tileMax = Maths.min(i + 32, scrollbarPxHeight - 8);
 			graphics.blit(FM_SHARED_GUI, x, y + tileMin, 214, 26, scrollbarPxWidth, tileMax - tileMin, SHARED_W, SHARED_H);
 
 		}
@@ -300,13 +300,13 @@ public abstract class WorkbenchScreenTab<T extends WorkbenchMenu> extends FMScre
 		int scrollbarMinSize = 8 + 8;
 
 		float parametric = value / (max - min);
-		float scrollbarPxSize = Maths.Max(scrollbarPxHeight / (max - min), scrollbarMinSize);
+		float scrollbarPxSize = Maths.max(scrollbarPxHeight / (max - min), scrollbarMinSize);
 
-		float minPx = Maths.LerpF(0, scrollbarPxHeight - scrollbarPxSize, parametric);
-		float maxPx = Maths.LerpF(scrollbarPxSize, scrollbarPxHeight, parametric);
+		float minPx = Maths.lerpF(0, scrollbarPxHeight - scrollbarPxSize, parametric);
+		float maxPx = Maths.lerpF(scrollbarPxSize, scrollbarPxHeight, parametric);
 
-		graphics.blit(FM_SHARED_GUI, x, y + Maths.Floor(minPx), 208, 18, scrollbarPxWidth, Maths.Floor(scrollbarPxSize) - 8, SHARED_W, SHARED_H);
-		graphics.blit(FM_SHARED_GUI, x, y + Maths.Floor(maxPx) - 8, 208, 82, scrollbarPxWidth, 8, SHARED_W, SHARED_H);
+		graphics.blit(FM_SHARED_GUI, x, y + Maths.floor(minPx), 208, 18, scrollbarPxWidth, Maths.floor(scrollbarPxSize) - 8, SHARED_W, SHARED_H);
+		graphics.blit(FM_SHARED_GUI, x, y + Maths.floor(maxPx) - 8, 208, 82, scrollbarPxWidth, 8, SHARED_W, SHARED_H);
 	}
 	protected boolean NetworkedButtonPress(int buttonID)
 	{

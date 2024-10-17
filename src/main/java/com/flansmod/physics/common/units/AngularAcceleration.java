@@ -65,7 +65,7 @@ public record AngularAcceleration(@Nonnull Vec3 Axis, double Magnitude) implemen
 	public AngularVelocity applyOneTick() { return new AngularVelocity(Axis, Magnitude); }
 
 	@Override
-	public boolean isApproxZero() { return Maths.Approx(Magnitude, 0d); }
+	public boolean isApproxZero() { return Maths.approx(Magnitude, 0d); }
 	@Override @Nonnull
 	public AngularAcceleration inverse() { return new AngularAcceleration(Axis, -Magnitude); }
 	@Override
@@ -76,7 +76,7 @@ public record AngularAcceleration(@Nonnull Vec3 Axis, double Magnitude) implemen
 	public boolean hasAngularComponent(@Nonnull Transform actingOn) { return true; }
 	@Override @Nonnull
 	public AngularAcceleration getAngularComponent(@Nonnull Transform actingOn) { return this; }
-	public boolean IsApproxZero() { return Maths.Approx(Magnitude, 0d); }
+	public boolean IsApproxZero() { return Maths.approx(Magnitude, 0d); }
 	@Override
 	public String toString() { return "AngularAcceleration ["+Units.Angle.Radians_To_Degrees(Magnitude)+"] degrees/tick^2 around ["+Axis+"]"; }
 	@Override @Nonnull
@@ -85,9 +85,9 @@ public record AngularAcceleration(@Nonnull Vec3 Axis, double Magnitude) implemen
 	public boolean equals(Object other)
 	{
 		if(other instanceof AngularAcceleration otherAngularA)
-			return otherAngularA.Axis.equals(Axis) && Maths.Approx(Magnitude, otherAngularA.Magnitude);
+			return otherAngularA.Axis.equals(Axis) && Maths.approx(Magnitude, otherAngularA.Magnitude);
 		return false;
 	}
-	public boolean isApprox(@Nonnull AngularAcceleration other) { return Maths.Approx(other.Axis, Axis) && Maths.Approx(other.Magnitude, Magnitude); }
-	public boolean isApprox(@Nonnull AngularAcceleration other, double epsilon) { return Maths.Approx(other.Axis, Axis, epsilon) && Maths.Approx(other.Magnitude, Magnitude, epsilon); }
+	public boolean isApprox(@Nonnull AngularAcceleration other) { return Maths.approx(other.Axis, Axis) && Maths.approx(other.Magnitude, Magnitude); }
+	public boolean isApprox(@Nonnull AngularAcceleration other, double epsilon) { return Maths.approx(other.Axis, Axis, epsilon) && Maths.approx(other.Magnitude, Magnitude, epsilon); }
 }

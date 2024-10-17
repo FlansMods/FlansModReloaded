@@ -48,7 +48,7 @@ public class ActionGroupDefinition
 		}
 
 		// Round up ticks so we know the duration covers everything
-		int ticks = Maths.Floor(duration * 20.0f);
+		int ticks = Maths.floor(duration * 20.0f);
 		return ticks / 20.0f;
 	}
 }

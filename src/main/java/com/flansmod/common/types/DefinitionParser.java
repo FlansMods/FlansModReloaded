@@ -32,22 +32,22 @@ public class DefinitionParser
 	{
 		Parsers.put(Integer.TYPE, (ref, jNode, annot) ->
 		{
-			try { return Maths.Clamp(jNode.getAsInt(), Maths.Ceil(annot.Min()), Maths.Floor(annot.Max())); }
+			try { return Maths.clamp(jNode.getAsInt(), Maths.ceil(annot.Min()), Maths.floor(annot.Max())); }
 			catch(Exception e) { FlansMod.LOGGER.error("Failed to parse JsonNode " + jNode + " into " + ref + " as int due to exception: " + e); throw e; }
 		});
 		Parsers.put(Float.TYPE, (ref, jNode, annot) ->
 		{
-			try { return Maths.Clamp(jNode.getAsFloat(), (float)annot.Min(), (float)annot.Max()); }
+			try { return Maths.clamp(jNode.getAsFloat(), (float)annot.Min(), (float)annot.Max()); }
 			catch(Exception e) { FlansMod.LOGGER.error("Failed to parse JsonNode " + jNode + " into " + ref + " as float due to exception: " + e); throw e; }
 		});
 		Parsers.put(Double.TYPE, (ref, jNode, annot) ->
 		{
-			try { return Maths.Clamp(jNode.getAsDouble(), annot.Min(), annot.Max()); }
+			try { return Maths.clamp(jNode.getAsDouble(), annot.Min(), annot.Max()); }
 			catch(Exception e) { FlansMod.LOGGER.error("Failed to parse JsonNode " + jNode + " into " + ref + " as double due to exception: " + e); throw e; }
 		});
 		Parsers.put(Short.TYPE, (ref, jNode, annot) ->
 		{
-			try { return Maths.Clamp(jNode.getAsShort(), (short)annot.Min(), (short)annot.Max()); }
+			try { return Maths.clamp(jNode.getAsShort(), (short)annot.Min(), (short)annot.Max()); }
 			catch(Exception e) { FlansMod.LOGGER.error("Failed to parse JsonNode " + jNode + " into " + ref + " as short due to exception: " + e); throw e; }
 		});
 		Parsers.put(Byte.TYPE, (ref, jNode, annot) ->

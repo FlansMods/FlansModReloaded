@@ -39,7 +39,7 @@ public class AbilityEffectApplyMobEffect implements IAbilityEffect
 				{
 					int decayTicks = stacks == null ? 20 : stacks.GetDecayTimeTicks(actionGroup.Gun);
 					living.addEffect(
-						new MobEffectInstance(Effect, decayTicks, Maths.Ceil(PotionMultiplier.Get(actionGroup, stacks)) - 1),
+						new MobEffectInstance(Effect, decayTicks, Maths.ceil(PotionMultiplier.Get(actionGroup, stacks)) - 1),
 						actionGroup.Gun.GetShooter().Owner());
 				}
 			});

@@ -1251,8 +1251,8 @@ public class VehicleEntity extends PhysicsEntity implements
 		// TODO
 		return new VehicleInventory(1, 1, 1);
 	}
-	public double GetSpeedXZ() { return Maths.LengthXZ(getDeltaMovement()); }
-	public double GetSpeed() { return Maths.LengthXYZ(getDeltaMovement()); }
+	public double GetSpeedXZ() { return Maths.lengthXZ(getDeltaMovement()); }
+	public double GetSpeed() { return Maths.lengthXYZ(getDeltaMovement()); }
 
 
 	@Nonnull

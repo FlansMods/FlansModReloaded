@@ -80,9 +80,9 @@ public class LegacyPlaneControlLogic extends ControlLogic
 		flapsPitchRight *= 0.9F;
 
 		//Limit flap angles
-		flapsYaw = Maths.Clamp(flapsYaw, -20, 20);
-		flapsPitchLeft = Maths.Clamp(flapsPitchLeft, -20, 20);
-		flapsPitchRight = Maths.Clamp(flapsPitchRight, -20, 20);
+		flapsYaw = Maths.clamp(flapsYaw, -20, 20);
+		flapsPitchLeft = Maths.clamp(flapsPitchLeft, -20, 20);
+		flapsPitchRight = Maths.clamp(flapsPitchRight, -20, 20);
 
 		// Movement
 
@@ -97,7 +97,7 @@ public class LegacyPlaneControlLogic extends ControlLogic
 		//Alter angles
 		//Sensitivity function
 		float sensitivityAdjust = 2.00677104758f - (float)Math.exp(-2.0f * throttle) / (4.5f * (throttle + 0.1f));
-		sensitivityAdjust = Maths.Clamp(sensitivityAdjust, 0.0f, 1.0f);
+		sensitivityAdjust = Maths.clamp(sensitivityAdjust, 0.0f, 1.0f);
 		//Scalar
 		sensitivityAdjust *= 0.125F;
 

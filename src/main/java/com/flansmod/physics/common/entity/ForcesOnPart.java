@@ -39,7 +39,7 @@ public class ForcesOnPart
 	}
 	public void addDampener(float dampening)
 	{
-		this.dampening *= (1.0f - Maths.Clamp(dampening, 0f, 1f));
+		this.dampening *= (1.0f - Maths.clamp(dampening, 0f, 1f));
 	}
 
 	public float getDampeningRatio() { return dampening; }
@@ -118,7 +118,7 @@ public class ForcesOnPart
 		{
 			return otherForces.forces.equals(forces)
 					&& otherForces.reactionForces.equals(reactionForces)
-					&& Maths.Approx(dampening, otherForces.dampening);
+					&& Maths.approx(dampening, otherForces.dampening);
 		}
 		return false;
 	}

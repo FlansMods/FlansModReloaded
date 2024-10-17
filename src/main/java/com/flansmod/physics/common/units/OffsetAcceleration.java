@@ -82,6 +82,6 @@ public record OffsetAcceleration(@Nonnull Vec3 Acceleration, @Nonnull Vec3 Origi
 			return otherOffsetA.Acceleration.equals(Acceleration) && otherOffsetA.Origin.equals(Origin);
 		return false;
 	}
-	public boolean isApprox(@Nonnull OffsetAcceleration other) { return Maths.Approx(other.Acceleration, Acceleration) && Maths.Approx(other.Origin, Origin); }
-	public boolean isApprox(@Nonnull OffsetAcceleration other, double epsilon) { return Maths.Approx(other.Acceleration, Acceleration, epsilon) && Maths.Approx(other.Origin, Origin, epsilon); }
+	public boolean isApprox(@Nonnull OffsetAcceleration other) { return Maths.approx(other.Acceleration, Acceleration) && Maths.approx(other.Origin, Origin); }
+	public boolean isApprox(@Nonnull OffsetAcceleration other, double epsilon) { return Maths.approx(other.Acceleration, Acceleration, epsilon) && Maths.approx(other.Origin, Origin, epsilon); }
 }

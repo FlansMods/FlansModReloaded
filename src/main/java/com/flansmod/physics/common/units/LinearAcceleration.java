@@ -25,7 +25,7 @@ public record LinearAcceleration(@Nonnull Vec3 Acceleration) implements IAcceler
 	@Nonnull
 	public static LinearAcceleration fromUtoVinSeconds(@Nonnull LinearVelocity u, @Nonnull LinearVelocity v, double seconds)
 	{
-		if(Maths.Approx(seconds, 0d))
+		if(Maths.approx(seconds, 0d))
 			return Zero;
 
 		// v = u+at, a=(v-u)/t
@@ -92,6 +92,6 @@ public record LinearAcceleration(@Nonnull Vec3 Acceleration) implements IAcceler
 			return otherLinearA.Acceleration.equals(Acceleration);
 		return false;
 	}
-	public boolean isApprox(@Nonnull LinearAcceleration other) { return Maths.Approx(other.Acceleration, Acceleration); }
-	public boolean isApprox(@Nonnull LinearAcceleration other, double epsilon) { return Maths.Approx(other.Acceleration, Acceleration, epsilon); }
+	public boolean isApprox(@Nonnull LinearAcceleration other) { return Maths.approx(other.Acceleration, Acceleration); }
+	public boolean isApprox(@Nonnull LinearAcceleration other, double epsilon) { return Maths.approx(other.Acceleration, Acceleration, epsilon); }
 }

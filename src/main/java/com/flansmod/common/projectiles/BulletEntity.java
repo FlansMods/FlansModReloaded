@@ -137,7 +137,7 @@ public class BulletEntity extends Projectile
 		float fuseTime = context.FuseTimeSeconds();
 		if(fuseTime > 0.0f)
 		{
-			FuseRemaining = Maths.Ceil(fuseTime * 20f);
+			FuseRemaining = Maths.ceil(fuseTime * 20f);
 			ActionGroupInstance group = context.ActionGroup.Gun.GetOrCreateActionGroup(context.ActionGroup);
 			if(group.GetProgressTicks() > 0)
 			{
@@ -160,13 +160,13 @@ public class BulletEntity extends Projectile
 	//
 	private void RecalculateFacing(Vec3 motion)
 	{
-		double xz = Maths.Sqrt(motion.x * motion.x + motion.z * motion.z);
-		float yawDeg = (float)Maths.Atan2(motion.x, motion.z) * Maths.RadToDegF;
-		float pitchDeg = (float)Maths.Atan2(motion.y, xz) * Maths.RadToDegF;
+		double xz = Maths.sqrt(motion.x * motion.x + motion.z * motion.z);
+		float yawDeg = (float)Maths.atan2(motion.x, motion.z) * Maths.RadToDegF;
+		float pitchDeg = (float)Maths.atan2(motion.y, xz) * Maths.RadToDegF;
 		// Slerp
 		float turnRate = GetContext().TurnRate();
-		pitchDeg = Maths.LerpDegrees(getXRot(), pitchDeg, Math.min(turnRate*20f,1.0f));
-		yawDeg = Maths.LerpDegrees(getYRot(), yawDeg, Math.min(turnRate*20f,1.0f));
+		pitchDeg = Maths.lerpDegrees(getXRot(), pitchDeg, Math.min(turnRate*20f,1.0f));
+		yawDeg = Maths.lerpDegrees(getYRot(), yawDeg, Math.min(turnRate*20f,1.0f));
 
 		setXRot(pitchDeg);
 		setYRot(yawDeg);
@@ -261,7 +261,7 @@ public class BulletEntity extends Projectile
 			//{
 			//
 			//}
-			return motion.scale(Maths.Clamp(1.0f - GetContext().DragInWater(), 0f, 1f));
+			return motion.scale(Maths.clamp(1.0f - GetContext().DragInWater(), 0f, 1f));
 		}
 		else
 		{
@@ -271,7 +271,7 @@ public class BulletEntity extends Projectile
 			//{
 			//
 			//}
-			return motion.scale(Maths.Clamp(1.0f - GetContext().DragInAir(), 0f, 1f));
+			return motion.scale(Maths.clamp(1.0f - GetContext().DragInAir(), 0f, 1f));
 		}
 	}
 

@@ -230,7 +230,7 @@ public class TurretBlockEntity extends ShooterBlockEntity implements WorldlyCont
             }
             else if(ItemStack.isSameItemSameTags(bulletStack, BulletStacks[i]))
             {
-                int count = Maths.Min(bulletStack.getCount(), getMaxStackSize() - BulletStacks[i].getCount());
+                int count = Maths.min(bulletStack.getCount(), getMaxStackSize() - BulletStacks[i].getCount());
                 BulletStacks[i].setCount(BulletStacks[i].getCount() + count);
                 bulletStack.setCount(bulletStack.getCount() - count);
             }

@@ -50,7 +50,7 @@ public class CollisionTasks
 							aCenter.add(deltaPos.scale(0.5d))));
 		}
 
-		double dist = aRadius + bRadius - Maths.Sqrt(deltaLengthSq);
+		double dist = aRadius + bRadius - Maths.sqrt(deltaLengthSq);
 		return SeparationResult.failure(
 				Plane.ofNormalAndPointOnPlane(
 						deltaPos.normalize(),
@@ -344,7 +344,7 @@ public class CollisionTasks
 		for(Vec3 alreadyTested : testedNormals)
 		{
 			double dot = alreadyTested.dot(normal);
-			if(Maths.AbsApprox(dot, 1))
+			if(Maths.absApprox(dot, 1))
 				return previousBestResult;
 		}
 

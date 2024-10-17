@@ -85,6 +85,6 @@ public record OffsetForce(@Nonnull Vec3 Force, @Nonnull Vec3 Offset) implements 
 			return otherForce.Force.equals(Force) && otherForce.Offset.equals(Offset);
 		return false;
 	}
-	public boolean isApprox(@Nonnull OffsetForce other) { return Maths.Approx(other.Force, Force) && Maths.Approx(other.Offset, Offset); }
-	public boolean isApprox(@Nonnull OffsetForce other, double epsilon) { return Maths.Approx(other.Force, Force, epsilon) && Maths.Approx(other.Offset, Offset, epsilon); }
+	public boolean isApprox(@Nonnull OffsetForce other) { return Maths.approx(other.Force, Force) && Maths.approx(other.Offset, Offset); }
+	public boolean isApprox(@Nonnull OffsetForce other, double epsilon) { return Maths.approx(other.Force, Force, epsilon) && Maths.approx(other.Offset, Offset, epsilon); }
 }

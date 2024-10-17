@@ -541,7 +541,7 @@ public class AbstractWorkbench implements Container, Clearable, MenuProvider
 					}
 					if (inputCount > 0 && canOutput && canPower)
 					{
-						CraftTime = Maths.Floor(Def.partCrafting.timePerCraft * 20);
+						CraftTime = Maths.floor(Def.partCrafting.timePerCraft * 20);
 						CraftDuration = CraftTime;
 						changed = true;
 					}
@@ -795,7 +795,7 @@ public class AbstractWorkbench implements Container, Clearable, MenuProvider
 				lowestMatch = maxProduction;
 		}
 
-		return Maths.Clamp(lowestMatch, 0, 999);
+		return Maths.clamp(lowestMatch, 0, 999);
 	}
 
 
@@ -965,7 +965,7 @@ public class AbstractWorkbench implements Container, Clearable, MenuProvider
 			}
 			else if(ItemStack.isSameItem(stackInSlot, stack))
 			{
-				int countToAdd = Maths.Min(stack.getCount(), maxStack - stackInSlot.getCount());
+				int countToAdd = Maths.min(stack.getCount(), maxStack - stackInSlot.getCount());
 				if(countToAdd > 0)
 				{
 					stackInSlot.setCount(stackInSlot.getCount() + countToAdd);

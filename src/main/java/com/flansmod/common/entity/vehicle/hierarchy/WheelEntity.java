@@ -246,8 +246,8 @@ public class WheelEntity extends Entity implements ITransformChildEntity
 		if(parent.IsAuthority())
 		{
 			// Lerp our parameters to the player requested parameters
-			TorqueParameterCurrent = Maths.LerpF(TorqueParameterCurrent, TargetTorqueParameter, GetWheelDef().TorqueLerpRate());
-			YawParameterCurrent = Maths.LerpF(YawParameterCurrent, TargetYawParameter, GetWheelDef().YawLerpRate());
+			TorqueParameterCurrent = Maths.lerpF(TorqueParameterCurrent, TargetTorqueParameter, GetWheelDef().TorqueLerpRate());
+			YawParameterCurrent = Maths.lerpF(YawParameterCurrent, TargetYawParameter, GetWheelDef().YawLerpRate());
 
 		}
 		else

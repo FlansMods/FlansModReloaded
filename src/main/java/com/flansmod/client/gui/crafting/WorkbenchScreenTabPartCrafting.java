@@ -189,9 +189,9 @@ public class WorkbenchScreenTabPartCrafting extends WorkbenchScreenTab<Workbench
 	{
 		if(InBox(xMouse, yMouse, xOrigin + PART_RECIPE_VIEWER_ORIGIN_X, 18 * PART_RECIPE_VIEWER_COLUMNS + 6, yOrigin + PART_RECIPE_VIEWER_ORIGIN_Y, 18 * PART_RECIPE_VIEWER_ROWS))
 		{
-			int numRows = Maths.Max(FilteredPartsList.size() / PART_RECIPE_VIEWER_COLUMNS - PART_RECIPE_VIEWER_ROWS + 1, 0);
+			int numRows = Maths.max(FilteredPartsList.size() / PART_RECIPE_VIEWER_COLUMNS - PART_RECIPE_VIEWER_ROWS + 1, 0);
 			partSelectorScrollOffset -= scroll;
-			partSelectorScrollOffset = Maths.Clamp(partSelectorScrollOffset, 0, numRows);
+			partSelectorScrollOffset = Maths.clamp(partSelectorScrollOffset, 0, numRows);
 			UpdateActivePartSelectionButtons();
 			return true;
 		}
@@ -288,7 +288,7 @@ public class WorkbenchScreenTabPartCrafting extends WorkbenchScreenTab<Workbench
 			{
 				if(InBox(xMouse, yMouse, xOrigin + PART_RECIPE_VIEWER_ORIGIN_X + i * 18, 18, yOrigin + PART_RECIPE_VIEWER_ORIGIN_Y + 18 * j, 18))
 				{
-					int index = (Maths.Floor(partSelectorScrollOffset) + j) * PART_RECIPE_VIEWER_COLUMNS + i;
+					int index = (Maths.floor(partSelectorScrollOffset) + j) * PART_RECIPE_VIEWER_COLUMNS + i;
 					if(index < FilteredPartsList.size())
 					{
 						graphics.renderTooltip(font, FilteredPartsList.get(index).getSecond().getResultItem(RegistryAccess.EMPTY).getHoverName(), xMouse, yMouse);
@@ -335,7 +335,7 @@ public class WorkbenchScreenTabPartCrafting extends WorkbenchScreenTab<Workbench
 		// Input and Output Slot Backgrounds
 		for(int j = 0; j < PART_CRAFTING_NUM_INPUT_SLOTS_Y; j++)
 		{
-			int numSlotsOnThisRow = Maths.Min(Workbench.PartCraftingInputContainer.getContainerSize() - j * PART_CRAFTING_NUM_INPUT_SLOTS_X, PART_CRAFTING_NUM_INPUT_SLOTS_X);
+			int numSlotsOnThisRow = Maths.min(Workbench.PartCraftingInputContainer.getContainerSize() - j * PART_CRAFTING_NUM_INPUT_SLOTS_X, PART_CRAFTING_NUM_INPUT_SLOTS_X);
 			if (numSlotsOnThisRow > 0)
 			{
 				graphics.blit(PARTS_BG, xOrigin + PART_CRAFTING_INPUT_SLOTS_X, yOrigin + PART_CRAFTING_INPUT_SLOTS_Y + 18 * j, 97, 136, 18 * numSlotsOnThisRow, 18, PARTS_W, PARTS_H);
@@ -343,7 +343,7 @@ public class WorkbenchScreenTabPartCrafting extends WorkbenchScreenTab<Workbench
 		}
 		for(int j = 0; j < PART_CRAFTING_NUM_OUTPUT_SLOTS_Y; j++)
 		{
-			int numOutputSlotsOnThisRow = Maths.Min(Workbench.PartCraftingOutputContainer.getContainerSize() - j * PART_CRAFTING_NUM_OUTPUT_SLOTS_X, PART_CRAFTING_NUM_OUTPUT_SLOTS_X);
+			int numOutputSlotsOnThisRow = Maths.min(Workbench.PartCraftingOutputContainer.getContainerSize() - j * PART_CRAFTING_NUM_OUTPUT_SLOTS_X, PART_CRAFTING_NUM_OUTPUT_SLOTS_X);
 			if(numOutputSlotsOnThisRow > 0)
 			{
 				graphics.blit(PARTS_BG, xOrigin + PART_CRAFTING_OUTPUT_SLOTS_X, yOrigin + PART_CRAFTING_OUTPUT_SLOTS_Y + 18 * j, 97, 136, 18 * numOutputSlotsOnThisRow, 18, PARTS_W, PARTS_H);
@@ -386,7 +386,7 @@ public class WorkbenchScreenTabPartCrafting extends WorkbenchScreenTab<Workbench
 						xOrigin + BLUEPRINT_ORIGIN_X + 6 + 25*i,
 						yOrigin + BLUEPRINT_ORIGIN_Y + 18,
 						275, 222,
-						1 + 3 * Maths.Clamp(maxProduce, 0, 5), 4,
+						1 + 3 * Maths.clamp(maxProduce, 0, 5), 4,
 						PARTS_W, PARTS_H);
 					if(maxProduce > 5)
 						graphics.blit(PARTS_BG,
@@ -439,7 +439,7 @@ public class WorkbenchScreenTabPartCrafting extends WorkbenchScreenTab<Workbench
 								xOrigin + QUEUE_VIEWER_ORIGIN_X + 18,
 								yOrigin + QUEUE_VIEWER_ORIGIN_Y + 13,
 								375, 21,
-								Maths.Ceil(48f * (1.0f - ((float) craftingTime / (float) craftingDuration))), 4,
+								Maths.ceil(48f * (1.0f - ((float) craftingTime / (float) craftingDuration))), 4,
 								PARTS_W, PARTS_H);
 						}
 
@@ -509,8 +509,8 @@ public class WorkbenchScreenTabPartCrafting extends WorkbenchScreenTab<Workbench
 		// Recipe selector scroller
 		for(int j = 0; j < PART_RECIPE_VIEWER_ROWS; j++)
 		{
-			int rowIndex = Maths.Floor(partSelectorScrollOffset) + j;
-			int numSlotsOnThisRow = Maths.Min(FilteredPartsList.size() - j * PART_RECIPE_VIEWER_COLUMNS, PART_RECIPE_VIEWER_COLUMNS);
+			int rowIndex = Maths.floor(partSelectorScrollOffset) + j;
+			int numSlotsOnThisRow = Maths.min(FilteredPartsList.size() - j * PART_RECIPE_VIEWER_COLUMNS, PART_RECIPE_VIEWER_COLUMNS);
 			if(numSlotsOnThisRow > 0)
 			{
 				graphics.blit(PARTS_BG, xOrigin + PART_RECIPE_VIEWER_ORIGIN_X, yOrigin + PART_RECIPE_VIEWER_ORIGIN_Y + 18 * j, 97, 217, 18 * numSlotsOnThisRow, 18, PARTS_W, PARTS_H);
@@ -565,7 +565,7 @@ public class WorkbenchScreenTabPartCrafting extends WorkbenchScreenTab<Workbench
 					ItemStack[] possibleInputs = ingredient.getItems();
 					if (possibleInputs.length > 0)
 					{
-						int pick = Maths.Modulo(Maths.Floor(ShowPotentialMatchTicker), possibleInputs.length);
+						int pick = Maths.Modulo(Maths.floor(ShowPotentialMatchTicker), possibleInputs.length);
 						ItemStack possibleInput = ingredient.getItems()[pick];
 
 						if(!possibleInput.isEmpty())
@@ -638,7 +638,7 @@ public class WorkbenchScreenTabPartCrafting extends WorkbenchScreenTab<Workbench
 		}
 
 		// Render part icons into the selector scrollbar
-		int firstRow = Maths.Floor(partSelectorScrollOffset);
+		int firstRow = Maths.floor(partSelectorScrollOffset);
 		for (int row = 0; row < PART_RECIPE_VIEWER_ROWS; row++)
 		{
 			int firstIndexInRow = (firstRow + row) * PART_RECIPE_VIEWER_COLUMNS;
@@ -700,7 +700,7 @@ public class WorkbenchScreenTabPartCrafting extends WorkbenchScreenTab<Workbench
 			FilteredPartsList.add(Pair.of(i, allRecipes.get(i)));
 		}
 
-		int maxScroll = Maths.Max(FilteredPartsList.size() / PART_RECIPE_VIEWER_COLUMNS - 2, 0);
+		int maxScroll = Maths.max(FilteredPartsList.size() / PART_RECIPE_VIEWER_COLUMNS - 2, 0);
 		if(partSelectorScrollOffset > maxScroll)
 			partSelectorScrollOffset = maxScroll;
 		UpdateActivePartSelectionButtons();
@@ -718,7 +718,7 @@ public class WorkbenchScreenTabPartCrafting extends WorkbenchScreenTab<Workbench
 			{
 				for (int i = 0; i < PART_RECIPE_VIEWER_COLUMNS; i++)
 				{
-					final int firstIndex = Maths.Floor(partSelectorScrollOffset) * PART_RECIPE_VIEWER_COLUMNS;
+					final int firstIndex = Maths.floor(partSelectorScrollOffset) * PART_RECIPE_VIEWER_COLUMNS;
 					final int relativeIndex = i + PART_RECIPE_VIEWER_COLUMNS * j;
 					PartSelectionButtons[relativeIndex].active = IsActive && (firstIndex + relativeIndex < FilteredPartsList.size());
 				}
@@ -756,7 +756,7 @@ public class WorkbenchScreenTabPartCrafting extends WorkbenchScreenTab<Workbench
 		if(level == null)
 			return;
 
-		int filteredIndex = Maths.Floor(partSelectorScrollOffset) * PART_RECIPE_VIEWER_COLUMNS + relativeIndex;
+		int filteredIndex = Maths.floor(partSelectorScrollOffset) * PART_RECIPE_VIEWER_COLUMNS + relativeIndex;
 		if(filteredIndex >= FilteredPartsList.size())
 			filteredIndex = -1;
 

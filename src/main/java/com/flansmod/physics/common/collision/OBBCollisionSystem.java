@@ -294,7 +294,7 @@ public class OBBCollisionSystem
 				staticFunc.accept(collision);
 			for(DynamicCollisionEvent collision : obj.DynamicCollisions)
 				dynamicFunc.accept(collision);
-			return obj.getCurrentColliders().Location();
+			return obj.getPendingLocation();
 		}
 		return Transform.IDENTITY;
 	}

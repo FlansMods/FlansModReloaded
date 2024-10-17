@@ -692,7 +692,7 @@ public class ActionGroupContext
 	@Nonnull
 	public ERepeatMode RepeatMode() 		{ return (ERepeatMode) ModifyEnum(STAT_GROUP_REPEAT_MODE, Def.repeatMode, ERepeatMode.class); }
 	public float RepeatDelaySeconds() 		{ return ModifyFloat(STAT_GROUP_REPEAT_DELAY).apply(Def.repeatDelay); }
-	public int RepeatCount() 				{ return Maths.Ceil(ModifyFloat(STAT_GROUP_REPEAT_COUNT).apply(Def.repeatCount)); }
+	public int RepeatCount() 				{ return Maths.ceil(ModifyFloat(STAT_GROUP_REPEAT_COUNT).apply(Def.repeatCount)); }
 	public float SpinUpDuration() 			{ return ModifyFloat(STAT_GROUP_SPIN_UP_DURATION).apply(Def.spinUpDuration); }
 	public float Loudness() 				{ return ModifyFloat(STAT_GROUP_LOUDNESS).apply(Def.loudness); }
 	public float Volume() 					{ return ModifyFloat(STAT_GROUP_LOUDNESS).apply(1.0f); }
@@ -702,8 +702,8 @@ public class ActionGroupContext
 	public float Spread() 					{ return ModifyFloat(STAT_SHOT_SPREAD).get(); }
 	public ESpreadPattern SpreadPattern() 	{ return (ESpreadPattern)ModifyEnum(STAT_SHOT_SPREAD_PATTERN, ESpreadPattern.FilledCircle, ESpreadPattern.class); }
 
-	public int RepeatDelayTicks() { return Maths.Ceil(RepeatDelaySeconds() * 20.0f); }
-	public int RoundsPerMinute() { return RepeatDelaySeconds() <= 0.00001f ? 0 : Maths.Ceil(60.0f / RepeatDelaySeconds()); }
+	public int RepeatDelayTicks() { return Maths.ceil(RepeatDelaySeconds() * 20.0f); }
+	public int RoundsPerMinute() { return RepeatDelaySeconds() <= 0.00001f ? 0 : Maths.ceil(60.0f / RepeatDelaySeconds()); }
 
 	@Override
 	public String toString()

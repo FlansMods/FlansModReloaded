@@ -218,7 +218,7 @@ public class ClientRenderHooks
 	private static final ArrayList<Vec2> MLGPositions = new ArrayList<>();
 	public void ApplyHitMarker(float duration, boolean fatal, boolean MLG)
 	{
-		HitMarkerDurationRemaining = Maths.Max(HitMarkerDurationRemaining, duration);
+		HitMarkerDurationRemaining = Maths.max(HitMarkerDurationRemaining, duration);
 		MC.getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.GENERIC_HURT, 1.0f));
 		isMLG = MLG;
 		isFatal = fatal;
@@ -229,11 +229,11 @@ public class ClientRenderHooks
 		if(isMLG)
 		{
 			MC.getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.GENERIC_HURT, 1.0f));
-			for(int i = 0; i < Maths.Ceil(HitMarkerDurationRemaining * 0.5f); i++)
+			for(int i = 0; i < Maths.ceil(HitMarkerDurationRemaining * 0.5f); i++)
 			{
 				MLGPositions.add(new Vec2((float)RNG.nextGaussian(), (float)RNG.nextGaussian()));
 			}
-			for(int i = 0; i < Maths.Ceil(MLGPositions.size() * 0.25f); i++)
+			for(int i = 0; i < Maths.ceil(MLGPositions.size() * 0.25f); i++)
 			{
 				MLGPositions.remove(RNG.nextInt(i+1));
 			}
@@ -419,7 +419,7 @@ public class ClientRenderHooks
 					int stacksStringWidth = Minecraft.getInstance().font.width(stacksString);
 					RenderString(graphics, anchorX + 118 + xOffset - stacksStringWidth, anchorY - 49, Component.literal(stacksString), 0xffffff);
 
-					String timeRemaining = ".".repeat(Math.max(0, Maths.Min(mobEffect.getDuration() / 20, 5)));
+					String timeRemaining = ".".repeat(Math.max(0, Maths.min(mobEffect.getDuration() / 20, 5)));
 					RenderString(graphics, anchorX + 102 + xOffset, anchorY - 39, Component.literal(timeRemaining), 0xffffff);
 
 
@@ -571,9 +571,9 @@ public class ClientRenderHooks
 
 	private void RenderItem(@Nonnull GuiGraphics graphics, @Nonnull ItemStack stack, float x, float y, boolean decorate)
 	{
-		graphics.renderItem(stack, Maths.Floor(x), Maths.Floor(y));
+		graphics.renderItem(stack, Maths.floor(x), Maths.floor(y));
 		if(decorate)
-			graphics.renderItemDecorations(Minecraft.getInstance().font, stack, Maths.Floor(x), Maths.Floor(y));
+			graphics.renderItemDecorations(Minecraft.getInstance().font, stack, Maths.floor(x), Maths.floor(y));
 	}
 
 	private void RenderSprite(@Nonnull GuiGraphics graphics, float x, float y, float w, float h, @Nonnull TextureAtlasSprite sprite)
@@ -688,6 +688,6 @@ public class ClientRenderHooks
 
 	private void RenderString(@Nonnull GuiGraphics graphics, float x, float y, @Nonnull Component content, int colour)
 	{
-		graphics.drawString(Minecraft.getInstance().font, content, Maths.Floor(x), Maths.Floor(y), colour);
+		graphics.drawString(Minecraft.getInstance().font, content, Maths.floor(x), Maths.floor(y), colour);
 	}
 }

@@ -329,8 +329,8 @@ public class ShootAction extends ActionInstance
 			{
 				float theta = rand.nextFloat() * Maths.TauF;
 				float radius = (spreadPattern == ESpreadPattern.Circle ? 1.0f : rand.nextFloat()) * spread;
-				xComponent = radius * Maths.SinF(theta);
-				yComponent = radius * Maths.CosF(theta);
+				xComponent = radius * Maths.sinF(theta);
+				yComponent = radius * Maths.cosF(theta);
 			}
 			case Horizontal ->
 			{
@@ -370,8 +370,8 @@ public class ShootAction extends ActionInstance
 			}
 		}
 
-		float yaw = Maths.AtanF(xComponent);
-		float pitch = Maths.AtanF(yComponent);
+		float yaw = Maths.atanF(xComponent);
+		float pitch = Maths.atanF(yComponent);
 
 		transformStack.add(Transform.fromEuler(pitch, yaw, 0f, () -> "{\"Spread\":"+spread+", \"Pattern\":\""+spreadPattern+"\"}"));
 	}
@@ -515,8 +515,8 @@ public class ShootAction extends ActionInstance
 				// Create client effects only for bullets that were added in this most recent re-trigger
 				GunshotContext gunshotContext = GunshotContext.of(Group.Context, shot);
 
-				verticalRecoil = Maths.Max(verticalRecoil, Group.Context.VerticalRecoil());
-				horizontalRecoil = Maths.Max(horizontalRecoil, Group.Context.HorizontalRecoil());
+				verticalRecoil = Maths.max(verticalRecoil, Group.Context.VerticalRecoil());
+				horizontalRecoil = Maths.max(horizontalRecoil, Group.Context.HorizontalRecoil());
 
 //  - HitMarker should be kinda locked in? Persuade me otherwise and I'll make an Effect for it
 
@@ -606,7 +606,7 @@ public class ShootAction extends ActionInstance
 				{
 					FlansModClient.RECOIL.AddRecoil(
 						horizontalRecoil * (float)player.getRandom().nextGaussian(),
-						verticalRecoil * (0.125f + 0.375f * Maths.ExpF(-triggerIndex * 0.125f))
+						verticalRecoil * (0.125f + 0.375f * Maths.expF(-triggerIndex * 0.125f))
 					);
 				}
 			}
@@ -634,7 +634,7 @@ public class ShootAction extends ActionInstance
 				for (HitResult hit : shot.hits)
 				{
 					// Check if this hit should be processed on this frame
-					double t = Maths.CalculateParameter(shot.origin, shot.Endpoint(), hit.getLocation()) * GetDurationPerTriggerTicks() + t0;
+					double t = Maths.calculateParameter(shot.origin, shot.Endpoint(), hit.getLocation()) * GetDurationPerTriggerTicks() + t0;
 					if (tickBefore <= t && t < tickAfter)
 					{
 						// Client impacts are processed with a slight visual delay. Should look cool.
@@ -651,7 +651,7 @@ public class ShootAction extends ActionInstance
 
 
 								Vec3[] motions = new Vec3[3];
-								motions[0] = Maths.Reflect(shot.trajectory.normalize(), blockHit.getDirection());
+								motions[0] = Maths.reflect(shot.trajectory.normalize(), blockHit.getDirection());
 								Vec3i normal = blockHit.getDirection().getNormal();
 								for (int i = 1; i < motions.length; i++)
 								{

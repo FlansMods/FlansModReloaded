@@ -20,9 +20,9 @@ public interface ITransformPair
 	@Nonnull
 	default Transform delta(float dt)
 	{
-		if(Maths.Approx(dt, 0f))
+		if(Maths.approx(dt, 0f))
 			return previous();
-		if(Maths.Approx(dt, 1f))
+		if(Maths.approx(dt, 1f))
 			return current();
 		return Transform.interpolate(previous(), current(), dt);
 	}

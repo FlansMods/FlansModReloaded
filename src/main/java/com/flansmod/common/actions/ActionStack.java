@@ -564,7 +564,7 @@ public class ActionStack
 				{
 					// Check the action stack for this action/gun pairing and see if any of them are waiting for mouse release
 					long numTicks = msg.Data.GetLastTriggerTick() - groupInstance.GetStartedTick();
-					int expectedTriggerCount = Maths.Floor(numTicks / groupContext.RepeatDelayTicks()) + 1;
+					int expectedTriggerCount = Maths.floor(numTicks / groupContext.RepeatDelayTicks()) + 1;
 					int serverTriggerCount = groupInstance.GetTriggerCount();
 
 					if (expectedTriggerCount > serverTriggerCount + 1)

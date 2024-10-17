@@ -51,8 +51,8 @@ public class GunFabricationDrawable
 						graphics.renderTooltip(
 							Minecraft.getInstance().font,
 							Component.translatable("crafting.match_tiers_above", tiered.MaterialTierMin),
-							Maths.Floor(mouseX),
-							Maths.Floor(mouseY));
+							Maths.floor(mouseX),
+							Maths.floor(mouseY));
 
 					DrawMaterialTypeBox(tiered, EMaterialType.Wood, graphics, 		8+22*i+3, 	27, 3, 145, mouseX, mouseY);
 					DrawMaterialTypeBox(tiered, EMaterialType.Glass, graphics, 		8+22*i+9, 	27, 9, 145, mouseX, mouseY);
@@ -84,8 +84,8 @@ public class GunFabricationDrawable
 					graphics.renderTooltip(
 						Minecraft.getInstance().font,
 						materialType.ToComponent(),
-						Maths.Floor(mouseX),
-						Maths.Floor(mouseY));
+						Maths.floor(mouseX),
+						Maths.floor(mouseY));
 			}
 		}
 	}

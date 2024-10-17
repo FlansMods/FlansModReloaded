@@ -28,7 +28,7 @@ public class AbilityEffectSetFireToEntity implements IAbilityEffect
 		// ------------------
 
 		targets.ForEachEntity((triggerOn) -> {
-			triggerOn.setSecondsOnFire(Maths.Ceil(globalFireMulti * FireTime.Get(actionGroup, stacks)));
+			triggerOn.setSecondsOnFire(Maths.ceil(globalFireMulti * FireTime.Get(actionGroup, stacks)));
 		});
 	}
 }

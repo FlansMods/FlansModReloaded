@@ -33,7 +33,7 @@ public class SoundLODManager
 		Entity camera = Minecraft.getInstance().cameraEntity;
 		if(camera != null)
 		{
-			double distance = Maths.Sqrt(camera.distanceToSqr(position));
+			double distance = Maths.sqrt(camera.distanceToSqr(position));
 			double bestLOD = 0d;
 			ResourceLocation soundToPlay = soundDef.GetSoundLocation();
 			for(SoundLODDefinition lodDefinition : soundDef.LODs)

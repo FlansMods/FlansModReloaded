@@ -1,7 +1,6 @@
 package com.flansmod.physics.common.util;
 
 import com.flansmod.physics.common.FlansPhysicsMod;
-import com.flansmod.physics.common.entity.ForcesOnPart;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.renderer.block.model.ItemTransform;
 import net.minecraft.core.BlockPos;
@@ -442,7 +441,7 @@ public class Transform
     // -------- Positional Operations, inc. conversion to/from MC coords and composing --------
     // ----------------------------------------------------------------------------------------
     @Nonnull
-    public BlockPos blockPos() { return new BlockPos(Maths.Floor(Position.x), Maths.Floor(Position.y), Maths.Floor(Position.z)); }
+    public BlockPos blockPos() { return new BlockPos(Maths.floor(Position.x), Maths.floor(Position.y), Maths.floor(Position.z)); }
     @Nonnull
     public Vec3 positionVec3() { return new Vec3(Position.x, Position.y, Position.z); }
     @Nonnull public Vec3 forward()  { return localToGlobalDirection(new Vec3(0d, 0d, -1d)); }
@@ -458,7 +457,7 @@ public class Transform
     public boolean isIdentity() {
         return Position.lengthSquared() <= Maths.Epsilon
             && Orientation.equals(IDENTITY_QUAT, Maths.EpsilonF)
-            && Maths.Approx(Scale.x, 1f) && Maths.Approx(Scale.y, 1f) && Maths.Approx(Scale.z, 1f);
+            && Maths.approx(Scale.x, 1f) && Maths.approx(Scale.y, 1f) && Maths.approx(Scale.z, 1f);
     }
     @Nonnull
     public Vector3f euler() { return toEuler(Orientation); }
@@ -631,12 +630,12 @@ public class Transform
                         new Vec3(localBounds.minX + localBounds.getXsize() * x,
                                 localBounds.minY + localBounds.getYsize() * y,
                                 localBounds.minZ + localBounds.getZsize() * z));
-                    minX = Maths.Min(minX, rotated.x);
-                    minY = Maths.Min(minY, rotated.y);
-                    minZ = Maths.Min(minZ, rotated.z);
-                    maxX = Maths.Max(maxX, rotated.x);
-                    maxY = Maths.Max(maxY, rotated.y);
-                    maxZ = Maths.Max(maxZ, rotated.z);
+                    minX = Maths.min(minX, rotated.x);
+                    minY = Maths.min(minY, rotated.y);
+                    minZ = Maths.min(minZ, rotated.z);
+                    maxX = Maths.max(maxX, rotated.x);
+                    maxY = Maths.max(maxY, rotated.y);
+                    maxZ = Maths.max(maxZ, rotated.z);
 
                 }
         return new AABB(minX, minY, minZ, maxX, maxY, maxZ);
@@ -745,9 +744,9 @@ public class Transform
     @Override
     public String toString()
     {
-        boolean isZeroPos = Maths.Approx(Position.lengthSquared(), 0d);
-        boolean isIdentityRot = Maths.Approx(Orientation.x, 0f) && Maths.Approx(Orientation.y, 0f) && Maths.Approx(Orientation.z, 0f) && Maths.Approx(Orientation.w, 1f);
-        boolean isOneScale = Maths.Approx(Scale.x, 1f) && Maths.Approx(Scale.y, 1f) && Maths.Approx(Scale.z, 1f);
+        boolean isZeroPos = Maths.approx(Position.lengthSquared(), 0d);
+        boolean isIdentityRot = Maths.approx(Orientation.x, 0f) && Maths.approx(Orientation.y, 0f) && Maths.approx(Orientation.z, 0f) && Maths.approx(Orientation.w, 1f);
+        boolean isOneScale = Maths.approx(Scale.x, 1f) && Maths.approx(Scale.y, 1f) && Maths.approx(Scale.z, 1f);
         if(isZeroPos && isIdentityRot && isOneScale)
             return "{\"Dbg\":"+ getDebugInfo()+"}";
         else
@@ -774,7 +773,7 @@ public class Transform
             {
                 if(!isZeroPos || !isIdentityRot)
                     output.append(',');
-                if(Maths.Approx(Scale.x, Scale.y) && Maths.Approx(Scale.y, Scale.z))
+                if(Maths.approx(Scale.x, Scale.y) && Maths.approx(Scale.y, Scale.z))
                 {
                     output.append("\"Scl\":").append(Runtime.format(Scale.x, FLOAT_FORMAT));
                 }

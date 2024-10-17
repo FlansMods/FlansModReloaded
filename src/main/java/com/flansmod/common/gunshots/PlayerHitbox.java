@@ -35,7 +35,7 @@ public class PlayerHitbox
 
     public boolean Raycast(@Nonnull Vec3 startPos, @Nonnull Vec3 endPos, @Nullable Vector3d outPos)
     {
-        return Maths.RayBoxIntersect(
+        return Maths.rayBoxIntersect(
             startPos,
             endPos,
             transform,

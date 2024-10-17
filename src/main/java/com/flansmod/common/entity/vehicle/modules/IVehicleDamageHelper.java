@@ -69,7 +69,7 @@ public interface IVehicleDamageHelper
 	default float ApplyDamageTo(@Nonnull VehicleComponentPath partName, @Nonnull DamageSource source, float amount)
 	{
 		VehicleComponentPath partToDamage = DamageableOrElseCore(partName);
-		float damageToDeal = Maths.Max(GetHealthOf(partToDamage) - amount, 0.0f);
+		float damageToDeal = Maths.max(GetHealthOf(partToDamage) - amount, 0.0f);
 		SetHealthOf(partToDamage, damageToDeal);
 		return amount - damageToDeal;
 	}

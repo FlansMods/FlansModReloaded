@@ -1,5 +1,6 @@
 package com.flansmod.physics.common.entity;
 
+import com.flansmod.physics.common.FlansPhysicsMod;
 import com.flansmod.physics.common.collision.OBBCollisionSystem;
 import com.flansmod.physics.common.units.*;
 import com.flansmod.physics.common.util.DeltaRingBuffer;
@@ -7,12 +8,15 @@ import com.flansmod.physics.common.util.ITransformPair;
 import com.flansmod.physics.common.util.Maths;
 import com.flansmod.physics.common.util.Transform;
 import com.flansmod.physics.common.collision.ColliderHandle;
+import com.flansmod.physics.network.PhysicsSyncMessage;
 import net.minecraft.world.phys.Vec3;
+import org.apache.commons.lang3.function.TriFunction;
 import org.joml.Quaternionf;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.function.Function;
 
 public class PhysicsComponent
 {
@@ -26,12 +30,6 @@ public class PhysicsComponent
 	public static final double POSITION_SYNC_THRESHOLD = 0.1d;
 	public static final float ORIENTATION_SYNC_THRESHOLD = 0.1f;
 	public static final float SCALE_SYNC_THRESHOLD = 0.01f;
-
-
-	public double mass = DEFAULT_MASS;
-	public Vec3 momentOfInertia = DEFAULT_MOMENT;
-	private boolean scheduledUpdate = false;
-	private ColliderHandle physicsHandle;
 
 	private static class Frame implements Comparable<Frame>
 	{
@@ -85,9 +83,17 @@ public class PhysicsComponent
 			return a.location.equals(b.location);
 		}
 	}
+
+
+	public double mass = DEFAULT_MASS;
+	public Vec3 momentOfInertia = DEFAULT_MOMENT;
+	private boolean scheduledUpdate = false;
+	private ColliderHandle physicsHandle;
 	private final DeltaRingBuffer<Frame> frameHistory;
 	private Frame lastSyncFrame = null;
+	private Frame localFrameAtLastReceive = null;
 	private ForcesOnPart pendingForces;
+
 
 	@Nonnull public ColliderHandle getPhysicsHandle() { return physicsHandle; }
 
@@ -129,13 +135,17 @@ public class PhysicsComponent
 	public void syncCollisionToComponent(@Nonnull OBBCollisionSystem system)
 	{
 		Frame pendingFrame = new Frame();
-
 		pendingFrame.gameTick = system.getGameTick();
-
+		generatePendingFrameFromCollision(system, pendingFrame);
+		boolean changed = frameHistory.addIfChanged(pendingFrame);
+		if(changed)
+			scheduledUpdate = checkIfUpdateNeeded(pendingFrame);
+	}
+	private void generatePendingFrameFromCollision(@Nonnull OBBCollisionSystem system, @Nonnull Frame target)
+	{
 		// Sum all the non-reactionary forces of the last frame
 		LinearForce impactForce = pendingForces.sumLinearForces(getCurrentTransform(), false);
 		pendingForces.endFrame();
-
 		if(physicsHandle.IsValid())
 		{
 			// Do we need to add these?
@@ -146,20 +156,20 @@ public class PhysicsComponent
 
 			Transform newPos = system.processEvents(physicsHandle,
 					(collision) -> {
-						if(!Maths.Approx(collision.ContactNormal().x, 0d))
+						if(!Maths.approx(collision.ContactNormal().x, 0d))
 							collidedX.set(true);
-						if(!Maths.Approx(collision.ContactNormal().y, 0d))
+						if(!Maths.approx(collision.ContactNormal().y, 0d))
 							collidedY.set(true);
-						if(!Maths.Approx(collision.ContactNormal().z, 0d))
+						if(!Maths.approx(collision.ContactNormal().z, 0d))
 							collidedZ.set(true);
 
 					},
 					(collision) -> {
-						if(!Maths.Approx(collision.ContactNormal().x, 0d))
+						if(!Maths.approx(collision.ContactNormal().x, 0d))
 							collidedX.set(true);
-						if(!Maths.Approx(collision.ContactNormal().y, 0d))
+						if(!Maths.approx(collision.ContactNormal().y, 0d))
 							collidedY.set(true);
-						if(!Maths.Approx(collision.ContactNormal().z, 0d))
+						if(!Maths.approx(collision.ContactNormal().z, 0d))
 							collidedZ.set(true);
 					});
 			//LinearVelocity v1 = physics.GetLinearVelocity(part.PhysicsHandle);
@@ -173,10 +183,7 @@ public class PhysicsComponent
 					collidedY.get() ? -impactForce.Force().y : 0.0d,
 					collidedZ.get() ? -impactForce.Force().z : 0.0d)));
 
-			pendingFrame.location = newPos;
-			boolean changed = frameHistory.addIfChanged(pendingFrame);
-			if(changed)
-				scheduledUpdate = checkIfUpdateNeeded(pendingFrame);
+			target.location = newPos;
 		}
 	}
 	public void syncComponentToCollision(@Nonnull OBBCollisionSystem physics)
@@ -194,12 +201,59 @@ public class PhysicsComponent
 			physics.addAngularAcceleration(physicsHandle, angular);
 		}
 	}
-	@Nonnull
-	public Transform getLocation(long gameTick, float partial)
-	{
-		for(int i = 0; i < MAX_HISTORY_FRAMES; i++)
-		{
 
+	@Nonnull
+	public Transform getLocation(long gameTick)
+	{
+		return interpolate(gameTick, frame -> frame.location, Transform::interpolate, Transform.IDENTITY);
+	}
+	@Nonnull
+	public LinearVelocity getLinearVelocity(long gameTick)
+	{
+		return interpolate(gameTick, frame -> frame.linearVelocity, LinearVelocity::interpolate, LinearVelocity.Zero);
+	}
+	@Nonnull
+	public AngularVelocity getAngularVelocity(long gameTick)
+	{
+		return interpolate(gameTick, frame -> frame.angularVelocity, AngularVelocity::interpolate, AngularVelocity.Zero);
+	}
+	private <T> T interpolate(long gameTick,
+							  @Nonnull Function<Frame, T> getFunc,
+							  @Nonnull TriFunction<T, T, Float, T> interpFunc,
+							  @Nullable T defaultValue)
+	{
+		Frame before = null, after = null;
+		for(Frame frame : frameHistory)
+		{
+			long delta = gameTick - frame.gameTick;
+			if(delta == 0)
+				return getFunc.apply(frame);
+
+			else if(delta < 0)
+			{
+				if(before == null || frame.gameTick > before.gameTick)
+					before = frame;
+			}
+			else // delta > 0
+			{
+				if(after == null || frame.gameTick < after.gameTick)
+					after = frame;
+			}
+		}
+
+		if(before != null && after != null)
+		{
+			float blend = (float)(gameTick - before.gameTick) / (float)(after.gameTick - before.gameTick);
+			return interpFunc.apply(getFunc.apply(before), getFunc.apply(after), blend);
+		}
+		else if(before != null)
+			return getFunc.apply(before);
+		else if(after != null)
+			return getFunc.apply(after);
+		else
+		{
+			FlansPhysicsMod.LOGGER.warn("Could not get location of physics component");
+			return defaultValue;
 		}
 	}
 	@Nonnull
@@ -278,6 +332,53 @@ public class PhysicsComponent
 			return true;
 
 		return false;
+	}
+	public void receiveUpdate(long gameTick, @Nonnull PhysicsSyncMessage.PhysicsStateChange syncMessage)
+	{
+		lastSyncFrame = new Frame();
+		lastSyncFrame.location = syncMessage.Location != null ? syncMessage.Location : getLocation(gameTick);
+		lastSyncFrame.linearVelocity = syncMessage.LinearVelocityUpdate != null ? syncMessage.LinearVelocityUpdate : getLinearVelocity(gameTick);
+		lastSyncFrame.angularVelocity = syncMessage.AngularVelocityUpdate != null ? syncMessage.AngularVelocityUpdate : getAngularVelocity(gameTick);
+		lastSyncFrame.gameTick = gameTick;
+		localFrameAtLastReceive = getCurrentFrame();
+	}
+	public static long REMOTE_LERP_CONVERGE_TICKS = 3;
+	public void syncAndLerpToComponent(@Nonnull OBBCollisionSystem system)
+	{
+		Frame pendingFrame = new Frame();
+		pendingFrame.gameTick = system.getGameTick();
+
+		if(lastSyncFrame != null && localFrameAtLastReceive != null)
+		{
+			long remoteT = lastSyncFrame.gameTick;
+			long receiveT = localFrameAtLastReceive.gameTick;
+			long maxT = Maths.max(receiveT, remoteT);
+			long convergeT = maxT + REMOTE_LERP_CONVERGE_TICKS;
+
+			if(pendingFrame.gameTick <= convergeT)
+			{
+				float blend = 1.0f - ((float)(convergeT - pendingFrame.gameTick) / (float)REMOTE_LERP_CONVERGE_TICKS);
+				blendExtrapolated(localFrameAtLastReceive, lastSyncFrame, blend, pendingFrame.gameTick, pendingFrame);
+				frameHistory.addIfChanged(pendingFrame);
+				return;
+			}
+		}
+
+		// So either we don't have net sync data OR we are past the point where our old data is relevant
+		generatePendingFrameFromCollision(system, pendingFrame);
+		frameHistory.addIfChanged(pendingFrame);
+	}
+	private void blendExtrapolated(@Nonnull Frame a, @Nonnull Frame b, float t, long targetTime, @Nonnull Frame target)
+	{
+		long ticksSinceA = targetTime - a.gameTick;
+		long ticksSinceB = targetTime - b.gameTick;
+		blend(createExtrapolatedFrame(a, ticksSinceA), createExtrapolatedFrame(b, ticksSinceB), t, target);
+	}
+	private void blend(@Nonnull Frame a, @Nonnull Frame b, float t, @Nonnull Frame target)
+	{
+		target.location = Transform.interpolate(a.location, b.location, t);
+		target.linearVelocity = LinearVelocity.interpolate(a.linearVelocity, b.linearVelocity, t);
+		target.angularVelocity = AngularVelocity.interpolate(a.angularVelocity, b.angularVelocity, t);
 	}
 	public void forceUpdate()
 	{

@@ -98,14 +98,14 @@ public class DistillationTowerScreen extends AbstractContainerScreen<Distillatio
 			for(int i = 0; i < DistillationTowerBlockEntity.MAX_DISTILLATION_STACK_HEIGHT; i++)
 				if(topDistiller.DataAccess.get(DistillationTowerBlockEntity.DATA_HAS_VALID_RECIPE_AT_DEPTH_1 + i) != 0)
 				{
-					graphics.blit(BACKGROUND_LOCATION, xOrigin + 64, yOrigin + 44 + 20 * i, 27, 221, Maths.Ceil(12 * craftProportion), 9, TEXTURE_WIDTH, TEXTURE_HEIGHT);
+					graphics.blit(BACKGROUND_LOCATION, xOrigin + 64, yOrigin + 44 + 20 * i, 27, 221, Maths.ceil(12 * craftProportion), 9, TEXTURE_WIDTH, TEXTURE_HEIGHT);
 				}
 
 			// If fuel is being added, render the burn time
 			int litTotalTime = topDistiller.DataAccess.get(DistillationTowerBlockEntity.DATA_LIT_DURATION);
 			int litProgress = topDistiller.DataAccess.get(DistillationTowerBlockEntity.DATA_LIT_TIME);
 			float burnProgress = litTotalTime > 0 ? ((float)litProgress / (float)litTotalTime) : 0f;
-			int burnPx = Maths.Ceil(11f * burnProgress);
+			int burnPx = Maths.ceil(11f * burnProgress);
 			graphics.blit(BACKGROUND_LOCATION, xOrigin + 19, yOrigin + 64 - burnPx, 7, 232 - burnPx, 9, burnPx, TEXTURE_WIDTH, TEXTURE_HEIGHT);
 		}
 	}

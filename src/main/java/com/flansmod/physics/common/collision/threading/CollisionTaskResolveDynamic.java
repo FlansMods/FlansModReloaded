@@ -7,7 +7,6 @@ import com.flansmod.physics.common.units.LinearVelocity;
 import com.flansmod.physics.common.units.OffsetAcceleration;
 import com.flansmod.physics.common.util.Maths;
 import com.flansmod.physics.common.util.ProjectedRange;
-import com.google.common.collect.ImmutableList;
 import net.minecraft.world.phys.Vec3;
 import org.joml.Quaternionf;
 
@@ -82,17 +81,17 @@ public class CollisionTaskResolveDynamic
         {
             Vec3 pushOutVec = collision.ContactNormal().scale(-collision.depth());
             pushOutVec = v.subtract(pushOutVec);
-            if(!Maths.Approx(pushOutVec.x, 0d))
+            if(!Maths.approx(pushOutVec.x, 0d))
             {
                 xMoveReq = ProjectedRange.add(xMoveReq, pushOutVec.x);
                 relevantX.add(collision);
             }
-            if(!Maths.Approx(pushOutVec.y, 0d))
+            if(!Maths.approx(pushOutVec.y, 0d))
             {
                 yMoveReq = ProjectedRange.add(yMoveReq, pushOutVec.y);
                 relevantY.add(collision);
             }
-            if(!Maths.Approx(pushOutVec.z, 0d))
+            if(!Maths.approx(pushOutVec.z, 0d))
             {
                 zMoveReq = ProjectedRange.add(zMoveReq, pushOutVec.z);
                 relevantZ.add(collision);

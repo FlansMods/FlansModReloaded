@@ -89,8 +89,8 @@ public class TransformTests {
 
 
         // Composition tests
-        Vector3f mcDownNorth = new Vector3f(0f, -Maths.CosF(Maths.TauF / 8f), -Maths.SinF(Maths.TauF / 8f));
-        Vector3f mcDownEast = new Vector3f(Maths.SinF(Maths.TauF / 8f), -Maths.CosF(Maths.TauF / 8f), 0f);
+        Vector3f mcDownNorth = new Vector3f(0f, -Maths.cosF(Maths.TauF / 8f), -Maths.sinF(Maths.TauF / 8f));
+        Vector3f mcDownEast = new Vector3f(Maths.sinF(Maths.TauF / 8f), -Maths.cosF(Maths.TauF / 8f), 0f);
         assertEqual(Transform.rotate(mcNorth, pitchDown45), mcDownNorth, "Pitch north not as expected");
         assertEqual(Transform.rotate(Transform.rotate(mcNorth, pitchDown45), yaw90), mcDownEast, "Pitch east not as expected");
 
@@ -171,15 +171,15 @@ public class TransformTests {
     {
         Vector3f eulerA = Transform.toEuler(a.Orientation);
         Vector3f eulerB = Transform.toEuler(b.Orientation);
-        if(!Maths.Approx(eulerA.x, eulerB.x, Epsilon)
-                || !Maths.Approx(eulerA.y, eulerB.y, Epsilon)
-                || !Maths.Approx(eulerA.z, eulerB.z, Epsilon)
-                || !Maths.Approx(a.Position.x, b.Position.x, Epsilon)
-                || !Maths.Approx(a.Position.y, b.Position.y, Epsilon)
-                || !Maths.Approx(a.Position.z, b.Position.z, Epsilon)
-                || !Maths.Approx(a.Scale.x, b.Scale.x, Epsilon)
-                || !Maths.Approx(a.Scale.y, b.Scale.y, Epsilon)
-                || !Maths.Approx(a.Scale.z, b.Scale.z, Epsilon))
+        if(!Maths.approx(eulerA.x, eulerB.x, Epsilon)
+                || !Maths.approx(eulerA.y, eulerB.y, Epsilon)
+                || !Maths.approx(eulerA.z, eulerB.z, Epsilon)
+                || !Maths.approx(a.Position.x, b.Position.x, Epsilon)
+                || !Maths.approx(a.Position.y, b.Position.y, Epsilon)
+                || !Maths.approx(a.Position.z, b.Position.z, Epsilon)
+                || !Maths.approx(a.Scale.x, b.Scale.x, Epsilon)
+                || !Maths.approx(a.Scale.y, b.Scale.y, Epsilon)
+                || !Maths.approx(a.Scale.z, b.Scale.z, Epsilon))
         {
             FlansPhysicsMod.LOGGER.error(error);
         }
@@ -188,10 +188,10 @@ public class TransformTests {
 
     private static void assertEqual(@Nonnull Quaternionf a, @Nonnull Quaternionf b, @Nonnull String error)
     {
-        if(!Maths.Approx(a.x, b.x, Epsilon)
-                || !Maths.Approx(a.y, b.y, Epsilon)
-                || !Maths.Approx(a.z, b.z, Epsilon)
-                || !Maths.Approx(a.w, b.w, Epsilon))
+        if(!Maths.approx(a.x, b.x, Epsilon)
+                || !Maths.approx(a.y, b.y, Epsilon)
+                || !Maths.approx(a.z, b.z, Epsilon)
+                || !Maths.approx(a.w, b.w, Epsilon))
         {
             Vector3f eulerA = Transform.toEuler(a);
             Vector3f eulerB = Transform.toEuler(b);
@@ -201,18 +201,18 @@ public class TransformTests {
 
     private static void assertEqual(@Nonnull Vec3 a, @Nonnull Vec3 b, @Nonnull String error)
     {
-        if(!Maths.Approx(a.x, b.x, Epsilon)
-                || !Maths.Approx(a.y, b.y, Epsilon)
-                || !Maths.Approx(a.z, b.z, Epsilon))
+        if(!Maths.approx(a.x, b.x, Epsilon)
+                || !Maths.approx(a.y, b.y, Epsilon)
+                || !Maths.approx(a.z, b.z, Epsilon))
         {
             FlansPhysicsMod.LOGGER.error(error);
         }
     }
     private static void assertEqual(@Nonnull Vec3 a, @Nonnull Vector3f b, @Nonnull String error)
     {
-        if(!Maths.Approx(a.x, b.x, Epsilon)
-                || !Maths.Approx(a.y, b.y, Epsilon)
-                || !Maths.Approx(a.z, b.z, Epsilon))
+        if(!Maths.approx(a.x, b.x, Epsilon)
+                || !Maths.approx(a.y, b.y, Epsilon)
+                || !Maths.approx(a.z, b.z, Epsilon))
         {
             FlansPhysicsMod.LOGGER.error(error);
         }
@@ -220,9 +220,9 @@ public class TransformTests {
 
     private static void assertEqual(@Nonnull Vector3f a, @Nonnull Vector3f b, @Nonnull String error)
     {
-        if(!Maths.Approx(a.x, b.x, Epsilon)
-                || !Maths.Approx(a.y, b.y, Epsilon)
-                || !Maths.Approx(a.z, b.z, Epsilon))
+        if(!Maths.approx(a.x, b.x, Epsilon)
+                || !Maths.approx(a.y, b.y, Epsilon)
+                || !Maths.approx(a.z, b.z, Epsilon))
         {
             FlansPhysicsMod.LOGGER.error(error);
         }
@@ -230,7 +230,7 @@ public class TransformTests {
 
     private static void assertEqual(float a, float b, @Nonnull String error)
     {
-        if(!Maths.Approx(a, b, Epsilon))
+        if(!Maths.approx(a, b, Epsilon))
         {
             FlansPhysicsMod.LOGGER.error(error);
         }

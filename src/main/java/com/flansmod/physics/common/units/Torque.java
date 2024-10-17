@@ -49,7 +49,7 @@ public record Torque(@Nonnull Vec3 Axis, double Magnitude) implements IForce
 	}
 
 	@Override
-	public boolean isApproxZero() { return Maths.Approx(Magnitude, 0d); }
+	public boolean isApproxZero() { return Maths.approx(Magnitude, 0d); }
 	@Override @Nonnull
 	public Torque inverse() { return new Torque(Axis, -Magnitude); }
 	@Override
@@ -69,10 +69,10 @@ public record Torque(@Nonnull Vec3 Axis, double Magnitude) implements IForce
 	public boolean equals(Object other)
 	{
 		if(other instanceof Torque otherForce)
-			return otherForce.Axis.equals(Axis) && Maths.Approx(Magnitude, otherForce.Magnitude);
+			return otherForce.Axis.equals(Axis) && Maths.approx(Magnitude, otherForce.Magnitude);
 		return false;
 	}
-	public boolean isApprox(@Nonnull Torque other) { return Maths.Approx(other.Axis, Axis) && Maths.Approx(other.Magnitude, Magnitude); }
-	public boolean isApprox(@Nonnull Torque other, double epsilon) { return Maths.Approx(other.Axis, Axis, epsilon) && Maths.Approx(other.Magnitude, Magnitude, epsilon); }
+	public boolean isApprox(@Nonnull Torque other) { return Maths.approx(other.Axis, Axis) && Maths.approx(other.Magnitude, Magnitude); }
+	public boolean isApprox(@Nonnull Torque other, double epsilon) { return Maths.approx(other.Axis, Axis, epsilon) && Maths.approx(other.Magnitude, Magnitude, epsilon); }
 
 }

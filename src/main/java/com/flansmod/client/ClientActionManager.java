@@ -125,7 +125,7 @@ public class ClientActionManager extends ActionManager {
 						{
 							case FullAuto, Minigun -> {
 								long numTicks = msg.Data.GetLastTriggerTick() - groupInstance.GetStartedTick();
-								int expectedTriggerCount = Maths.Floor(numTicks / groupContext.RepeatDelayTicks()) + 1;
+								int expectedTriggerCount = Maths.floor(numTicks / groupContext.RepeatDelayTicks()) + 1;
 								int serverTriggerCount = groupInstance.GetTriggerCount();
 								if(expectedTriggerCount > serverTriggerCount)
 								{

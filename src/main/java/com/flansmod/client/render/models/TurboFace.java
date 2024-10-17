@@ -52,9 +52,9 @@ public class TurboFace
 
 	private static Vector3f EstimateNormal(Vector3f[] positions)
 	{
-		Vector3f axis1 = Maths.Sub(positions[0], positions[1]);
-		Vector3f axis2 = Maths.Sub(positions[2], positions[1]);
-		Vector3f normal = Maths.Cross(axis1, axis2).normalize();
+		Vector3f axis1 = Maths.sub(positions[0], positions[1]);
+		Vector3f axis2 = Maths.sub(positions[2], positions[1]);
+		Vector3f normal = Maths.cross(axis1, axis2).normalize();
 		return normal;
 	}
 
