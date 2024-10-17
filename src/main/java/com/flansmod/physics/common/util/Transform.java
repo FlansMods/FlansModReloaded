@@ -19,24 +19,17 @@ import javax.annotation.Nullable;
 import java.nio.FloatBuffer;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
-import java.util.Arrays;
 import java.util.List;
 import java.util.function.Consumer;
-import java.util.function.Supplier;
 
 public class Transform
 {
     private static final Vector3d       IDENTITY_POS    = new Vector3d();
     private static final Quaternionf    IDENTITY_QUAT   = new Quaternionf();
     private static final Vector3f       IDENTITY_SCALE  = new Vector3f(1f, 1f, 1f);
-    public static final Transform IDENTITY = new Transform(() -> "\"Identity\"");
+    public static final Transform       IDENTITY = new Transform();
 
     // -- Fields --
-    public static final String DEBUG_OFF = "";
-    public static final Supplier<String> DEBUG_OFF_SUPP = () -> DEBUG_OFF;
-
-    @Nullable
-    public final Supplier<String> DebugInfo;
     @Nonnull
     public final Vector3d Position;
     @Nonnull
@@ -44,7 +37,7 @@ public class Transform
     @Nonnull
     public final Vector3f Scale;
 
-    private void ConstructorNaNCheck()
+    private void constructorNaNCheck()
     {
         // Don't do in live, this is costly
         if(FMLEnvironment.production)
@@ -60,161 +53,121 @@ public class Transform
         }
     }
 
-
-
-    private Transform(double x, double y, double z, float pitch, float yaw, float roll, float scale, @Nullable Supplier<String> debugFunc)
+    private Transform(double x, double y, double z, float pitch, float yaw, float roll, float scale)
     {
-        DebugInfo = DEBUG_OFF_SUPP;
-        //DebugInfo = debugFunc;
         Position = new Vector3d(x, y, z);
         Orientation = quatFromEuler(pitch, yaw, roll);
         Scale = new Vector3f(scale, scale, scale);
-        ConstructorNaNCheck();
+        constructorNaNCheck();
     }
-    private Transform(@Nonnull Vec3 pos,  @Nonnull Quaternionf rotation, @Nonnull Vector3f scale, @Nullable Supplier<String> debugFunc)
+    private Transform(@Nonnull Vec3 pos,  @Nonnull Quaternionf rotation, @Nonnull Vector3f scale)
     {
-        DebugInfo = DEBUG_OFF_SUPP;
-        //DebugInfo = debugFunc;
         Position = new Vector3d(pos.x, pos.y, pos.z);
         Orientation = new Quaternionf(rotation);
         Scale = new Vector3f(scale);
-        ConstructorNaNCheck();
+        constructorNaNCheck();
     }
-    private Transform(@Nonnull Vector3d pos,  @Nonnull Quaternionf rotation, @Nonnull Vector3f scale, @Nullable Supplier<String> debugFunc)
+    private Transform(@Nonnull Vector3d pos,  @Nonnull Quaternionf rotation, @Nonnull Vector3f scale)
     {
-        DebugInfo = DEBUG_OFF_SUPP;
-        //DebugInfo = debugFunc;
         Position = new Vector3d(pos.x, pos.y, pos.z);
         Orientation = new Quaternionf(rotation);
         Scale = new Vector3f(scale);
-        ConstructorNaNCheck();
+        constructorNaNCheck();
     }
-    private Transform(double x, double y, double z, @Nonnull Quaternionf rotation, float scale, @Nullable Supplier<String> debugFunc)
+    private Transform(double x, double y, double z, @Nonnull Quaternionf rotation, float scale)
     {
-        DebugInfo = DEBUG_OFF_SUPP;
-        //DebugInfo = debugFunc;
         Position = new Vector3d(x, y, z);
         Orientation = new Quaternionf(rotation);
         Scale = new Vector3f(scale, scale, scale);
-        ConstructorNaNCheck();
+        constructorNaNCheck();
     }
-    private Transform(double x, double y, double z, float scale, @Nullable Supplier<String> debugFunc)
+    private Transform(double x, double y, double z, float scale)
     {
-        DebugInfo = DEBUG_OFF_SUPP;
-        //DebugInfo = debugFunc;
         Position = new Vector3d(x, y, z);
         Orientation = IDENTITY_QUAT;
         Scale = new Vector3f(scale, scale, scale);
-        ConstructorNaNCheck();
+        constructorNaNCheck();
     }
-    private Transform(@Nonnull Vector3f pos, @Nonnull Quaternionf rotation, @Nonnull Vector3f scale, @Nullable Supplier<String> debugFunc)
+    private Transform(@Nonnull Vector3f pos, @Nonnull Quaternionf rotation, @Nonnull Vector3f scale)
     {
-        DebugInfo = DEBUG_OFF_SUPP;
-        //DebugInfo = debugFunc;
         Position = new Vector3d(pos.x, pos.y, pos.z);
         Orientation = new Quaternionf(rotation);
         Scale = new Vector3f(scale);
-        ConstructorNaNCheck();
+        constructorNaNCheck();
     }
-    private Transform(float scale, @Nullable Supplier<String> debugFunc)
+    private Transform(float scale)
     {
-        DebugInfo = DEBUG_OFF_SUPP;
-        //DebugInfo = debugFunc;
         Position = IDENTITY_POS;
         Orientation = IDENTITY_QUAT;
         Scale = new Vector3f(scale, scale, scale);
-        ConstructorNaNCheck();
-    }
-    private Transform(@Nullable Supplier<String> debugFunc)
-    {
-        DebugInfo = DEBUG_OFF_SUPP;
-        //DebugInfo = debugFunc;
-        Position = IDENTITY_POS;
-        Orientation = IDENTITY_QUAT;
-        Scale = IDENTITY_SCALE;
-        ConstructorNaNCheck();
+        constructorNaNCheck();
     }
     private Transform()
     {
-        DebugInfo = DEBUG_OFF_SUPP;
-        //DebugInfo = null;
         Position = IDENTITY_POS;
         Orientation = IDENTITY_QUAT;
         Scale = IDENTITY_SCALE;
-        ConstructorNaNCheck();
+        constructorNaNCheck();
     }
 
     // From complete transform
-    private Transform(Transform other) { this(other.Position, other.Orientation, other.Scale, other.DebugInfo); }
+    private Transform(@Nonnull Transform other) { this(other.Position, other.Orientation, other.Scale); }
 
-
-    public static Transform compose(Transform ... transforms)
+    @Nonnull
+    public static Transform compose(@Nonnull Transform ... transforms)
     {
-        TransformStack stack = new TransformStack();
-        stack.addAll(Arrays.asList(transforms));
-        return stack.Top();
+        return TransformStack.of(transforms).top();
     }
-    @Nonnull public static Transform identity()                                                                               { return new Transform((Supplier<String>) null); }
-    @Nonnull public static Transform fromScale(float scale)                                                                   { return new Transform(scale, null);  }
-    @Nonnull public static Transform fromPos(@Nonnull Vec3 pos)                                                               { return new Transform(pos.x, pos.y, pos.z, 1f, null); }
-    @Nonnull public static Transform fromPos(double x, double y, double z)                                                    { return new Transform(x, y, z, 1f, null); }
-    @Nonnull public static Transform fromPosAndQuat(double x, double y, double z, @Nonnull Quaternionf ori)                   { return new Transform(x, y, z, ori, 1f, null); }
-    @Nonnull public static Transform fromPosAndQuat(@Nonnull Vector3d pos, @Nonnull Quaternionf ori)                          { return new Transform(pos.x, pos.y, pos.z, ori, 1f, null); }
-    @Nonnull public static Transform fromPosAndQuat(@Nonnull Vec3 pos, @Nonnull Quaternionf ori)                              { return new Transform(pos.x, pos.y, pos.z, ori, 1f, null); }
-    @Nonnull public static Transform fromPosAndEuler(@Nonnull Vec3 pos, @Nonnull Vector3f euler)                              { return new Transform(pos.x, pos.y, pos.z, euler.x, euler.y, euler.z, 1f, null); }
-    @Nonnull public static Transform fromPosAndEuler(@Nonnull Vector3f pos, @Nonnull Vector3f euler)                          { return new Transform(pos.x, pos.y, pos.z, euler.x, euler.y, euler.z, 1f, null);}
-    @Nonnull public static Transform fromPosAndEuler(@Nonnull Vec3 pos, float pitch, float yaw, float roll)                   { return new Transform(pos.x, pos.y, pos.z, pitch, yaw, roll, 1f, null);}
-    @Nonnull public static Transform fromEuler(float pitch, float yaw, float roll)                                            { return new Transform(0d, 0d, 0d, quatFromEuler(pitch, yaw, roll), 1f, null);}
-    @Nonnull public static Transform fromEulerRadians(float pitch, float yaw, float roll)                                     { return new Transform(0d, 0d, 0d, quatFromEulerRadians(pitch, yaw, roll), 1f, null); }
-    @Nonnull public static Transform fromEuler(@Nonnull Vector3f euler)                                                       { return new Transform(0d, 0d, 0d, quatFromEuler(euler), 1f, null); }
-    @Nonnull public static Transform fromLookDirection(@Nonnull Vec3 forward, @Nonnull Vec3 up)                               { return new Transform(0d, 0d, 0d, lookAlong(forward, up), 1f, null); }
-    @Nonnull public static Transform fromPositionAndLookDirection(@Nonnull Vec3 pos, @Nonnull Vec3 forward, @Nonnull Vec3 up) { return new Transform(pos.x, pos.y, pos.z, lookAlong(forward, up), 1f, null); }
-    @Nonnull public static Transform fromBlockPos(@Nonnull BlockPos blockPos)                                                 { return new Transform(blockPos.getX(), blockPos.getY(), blockPos.getZ(), 1f, null); }
-    @Nonnull public static Transform fromPose(@Nonnull Matrix4f pose)                                                         { return new Transform(pose.transformPosition(new Vector3f()), pose.getUnnormalizedRotation(new Quaternionf()), getScale(pose), null); }
-    @Nonnull public static Transform fromPose(@Nonnull PoseStack poseStack)                                                   { return fromPose(poseStack.last().pose(), null); }
-    @Nonnull public static Transform fromEntity(@Nonnull Entity entity)                                                       { return fromPosAndEuler(entity.position(), entity.getXRot(), entity.getYRot(), 0f, () -> "From Ent:" + entity); }
+    @Nonnull public static Transform identity()                                                                               { return new Transform(); }
+    @Nonnull public static Transform fromScale(float scale)                                                                   { return new Transform(scale);  }
+    @Nonnull public static Transform fromScale(@Nonnull Vector3f scale)                                                       { return new Transform(IDENTITY_POS, IDENTITY_QUAT, scale);  }
+    @Nonnull public static Transform fromPos(@Nonnull Vec3 pos)                                                               { return new Transform(pos.x, pos.y, pos.z, 1f); }
+    @Nonnull public static Transform fromPos(double x, double y, double z)                                                    { return new Transform(x, y, z, 1f); }
+    @Nonnull public static Transform fromPosAndQuat(double x, double y, double z, @Nonnull Quaternionf ori)                   { return new Transform(x, y, z, ori, 1f); }
+    @Nonnull public static Transform fromPosAndQuat(@Nonnull Vector3d pos, @Nonnull Quaternionf ori)                          { return new Transform(pos.x, pos.y, pos.z, ori, 1f); }
+    @Nonnull public static Transform fromPosAndQuat(@Nonnull Vec3 pos, @Nonnull Quaternionf ori)                              { return new Transform(pos.x, pos.y, pos.z, ori, 1f); }
+    @Nonnull public static Transform fromPosAndEuler(@Nonnull Vec3 pos, @Nonnull Vector3f euler)                              { return new Transform(pos.x, pos.y, pos.z, euler.x, euler.y, euler.z, 1f); }
+    @Nonnull public static Transform fromPosAndEuler(@Nonnull Vector3f pos, @Nonnull Vector3f euler)                          { return new Transform(pos.x, pos.y, pos.z, euler.x, euler.y, euler.z, 1f);}
+    @Nonnull public static Transform fromPosAndEuler(@Nonnull Vec3 pos, float pitch, float yaw, float roll)                   { return new Transform(pos.x, pos.y, pos.z, pitch, yaw, roll, 1f);}
+    @Nonnull public static Transform fromEuler(float pitch, float yaw, float roll)                                            { return new Transform(0d, 0d, 0d, quatFromEuler(pitch, yaw, roll), 1f);}
+    @Nonnull public static Transform fromEulerRadians(float pitch, float yaw, float roll)                                     { return new Transform(0d, 0d, 0d, quatFromEulerRadians(pitch, yaw, roll), 1f); }
+    @Nonnull public static Transform fromEuler(@Nonnull Vector3f euler)                                                       { return new Transform(0d, 0d, 0d, quatFromEuler(euler), 1f); }
+    @Nonnull public static Transform fromLookDirection(@Nonnull Vec3 forward, @Nonnull Vec3 up)                               { return new Transform(0d, 0d, 0d, lookAlong(forward, up), 1f); }
+    @Nonnull public static Transform fromPositionAndLookDirection(@Nonnull Vec3 pos, @Nonnull Vec3 forward, @Nonnull Vec3 up) { return new Transform(pos.x, pos.y, pos.z, lookAlong(forward, up), 1f); }
+    @Nonnull public static Transform fromBlockPos(@Nonnull BlockPos blockPos)                                                 { return new Transform(blockPos.getX(), blockPos.getY(), blockPos.getZ(), 1f); }
+    @Nonnull public static Transform fromPose(@Nonnull Matrix4f pose)                                                         { return new Transform(pose.transformPosition(new Vector3f()), pose.getUnnormalizedRotation(new Quaternionf()), getScale(pose)); }
+    @Nonnull public static Transform fromPose(@Nonnull PoseStack poseStack)                                                   { return fromPose(poseStack.last().pose()); }
+    @Nonnull public static Transform fromItem(@Nonnull ItemTransform itemTransform)                                           { return new Transform(itemTransform.translation.x, itemTransform.translation.y, itemTransform.translation.z, quatFromEuler(itemTransform.rotation), itemTransform.scale.x); }
+    @Nonnull public static Transform fromEntity(@Nonnull Entity entity)                                                       { return fromPosAndEuler(entity.position(), entity.getXRot(), entity.getYRot(), 0f); }
     @Nonnull public static Transform copy(@Nonnull Transform other)                                                           { return new Transform(other); }
 
-    @Nonnull public static Transform identity(@Nullable Supplier<String> debugFunc)                                                                                 { return new Transform(debugFunc); }
-    @Nonnull public static Transform fromScale(float scale, @Nullable Supplier<String> debugFunc)                                                                   { return new Transform(scale, debugFunc);  }
-    @Nonnull public static Transform fromScale(@Nonnull Vector3f scale, @Nullable Supplier<String> debugFunc)                                                       { return new Transform(IDENTITY_POS, IDENTITY_QUAT, scale, debugFunc);  }
-    @Nonnull public static Transform fromPos(@Nonnull Vec3 pos, @Nullable Supplier<String> debugFunc)                                                               { return new Transform(pos.x, pos.y, pos.z, 1f, debugFunc); }
-    @Nonnull public static Transform fromPos(double x, double y, double z, @Nullable Supplier<String> debugFunc)                                                    { return new Transform(x, y, z, 1f, debugFunc); }
-    @Nonnull public static Transform fromPosAndEuler(@Nonnull Vec3 pos, @Nonnull Vector3f euler, @Nullable Supplier<String> debugFunc)                              { return new Transform(pos.x, pos.y, pos.z, euler.x, euler.y, euler.z, 1f, debugFunc); }
-    @Nonnull public static Transform fromPosAndQuat(double x, double y, double z, @Nonnull Quaternionf ori, @Nullable Supplier<String> debugFunc)                   { return new Transform(x, y, z, ori, 1f, debugFunc); }
-    @Nonnull public static Transform fromPosAndQuat(@Nonnull Vector3d pos, @Nonnull Quaternionf ori, @Nullable Supplier<String> debugFunc)                          { return new Transform(pos.x, pos.y, pos.z, ori, 1f, debugFunc); }
-    @Nonnull public static Transform fromPosAndQuat(@Nonnull Vec3 pos, @Nonnull Quaternionf ori, @Nullable Supplier<String> debugFunc)                              { return new Transform(pos.x, pos.y, pos.z, ori, 1f, debugFunc); }
-    @Nonnull public static Transform fromPosAndEuler(@Nonnull Vector3f pos, @Nonnull Vector3f euler, @Nullable Supplier<String> debugFunc)                          { return new Transform(pos.x, pos.y, pos.z, euler.x, euler.y, euler.z, 1f, debugFunc);}
-    @Nonnull public static Transform fromPosAndEuler(@Nonnull Vec3 pos, float pitch, float yaw, float roll, @Nullable Supplier<String> debugFunc)                   { return new Transform(pos.x, pos.y, pos.z, pitch, yaw, roll, 1f, debugFunc);}
-    @Nonnull public static Transform fromEuler(float pitch, float yaw, float roll, @Nullable Supplier<String> debugFunc)                                            { return new Transform(0d, 0d, 0d, quatFromEuler(pitch, yaw, roll), 1f, debugFunc);}
-    @Nonnull public static Transform fromEulerRadians(float pitch, float yaw, float roll, @Nullable Supplier<String> debugFunc)                                     { return new Transform(0d, 0d, 0d, quatFromEulerRadians(pitch, yaw, roll), 1f, debugFunc); }
-    @Nonnull public static Transform fromEuler(@Nonnull Vector3f euler, @Nullable Supplier<String> debugFunc)                                                       { return new Transform(0d, 0d, 0d, quatFromEuler(euler), 1f, debugFunc); }
-    @Nonnull public static Transform fromLookDirection(@Nonnull Vec3 forward, @Nonnull Vec3 up, @Nullable Supplier<String> debugFunc)                               { return new Transform(0d, 0d, 0d, lookAlong(forward, up), 1f, debugFunc); }
-    @Nonnull public static Transform fromPositionAndLookDirection(@Nonnull Vec3 pos, @Nonnull Vec3 forward, @Nonnull Vec3 up, @Nullable Supplier<String> debugFunc) { return new Transform(pos.x, pos.y, pos.z, lookAlong(forward, up), 1f, debugFunc); }
-    @Nonnull public static Transform fromItem(@Nonnull ItemTransform itemTransform, @Nullable Supplier<String> debugFunc)                                           { return new Transform(itemTransform.translation.x, itemTransform.translation.y, itemTransform.translation.z, quatFromEuler(itemTransform.rotation), itemTransform.scale.x, debugFunc); }
-    @Nonnull public static Transform fromPose(@Nonnull Matrix4f pose, @Nullable Supplier<String> debugFunc)                                                         { return new Transform(pose.transformPosition(new Vector3f()), pose.getUnnormalizedRotation(new Quaternionf()), getScale(pose), debugFunc); }
-    @Nonnull public static Transform fromPose(@Nonnull PoseStack poseStack, @Nullable Supplier<String> debugFunc)                                                   { return fromPose(poseStack.last().pose(), debugFunc); }
-    @Nonnull public static Transform fromBlockPos(@Nonnull BlockPos blockPos, @Nullable Supplier<String> debugFunc)                                                 { return new Transform(blockPos.getX(), blockPos.getY(), blockPos.getZ(), 1f, debugFunc); }
-    @Nonnull public static Transform debug(@Nullable Supplier<String> debugFunc)                                                                                    { return new Transform(debugFunc); }
-    @Nonnull public static Transform error(@Nonnull String errorMessage)                                                                                            { return new Transform(() -> errorMessage); }
+    @Nonnull public static Transform error(@Nonnull String errorMessage)
+    {
+        return new Transform()
+        {
+            @Override @Nonnull
+            public String toString() { return errorMessage; }
+        };
+    }
+
     @Nonnull
-    public static Transform extractOrientation(@Nonnull Transform from, boolean invert, @Nullable Supplier<String> debugFunc)
+    public static Transform extractOrientation(@Nonnull Transform from, boolean invert)
     {
         Quaternionf ori = invert ? from.Orientation.invert(new Quaternionf()) : from.Orientation;
-        return new Transform(0d, 0d, 0d, ori, 1f, debugFunc == null ? () -> "{\"OriFrom\":"+from.DebugInfo+"}" : debugFunc);
+        return new Transform(0d, 0d, 0d, ori, 1f);
     }
     @Nonnull
-    public static Transform extractPosition(@Nonnull Transform from, double scale, @Nullable Supplier<String> debugFunc)
+    public static Transform extractPosition(@Nonnull Transform from, double scale)
     {
         Vector3d pos = from.Position.mul(scale, new Vector3d());
-        return new Transform(pos.x, pos.y, pos.z, IDENTITY_QUAT, 1f, debugFunc == null ? () -> "{\"PosFrom\":"+from.DebugInfo+"}" : debugFunc);
+        return new Transform(pos.x, pos.y, pos.z, IDENTITY_QUAT, 1f);
     }
     @Nonnull
     public static Transform flatten(@Nonnull Consumer<TransformStack> func)
     {
-        TransformStack stack = new TransformStack();
+        TransformStack stack = TransformStack.of();
         func.accept(stack);
-        return stack.Top();
+        return stack.top();
     }
     @Nonnull
     public CompoundTag toTag(boolean storePos, boolean storeOri, boolean storeScale)
@@ -271,7 +224,7 @@ public class Transform
             withScale = new Vector3f(scaleX, scaleY, scaleZ);
         }
 
-        return new Transform(withPos, withOri, withScale, ()->"Loaded from Tag");
+        return new Transform(withPos, withOri, withScale);
     }
     @Nonnull
     public static Transform fromTag(@Nonnull CompoundTag tags) {  return fromTag(tags, null, null, null); }
@@ -353,47 +306,47 @@ public class Transform
     @Nonnull
     public Transform withEulerAngles(float pitch, float yaw, float roll)
     {
-        return new Transform(Position, quatFromEuler(pitch, yaw, roll), Scale, () -> "SetEulers[P:"+pitch+", Y:"+yaw+", R:"+roll+"]");
+        return new Transform(Position, quatFromEuler(pitch, yaw, roll), Scale);
     }
     @Nonnull
     public Transform withPosition(double x, double y, double z)
     {
-        return new Transform(new Vec3(x, y, z), Orientation, Scale, () -> "SetPos["+x+","+y+","+z+"]");
+        return new Transform(new Vec3(x, y, z), Orientation, Scale);
     }
     @Nonnull
     public Transform withPosition(@Nonnull Vec3 pos)
     {
-        return new Transform(pos, Orientation, Scale, () -> "SetPos["+pos+"]");
+        return new Transform(pos, Orientation, Scale);
     }
     @Nonnull
     public Transform translated(@Nonnull Vec3 pos)
     {
-        return new Transform(new Vector3d(Position.x + pos.x, Position.y + pos.y, Position.z + pos.z), Orientation, Scale, () -> "AddPos["+pos+"]");
+        return new Transform(new Vector3d(Position.x + pos.x, Position.y + pos.y, Position.z + pos.z), Orientation, Scale);
     }
     @Nonnull
     public Transform withYaw(float yaw)
     {
         Vector3f euler = euler();
-        return new Transform(Position, quatFromEuler(euler.x, yaw, euler.z), Scale, () -> "SetYaw["+yaw+"]");
+        return new Transform(Position, quatFromEuler(euler.x, yaw, euler.z), Scale);
     }
     @Nonnull
     public Transform withPitch(float pitch)
     {
         Vector3f euler = euler();
-        return new Transform(Position, quatFromEuler(pitch, euler.y, euler.z), Scale, () -> "SetPitch["+pitch+"]");
+        return new Transform(Position, quatFromEuler(pitch, euler.y, euler.z), Scale);
     }
     @Nonnull
     public Transform withRoll(float roll)
     {
         Vector3f euler = euler();
-        return new Transform(Position, quatFromEuler(euler.x, euler.y, roll), Scale, () -> "SetRoll["+roll+"]");
+        return new Transform(Position, quatFromEuler(euler.x, euler.y, roll), Scale);
     }
     @Nonnull
-    public Transform rotateYaw(float dYaw)  { return new Transform(Position, Orientation.mul(quatFromEuler(0, dYaw, 0), new Quaternionf()), Scale, () -> "AddYaw"); }
+    public Transform rotateYaw(float dYaw)  { return new Transform(Position, Orientation.mul(quatFromEuler(0, dYaw, 0), new Quaternionf()), Scale); }
     @Nonnull
-    public Transform rotatePitch(float dPitch)  { return new Transform(Position, Orientation.mul(quatFromEuler(dPitch, 0, 0), new Quaternionf()), Scale, () -> "AddPitch"); }
+    public Transform rotatePitch(float dPitch)  { return new Transform(Position, Orientation.mul(quatFromEuler(dPitch, 0, 0), new Quaternionf()), Scale); }
     @Nonnull
-    public Transform rotateRoll(float dRoll)  { return new Transform(Position, Orientation.mul(quatFromEuler(0, 0, dRoll), new Quaternionf()), Scale, () -> "AddRoll"); }
+    public Transform rotateRoll(float dRoll)  { return new Transform(Position, Orientation.mul(quatFromEuler(0, 0, dRoll), new Quaternionf()), Scale); }
 
     @Nonnull
     public static Vector3f getScale(@Nonnull Matrix4f mat)
@@ -601,8 +554,7 @@ public class Transform
         return new Transform(
             localToGlobalPosition(localTransform.positionVec3()),
             localToGlobalOrientation(localTransform.Orientation),
-            localToGlobalScale(localTransform.Scale),
-            () -> "{\"Local\":"+localTransform+",\"Apply\":"+this+"}");
+            localToGlobalScale(localTransform.Scale));
     }
     @Nonnull
     public Transform globalToLocalTransform(@Nonnull Transform globalTransform)
@@ -610,8 +562,7 @@ public class Transform
         return new Transform(
             globalToLocalPosition(globalTransform.positionVec3()),
             globalToLocalOrientation(globalTransform.Orientation),
-            globalToLocalScale(globalTransform.Scale),
-            () -> "{\"Globl\":"+globalTransform+",\"Apply\":"+this+"}");
+            globalToLocalScale(globalTransform.Scale));
     }
     @Nonnull
     public AABB localToGlobalBounds(@Nonnull AABB localBounds)
@@ -652,8 +603,7 @@ public class Transform
         return new Transform(
             a.Position.lerp(b.Position, t, new Vector3d()),
             a.Orientation.slerp(b.Orientation, t, new Quaternionf()),
-            a.Scale.lerp(b.Scale, t, new Vector3f()),
-            () -> "{\"Interpolate\":["+a.DebugInfo+","+b.DebugInfo+"]}");
+            a.Scale.lerp(b.Scale, t, new Vector3f()));
     }
     @Nonnull
     public static Transform interpolate(@Nonnull List<Transform> transforms)
@@ -673,23 +623,9 @@ public class Transform
             weights[i] = 1f / transforms.size();
         }
 
-        // This will lambda capture a lot of info, so it being a supplier is still heavy
-        Supplier<String> debugInfoBuilder = () -> {
-
-            StringBuilder debugInfo = new StringBuilder("{\"Interpolate\":[");
-            for(int i = 0; i < transforms.size(); i++)
-            {
-                debugInfo.append(transforms.get(i).DebugInfo);
-                if (i != transforms.size() - 1)
-                    debugInfo.append(',');
-            }
-            return debugInfo.append("]}").toString();
-        };
-
         return Transform.fromPosAndQuat(
             position.mul(1d / transforms.size()),
-            (Quaternionf) Quaternionf.slerp(orientations, weights, new Quaternionf()),
-            debugInfoBuilder);
+            (Quaternionf) Quaternionf.slerp(orientations, weights, new Quaternionf()));
     }
     @Nonnull
     public static Transform interpolate(@Nonnull List<Transform> transforms, @Nonnull float[] weights)
@@ -709,37 +645,14 @@ public class Transform
             totalWeight += weights[i];
         }
 
-        // This will lambda capture a lot of info, so it being a supplier is still heavy
-        Supplier<String> debugInfoBuilder = () -> {
-            StringBuilder debugInfo = new StringBuilder("{\"Interpolate\":[");
-            for(int i = 0; i < transforms.size(); i++)
-            {
-                debugInfo.append('{').append("\"Weight\":").append(weights[i]).append(", \"Trans\":").append(transforms.get(i).DebugInfo).append('}');
-                if(i != transforms.size() - 1)
-                    debugInfo.append(',');
-            }
-            return debugInfo.append("]}").toString();
-        };
-
         return Transform.fromPosAndQuat(
             position.mul(1d / totalWeight),
-            (Quaternionf) Quaternionf.slerp(orientations, weights, new Quaternionf()),
-            debugInfoBuilder);
+            (Quaternionf) Quaternionf.slerp(orientations, weights, new Quaternionf()));
     }
 
 
     private static final NumberFormat FLOAT_FORMAT = new DecimalFormat("#.##");
     private static final NumberFormat ANGLE_FORMAT = new DecimalFormat("#");
-
-
-
-    @Nonnull
-    public String getDebugInfo()
-    {
-        if(DebugInfo == null)
-            return "N/A";
-        return DebugInfo.get();
-    }
 
     @Override
     public String toString()
@@ -748,7 +661,7 @@ public class Transform
         boolean isIdentityRot = Maths.approx(Orientation.x, 0f) && Maths.approx(Orientation.y, 0f) && Maths.approx(Orientation.z, 0f) && Maths.approx(Orientation.w, 1f);
         boolean isOneScale = Maths.approx(Scale.x, 1f) && Maths.approx(Scale.y, 1f) && Maths.approx(Scale.z, 1f);
         if(isZeroPos && isIdentityRot && isOneScale)
-            return "{\"Dbg\":"+ getDebugInfo()+"}";
+            return "IDENTITY";
         else
         {
             StringBuilder output = new StringBuilder("{");
@@ -785,7 +698,6 @@ public class Transform
                         .append(Runtime.format(Scale.z, FLOAT_FORMAT)).append("]");
                 }
             }
-            output.append(", \"Dbg\":").append(getDebugInfo()).append("}");
             return output.toString();
         }
     }

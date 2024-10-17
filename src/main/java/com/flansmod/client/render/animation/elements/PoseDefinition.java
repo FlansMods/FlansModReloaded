@@ -26,7 +26,6 @@ public class PoseDefinition
 	{
 		return Transform.fromPosAndEuler(
 			position.ResolveF(parameters).mul(1f/16f),
-			rotation.ResolveF(parameters),
-			() -> "{\"Pose\":\""+applyTo+"\"}");
+			rotation.ResolveF(parameters));
 	}
 }

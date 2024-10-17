@@ -22,7 +22,7 @@ public record TransformedBBCollection(@Nonnull Transform Location, @Nonnull Immu
 	@Nonnull
 	public TransformedBB getColliderBB(int index)
 	{
-		return new TransformedBB(Transform.fromPosAndQuat(getCenter(index), Location.Orientation, ()->""), getHalfExtents(index));
+		return new TransformedBB(Transform.fromPosAndQuat(getCenter(index), Location.Orientation), getHalfExtents(index));
 	}
 	@Nonnull
 	public TransformedBB getBoundingBB()

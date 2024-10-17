@@ -122,7 +122,7 @@ public interface IVehicleTransformHelpers
 						 float dt,
 						 @Nonnull BiConsumer<VehiclePartPath, Vec3> func)
 	{
-		stack.PushSaveState();
+		stack.push();
 
 		// If this piece is articulated, add a transform
 		if(node.Def.IsArticulated())
@@ -145,16 +145,16 @@ public interface IVehicleTransformHelpers
 		// If this piece has a hitbox (needs damageable), cast against it
 		if(node.Def.IsDamageable())
 		{
-			stack.PushSaveState();
+			stack.push();
 			stack.add(Transform.fromPos(node.Def.damage.hitboxCenter));
 			Vector3d hitPos = new Vector3d();
-			if(Maths.rayBoxIntersect(start, end, stack.Top(), node.Def.damage.hitboxHalfExtents.toVector3f(), hitPos))
+			if(Maths.rayBoxIntersect(start, end, stack.top(), node.Def.damage.hitboxHalfExtents.toVector3f(), hitPos))
 			{
 				func.accept(node.GetPath(), new Vec3(hitPos.x, hitPos.y, hitPos.z));
 			}
-			stack.PopSaveState();
+			stack.pop();
 		}
 
-		stack.PopSaveState();
+		stack.pop();
 	}
 }

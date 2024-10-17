@@ -113,20 +113,20 @@ public class TransformTests {
         assertEqual(Transform.IDENTITY.up(), mcUp, "IDENTITY.Up() not Up");
         assertEqual(Transform.IDENTITY.right(), mcEast, "IDENTITY.Right() not East");
         // Test the properties of translations
-        Transform offsetXAxis = Transform.fromPos(1d, 0d, 0d, () -> "X Axis");
-        Transform offsetYAxis = Transform.fromPos(0d, 1d, 0d, () -> "Y Axis");
-        Transform offsetZAxis = Transform.fromPos(0d, 0d, 1d, () -> "Z Axis");
+        Transform offsetXAxis = Transform.fromPos(1d, 0d, 0d);
+        Transform offsetYAxis = Transform.fromPos(0d, 1d, 0d);
+        Transform offsetZAxis = Transform.fromPos(0d, 0d, 1d);
         verifyCommutative(offsetXAxis, offsetYAxis);
         verifyCommutative(offsetXAxis, offsetZAxis);
         verifyAssociative(offsetXAxis, offsetYAxis, offsetZAxis);
         // Test the properties of rotations
-        Transform tYaw90 = Transform.fromEuler(eulerYaw90, () -> "Yaw90");
-        Transform tYaw135 = Transform.fromEuler(eulerYaw135, () -> "Yaw135");
-        Transform tPitchUp90 = Transform.fromEuler(eulerPitchUp90, () -> "PitchUp90");
-        Transform tPitchDown45 = Transform.fromEuler(eulerPitchDown45, () -> "PitchDown45");
-        Transform tRollRight45 = Transform.fromEuler(eulerRollRight45, () -> "RollRight45");
-        Transform tRollRight90 = Transform.fromEuler(eulerRollRight90, () -> "RollRight90");
-        assertEqual(TransformStack.of(tYaw90, tYaw90, tYaw90, tYaw90).Top(), Transform.IDENTITY, "4 turns != identity");
+        Transform tYaw90 = Transform.fromEuler(eulerYaw90);
+        Transform tYaw135 = Transform.fromEuler(eulerYaw135);
+        Transform tPitchUp90 = Transform.fromEuler(eulerPitchUp90);
+        Transform tPitchDown45 = Transform.fromEuler(eulerPitchDown45);
+        Transform tRollRight45 = Transform.fromEuler(eulerRollRight45);
+        Transform tRollRight90 = Transform.fromEuler(eulerRollRight90);
+        assertEqual(TransformStack.of(tYaw90, tYaw90, tYaw90, tYaw90).top(), Transform.IDENTITY, "4 turns != identity");
         verifyAssociative(tRollRight45, tPitchUp90, tYaw90);
         verifyCommutative(tYaw90, tYaw135);
         verifyCommutative(tRollRight45, tRollRight90);
@@ -143,26 +143,26 @@ public class TransformTests {
         assertEqual(Transform.fromLookDirection(tRollRight90.forward(), tRollRight90.up()), tRollRight90, "Look along failed");
 
         // Test Section #7 - Non-uniform scale
-        Transform flipTest = Transform.fromPosAndEuler(new Vec3(30d, 31.3d, -12d), 45f, 43f, 13f, () -> "FlipTest");
+        Transform flipTest = Transform.fromPosAndEuler(new Vec3(30d, 31.3d, -12d), 45f, 43f, 13f);
         assertEqual(flipTest, flipTest.reflect(true, false, false).reflect(true, false, false), "FlipX not self-inverse");
         assertEqual(flipTest, flipTest.reflect(false, true, false).reflect(false, true, false), "FlipY not self-inverse");
         assertEqual(flipTest, flipTest.reflect(false, false, true).reflect(false, false, true), "FlipZ not self-inverse");
 
-        Transform composed = TransformStack.of(tYaw90, tRollRight45, tPitchDown45).Top();
+        Transform composed = TransformStack.of(tYaw90, tRollRight45, tPitchDown45).top();
         assertEqual(Transform.fromLookDirection(composed.forward(), composed.up()), composed, "Look along failed");
 
     }
     private static void verifyAssociative(@Nonnull Transform a, @Nonnull Transform b, @Nonnull Transform c)
     {
-        assertEqual(TransformStack.of(TransformStack.of(a, b).Top(), c).Top(),
-                TransformStack.of(a, TransformStack.of(b, c).Top()).Top(),
+        assertEqual(TransformStack.of(TransformStack.of(a, b).top(), c).top(),
+                TransformStack.of(a, TransformStack.of(b, c).top()).top(),
                 "Transforms not associative");
     }
     private static void verifyCommutative(@Nonnull Transform a, @Nonnull Transform b)
     {
         assertEqual(
-                TransformStack.of().andThen(a).andThen(b).Top(),
-                TransformStack.of().andThen(b).andThen(a).Top(),
+                TransformStack.of().and(a).and(b).top(),
+                TransformStack.of().and(b).and(a).top(),
                 "Transforms not commutative");
     }
 

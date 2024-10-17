@@ -20,13 +20,13 @@ public class EffectRenderer extends FlanItemModelRenderer
 	protected void DoRender(@Nullable Entity heldByEntity, @Nullable ItemStack stack, @Nonnull RenderContext renderContext)
 	{
 		ResourceLocation skin = GetSkin(stack);
-		renderContext.Transforms.PushSaveState();
+		renderContext.Transforms.push();
 		RenderPartIteratively(renderContext,
 			"body",
 			(partName) -> skin, 						// Texture func
 			(partName, innerRenderContext) -> true, 	// Pre-func
 			(partName, innerRenderContext) -> { } 		// Post-func
 		);
-		renderContext.Transforms.PopSaveState();
+		renderContext.Transforms.pop();
 	}
 }

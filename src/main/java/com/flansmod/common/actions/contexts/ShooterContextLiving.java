@@ -92,8 +92,7 @@ public class ShooterContextLiving extends ShooterContext implements Container
 			Shooter.getEyePosition(deltaTick),
 			Shooter.getViewXRot(deltaTick),
 			180f + Shooter.getViewYRot(deltaTick),
-			0.0f,
-			() -> "\"ShootOrigin\"");
+			0.0f);
 	}
 
 	@Override

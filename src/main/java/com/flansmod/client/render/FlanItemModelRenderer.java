@@ -69,7 +69,7 @@ public abstract class FlanItemModelRenderer extends BlockEntityWithoutLevelRende
                              int light,
                              int overlay)
     {
-        TransformStack transformStack = new TransformStack(Transform.fromPose(ms));
+        TransformStack transformStack = TransformStack.of(Transform.fromPose(ms));
         boolean shouldRenderIcon = false;
         if(stack.getItem() instanceof FlanItem flanItem && flanItem.ShouldRenderAsIcon(transformType))
             shouldRenderIcon = true;
@@ -86,12 +86,12 @@ public abstract class FlanItemModelRenderer extends BlockEntityWithoutLevelRende
                         transformStack.add(Transform.fromEuler(0f, 0f, 180f));
                         transformStack.add(Transform.fromPos(1d, 0d, 0d));
                         //transformStack.add(Transform.FromScale(new Vector3f(-2.0f, -2.0f, 2.0f), () -> "\"Scale to GUI size\""));
-                        poseStack = transformStack.Top().toNewPoseStack();
+                        poseStack = transformStack.top().toNewPoseStack();
                         poseStack.scale(-1f, 1f, 1f);
                         Lighting.setupForFlatItems();
                     }
                     default -> {
-                        poseStack = transformStack.Top().toNewPoseStack();
+                        poseStack = transformStack.top().toNewPoseStack();
                         poseStack.scale(0.55f, 0.55f, 0.55f);
                         poseStack.translate(0.4f, 0.5f, 0.5f);
                     }
@@ -127,7 +127,7 @@ public abstract class FlanItemModelRenderer extends BlockEntityWithoutLevelRende
     // Not sure why you need to do this but another way in
     public void RenderDirect(@Nullable Entity heldByEntity, @Nullable ItemStack stack, @Nonnull RenderContext renderContext)
     {
-        renderContext.Transforms.PushSaveState();
+        renderContext.Transforms.push();
         {
             // Apply root transform
             //if(renderContext.TransformType != null)
@@ -135,7 +135,7 @@ public abstract class FlanItemModelRenderer extends BlockEntityWithoutLevelRende
 
             DoRender(heldByEntity, stack, renderContext);
         }
-        renderContext.Transforms.PopSaveState();
+        renderContext.Transforms.pop();
     }
 
     // The specifics handled by each render type, gun etc.

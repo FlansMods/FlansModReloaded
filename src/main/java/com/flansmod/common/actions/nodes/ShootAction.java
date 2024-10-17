@@ -261,7 +261,7 @@ public class ShootAction extends ActionInstance
 					float bulletSpread = 1.25f * Group.Context.Spread();
 					for (int i = 0; i < gunshotContext.BulletCount(); i++)
 					{
-						TransformStack transformStack = new TransformStack();
+						TransformStack transformStack = TransformStack.empty();
 						transformStack.add(Group.Context.Gun.GetShootOrigin());
 						RandomizeVectorDirection(
 							transformStack,
@@ -269,7 +269,7 @@ public class ShootAction extends ActionInstance
 							bulletSpread,
 							Group.Context.SpreadPattern());
 
-						Transform randomizedDirection = transformStack.Top();
+						Transform randomizedDirection = transformStack.top();
 
 						float penetrationPower = gunshotContext.PenetrationPower();
 
@@ -373,7 +373,7 @@ public class ShootAction extends ActionInstance
 		float yaw = Maths.atanF(xComponent);
 		float pitch = Maths.atanF(yComponent);
 
-		transformStack.add(Transform.fromEuler(pitch, yaw, 0f, () -> "{\"Spread\":"+spread+", \"Pattern\":\""+spreadPattern+"\"}"));
+		transformStack.add(Transform.fromEuler(pitch, yaw, 0f));
 	}
 
 	@Override

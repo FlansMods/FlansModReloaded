@@ -106,7 +106,7 @@ public class CommonPlayerModel
 		public void Pose(@Nonnull TransformStack stack)
 		{
 			stack.add(Transform.fromPos(x / 16f, y / 16f, z / 16f));
-			stack.add(Transform.fromPosAndQuat(Vec3.ZERO, (new Quaternionf()).rotationZYX(zRot, yRot, xRot), () -> "ZYX Rot"));
+			stack.add(Transform.fromPosAndQuat(Vec3.ZERO, (new Quaternionf()).rotationZYX(zRot, yRot, xRot)));
 			stack.add(Transform.fromPos(BoxMin.x / 16f + BoxDims.x / 32f, BoxMin.y / 16f + BoxDims.y / 32f, BoxMin.z / 16f + BoxDims.z / 32f));
 
 		}
@@ -114,9 +114,9 @@ public class CommonPlayerModel
 		@Nonnull
 		public Transform GetCenter()
 		{
-			TransformStack stack = new TransformStack();
+			TransformStack stack = TransformStack.empty();
 			Pose(stack);
-			return stack.Top();
+			return stack.top();
 		}
 
 		@Nonnull
@@ -196,7 +196,7 @@ public class CommonPlayerModel
 	public void Snap(@Nonnull Player player, @Nonnull PlayerSnapshot snap)
 	{
 		snap.valid = false;
-		TransformStack poseStack = new TransformStack();
+		TransformStack poseStack = TransformStack.empty();
 		float p_115310_ = 0f; // Partial tick
 
 		// Copied from EntityRenderDispatcher::render(E p_114385_, double p_114386_, double p_114387_, double p_114388_, float p_114389_, float p_114390_, PoseStack p_114391_, MultiBufferSource p_114392_, int p_114393_)
@@ -284,41 +284,41 @@ public class CommonPlayerModel
 		this.livingSetupAnim(player, f5, f8, f7, f2, f6);
 
 		// Now use all this good stuff to build a snapshot
-		poseStack.PushSaveState();
+		poseStack.push();
 		head.Pose(poseStack);
 		poseStack.mulPose(Axis.ZP.rotationDegrees(180f));
-		snap.UpdateHitbox(EPlayerHitArea.HEAD, poseStack.Top(), head.GetHalfExtents());
-		poseStack.PopSaveState();
+		snap.UpdateHitbox(EPlayerHitArea.HEAD, poseStack.top(), head.GetHalfExtents());
+		poseStack.pop();
 
-		poseStack.PushSaveState();
+		poseStack.push();
 		body.Pose(poseStack);
 		poseStack.mulPose(Axis.ZP.rotationDegrees(180f));
-		snap.UpdateHitbox(EPlayerHitArea.BODY, poseStack.Top(), body.GetHalfExtents());
-		poseStack.PopSaveState();
+		snap.UpdateHitbox(EPlayerHitArea.BODY, poseStack.top(), body.GetHalfExtents());
+		poseStack.pop();
 
-		poseStack.PushSaveState();
+		poseStack.push();
 		leftLeg.Pose(poseStack);
 		poseStack.mulPose(Axis.ZP.rotationDegrees(180f));
-		snap.UpdateHitbox(EPlayerHitArea.LEFTLEG, poseStack.Top(), leftLeg.GetHalfExtents());
-		poseStack.PopSaveState();
+		snap.UpdateHitbox(EPlayerHitArea.LEFTLEG, poseStack.top(), leftLeg.GetHalfExtents());
+		poseStack.pop();
 
-		poseStack.PushSaveState();
+		poseStack.push();
 		rightLeg.Pose(poseStack);
 		poseStack.mulPose(Axis.ZP.rotationDegrees(180f));
-		snap.UpdateHitbox(EPlayerHitArea.RIGHTLEG, poseStack.Top(), rightLeg.GetHalfExtents());
-		poseStack.PopSaveState();
+		snap.UpdateHitbox(EPlayerHitArea.RIGHTLEG, poseStack.top(), rightLeg.GetHalfExtents());
+		poseStack.pop();
 
-		poseStack.PushSaveState();
+		poseStack.push();
 		leftArm.Pose(poseStack);
 		poseStack.mulPose(Axis.ZP.rotationDegrees(180f));
-		snap.UpdateHitbox(EPlayerHitArea.LEFTARM, poseStack.Top(), leftArm.GetHalfExtents());
-		poseStack.PopSaveState();
+		snap.UpdateHitbox(EPlayerHitArea.LEFTARM, poseStack.top(), leftArm.GetHalfExtents());
+		poseStack.pop();
 
-		poseStack.PushSaveState();
+		poseStack.push();
 		rightArm.Pose(poseStack);
 		poseStack.mulPose(Axis.ZP.rotationDegrees(180f));
-		snap.UpdateHitbox(EPlayerHitArea.RIGHTARM, poseStack.Top(), rightArm.GetHalfExtents());
-		poseStack.PopSaveState();
+		snap.UpdateHitbox(EPlayerHitArea.RIGHTARM, poseStack.top(), rightArm.GetHalfExtents());
+		poseStack.pop();
 
 		snap.valid = true;
 	}

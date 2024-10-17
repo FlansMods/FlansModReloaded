@@ -316,7 +316,7 @@ public class TurboRenderUtility
 				}
 			}
 
-			Transform resultPose = poses.size() > 0 ? Transform.interpolate(poses) : Transform.identity(() -> "\"Anim no-op\"");
+			Transform resultPose = poses.size() > 0 ? Transform.interpolate(poses) : Transform.identity();
 			TurboModel model = Unbaked.GetPart(partName);
 			if (model != null)
 			{
@@ -326,7 +326,7 @@ public class TurboRenderUtility
 			return resultPose;
 		}
 
-		return Transform.identity(() -> "\"No Anims\"");
+		return Transform.identity();
 	}
 	public void RenderPartIteratively(@Nonnull RenderContext renderContext,
 										 @Nonnull String partName,
@@ -334,22 +334,22 @@ public class TurboRenderUtility
 										 @Nonnull BiFunction<String, RenderContext, Boolean> preRenderFunc,
 										 @Nonnull BiConsumer<String, RenderContext> postRenderFunc)
 	{
-		renderContext.Transforms.PushSaveState();
+		renderContext.Transforms.push();
 		{
 			boolean shouldRender = preRenderFunc.apply(partName, renderContext);
 			if(shouldRender)
 			{
 				RenderPart(partName, textureFunc, renderContext);
 				ForEachChild(partName, (childName, childAP) -> {
-					renderContext.Transforms.PushSaveState();
+					renderContext.Transforms.push();
 					renderContext.Transforms.add(childAP.Offset);
 					RenderPartIteratively(renderContext, childName, textureFunc, preRenderFunc, postRenderFunc);
-					renderContext.Transforms.PopSaveState();
+					renderContext.Transforms.pop();
 				});
 			}
 			postRenderFunc.accept(partName, renderContext);
 		}
-		renderContext.Transforms.PopSaveState();
+		renderContext.Transforms.pop();
 	}
 	public void RenderPart(@Nonnull String partName,
 						   @Nonnull Function<String, ResourceLocation> textureFunc,
@@ -393,7 +393,7 @@ public class TurboRenderUtility
 	public void RenderPart(@Nonnull TurboModel.Baked bakedModel, @Nonnull VertexConsumer vc, @Nonnull TransformStack transformStack, int light, int overlay)
 	{
 		Minecraft.getInstance().getItemRenderer().renderQuadList(
-			transformStack.Top().toNewPoseStack(),
+			transformStack.top().toNewPoseStack(),
 			vc,
 			bakedModel.getQuads(
 				null,
@@ -407,14 +407,14 @@ public class TurboRenderUtility
 
 	public void RenderPart(@Nonnull TurboModel model, @Nonnull VertexConsumer vc, @Nonnull TransformStack transformStack, int light, int overlay, float scale)
 	{
-		Transform topPose = transformStack.Top();
+		Transform topPose = transformStack.top();
 		if(USE_MODELVIEW_MATRIX_RENDER_MODE)
 		{
 			// Copy our pose into the model view matrix and upload it
 			PoseStack modelViewStack = RenderSystem.getModelViewStack();
 			modelViewStack.pushPose();
 			modelViewStack.setIdentity();
-			modelViewStack.mulPoseMatrix(transformStack.Top().toNewPoseStack().last().pose());
+			modelViewStack.mulPoseMatrix(transformStack.top().toNewPoseStack().last().pose());
 			RenderSystem.applyModelViewMatrix();
 
 			// Render without transformation on the CPU

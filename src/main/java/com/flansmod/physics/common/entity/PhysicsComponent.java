@@ -82,6 +82,12 @@ public class PhysicsComponent
 		{
 			return a.location.equals(b.location);
 		}
+
+		@Override @Nonnull
+		public String toString()
+		{
+			return "["+gameTick+"]@"+location+" with ["+linearVelocity+"] and ["+angularVelocity+"]";
+		}
 	}
 
 
@@ -257,7 +263,7 @@ public class PhysicsComponent
 		}
 	}
 	@Nonnull
-	private Frame getCurrentFrame() { return frameHistory.getMostRecent(); }
+	private Frame getCurrentFrame(long currentTick) { return getLocation(currentTick); }
 	@Nullable
 	private Frame getPreviousFrame() { return frameHistory.getOldEntry(1); }
 	@Nonnull

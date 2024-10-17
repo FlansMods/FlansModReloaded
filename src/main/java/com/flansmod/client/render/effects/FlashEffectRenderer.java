@@ -153,7 +153,7 @@ public class FlashEffectRenderer
 				light,
 				0);
 
-			renderContext.Transforms.PushSaveState();
+			renderContext.Transforms.push();
 
 			if(camera != null)
 				renderContext.Transforms.add(Transform.fromPos(camera.getPosition().scale(-1d)));
@@ -174,7 +174,7 @@ public class FlashEffectRenderer
 
 			renderContext.Transforms.add(Transform.fromPos(0d, 0d, -1d/16d));
 			renderer.RenderDirect(null, null, renderContext);
-			renderContext.Transforms.PopSaveState();
+			renderContext.Transforms.pop();
 		}
 	}
 }

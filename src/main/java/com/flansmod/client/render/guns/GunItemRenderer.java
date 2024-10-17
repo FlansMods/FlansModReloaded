@@ -9,7 +9,6 @@ import com.flansmod.client.render.models.ITurboRenderer;
 import com.flansmod.common.actions.*;
 import com.flansmod.common.actions.ActionInstance;
 import com.flansmod.common.actions.contexts.*;
-import com.flansmod.common.item.FlanItem;
 import com.flansmod.common.item.GunItem;
 import com.flansmod.common.types.attachments.AttachmentDefinition;
 import com.flansmod.common.types.attachments.EAttachmentType;
@@ -70,7 +69,7 @@ public class GunItemRenderer extends FlanItemModelRenderer
                 },
                 // Pre-Func
                 (partName, innerRenderContext) -> {
-                    innerRenderContext.Transforms.PushSaveState();
+                    innerRenderContext.Transforms.push();
                     ApplyAnimations(innerRenderContext, animationSet, actionStack, partName);
 
                     if(partName.startsWith("grip") || partName.startsWith("barrel") || partName.startsWith("stock") || partName.startsWith("sights"))
@@ -129,7 +128,7 @@ public class GunItemRenderer extends FlanItemModelRenderer
                 },
                 // Post-Func
                 (partName, innerRenderContext) -> {
-                    innerRenderContext.Transforms.PopSaveState();
+                    innerRenderContext.Transforms.pop();
                 });
 
 
@@ -151,9 +150,9 @@ public class GunItemRenderer extends FlanItemModelRenderer
             ITurboRenderer attachmentRenderer = FlansModelRegistry.GetItemRenderer(attachmentStack);
             if (attachmentRenderer instanceof AttachmentItemRenderer attachmentItemRenderer)
             {
-                renderContext.Transforms.PushSaveState();
+                renderContext.Transforms.push();
                 attachmentItemRenderer.RenderAsAttachment(renderContext, gunContext, attachmentType, attachmentIndex);
-                renderContext.Transforms.PopSaveState();
+                renderContext.Transforms.pop();
             }
         }
 

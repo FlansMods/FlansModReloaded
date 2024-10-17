@@ -57,7 +57,7 @@ public class VehicleRenderer extends EntityRenderer<VehicleEntity> implements IT
 		ResourceLocation skin = vehicle != null ? getTextureLocation(vehicle) : TextureManager.INTENTIONAL_MISSING_TEXTURE;
 		if(vehicle != null)
 		{
-			renderContext.Transforms.add(Transform.extractOrientation(vehicle.RootTransform(deltaTick), false, () -> "RootOri"));
+			renderContext.Transforms.add(Transform.extractOrientation(vehicle.RootTransform(deltaTick), false));
 		}
 		GetTurboRigWrapper().RenderPartIteratively(renderContext,
 			"body",

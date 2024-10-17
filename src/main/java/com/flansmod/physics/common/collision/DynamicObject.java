@@ -259,8 +259,7 @@ public class DynamicObject implements IConstDynamicObject
 
 		Transform newLoc = Transform.fromPosAndQuat(
 			currentFrame.Location.positionVec3().add(deltaPos),
-			currentFrame.Location.Orientation.mul(deltaRot, new Quaternionf()),
-			() -> "");
+			currentFrame.Location.Orientation.mul(deltaRot, new Quaternionf()));
 
 		//Transform newLoc = Transform.Compose(
 		//	currentFrame.Location,
