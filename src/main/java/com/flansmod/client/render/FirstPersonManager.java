@@ -17,7 +17,7 @@ import com.flansmod.common.gunshots.Raytracer;
 import com.flansmod.common.types.attachments.AttachmentDefinition;
 import com.flansmod.common.types.attachments.EAttachmentType;
 import com.flansmod.physics.common.util.Maths;
-import com.flansmod.util.MinecraftHelpers;
+import com.flansmod.physics.common.util.MinecraftHelpers;
 import com.flansmod.physics.common.util.Transform;
 import com.flansmod.physics.common.util.TransformStack;
 import com.google.common.base.MoreObjects;
@@ -146,8 +146,8 @@ public class FirstPersonManager
 						PlayerSnapshot prevSnap = raytracer.GetSnapshot(player, 1);
 						if(currentSnap.valid && prevSnap.valid)
 						{
-							Transform currentArmRoot = currentSnap.GetArmTransform(MinecraftHelpers.GetArm(transformType));
-							Transform previousArmRoot = prevSnap.GetArmTransform(MinecraftHelpers.GetArm(transformType));
+							Transform currentArmRoot = currentSnap.GetArmTransform(MinecraftHelpers.getArm(transformType));
+							Transform previousArmRoot = prevSnap.GetArmTransform(MinecraftHelpers.getArm(transformType));
 
 							transformStack.add(Transform.interpolate(previousArmRoot, currentArmRoot, dt));
 							// 3.0F, 12.0F, 4.0F
@@ -445,11 +445,11 @@ public class FirstPersonManager
 		// handRaise = p_109376_
 		float atkSwing = player.getAttackAnim(dt); // renderHandsWithItems::f
 		InteractionHand attackingHand = MoreObjects.firstNonNull(player.swingingArm, InteractionHand.MAIN_HAND); // renderHandsWithItems::interactionhand
-		if(attackingHand != MinecraftHelpers.GetHand(transformType))
+		if(attackingHand != MinecraftHelpers.getHand(transformType))
 			atkSwing = 0.0f; // renderHandsWithItems::f4/f6 == renderArmWithItem::p_109376_
 
 		final float attackSwing = atkSwing;
-		final float handRaise = (1.0F - FlansModClient.GetHandHeight(MinecraftHelpers.GetHand(transformType), dt)); // == renderHandsWithItems::f5/f7 == renderArmWithItem::p_109378_
+		final float handRaise = (1.0F - FlansModClient.GetHandHeight(MinecraftHelpers.getHand(transformType), dt)); // == renderHandsWithItems::f5/f7 == renderArmWithItem::p_109378_
 
 		float f5 = -0.4F * Mth.sin(Mth.sqrt(handRaise) * (float) Math.PI);
 		float f6 = 0.2F * Mth.sin(Mth.sqrt(handRaise) * ((float) Math.PI * 2F));
@@ -552,7 +552,7 @@ public class FirstPersonManager
 						{
 							if (action instanceof AimDownSightAction adsAction)
 							{
-								ItemDisplayContext transformType = actionGroup.Context.Gun instanceof GunContextPlayer gunContextPlayer ? MinecraftHelpers.GetFirstPersonTransformType(gunContextPlayer.GetHand()) : ItemDisplayContext.FIXED;
+								ItemDisplayContext transformType = actionGroup.Context.Gun instanceof GunContextPlayer gunContextPlayer ? MinecraftHelpers.getFirstPersonTransformType(gunContextPlayer.GetHand()) : ItemDisplayContext.FIXED;
 								String key = transformType + "/" + actionGroup.Context.GroupPath;
 
 								// We don't know about it, must be new

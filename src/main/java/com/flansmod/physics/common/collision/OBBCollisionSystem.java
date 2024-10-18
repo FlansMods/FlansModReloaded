@@ -1,7 +1,7 @@
 package com.flansmod.physics.common.collision;
 
 import com.flansmod.physics.client.DebugRenderer;
-import com.flansmod.common.FlansMod;
+import com.flansmod.physics.common.FlansPhysicsMod;
 import com.flansmod.physics.common.collision.threading.CollisionTaskResolveDynamic;
 import com.flansmod.physics.common.units.*;
 import com.flansmod.physics.common.util.ProjectedRange;
@@ -10,6 +10,7 @@ import com.flansmod.physics.common.util.Transform;
 import com.flansmod.physics.common.collision.threading.CollisionTaskSeparateDynamicFromStatic;
 import com.flansmod.physics.common.collision.threading.CollisionTaskSeparateDynamicPair;
 import com.flansmod.physics.common.util.shapes.ISeparationAxis;
+
 import com.google.common.collect.ImmutableList;
 import com.mojang.datafixers.util.Pair;
 import net.minecraft.world.level.Level;
@@ -327,7 +328,7 @@ public class OBBCollisionSystem
 		}
 		else
 		{
-			FlansMod.LOGGER.warn("Physics could not lock after " + PHYSICS_LOCK_MS_TIMEOUT + "ms");
+			FlansPhysicsMod.LOGGER.warn("Physics could not lock after " + PHYSICS_LOCK_MS_TIMEOUT + "ms");
 		}
 	}
 
@@ -385,7 +386,7 @@ public class OBBCollisionSystem
 		}
 		else
 		{
-			FlansMod.LOGGER.warn("Physics could not lock after " + PHYSICS_LOCK_MS_TIMEOUT + "ms");
+			FlansPhysicsMod.LOGGER.warn("Physics could not lock after " + PHYSICS_LOCK_MS_TIMEOUT + "ms");
 		}
 	}
 
@@ -456,7 +457,7 @@ public class OBBCollisionSystem
 			CollisionTaskSeparateDynamicFromStatic task = StaticSeparationTasks.get(i);
 			task.run();
 			if(!task.isComplete())
-				FlansMod.LOGGER.error("SINGLE_THREAD_PHYSICS: Failed to complete static task");
+				FlansPhysicsMod.LOGGER.error("SINGLE_THREAD_PHYSICS: Failed to complete static task");
 		}
 
 		for(int i = 0; i < DynamicSeparationTasks.size(); i++)
@@ -464,7 +465,7 @@ public class OBBCollisionSystem
 			CollisionTaskSeparateDynamicPair task = DynamicSeparationTasks.get(i);
 			task.run();
 			if(!task.isComplete())
-				FlansMod.LOGGER.error("SINGLE_THREAD_PHYSICS: Failed to complete dynamic task");
+				FlansPhysicsMod.LOGGER.error("SINGLE_THREAD_PHYSICS: Failed to complete dynamic task");
 		}
 	}
 
@@ -594,7 +595,7 @@ public class OBBCollisionSystem
 			CollisionTaskResolveDynamic task = ResolverTasks.get(i);
 			task.run();
 			if(!task.isComplete())
-				FlansMod.LOGGER.error("SINGLE_THREAD_PHYSICS: Failed to complete resolver task");
+				FlansPhysicsMod.LOGGER.error("SINGLE_THREAD_PHYSICS: Failed to complete resolver task");
 		}
 	}
 
@@ -630,7 +631,7 @@ public class OBBCollisionSystem
 		|| sweepAABB.getYsize() > 64d
 		|| sweepAABB.getZsize() > 128d)
 		{
-			FlansMod.LOGGER.warn("Oversized SweepTest AABB at " + sweepAABB);
+			FlansPhysicsMod.LOGGER.warn("Oversized SweepTest AABB at " + sweepAABB);
 			return builder.build();
 		}
 

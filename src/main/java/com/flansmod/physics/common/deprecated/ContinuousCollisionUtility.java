@@ -1,6 +1,8 @@
-package com.flansmod.physics.common.collision;
+package com.flansmod.physics.common.deprecated;
 
+import com.flansmod.physics.common.collision.TransformedBB;
 import com.flansmod.physics.common.util.Transform;
+
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import org.joml.Matrix3f;

@@ -5,7 +5,8 @@ import com.flansmod.common.FlansMod;
 import com.flansmod.common.actions.stats.*;
 import com.flansmod.common.item.FlanItem;
 import com.flansmod.common.types.Constants;
-import com.flansmod.util.MinecraftHelpers;
+import com.flansmod.physics.common.util.EContextSide;
+import com.flansmod.physics.common.util.MinecraftHelpers;
 import com.flansmod.physics.common.util.Transform;
 import com.flansmod.util.formulae.FloatAccumulation;
 import net.minecraft.core.registries.Registries;
@@ -106,7 +107,7 @@ public abstract class ShooterContext
 	@Nonnull
 	public static ShooterContext of(@Nonnull UUID shooterID, @Nonnull UUID ownerID)
 	{
-		return MinecraftHelpers.IsClientThread() ? client(shooterID, ownerID) : server(shooterID, ownerID);
+		return MinecraftHelpers.isClientThread() ? client(shooterID, ownerID) : server(shooterID, ownerID);
 	}
 	@Nonnull
 	public static ShooterContext server(@Nonnull Entity shooter) { return FlansMod.CONTEXT_CACHE.GetShooter(shooter); }
@@ -128,7 +129,7 @@ public abstract class ShooterContext
 	public static ShooterContext client(@Nonnull Entity shooter, @Nullable Entity owner) { return FlansModClient.CONTEXT_CACHE.GetShooter(shooter, owner); }
 	@OnlyIn(Dist.CLIENT)
 	@Nonnull
-	public static ShooterContext client(@Nonnull UUID shooterID, @Nonnull UUID ownerID) { return FlansModClient.CONTEXT_CACHE.GetShooter(shooterID, ownerID, MinecraftHelpers.Client_GetCurrentLevel()); }
+	public static ShooterContext client(@Nonnull UUID shooterID, @Nonnull UUID ownerID) { return FlansModClient.CONTEXT_CACHE.GetShooter(shooterID, ownerID, MinecraftHelpers.clientGetCurrentLevel()); }
 
 
 	// ---------------------------------------------------------------------------------------------------

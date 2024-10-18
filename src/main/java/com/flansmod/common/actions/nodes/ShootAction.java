@@ -17,6 +17,7 @@ import com.flansmod.common.types.bullets.BulletDefinition;
 import com.flansmod.common.types.bullets.elements.ImpactDefinition;
 import com.flansmod.common.types.guns.elements.ActionDefinition;
 import com.flansmod.common.types.guns.elements.ESpreadPattern;
+import com.flansmod.physics.common.util.EContextSide;
 import com.flansmod.physics.common.util.Maths;
 import com.flansmod.physics.common.util.Transform;
 import com.flansmod.physics.common.util.TransformStack;

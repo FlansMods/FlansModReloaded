@@ -2,6 +2,7 @@ package com.flansmod.common.actions.contexts;
 
 import com.flansmod.common.actions.ActionManager;
 import com.flansmod.common.item.FlanItem;
+import com.flansmod.physics.common.util.EContextSide;
 import net.minecraft.world.Container;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.Entity;

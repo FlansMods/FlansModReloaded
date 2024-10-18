@@ -7,7 +7,7 @@ import com.flansmod.common.actions.contexts.GunContext;
 import com.flansmod.common.actions.contexts.ShooterContext;
 import com.flansmod.common.network.FlansModMessage;
 import com.flansmod.common.network.elements.ActionGroupNetID;
-import com.flansmod.util.MinecraftHelpers;
+import com.flansmod.physics.common.util.MinecraftHelpers;
 import net.minecraft.network.FriendlyByteBuf;
 
 import javax.annotation.Nonnull;
@@ -128,7 +128,7 @@ public class ActionUpdateMessage extends FlansModMessage
 		for(int i = triggerIndexMin; i <= triggerIndexMax; i++)
 		{
 			ActionTriggerInfo accumulatedNetData = new ActionTriggerInfo();
-			accumulatedNetData.DeltaTick = (int)(MinecraftHelpers.GetTick() - group.GetStartedTick());
+			accumulatedNetData.DeltaTick = (int)(MinecraftHelpers.getTick() - group.GetStartedTick());
 			for(ActionInstance action : group.GetActions())
 			{
 				accumulatedNetData.NetData.add(action.GetNetDataForTrigger(i));

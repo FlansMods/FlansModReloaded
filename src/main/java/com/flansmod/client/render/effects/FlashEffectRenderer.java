@@ -10,7 +10,7 @@ import com.flansmod.common.actions.contexts.GunContext;
 import com.flansmod.common.actions.contexts.GunContextPlayer;
 import com.flansmod.common.actions.contexts.ShooterContext;
 import com.flansmod.common.actions.nodes.AttachEffectAction;
-import com.flansmod.util.MinecraftHelpers;
+import com.flansmod.physics.common.util.MinecraftHelpers;
 import com.flansmod.physics.common.util.Transform;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -137,10 +137,10 @@ public class FlashEffectRenderer
 			{
 				if (!Minecraft.getInstance().options.getCameraType().isFirstPerson() || !gunContext.GetShooter().IsLocalPlayerOwner())
 				{
-					transformType = MinecraftHelpers.GetThirdPersonTransformType(gunContext.GetShooter().IsLocalPlayerOwner(), playerGunContext.GetHand());
+					transformType = MinecraftHelpers.getThirdPersonTransformType(gunContext.GetShooter().IsLocalPlayerOwner(), playerGunContext.GetHand());
 				} else
 				{
-					transformType = MinecraftHelpers.GetFirstPersonTransformType(playerGunContext.GetHand());
+					transformType = MinecraftHelpers.getFirstPersonTransformType(playerGunContext.GetHand());
 				}
 			}
 

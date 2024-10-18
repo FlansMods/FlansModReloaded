@@ -1,7 +1,7 @@
 package com.flansmod.common.types.bullets.elements;
 
 import com.flansmod.common.types.JsonField;
-import com.flansmod.util.MinecraftHelpers;
+import com.flansmod.physics.common.util.MinecraftHelpers;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
@@ -18,7 +18,7 @@ public class ShotDefinition
 			BreakTagRefs = new TagKey[breaksBlockTags.length];
 			for(int i = 0; i < breaksBlockTags.length; i++)
 			{
-				BreakTagRefs[i] = MinecraftHelpers.FindBlockTag(breaksBlockTags[i]);
+				BreakTagRefs[i] = MinecraftHelpers.findBlockTag(breaksBlockTags[i]);
 			}
 		}
 		return BreakTagRefs;

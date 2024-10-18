@@ -4,7 +4,7 @@ import com.flansmod.physics.common.util.ITransformPair;
 import com.flansmod.common.entity.vehicle.VehicleEntity;
 import com.flansmod.physics.common.util.Maths;
 import com.flansmod.physics.common.util.Transform;
-import com.flansmod.physics.common.collision.ContinuousSeparationManifold;
+import com.flansmod.physics.common.deprecated.ContinuousSeparationManifold;
 import com.flansmod.physics.common.collision.TransformedBB;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.item.ItemEntity;

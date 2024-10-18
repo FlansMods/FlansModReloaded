@@ -1,4 +1,4 @@
-package com.flansmod.common.actions.contexts;
+package com.flansmod.physics.common.util;
 
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.Level;
@@ -35,11 +35,11 @@ public enum EContextSide
 		return blockEntity.getLevel().isClientSide ? Client : Server;
 	}
 
-	public boolean IsClient()
+	public boolean isClient()
 	{
 		return this == Client;
 	}
-	public boolean IsServer()
+	public boolean isServer()
 	{
 		return this == Server;
 	}

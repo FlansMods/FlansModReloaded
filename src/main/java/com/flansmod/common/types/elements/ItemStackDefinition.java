@@ -8,6 +8,8 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.registries.ForgeRegistries;
 
+import javax.annotation.Nonnull;
+
 public class ItemStackDefinition
 {
 	@JsonField
@@ -19,6 +21,7 @@ public class ItemStackDefinition
 	@JsonField
 	public String tags = "{}";
 
+	@Nonnull
 	public ItemStack CreateStack()
 	{
 		try

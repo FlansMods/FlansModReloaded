@@ -1,8 +1,6 @@
 package com.flansmod.physics.common.collision;
 
 import com.flansmod.physics.common.util.shapes.IPlane;
-import com.flansmod.physics.common.util.shapes.ISeparationAxis;
-import com.google.common.collect.ImmutableList;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;

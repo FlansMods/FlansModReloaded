@@ -1,8 +1,9 @@
 package com.flansmod.physics.client;
 
 import com.flansmod.physics.common.util.Maths;
-import com.flansmod.util.MinecraftHelpers;
+import com.flansmod.physics.common.util.MinecraftHelpers;
 import com.flansmod.physics.common.util.Transform;
+
 import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.*;
@@ -51,11 +52,11 @@ public class DebugRenderer
         @Override
         public void render(PoseStack poseStack, Tesselator tesselator)
         {
-            if(MinecraftHelpers.GetCamera() == null)
+            if(MinecraftHelpers.getCamera() == null)
                 return;
 
-            Vec3 toCamera = MinecraftHelpers.GetCamera().getForward().normalize();
-            Vec3 verticalAxis = MinecraftHelpers.GetCamera().getUpVector(0f).normalize();
+            Vec3 toCamera = MinecraftHelpers.getCamera().getForward().normalize();
+            Vec3 verticalAxis = MinecraftHelpers.getCamera().getUpVector(0f).normalize();
             Vec3 lateralAxis = Maths.cross(toCamera, verticalAxis).normalize();
 
 
@@ -150,7 +151,7 @@ public class DebugRenderer
         @Override
         public void render(PoseStack poseStack, Tesselator tesselator)
         {
-            if(MinecraftHelpers.GetCamera() == null)
+            if(MinecraftHelpers.getCamera() == null)
                 return;
 
             renderLineSegment(poseStack, tesselator, Vec3.ZERO, direction, colour, Arrow);
@@ -173,7 +174,7 @@ public class DebugRenderer
         @Override
         public void render(PoseStack poseStack, Tesselator tesselator)
         {
-            if(MinecraftHelpers.GetCamera() == null)
+            if(MinecraftHelpers.getCamera() == null)
                 return;
 
             Vec3 from = getPoint(0);
@@ -274,7 +275,7 @@ public class DebugRenderer
         @Override
         public void render(PoseStack poseStack, Tesselator tesselator)
         {
-            if(MinecraftHelpers.GetCamera() == null)
+            if(MinecraftHelpers.getCamera() == null)
                 return;
 
             renderLineSegment(poseStack, tesselator, Vec3.ZERO, transform.forward(), new Vector4f(1f, 0f, 0f, 1f), false);

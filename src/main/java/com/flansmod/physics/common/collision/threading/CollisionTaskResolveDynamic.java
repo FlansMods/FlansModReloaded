@@ -7,6 +7,7 @@ import com.flansmod.physics.common.units.LinearVelocity;
 import com.flansmod.physics.common.units.OffsetAcceleration;
 import com.flansmod.physics.common.util.Maths;
 import com.flansmod.physics.common.util.ProjectedRange;
+
 import net.minecraft.world.phys.Vec3;
 import org.joml.Quaternionf;
 

@@ -1,7 +1,7 @@
 package com.flansmod.common.actions.contexts;
 
 import com.flansmod.common.item.FlanItem;
-import com.flansmod.util.MinecraftHelpers;
+import com.flansmod.physics.common.util.MinecraftHelpers;
 import net.minecraft.world.Container;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.ItemStack;
@@ -37,7 +37,7 @@ public class GunContextHistory extends ContextHistory<GunContext>
 			(check) -> check.GetShooter() == shooter
 					&& check.GetInventorySlotIndex() == slotIndex,
 			() -> shooter.CreateContext(ID),
-			MinecraftHelpers::GetTick);
+			MinecraftHelpers::getTick);
 
 		gunContext.UpdateFromItemStack();
 		return gunContext;
@@ -50,7 +50,7 @@ public class GunContextHistory extends ContextHistory<GunContext>
 			(check) -> check.GetShooter() == shooter
 					&& IsGunStillPresentIn(check, shooter),
 			() -> shooter.CreateContext(ID),
-			MinecraftHelpers::GetTick);
+			MinecraftHelpers::getTick);
 
 		gunContext.UpdateFromItemStack();
 		return gunContext;
@@ -63,7 +63,7 @@ public class GunContextHistory extends ContextHistory<GunContext>
 			(check) -> check instanceof GunContextItemEntity checkItemEntity
 					&& checkItemEntity.Holder == itemEntity,
 			() -> new GunContextItemEntity(itemEntity),
-			MinecraftHelpers::GetTick);
+			MinecraftHelpers::getTick);
 	}
 
 	@Nonnull
@@ -86,7 +86,7 @@ public class GunContextHistory extends ContextHistory<GunContext>
 				}
 				return GunContext.INVALID;
 			},
-			MinecraftHelpers::GetTick);
+			MinecraftHelpers::getTick);
 	}
 
 	@Nonnull
@@ -99,7 +99,7 @@ public class GunContextHistory extends ContextHistory<GunContext>
 					&& check.GetInventorySlotIndex() == slotIndex;
 			},
 			() -> new GunContextInventoryItem(container, slotIndex),
-			MinecraftHelpers::GetTick);
+			MinecraftHelpers::getTick);
 	}
 
 	@Nonnull
@@ -108,7 +108,7 @@ public class GunContextHistory extends ContextHistory<GunContext>
 		return GetOrCreate(
 			(check) -> FlanItem.GetGunID(check.Stack).equals(ID),
 			() -> new GunContextItem(stack),
-			MinecraftHelpers::GetTick);
+			MinecraftHelpers::getTick);
 	}
 
 	@Nonnull

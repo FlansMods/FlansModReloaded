@@ -8,7 +8,7 @@ import com.flansmod.common.actions.contexts.GunContextPlayer;
 import com.flansmod.common.actions.contexts.GunshotContext;
 import com.flansmod.common.item.FlanItem;
 import com.flansmod.physics.common.util.Maths;
-import com.flansmod.util.MinecraftHelpers;
+import com.flansmod.physics.common.util.MinecraftHelpers;
 import com.flansmod.physics.common.util.Transform;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.*;
@@ -46,7 +46,7 @@ public class ShotRenderer
 	{
 		if(Minecraft.getInstance().player != null && gunshotContext.ActionGroup.Gun instanceof GunContextPlayer playerGunContext)
 		{
-			Transform shootOrigin = FirstPersonManager.GetWorldSpaceAPTransform(gunshotContext.ActionGroup.Gun, MinecraftHelpers.GetFirstPersonTransformType(playerGunContext.GetHand()), "shoot_origin");
+			Transform shootOrigin = FirstPersonManager.GetWorldSpaceAPTransform(gunshotContext.ActionGroup.Gun, MinecraftHelpers.getFirstPersonTransformType(playerGunContext.GetHand()), "shoot_origin");
 			ShotRenderInstance shot = new ShotRenderInstance(shootOrigin.positionVec3(), endpoint, 0.05f, 10.0f, 10.0f, null, GetBulletRenderer(gunshotContext));
 			shots.add(shot);
 			return shot.GetLifetime();

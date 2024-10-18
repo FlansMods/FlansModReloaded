@@ -1,6 +1,7 @@
 package com.flansmod.client;
 
 import com.flansmod.common.actions.contexts.*;
+import com.flansmod.physics.common.util.EContextSide;
 import com.mojang.datafixers.util.Pair;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;

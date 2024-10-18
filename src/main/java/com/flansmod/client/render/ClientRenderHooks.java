@@ -14,7 +14,7 @@ import com.flansmod.common.types.bullets.elements.ProjectileDefinition;
 import com.flansmod.common.types.guns.elements.ModeDefinition;
 import com.flansmod.common.types.magazines.MagazineDefinition;
 import com.flansmod.physics.common.util.Maths;
-import com.flansmod.util.MinecraftHelpers;
+import com.flansmod.physics.common.util.MinecraftHelpers;
 import com.flansmod.physics.common.util.Transform;
 import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
@@ -75,7 +75,7 @@ public class ClientRenderHooks
 	@SubscribeEvent
 	public void OnComputeFOV(ComputeFovModifierEvent event)
 	{
-		ShooterContext shooterContext = ShooterContext.of(MinecraftHelpers.GetClient().player);
+		ShooterContext shooterContext = ShooterContext.of(MinecraftHelpers.getClient().player);
 		if(!shooterContext.IsValid())
 			return;
 
@@ -111,7 +111,7 @@ public class ClientRenderHooks
 	public void OnRenderOverlay(RenderGuiOverlayEvent event)
 	{
 		GuiGraphics graphics = event.getGuiGraphics();
-		Player player = MinecraftHelpers.GetClient().player;
+		Player player = MinecraftHelpers.getClient().player;
 		ShooterContext shooterContext = ShooterContext.of(player);
 		if(!shooterContext.IsValid())
 			return;
@@ -167,8 +167,8 @@ public class ClientRenderHooks
 
 	private boolean RenderScopeOverlay(GunContext main, GunContext off)
 	{
-		int i = MinecraftHelpers.GetClient().getWindow().getGuiScaledWidth();
-		int j = MinecraftHelpers.GetClient().getWindow().getGuiScaledHeight();
+		int i = MinecraftHelpers.getClient().getWindow().getGuiScaledWidth();
+		int j = MinecraftHelpers.getClient().getWindow().getGuiScaledHeight();
 
 		for(GunContext gunContext : new GunContext[] { main, off})
 		{
@@ -245,8 +245,8 @@ public class ClientRenderHooks
 
 	private void RenderHitMarkerOverlay()
 	{
-		int i = MinecraftHelpers.GetClient().getWindow().getGuiScaledWidth();
-		int j = MinecraftHelpers.GetClient().getWindow().getGuiScaledHeight();
+		int i = MinecraftHelpers.getClient().getWindow().getGuiScaledWidth();
+		int j = MinecraftHelpers.getClient().getWindow().getGuiScaledHeight();
 
 		RenderSystem.enableBlend();
 		RenderSystem.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
@@ -282,8 +282,8 @@ public class ClientRenderHooks
 	{
 		Player player = Minecraft.getInstance().player;
 
-		int screenX = MinecraftHelpers.GetClient().getWindow().getGuiScaledWidth();
-		int screenY = MinecraftHelpers.GetClient().getWindow().getGuiScaledHeight();
+		int screenX = MinecraftHelpers.getClient().getWindow().getGuiScaledWidth();
+		int screenY = MinecraftHelpers.getClient().getWindow().getGuiScaledHeight();
 
 		int anchorX = screenX / 2;
 		int anchorY = screenY;
@@ -320,8 +320,8 @@ public class ClientRenderHooks
 
 			if(def != null){
 				if(def.HasLockOn()){
-					int i = MinecraftHelpers.GetClient().getWindow().getGuiScaledWidth();
-					int j = MinecraftHelpers.GetClient().getWindow().getGuiScaledHeight();
+					int i = MinecraftHelpers.getClient().getWindow().getGuiScaledWidth();
+					int j = MinecraftHelpers.getClient().getWindow().getGuiScaledHeight();
 					double size = ((def.lockCone/ Minecraft.getInstance().options.fov().get())*i)/2d;
 					RenderUntexturedCircle(i*0.5f, j*0.5f ,
 							32, (float)size,
@@ -468,8 +468,8 @@ public class ClientRenderHooks
 
 			if(def != null){
 				if(def.HasLockOn()){
-					int i = MinecraftHelpers.GetClient().getWindow().getGuiScaledWidth();
-					int j = MinecraftHelpers.GetClient().getWindow().getGuiScaledHeight();
+					int i = MinecraftHelpers.getClient().getWindow().getGuiScaledWidth();
+					int j = MinecraftHelpers.getClient().getWindow().getGuiScaledHeight();
 					double size = ((def.lockCone/ Minecraft.getInstance().options.fov().get())*i)/2d;
 					RenderUntexturedCircle(i*0.5f, j*0.5f ,
 							32, (float)size,

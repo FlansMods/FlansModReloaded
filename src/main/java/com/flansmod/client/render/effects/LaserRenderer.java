@@ -9,7 +9,7 @@ import com.flansmod.common.actions.contexts.*;
 import com.flansmod.common.actions.nodes.LaserAction;
 import com.flansmod.common.gunshots.Raytracer;
 import com.flansmod.common.types.attachments.EAttachmentType;
-import com.flansmod.util.MinecraftHelpers;
+import com.flansmod.physics.common.util.MinecraftHelpers;
 import com.flansmod.physics.common.util.Transform;
 import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
@@ -116,11 +116,11 @@ public class LaserRenderer
 		{
 			if(!Minecraft.getInstance().options.getCameraType().isFirstPerson() || !gunContext.GetShooter().IsLocalPlayerOwner())
 			{
-				transformType = MinecraftHelpers.GetThirdPersonTransformType(gunContext.GetShooter().IsLocalPlayerOwner(), playerGunContext.GetHand());
+				transformType = MinecraftHelpers.getThirdPersonTransformType(gunContext.GetShooter().IsLocalPlayerOwner(), playerGunContext.GetHand());
 			}
 			else
 			{
-				transformType = MinecraftHelpers.GetFirstPersonTransformType(playerGunContext.GetHand());
+				transformType = MinecraftHelpers.getFirstPersonTransformType(playerGunContext.GetHand());
 			}
 
 		}

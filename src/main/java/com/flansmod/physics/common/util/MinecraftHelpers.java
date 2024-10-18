@@ -1,9 +1,7 @@
-package com.flansmod.util;
+package com.flansmod.physics.common.util;
 
-import com.flansmod.common.FlansMod;
-import com.flansmod.common.actions.contexts.EContextSide;
-import com.flansmod.common.types.elements.ItemStackDefinition;
-import com.mojang.brigadier.StringReader;
+import com.flansmod.physics.common.FlansPhysicsMod;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.nbt.*;
 import net.minecraft.resources.ResourceKey;
@@ -14,7 +12,6 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.HumanoidArm;
 import net.minecraft.world.item.ItemDisplayContext;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraftforge.api.distmarker.Dist;
@@ -31,36 +28,36 @@ import java.util.ArrayList;
 public class MinecraftHelpers
 {
 	@Nullable
-	public static Level GetLevel(@Nonnull ResourceKey<Level> dimension)
+	public static Level getLevel(@Nonnull ResourceKey<Level> dimension)
 	{
-		if(IsClientThread())
+		if(isClientThread())
 		{
 			// Failing that, there is a chance this is our current loaded client level
-			if(IsClientDist())
+			if(isClientDist())
 			{
-				Level clientLevel = DistExecutor.unsafeCallWhenOn(Dist.CLIENT, () -> MinecraftHelpers::Client_GetCurrentLevel);
+				Level clientLevel = DistExecutor.unsafeCallWhenOn(Dist.CLIENT, () -> MinecraftHelpers::clientGetCurrentLevel);
 				if (clientLevel.dimension().equals(dimension))
 					return clientLevel;
 				else
 				{
-                    FlansMod.LOGGER.warn("Tried to access non-loaded client dimension: {}", dimension);
+                    FlansPhysicsMod.LOGGER.warn("Tried to access non-loaded client dimension: {}", dimension);
 					return null;
 				}
 			}
 			else
 			{
-				FlansMod.LOGGER.error("How are we on a client thread outside of a client dist???");
+				FlansPhysicsMod.LOGGER.error("How are we on a client thread outside of a client dist???");
 				return null;
 			}
 		}
 
 		// Try getting from the running server
-		if(!IsServerThread())
+		if(!isServerThread())
 		{
-			FlansMod.LOGGER.error("What thread are you trying to get the level on?");
+			FlansPhysicsMod.LOGGER.error("What thread are you trying to get the level on?");
 		}
 
-		MinecraftServer server = GetServer();
+		MinecraftServer server = getServer();
 		if (server != null && server.isRunning())
 		{
 			return server.getLevel(dimension);
@@ -69,10 +66,10 @@ public class MinecraftHelpers
 		return null;
 	}
 	@Nonnull
-	public static Iterable<? extends Level> Server_GetLoadedLevels()
+	public static Iterable<? extends Level> serverGetLoadedLevels()
 	{
 		// Try getting from the running server
-		MinecraftServer server = GetServer();
+		MinecraftServer server = getServer();
 		if (server != null && server.isRunning())
 		{
 			return server.getAllLevels();
@@ -80,7 +77,7 @@ public class MinecraftHelpers
 		return new ArrayList<>();
 	}
 
-	public static boolean TagEqual(Tag tag, String stringValue)
+	public static boolean tagEqual(@Nonnull Tag tag, @Nonnull String stringValue)
 	{
 		if(tag instanceof IntTag intTag)
 		{
@@ -100,22 +97,22 @@ public class MinecraftHelpers
 		}
 		else
 		{
-			FlansMod.LOGGER.warn("Unknown tag type in ingredient");
+			FlansPhysicsMod.LOGGER.warn("Unknown tag type in ingredient");
 		}
 		return true;
 	}
 
-	public static long GetTick()
+	public static long getTick()
 	{
-		if(IsClientDist())
+		if(isClientDist())
 		{
-			Level level = Client_GetCurrentLevel();
+			Level level = clientGetCurrentLevel();
 			if(level != null)
 				return level.getGameTime();
 		}
 		else
 		{
-			MinecraftServer server = GetServer();
+			MinecraftServer server = getServer();
 			if(server != null && server.isRunning())
 			{
 				Level level = server.getLevel(Level.OVERWORLD);
@@ -127,7 +124,7 @@ public class MinecraftHelpers
 	}
 
 	@Nonnull
-	public static String GetFEString(int fe)
+	public static String getFEString(int fe)
 	{
 		if(fe >= 1000000000)
 			return String.format("%.2f GFE", fe / 1000000000f);
@@ -138,45 +135,45 @@ public class MinecraftHelpers
 		return fe + " FE";
 	}
 
-	public static boolean IsClientDist()
+	public static boolean isClientDist()
 	{
 		return FMLEnvironment.dist == Dist.CLIENT;
 	}
 
-	public static boolean IsClientThread() { return GetLogicalSide() == EContextSide.Client; }
-	public static boolean IsServerThread() { return GetLogicalSide() == EContextSide.Server; }
+	public static boolean isClientThread() { return getLogicalSide() == EContextSide.Client; }
+	public static boolean isServerThread() { return getLogicalSide() == EContextSide.Server; }
 
 	@Nonnull
-	public static EContextSide GetLogicalSide(@Nonnull Entity entity)
+	public static EContextSide getLogicalSide(@Nonnull Entity entity)
 	{
-		return GetLogicalSide(entity.level());
+		return getLogicalSide(entity.level());
 	}
 	@Nonnull
-	public static EContextSide GetLogicalSide(@Nonnull Level level)
+	public static EContextSide getLogicalSide(@Nonnull Level level)
 	{
 		return level.isClientSide ? EContextSide.Client : EContextSide.Server;
 	}
 	@Nonnull
-	public static EContextSide GetLogicalSide()
+	public static EContextSide getLogicalSide()
 	{
 		MinecraftServer currentServer = ServerLifecycleHooks.getCurrentServer();
 		if(currentServer != null)
 			if(Thread.currentThread() == currentServer.getRunningThread())
 				return EContextSide.Server;
-		if(IsClientDist())
+		if(isClientDist())
 			return EContextSide.Client;
 		return EContextSide.Unknown;
 	}
 
 	@Nullable
-	public static MinecraftServer GetServer()
+	public static MinecraftServer getServer()
 	{
 		return ServerLifecycleHooks.getCurrentServer();
 	}
 
 	@OnlyIn(Dist.CLIENT)
 	@Nonnull
-	public static HumanoidArm GetArm(@Nonnull InteractionHand hand)
+	public static HumanoidArm getArm(@Nonnull InteractionHand hand)
 	{
 		return hand == InteractionHand.MAIN_HAND ?
 			Minecraft.getInstance().options.mainHand().get() :
@@ -184,7 +181,7 @@ public class MinecraftHelpers
 	}
 	@OnlyIn(Dist.CLIENT)
 	@Nonnull
-	public static HumanoidArm GetArm(@Nonnull ItemDisplayContext hand)
+	public static HumanoidArm getArm(@Nonnull ItemDisplayContext hand)
 	{
 		return switch(hand) {
 			case FIRST_PERSON_LEFT_HAND, THIRD_PERSON_LEFT_HAND -> HumanoidArm.LEFT;
@@ -194,7 +191,7 @@ public class MinecraftHelpers
 
 	@OnlyIn(Dist.CLIENT)
 	@Nonnull
-	public static InteractionHand GetHand(@Nullable ItemDisplayContext transformType)
+	public static InteractionHand getHand(@Nullable ItemDisplayContext transformType)
 	{
 		boolean rightHanded = Minecraft.getInstance().options.mainHand().get() == HumanoidArm.RIGHT;
 		if(transformType == null)
@@ -210,7 +207,7 @@ public class MinecraftHelpers
 
 	@OnlyIn(Dist.CLIENT)
 	@Nonnull
-	public static ItemDisplayContext GetFirstPersonTransformType(@Nonnull InteractionHand hand)
+	public static ItemDisplayContext getFirstPersonTransformType(@Nonnull InteractionHand hand)
 	{
 		boolean rightHanded = Minecraft.getInstance().options.mainHand().get() == HumanoidArm.RIGHT;
 		return switch (hand)
@@ -221,7 +218,7 @@ public class MinecraftHelpers
 	}
 	@OnlyIn(Dist.CLIENT)
 	@Nonnull
-	public static ItemDisplayContext GetThirdPersonTransformType(boolean isLocalPlayer, @Nonnull InteractionHand hand)
+	public static ItemDisplayContext getThirdPersonTransformType(boolean isLocalPlayer, @Nonnull InteractionHand hand)
 	{
 		boolean rightHanded = !isLocalPlayer || Minecraft.getInstance().options.mainHand().get() == HumanoidArm.RIGHT;
 		return switch (hand)
@@ -232,45 +229,28 @@ public class MinecraftHelpers
 	}
 
 	@OnlyIn(Dist.CLIENT)
-	public static Entity GetCamera() { return Minecraft.getInstance().cameraEntity; }
+	public static Entity getCamera() { return Minecraft.getInstance().cameraEntity; }
 
 	@OnlyIn(Dist.CLIENT)
-	public static Minecraft GetClient()
+	public static Minecraft getClient()
 	{
 		return Minecraft.getInstance();
 	}
 
 	@OnlyIn(Dist.CLIENT)
 	@Nullable
-	public static Level Client_GetCurrentLevel()
+	public static Level clientGetCurrentLevel()
 	{
-		return GetClient().level;
+		return getClient().level;
 	}
 
-	public static ResourceLocation CreateLocation(String locString)
+	@Nullable
+	public static ResourceLocation createLocation(@Nonnull String locString)
 	{
 		return ResourceLocation.tryParse(locString);
 	}
-
-	public static ItemStack CreateStack(ItemStackDefinition def)
-	{
-		if(def.tags != null && def.tags.length() > 0)
-		{
-			try
-			{
-				CompoundTag tags = new TagParser(new StringReader(def.tags)).readStruct();
-				return new ItemStack(ForgeRegistries.ITEMS.getValue(CreateLocation(def.item)), def.count, tags);
-			}
-			catch(Exception e)
-			{
-				FlansMod.LOGGER.error("Could not parse " + def.tags);
-			}
-		}
-		return new ItemStack(ForgeRegistries.ITEMS.getValue(CreateLocation(def.item)), def.count);
-	}
-
 	@Nonnull
-	public static TagKey<Block> FindBlockTag(String location)
+	public static TagKey<Block> findBlockTag(@Nonnull String location)
 	{
 		ResourceLocation resLoc = new ResourceLocation(location);
 		return TagKey.create(ForgeRegistries.BLOCKS.getRegistryKey(), resLoc);

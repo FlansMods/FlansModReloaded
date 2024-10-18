@@ -1,12 +1,9 @@
-package com.flansmod.physics.common.collision;
+package com.flansmod.physics.common.deprecated;
 
 import net.minecraft.world.phys.Vec3;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-
-import static java.lang.Math.abs;
-import static java.lang.Math.signum;
 
 public record ContinuousSeparationManifold(
 	@Nonnull Vec3 Axis,

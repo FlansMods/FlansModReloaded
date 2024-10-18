@@ -14,6 +14,7 @@ import com.flansmod.common.types.bullets.elements.ProjectileDefinition;
 import com.flansmod.common.types.guns.elements.*;
 import com.flansmod.common.types.guns.GunDefinition;
 import com.flansmod.common.types.magazines.MagazineDefinition;
+import com.flansmod.physics.common.util.EContextSide;
 import com.flansmod.physics.common.util.Maths;
 import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.Multimap;

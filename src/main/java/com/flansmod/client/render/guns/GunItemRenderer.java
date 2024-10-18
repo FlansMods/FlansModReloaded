@@ -15,7 +15,8 @@ import com.flansmod.common.types.attachments.EAttachmentType;
 import com.flansmod.common.types.guns.elements.AttachmentSettingsDefinition;
 import com.flansmod.common.types.magazines.EAmmoLoadMode;
 import com.flansmod.common.types.magazines.MagazineDefinition;
-import com.flansmod.util.MinecraftHelpers;
+import com.flansmod.physics.common.util.EContextSide;
+import com.flansmod.physics.common.util.MinecraftHelpers;
 
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.resources.ResourceLocation;
@@ -40,7 +41,7 @@ public class GunItemRenderer extends FlanItemModelRenderer
 
         ShooterContext shooterContext = ShooterContext.of(heldByEntity);
         GunContext gunContext = shooterContext.IsValid()
-            ? GunContext.of(shooterContext, MinecraftHelpers.GetHand(renderContext.TransformType))
+            ? GunContext.of(shooterContext, MinecraftHelpers.getHand(renderContext.TransformType))
             : GunContext.of(stack, EContextSide.Client);
         if(gunContext.IsValid())
         {

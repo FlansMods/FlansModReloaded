@@ -4,6 +4,7 @@ import com.flansmod.physics.common.FlansPhysicsMod;
 import com.flansmod.physics.common.collision.*;
 import com.flansmod.physics.common.util.ProjectedRange;
 import com.flansmod.physics.common.util.shapes.*;
+
 import com.google.common.collect.ImmutableList;
 import com.mojang.datafixers.util.Pair;
 import net.minecraft.core.Direction;

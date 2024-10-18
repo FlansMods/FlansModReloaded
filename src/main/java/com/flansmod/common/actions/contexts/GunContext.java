@@ -19,7 +19,8 @@ import com.flansmod.common.types.elements.ModifierDefinition;
 import com.flansmod.common.types.guns.*;
 import com.flansmod.common.types.parts.PartDefinition;
 import com.flansmod.common.types.elements.EPlayerInput;
-import com.flansmod.util.MinecraftHelpers;
+import com.flansmod.physics.common.util.EContextSide;
+import com.flansmod.physics.common.util.MinecraftHelpers;
 import com.flansmod.physics.common.util.Transform;
 import com.flansmod.util.formulae.FloatAccumulation;
 import com.mojang.datafixers.util.Pair;
@@ -127,7 +128,7 @@ public abstract class GunContext implements IStatCalculatorContext
 	@Nonnull
 	public static GunContext of(@Nonnull UUID gunID)
 	{
-		switch(MinecraftHelpers.GetLogicalSide())
+		switch(MinecraftHelpers.getLogicalSide())
 		{
 			case Client -> { return client(gunID); }
 			case Server -> { return server(gunID); }

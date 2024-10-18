@@ -1,14 +1,13 @@
 package com.flansmod.common.actions.contexts;
 
-import com.flansmod.util.MinecraftHelpers;
+import com.flansmod.physics.common.util.EContextSide;
+import com.flansmod.physics.common.util.MinecraftHelpers;
 import com.mojang.datafixers.util.Pair;
-import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.block.entity.BlockEntity;
 
 import javax.annotation.Nonnull;
@@ -24,7 +23,7 @@ public class ServerContextCache extends ContextCache
 	@Override
 	protected Entity TryFindEntity(@Nonnull UUID entityID)
 	{
-		MinecraftServer server = MinecraftHelpers.GetServer();
+		MinecraftServer server = MinecraftHelpers.getServer();
 		if(server != null && server.isRunning())
 		{
 			for(ServerPlayer player : server.getPlayerList().getPlayers())
@@ -46,7 +45,7 @@ public class ServerContextCache extends ContextCache
 	protected Optional<ShooterBlockEntity> TryFindBlockEntity(@Nonnull UUID blockEntityID)
 	{
 		Pair<Integer, BlockPos> pair = ShooterContextBlockEntity.ConvertShooterIDToCoords(blockEntityID);
-		MinecraftServer server = MinecraftHelpers.GetServer();
+		MinecraftServer server = MinecraftHelpers.getServer();
 		if(server != null && server.isRunning())
 		{
 			for (ServerLevel level : server.getAllLevels())

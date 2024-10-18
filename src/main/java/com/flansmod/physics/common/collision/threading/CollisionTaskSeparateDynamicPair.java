@@ -2,6 +2,7 @@ package com.flansmod.physics.common.collision.threading;
 
 import com.flansmod.physics.common.collision.*;
 import com.flansmod.physics.common.util.shapes.ISeparationAxis;
+
 import com.google.common.collect.ImmutableList;
 import net.minecraft.world.phys.Vec3;
 

@@ -3,7 +3,7 @@ package com.flansmod.packs.basics.plugins.jei;
 import com.flansmod.packs.basics.BasicPartsMod;
 import com.flansmod.packs.basics.common.DistillationRecipe;
 import com.flansmod.plugins.jei.FlansCraftingCategory;
-import com.flansmod.util.MinecraftHelpers;
+import com.flansmod.physics.common.util.MinecraftHelpers;
 import mezz.jei.api.gui.builder.IRecipeLayoutBuilder;
 import mezz.jei.api.gui.drawable.IDrawable;
 import mezz.jei.api.gui.ingredient.IRecipeSlotsView;
@@ -15,7 +15,6 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.api.distmarker.Dist;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
@@ -60,7 +59,7 @@ public class DistillationCraftingCategory extends FlansCraftingCategory<Distilla
 			.setSlotName("input");
 
 		List<DistillationRecipe> recipeGroup = new ArrayList<>();
-		Level world = MinecraftHelpers.Client_GetCurrentLevel();
+		Level world = MinecraftHelpers.clientGetCurrentLevel();
 		if(world != null)
 		{
 			for(DistillationRecipe otherRecipe : world.getRecipeManager().getAllRecipesFor(BasicPartsMod.DISTILLATION_RECIPE_TYPE.get()))

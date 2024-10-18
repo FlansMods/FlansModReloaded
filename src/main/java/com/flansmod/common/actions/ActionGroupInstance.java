@@ -7,7 +7,7 @@ import com.flansmod.common.types.guns.elements.ActionDefinition;
 import com.flansmod.common.types.guns.elements.ActionGroupDefinition;
 import com.flansmod.common.types.guns.elements.ERepeatMode;
 import com.flansmod.physics.common.util.Maths;
-import com.flansmod.util.MinecraftHelpers;
+import com.flansmod.physics.common.util.MinecraftHelpers;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.material.Fluids;
 import net.minecraft.world.phys.Vec3;
@@ -53,14 +53,14 @@ public class ActionGroupInstance
 	public long GetStartedTick() { return StartedTick; }
 	public long GetTicksSinceStart()
 	{
-		return MinecraftHelpers.GetTick() - StartedTick;
+		return MinecraftHelpers.getTick() - StartedTick;
 	}
 
 	public boolean HasReceivedNetSync() { return NetSyncTick >= 0; }
 	public long GetLastNetSyncTick() { return NetSyncTick; }
 	public long GetTicksSinceLastNetSync()
 	{
-		return MinecraftHelpers.GetTick() - NetSyncTick;
+		return MinecraftHelpers.getTick() - NetSyncTick;
 	}
 
 	public int GetProgressTicks() { return Progress; }
@@ -404,7 +404,7 @@ public class ActionGroupInstance
 			FlansMod.LOGGER.warn("Action was NetSynced, but not for the required range");
 		}
 		NetSyncedTriggers = triggerMax + 1;
-		NetSyncTick = MinecraftHelpers.GetTick();
+		NetSyncTick = MinecraftHelpers.getTick();
 	}
 	public void CheckTimeout()
 	{
@@ -417,14 +417,14 @@ public class ActionGroupInstance
 					{
 						if (GetTicksSinceLastNetSync() > FullAutoTimeout())
 						{
-							FlansMod.LOGGER.warn(Context + " timed out [" + MinecraftHelpers.GetTick() + "] after " + FullAutoTimeout() + " ticks because it stopped receiving NetSyncs");
+							FlansMod.LOGGER.warn(Context + " timed out [" + MinecraftHelpers.getTick() + "] after " + FullAutoTimeout() + " ticks because it stopped receiving NetSyncs");
 							SetFinished();
 						}
 					}
 					else if (GetTicksSinceStart() >= TIMEOUT_AFTER_NO_NETSYNC)
 					{
 
-						FlansMod.LOGGER.warn(Context+" timed out ["+MinecraftHelpers.GetTick()+"] after "+TIMEOUT_AFTER_NO_NETSYNC+" ticks because it was never given a NetSync");
+						FlansMod.LOGGER.warn(Context+" timed out ["+MinecraftHelpers.getTick()+"] after "+TIMEOUT_AFTER_NO_NETSYNC+" ticks because it was never given a NetSync");
 						SetFinished();
 					}
 				}

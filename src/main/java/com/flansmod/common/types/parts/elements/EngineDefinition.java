@@ -2,7 +2,7 @@ package com.flansmod.common.types.parts.elements;
 
 import com.flansmod.common.types.JsonField;
 import com.flansmod.physics.common.util.Maths;
-import com.flansmod.util.MinecraftHelpers;
+import com.flansmod.physics.common.util.MinecraftHelpers;
 import net.minecraft.network.chat.Component;
 
 import javax.annotation.Nonnull;
@@ -91,7 +91,7 @@ public class EngineDefinition
 				return Component.translatable("tooltip.format.engine_liquid_fuel_storage", liquidFuelCapacity, solidFuelSlots);
 			}
 			case FE -> {
-				return Component.translatable("tooltip.format.engine_electric_fuel_storage", MinecraftHelpers.GetFEString(FECapacity), batterySlots);
+				return Component.translatable("tooltip.format.engine_electric_fuel_storage", MinecraftHelpers.getFEString(FECapacity), batterySlots);
 			}
 			case Creative -> {
 				return Component.translatable("tooltip.format.engine_creative_storage");

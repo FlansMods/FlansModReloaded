@@ -3,18 +3,14 @@ package com.flansmod.common.actions;
 import com.flansmod.common.FlansMod;
 import com.flansmod.common.actions.contexts.ActionGroupContext;
 import com.flansmod.common.actions.contexts.GunContext;
-import com.flansmod.common.actions.contexts.ContextCache;
 import com.flansmod.common.actions.contexts.ShooterContext;
-import com.flansmod.common.entity.INpcRelationshipsCapability;
-import com.flansmod.common.entity.NpcRelationshipsCapability;
 import com.flansmod.common.item.FlanItem;
 import com.flansmod.common.item.GunItem;
 import com.flansmod.common.network.bidirectional.ActionUpdateMessage;
-import com.flansmod.util.MinecraftHelpers;
+import com.flansmod.physics.common.util.MinecraftHelpers;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -102,7 +98,7 @@ public class ServerActionManager extends ActionManager
 				ActionStacks.remove(invalidID);
 			}
 
-			for (var level : MinecraftHelpers.Server_GetLoadedLevels())
+			for (var level : MinecraftHelpers.serverGetLoadedLevels())
 			{
 				for (var player : level.players())
 				{

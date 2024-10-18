@@ -9,7 +9,7 @@ import com.flansmod.client.render.animation.FlanimationDefinition;
 import com.flansmod.client.render.models.*;
 import com.flansmod.common.FlansMod;
 import com.flansmod.common.actions.*;
-import com.flansmod.common.actions.contexts.EContextSide;
+import com.flansmod.physics.common.util.EContextSide;
 import com.flansmod.common.actions.contexts.GunContext;
 import com.flansmod.common.item.FlanItem;
 import com.flansmod.common.types.attachments.EAttachmentType;

@@ -1,7 +1,8 @@
 package com.flansmod.common.actions.contexts;
 
 import com.flansmod.common.actions.stats.IModifierBaker;
-import com.flansmod.util.MinecraftHelpers;
+import com.flansmod.physics.common.util.EContextSide;
+import com.flansmod.physics.common.util.MinecraftHelpers;
 import com.flansmod.physics.common.util.Transform;
 import com.mojang.datafixers.util.Pair;
 import net.minecraft.core.BlockPos;
@@ -79,7 +80,7 @@ public class ShooterContextBlockEntity extends ShooterContext
     @Override @Nullable
     public Level Level()
     {
-        return MinecraftHelpers.GetLevel(Dimension);
+        return MinecraftHelpers.getLevel(Dimension);
     }
 
     @Nonnull

@@ -1,10 +1,13 @@
 package com.flansmod.physics.common.collision;
 
+import com.flansmod.physics.common.deprecated.ContinuousCollisionUtility;
+import com.flansmod.physics.common.deprecated.ContinuousSeparationManifold;
 import com.flansmod.physics.common.util.Maths;
 import com.flansmod.physics.common.util.Transform;
 import com.flansmod.physics.common.util.shapes.VertexIndex;
 import com.flansmod.physics.common.util.shapes.IPolygon;
 import com.flansmod.physics.common.util.shapes.Polygon;
+
 import net.minecraft.core.Direction;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;

@@ -19,7 +19,7 @@ import com.flansmod.common.FlansMod;
 import com.flansmod.common.actions.contexts.*;
 import com.flansmod.common.gunshots.Raytracer;
 import com.flansmod.physics.common.util.Maths;
-import com.flansmod.util.MinecraftHelpers;
+import com.flansmod.physics.common.util.MinecraftHelpers;
 import com.flansmod.physics.common.util.Transform;
 import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import net.minecraft.Util;
@@ -291,11 +291,11 @@ public class FlansModClient
 
 					if(!Minecraft.getInstance().options.getCameraType().isFirstPerson() || !gunContext.GetShooter().IsLocalPlayerOwner())
 					{
-						transformType = MinecraftHelpers.GetThirdPersonTransformType(gunContext.GetShooter().IsLocalPlayerOwner(), playerGunContext.GetHand());
+						transformType = MinecraftHelpers.getThirdPersonTransformType(gunContext.GetShooter().IsLocalPlayerOwner(), playerGunContext.GetHand());
 					}
 					else
 					{
-						transformType = MinecraftHelpers.GetFirstPersonTransformType(playerGunContext.GetHand());
+						transformType = MinecraftHelpers.getFirstPersonTransformType(playerGunContext.GetHand());
 					}
 					Transform shootOrigin = FirstPersonManager.GetWorldSpaceAPTransform(gunContext, transformType, ActionGroupContext.CreateGroupPath("shoot_origin"));
 
@@ -324,11 +324,11 @@ public class FlansModClient
 				{
 					if(!Minecraft.getInstance().options.getCameraType().isFirstPerson() || !gunContext.GetShooter().IsLocalPlayerOwner())
 					{
-						transformType = MinecraftHelpers.GetThirdPersonTransformType(gunContext.GetShooter().IsLocalPlayerOwner(), playerGunContext.GetHand());
+						transformType = MinecraftHelpers.getThirdPersonTransformType(gunContext.GetShooter().IsLocalPlayerOwner(), playerGunContext.GetHand());
 					}
 					else
 					{
-						transformType = MinecraftHelpers.GetFirstPersonTransformType(playerGunContext.GetHand());
+						transformType = MinecraftHelpers.getFirstPersonTransformType(playerGunContext.GetHand());
 					}
 
 				}

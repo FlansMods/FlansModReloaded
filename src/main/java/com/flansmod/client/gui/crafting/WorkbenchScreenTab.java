@@ -7,7 +7,7 @@ import com.flansmod.client.render.models.ITurboRenderer;
 import com.flansmod.common.FlansMod;
 import com.flansmod.common.crafting.menus.WorkbenchMenu;
 import com.flansmod.physics.common.util.Maths;
-import com.flansmod.util.MinecraftHelpers;
+import com.flansmod.physics.common.util.MinecraftHelpers;
 import com.mojang.blaze3d.platform.Lighting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
@@ -202,7 +202,7 @@ public abstract class WorkbenchScreenTab<T extends WorkbenchMenu> extends FMScre
 	}
 	public void RenderPowerBarFG(@Nonnull GuiGraphics graphics, int x, int y, int fe, int feMax)
 	{
-		String storedEnergyAmount = MinecraftHelpers.GetFEString(fe) + " / " + MinecraftHelpers.GetFEString(feMax);
+		String storedEnergyAmount = MinecraftHelpers.getFEString(fe) + " / " + MinecraftHelpers.getFEString(feMax);
 		graphics.drawString(font, storedEnergyAmount, Maths.floor(x - (font.width(storedEnergyAmount) / 2f)), y, 0x505050, false);
 	}
 	protected void RenderGUIItem(@Nonnull GuiGraphics graphics, int x, int y, @Nonnull ItemStack stack, boolean withText)

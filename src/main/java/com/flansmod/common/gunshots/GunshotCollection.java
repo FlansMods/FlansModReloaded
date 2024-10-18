@@ -2,14 +2,11 @@ package com.flansmod.common.gunshots;
 
 import com.flansmod.common.FlansMod;
 import com.flansmod.common.types.guns.GunDefinition;
-import com.flansmod.util.MinecraftHelpers;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.registries.ForgeRegistries;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;

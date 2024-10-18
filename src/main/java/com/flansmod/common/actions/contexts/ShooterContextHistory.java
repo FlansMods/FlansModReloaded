@@ -1,7 +1,7 @@
 package com.flansmod.common.actions.contexts;
 
 import com.flansmod.common.entity.vehicle.VehicleEntity;
-import com.flansmod.util.MinecraftHelpers;
+import com.flansmod.physics.common.util.MinecraftHelpers;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
@@ -10,7 +10,6 @@ import net.minecraftforge.common.util.NonNullSupplier;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.Collection;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.function.Function;
@@ -45,7 +44,7 @@ public class ShooterContextHistory extends ContextHistory<ShooterContext>
 					&& check.OwnerUUID().equals(ownerUUID)
 					&& (checkLevel == null || check.Level() == checkLevel),
 			() -> CreateFor(ownerUUID, shooterUUID, entityResolveFunc, blockEntityResolveFunc),
-			MinecraftHelpers::GetTick);
+			MinecraftHelpers::getTick);
 	}
 
 	@Nonnull
@@ -55,8 +54,8 @@ public class ShooterContextHistory extends ContextHistory<ShooterContext>
 			(check) -> check.ShooterID().equals(shooterUUID)
 				&& check.OwnerUUID().equals(ownerUUID)
 				&& (checkLevel == null || check.Level() == checkLevel),
-			() -> new ShooterContextUnresolvedEntity(ownerUUID, shooterUUID, MinecraftHelpers.GetLogicalSide()),
-			MinecraftHelpers::GetTick);
+			() -> new ShooterContextUnresolvedEntity(ownerUUID, shooterUUID, MinecraftHelpers.getLogicalSide()),
+			MinecraftHelpers::getTick);
 	}
 
 	@Nonnull
@@ -78,7 +77,7 @@ public class ShooterContextHistory extends ContextHistory<ShooterContext>
 		return GetOrCreate(
 			(check) -> check.Entity() == livingShooter,
 			() -> new ShooterContextLiving(livingShooter),
-			MinecraftHelpers::GetTick);
+			MinecraftHelpers::getTick);
 	}
 
 	@Nonnull
@@ -87,7 +86,7 @@ public class ShooterContextHistory extends ContextHistory<ShooterContext>
 		return GetOrCreate(
 				(check) -> check instanceof ShooterContextBlockEntity shooterBE && shooterBE.GetBlockEntity().equals(Optional.of(blockShooter)),
 				() -> new ShooterContextBlockEntity(blockShooter),
-				MinecraftHelpers::GetTick);
+				MinecraftHelpers::getTick);
 	}
 
 	@Nonnull
@@ -96,7 +95,7 @@ public class ShooterContextHistory extends ContextHistory<ShooterContext>
 		return GetOrCreate(
 			(check) -> check.Entity() == playerShooter,
 			() -> new ShooterContextPlayer(playerShooter),
-			MinecraftHelpers::GetTick);
+			MinecraftHelpers::getTick);
 	}
 
 	@Nonnull
@@ -131,7 +130,7 @@ public class ShooterContextHistory extends ContextHistory<ShooterContext>
 		return new ShooterContextUnresolvedEntity(
 			ownerUUID,
 			shooterUUID,
-			MinecraftHelpers.GetLogicalSide());
+			MinecraftHelpers.getLogicalSide());
 	}
 
 	@Override
