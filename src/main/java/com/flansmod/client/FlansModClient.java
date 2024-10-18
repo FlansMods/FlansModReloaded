@@ -11,7 +11,6 @@ import com.flansmod.client.render.models.FlansModelRegistry;
 import com.flansmod.client.render.MagazineTextureAtlas;
 import com.flansmod.client.render.animation.FlanimationDefinitions;
 import com.flansmod.client.render.bullets.BulletEntityRenderer;
-import com.flansmod.client.render.debug.DebugRenderer;
 import com.flansmod.client.render.effects.DecalRenderer;
 import com.flansmod.client.render.bullets.ShotRenderer;
 import com.flansmod.client.render.effects.LaserRenderer;
@@ -62,7 +61,6 @@ import java.lang.reflect.Method;
 public class FlansModClient
 {
 	public static final ClientInventoryManager INVENTORY_MANAGER = new ClientInventoryManager();
-	public static final DebugRenderer DEBUG_RENDERER = new DebugRenderer();
 	public static final VehicleDebugRenderer VEHICLE_DEBUG_RENDERER = new VehicleDebugRenderer();
 
 	public static final ShotRenderer SHOT_RENDERER= new ShotRenderer();

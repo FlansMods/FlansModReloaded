@@ -1,4 +1,4 @@
-package com.flansmod.client.render.debug;
+package com.flansmod.physics.client;
 
 import com.flansmod.physics.common.util.Maths;
 import com.flansmod.util.MinecraftHelpers;
@@ -34,7 +34,7 @@ public class DebugRenderer
             colour = col;
         }
 
-        public abstract void Render(PoseStack poseStack, Tesselator tesselator);
+        public abstract void render(PoseStack poseStack, Tesselator tesselator);
     }
 
     private static class DebugRenderPoint extends DebugRenderItem
@@ -49,7 +49,7 @@ public class DebugRenderer
         private static final float RADS_PER_SEGMENT = Maths.TauF / NUM_SEGMENTS;
 
         @Override
-        public void Render(PoseStack poseStack, Tesselator tesselator)
+        public void render(PoseStack poseStack, Tesselator tesselator)
         {
             if(MinecraftHelpers.GetCamera() == null)
                 return;
@@ -87,7 +87,7 @@ public class DebugRenderer
             Arrow = arrow;
         }
 
-        protected void RenderLineSegment(PoseStack poseStack, Tesselator tesselator, Vec3 start, Vec3 ray, Vector4f col, boolean asArrow)
+        protected void renderLineSegment(PoseStack poseStack, Tesselator tesselator, Vec3 start, Vec3 ray, Vector4f col, boolean asArrow)
         {
             BufferBuilder buf = tesselator.getBuilder();
             buf.begin(VertexFormat.Mode.TRIANGLES, DefaultVertexFormat.POSITION_COLOR);
@@ -148,12 +148,12 @@ public class DebugRenderer
         }
 
         @Override
-        public void Render(PoseStack poseStack, Tesselator tesselator)
+        public void render(PoseStack poseStack, Tesselator tesselator)
         {
             if(MinecraftHelpers.GetCamera() == null)
                 return;
 
-            RenderLineSegment(poseStack, tesselator, Vec3.ZERO, direction, colour, Arrow);
+            renderLineSegment(poseStack, tesselator, Vec3.ZERO, direction, colour, Arrow);
         }
     }
 
@@ -171,22 +171,22 @@ public class DebugRenderer
         }
 
         @Override
-        public void Render(PoseStack poseStack, Tesselator tesselator)
+        public void render(PoseStack poseStack, Tesselator tesselator)
         {
             if(MinecraftHelpers.GetCamera() == null)
                 return;
 
-            Vec3 from = GetPoint(0);
-            Vec3 to = GetPoint(1);
+            Vec3 from = getPoint(0);
+            Vec3 to = getPoint(1);
             for(int i = 1; i < NUM_SEGMENTS+1; i++)
             {
-                RenderLineSegment(poseStack, tesselator, from, to.subtract(from), colour, i == NUM_SEGMENTS);
+                renderLineSegment(poseStack, tesselator, from, to.subtract(from), colour, i == NUM_SEGMENTS);
                 from = to;
-                to = GetPoint(i+1);
+                to = getPoint(i+1);
             }
         }
 
-        private Vec3 GetPoint(int index)
+        private Vec3 getPoint(int index)
         {
             AxisAngle4d axisAngle = new AxisAngle4d(Magnitude * index * RADS_PER_SEGMENT, direction.x, direction.y, direction.z);
             Vector3d sweepVec = new Vector3d(direction.x, direction.y, direction.z);
@@ -219,7 +219,7 @@ public class DebugRenderer
             2, 7, 3,    2, 6, 7, // Top +y
         };
         @Override
-        public void Render(PoseStack poseStack, Tesselator tesselator)
+        public void render(PoseStack poseStack, Tesselator tesselator)
         {
             BufferBuilder buf = tesselator.getBuilder();
     
@@ -272,46 +272,46 @@ public class DebugRenderer
         }
 
         @Override
-        public void Render(PoseStack poseStack, Tesselator tesselator)
+        public void render(PoseStack poseStack, Tesselator tesselator)
         {
             if(MinecraftHelpers.GetCamera() == null)
                 return;
 
-            RenderLineSegment(poseStack, tesselator, Vec3.ZERO, transform.forward(), new Vector4f(1f, 0f, 0f, 1f), false);
-            RenderLineSegment(poseStack, tesselator, Vec3.ZERO, transform.up(), new Vector4f(0f, 1f, 0f, 1f), false);
-            RenderLineSegment(poseStack, tesselator, Vec3.ZERO, transform.right(), new Vector4f(0f, 0f, 1f, 1f), false);
+            renderLineSegment(poseStack, tesselator, Vec3.ZERO, transform.forward(), new Vector4f(1f, 0f, 0f, 1f), false);
+            renderLineSegment(poseStack, tesselator, Vec3.ZERO, transform.up(), new Vector4f(0f, 1f, 0f, 1f), false);
+            renderLineSegment(poseStack, tesselator, Vec3.ZERO, transform.right(), new Vector4f(0f, 0f, 1f, 1f), false);
         }
     }
 
     private static final Queue<DebugRenderItem> itemsToAdd = new ConcurrentLinkedQueue<>();
     private static final ArrayList<DebugRenderItem> renderItems = new ArrayList<>();
 
-    public static void RenderCube(Transform t, int ticks, Vector4f col, Vector3f h)
+    public static void renderCube(Transform t, int ticks, Vector4f col, Vector3f h)
     {
         itemsToAdd.add(new DebugRenderCube(t, ticks, col, h));
     }
 
-    public static void RenderPoint(Transform t, int ticks, Vector4f col)
+    public static void renderPoint(Transform t, int ticks, Vector4f col)
     {
         itemsToAdd.add(new DebugRenderPoint(t, ticks, col));
     }
 
-    public static void RenderLine(Transform t, int ticks, Vector4f col, Vec3 ray)
+    public static void renderLine(Transform t, int ticks, Vector4f col, Vec3 ray)
     {
         if(!Maths.approx(ray.lengthSqr(), 0d))
             itemsToAdd.add(new DebugRenderLine(t, ticks, col, ray, false));
     }
-    public static void RenderArrow(Transform t, int ticks, Vector4f col, Vec3 ray)
+    public static void renderArrow(Transform t, int ticks, Vector4f col, Vec3 ray)
     {
         if(!Maths.approx(ray.lengthSqr(), 0d))
             itemsToAdd.add(new DebugRenderLine(t, ticks, col, ray, true));
     }
-    public static void RenderRotation(Transform t, int ticks, Vector4f col, Vec3 axis, double magnitude)
+    public static void renderRotation(Transform t, int ticks, Vector4f col, Vec3 axis, double magnitude)
     {
         if(!Maths.approx(magnitude, 0d))
             itemsToAdd.add(new DebugRenderRotation(t, ticks, col, axis, magnitude, true));
     }
-    public static void RenderAxes(Transform t, int ticks, Vector4f col)
+    public static void renderAxes(Transform t, int ticks, Vector4f col)
     {
         itemsToAdd.add(new DebugRenderAxes(t, ticks, col));
     }
@@ -353,7 +353,7 @@ public class DebugRenderer
                 poseStack.pushPose();
                 poseStack.translate(item.transform.Position.x - pos.x, item.transform.Position.y - pos.y, item.transform.Position.z - pos.z);
                 poseStack.mulPose(item.transform.Orientation);
-                item.Render(poseStack, tesselator);
+                item.render(poseStack, tesselator);
                 poseStack.popPose();
             }
 

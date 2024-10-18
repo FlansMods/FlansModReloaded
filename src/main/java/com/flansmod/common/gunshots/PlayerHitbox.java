@@ -1,6 +1,6 @@
 package com.flansmod.common.gunshots;
 
-import com.flansmod.client.render.debug.DebugRenderer;
+import com.flansmod.physics.client.DebugRenderer;
 import com.flansmod.physics.common.util.Maths;
 import com.flansmod.physics.common.util.Transform;
 import net.minecraft.world.phys.Vec3;
@@ -50,8 +50,8 @@ public class PlayerHitbox
     {
         Transform renderPos = Transform.compose(Transform.fromPos(withOffset), transform); //.Translate(0.0d, 0.0d, 2.0d);
 
-        DebugRenderer.RenderCube(renderPos, 1, colour, halfExtents);
-        DebugRenderer.RenderAxes(renderPos, 1, new Vector4f(1f, 1f, 1f, 1f));
+        DebugRenderer.renderCube(renderPos, 1, colour, halfExtents);
+        DebugRenderer.renderAxes(renderPos, 1, new Vector4f(1f, 1f, 1f, 1f));
         //Vector3f quarterExtents = new Vector3f(halfExtents.x * 0.5f, halfExtents.y * 0.5f, halfExtents.z * 0.5f);
         //DebugRenderer.RenderCube(renderPos, 40, colour, quarterExtents);
 

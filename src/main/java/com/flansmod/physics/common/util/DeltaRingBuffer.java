@@ -38,7 +38,7 @@ public class DeltaRingBuffer<TData extends Comparable<TData>> implements Iterabl
     {
         if(depth < numElements)
         {
-            int oldIndex = Maths.Modulo(headIndex - depth, elements.length);
+            int oldIndex = Maths.modulo(headIndex - depth, elements.length);
             if (elements[oldIndex] != null)
                 return (TData) elements[oldIndex];
         }

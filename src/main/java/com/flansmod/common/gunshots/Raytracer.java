@@ -1,6 +1,6 @@
 package com.flansmod.common.gunshots;
 
-import com.flansmod.client.render.debug.DebugRenderer;
+import com.flansmod.physics.client.DebugRenderer;
 import com.flansmod.common.FlansMod;
 import com.flansmod.common.entity.vehicle.VehicleEntity;
 import com.flansmod.physics.common.util.Transform;
@@ -193,7 +193,7 @@ public class Raytracer
                 FlansMod.LOGGER.warn("Raytrace exceeded 100 raycasts, something is probably wrong");
                 if(World.isClientSide())
                 {
-                    DebugRenderer.RenderLine(
+                    DebugRenderer.renderLine(
                         Transform.fromPos(origin),
                         100,
                         new Vector4f(1.0f, 1.0f, 1.0f, 1.0f),

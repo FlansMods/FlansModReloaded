@@ -98,13 +98,13 @@ public class CollisionTaskResolveDynamic
             }
         }
 
-        double xRange = ProjectedRange.width(xMoveReq);
-        double yRange = ProjectedRange.width(yMoveReq);
-        double zRange = ProjectedRange.width(zMoveReq);
+        double xRange = ProjectedRange.isNonZero(xMoveReq) ? ProjectedRange.width(xMoveReq) : Double.MAX_VALUE;
+        double yRange = ProjectedRange.isNonZero(yMoveReq) ? ProjectedRange.width(yMoveReq) : Double.MAX_VALUE;
+        double zRange = ProjectedRange.isNonZero(zMoveReq) ? ProjectedRange.width(zMoveReq) : Double.MAX_VALUE;
 
         Vec3 forceOrigin = Input.Dynamic.getCurrentLocation().positionVec3();
 
-        // Clamp on the smallest axis
+        // Clamp on the smallest non-zero axis
         if(xRange <= yRange && xRange <= zRange)
         {
             v = new Vec3(ProjectedRange.clamp(xMoveReq, v.x), v.y, v.z);

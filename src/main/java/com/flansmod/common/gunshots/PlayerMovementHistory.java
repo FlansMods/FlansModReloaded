@@ -31,7 +31,7 @@ public class PlayerMovementHistory
 
     private int GetNextIndex() { return (mostRecentSnapshot + 1) % snapshotCount; }
     private int GetCurrentIndex() { return mostRecentSnapshot; }
-    private int GetIndexNTicksAgo(int n) { return Maths.Modulo(mostRecentSnapshot - n, snapshotCount); }
+    private int GetIndexNTicksAgo(int n) { return Maths.modulo(mostRecentSnapshot - n, snapshotCount); }
 
     public void TakeSnapshot(@Nonnull Player player)
     {

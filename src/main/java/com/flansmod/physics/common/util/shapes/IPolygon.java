@@ -27,7 +27,7 @@ public interface IPolygon
         if(GetVertices().isEmpty())
             return Vec3.ZERO;
 
-        index = Maths.Modulo(index, GetVertices().size());
+        index = Maths.modulo(index, GetVertices().size());
         return GetVertices().get(index);
     }
     @Nonnull

@@ -1,5 +1,6 @@
 package com.flansmod.physics.common;
 
+import com.flansmod.physics.client.DebugRenderer;
 import com.flansmod.physics.client.PhysicsDebugRenderer;
 import com.flansmod.physics.client.PhysicsKeyMappings;
 import com.flansmod.physics.client.TestCubeEntityRenderer;
@@ -96,6 +97,7 @@ public class FlansPhysicsMod
     @Mod.EventBusSubscriber(value = Dist.CLIENT, bus = Mod.EventBusSubscriber.Bus.MOD, modid = MODID)
     public static class ClientMod
     {
+        public static final DebugRenderer DEBUG_RENDERER = new DebugRenderer();
         public static final PhysicsDebugRenderer PHYSICS_DEBUG_RENDERER = new PhysicsDebugRenderer();
 
         @SubscribeEvent

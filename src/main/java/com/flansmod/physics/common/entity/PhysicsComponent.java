@@ -15,6 +15,7 @@ import org.joml.Quaternionf;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.Optional;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Function;
 
@@ -33,7 +34,6 @@ public class PhysicsComponent
 
 	private static class Frame implements Comparable<Frame>
 	{
-		public boolean fromAuthority;
 		public long gameTick;
 		public Transform location;
 		public ForcesOnPart forces;
@@ -42,7 +42,6 @@ public class PhysicsComponent
 
 		public Frame(long tick, @Nonnull Transform loc)
 		{
-			fromAuthority = false;
 			gameTick = tick;
 			location = loc;
 			forces = new ForcesOnPart();
@@ -52,6 +51,44 @@ public class PhysicsComponent
 		public Frame()
 		{
 			this(0L, Transform.IDENTITY);
+		}
+
+		@Nonnull
+		public static Frame interpolate(@Nonnull Frame a, @Nonnull Frame b, float t)
+		{
+			Frame interp = new Frame();
+			interp.linearVelocity = LinearVelocity.interpolate(a.linearVelocity, b.linearVelocity, t);
+			interp.angularVelocity = AngularVelocity.interpolate(a.angularVelocity, b.angularVelocity, t);
+			interp.location = Transform.interpolate(a.location, b.location, t);
+			interp.gameTick = Maths.roundLerp(a.gameTick, b.gameTick, t);
+			return interp;
+		}
+		@Nonnull
+		public static Frame extrapolate(@Nonnull Frame startingFrame, long ticks, double mass, @Nonnull Vec3 momentOfInertia)
+		{
+			Frame extrapolatedFrame = new Frame();
+			extrapolatedFrame.gameTick = startingFrame.gameTick + ticks;
+			extrapolatedFrame.forces = startingFrame.forces;
+
+			// assume accelerations are constant
+			final LinearAcceleration linearA = startingFrame.forces.sumLinearAcceleration(startingFrame.location, mass, false);
+			final AngularAcceleration angularA = startingFrame.forces.sumAngularAcceleration(startingFrame.location, momentOfInertia, false);
+
+			// calculate v = u+at
+			extrapolatedFrame.linearVelocity = startingFrame.linearVelocity.add(linearA.applyOverTicks(ticks));
+			extrapolatedFrame.angularVelocity = startingFrame.angularVelocity.compose(angularA.applyOverTicks(ticks));
+
+			// calculate s = s_0 + ut + 1/2at^2
+			Vec3 linearVTerm = startingFrame.linearVelocity.applyOverTicks(ticks);
+			Vec3 linearATerm = linearA.applyOverTicks(ticks).scale(0.5d).applyOverTicks(ticks);
+			Vec3 pos = startingFrame.location.positionVec3().add(linearVTerm).add(linearATerm);
+			Quaternionf angularVTerm = startingFrame.angularVelocity.applyOverTicks(ticks);
+			Quaternionf angularATerm = angularA.applyOverTicks(ticks).scale(0.5d).applyOverTicks(ticks);
+			Quaternionf ori = new Quaternionf(startingFrame.location.Orientation);
+			ori.mul(angularVTerm);
+			ori.mul(angularATerm);
+			extrapolatedFrame.location = Transform.fromPosAndQuat(pos, ori);
+			return extrapolatedFrame;
 		}
 
 		@Override
@@ -89,6 +126,101 @@ public class PhysicsComponent
 			return "["+gameTick+"]@"+location+" with ["+linearVelocity+"] and ["+angularVelocity+"]";
 		}
 	}
+	private static class FrameBuilder
+	{
+		public Frame FrameA;
+		public Frame FrameB;
+		public final long TargetTick;
+
+		public FrameBuilder(long gameTick)
+		{
+			TargetTick = gameTick;
+		}
+		@Nonnull
+		public FrameBuilder unknown()
+		{
+			return this;
+		}
+		@Nonnull
+		public FrameBuilder interpolated(@Nonnull Frame srcA, @Nonnull Frame srcB)
+		{
+			FrameA = srcA;
+			FrameB = srcB;
+			return this;
+		}
+		@Nonnull
+		public FrameBuilder extrapolated(@Nonnull Frame src)
+		{
+			FrameA = src;
+			return this;
+		}
+		@Nonnull
+		public FrameBuilder exact(@Nonnull Frame src)
+		{
+			FrameA = src;
+			return this;
+		}
+		@Nonnull
+		public FrameBuilder test(@Nonnull DeltaRingBuffer<Frame> frameHistory)
+		{
+			Frame before = null, after = null;
+			for(Frame frame : frameHistory)
+			{
+				long delta = TargetTick - frame.gameTick;
+				if(delta == 0)
+					return exact(frame);
+
+				else if(delta < 0)
+				{
+					if(before == null || frame.gameTick > before.gameTick)
+						before = frame;
+				}
+				else // delta > 0
+				{
+					if(after == null || frame.gameTick < after.gameTick)
+						after = frame;
+				}
+			}
+
+			if(before != null && after != null)
+				return interpolated(before, after);
+			else if(before != null)
+				return extrapolated(before);
+			else if(after != null)
+				return extrapolated(after);
+			else
+				return unknown();
+		}
+
+		public boolean isExact() { return FrameA != null && FrameA.gameTick == TargetTick; }
+		public boolean isExtrapolation() { return FrameA != null && FrameB == null && FrameA.gameTick != TargetTick; }
+		public boolean isInterpolation() { return FrameA != null && FrameB != null; }
+
+		@Nonnull
+		public Optional<Frame> build(boolean allowInterpolation, boolean allowExtrapolation, double mass, @Nonnull Vec3 momentOfInertia)
+		{
+			if(FrameA == null)
+				return Optional.empty();
+			if(FrameB == null)
+			{
+				// Only one source frame, either exact or an extrapolation
+				if(FrameA.gameTick == TargetTick)
+					return Optional.of(FrameA);
+				else if(allowExtrapolation)
+					return Optional.of(Frame.extrapolate(FrameA, TargetTick - FrameA.gameTick, mass, momentOfInertia));
+				else
+					return Optional.empty();
+			}
+			else
+			{
+				// Two source frames, this must be interpolation
+				if(allowInterpolation)
+					return Optional.of(Frame.interpolate(FrameA, FrameB, (TargetTick - FrameA.gameTick) / (float)(FrameB.gameTick - FrameA.gameTick)));
+				else
+					return Optional.empty();
+			}
+		}
+	}
 
 
 	public double mass = DEFAULT_MASS;
@@ -105,15 +237,15 @@ public class PhysicsComponent
 
 	@Nonnull public ForcesOnPart getPendingForces() { return pendingForces; }
 
-	@Nonnull public ForcesOnPart getCurrentForces() { return getCurrentFrame().forces; }
-	@Nonnull public Transform getCurrentTransform() { return getCurrentFrame().location; }
-	@Nonnull public LinearVelocity getCurrentLinearVelocity() { return getCurrentFrame().linearVelocity; }
-	@Nonnull public AngularVelocity getCurrentAngularVelocity() { return getCurrentFrame().angularVelocity; }
+	@Nonnull public ForcesOnPart getCurrentForces() { return getMostRecentFrame().forces; }
+	@Nonnull public Transform getCurrentTransform() { return getMostRecentFrame().location; }
+	@Nonnull public LinearVelocity getCurrentLinearVelocity() { return getMostRecentFrame().linearVelocity; }
+	@Nonnull public AngularVelocity getCurrentAngularVelocity() { return getMostRecentFrame().angularVelocity; }
 
-	@Nonnull public ForcesOnPart getPreviousForces() { return getPreviousFrameOrCurrent().forces; }
-	@Nonnull public Transform getPreviousTransform() { return getPreviousFrameOrCurrent().location; }
-	@Nonnull public LinearVelocity getPreviousLinearVelocity() { return getPreviousFrameOrCurrent().linearVelocity; }
-	@Nonnull public AngularVelocity getPreviousAngularVelocity() { return getPreviousFrameOrCurrent().angularVelocity; }
+	@Nonnull public ForcesOnPart getPreviousForces() { return getPreviousRecentFrame().forces; }
+	@Nonnull public Transform getPreviousTransform() { return getPreviousRecentFrame().location; }
+	@Nonnull public LinearVelocity getPreviousLinearVelocity() { return getPreviousRecentFrame().linearVelocity; }
+	@Nonnull public AngularVelocity getPreviousAngularVelocity() { return getPreviousRecentFrame().angularVelocity; }
 
 	@Nonnull public ITransformPair pair() { return ITransformPair.of(this::getPreviousTransform, this::getCurrentTransform); }
 
@@ -209,6 +341,26 @@ public class PhysicsComponent
 	}
 
 	@Nonnull
+	private Optional<Frame> getExactFrame(long gameTick) { return getFrame(gameTick, false, false); }
+	@Nonnull
+	private Optional<Frame> getInterpolatedFrame(long gameTick) { return getFrame(gameTick, true, false); }
+	@Nonnull
+	private Optional<Frame> getExtrapolatedFrame(long gameTick) { return getFrame(gameTick, false, true); }
+	@Nonnull
+	private Optional<Frame> getFrame(long gameTick, boolean allowInterpolation, boolean allowExtrapolation)
+	{
+		return new FrameBuilder(gameTick).test(frameHistory).build(allowInterpolation, allowExtrapolation, mass, momentOfInertia);
+	}
+	@Nonnull
+	private Frame getMostRecentFrame() { return frameHistory.getMostRecent(); }
+	@Nonnull
+	private Frame getPreviousRecentFrame()
+	{
+		// TODO: Have I gone too complex for a simple task? Probably
+		return getInterpolatedFrame(frameHistory.getMostRecent().gameTick - 1).orElse(getMostRecentFrame());
+	}
+
+	@Nonnull
 	public Transform getLocation(long gameTick)
 	{
 		return interpolate(gameTick, frame -> frame.location, Transform::interpolate, Transform.IDENTITY);
@@ -262,16 +414,6 @@ public class PhysicsComponent
 			return defaultValue;
 		}
 	}
-	@Nonnull
-	private Frame getCurrentFrame(long currentTick) { return getLocation(currentTick); }
-	@Nullable
-	private Frame getPreviousFrame() { return frameHistory.getOldEntry(1); }
-	@Nonnull
-	private Frame getPreviousFrameOrCurrent()
-	{
-		Frame frame = frameHistory.getOldEntry(1);
-		return frame == null ? getCurrentFrame() : frame;
-	}
 	public void teleportTo(@Nonnull OBBCollisionSystem system, @Nonnull Transform newLocation)
 	{
 		if(physicsHandle.IsValid())
@@ -296,29 +438,7 @@ public class PhysicsComponent
 	@Nonnull
 	private Frame createExtrapolatedFrame(@Nonnull Frame startingFrame, long ticks)
 	{
-		Frame extrapolatedFrame = new Frame();
-		extrapolatedFrame.gameTick = startingFrame.gameTick + ticks;
-		extrapolatedFrame.forces = startingFrame.forces;
-
-		// assume accelerations are constant
-		final LinearAcceleration linearA = startingFrame.forces.sumLinearAcceleration(startingFrame.location, mass, false);
-		final AngularAcceleration angularA = startingFrame.forces.sumAngularAcceleration(startingFrame.location, momentOfInertia, false);
-
-		// calculate v = u+at
-		extrapolatedFrame.linearVelocity = startingFrame.linearVelocity.add(linearA.applyOverTicks(ticks));
-		extrapolatedFrame.angularVelocity = startingFrame.angularVelocity.compose(angularA.applyOverTicks(ticks));
-
-		// calculate s = s_0 + ut + 1/2at^2
-		Vec3 linearVTerm = startingFrame.linearVelocity.applyOverTicks(ticks);
-		Vec3 linearATerm = linearA.applyOverTicks(ticks).scale(0.5d).applyOverTicks(ticks);
-		Vec3 pos = startingFrame.location.positionVec3().add(linearVTerm).add(linearATerm);
-		Quaternionf angularVTerm = startingFrame.angularVelocity.applyOverTicks(ticks);
-		Quaternionf angularATerm = angularA.applyOverTicks(ticks).scale(0.5d).applyOverTicks(ticks);
-		Quaternionf ori = new Quaternionf(startingFrame.location.Orientation);
-		ori.mul(angularVTerm);
-		ori.mul(angularATerm);
-		extrapolatedFrame.location = Transform.fromPosAndQuat(pos, ori);
-		return extrapolatedFrame;
+		return Frame.extrapolate(startingFrame, ticks, mass, momentOfInertia);
 	}
 	private boolean checkIfUpdateNeeded(@Nonnull Frame newSyncFrame)
 	{
@@ -346,7 +466,7 @@ public class PhysicsComponent
 		lastSyncFrame.linearVelocity = syncMessage.LinearVelocityUpdate != null ? syncMessage.LinearVelocityUpdate : getLinearVelocity(gameTick);
 		lastSyncFrame.angularVelocity = syncMessage.AngularVelocityUpdate != null ? syncMessage.AngularVelocityUpdate : getAngularVelocity(gameTick);
 		lastSyncFrame.gameTick = gameTick;
-		localFrameAtLastReceive = getCurrentFrame();
+		localFrameAtLastReceive = getMostRecentFrame();
 	}
 	public static long REMOTE_LERP_CONVERGE_TICKS = 3;
 	public void syncAndLerpToComponent(@Nonnull OBBCollisionSystem system)
@@ -358,12 +478,12 @@ public class PhysicsComponent
 		{
 			long remoteT = lastSyncFrame.gameTick;
 			long receiveT = localFrameAtLastReceive.gameTick;
-			long maxT = Maths.max(receiveT, remoteT);
-			long convergeT = maxT + REMOTE_LERP_CONVERGE_TICKS;
+			//long maxT = Maths.max(receiveT, remoteT);
+			long convergeT = receiveT + REMOTE_LERP_CONVERGE_TICKS;
 
 			if(pendingFrame.gameTick <= convergeT)
 			{
-				float blend = 1.0f - ((float)(convergeT - pendingFrame.gameTick) / (float)REMOTE_LERP_CONVERGE_TICKS);
+				float blend = 1.0f - Maths.clamp((float)(convergeT - pendingFrame.gameTick) / (float)REMOTE_LERP_CONVERGE_TICKS, 0f, 1f);
 				blendExtrapolated(localFrameAtLastReceive, lastSyncFrame, blend, pendingFrame.gameTick, pendingFrame);
 				frameHistory.addIfChanged(pendingFrame);
 				return;

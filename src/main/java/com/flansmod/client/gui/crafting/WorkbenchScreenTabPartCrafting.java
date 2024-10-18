@@ -565,7 +565,7 @@ public class WorkbenchScreenTabPartCrafting extends WorkbenchScreenTab<Workbench
 					ItemStack[] possibleInputs = ingredient.getItems();
 					if (possibleInputs.length > 0)
 					{
-						int pick = Maths.Modulo(Maths.floor(ShowPotentialMatchTicker), possibleInputs.length);
+						int pick = Maths.modulo(Maths.floor(ShowPotentialMatchTicker), possibleInputs.length);
 						ItemStack possibleInput = ingredient.getItems()[pick];
 
 						if(!possibleInput.isEmpty())

@@ -1,6 +1,5 @@
 package com.flansmod.physics.client;
 
-import com.flansmod.client.render.debug.DebugRenderer;
 import com.flansmod.physics.common.collision.*;
 import com.flansmod.physics.common.entity.ForcesOnPart;
 import com.flansmod.physics.common.entity.PhysicsEntity;
@@ -151,8 +150,8 @@ public class PhysicsDebugRenderer
         Vec3 normal = axis.GetNormal();
         Vec3 up = new Vec3(normal.z, -normal.x, -normal.y);
         Transform frame = Transform.fromPositionAndLookDirection(position, axis.GetNormal(), up);
-        DebugRenderer.RenderArrow(frame, 2, palette.CollisionStatic, new Vec3(0d, 0d, -1d));
-        DebugRenderer.RenderCube(frame, 2, palette.CollisionStatic, new Vector3f(0.25f, 0.25f, 0f));
+        DebugRenderer.renderArrow(frame, 2, palette.CollisionStatic, new Vec3(0d, 0d, -1d));
+        DebugRenderer.renderCube(frame, 2, palette.CollisionStatic, new Vector3f(0.25f, 0.25f, 0f));
     }
 
     private void DebugRender(@Nonnull DynamicObject dynamic, @Nonnull DebugPalette palette)
@@ -170,18 +169,18 @@ public class PhysicsDebugRenderer
             {
                 Vec3 vCurrent = collisionSurface.GetVertexLooped(i);
                 Vec3 vNext = collisionSurface.GetVertexLooped(i + 1);
-                DebugRenderer.RenderPoint(Transform.fromPos(vCurrent), 2, palette.CollisionStatic);
-                DebugRenderer.RenderLine(Transform.fromPos(vCurrent), 2, palette.CollisionStatic, vNext.subtract(vCurrent));
+                DebugRenderer.renderPoint(Transform.fromPos(vCurrent), 2, palette.CollisionStatic);
+                DebugRenderer.renderLine(Transform.fromPos(vCurrent), 2, palette.CollisionStatic, vNext.subtract(vCurrent));
                 avgPos = avgPos.add(vCurrent);
             }
             if(numVerts > 0) {
                 Transform collisionFrame = Transform.fromPositionAndLookDirection(avgPos.scale(1d / numVerts), normal, up);
-                DebugRenderer.RenderArrow(collisionFrame, 2, palette.CollisionStatic, new Vec3(0d, 0d, -1d));
+                DebugRenderer.renderArrow(collisionFrame, 2, palette.CollisionStatic, new Vec3(0d, 0d, -1d));
                 //staticCollisionPoints.add(collisionFrame.PositionVec3());
             }
             else {
                 Transform collisionFrame = Transform.fromPositionAndLookDirection(dynamic.getCurrentWorldBounds().getCenter(), normal, up);
-                DebugRenderer.RenderArrow(collisionFrame, 2, palette.CollisionStatic.mul(1.0f, 0.5f, 0.5f, 1.0f, new Vector4f()), new Vec3(0d, 0d, -1d));
+                DebugRenderer.renderArrow(collisionFrame, 2, palette.CollisionStatic.mul(1.0f, 0.5f, 0.5f, 1.0f, new Vector4f()), new Vec3(0d, 0d, -1d));
                 //staticCollisionPoints.add(collisionFrame.PositionVec3());
             }
             //Transform collisionFrame = Transform.FromPositionAndLookDirection(collisionSurface.GetVertexLooped(0), normal, up);
@@ -192,8 +191,8 @@ public class PhysicsDebugRenderer
             Vec3 normal = collision.ContactNormal();
             Vec3 up = new Vec3(normal.z, -normal.x, -normal.y);
             Transform collisionFrame = Transform.fromPositionAndLookDirection(collision.ContactPoint(), normal, up);
-            DebugRenderer.RenderCube(collisionFrame, 2, palette.CollisionDynamic, new Vector3f(0.25f, 0.25f, 0f));
-            DebugRenderer.RenderArrow(collisionFrame, 2, palette.CollisionDynamic, new Vec3(0d,0d,-1d));
+            DebugRenderer.renderCube(collisionFrame, 2, palette.CollisionDynamic, new Vector3f(0.25f, 0.25f, 0f));
+            DebugRenderer.renderArrow(collisionFrame, 2, palette.CollisionDynamic, new Vec3(0d,0d,-1d));
         }
     }
     private void DebugRender(@Nonnull TransformedBBCollection bbs, @Nonnull DebugPalette palette, boolean predicted)
@@ -201,7 +200,7 @@ public class PhysicsDebugRenderer
         for(int i = 0; i < bbs.getCount(); i++)
         {
             TransformedBB bb = bbs.getColliderBB(i);
-            DebugRenderer.RenderCube(bb.Loc(), 2, predicted ? palette.PositionCurrent : palette.PositionPrevious, bb.HalfExtents());
+            DebugRenderer.renderCube(bb.Loc(), 2, predicted ? palette.PositionCurrent : palette.PositionPrevious, bb.HalfExtents());
         }
     }
     private void DebugRender(@Nonnull Iterable<Entity> entityList, @Nonnull DebugPalette palette)
@@ -247,21 +246,21 @@ public class PhysicsDebugRenderer
                 if(force.hasLinearComponent(worldTransform))
                 {
                     LinearForce linear = force.getLinearComponent(worldTransform);
-                    DebugRenderer.RenderArrow(worldTransform, 1, forceColour, linear.Force().scale(forceArrowScale));
+                    DebugRenderer.renderArrow(worldTransform, 1, forceColour, linear.Force().scale(forceArrowScale));
                 }
                 if(force.hasAngularComponent(worldTransform))
                 {
                     Torque torque = force.getTorqueComponent(worldTransform);
-                    DebugRenderer.RenderRotation(worldTransform, 1, forceColour, torque.Axis(), torque.Magnitude());
+                    DebugRenderer.renderRotation(worldTransform, 1, forceColour, torque.Axis(), torque.Magnitude());
                     //Quaternionf angular = force.GetAngularComponentRadiansPerSecondSq(worldTransform);
                     //forceTotal = forceTotal.add(global.Vector());
                 }
             }
 
             Vec3 motionNext = motion.add(forceTotal.scale(inertia));
-            DebugRenderer.RenderArrow(worldTransform, 1, palette.MotionCurrent, motion.scale(motionArrowScale));
+            DebugRenderer.renderArrow(worldTransform, 1, palette.MotionCurrent, motion.scale(motionArrowScale));
             //DebugRenderer.RenderArrow(worldTransform, 1, palette.MotionCurrent, motionNext.scale(motionArrowScale));
-            DebugRenderer.RenderArrow(worldTransform.translated(motion.scale(motionArrowScale)), 1, palette.ForceInputs, forceTotal.scale(motionArrowScale));
+            DebugRenderer.renderArrow(worldTransform.translated(motion.scale(motionArrowScale)), 1, palette.ForceInputs, forceTotal.scale(motionArrowScale));
             return motionNext;
         }
         return Vec3.ZERO;

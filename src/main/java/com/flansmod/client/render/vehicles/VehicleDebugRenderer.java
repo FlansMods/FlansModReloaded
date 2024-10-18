@@ -1,7 +1,7 @@
 package com.flansmod.client.render.vehicles;
 
 import com.flansmod.client.FlansModClient;
-import com.flansmod.client.render.debug.DebugRenderer;
+import com.flansmod.physics.client.DebugRenderer;
 import com.flansmod.common.FlansMod;
 import com.flansmod.common.entity.longdistance.LongDistanceEntity;
 import com.flansmod.common.entity.longdistance.LongDistanceVehicle;
@@ -188,7 +188,7 @@ public class VehicleDebugRenderer
 		for(int i = 0; i < bbs.getCount(); i++)
 		{
 			TransformedBB bb = bbs.getColliderBB(i);
-			DebugRenderer.RenderCube(bb.Loc(), 1, palette.CoreCurrent, bb.HalfExtents());
+			DebugRenderer.renderCube(bb.Loc(), 1, palette.CoreCurrent, bb.HalfExtents());
 		}
 	}
 
@@ -248,8 +248,8 @@ public class VehicleDebugRenderer
 					Transform wheelPos =physics.getCurrentTransform();
 					Vector3f debugWheelBoxSize = new Vector3f(0.5f * def.radius, def.radius, def.radius);
 					//DebugRenderer.RenderAxes(wheel.GetWorldTransformCurrent(), 1, palette.Default);
-					DebugRenderer.RenderRotation(wheelPos, 1, palette.WheelCurrent, wheelPos.right(), 1.0d);
-					DebugRenderer.RenderLine(vehiclePos, 1, palette.WheelCurrent, vehiclePos.globalToLocalPosition(wheelPos.positionVec3()));
+					DebugRenderer.renderRotation(wheelPos, 1, palette.WheelCurrent, wheelPos.right(), 1.0d);
+					DebugRenderer.renderLine(vehiclePos, 1, palette.WheelCurrent, vehiclePos.globalToLocalPosition(wheelPos.positionVec3()));
 
 
 					Vec3 wheelMotionNextFrame = DebugRenderForces(physics.getCurrentForces(),
@@ -290,12 +290,12 @@ public class VehicleDebugRenderer
 				if(force.hasLinearComponent(worldTransform))
 				{
 					LinearForce linear = force.getLinearComponent(worldTransform);
-					DebugRenderer.RenderArrow(worldTransform, 1, forceColour, linear.Force().scale(forceArrowScale));
+					DebugRenderer.renderArrow(worldTransform, 1, forceColour, linear.Force().scale(forceArrowScale));
 				}
 				if(force.hasAngularComponent(worldTransform))
 				{
 					Torque torque = force.getTorqueComponent(worldTransform);
-					DebugRenderer.RenderRotation(worldTransform, 1, forceColour, torque.Axis(), torque.Magnitude());
+					DebugRenderer.renderRotation(worldTransform, 1, forceColour, torque.Axis(), torque.Magnitude());
 					//Quaternionf angular = force.GetAngularComponentRadiansPerSecondSq(worldTransform);
 					//forceTotal = forceTotal.add(global.Vector());
 				}
@@ -345,9 +345,9 @@ public class VehicleDebugRenderer
 			//}
 
 			Vec3 motionNext = motion.add(forceTotal.scale(inertia));
-			DebugRenderer.RenderArrow(worldTransform, 1, palette.MotionCurrent, motion.scale(motionArrowScale));
-			DebugRenderer.RenderArrow(worldTransform, 1, palette.MotionNext, motionNext.scale(motionArrowScale));
-			DebugRenderer.RenderArrow(worldTransform.translated(motion.scale(motionArrowScale)), 1, palette.TotalForce, forceTotal.scale(motionArrowScale));
+			DebugRenderer.renderArrow(worldTransform, 1, palette.MotionCurrent, motion.scale(motionArrowScale));
+			DebugRenderer.renderArrow(worldTransform, 1, palette.MotionNext, motionNext.scale(motionArrowScale));
+			DebugRenderer.renderArrow(worldTransform.translated(motion.scale(motionArrowScale)), 1, palette.TotalForce, forceTotal.scale(motionArrowScale));
 			return motionNext;
 		}
 		return Vec3.ZERO;

@@ -1,6 +1,6 @@
 package com.flansmod.physics.common.util.shapes;
 
-import com.flansmod.client.render.debug.DebugRenderer;
+import com.flansmod.physics.client.DebugRenderer;
 import com.flansmod.physics.common.FlansPhysicsMod;
 import com.flansmod.physics.common.collision.TransformedBB;
 import com.flansmod.physics.common.collision.TransformedBBCollection;
@@ -110,15 +110,15 @@ public interface IPlane extends ISeparationAxis
         {
             Transform vCurrent = Transform.fromPos(incident.GetVertex(i));
             Vec3 vEdge = incident.GetEdgeVector(i);
-            DebugRenderer.RenderLine(vCurrent, 2, new Vector4f(1.0f, 0.0f, 0.0f, 1.0f), vEdge);
-            DebugRenderer.RenderPoint(vCurrent, 2, new Vector4f(1.0f, 0.0f, 0.0f, 1.0f));
+            DebugRenderer.renderLine(vCurrent, 2, new Vector4f(1.0f, 0.0f, 0.0f, 1.0f), vEdge);
+            DebugRenderer.renderPoint(vCurrent, 2, new Vector4f(1.0f, 0.0f, 0.0f, 1.0f));
         }
         for(int i = 0; i < reference.GetNumVertices(); i++)
         {
             Transform vCurrent = Transform.fromPos(reference.GetVertex(i));
             Vec3 vEdge = reference.GetEdgeVector(i);
-            DebugRenderer.RenderLine(vCurrent, 2, new Vector4f(0.0f, 1.0f, 0.0f, 1.0f), vEdge);
-            DebugRenderer.RenderPoint(vCurrent, 2, new Vector4f(0.0f, 1.0f, 0.0f, 1.0f));
+            DebugRenderer.renderLine(vCurrent, 2, new Vector4f(0.0f, 1.0f, 0.0f, 1.0f), vEdge);
+            DebugRenderer.renderPoint(vCurrent, 2, new Vector4f(0.0f, 1.0f, 0.0f, 1.0f));
         }
 
         // Adjacent Face Clipping

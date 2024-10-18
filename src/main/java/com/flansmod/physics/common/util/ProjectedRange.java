@@ -24,6 +24,12 @@ public record ProjectedRange(double min, double max)
             return Double.MAX_VALUE;
         return range.max() - range.min();
     }
+    public static boolean isNonZero(@Nullable ProjectedRange range)
+    {
+        if(range == null)
+            return false;
+        return !Maths.approx(range.min(), 0d) || !Maths.approx(range.max(), 0d);
+    }
     public static double clamp(@Nullable ProjectedRange range, double value)
     {
         if(range == null)

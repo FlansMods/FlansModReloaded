@@ -1,6 +1,5 @@
 package com.flansmod.physics.common.util;
 
-import com.flansmod.physics.common.FlansPhysicsMod;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.phys.Vec3;
@@ -17,9 +16,12 @@ public class Maths
     // Long maths
     public static long max(long a, long b) { return a > b ? a : b; }
     public static long min(long a, long b) { return a < b ? a : b; }
+    public static long ceilLerp(long a, long b, double t) { return ceilL(a + (b-a)*t); }
+    public static long floorLerp(long a, long b, double t) { return floorL(a + (b-a)*t); }
+    public static long roundLerp(long a, long b, double t) { return roundL(a + (b-a)*t); }
 
     // Integer maths
-    public static int Modulo(int a, int b)
+    public static int modulo(int a, int b)
     {
         int c = a % b;
         if(c < 0)
@@ -30,8 +32,9 @@ public class Maths
     public static int clamp(int i, int min, int max) { return i > max ? max : (i < min ? min : i);  }
     public static int max(int a, int b) { return a > b ? a : b; }
     public static int min(int a, int b) { return a < b ? a : b; }
-    public static int ceilLerp(int a, int b, float t) { return Maths.ceil(a + (b-a)*t); }
-    public static int floorLerp(int a, int b, float t) { return Maths.floor(a + (b-a)*t); }
+    public static int ceilLerp(int a, int b, float t) { return ceil(a + (b-a)*t); }
+    public static int floorLerp(int a, int b, float t) { return floor(a + (b-a)*t); }
+    public static int roundLerp(int a, int b, float t) { return round(a + (b-a)*t); }
 
     // Double maths
     public static final double Root2 = sqrt(2);
@@ -42,6 +45,9 @@ public class Maths
     public static int ceil(double d) { return (int)Math.ceil(d); }
     public static int floor(double d) { return (int)Math.floor(d); }
     public static int round(double d) { return (int)Math.round(d); }
+    public static long ceilL(double d) { return (long)Math.ceil(d); }
+    public static long floorL(double d) { return (long)Math.floor(d); }
+    public static long roundL(double d) { return (long)Math.round(d); }
     public static double max(double a, double b) { return a > b ? a : b; }
     public static double min(double a, double b) { return a < b ? a : b; }
 
@@ -167,7 +173,7 @@ public class Maths
 
     public static int getClosestDistanceModulo(int a, int b, int mod)
     {
-        int delta = Modulo(a - b, mod);  // in [0, mod)
+        int delta = modulo(a - b, mod);  // in [0, mod)
         int complement = delta - mod;       // in [-mod, 0)
 
         return abs(complement) < abs(delta) ? complement : delta;

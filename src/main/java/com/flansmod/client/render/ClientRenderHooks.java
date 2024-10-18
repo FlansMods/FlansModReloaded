@@ -1,6 +1,6 @@
 package com.flansmod.client.render;
 
-import com.flansmod.client.render.debug.DebugRenderer;
+import com.flansmod.physics.client.DebugRenderer;
 import com.flansmod.common.FlansMod;
 import com.flansmod.common.actions.*;
 import com.flansmod.common.actions.contexts.ActionGroupContext;
@@ -337,7 +337,7 @@ public class ClientRenderHooks
 
 						Vector3f bounds = new Vector3f((float) item.LockedOnTarget.getBoundingBox().getSize(), (float) item.LockedOnTarget.getBoundingBox().getSize(),0);
 						t = t.translated(new Vec3(0,item.LockedOnTarget.getBoundingBox().getSize()/2,0));
-						DebugRenderer.RenderCube(t,1,lockCol,bounds.mul(2f-Math.min(item.lockTime/item.lockTimeMax,1f)));
+						DebugRenderer.renderCube(t,1,lockCol,bounds.mul(2f-Math.min(item.lockTime/item.lockTimeMax,1f)));
 						//Transform t2 = t;
 						//Vector3f bounds2 = bounds;
 						//DebugRenderer.RenderCube(t2,2,lockCol,bounds2.mul(0.5f));
@@ -486,7 +486,7 @@ public class ClientRenderHooks
 
 						Vector3f bounds = new Vector3f((float) item.LockedOnTarget.getBoundingBox().getSize(), (float) item.LockedOnTarget.getBoundingBox().getSize(),0);
 						t = t.translated(new Vec3(0,item.LockedOnTarget.getBoundingBox().getSize()/2,0));
-						DebugRenderer.RenderCube(t,1,lockCol,bounds.mul(2f-Math.min(item.lockTime/item.lockTimeMax,1f)));
+						DebugRenderer.renderCube(t,1,lockCol,bounds.mul(2f-Math.min(item.lockTime/item.lockTimeMax,1f)));
 					}
 				}
 			}

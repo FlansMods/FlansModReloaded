@@ -1,6 +1,6 @@
 package com.flansmod.physics.common.collision;
 
-import com.flansmod.client.render.debug.DebugRenderer;
+import com.flansmod.physics.client.DebugRenderer;
 import com.flansmod.common.FlansMod;
 import com.flansmod.physics.common.collision.threading.CollisionTaskResolveDynamic;
 import com.flansmod.physics.common.units.*;
@@ -500,7 +500,7 @@ public class OBBCollisionSystem
 									double center = axis.Project(obb.GetCenter());
 
 									Transform pos = Transform.fromPositionAndLookDirection(obb.GetCenter().add(normal.scale(range.max() - center)), normal, up);
-									DebugRenderer.RenderArrow(pos, 3, new Vector4f(1.0f, 1.0f, blue, 1.0f), new Vec3(0d, 0d, -1d));
+									DebugRenderer.renderArrow(pos, 3, new Vector4f(1.0f, 1.0f, blue, 1.0f), new Vec3(0d, 0d, -1d));
 
 									for(int j = statics.size() - 1; j >= 0; j--)
 									{
@@ -509,7 +509,7 @@ public class OBBCollisionSystem
 										if(ProjectionUtil.SeparatedAThenB(range, boxProj))
 										{
 											Transform staticPos = Transform.fromPos(aabb.getCenter());
-											DebugRenderer.RenderCube(staticPos, 3, new Vector4f(1.0f, 1.0f, blue, 1.0f), new Vector3f((float)aabb.getXsize()*0.5f, (float)aabb.getYsize()*0.5f, (float)aabb.getZsize()*0.5f));
+											DebugRenderer.renderCube(staticPos, 3, new Vector4f(1.0f, 1.0f, blue, 1.0f), new Vector3f((float)aabb.getXsize()*0.5f, (float)aabb.getYsize()*0.5f, (float)aabb.getZsize()*0.5f));
 
 											statics.remove(j);
 										}
@@ -520,7 +520,7 @@ public class OBBCollisionSystem
 								{
 									AABB aabb = statics.get(j).bounds();
 									Transform staticPos = Transform.fromPos(aabb.getCenter());
-									DebugRenderer.RenderCube(staticPos, 3, new Vector4f(1.0f, 0.0f, 0.0f, 1.0f), new Vector3f((float)aabb.getXsize()*0.5f, (float)aabb.getYsize()*0.5f, (float)aabb.getZsize()*0.5f));
+									DebugRenderer.renderCube(staticPos, 3, new Vector4f(1.0f, 0.0f, 0.0f, 1.0f), new Vector3f((float)aabb.getXsize()*0.5f, (float)aabb.getYsize()*0.5f, (float)aabb.getZsize()*0.5f));
 								}
 
 								//for(VoxelShape shape : task.GetResult()) {

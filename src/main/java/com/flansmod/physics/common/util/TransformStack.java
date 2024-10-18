@@ -1,6 +1,5 @@
 package com.flansmod.physics.common.util;
 
-import com.flansmod.client.render.debug.DebugRenderer;
 import com.flansmod.physics.common.FlansPhysicsMod;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.world.phys.Vec3;
@@ -9,7 +8,6 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 import org.joml.Quaternionf;
 import org.joml.Vector3d;
 import org.joml.Vector3f;
-import org.joml.Vector4f;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
