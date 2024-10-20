@@ -44,7 +44,7 @@ public class DynamicObject implements IConstDynamicObject
 	@Nonnull
 	public AngularVelocity NextFrameAngularMotion;
 	@Nonnull
-	public OffsetAcceleration ReactionAcceleration;
+	public CompoundAcceleration ReactionAcceleration;
 	@Nonnull
 	public Optional<Transform> NextFrameTeleport;
 	@Nonnull
@@ -62,7 +62,7 @@ public class DynamicObject implements IConstDynamicObject
 		Frames.add(new FrameData(Transform.copy(initialLocation), LinearVelocity.Zero, AngularVelocity.Zero));
 		NextFrameLinearMotion = LinearVelocity.Zero;
 		NextFrameAngularMotion = AngularVelocity.Zero;
-		ReactionAcceleration = OffsetAcceleration.Zero;
+		ReactionAcceleration = CompoundAcceleration.Zero;
 		NextFrameTeleport = Optional.empty();
 		DynamicCollisions = new ArrayList<>();
 		StaticCollisions = new ArrayList<>();
@@ -247,8 +247,8 @@ public class DynamicObject implements IConstDynamicObject
 			if(withReactionForce)
 			{
 				var reaction = ReactionAcceleration.applyOneTick(getCurrentLocation());
-				deltaPos = deltaPos.add(reaction.getFirst().applyOneTick());
-				deltaRot.mul(reaction.getSecond().applyOneTick());
+				deltaPos = deltaPos.add(reaction.linear().applyOneTick());
+				deltaRot.mul(reaction.angular().applyOneTick());
 			}
 
 			extrapolateNextFrame(deltaPos, deltaRot);

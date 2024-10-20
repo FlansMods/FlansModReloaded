@@ -13,14 +13,14 @@ public record Plane(@Nonnull Vec3 Normal, double Distance) implements IPlane
     @Nonnull
     public static Plane ofNormalAndPointOnPlane(@Nonnull Vec3 normal, @Nonnull Vec3 point) { return new Plane(normal, point.dot(normal)); }
     @Nonnull
-    public static Plane of(@Nonnull ISeparationAxis axis, double distance) { return new Plane(axis.GetNormal(), distance); }
+    public static Plane of(@Nonnull ISeparationAxis axis, double distance) { return new Plane(axis.getNormal(), distance); }
 
     @Override
     public double GetDistance() { return Distance; }
     @Override @Nonnull
-    public Vec3 GetNormal() { return Normal; }
+    public Vec3 getNormal() { return Normal; }
     @Override
-    public double Project(@Nonnull Vec3 point) { return point.dot(Normal); }
+    public double project(@Nonnull Vec3 point) { return point.dot(Normal); }
 
     @Override @Nonnull
     public Optional<Vec3> RayPlaneIntersect(@Nonnull Vec3 origin, @Nonnull Vec3 ray)

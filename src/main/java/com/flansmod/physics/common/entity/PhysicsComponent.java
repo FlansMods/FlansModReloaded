@@ -294,11 +294,11 @@ public class PhysicsComponent
 
 			Transform newPos = system.processEvents(physicsHandle,
 					(collision) -> {
-						if(!Maths.approx(collision.ContactNormal().x, 0d))
+						if(!Maths.approx(collision.separationPlane().getNormal().x, 0d))
 							collidedX.set(true);
-						if(!Maths.approx(collision.ContactNormal().y, 0d))
+						if(!Maths.approx(collision.separationPlane().getNormal().y, 0d))
 							collidedY.set(true);
-						if(!Maths.approx(collision.ContactNormal().z, 0d))
+						if(!Maths.approx(collision.separationPlane().getNormal().z, 0d))
 							collidedZ.set(true);
 
 					},

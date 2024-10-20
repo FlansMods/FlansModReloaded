@@ -17,8 +17,8 @@ import static java.lang.Math.abs;
 
 public interface ISeparationAxis
 {
-    @Nonnull Vec3 GetNormal();
-    double Project(@Nonnull Vec3 point);
+    @Nonnull Vec3 getNormal();
+    double project(@Nonnull Vec3 point);
 
     // These defaults are given mainly to show the layer by layer construction of our projection logic
     // Take a max over any of the box corners, i.e. v = (+/-1, +/-1, +/-1) * halfExtents
@@ -26,11 +26,11 @@ public interface ISeparationAxis
     //  Axis.x * vMax.x, Axis.y * vMax.y, Axis.z * vMax.z
     // Since we can pick any corner, vMax.x, .y, and .z are all independent, so we can maximise each component
     // Notably, this cannot be negative, but that makes sense. We are centered on the origin
-    default double ProjectOriginBoxMax(@Nonnull Vector3f halfExtents) { return abs(GetNormal().x * halfExtents.x) + abs(GetNormal().y * halfExtents.y) + abs(GetNormal().z * halfExtents.z); }
-    default double ProjectOriginBoxMin(@Nonnull Vector3f halfExtents) { return -(abs(GetNormal().x * halfExtents.x) + abs(GetNormal().y * halfExtents.y) + abs(GetNormal().z * halfExtents.z)); }
-    @Nonnull default ProjectedRange ProjectOriginBox(@Nonnull Vector3f halfExtents)
+    default double projectOriginBoxMax(@Nonnull Vector3f halfExtents) { return abs(getNormal().x * halfExtents.x) + abs(getNormal().y * halfExtents.y) + abs(getNormal().z * halfExtents.z); }
+    default double projectOriginBoxMin(@Nonnull Vector3f halfExtents) { return -(abs(getNormal().x * halfExtents.x) + abs(getNormal().y * halfExtents.y) + abs(getNormal().z * halfExtents.z)); }
+    @Nonnull default ProjectedRange projectOriginBox(@Nonnull Vector3f halfExtents)
     {
-        return ProjectionUtil.ProjectAABBMinMax(GetNormal(), -halfExtents.x, -halfExtents.y, -halfExtents.z, halfExtents.x, halfExtents.y, halfExtents.z);
+        return ProjectionUtil.ProjectAABBMinMax(getNormal(), -halfExtents.x, -halfExtents.y, -halfExtents.z, halfExtents.x, halfExtents.y, halfExtents.z);
     }
 
 
@@ -39,123 +39,123 @@ public interface ISeparationAxis
     //  projection = Axis.x * (pos.x + vMax.x), ...
     //  		   = dot(Axis, pos) + dot(Axis, vMax)
     //  max(dot(A,p)+dot(A,v)) = dot(A,p) + sign(dot(A,p))*abs(dot(A,v)) <- not sure if this is worth optimising
-    @Nonnull default ProjectedRange ProjectAABBMinMax(@Nonnull Vec3 point, @Nonnull Vector3f halfExtents)
+    @Nonnull default ProjectedRange projectAABBMinMax(@Nonnull Vec3 point, @Nonnull Vector3f halfExtents)
     {
-        return ProjectionUtil.ProjectAABBMinMax(GetNormal(),
+        return ProjectionUtil.ProjectAABBMinMax(getNormal(),
                 point.x - halfExtents.x, point.y - halfExtents.y, point.z - halfExtents.z,
                 point.x + halfExtents.x, point.y + halfExtents.y, point.z + halfExtents.z);
     }
-    default double ProjectAABBMin(@Nonnull Vec3 point, @Nonnull Vector3f halfExtents) { return ProjectAABBMinMax(point, halfExtents).min(); }
-    default double ProjectAABBMax(@Nonnull Vec3 point, @Nonnull Vector3f halfExtents) { return ProjectAABBMinMax(point, halfExtents).max(); }
-    @Nonnull default ProjectedRange ProjectAABBMinMax(@Nonnull AABB aabb) { return ProjectionUtil.ProjectAABBMinMax(GetNormal(), aabb); }
-    default double ProjectAABBMin(@Nonnull AABB aabb) { return ProjectAABBMinMax(aabb).min(); }
-    default double ProjectAABBMax(@Nonnull AABB aabb) { return ProjectAABBMinMax(aabb).max(); }
+    default double projectAABBMin(@Nonnull Vec3 point, @Nonnull Vector3f halfExtents) { return projectAABBMinMax(point, halfExtents).min(); }
+    default double projectAABBMax(@Nonnull Vec3 point, @Nonnull Vector3f halfExtents) { return projectAABBMinMax(point, halfExtents).max(); }
+    @Nonnull default ProjectedRange projectAABBMinMax(@Nonnull AABB aabb) { return ProjectionUtil.ProjectAABBMinMax(getNormal(), aabb); }
+    default double projectAABBMin(@Nonnull AABB aabb) { return projectAABBMinMax(aabb).min(); }
+    default double projectAABBMax(@Nonnull AABB aabb) { return projectAABBMinMax(aabb).max(); }
     @Nonnull
-    default Pair<Double, IPlane> GetSeparationPlaneAtoB(@Nonnull TransformedBB a, @Nonnull AABB b)
+    default Pair<Double, IPlane> getSeparationPlaneAtoB(@Nonnull TransformedBB a, @Nonnull AABB b)
     {
-        ProjectedRange aProjection = ProjectOBBMinMax(a);
-        ProjectedRange bProjection = ProjectAABBMinMax(b);
+        ProjectedRange aProjection = projectOBBMinMax(a);
+        ProjectedRange bProjection = projectAABBMinMax(b);
         var pair = ProjectionUtil.GetSeparationDistanceAndOrder(aProjection, bProjection);
         return switch(pair.getSecond())
         {
-            case Separate_A_Then_B, Colliding_A_Then_B -> Pair.of(pair.getFirst(), Plane.of(GetNormal(), aProjection.max()));
-            case Separate_B_Then_A, Colliding_B_Then_A -> Pair.of(pair.getFirst(), Plane.of(GetNormal().scale(-1d), -aProjection.min()));
+            case Separate_A_Then_B, Colliding_A_Then_B -> Pair.of(pair.getFirst(), Plane.of(getNormal(), aProjection.max()));
+            case Separate_B_Then_A, Colliding_B_Then_A -> Pair.of(pair.getFirst(), Plane.of(getNormal().scale(-1d), -aProjection.min()));
         };
     }
 
     @Nonnull
-    default ProjectedRange ProjectOBBMinMax(@Nonnull Vec3 point, @Nonnull Vector3f halfExtents, @Nonnull Matrix3f ori)
+    default ProjectedRange projectOBBMinMax(@Nonnull Vec3 point, @Nonnull Vector3f halfExtents, @Nonnull Matrix3f ori)
     {
-        return ProjectionUtil.ProjectOBBMinMax(GetNormal(), point, halfExtents, ori);
+        return ProjectionUtil.ProjectOBBMinMax(getNormal(), point, halfExtents, ori);
     }
-    default double ProjectOBBMin(@Nonnull Vec3 point, @Nonnull Vector3f halfExtents, @Nonnull Matrix3f ori) { return ProjectOBBMinMax(point, halfExtents, ori).min(); }
-    default double ProjectOBBMax(@Nonnull Vec3 point, @Nonnull Vector3f halfExtents, @Nonnull Matrix3f ori) { return ProjectOBBMinMax(point, halfExtents, ori).max(); }
-    @Nonnull default ProjectedRange ProjectOBBMinMax(@Nonnull TransformedBB obb) { return ProjectionUtil.ProjectOBBMinMax(GetNormal(), obb); }
-    default double ProjectOBBMin(@Nonnull TransformedBB obb) { return ProjectOBBMinMax(obb).min(); }
-    default double ProjectOBBMax(@Nonnull TransformedBB obb) { return ProjectOBBMinMax(obb).max(); }
+    default double projectOBBMin(@Nonnull Vec3 point, @Nonnull Vector3f halfExtents, @Nonnull Matrix3f ori) { return projectOBBMinMax(point, halfExtents, ori).min(); }
+    default double projectOBBMax(@Nonnull Vec3 point, @Nonnull Vector3f halfExtents, @Nonnull Matrix3f ori) { return projectOBBMinMax(point, halfExtents, ori).max(); }
+    @Nonnull default ProjectedRange projectOBBMinMax(@Nonnull TransformedBB obb) { return ProjectionUtil.ProjectOBBMinMax(getNormal(), obb); }
+    default double projectOBBMin(@Nonnull TransformedBB obb) { return projectOBBMinMax(obb).min(); }
+    default double projectOBBMax(@Nonnull TransformedBB obb) { return projectOBBMinMax(obb).max(); }
 
 
     @Nonnull
-    default ProjectedRange ProjectOBBsMinMax(@Nonnull TransformedBBCollection set)
+    default ProjectedRange projectOBBsMinMax(@Nonnull TransformedBBCollection set)
     {
         Matrix3f matrix = set.Location().oriMatrix();
         double min = Double.MAX_VALUE;
         double max = -Double.MAX_VALUE;
         for(int i = 0; i < set.getCount(); i++)
         {
-            ProjectedRange projection = ProjectOBBMinMax(set.getCenter(i), set.getHalfExtents(i), matrix);
+            ProjectedRange projection = projectOBBMinMax(set.getCenter(i), set.getHalfExtents(i), matrix);
             min = Maths.min(projection.min(), min);
             max = Maths.min(projection.max(), max);
         }
         return ProjectedRange.preSorted(min, max);
     }
 
-    default boolean Separates(@Nonnull TransformedBB a, @Nonnull TransformedBB b)
+    default boolean separates(@Nonnull TransformedBB a, @Nonnull TransformedBB b)
     {
-        ProjectedRange projectionA = ProjectOBBMinMax(a);
-        ProjectedRange projectionB = ProjectOBBMinMax(b);
+        ProjectedRange projectionA = projectOBBMinMax(a);
+        ProjectedRange projectionB = projectOBBMinMax(b);
         return ProjectionUtil.Separated(projectionA, projectionB);
     }
-    default boolean Separates(@Nonnull TransformedBBCollection a, @Nonnull TransformedBBCollection b)
+    default boolean separates(@Nonnull TransformedBBCollection a, @Nonnull TransformedBBCollection b)
     {
-        ProjectedRange projectionA = ProjectOBBsMinMax(a);
-        ProjectedRange projectionB = ProjectOBBsMinMax(b);
+        ProjectedRange projectionA = projectOBBsMinMax(a);
+        ProjectedRange projectionB = projectOBBsMinMax(b);
         return ProjectionUtil.Separated(projectionA, projectionB);
     }
-    default double GetSeparationDistance(@Nonnull TransformedBB a, @Nonnull TransformedBB b)
+    default double getSeparationDistance(@Nonnull TransformedBB a, @Nonnull TransformedBB b)
     {
-        ProjectedRange aProjection = ProjectOBBMinMax(a);
-        ProjectedRange bProjection = ProjectOBBMinMax(b);
+        ProjectedRange aProjection = projectOBBMinMax(a);
+        ProjectedRange bProjection = projectOBBMinMax(b);
         return ProjectionUtil.GetSeparationDistance(aProjection, bProjection);
     }
     @Nonnull
-    default Pair<Double, IPlane> GetSeparationPlaneAtoB(@Nonnull TransformedBB a, @Nonnull TransformedBB b)
+    default Pair<Double, IPlane> getSeparationPlaneAtoB(@Nonnull TransformedBB a, @Nonnull TransformedBB b)
     {
-        ProjectedRange aProjection = ProjectOBBMinMax(a);
-        ProjectedRange bProjection = ProjectOBBMinMax(b);
+        ProjectedRange aProjection = projectOBBMinMax(a);
+        ProjectedRange bProjection = projectOBBMinMax(b);
         var pair = ProjectionUtil.GetSeparationDistanceAndOrder(aProjection, bProjection);
         return switch(pair.getSecond())
         {
-            case Separate_A_Then_B, Colliding_A_Then_B -> Pair.of(pair.getFirst(), Plane.of(GetNormal(), aProjection.max()));
-            case Separate_B_Then_A, Colliding_B_Then_A -> Pair.of(pair.getFirst(), Plane.of(GetNormal().scale(-1d), -aProjection.min()));
+            case Separate_A_Then_B, Colliding_A_Then_B -> Pair.of(pair.getFirst(), Plane.of(getNormal(), aProjection.max()));
+            case Separate_B_Then_A, Colliding_B_Then_A -> Pair.of(pair.getFirst(), Plane.of(getNormal().scale(-1d), -aProjection.min()));
         };
     }
-    default double GetSeparationDistance(@Nonnull TransformedBBCollection a, @Nonnull TransformedBBCollection b)
+    default double getSeparationDistance(@Nonnull TransformedBBCollection a, @Nonnull TransformedBBCollection b)
     {
-        ProjectedRange aProjection = ProjectOBBsMinMax(a);
-        ProjectedRange bProjection = ProjectOBBsMinMax(b);
+        ProjectedRange aProjection = projectOBBsMinMax(a);
+        ProjectedRange bProjection = projectOBBsMinMax(b);
         return ProjectionUtil.GetSeparationDistance(aProjection, bProjection);
     }
-    default boolean SeparatesWithMotion(@Nonnull TransformedBB a, @Nonnull Vec3 motionA, @Nonnull TransformedBB b, @Nonnull Vec3 motionB)
+    default boolean separatesWithMotion(@Nonnull TransformedBB a, @Nonnull Vec3 motionA, @Nonnull TransformedBB b, @Nonnull Vec3 motionB)
     {
-        ProjectedRange projectedRangeA = ProjectOBBMinMax(a);
-        double projectedMotionA = Project(motionA);
-        ProjectedRange projectedRangeB = ProjectOBBMinMax(b);
-        double projectedMotionB = Project(motionB);
+        ProjectedRange projectedRangeA = projectOBBMinMax(a);
+        double projectedMotionA = project(motionA);
+        ProjectedRange projectedRangeB = projectOBBMinMax(b);
+        double projectedMotionB = project(motionB);
         return ProjectionUtil.SeparatedWithMotion(projectedRangeA, projectedMotionA, projectedRangeB, projectedMotionB);
     }
-    default boolean SeparatesWithMotion(@Nonnull TransformedBBCollection a, @Nonnull Vec3 motionA, @Nonnull TransformedBBCollection b, @Nonnull Vec3 motionB)
+    default boolean separatesWithMotion(@Nonnull TransformedBBCollection a, @Nonnull Vec3 motionA, @Nonnull TransformedBBCollection b, @Nonnull Vec3 motionB)
     {
-        ProjectedRange projectedRangeA = ProjectOBBsMinMax(a);
-        double projectedMotionA = Project(motionA);
-        ProjectedRange projectedRangeB = ProjectOBBsMinMax(b);
-        double projectedMotionB = Project(motionB);
+        ProjectedRange projectedRangeA = projectOBBsMinMax(a);
+        double projectedMotionA = project(motionA);
+        ProjectedRange projectedRangeB = projectOBBsMinMax(b);
+        double projectedMotionB = project(motionB);
         return ProjectionUtil.SeparatedWithMotion(projectedRangeA, projectedMotionA, projectedRangeB, projectedMotionB);
     }
-    default double GetSeparationDistanceWithMotion(@Nonnull TransformedBB a, @Nonnull Vec3 motionA, @Nonnull TransformedBB b, @Nonnull Vec3 motionB)
+    default double getSeparationDistanceWithMotion(@Nonnull TransformedBB a, @Nonnull Vec3 motionA, @Nonnull TransformedBB b, @Nonnull Vec3 motionB)
     {
-        ProjectedRange aProjection = ProjectOBBMinMax(a);
-        double projectedMotionA = Project(motionA);
-        ProjectedRange bProjection = ProjectOBBMinMax(b);
-        double projectedMotionB = Project(motionB);
+        ProjectedRange aProjection = projectOBBMinMax(a);
+        double projectedMotionA = project(motionA);
+        ProjectedRange bProjection = projectOBBMinMax(b);
+        double projectedMotionB = project(motionB);
         return ProjectionUtil.GetSeparationDistanceWithMotion(aProjection, projectedMotionA, bProjection, projectedMotionB);
     }
-    default double GetSeparationDistanceWithMotion(@Nonnull TransformedBBCollection a, @Nonnull Vec3 motionA, @Nonnull TransformedBBCollection b, @Nonnull Vec3 motionB)
+    default double getSeparationDistanceWithMotion(@Nonnull TransformedBBCollection a, @Nonnull Vec3 motionA, @Nonnull TransformedBBCollection b, @Nonnull Vec3 motionB)
     {
-        ProjectedRange aProjection = ProjectOBBsMinMax(a);
-        double projectedMotionA = Project(motionA);
-        ProjectedRange bProjection = ProjectOBBsMinMax(b);
-        double projectedMotionB = Project(motionB);
+        ProjectedRange aProjection = projectOBBsMinMax(a);
+        double projectedMotionA = project(motionA);
+        ProjectedRange bProjection = projectOBBsMinMax(b);
+        double projectedMotionB = project(motionB);
         return ProjectionUtil.GetSeparationDistanceWithMotion(aProjection, projectedMotionA, bProjection, projectedMotionB);
     }
 }

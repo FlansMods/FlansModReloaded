@@ -4,6 +4,7 @@
   "flansphysicsmod.angular_acceleration": "%f degrees/tick^2 around (%f, %f, %f)",
   "flansphysicsmod.angular_velocity": "%f degrees/tick around (%f, %f, %f)",
   "flansphysicsmod.offset_acceleration": "(%f, %f, %f) blocks/tick^2 applied at (%f, %f, %f)",
+  "flansphysicsmod.compound_acceleration": "(%f, %f, %f) blocks/tick^2 and %f degrees/tick^2 around (%f, %f, %f)",
   "flansphysicsmod.linear_force": "(%f, %f, %f) kgm/tick^2",
   "flansphysicsmod.torque": "%f kgm^2/tick^2 around (%f, %f, %f)",
   "flansphysicsmod.offset_force": "(%f, %f, %f) kgm/tick^2 applied at (%f, %f, %f)",

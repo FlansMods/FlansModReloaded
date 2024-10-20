@@ -149,7 +149,7 @@ public class CollisionTaskSeparateDynamicFromStatic
 		for(ISeparationAxis separator : Input.ExistingSeparators)
 		{
 			// Check if this separator still bounds our dynamic object
-			ProjectedRange projectionA = separator.ProjectOBBMinMax(boundsA);
+			ProjectedRange projectionA = separator.projectOBBMinMax(boundsA);
 			IPlane testPlane = Plane.of(separator, projectionA.max());
 
 			// Now apply to our unseparated entries
@@ -207,7 +207,7 @@ public class CollisionTaskSeparateDynamicFromStatic
 
 				IPolygon collisionPoly = separationResult.separator().CollisionClip(incidentPoly, referencePoly);
 
-				collisions.add(new StaticCollisionEvent(collisionPoly, separationResult.separator().GetNormal(), separationResult.depth()));
+				collisions.add(new StaticCollisionEvent(collisionPoly, separationResult.separator(), separationResult.depth()));
 			}
 		}
 
@@ -253,7 +253,7 @@ public class CollisionTaskSeparateDynamicFromStatic
 
 			for(ISeparationAxis separator : Input.ExistingSeparators)
 			{
-				Pair<Double, IPlane> sepResult = separator.GetSeparationPlaneAtoB(boundsA, aabb);
+				Pair<Double, IPlane> sepResult = separator.getSeparationPlaneAtoB(boundsA, aabb);
 				double sepDistance = sepResult.getFirst();
 				if(sepDistance < shortestIntersectionDist)
 				{
@@ -271,7 +271,7 @@ public class CollisionTaskSeparateDynamicFromStatic
 			{
 				for (ISeparationAxis separator : NewSeparators)
 				{
-					Pair<Double, IPlane> sepResult = separator.GetSeparationPlaneAtoB(boundsA, aabb);
+					Pair<Double, IPlane> sepResult = separator.getSeparationPlaneAtoB(boundsA, aabb);
 					double sepDistance = sepResult.getFirst();
 					if (sepDistance < shortestIntersectionDist)
 					{

@@ -7,8 +7,8 @@ import javax.annotation.Nonnull;
 public record SeparationAxis(@Nonnull Vec3 Normal) implements ISeparationAxis
 {
     @Override @Nonnull
-    public Vec3 GetNormal() { return Normal; }
+    public Vec3 getNormal() { return Normal; }
     @Override
-    public double Project(@Nonnull Vec3 point) { return point.dot(Normal); }
+    public double project(@Nonnull Vec3 point) { return point.dot(Normal); }
 
 }

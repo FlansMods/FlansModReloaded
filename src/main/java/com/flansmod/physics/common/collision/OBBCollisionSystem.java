@@ -493,12 +493,12 @@ public class OBBCollisionSystem
 								float blue = 1.0f;
 								for(ISeparationAxis axis : output.NewSeparatorList())
 								{
-									Vec3 normal = axis.GetNormal();
+									Vec3 normal = axis.getNormal();
 									Vec3 up = new Vec3(normal.z, -normal.x, -normal.y);
 
 									TransformedBB obb = object.getPendingBB();
-									ProjectedRange range = axis.ProjectOBBMinMax(obb);
-									double center = axis.Project(obb.GetCenter());
+									ProjectedRange range = axis.projectOBBMinMax(obb);
+									double center = axis.project(obb.GetCenter());
 
 									Transform pos = Transform.fromPositionAndLookDirection(obb.GetCenter().add(normal.scale(range.max() - center)), normal, up);
 									DebugRenderer.renderArrow(pos, 3, new Vector4f(1.0f, 1.0f, blue, 1.0f), new Vec3(0d, 0d, -1d));
@@ -506,7 +506,7 @@ public class OBBCollisionSystem
 									for(int j = statics.size() - 1; j >= 0; j--)
 									{
 										AABB aabb = statics.get(j).bounds();
-										ProjectedRange boxProj = axis.ProjectAABBMinMax(aabb);
+										ProjectedRange boxProj = axis.projectAABBMinMax(aabb);
 										if(ProjectionUtil.SeparatedAThenB(range, boxProj))
 										{
 											Transform staticPos = Transform.fromPos(aabb.getCenter());

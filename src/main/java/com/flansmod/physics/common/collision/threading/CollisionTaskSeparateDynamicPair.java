@@ -75,7 +75,7 @@ public class CollisionTaskSeparateDynamicPair
 
 			for (ISeparationAxis separator : Input.ExistingSeparators)
 			{
-				if (separator.SeparatesWithMotion(
+				if (separator.separatesWithMotion(
 					boundsA,
 					Input.ObjectA.getNextFrameLinearVelocity().applyOneTick(),
 					boundsB,
@@ -105,8 +105,8 @@ public class CollisionTaskSeparateDynamicPair
 			//Vec3 pointInB = test.GetCollidingPoint(boundsB);
 
 			Output = new Output(
-				ImmutableList.of(new DynamicCollisionEvent(HandleB, pointInB, test.separator().GetNormal().scale(-1d), test.depth())),
-				ImmutableList.of(new DynamicCollisionEvent(HandleA, pointInB, test.separator().GetNormal(), test.depth())),
+				ImmutableList.of(new DynamicCollisionEvent(HandleB, pointInB, test.separator().getNormal().scale(-1d), test.depth())),
+				ImmutableList.of(new DynamicCollisionEvent(HandleA, pointInB, test.separator().getNormal(), test.depth())),
 				ImmutableList.of(test.separator()));
 		}
 	}

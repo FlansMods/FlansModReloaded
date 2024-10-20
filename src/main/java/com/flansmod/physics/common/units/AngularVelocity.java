@@ -20,9 +20,20 @@ public record AngularVelocity(@Nonnull Vec3 Axis, double Magnitude) implements I
 		return new AngularVelocity(axis, Units.AngularSpeed.RadiansPerSecond_To_RadiansPerTick(radiansPerSecond));
 	}
 	@Nonnull
+	public static AngularVelocity radiansPerSecond(@Nonnull AxisAngle4f radiansPerSecond)
+	{
+		return new AngularVelocity(new Vec3(radiansPerSecond.x, radiansPerSecond.y, radiansPerSecond.z),
+				Units.AngularSpeed.RadiansPerSecond_To_RadiansPerTick(radiansPerSecond.angle));
+	}
+	@Nonnull
 	public static AngularVelocity radiansPerTick(@Nonnull Vec3 axis, double radiansPerTick)
 	{
 		return new AngularVelocity(axis, radiansPerTick);
+	}
+	@Nonnull
+	public static AngularVelocity radiansPerTick(@Nonnull AxisAngle4f radiansPerTick)
+	{
+		return new AngularVelocity(new Vec3(radiansPerTick.x, radiansPerTick.y, radiansPerTick.z), radiansPerTick.angle);
 	}
 	@Nonnull
 	public static AngularVelocity degreesPerSecond(@Nonnull Vec3 axis, double degressPerSecond)

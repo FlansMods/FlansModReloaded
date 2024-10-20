@@ -315,6 +315,10 @@ public class CollisionTasks
         while (testAxes.hasNext())
 		{
             Vec3 axis = testAxes.next();
+			if(Maths.approx(axis.lengthSqr(), 0d))
+				continue;
+
+			axis = axis.normalize();
 			bestResult = test(projectFuncA, projectFuncB, axis, testedNormals, bestResult);
             if(bestResult != null)
             {

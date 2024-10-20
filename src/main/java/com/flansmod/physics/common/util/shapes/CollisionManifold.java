@@ -40,14 +40,14 @@ public record CollisionManifold(@Nonnull Vec3 Normal, double Distance, @Nonnull 
 	// =================================================================
 	// IPlane
 	@Override @Nonnull
-	public Vec3 GetNormal() { return Normal; }
+	public Vec3 getNormal() { return Normal; }
 	@Override
 	public double GetDistance() { return Distance; }
 	@Override
-	public double Project(@Nonnull Vec3 point) { return Normal.dot(point); }
+	public double project(@Nonnull Vec3 point) { return Normal.dot(point); }
 	// The chosen definition of a plane is shown most clearly here
 	@Override
-	public double GetPointHeightAbove(@Nonnull Vec3 point) { return (Project(point) - Distance); }
+	public double GetPointHeightAbove(@Nonnull Vec3 point) { return (project(point) - Distance); }
 	@Override @Nonnull
 	public Optional<Vec3> RayPlaneIntersect(@Nonnull Vec3 origin, @Nonnull Vec3 ray)
 	{
@@ -79,8 +79,8 @@ public record CollisionManifold(@Nonnull Vec3 Normal, double Distance, @Nonnull 
 			Vec3 vCurr = BoundingVertices.get(i);
 			Vec3 vNext = GetVertexLooped(i + 1);
 
-			double dCurr = clipPlane.Project(vCurr);
-			double dNext = clipPlane.Project(vNext);
+			double dCurr = clipPlane.project(vCurr);
+			double dNext = clipPlane.project(vNext);
 
 			if(dCurr <= 0d && dNext <= 0d)
 			{
@@ -126,7 +126,7 @@ public record CollisionManifold(@Nonnull Vec3 Normal, double Distance, @Nonnull 
 		for(int i = 0; i < BoundingVertices.size(); i++)
 		{
 			Vec3 vCurr = BoundingVertices.get(i);
-			double dCurr = clipPlane.Project(vCurr);
+			double dCurr = clipPlane.project(vCurr);
 			if(dCurr >= 0d)
 				builder.add(vCurr);
 		}

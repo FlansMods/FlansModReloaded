@@ -102,7 +102,7 @@ public class PhysicsDebugRenderer
                     (stat) -> {
                         Vec3 normal = stat.ContactNormal();
                         Vec3 up = new Vec3(normal.z, -normal.x, -normal.y);
-                        IPolygon collisionSurface = stat.ContactSurface();
+                        IPolygon collisionSurface = stat.contactSurface();
                         Vec3 avgPos = Vec3.ZERO;
                         int numVerts = collisionSurface.GetNumVertices();
                         for(int i = 0; i < numVerts; i++)
@@ -148,9 +148,9 @@ public class PhysicsDebugRenderer
 
     private void DebugRender(@Nonnull Vec3 position, @Nonnull ISeparationAxis axis, @Nonnull DebugPalette palette)
     {
-        Vec3 normal = axis.GetNormal();
+        Vec3 normal = axis.getNormal();
         Vec3 up = new Vec3(normal.z, -normal.x, -normal.y);
-        Transform frame = Transform.fromPositionAndLookDirection(position, axis.GetNormal(), up);
+        Transform frame = Transform.fromPositionAndLookDirection(position, axis.getNormal(), up);
         DebugRenderer.renderArrow(frame, 2, palette.CollisionStatic, new Vec3(0d, 0d, -1d));
         DebugRenderer.renderCube(frame, 2, palette.CollisionStatic, new Vector3f(0.25f, 0.25f, 0f));
     }
@@ -161,9 +161,9 @@ public class PhysicsDebugRenderer
         DebugRender(dynamic.getPendingColliders(), palette, true);
         for (StaticCollisionEvent collision : dynamic.StaticCollisions)
         {
-            Vec3 normal = collision.ContactNormal();
+            Vec3 normal = collision.separationPlane().getNormal();
             Vec3 up = new Vec3(normal.z, -normal.x, -normal.y);
-            IPolygon collisionSurface = collision.ContactSurface();
+            IPolygon collisionSurface = collision.contactSurface();
             Vec3 avgPos = Vec3.ZERO;
             int numVerts = collisionSurface.GetNumVertices();
             for(int i = 0; i < numVerts; i++)
