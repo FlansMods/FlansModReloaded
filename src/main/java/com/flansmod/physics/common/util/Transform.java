@@ -426,8 +426,9 @@ public class Transform
         buf.mark();
         Orientation.getAsMatrix3f(buf);
         buf.reset();
-        return new Matrix3f(buf);
-
+        Matrix3f ret = new Matrix3f(buf);
+        MemoryUtil.memFree(buf);
+        return ret;
     }
     public boolean hasNaN()
     {

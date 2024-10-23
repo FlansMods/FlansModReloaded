@@ -2,6 +2,7 @@ package com.flansmod.physics.common.collision.threading;
 
 import com.flansmod.physics.common.collision.*;
 import com.flansmod.physics.common.units.*;
+import com.flansmod.physics.common.util.Maths;
 import com.flansmod.physics.common.util.ProjectedRange;
 
 import com.flansmod.physics.common.util.Transform;
@@ -89,7 +90,11 @@ public class CollisionTaskResolveDynamic
         {
             Vec3 pushOutVec = collision.separationPlane().getNormal().scale(-collision.depth());
             pushOutVec = v.subtract(pushOutVec);
-            responseVectors.put(collision, new Ray(collision.contactSurface().GetAveragePos(), pushOutVec));
+
+            if(collision.contactSurface().GetNumVertices() > 0)
+                responseVectors.put(collision, new Ray(collision.contactSurface().GetAveragePos(), pushOutVec));
+            else
+                responseVectors.put(collision, new Ray(pendingLocation.positionVec3(), pushOutVec));
 
             //if(!Maths.approx(pushOutVec.x, 0d))
             //{
@@ -117,7 +122,7 @@ public class CollisionTaskResolveDynamic
             for(var kvp : responseVectors.entrySet())
             {
                 // We re-test using the response vectors we have chosen so far.
-                double updatedDepth = kvp.getKey().separationPlane().projectOBBsMinMax(bbs).min();
+                double updatedDepth = kvp.getKey().separationPlane().getOBBsHeightAbove(bbs);
                 // If this has been resolved by an earlier choice, skip it
                 if(updatedDepth >= 0.0d)
                 {
@@ -153,8 +158,12 @@ public class CollisionTaskResolveDynamic
             Quaternionf rot = appliedResponses.get(i).getAngularComponent(pendingLocation).get(new Quaternionf());
             angularSum.mul(rot);
         }
+        AxisAngle4f radsPerTick = new AxisAngle4f().set(angularSum);
+        if(Maths.approx(Maths.lengthSqr(radsPerTick.x, radsPerTick.y, radsPerTick.z), 0d))
+            radsPerTick.set(radsPerTick.angle, 0f, 1f, 0f);
+
         LinearVelocity linearTarget = LinearVelocity.blocksPerTick(linearSum);
-        AngularVelocity angularTarget = AngularVelocity.radiansPerTick(new AxisAngle4f().set(angularSum));
+        AngularVelocity angularTarget = AngularVelocity.radiansPerTick(radsPerTick);
         LinearAcceleration linearImpulse = LinearAcceleration.fromUtoVinTicks(linearV, linearTarget, 1);
         AngularAcceleration angularImpulse = AngularAcceleration.fromUtoVinTicks(angularV, angularTarget, 1);
 

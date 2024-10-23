@@ -125,6 +125,7 @@ public class Maths
     public static Vec3 sub(Vec3 a, Vec3 b) { return new Vec3(a.x - b.x, a.y - b.y, a.z - b.z); }
     public static Vec3 add(Vec3 a, Vec3 b) { return new Vec3(a.x + b.x, a.y + b.y, a.z + b.z); }
     public static Vec3 cross(Vec3 a, Vec3 b) { return a.cross(b); }
+    public static double lengthSqr(double x, double y, double z) { return x*x+y*y+z*z; }
     public static double lengthXYZ(Vec3 v) { return v.length(); }
     public static double lengthXZ(Vec3 v) { return sqrt(v.x * v.x + v.z * v.z); }
     public static boolean approx(Vec3 a, Vec3 b) { return (a.x-b.x)*(a.x-b.x)+(a.y-b.y)*(a.y-b.y)+(a.z-b.z)*(a.z-b.z) < EpsilonSq; }

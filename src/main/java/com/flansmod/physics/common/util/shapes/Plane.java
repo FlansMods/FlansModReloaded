@@ -16,14 +16,14 @@ public record Plane(@Nonnull Vec3 Normal, double Distance) implements IPlane
     public static Plane of(@Nonnull ISeparationAxis axis, double distance) { return new Plane(axis.getNormal(), distance); }
 
     @Override
-    public double GetDistance() { return Distance; }
+    public double getDistance() { return Distance; }
     @Override @Nonnull
     public Vec3 getNormal() { return Normal; }
     @Override
     public double project(@Nonnull Vec3 point) { return point.dot(Normal); }
 
     @Override @Nonnull
-    public Optional<Vec3> RayPlaneIntersect(@Nonnull Vec3 origin, @Nonnull Vec3 ray)
+    public Optional<Vec3> rayPlaneIntersect(@Nonnull Vec3 origin, @Nonnull Vec3 ray)
     {
         // (Origin + t * Ray).V == d
         // Solve for t

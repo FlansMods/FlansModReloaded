@@ -9,11 +9,8 @@ import com.flansmod.common.entity.vehicle.VehicleEntity;
 import com.flansmod.common.entity.vehicle.hierarchy.VehicleComponentPath;
 import com.flansmod.physics.common.entity.PhysicsComponent;
 import com.flansmod.physics.common.collision.*;
-import com.flansmod.physics.common.entity.ForcesOnPart;
+import com.flansmod.physics.common.units.*;
 import com.flansmod.physics.common.util.Transform;
-import com.flansmod.physics.common.units.IForce;
-import com.flansmod.physics.common.units.LinearForce;
-import com.flansmod.physics.common.units.Torque;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.server.MinecraftServer;
@@ -27,6 +24,7 @@ import org.joml.Vector4f;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.List;
 import java.util.function.Function;
 
 public class VehicleDebugRenderer
@@ -268,7 +266,7 @@ public class VehicleDebugRenderer
 
 
 
-	private Vec3 DebugRenderForces(@Nullable ForcesOnPart forces,
+	private Vec3 DebugRenderForces(@Nullable List<IAcceleration> forces,
 								   @Nonnull Vec3 motion,
 								   @Nonnull Transform worldTransform,
 								   @Nonnull DebugPalette palette,
@@ -285,17 +283,17 @@ public class VehicleDebugRenderer
 			Vec3 forceTotal = new Vec3(0d, 0d, 0d);
 			Vector4f forceColour = isCore ? palette.CoreForces : palette.WheelForces;
 
-			for(IForce force : forces.Debug_GetForces())
+			for(IAcceleration force : forces)
 			{
 				if(force.hasLinearComponent(worldTransform))
 				{
-					LinearForce linear = force.getLinearComponent(worldTransform);
-					DebugRenderer.renderArrow(worldTransform, 1, forceColour, linear.Force().scale(forceArrowScale));
+					LinearAcceleration linear = force.getLinearComponent(worldTransform);
+					DebugRenderer.renderArrow(worldTransform, 1, forceColour, linear.Acceleration().scale(forceArrowScale));
 				}
 				if(force.hasAngularComponent(worldTransform))
 				{
-					Torque torque = force.getTorqueComponent(worldTransform);
-					DebugRenderer.renderRotation(worldTransform, 1, forceColour, torque.Axis(), torque.Magnitude());
+					AngularAcceleration angular = force.getAngularComponent(worldTransform);
+					DebugRenderer.renderRotation(worldTransform, 1, forceColour, angular.Axis(), angular.Magnitude());
 					//Quaternionf angular = force.GetAngularComponentRadiansPerSecondSq(worldTransform);
 					//forceTotal = forceTotal.add(global.Vector());
 				}

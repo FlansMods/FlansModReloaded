@@ -15,6 +15,22 @@ public record Torque(@Nonnull Vec3 Axis, double Magnitude) implements IForce
 	public static final Torque Zero = new Torque(new Vec3(0d, 1d, 0d), 0.0d);
 
 	@Nonnull
+	public static Torque fromKgBlocksSqQuatPerTickSq(@Nonnull Quaternionf quaternionPerTick)
+	{
+		if(quaternionPerTick.equals(Transform.IDENTITY.Orientation, Maths.EpsilonF))
+		{
+			return Torque.Zero;
+		}
+		AxisAngle4f axisAngle = new AxisAngle4f().set(quaternionPerTick);
+		return new Torque(new Vec3(axisAngle.x, axisAngle.y, axisAngle.z), axisAngle.angle);
+	}
+	@Nonnull
+	public static Torque fromKgBlocksSqQuatPerSecondSq(@Nonnull Quaternionf quaternionPerSecond)
+	{
+		return fromKgBlocksSqQuatPerTickSq(quaternionPerSecond).scale(Units.Torque.KgBlocksSqPerSecondSq_To_KgBlocksSqPerTickSq);
+	}
+
+	@Nonnull
 	public static Torque kgBlocksSqPerSecondSq(@Nonnull Vec3 axis, double kgBlocksSqPerSecondSq)
 	{
 		return new Torque(axis, Units.Force.KgBlocksPerSecondSq_To_KgBlocksPerTickSq(kgBlocksSqPerSecondSq));
@@ -25,15 +41,18 @@ public record Torque(@Nonnull Vec3 Axis, double Magnitude) implements IForce
 		return new Torque(axis, kgBlocksSqPerTickSq);
 	}
 
-
+	@Nonnull
+	public Torque scale(double scale)
+	{
+		return new Torque(Axis, Magnitude * scale);
+	}
 	@Nonnull
 	public Torque compose(@Nonnull Torque other)
 	{
 		Quaternionf torqueA = new Quaternionf().setAngleAxis(Magnitude, Axis.x, Axis.y, Axis.z);
 		Quaternionf torqueB = new Quaternionf().setAngleAxis(other.Magnitude, other.Axis.x, other.Axis.y, other.Axis.z);
 		Quaternionf composed = torqueA.mul(torqueB);
-		AxisAngle4f axisAngle = new AxisAngle4f().set(composed);
-		return new Torque(new Vec3(axisAngle.x, axisAngle.y, axisAngle.z), axisAngle.angle);
+		return fromKgBlocksSqQuatPerTickSq(composed);
 	}
 
 	@Nonnull

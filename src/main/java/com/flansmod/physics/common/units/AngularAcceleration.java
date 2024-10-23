@@ -4,14 +4,29 @@ import com.flansmod.physics.common.util.Maths;
 import com.flansmod.physics.common.util.Transform;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.phys.Vec3;
-import org.joml.AxisAngle4f;
-import org.joml.Quaternionf;
+import org.joml.*;
 
 import javax.annotation.Nonnull;
 
 public record AngularAcceleration(@Nonnull Vec3 Axis, double Magnitude) implements IAcceleration
 {
 	public static final AngularAcceleration Zero = new AngularAcceleration(new Vec3(0d, 1d, 0d), 0d);
+
+	@Nonnull
+	public static AngularAcceleration fromQuatPerTickSq(@Nonnull Quaternionf quaternionPerTick)
+	{
+		if(quaternionPerTick.equals(Transform.IDENTITY.Orientation, Maths.EpsilonF))
+		{
+			return AngularAcceleration.Zero;
+		}
+		AxisAngle4f axisAngle = new AxisAngle4f().set(quaternionPerTick);
+		return new AngularAcceleration(new Vec3(axisAngle.x, axisAngle.y, axisAngle.z), axisAngle.angle);
+	}
+	@Nonnull
+	public static AngularAcceleration fromQuatPerSecondSq(@Nonnull Quaternionf quaternionPerSecond)
+	{
+		return fromQuatPerTickSq(quaternionPerSecond).scale(Units.AngularAcceleration.RadiansPerSecondSq_To_RadiansPerTickSq);
+	}
 
 	@Nonnull
 	public static AngularAcceleration radiansPerSecondSq(@Nonnull Vec3 axis, double radsPerSecSq)
@@ -34,7 +49,6 @@ public record AngularAcceleration(@Nonnull Vec3 Axis, double Magnitude) implemen
 		return new AngularAcceleration(axis, Units.AngularAcceleration.Convert(degsPerTickSq, Units.AngularAcceleration.DegreesPerTickSq, Units.AngularAcceleration.RadiansPerTickSq));
 	}
 
-
 	@Nonnull
 	public static AngularAcceleration fromUtoVinTicks(@Nonnull AngularVelocity u, @Nonnull AngularVelocity v, int ticks)
 	{
@@ -45,14 +59,32 @@ public record AngularAcceleration(@Nonnull Vec3 Axis, double Magnitude) implemen
 		Quaternionf vPerT = new Quaternionf().setAngleAxis(v.Magnitude(), v.Axis().x, v.Axis().y, v.Axis().z);
 		uPerT.invert();
 		Quaternionf composed = vPerT.mul(uPerT); // VU^-1
-		AxisAngle4f axisAngle = new AxisAngle4f().set(composed);
-
 		// v = u+at, a=(v-u)/t, or in this case A = [VU^-1] / t
-		return new AngularAcceleration(new Vec3(axisAngle.x, axisAngle.y, axisAngle.z), axisAngle.angle / ticks);
+		return fromQuatPerTickSq(composed).scale(1d/ticks);
 	}
-
 	@Nonnull
-	public Torque multiplyBy(double mass) { return new Torque(Axis, Magnitude * mass); }
+	public AngularAcceleration scale(double scale)
+	{
+		return new AngularAcceleration(Axis, Magnitude * scale);
+	}
+	@Nonnull
+	public Torque asTorqueForPointMass(double mass) { return new Torque(Axis, Magnitude * mass); }
+	@Nonnull
+	public Torque asTorqueForSpinMass(@Nonnull Vec3 momentOfInertia)
+	{
+		AxisAngle4d axisAngle = new AxisAngle4d();
+		Quaterniond quat = new Quaterniond();
+		Vector3d euler = new Vector3d();
+
+		quat.setAngleAxis(Magnitude, Axis.x, Axis.y, Axis.z);
+		quat.getEulerAnglesXYZ(euler);
+		euler.mul(momentOfInertia.x, momentOfInertia.y, momentOfInertia.z);
+		quat.identity();
+		quat.rotateXYZ(euler.x, euler.y, euler.z);
+		axisAngle.set(quat);
+
+		return new Torque(new Vec3(axisAngle.x, axisAngle.y, axisAngle.z), axisAngle.angle);
+	}
 	@Nonnull
 	public Units.AngularAcceleration getDefaultUnits() { return Units.AngularAcceleration.RadiansPerTickSq; }
 	public double getInUnits(@Nonnull Units.AngularAcceleration toUnit)
@@ -63,6 +95,14 @@ public record AngularAcceleration(@Nonnull Vec3 Axis, double Magnitude) implemen
 	public AngularVelocity applyOverTicks(double ticks) { return new AngularVelocity(Axis, Magnitude * ticks); }
 	@Nonnull
 	public AngularVelocity applyOneTick() { return new AngularVelocity(Axis, Magnitude); }
+	@Nonnull
+	public AngularAcceleration compose(@Nonnull AngularAcceleration other)
+	{
+		Quaternionf angularA = new Quaternionf().setAngleAxis(Magnitude, Axis.x, Axis.y, Axis.z);
+		Quaternionf angularB = new Quaternionf().setAngleAxis(other.Magnitude, other.Axis.x, other.Axis.y, other.Axis.z);
+		Quaternionf composed = angularA.mul(angularB);
+		return fromQuatPerTickSq(composed);
+	}
 
 	@Override
 	public boolean isApproxZero() { return Maths.approx(Magnitude, 0d); }

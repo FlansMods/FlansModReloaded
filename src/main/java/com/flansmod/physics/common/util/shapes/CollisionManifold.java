@@ -42,14 +42,14 @@ public record CollisionManifold(@Nonnull Vec3 Normal, double Distance, @Nonnull 
 	@Override @Nonnull
 	public Vec3 getNormal() { return Normal; }
 	@Override
-	public double GetDistance() { return Distance; }
+	public double getDistance() { return Distance; }
 	@Override
 	public double project(@Nonnull Vec3 point) { return Normal.dot(point); }
 	// The chosen definition of a plane is shown most clearly here
 	@Override
-	public double GetPointHeightAbove(@Nonnull Vec3 point) { return (project(point) - Distance); }
+	public double getPointHeightAbove(@Nonnull Vec3 point) { return (project(point) - Distance); }
 	@Override @Nonnull
-	public Optional<Vec3> RayPlaneIntersect(@Nonnull Vec3 origin, @Nonnull Vec3 ray)
+	public Optional<Vec3> rayPlaneIntersect(@Nonnull Vec3 origin, @Nonnull Vec3 ray)
 	{
 		// (Origin + t * Ray).V == d
 		// Solve for t
@@ -96,7 +96,7 @@ public record CollisionManifold(@Nonnull Vec3 Normal, double Distance, @Nonnull 
 			}
 			else if(dCurr <= 0d && dNext > 0d)
 			{
-				Optional<Vec3> clipPos = clipPlane.RayPlaneIntersect(vCurr, vNext.subtract(vCurr));
+				Optional<Vec3> clipPos = clipPlane.rayPlaneIntersect(vCurr, vNext.subtract(vCurr));
 				if(clipPos.isPresent())
 					builder.add(clipPos.get());
 				else {
@@ -106,7 +106,7 @@ public record CollisionManifold(@Nonnull Vec3 Normal, double Distance, @Nonnull 
 			}
 			else if(dCurr > 0d && dNext <= 0d)
 			{
-				Optional<Vec3> clipPos = clipPlane.RayPlaneIntersect(vCurr, vNext.subtract(vCurr));
+				Optional<Vec3> clipPos = clipPlane.rayPlaneIntersect(vCurr, vNext.subtract(vCurr));
 				if(clipPos.isPresent())
 					builder.add(clipPos.get());
 				else {

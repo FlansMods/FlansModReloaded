@@ -12,7 +12,23 @@ import javax.annotation.Nonnull;
 
 public record AngularVelocity(@Nonnull Vec3 Axis, double Magnitude) implements IVelocity
 {
-	public static final AngularVelocity Zero = new AngularVelocity(Vec3.ZERO, 0.0d);
+	public static final AngularVelocity Zero = new AngularVelocity(new Vec3(0d, 1d, 0d), 0.0d);
+
+	@Nonnull
+	public static AngularVelocity fromQuatPerTick(@Nonnull Quaternionf quaternionPerTick)
+	{
+		if(quaternionPerTick.equals(Transform.IDENTITY.Orientation, Maths.EpsilonF))
+		{
+			return AngularVelocity.Zero;
+		}
+		AxisAngle4f axisAngle = new AxisAngle4f().set(quaternionPerTick);
+		return new AngularVelocity(new Vec3(axisAngle.x, axisAngle.y, axisAngle.z), axisAngle.angle);
+	}
+	@Nonnull
+	public static AngularVelocity fromQuatPerSecond(@Nonnull Quaternionf quaternionPerSecond)
+	{
+		return fromQuatPerTick(quaternionPerSecond).scale(Units.AngularSpeed.RadiansPerSecond_To_RadiansPerTick);
+	}
 
 	@Nonnull
 	public static AngularVelocity radiansPerSecond(@Nonnull Vec3 axis, double radiansPerSecond)
@@ -47,8 +63,7 @@ public record AngularVelocity(@Nonnull Vec3 Axis, double Magnitude) implements I
 		Quaternionf angularA = new Quaternionf().setAngleAxis(Magnitude, Axis.x, Axis.y, Axis.z);
 		Quaternionf angularB = new Quaternionf().setAngleAxis(other.Magnitude, other.Axis.x, other.Axis.y, other.Axis.z);
 		Quaternionf composed = angularA.mul(angularB);
-		AxisAngle4f axisAngle = new AxisAngle4f().set(composed);
-		return new AngularVelocity(new Vec3(axisAngle.x, axisAngle.y, axisAngle.z), axisAngle.angle);
+		return fromQuatPerTick(composed);
 	}
 	@Nonnull
 	public AngularVelocity lerp(@Nonnull AngularVelocity other, float t)
@@ -56,8 +71,7 @@ public record AngularVelocity(@Nonnull Vec3 Axis, double Magnitude) implements I
 		Quaternionf angularA = new Quaternionf().setAngleAxis(Magnitude, Axis.x, Axis.y, Axis.z);
 		Quaternionf angularB = new Quaternionf().setAngleAxis(other.Magnitude, other.Axis.x, other.Axis.y, other.Axis.z);
 		Quaternionf slerp = angularA.slerp(angularB, t);
-		AxisAngle4f axisAngle = new AxisAngle4f().set(slerp);
-		return new AngularVelocity(new Vec3(axisAngle.x, axisAngle.y, axisAngle.z), axisAngle.angle);
+		return fromQuatPerTick(slerp);
 	}
 	@Nonnull
 	public static AngularVelocity interpolate(@Nonnull AngularVelocity a, @Nonnull AngularVelocity b, float t) { return a.lerp(b, t); }

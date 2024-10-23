@@ -4,6 +4,7 @@ import com.flansmod.physics.common.util.Maths;
 import com.flansmod.physics.common.util.Transform;
 import com.mojang.datafixers.util.Pair;
 import net.minecraft.network.chat.Component;
+import net.minecraft.world.phys.Vec3;
 
 import javax.annotation.Nonnull;
 
@@ -25,6 +26,10 @@ public record CompoundAcceleration(@Nonnull LinearAcceleration linear, @Nonnull 
     {
         return CompoundVelocity.of(getLinearComponent(actingOn).applyOneTick(), getAngularComponent(actingOn).applyOneTick());
     }
+    @Nonnull
+    public CompoundForce asForceForPointMass(double mass) { return CompoundForce.of(linear.multiplyBy(mass), angular.asTorqueForPointMass(mass)); }
+    @Nonnull
+    public CompoundForce asForceForMass(double mass, @Nonnull Vec3 momentOfInertia) { return CompoundForce.of(linear.multiplyBy(mass), angular.asTorqueForSpinMass(momentOfInertia)); }
 
     @Override @Nonnull
     public CompoundAcceleration inverse() { return new CompoundAcceleration(linear.inverse(), angular.inverse()); }

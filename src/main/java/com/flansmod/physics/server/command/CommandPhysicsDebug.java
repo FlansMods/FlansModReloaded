@@ -171,7 +171,7 @@ public class CommandPhysicsDebug
                 OBBCollisionSystem system = OBBCollisionSystem.ForLevel(entity.level());
                 physicsEntity.forEachPhysicsComponent((component) ->
                 {
-                    component.getPendingForces().addForce(acc.multiplyBy(component.mass));
+                    component.getPendingForces().addForce(acc.asTorqueForPointMass(component.mass));
                 });
                 entityCount++;
             }

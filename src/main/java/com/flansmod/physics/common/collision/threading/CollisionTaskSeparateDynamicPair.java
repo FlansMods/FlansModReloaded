@@ -100,7 +100,7 @@ public class CollisionTaskSeparateDynamicPair
 			// So we collided, right? Actually we might be non-colliding if we dig deeper than the bounds
 			// TODO: Fine-grain
 
-			Optional<Vec3> collidingPoint = test.separator().LinePlaneIntersect(boundsA.GetCenter(), boundsB.GetCenter());
+			Optional<Vec3> collidingPoint = test.separator().linePlaneIntersect(boundsA.GetCenter(), boundsB.GetCenter());
 			Vec3 pointInB = collidingPoint.orElse(boundsB.GetCenter());
 			//Vec3 pointInB = test.GetCollidingPoint(boundsB);
 

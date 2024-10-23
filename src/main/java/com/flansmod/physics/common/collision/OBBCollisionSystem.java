@@ -243,6 +243,14 @@ public class OBBCollisionSystem
 			return dyn.NextFrameLinearMotion;
 		return LinearVelocity.Zero;
 	}
+	@Nonnull
+	public AngularVelocity getAngularVelocity(@Nonnull ColliderHandle handle)
+	{
+		DynamicObject dyn = Dynamics.get(handle);
+		if(dyn != null)
+			return dyn.NextFrameAngularMotion;
+		return AngularVelocity.Zero;
+	}
 	public void setLinearVelocity(@Nonnull ColliderHandle handle, @Nonnull LinearVelocity linearVelocity)
 	{
 		doAfterPhysics(() -> {
@@ -288,16 +296,45 @@ public class OBBCollisionSystem
 								   @Nonnull Consumer<StaticCollisionEvent> staticFunc,
 								   @Nonnull Consumer<DynamicCollisionEvent> dynamicFunc)
 	{
+
 		DynamicObject obj = Dynamics.get(handle);
 		if(obj != null)
 		{
-			for(StaticCollisionEvent collision : obj.StaticCollisions)
-				staticFunc.accept(collision);
-			for(DynamicCollisionEvent collision : obj.DynamicCollisions)
-				dynamicFunc.accept(collision);
-			return obj.getPendingLocation();
+			if(PAUSE_PHYSICS)
+			{
+				return obj.getCurrentLocation();
+			}
+			else
+			{
+				for (StaticCollisionEvent collision : obj.StaticCollisions)
+					staticFunc.accept(collision);
+				for (DynamicCollisionEvent collision : obj.DynamicCollisions)
+					dynamicFunc.accept(collision);
+				return obj.getPendingLocation();
+			}
 		}
 		return Transform.IDENTITY;
+	}
+	public void copyDynamicState(@Nonnull ColliderHandle handle,
+								 @Nonnull IDynamicObjectUpdateReceiver receiver)
+	{
+		DynamicObject obj = Dynamics.get(handle);
+		if(obj != null) {
+			if (PAUSE_PHYSICS) {
+				receiver.updateLocation(obj.getCurrentLocation());
+			}
+			else
+			{
+				for (StaticCollisionEvent collision : obj.StaticCollisions)
+					receiver.handleStaticCollision(collision);
+				for (DynamicCollisionEvent collision : obj.DynamicCollisions)
+					receiver.handleDynamicCollision(collision);
+				receiver.updateLocation(obj.getPendingLocation());
+				receiver.updateLinearVelocity(obj.getNextFrameLinearVelocity());
+				receiver.updateAngularVelocity(obj.getNextFrameAngularVelocity());
+				receiver.updateReactionForce(obj.ReactionAcceleration);
+			}
+		}
 	}
 
 
@@ -616,10 +653,15 @@ public class OBBCollisionSystem
 	private void physicsStep_commitFrame()
 	{
 		if(PAUSE_PHYSICS)
-			return;
-
-		for (DynamicObject dyn : Dynamics.values())
-			dyn.commitFrame();
+		{
+			for (DynamicObject dyn : Dynamics.values())
+				dyn.resetVelocity();
+		}
+		else
+		{
+			for (DynamicObject dyn : Dynamics.values())
+				dyn.commitFrame();
+		}
 	}
 
 	@Nonnull

@@ -51,6 +51,8 @@ public record LinearAcceleration(@Nonnull Vec3 Acceleration) implements IAcceler
 	}
 
 	@Nonnull
+	public LinearAcceleration add(@Nonnull LinearAcceleration other) { return new LinearAcceleration(Acceleration.add(other.Acceleration)); }
+	@Nonnull
 	public Vec3 getTicksPerSecondSq() { return Acceleration; }
 	@Nonnull
 	public Vec3 getBlocksPerSecondSq() { return getInUnits(Units.Acceleration.BlocksPerSecondSquared); }

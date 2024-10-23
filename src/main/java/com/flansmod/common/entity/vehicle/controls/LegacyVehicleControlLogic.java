@@ -4,16 +4,18 @@ import com.flansmod.common.entity.vehicle.VehicleEntity;
 import com.flansmod.common.entity.vehicle.hierarchy.EPartDefComponent;
 import com.flansmod.common.entity.vehicle.hierarchy.VehicleComponentPath;
 import com.flansmod.common.entity.vehicle.hierarchy.VehiclePartPath;
-import com.flansmod.physics.common.entity.ForcesOnPart;
+import com.flansmod.physics.common.deprecated.ForcesOnPart;
 import com.flansmod.common.types.vehicles.ControlSchemeDefinition;
 import com.flansmod.common.types.vehicles.EVehicleAxis;
 import com.flansmod.common.types.vehicles.VehicleDefinition;
+import com.flansmod.physics.common.units.IAcceleration;
 import net.minecraft.world.entity.MoverType;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 
 import javax.annotation.Nonnull;
+import java.util.List;
 
 public class LegacyVehicleControlLogic extends ControlLogic
 {
@@ -95,7 +97,7 @@ public class LegacyVehicleControlLogic extends ControlLogic
 		float engineSpeed = vehicle.GetEngineDef(SingleEngineKey).maxSpeed;
 		// -------------------------------------------------------------------------------------
 
-		ForcesOnPart coreForces = vehicle.GetCoreForces();
+		List<IAcceleration> coreForces = vehicle.GetCoreForces();
 
 		//vehicle.GetHierarchy().ForEachWheel((path, def) -> {
 		//	ForcesOnPart wheelForces = vehicle.GetForcesOn(path);

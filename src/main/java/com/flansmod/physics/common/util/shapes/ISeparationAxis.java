@@ -89,6 +89,8 @@ public interface ISeparationAxis
         }
         return ProjectedRange.preSorted(min, max);
     }
+    default double projectOBBsMin(@Nonnull TransformedBBCollection set) { return projectOBBsMinMax(set).min(); }
+    default double projectOBBsMax(@Nonnull TransformedBBCollection set) { return projectOBBsMinMax(set).max(); }
 
     default boolean separates(@Nonnull TransformedBB a, @Nonnull TransformedBB b)
     {

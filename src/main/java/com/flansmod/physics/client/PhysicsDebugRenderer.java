@@ -1,11 +1,9 @@
 package com.flansmod.physics.client;
 
 import com.flansmod.physics.common.collision.*;
-import com.flansmod.physics.common.entity.ForcesOnPart;
+import com.flansmod.physics.common.deprecated.ForcesOnPart;
 import com.flansmod.physics.common.entity.PhysicsEntity;
-import com.flansmod.physics.common.units.LinearForce;
-import com.flansmod.physics.common.units.Torque;
-import com.flansmod.physics.common.units.IForce;
+import com.flansmod.physics.common.units.*;
 import com.flansmod.physics.common.util.Transform;
 import com.flansmod.physics.common.util.shapes.IPolygon;
 import com.flansmod.physics.common.util.shapes.ISeparationAxis;
@@ -24,6 +22,7 @@ import org.joml.Vector4f;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.List;
 
 public class PhysicsDebugRenderer
 {
@@ -159,6 +158,9 @@ public class PhysicsDebugRenderer
     {
         DebugRender(dynamic.getCurrentColliders(), palette, false);
         DebugRender(dynamic.getPendingColliders(), palette, true);
+
+
+
         for (StaticCollisionEvent collision : dynamic.StaticCollisions)
         {
             Vec3 normal = collision.separationPlane().getNormal();
@@ -201,7 +203,7 @@ public class PhysicsDebugRenderer
         for(int i = 0; i < bbs.getCount(); i++)
         {
             TransformedBB bb = bbs.getColliderBB(i);
-            DebugRenderer.renderCube(bb.Loc(), 2, predicted ? palette.PositionCurrent : palette.PositionPrevious, bb.HalfExtents());
+            DebugRenderer.renderCube(bb.Loc(), 3, predicted ? palette.PositionCurrent : palette.PositionPrevious, bb.HalfExtents());
         }
     }
     private void DebugRender(@Nonnull Iterable<Entity> entityList, @Nonnull DebugPalette palette)
@@ -219,44 +221,37 @@ public class PhysicsDebugRenderer
                             vehicle.getDeltaMovement(),
                             componentPos,
                             palette,
-                            true,
+                            (float) component.mass);
+                    DebugRenderForces(
+                            List.of(component.getCurrentReactionForce()),
+                            vehicle.getDeltaMovement(),
+                            componentPos,
+                            palette,
                             (float) component.mass);
                     Transform componentPosNext = Transform.compose(componentPos, Transform.fromPos(coreMotionNextFrame.scale(1f/20f)));
+
+
                 });
             }
         }
     }
-    private Vec3 DebugRenderForces(@Nullable ForcesOnPart forces,
+    private Vec3 DebugRenderForces(@Nullable List<IAcceleration> forces,
                                    @Nonnull Vec3 motion,
                                    @Nonnull Transform worldTransform,
                                    @Nonnull DebugPalette palette,
-                                   boolean isReactionForce,
                                    float mass)
     {
         float inertia = 1.0f / mass;
-        float forceArrowScale = 1.0f / 20f;
         float motionArrowScale = 1.0f;
         if(forces != null)
         {
-            Vec3 origin = worldTransform.positionVec3();
             Vec3 forceTotal = new Vec3(0d, 0d, 0d);
-            Vector4f forceColour = isReactionForce ? palette.ForceInputs : palette.ForceReactions;
 
-            for(IForce force : forces.Debug_GetForces())
+            for(IAcceleration force : forces)
             {
-                if(force.hasLinearComponent(worldTransform))
-                {
-                    LinearForce linear = force.getLinearComponent(worldTransform);
-                    DebugRenderer.renderArrow(worldTransform, 1, forceColour, linear.Force().scale(forceArrowScale));
-                }
-                if(force.hasAngularComponent(worldTransform))
-                {
-                    Torque torque = force.getTorqueComponent(worldTransform);
-                    DebugRenderer.renderRotation(worldTransform, 1, forceColour, torque.Axis(), torque.Magnitude());
-                    //Quaternionf angular = force.GetAngularComponentRadiansPerSecondSq(worldTransform);
-                    //forceTotal = forceTotal.add(global.Vector());
-                }
+                DebugRenderForce(worldTransform, force, palette.ForceInputs);
             }
+
 
             Vec3 motionNext = motion.add(forceTotal.scale(inertia));
             DebugRenderer.renderArrow(worldTransform, 1, palette.MotionCurrent, motion.scale(motionArrowScale));
@@ -265,5 +260,21 @@ public class PhysicsDebugRenderer
             return motionNext;
         }
         return Vec3.ZERO;
+    }
+    private void DebugRenderForce(@Nonnull Transform worldTransform, @Nonnull IAcceleration force, @Nonnull Vector4f forceColour)
+    {
+        float forceArrowScale = 1.0f / 20f;
+        if(force.hasLinearComponent(worldTransform))
+        {
+            LinearAcceleration linear = force.getLinearComponent(worldTransform);
+            DebugRenderer.renderArrow(worldTransform, 1, forceColour, linear.Acceleration().scale(forceArrowScale));
+        }
+        if(force.hasAngularComponent(worldTransform))
+        {
+            AngularAcceleration torque = force.getAngularComponent(worldTransform);
+            DebugRenderer.renderRotation(worldTransform, 1, forceColour, torque.Axis(), torque.Magnitude());
+            //Quaternionf angular = force.GetAngularComponentRadiansPerSecondSq(worldTransform);
+            //forceTotal = forceTotal.add(global.Vector());
+        }
     }
 }

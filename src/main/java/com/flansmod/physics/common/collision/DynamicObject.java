@@ -215,6 +215,12 @@ public class DynamicObject implements IConstDynamicObject
 		return false;
 	}
 
+	// An alternative to commitFrame that basically undoes any changes to this dynamic
+	public void resetVelocity()
+	{
+		NextFrameLinearMotion = getFrameNTicksAgo(0).linearVelocity;
+		NextFrameAngularMotion = getFrameNTicksAgo(0).angularVelocity;
+	}
 	public void commitFrame()
 	{
 		if (Frames.size() >= MAX_HISTORY)
@@ -241,31 +247,30 @@ public class DynamicObject implements IConstDynamicObject
 		}
 		else
 		{
-			Vec3 deltaPos = NextFrameLinearMotion.applyOneTick();
-			Quaternionf deltaRot = NextFrameAngularMotion.applyOneTick();
-
 			if(withReactionForce)
 			{
-				var reaction = ReactionAcceleration.applyOneTick(getCurrentLocation());
-				deltaPos = deltaPos.add(reaction.linear().applyOneTick());
-				deltaRot.mul(reaction.angular().applyOneTick());
-			}
+				CompoundVelocity reaction = ReactionAcceleration.applyOneTick(getCurrentLocation());
+				LinearVelocity reactionaryLinearV = NextFrameLinearMotion.add(reaction.getLinearComponent(getCurrentLocation()));
+				AngularVelocity reactionaryAngularV = NextFrameAngularMotion.compose(reaction.getAngularComponent(getCurrentLocation()));
 
-			extrapolateNextFrame(deltaPos, deltaRot);
+				extrapolateNextFrame(reactionaryLinearV, reactionaryAngularV);
+			}
+			else
+			{
+				extrapolateNextFrame(NextFrameLinearMotion, NextFrameAngularMotion);
+			}
 		}
 	}
-	public void extrapolateNextFrame(@Nonnull Vec3 deltaPos, @Nonnull Quaternionf deltaRot)
+	public void extrapolateNextFrame(@Nonnull LinearVelocity linearMotion, @Nonnull AngularVelocity angularMotion)
 	{
+		Vec3 deltaPos = linearMotion.applyOneTick();
+		Quaternionf deltaRot = angularMotion.applyOneTick();
+
 		FrameData currentFrame = getFrameNTicksAgo(0);
-
 		Transform newLoc = Transform.fromPosAndQuat(
-			currentFrame.Location.positionVec3().add(deltaPos),
-			currentFrame.Location.Orientation.mul(deltaRot, new Quaternionf()));
-
-		//Transform newLoc = Transform.Compose(
-		//	currentFrame.Location,
-		//	Transform.FromPosAndQuat(deltaPos, deltaRot, () -> "ExtrapolatePhysicsFrame"));
-		PendingFrame = new FrameData(newLoc, NextFrameLinearMotion, NextFrameAngularMotion);
+				currentFrame.Location.positionVec3().add(deltaPos),
+				currentFrame.Location.Orientation.mul(deltaRot, new Quaternionf()));
+		PendingFrame = new FrameData(newLoc, linearMotion, angularMotion);
 	}
 	public void extrapolateNextFrame() { extrapolateNextFrame(false); }
 	public void extrapolateNextFrameWithReaction() { extrapolateNextFrame(true); }

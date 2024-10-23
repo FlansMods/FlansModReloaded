@@ -37,8 +37,8 @@ public class TestCubeEntity extends PhysicsEntity // implements ITransformEntity
         PhysicsComponent coreComponent = getRootComponent();
 
         LinearForce coreGravity = LinearForce.kgBlocksPerSecondSq(new Vec3(0f, -9.81f * Mass, 0f));
-        //coreComponent.Forces.AddForce(coreGravity);
-        coreComponent.getCurrentForces().addDampener(0.1f);
+        coreComponent.getPendingForces().addForce(coreGravity);
+        coreComponent.getPendingForces().addDampener(0.1f);
     }
     @Override
     protected void tickOutsidePhysicsRange()

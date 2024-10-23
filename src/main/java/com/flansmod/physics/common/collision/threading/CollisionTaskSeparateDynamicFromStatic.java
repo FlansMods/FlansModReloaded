@@ -199,13 +199,13 @@ public class CollisionTaskSeparateDynamicFromStatic
 				// The separating axis theorem tells us that this means our cubes collide, BUT not where.
 
 				// Step 1. Identify the incident and reference faces
-				Direction referenceSide = separationResult.separator().SelectFaceAABBMin(voxelBB);
-				Direction incidentSide = separationResult.separator().SelectFaceOBBMax(boundsA);
+				Direction referenceSide = separationResult.separator().selectFaceAABBMin(voxelBB);
+				Direction incidentSide = separationResult.separator().selectFaceOBBMax(boundsA);
 
 				IPolygon referencePoly = Polygon.of(voxelBB, referenceSide);
 				IPolygon incidentPoly = boundsA.GetFace(incidentSide);
 
-				IPolygon collisionPoly = separationResult.separator().CollisionClip(incidentPoly, referencePoly);
+				IPolygon collisionPoly = separationResult.separator().collisionClip(incidentPoly, referencePoly);
 
 				collisions.add(new StaticCollisionEvent(collisionPoly, separationResult.separator(), separationResult.depth()));
 			}
@@ -228,7 +228,7 @@ public class CollisionTaskSeparateDynamicFromStatic
 				continue;
 
 			VoxelShape shape = Input.StaticShapes.get(i);
-			double heightAbove = separator.GetAABBHeightAbove(shape.bounds());
+			double heightAbove = separator.getAABBHeightAbove(shape.bounds());
 			if(heightAbove >= 0.0f) {
 				results[i] = SeparationResult.successful(separator);
 				numSeparated++;

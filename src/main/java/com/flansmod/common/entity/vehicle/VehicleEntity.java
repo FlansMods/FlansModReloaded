@@ -3,13 +3,14 @@ package com.flansmod.common.entity.vehicle;
 import com.flansmod.client.input.ClientInputHooks;
 import com.flansmod.common.FlansMod;
 import com.flansmod.physics.common.entity.PhysicsEntity;
+import com.flansmod.physics.common.units.IAcceleration;
 import com.flansmod.physics.common.util.ITransformPair;
 import com.flansmod.common.entity.vehicle.controls.ControlLogic;
 import com.flansmod.common.entity.vehicle.controls.ControlLogics;
 import com.flansmod.common.entity.vehicle.controls.VehicleInputState;
 import com.flansmod.common.entity.vehicle.modules.IVehicleEngineModule;
 import com.flansmod.common.entity.vehicle.modules.IVehicleTransformHelpers;
-import com.flansmod.physics.common.entity.ForcesOnPart;
+import com.flansmod.physics.common.deprecated.ForcesOnPart;
 import com.flansmod.physics.common.entity.PhysicsComponent;
 import com.flansmod.common.entity.vehicle.save.*;
 import com.flansmod.common.entity.vehicle.modules.IVehicleDamageHelper;
@@ -596,9 +597,9 @@ public class VehicleEntity extends PhysicsEntity implements
 		return PhysicsParts.getOrDefault(VehicleComponentPath.coreArticulation, PhysicsComponent.invalid);
 	}
 	@Nonnull
-	public ForcesOnPart GetCoreForces() { return GetCorePhysics().getCurrentForces(); }
+	public List<IAcceleration> GetCoreForces() { return GetCorePhysics().getCurrentForces(); }
 	@Nonnull
-	public ForcesOnPart GetForcesOn(@Nonnull VehicleComponentPath path) { return GetPartPhysics(path).getCurrentForces(); }
+	public List<IAcceleration> GetForcesOn(@Nonnull VehicleComponentPath path) { return GetPartPhysics(path).getCurrentForces(); }
 	@Nonnull
 	public ColliderHandle GetCorePhsyicsHandle() { return GetCorePhysics().getPhysicsHandle(); }
 	@Nonnull
@@ -728,12 +729,12 @@ public class VehicleEntity extends PhysicsEntity implements
 		{
 			LinearForce coreGravity = LinearForce.kgBlocksPerSecondSq(new Vec3(0f, -9.81f * Def().physics.mass, 0f));
 
-			GetCorePhysics().getCurrentForces().addForce(coreGravity);
-			GetCorePhysics().getCurrentForces().addDampener(0.1f);
+			GetCorePhysics().getPendingForces().addForce(coreGravity);
+			GetCorePhysics().getPendingForces().addDampener(0.1f);
 			GetHierarchy().ForEachWheel((path, def) -> {
 				LinearForce wheelGravity = LinearForce.kgBlocksPerSecondSq(new Vec3(0f, -9.81f * def.mass, 0f));
-				GetPartPhysics(path).getCurrentForces().addForce(wheelGravity);
-				GetPartPhysics(path).getCurrentForces().addDampener(0.1f);
+				GetPartPhysics(path).getPendingForces().addForce(wheelGravity);
+				GetPartPhysics(path).getPendingForces().addDampener(0.1f);
 			});
 		}
 	}

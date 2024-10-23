@@ -1,4 +1,4 @@
-package com.flansmod.physics.common.entity;
+package com.flansmod.physics.common.deprecated;
 
 import com.flansmod.physics.common.units.*;
 import com.flansmod.physics.common.util.Maths;
@@ -24,10 +24,9 @@ public class ForcesOnPart
 	}
 
 	@Nonnull
-	public List<IForce> Debug_GetForces()
-	{
-		return forces;
-	}
+	public List<IForce> debug_GetForces() { return forces; }
+	@Nonnull
+	public List<IForce> debug_GetReactionForces() { return reactionForces; }
 
 	public void addReactionForce(@Nonnull IForce force)
 	{

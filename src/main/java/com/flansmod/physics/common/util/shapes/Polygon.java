@@ -55,8 +55,8 @@ public record Polygon(@Nonnull ImmutableList<Vec3> vertices) implements IPolygon
             Vec3 vCurr = vertices.get(i);
             Vec3 vNext = GetVertexLooped(i + 1);
 
-            double dCurr = clipPlane.GetPointHeightAbove(vCurr);
-            double dNext = clipPlane.GetPointHeightAbove(vNext);
+            double dCurr = clipPlane.getPointHeightAbove(vCurr);
+            double dNext = clipPlane.getPointHeightAbove(vNext);
 
             if(dCurr <= 0d && dNext <= 0d)
             {
@@ -72,7 +72,7 @@ public record Polygon(@Nonnull ImmutableList<Vec3> vertices) implements IPolygon
             }
             else if(dCurr <= 0d && dNext > 0d)
             {
-                Optional<Vec3> clipPos = clipPlane.RayPlaneIntersect(vCurr, vNext.subtract(vCurr));
+                Optional<Vec3> clipPos = clipPlane.rayPlaneIntersect(vCurr, vNext.subtract(vCurr));
                 if(clipPos.isPresent())
                     builder.add(clipPos.get());
                 else {
@@ -82,7 +82,7 @@ public record Polygon(@Nonnull ImmutableList<Vec3> vertices) implements IPolygon
             }
             else if(dCurr > 0d && dNext <= 0d)
             {
-                Optional<Vec3> clipPos = clipPlane.RayPlaneIntersect(vCurr, vNext.subtract(vCurr));
+                Optional<Vec3> clipPos = clipPlane.rayPlaneIntersect(vCurr, vNext.subtract(vCurr));
                 if(clipPos.isPresent())
                     builder.add(clipPos.get());
                 else {
@@ -102,7 +102,7 @@ public record Polygon(@Nonnull ImmutableList<Vec3> vertices) implements IPolygon
         for(int i = 0; i < vertices.size(); i++)
         {
             Vec3 vCurr = vertices.get(i);
-            double dCurr = clipPlane.GetPointHeightAbove(vCurr);
+            double dCurr = clipPlane.getPointHeightAbove(vCurr);
             if(dCurr >= 0d)
                 builder.add(vCurr);
         }
