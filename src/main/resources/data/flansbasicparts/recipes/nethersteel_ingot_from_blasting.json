@@ -7,5 +7,8 @@
   "ingredient": {
     "item": "minecraft:netherite_ingot"
   },
-  "result": "flansbasicparts:nethersteel_ingot"
+  "result": {
+    "item": "flansbasicparts:nethersteel_ingot",
+    "count": 8
+  }
 }
