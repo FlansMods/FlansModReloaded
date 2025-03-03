@@ -611,8 +611,10 @@ public class ActionGroupContext
 							if (magDef.ammoLoadMode == EAmmoLoadMode.FullMag)
 							{
 								stack = LoadBullets(magIndex, stack, isClient);
-								if(isClient) {
+								if(!isClient) {
 									inventory.setItem(i, stack);
+									inventory.setChanged();
+								} else {
 									inventory.setChanged();
 								}
 							} else
@@ -622,8 +624,10 @@ public class ActionGroupContext
 								if(bulletIndex != Inventory.NOT_FOUND_INDEX)
 								{
 									stack = LoadOneBulletIntoSlot(magIndex, bulletIndex, stack, isClient);
-									if(isClient) {
+									if(!isClient) {
 										inventory.setItem(i, stack);
+										inventory.setChanged();
+									} else {
 										inventory.setChanged();
 									}
 								}
