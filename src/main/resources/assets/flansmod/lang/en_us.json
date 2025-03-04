@@ -6,6 +6,7 @@
   "block.flansmod.gun_modification_table": "Gun Modification Table",
   "block.flansmod.portable_coal_generator": "Portable Coal Generator",
   "block.flansmod.portable_diesel_generator": "Portable Diesel Generator",
+  "block.flansmod.painting_table": "Gun Painting Table",
   "tooltip.format.attached": "§2+%s",
   "tooltip.format.impact_damage": "%.0f",
   "tooltip.format.impact_damage.advanced": " Impact Damage %.0f",

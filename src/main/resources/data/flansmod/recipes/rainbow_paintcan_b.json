@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "building",
+  "ingredients": [
+    { "item": "minecraft:orange_dye" },
+    { "item": "minecraft:black_dye" },
+    { "item": "minecraft:gray_dye" },
+    { "item": "minecraft:pink_dye" },
+    { "item": "minecraft:light_blue_dye" },
+    { "item": "minecraft:yellow_dye" },
+    { "item": "minecraft:green_dye" },
+    { "item": "minecraft:purple_dye" }
+  ],
+  "result": {
+    "item": "flansmod:rainbow_paint_can"
+  },
+  "show_notification": true
+}

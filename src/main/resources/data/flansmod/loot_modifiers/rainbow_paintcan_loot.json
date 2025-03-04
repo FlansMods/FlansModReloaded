@@ -2,7 +2,7 @@
   "type": "flansmod:loot_populator",
   "conditions": [
 	{
-		"condition": "minecraft:alternative",
+		"condition": "minecraft:any_of",
 		"terms": 
 		[
 			{
@@ -26,7 +26,7 @@
   ],
   "entries": [
 	{
-	  "chance":0.25,
+	  "chance":0.5,
 	  "min_stack_size":1,
 	  "max_stack_size":1,
 	  "item": {

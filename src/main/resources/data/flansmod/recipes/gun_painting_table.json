@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "building",
+  "key": {
+    "P": {
+      "item": "flansmod:rainbow_paint_can"
+    },
+	"A": {
+      "item": "minecraft:crafting_table"
+    },
+	"I": {
+      "item": "minecraft:iron_ingot"
+    }
+  },
+  "pattern": [
+    " P ",
+    "III",
+    "IAI"
+  ],
+  "result": {
+    "item": "flansmod:painting_table"
+  },
+  "show_notification": true
+}
