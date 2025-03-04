@@ -94,7 +94,7 @@ public class StatAccumulator extends FloatAccumulator<EAccumulationSource, StatF
 		return Evaluate((statIndex) -> {
 			switch(EAccumulationSource.values()[statIndex]) {
 				case PerLevel, PerStacks:
-					FlansMod.LOGGER.error("Too late to bake in trait level or stack count");
+					//FlansMod.LOGGER.error("Too late to bake in trait level or stack count");
 					return 1f;
 				case PerAttachment: return (float)ctx.GetNumAttachments();
 				case PerMagFullness: return ctx.GetMagFullness();

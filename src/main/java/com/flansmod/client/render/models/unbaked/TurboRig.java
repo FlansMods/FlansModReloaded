@@ -121,7 +121,7 @@ public class TurboRig implements IUnbakedGeometry<TurboRig>, UnbakedModel
 			sections.put(kvp.getKey(), kvp.getValue().bake(context, baker, spriteGetter, modelState, overrides, modelLocation, TextureSize));
 		}
 
-		attachPoints.put("body", new BakedAttachPoint(null, Transform.identity()));
+		attachPoints.put("body", new BakedAttachPoint(null, Transform.identity(), false));
 		for(var kvp : AttachPoints.entrySet())
 		{
 			attachPoints.put(kvp.getKey(), kvp.getValue().bake());
@@ -231,7 +231,8 @@ public class TurboRig implements IUnbakedGeometry<TurboRig>, UnbakedModel
 					String attachTo = jAPObject.get("attachTo").getAsString();
 					Vector3f offset = getOrDefaultVector3f(jAPObject, "offset", new Vector3f());
 					Vector3f euler = getOrDefaultVector3f(jAPObject, "euler", new Vector3f());
-					attachPoints.put(name, new AttachPoint(attachTo, offset, euler));
+					boolean physics = jAPObject.has("physics") && jAPObject.get("physics").getAsBoolean();
+					attachPoints.put(name, new AttachPoint(attachTo, offset, euler, physics));
 				}
 			}
 

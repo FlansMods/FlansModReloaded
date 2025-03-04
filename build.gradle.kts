@@ -151,6 +151,8 @@ dependencies {
     compileOnly(fg.deobf("mezz.jei:jei-${mcVersion}-forge-api:${jeiVersion}"))
     // at runtime, use the full JEI jar for Forge
     runtimeOnly(fg.deobf("mezz.jei:jei-${mcVersion}-forge:${jeiVersion}"))
+
+  //  compileOnly("com.patreon:patreon:0.1.1")
 }
 
 // processResources

@@ -55,6 +55,13 @@ public class FirstPersonManager
 
 	public static HashMap<String, AdsInstance> ADS_INSTANCES = new HashMap<>();
 
+	public static class PhysicsAPInstance
+	{
+		public ItemDisplayContext TransformType;
+		public Transform LastKnownPosition;
+	}
+
+	public static HashMap<String, PhysicsAPInstance> PHYSICS_AP_INSTANCES = new HashMap<>();
 
 	// I don't like this, but server keeps sending us an updated ItemStack and we're like "guess I don't need to play an anim"
 	public static int NUM_LOAD_ANIMS_TO_PLAY = 0;
@@ -530,7 +537,22 @@ public class FirstPersonManager
 		return Transform.interpolate(defaultPose, lookDownEyeLineTransform, blendWeight);
 	}
 
+	@Nonnull
+	public static Transform UpdatePhysicsAP(@Nonnull String apPath, @Nonnull Transform expectedParentLocation, @Nonnull Transform restingParentRelative)
+	{
+		PhysicsAPInstance physicsData = PHYSICS_AP_INSTANCES.get(apPath);
+		if(physicsData != null)
+		{
 
+		}
+		else
+		{
+			physicsData = new PhysicsAPInstance();
+			physicsData.LastKnownPosition = TransformStack.of(expectedParentLocation, restingParentRelative).top();
+			PHYSICS_AP_INSTANCES.put(apPath, physicsData);
+		}
+		return physicsData.LastKnownPosition;
+	}
 
 
 	public static void RenderTick()

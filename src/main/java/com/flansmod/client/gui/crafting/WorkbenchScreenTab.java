@@ -224,8 +224,6 @@ public abstract class WorkbenchScreenTab<T extends WorkbenchMenu> extends FMScre
 				.rotateLocalX(pitch * Maths.DegToRadF)
 				.rotateLocalY(yaw * Maths.DegToRadF)
 			);
-		//graphics.pose().translate(-10f, 0f, 0f);
-
 		ITurboRenderer gunRenderer = FlansModelRegistry.GetItemRenderer(stack);
 		if(gunRenderer != null)
 		{
@@ -233,13 +231,9 @@ public abstract class WorkbenchScreenTab<T extends WorkbenchMenu> extends FMScre
 			{
 				Lighting.setupForEntityInInventory();
 				MultiBufferSource.BufferSource buffers = Minecraft.getInstance().renderBuffers().bufferSource();
-				//graphics.pose().translate(x + 8, y + 12, 0f); // TODO: This was blit offset?
-
 				graphics.pose().mulPose(new Quaternionf().rotateLocalX(Maths.PiF));
 				graphics.pose().mulPose(new Quaternionf().rotateLocalY(Maths.PiF));
-
 				TransformStack transformStack = TransformStack.of(graphics.pose());
-				//transformStack.add(Transform.fromScale(new Vector3f(-1f, 1f, 1f)));
 
 				gunRenderer.renderDirect(null, stack, new RenderContext(
 					buffers,
@@ -254,7 +248,6 @@ public abstract class WorkbenchScreenTab<T extends WorkbenchMenu> extends FMScre
 			graphics.pose().popPose();
 		}
 
-		//xOrigin + 126, yOrigin + 31
 		graphics.pose().popPose();
 	}
 	protected void RenderStatComparisonBar(@Nonnull GuiGraphics graphics, int x, int y, float value, float compareTo, float minValue, float maxValue, int icon)
