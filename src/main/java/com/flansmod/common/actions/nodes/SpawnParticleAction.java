@@ -6,6 +6,7 @@ import com.flansmod.common.actions.ActionInstance;
 import com.flansmod.common.types.Constants;
 import com.flansmod.common.types.guns.elements.ActionDefinition;
 import com.flansmod.common.types.guns.elements.ESpreadPattern;
+import net.minecraft.client.Minecraft;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
@@ -24,42 +25,27 @@ public class SpawnParticleAction extends ActionInstance {
     @Override
     public void OnTriggerClient(int triggerIndex)
     {
-        if(Def.delay==0){
-            FlansModClient.SpawnLocalParticles(this);
-        }
-        //FlansModClient.SpawnLocalParticles(this);
+        FlansModClient.SpawnLocalParticles(this);
     }
 
     @Override
     public void OnTriggerServer(int triggerIndex) {
-        if(Def.delay==0){
-            Execute();
-        }
-        //FlansModClient.SpawnLocalParticles(this);
+
     }
 
     @Override
     public void OnTickClient() {
         super.OnTickClient();
-        if(Def.delay > 0) {
-            if (ticksActiveClient >= Def.delay) {
-                Execute();
-            }
-            ticksActiveClient++;
-        }
     }
 
     @Override
     public void OnTickServer() {
-        super.OnTickServer();
+        super.OnTickClient();
     }
 
-    public void Execute()
-    {
-        if(executed) return;
-        executed = true;
-
-        FlansModClient.SpawnLocalParticles(this);
+    @Override
+    public boolean PropogateToServer() {
+        return true;
     }
 
     @Nonnull

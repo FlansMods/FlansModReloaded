@@ -56,4 +56,10 @@ public class MagazineDefinition extends JsonDefinition
 				return true;
 		return false;
 	}
+	@JsonField(Docs = "Override for the casing model specified in the gun definition")
+	public String casingModelOverride = "";
+	@JsonField(Docs = "What item does the ejected bullet casing drop")
+	public String spawnBulletCasing = "";
+	@JsonField(Docs = "Whether to allow the gun to spawn bullet casings for this ammo type")
+	public boolean ejectCasings = true;
 }

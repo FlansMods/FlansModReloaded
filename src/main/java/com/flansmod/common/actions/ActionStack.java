@@ -7,6 +7,7 @@ import com.flansmod.common.actions.contexts.ActionGroupContext;
 import com.flansmod.common.actions.contexts.GunContext;
 import com.flansmod.common.actions.contexts.TargetsContext;
 import com.flansmod.common.actions.contexts.TriggerContext;
+import com.flansmod.common.actions.nodes.EjectCasingAction;
 import com.flansmod.common.gunshots.EPressType;
 import com.flansmod.common.network.FlansModPacketHandler;
 import com.flansmod.common.network.bidirectional.ActionUpdateMessage;
@@ -337,10 +338,21 @@ public class ActionStack
 		ActionGroupContext newGroupContext = triggeringActionGroup.Gun
 			.GetActionGroupContextSibling(triggeringActionGroup, reload.GetReloadActionKey(reloadStage));
 		ActionGroupInstance groupInstance = GetOrCreateGroupInstance(newGroupContext);
-		TryStartGroupInstance(newGroupContext, true);
+		EActionResult result = TryStartGroupInstance(newGroupContext, true);
 		if (reloadStage == EReloadStage.LoadOne)// && !IsClient)
 		{
-			newGroupContext.LoadOne(0, newGroupContext.Gun.GetAttachedInventory());
+			newGroupContext.LoadOne(0, newGroupContext.Gun.GetAttachedInventory(),IsClient);
+		}
+		//EActionResult result = TryStartGroupInstance(newGroupContext, true);
+		// Send a message to the server about these actions if required
+		
+		if(IsClient) {
+			if (result == EActionResult.CanProcess && (groupInstance.PropogateToServer() || groupInstance.NeedsNetSync())) {
+				ActionUpdateMessage updateMsg = new ActionUpdateMessage(newGroupContext, EPressType.Press, groupInstance.GetStartedTick());
+				updateMsg.AddTriggers(groupInstance, groupInstance.GetRequiredNetSyncMin(), groupInstance.GetRequiredNetSyncMax());
+				FlansModPacketHandler.SendToServer(new ActionUpdateMessage.ToServer(updateMsg));
+				groupInstance.OnPerformedNetSync(groupInstance.GetRequiredNetSyncMin(), groupInstance.GetRequiredNetSyncMax());
+			}
 		}
 	}
 
@@ -554,8 +566,13 @@ public class ActionStack
 				{
 					for (ActionInstance action : groupInstance.GetActions())
 					{
-						action.OnTriggerServer(triggerIndex);
+						//action.OnTriggerServer(triggerIndex);
+						if(action instanceof EjectCasingAction) {
+							ActionInstance.NetData netData = msg.Data.GetNetData(triggerIndex, actionIndex);
+							action.UpdateFromNetData(netData, triggerIndex);
+						}
 					}
+					groupInstance.ProxyTriggerServer(triggerIndex);
 					groupInstance.TriggerCount++;
 				}
 

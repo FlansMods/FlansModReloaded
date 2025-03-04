@@ -88,8 +88,13 @@ public class ClientActionManager extends ActionManager {
 
 			// See if we are updating an existing action, or if we need to start fresh
 			ActionGroupInstance groupInstance = actionStack.TryGetGroupInstance(groupContext);
+			if(groupInstance == null){
+				groupInstance = actionStack.GetOrCreateGroupInstance(groupContext);
+			}
 			EPressType pressTypeToProcess = msg.Data.GetPressType();
-			if(groupInstance == null)
+			//Previously this was checking if the group was null, and then calling GetOrCreate underneath, problem is this was discarding release events, so we check for null beforehand
+			//Don't know why it was like this. If this breaks something down the line blame me.
+			if(groupInstance != null)
 			{
 				if(pressTypeToProcess != EPressType.Press)
 				{
@@ -97,7 +102,7 @@ public class ClientActionManager extends ActionManager {
 					if(pressTypeToProcess == EPressType.Hold)
 						pressTypeToProcess = EPressType.Press;
 				}
-				groupInstance = actionStack.GetOrCreateGroupInstance(groupContext);
+				//groupInstance = actionStack.GetOrCreateGroupInstance(groupContext);
 				groupInstance.OnStartClientFromNetwork(msg.Data.GetStartTick());
 
 				// Now run through all the triggers that are bundled in this message and run any client side effects
@@ -113,7 +118,7 @@ public class ClientActionManager extends ActionManager {
 							{
 								ActionInstance.NetData netData = msg.Data.GetNetData(triggerIndex, actionIndex);
 								action.UpdateFromNetData(netData, triggerIndex);
-								action.OnTriggerClient(triggerIndex);
+								//action.OnTriggerClient(triggerIndex);
 								actionIndex++;
 							}
 						}

@@ -19,5 +19,6 @@
             }
         ],
         "materialFilters": []
-    }
+    },
+    "spawnBulletCasing": "minecraft:iron_nugget"
 }

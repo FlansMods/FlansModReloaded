@@ -1,5 +1,6 @@
 package com.flansmod.common.gunshots;
 
+import com.flansmod.common.projectiles.CasingEntity;
 import com.flansmod.physics.client.DebugRenderer;
 import com.flansmod.common.FlansMod;
 import com.flansmod.common.entity.vehicle.VehicleEntity;
@@ -141,7 +142,6 @@ public class Raytracer
             List<HitResult> hitsFromThisSection = new ArrayList<>(8);
             // Move our test point to the end of the cast section
             testPoint = GetHitsUpToNextBlock(origin, endPoint, hitsFromThisSection);
-
             for(HitResult hit : hitsFromThisSection)
             {
                 // Take the hit and calculate the penetration falloff
@@ -248,7 +248,7 @@ public class Raytracer
                     continue;
                 }
             }
-
+            if(checkEnt instanceof CasingEntity) continue;
             // This may still happen for a player, if their movement history was not found for some reason
             Optional<Vec3> hit = checkEnt.getBoundingBox().clip(origin, endPoint);
             hit.ifPresent(vec3 -> outResults.add(new EntityHitResult(checkEnt, vec3)));

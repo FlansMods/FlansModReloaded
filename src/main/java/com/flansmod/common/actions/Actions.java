@@ -27,6 +27,7 @@ public class Actions
 			}
 			case AttachEffect 		-> { return new AttachEffectAction(group, def); }
 			case SpawnParticle 		-> { return new SpawnParticleAction(group, def); }
+			case EjectCasing 				-> { return new EjectCasingAction(group, def); }
 			case Laser 				-> { return new LaserAction(group, def); }
 			case SwitchMode			-> { return new SwitchModeAction(group, def); }
 			case AbilityOnSelf 		-> { return new AbilityOnSelfAction(group, def); }
@@ -50,6 +51,7 @@ public class Actions
 		{
 			case ActionInstance.NetData.INVALID_ID -> { return ActionInstance.NetData.Invalid; }
 			case ShootAction.ShootNetData.ID -> { return new ShootAction.ShootNetData(); }
+			case EjectCasingAction.CasingNetData.ID -> { return new EjectCasingAction.CasingNetData(); }
 		}
 		return ActionInstance.NetData.Invalid;
 	}

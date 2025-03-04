@@ -337,7 +337,7 @@ public class ActionGroupContext
 		return Pair.of(ItemStack.EMPTY, ActionGroupContext.INVALID_FIRE_INDEX);
 	}
 	@Nonnull
-	public ItemStack LoadOneBulletIntoSlot(int magIndex, int bulletIndex, ItemStack bulletStack)
+	public ItemStack LoadOneBulletIntoSlot(int magIndex, int bulletIndex, ItemStack bulletStack, boolean isClient)
 	{
 		boolean isCreative = Gun.GetShooter().IsCreative();
 		if(bulletStack.getItem() instanceof BulletItem bulletItem)
@@ -347,13 +347,13 @@ public class ActionGroupContext
 			items[bulletIndex] = bulletStack.getItem();
 			CompactStacks(magIndex, items);
 
-			if(!isCreative)
+			if(!isCreative && !isClient)
 				bulletStack.setCount(bulletStack.getCount() - 1);
 		}
 		return bulletStack;
 	}
 	@Nonnull
-	public ItemStack LoadBullets(int magIndex, ItemStack bulletStack)
+	public ItemStack LoadBullets(int magIndex, ItemStack bulletStack, boolean isClient)
 	{
 		boolean isCreative = Gun.GetShooter().IsCreative();
 		if(bulletStack.getItem() instanceof BulletItem bulletItem)
@@ -366,7 +366,7 @@ public class ActionGroupContext
 				if(items[i] == null || items[i] == Items.APPLE)
 				{
 					items[i] = bulletStack.getItem();
-					if(!isCreative)
+					if(!isCreative && !isClient)
 						bulletStack.setCount(bulletStack.getCount() - 1);
 				}
 
@@ -592,7 +592,7 @@ public class ActionGroupContext
 		}
 		return Inventory.NOT_FOUND_INDEX;
 	}
-	public void LoadOne(int magIndex, Container inventory)
+	public void LoadOne(int magIndex, Container inventory, boolean isClient)
 	{
 		if(inventory != null)
 		{
@@ -610,18 +610,26 @@ public class ActionGroupContext
 						{
 							if (magDef.ammoLoadMode == EAmmoLoadMode.FullMag)
 							{
-								stack = LoadBullets(magIndex, stack);
-								inventory.setItem(i, stack);
-								inventory.setChanged();
+								stack = LoadBullets(magIndex, stack, isClient);
+								if(!isClient) {
+									inventory.setItem(i, stack);
+									inventory.setChanged();
+								} else {
+									inventory.setChanged();
+								}
 							} else
 							{
 								// Both of these modes are LoadOne, but differ in how they select an index
 								int bulletIndex = GetNextIndexToLoad(magIndex);
 								if(bulletIndex != Inventory.NOT_FOUND_INDEX)
 								{
-									stack = LoadOneBulletIntoSlot(magIndex, bulletIndex, stack);
-									inventory.setItem(i, stack);
-									inventory.setChanged();
+									stack = LoadOneBulletIntoSlot(magIndex, bulletIndex, stack, isClient);
+									if(!isClient) {
+										inventory.setItem(i, stack);
+										inventory.setChanged();
+									} else {
+										inventory.setChanged();
+									}
 								}
 								// And break because we only want to load one bullet
 								break;

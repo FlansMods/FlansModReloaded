@@ -164,6 +164,12 @@ public abstract class FlanItemModelRenderer extends BlockEntityWithoutLevelRende
     {
         return getOrDefault(rig -> rig.getPose(sectionName, getDefLoc(), animationSet, actionStack), Transform.IDENTITY);
     }
+
+    @Nonnull
+    public Transform getPosePublic (@Nonnull FlanimationDefinition animationSet, @Nullable ActionStack actionStack, @Nonnull String sectionName)
+    {
+        return getOrDefault(rig -> rig.getPose(sectionName, getDefLoc(), animationSet, actionStack), Transform.IDENTITY);
+    }
     public boolean hasSection(@Nonnull String sectionName) { return getOrDefault(rig -> rig.hasSection(sectionName), false); }
     private void applyItemArmTransform(PoseStack poseStack, HumanoidArm arm, float equipProgress)
     {

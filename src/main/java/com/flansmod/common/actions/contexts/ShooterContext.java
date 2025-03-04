@@ -234,6 +234,7 @@ public abstract class ShooterContext
 	@Nonnull
 	public static ShooterContext Load(@Nonnull CompoundTag tags, boolean client)
 	{
+		if(!tags.hasUUID("owner")) return null;
 		UUID ownerID = tags.getUUID("owner");
 		UUID entityID = tags.getUUID("entity");
 		return ShooterContext.of(ownerID, entityID, client);

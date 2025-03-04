@@ -235,6 +235,14 @@
                     "itemStack": "",
                     "scopeOverlay": "",
                     "anim": ""
+                },
+                {
+                    "actionType": "EjectCasing",
+                    "duration": 0.05,
+                    "sounds": [],
+                    "itemStack": "",
+                    "scopeOverlay": "",
+                    "anim": "shoot"
                 }
             ],
             "modifiers": [
@@ -419,6 +427,29 @@
                             "multiplyPer": []
                         }
                     ],
+                    "setValue": ""
+                },
+
+                {
+                    "stat": "casing_eject_point",
+                    "matchGroupPaths": [],
+                    "accumulators": [],
+                    "setValue": "casing_eject"
+                },
+                {
+                    "stat": "casing_eject_direction",
+                    "matchGroupPaths": [],
+                    "accumulators": [],
+                    "setValue": "casing_eject_direction"
+                },
+                {
+                    "stat": "casing_eject_speed",
+                    "matchGroupPaths": [],
+                    "accumulators": [                      {
+                        "operation": "BaseAdd",
+                        "value": 0.5,
+                        "multiplyPer": []
+                    }],
                     "setValue": ""
                 }
             ]
@@ -761,5 +792,6 @@
     },
     "modelParts": [],
     "animationSet": "flansmod:rifle_priming_handle_magazine_fed",
-    "particleCount": 0
+    "particleCount": 0,
+    "casingModel": "flansmod:effects/casing_rifle"
 }

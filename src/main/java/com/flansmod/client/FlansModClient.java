@@ -5,14 +5,13 @@ import com.flansmod.client.gui.turret.TurretScreen;
 import com.flansmod.client.render.ClientRenderHooks;
 import com.flansmod.client.input.ClientInputHooks;
 import com.flansmod.client.render.FirstPersonManager;
+import com.flansmod.client.render.bullets.*;
 import com.flansmod.client.render.effects.EffectRenderer;
 import com.flansmod.client.render.effects.FlashEffectRenderer;
 import com.flansmod.client.render.models.FlansModelRegistry;
 import com.flansmod.client.render.MagazineTextureAtlas;
 import com.flansmod.client.render.animation.FlanimationDefinitions;
-import com.flansmod.client.render.bullets.BulletEntityRenderer;
 import com.flansmod.client.render.effects.DecalRenderer;
-import com.flansmod.client.render.bullets.ShotRenderer;
 import com.flansmod.client.render.effects.LaserRenderer;
 import com.flansmod.client.render.vehicles.VehicleDebugRenderer;
 import com.flansmod.common.FlansMod;
@@ -73,6 +72,7 @@ public class FlansModClient
 	public static final ShotRenderer SHOT_RENDERER= new ShotRenderer();
 	public static final LaserRenderer LASER_RENDERER = new LaserRenderer();
 	public static final FlashEffectRenderer FLASH_RENDERER = new FlashEffectRenderer();
+	public static final CasingEntityItemRenderer CASING_RENDERER = new CasingEntityItemRenderer();
 	public static final ClientInputHooks CLIENT_INPUT_HOOKS = new ClientInputHooks();
 	public static final ClientRenderHooks CLIENT_OVERLAY_HOOKS = new ClientRenderHooks();
 	public static final FlansModelRegistry MODEL_REGISTRATION = new FlansModelRegistry();
@@ -109,6 +109,9 @@ public class FlansModClient
 		FlansModelRegistry.PreRegisterRenderer(smallMuzzleFlash, new EffectRenderer(smallMuzzleFlash));
 		FlansModelRegistry.PreRegisterRenderer(mediumMuzzleFlash, new EffectRenderer(mediumMuzzleFlash));
 		FlansModelRegistry.PreRegisterRenderer(largeMuzzleFlash, new EffectRenderer(largeMuzzleFlash));
+
+		ResourceLocation rifleCasing = new ResourceLocation(FlansMod.MODID, "effects/casing_rifle");
+		FlansModelRegistry.PreRegisterRenderer(rifleCasing, new CasingRenderer(rifleCasing));
 	}
 
 	@SubscribeEvent
@@ -132,6 +135,7 @@ public class FlansModClient
 
 		// Entity Renderers
 		EntityRenderers.register(FlansMod.ENT_TYPE_BULLET.get(), BulletEntityRenderer::new);
+		EntityRenderers.register(FlansMod.ENT_TYPE_CASING.get(), CasingEntityRenderer::new);
 
 		MinecraftForge.EVENT_BUS.addListener(FlansModClient::RenderTick);
 		MinecraftForge.EVENT_BUS.addListener(FlansModClient::OnLevelLoad);
@@ -174,6 +178,7 @@ public class FlansModClient
 	public static ShaderInstance GetGunSolidShader() { return GUN_SOLID; }
 	@Nullable
 	public static ShaderInstance GetGunCutoutShader() { return GUN_CUTOUT; }
+
 	@Nullable
 	public static ShaderInstance GetGunEmissiveShader() { return GUN_EMISSIVE; }
 	@Nullable

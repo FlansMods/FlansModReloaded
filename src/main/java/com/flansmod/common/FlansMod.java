@@ -23,6 +23,7 @@ import com.flansmod.common.item.*;
 import com.flansmod.common.network.FlansEntityDataSerializers;
 import com.flansmod.common.network.FlansModPacketHandler;
 import com.flansmod.common.projectiles.BulletEntity;
+import com.flansmod.common.projectiles.CasingEntity;
 import com.flansmod.common.types.abilities.CraftingTraitDefinition;
 import com.flansmod.common.types.abilities.CraftingTraitDefinitions;
 import com.flansmod.common.types.abilities.elements.AbilityEffectDefinition;
@@ -115,6 +116,7 @@ public class FlansMod
 {
     public static final String MODID = "flansmod";
     public static final Logger LOGGER = LogUtils.getLogger();
+
     public static boolean DEBUG = false;
 
     // Registers
@@ -144,6 +146,13 @@ public class FlansMod
             MobCategory.MISC)
             .sized(0.25f, 0.25f)
             .build("wheel"));
+    public static final RegistryObject<EntityType<CasingEntity>> ENT_TYPE_CASING = ENTITY_TYPES.register(
+            "casing",
+            () -> EntityType.Builder.of(
+                            CasingEntity::new,
+                            MobCategory.MISC)
+                    .sized(0.5f, 0.5f)
+                    .build("casing"));
 
 
 

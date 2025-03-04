@@ -202,6 +202,26 @@
                     "anim": ""
                 },
                 {
+                    "actionType": "PlaySound",
+                    "delay" : 13,
+                    "duration": 0.0,
+                    "sounds": [
+                        {
+                            "sound": "flansmod:bullet_drop_tinkle",
+                            "length": 0.0,
+                            "minPitchMultiplier": 0.8333333,
+                            "maxPitchMultiplier": 1.25,
+                            "minVolume": 1.0,
+                            "maxVolume": 1.0,
+                            "maxRange": 100.0,
+                            "LODs": []
+                        }
+                    ],
+                    "itemStack": "",
+                    "scopeOverlay": "",
+                    "anim": ""
+                },
+                {
                     "actionType": "Animation",
                     "duration": 1.0,
                     "sounds": [],
@@ -212,6 +232,15 @@
                 {
                     "actionType": "AttachEffect",
                     "duration": 0.05,
+                    "sounds": [],
+                    "itemStack": "",
+                    "scopeOverlay": "",
+                    "anim": "shoot"
+                },
+                {
+                    "actionType": "EjectCasing",
+                    "delay" : 13,
+                    "duration": 1.5,
                     "sounds": [],
                     "itemStack": "",
                     "scopeOverlay": "",
@@ -266,6 +295,28 @@
                         }
                     ],
                     "setValue": "flansmod:effects/muzzle_flash_large"
+                },
+                {
+                    "stat": "casing_eject_point",
+                    "matchGroupPaths": [],
+                    "accumulators": [],
+                    "setValue": "casing_eject"
+                },
+                {
+                    "stat": "casing_eject_direction",
+                    "matchGroupPaths": [],
+                    "accumulators": [],
+                    "setValue": "casing_eject_direction"
+                },
+                {
+                    "stat": "casing_eject_speed",
+                    "matchGroupPaths": [],
+                    "accumulators": [                      {
+                        "operation": "BaseAdd",
+                        "value": 0.5,
+                        "multiplyPer": []
+                    }],
+                    "setValue": ""
                 }
             ]
         },
@@ -574,5 +625,6 @@
     },
     "modelParts": [],
     "animationSet": "flansmod:bolt_action_magazine_fed",
-    "particleCount": 1
+    "particleCount": 1,
+    "casingModel": "flansmod:effects/casing_rifle"
 }

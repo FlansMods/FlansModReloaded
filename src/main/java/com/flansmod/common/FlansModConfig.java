@@ -11,6 +11,7 @@ public class FlansModConfig
 	public static ForgeConfigSpec.BooleanValue AllowBulletsBreakBlocks;
 	public static ForgeConfigSpec.BooleanValue AllowBulletsCreateExplosions;
 	public static ForgeConfigSpec.BooleanValue AllowBulletsCreateFire;
+	public static ForgeConfigSpec.BooleanValue AllowBulletCasingDrops;
 
 	public static ForgeConfigSpec.BooleanValue AllowSummonNpc;
 	public static ForgeConfigSpec.DoubleValue SummonNpcMinDistance;
@@ -48,6 +49,7 @@ public class FlansModConfig
 		AllowBulletsBreakBlocks = builder.define("allow_bullet_break_blocks", true);
 		AllowBulletsCreateExplosions = builder.define("allow_bullet_create_explosions", true);
 		AllowBulletsCreateFire = builder.define("allow_bullet_create_fire", true);
+		AllowBulletCasingDrops = builder.define("allow_bullet_casing_drops", true);
 		AllowSummonNpc = builder.define("allow_summon_npc", true);
 		SummonNpcMinDistance = builder.defineInRange("summon_npc_min_distance", 400d, 0d, 1000d);
 		SummonNpcExtraCooldown = builder.defineInRange("summon_npc_extra_cooldown", 0d, 0d, 10000d);

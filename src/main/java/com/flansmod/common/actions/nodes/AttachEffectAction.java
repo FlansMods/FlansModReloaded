@@ -11,7 +11,7 @@ import javax.annotation.Nonnull;
 
 public class AttachEffectAction extends ActionInstance
 {
-	public int TicksSinceTrigger = 0;
+	public int TicksSinceTrigger = -1;
 
 	public AttachEffectAction(@Nonnull ActionGroupInstance group, @Nonnull ActionDefinition def)
 	{
@@ -23,7 +23,7 @@ public class AttachEffectAction extends ActionInstance
 	@Override
 	public void OnTriggerClient(int triggerIndex)
 	{
-		TicksSinceTrigger = (int) -Def.delay;
+		TicksSinceTrigger = 0;
 	}
 	@Override
 	public void OnTriggerServer(int triggerIndex) { }

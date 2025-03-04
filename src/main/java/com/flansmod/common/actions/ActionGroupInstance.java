@@ -2,6 +2,7 @@ package com.flansmod.common.actions;
 
 import com.flansmod.common.FlansMod;
 import com.flansmod.common.actions.contexts.ActionGroupContext;
+import com.flansmod.common.actions.nodes.PlaySoundAction;
 import com.flansmod.common.actions.nodes.ShootAction;
 import com.flansmod.common.types.guns.elements.ActionDefinition;
 import com.flansmod.common.types.guns.elements.ActionGroupDefinition;
@@ -15,6 +16,7 @@ import net.minecraft.world.phys.Vec3;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.function.Supplier;
 
@@ -33,6 +35,9 @@ public class ActionGroupInstance
 	public final ActionGroupContext Context;
 	@Nonnull
 	public final ActionGroupDefinition Def;
+
+	public HashMap<ActionInstance,Integer> delayedClientActions = new HashMap<ActionInstance, Integer>();
+	public HashMap<ActionInstance,Integer> delayedServerActions = new HashMap<ActionInstance, Integer>();
 
 
 	protected boolean Finished = false;
@@ -155,13 +160,36 @@ public class ActionGroupInstance
 		StartedTick = startedTick;
 		for(ActionInstance action : Actions)
 			action.OnStartClient();
+		DoInitialTrigger(() ->
+		{
+			OnTriggerClient(TriggerCount);
+			TriggerCount++;
+			return null;
+		});
 	}
 	public void OnTickClient()
 	{
 		Progress++;
 
-		for(ActionInstance action : Actions)
+		for(ActionInstance action : Actions) {
+			if(!delayedClientActions.containsKey(action))
 			action.OnTickClient();
+		}
+
+		ArrayList<ActionInstance> completedAction = new ArrayList<ActionInstance>();
+
+		delayedClientActions.forEach((key,value)->{
+			value--;
+			if(value<= 0){
+				key.OnTriggerClient(TriggerCount);
+				completedAction.add(key);
+			}
+			delayedClientActions.replace(key,(value));
+		});
+
+		completedAction.forEach((action) ->{
+			delayedClientActions.remove(action);
+		});
 
 		CheckRetrigger(() ->
 		{
@@ -174,12 +202,21 @@ public class ActionGroupInstance
 	{
 		for(ActionInstance action : Actions)
 			action.OnFinishClient();
+
 	}
 	private void OnTriggerClient(int triggerIndex)
 	{
 		for(ActionInstance action : Actions)
-			action.OnTriggerClient(triggerIndex);
+		{
+			if(action.Def.delay==0)
+				action.OnTriggerClient(triggerIndex);
+			else
+			{
+				delayedClientActions.put(action, (int) action.Def.delay);
+			}
+		}
 	}
+
 
 	// -----------------------------------------------------------------------------------------------------------------
 	//  SERVER
@@ -219,8 +256,25 @@ public class ActionGroupInstance
 	{
 		Progress++;
 
-		for(ActionInstance action : Actions)
-			action.OnTickServer();
+		for(ActionInstance action : Actions) {
+			if(!delayedServerActions.containsKey(action))
+				action.OnTickServer();
+		}
+
+		ArrayList<ActionInstance> completedAction = new ArrayList<ActionInstance>();
+
+		delayedServerActions.forEach((key,value)->{
+			value--;
+			if(value<= 0){
+				key.OnTriggerServer(TriggerCount);
+				completedAction.add(key);
+			}
+			delayedServerActions.replace(key,(value));
+		});
+
+		completedAction.forEach((action) ->{
+			delayedServerActions.remove(action);
+		});
 
 		CheckRetrigger(() ->
 		{
@@ -237,7 +291,26 @@ public class ActionGroupInstance
 	private void OnTriggerServer(int triggerIndex)
 	{
 		for(ActionInstance action : Actions)
-			action.OnTriggerServer(triggerIndex);
+		{
+			if(action.Def.delay==0)
+				action.OnTriggerServer(triggerIndex);
+			else
+			{
+				delayedServerActions.put(action, (int) action.Def.delay);
+			}
+		}
+	}
+
+	public void ProxyTriggerServer(int triggerIndex){
+		for(ActionInstance action : Actions)
+		{
+			if(action.Def.delay==0)
+				action.OnTriggerServer(triggerIndex);
+			else
+			{
+				delayedServerActions.put(action, (int) action.Def.delay);
+			}
+		}
 	}
 
 	// -----------------------------------------------------------------------------------------------------------------

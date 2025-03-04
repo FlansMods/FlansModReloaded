@@ -1,0 +1,138 @@
+{
+    "loader": "flansmod:turborig",
+    "display": {},
+    "textures": {
+        "default": "flansmod:skins/casing_rifle"
+    },
+    "icons": {},
+    "animations": {},
+    "parts": {
+        "body": {
+            "origin": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "material": "Transparent",
+            "turboelements": [
+                {
+                    "verts": [
+                        [
+                            0.0,
+                            0.0,
+                            0.0
+                        ],
+                        [
+                            3.0,
+                            0.0,
+                            0.0
+                        ],
+                        [
+                            0.0,
+                            1.0,
+                            0.0
+                        ],
+                        [
+                            3.0,
+                            1.0,
+                            0.0
+                        ],
+                        [
+                            0.0,
+                            0.0,
+                            1.0
+                        ],
+                        [
+                            3.0,
+                            0.0,
+                            1.0
+                        ],
+                        [
+                            0.0,
+                            1.0,
+                            1.0
+                        ],
+                        [
+                            3.0,
+                            1.0,
+                            1.0
+                        ]
+                    ],
+                    "eulerRotations": [
+                        0.0,
+                        0.0,
+                        0.0
+                    ],
+                    "rotationOrigin": [
+                        0.0,
+                        -0.5,
+                        -0.5
+                    ],
+                    "faces": {
+                        "north": {
+                            "uv": [
+                                0.625,
+                                0.5,
+                                0.75,
+                                1.0
+                            ],
+                            "rotation": 180,
+                            "texture": "#default"
+                        },
+                        "east": {
+                            "uv": [
+                                0.5625,
+                                0.5,
+                                0.625,
+                                1.0
+                            ],
+                            "rotation": 180,
+                            "texture": "#default"
+                        },
+                        "south": {
+                            "uv": [
+                                0.4375,
+                                0.5,
+                                0.5625,
+                                1.0
+                            ],
+                            "rotation": 180,
+                            "texture": "#default"
+                        },
+                        "west": {
+                            "uv": [
+                                0.375,
+                                0.5,
+                                0.4375,
+                                1.0
+                            ],
+                            "rotation": 180,
+                            "texture": "#default"
+                        },
+                        "up": {
+                            "uv": [
+                                0.4375,
+                                0.0,
+                                0.5625,
+                                0.5
+                            ],
+                            "rotation": 180,
+                            "texture": "#default"
+                        },
+                        "down": {
+                            "uv": [
+                                0.5625,
+                                0.0,
+                                0.6875,
+                                0.5
+                            ],
+                            "rotation": 270,
+                            "texture": "#default"
+                        }
+                    }
+                }
+            ]
+        }
+    },
+    "attachPoints": []
+}

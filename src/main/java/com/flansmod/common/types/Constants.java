@@ -117,6 +117,10 @@ public final class Constants
 	public static final String PARTICLE_SPREAD = "particle_spread";
 	public static final String PARTICLE_SPREAD_PATTERN = "particle_spread_pattern";
 
+	public static final String CASING_EJECT_POINT = "casing_eject_point";
+	public static final String CASING_EJECT_DIRECTION = "casing_eject_direction";
+	public static final String CASING_EJECT_SPEED = "casing_eject_speed";
+
 	public static final String STAT_ENCHANTMENT_ID = "enchantment_id";
 	public static final String STAT_ENCHANTMENT_LEVEL = "enchantment_level";
 }

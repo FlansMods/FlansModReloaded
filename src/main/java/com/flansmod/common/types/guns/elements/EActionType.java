@@ -40,5 +40,5 @@ public enum EActionType
 	Laser,				// Implemented. You need this on your gun to render a laser effect
 	SwitchMode,			// Implemented. Changes a mode on your gun
 
-	AbilityOnSelf,
+	AbilityOnSelf, EjectCasing,
 }

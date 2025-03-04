@@ -2571,6 +2571,34 @@
                 0.0,
                 0.0
             ]
+        },
+        {
+            "name": "casing_eject",
+            "attachTo": "body",
+            "offset": [
+                0.0,
+                2.25,
+                -0.7500001
+            ],
+            "euler": [
+                0.0,
+                0.0,
+                0.0
+            ]
+        },
+        {
+            "name": "casing_eject_direction",
+            "attachTo": "body",
+            "offset": [
+                0.0,
+                2.25,
+                -0.7500001
+            ],
+            "euler": [
+                315.0,
+                270.0,
+                0.0
+            ]
         }
     ],
     "textureSize": [
