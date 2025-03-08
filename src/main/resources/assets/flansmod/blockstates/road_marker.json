@@ -1,0 +1,10 @@
+{
+  "variants": {
+    "lit=false": {
+      "model": "flansmod:block/road_marker_off"
+    },
+    "lit=true": {
+      "model": "flansmod:block/road_marker_on"
+    }
+  }
+}
