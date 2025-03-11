@@ -1,5 +1,6 @@
-package com.flansmod.common.abilities;
+package com.flansmod.common.effects;
 
+import com.flansmod.common.abilities.AbilityStack;
 import com.flansmod.common.actions.contexts.ActionGroupContext;
 import com.flansmod.common.actions.contexts.TriggerContext;
 import com.flansmod.common.actions.contexts.TargetsContext;
@@ -15,7 +16,7 @@ import net.minecraftforge.registries.ForgeRegistries;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-public class AbilityEffectApplyMobEffect implements IAbilityEffect
+public class EffectApplyMobEffect implements IEffect
 {
 	@Nullable
 	public final MobEffect Effect;
@@ -23,7 +24,7 @@ public class AbilityEffectApplyMobEffect implements IAbilityEffect
 	@Nonnull
 	private final StatHolder PotionMultiplier;
 
-	public AbilityEffectApplyMobEffect(@Nonnull AbilityEffectDefinition def)
+	public EffectApplyMobEffect(@Nonnull AbilityEffectDefinition def)
 	{
 		Effect = ForgeRegistries.MOB_EFFECTS.getValue(new ResourceLocation(def.ModifyString(Constants.KEY_MOB_EFFECT_ID, "")));
 		PotionMultiplier = new StatHolder(Constants.STAT_POTION_MULTIPLIER, def);

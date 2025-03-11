@@ -1,7 +1,8 @@
-package com.flansmod.common.abilities;
+package com.flansmod.common.effects;
 
 import com.flansmod.client.FlansModClient;
 import com.flansmod.common.FlansMod;
+import com.flansmod.common.abilities.AbilityStack;
 import com.flansmod.common.actions.contexts.ActionGroupContext;
 import com.flansmod.common.actions.contexts.TargetsContext;
 import com.flansmod.common.actions.contexts.TriggerContext;
@@ -16,14 +17,14 @@ import net.minecraft.world.phys.BlockHitResult;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-public class AbilityEffectApplyDecal implements IAbilityEffect
+public class EffectApplyDecal implements IEffect
 {
 	@Nonnull
 	private final ResourceLocation DecalTexture;
 	private final StatHolder DecalDuration;
 	private final boolean RandomizeRotation;
 
-	public AbilityEffectApplyDecal(@Nonnull AbilityEffectDefinition def)
+	public EffectApplyDecal(@Nonnull AbilityEffectDefinition def)
 	{
 		DecalTexture = new ResourceLocation(def.ModifyString(Constants.DECAL_TEXTURE, "")).withPrefix("textures/").withSuffix(".png");
 		DecalDuration = new StatHolder(Constants.DECAL_DURATION, def);

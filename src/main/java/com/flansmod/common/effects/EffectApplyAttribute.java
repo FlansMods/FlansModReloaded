@@ -1,5 +1,6 @@
-package com.flansmod.common.abilities;
+package com.flansmod.common.effects;
 
+import com.flansmod.common.abilities.AbilityStack;
 import com.flansmod.common.actions.contexts.ActionGroupContext;
 import com.flansmod.common.actions.contexts.GunContext;
 import com.flansmod.common.actions.contexts.TriggerContext;
@@ -17,7 +18,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.UUID;
 
-public class AbilityEffectApplyAttribute implements IAbilityEffect
+public class EffectApplyAttribute implements IEffect
 {
 	public final Attribute Attrib;
 	public final UUID IdentifyingKey;
@@ -25,7 +26,7 @@ public class AbilityEffectApplyAttribute implements IAbilityEffect
 	@Nonnull
 	private final StatHolder AttributeMultiplier;
 
-	public AbilityEffectApplyAttribute(@Nonnull AbilityEffectDefinition def)
+	public EffectApplyAttribute(@Nonnull AbilityEffectDefinition def)
 	{
 		Attrib = ForgeRegistries.ATTRIBUTES.getValue(new ResourceLocation(def.ModifyString(Constants.STAT_ATTRIBUTE_ID, "")));
 		IdentifyingKey = UUID.randomUUID();

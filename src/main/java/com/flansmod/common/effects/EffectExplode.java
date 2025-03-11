@@ -1,7 +1,7 @@
-package com.flansmod.common.abilities;
+package com.flansmod.common.effects;
 
 import com.flansmod.common.FlansModConfig;
-import com.flansmod.common.actions.EActionResult;
+import com.flansmod.common.abilities.AbilityStack;
 import com.flansmod.common.actions.contexts.ActionGroupContext;
 import com.flansmod.common.actions.contexts.TargetsContext;
 import com.flansmod.common.actions.contexts.TriggerContext;
@@ -13,12 +13,12 @@ import net.minecraft.world.level.Level;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-public class AbilityEffectExplode implements IAbilityEffect
+public class EffectExplode implements IEffect
 {
 	private final StatHolder ExplosionRadius;
 	private final boolean BreakBlocks;
 
-	public AbilityEffectExplode(@Nonnull AbilityEffectDefinition def)
+	public EffectExplode(@Nonnull AbilityEffectDefinition def)
 	{
 		ExplosionRadius = new StatHolder(Constants.STAT_IMPACT_EXPLOSION_RADIUS, def);
 		BreakBlocks = def.ModifyBoolean(Constants.STAT_EXPLOSION_BREAKS_BLOCKS, true);

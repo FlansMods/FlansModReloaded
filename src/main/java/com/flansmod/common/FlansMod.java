@@ -1,7 +1,7 @@
 package com.flansmod.common;
 
 import com.flansmod.client.FlansModClient;
-import com.flansmod.common.abilities.Abilities;
+import com.flansmod.common.effects.Effects;
 import com.flansmod.common.actions.Actions;
 import com.flansmod.common.actions.contexts.*;
 import com.flansmod.common.actions.ServerActionManager;
@@ -51,8 +51,6 @@ import com.flansmod.common.types.teams.TeamDefinitions;
 import com.flansmod.common.types.vehicles.ControlSchemeDefinitions;
 import com.flansmod.common.types.vehicles.VehicleDefinitions;
 import com.flansmod.common.worldgen.loot.LootPopulator;
-import com.flansmod.packs.clockwork.common.ChipEntity;
-import com.flansmod.packs.clockwork.common.SadieEntity;
 import com.mojang.logging.LogUtils;
 import com.mojang.serialization.Codec;
 import net.minecraft.advancements.CriteriaTriggers;
@@ -89,7 +87,6 @@ import net.minecraftforge.common.crafting.CraftingHelper;
 import net.minecraftforge.common.extensions.IForgeMenuType;
 import net.minecraftforge.common.loot.IGlobalLootModifier;
 import net.minecraftforge.event.AddReloadListenerEvent;
-import net.minecraftforge.event.entity.EntityAttributeCreationEvent;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.level.LevelEvent;
@@ -500,7 +497,7 @@ public class FlansMod
         FlansRegistries.init();
 
         Actions.BASE_ACTION_TYPES.register(modEventBus);
-        Abilities.BASE_ABILITY_EFFECT_TYPES.register(modEventBus);
+        Effects.BASE_EFFECT_TYPES.register(modEventBus);
     }
 
     private void CommonInit(final FMLCommonSetupEvent event)
@@ -589,7 +586,7 @@ public class FlansMod
                                         {
                                             for (AbilityEffectDefinition effectDef : abilityDef.effects)
                                             {
-                                                if (effectDef.effectType.equals(Abilities.ABILITY_EFFECT_TYPE_TOTEM_OF_UNDYING.getId()))
+                                                if (effectDef.effectType.equals(Effects.EFFECT_TYPE_TOTEM_OF_UNDYING.getId()))
                                                 {
                                                     if (net.minecraftforge.common.ForgeHooks.onLivingUseTotem(player, damageSource, attachmentStack, gunContextPlayer.GetHand()))
                                                     {

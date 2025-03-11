@@ -1,8 +1,8 @@
 package com.flansmod.common.types.abilities.elements;
 
 import com.flansmod.common.FlansMod;
-import com.flansmod.common.abilities.Abilities;
-import com.flansmod.common.abilities.IAbilityEffect;
+import com.flansmod.common.effects.Effects;
+import com.flansmod.common.effects.IEffect;
 import com.flansmod.common.types.JsonField;
 import com.flansmod.common.types.elements.ModifierDefinition;
 import net.minecraft.network.chat.Component;
@@ -55,12 +55,12 @@ public class AbilityEffectDefinition
 	}
 
 	@Nullable
-	private IAbilityEffect EffectProcessor = null;
+	private IEffect EffectProcessor = null;
 	@Nonnull
-	public IAbilityEffect GetEffectProcessor()
+	public IEffect GetEffectProcessor()
 	{
 		if(EffectProcessor == null)
-			EffectProcessor = Abilities.CreateEffectProcessor(this);
+			EffectProcessor = Effects.CreateEffectProcessor(this);
 		return EffectProcessor;
 	}
 

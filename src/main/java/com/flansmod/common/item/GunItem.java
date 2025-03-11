@@ -3,7 +3,7 @@ package com.flansmod.common.item;
 import com.flansmod.client.FlansModClient;
 import com.flansmod.client.render.guns.GunItemClientExtension;
 import com.flansmod.common.FlansMod;
-import com.flansmod.common.abilities.AbilityEffectProvideEnchantment;
+import com.flansmod.common.effects.EffectProvideEnchantment;
 import com.flansmod.common.actions.*;
 import com.flansmod.common.actions.contexts.*;
 import com.flansmod.common.projectiles.BulletGuidance;
@@ -20,7 +20,6 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.Multimap;
 import com.mojang.blaze3d.platform.InputConstants;
-import cpw.mods.util.Lazy;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
@@ -538,7 +537,7 @@ public class GunItem extends FlanItem
         {
             for(var kvp : gun.GetActiveModifierAbilities().entrySet())
             {
-                if(kvp.getKey().Def.GetEffectProcessor() instanceof AbilityEffectProvideEnchantment enchantmentProvider)
+                if(kvp.getKey().Def.GetEffectProcessor() instanceof EffectProvideEnchantment enchantmentProvider)
                 {
                     if(enchantmentProvider.Enchant.equals(enchantment))
                     {

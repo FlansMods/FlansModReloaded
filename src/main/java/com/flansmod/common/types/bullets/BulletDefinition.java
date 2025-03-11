@@ -1,7 +1,7 @@
 package com.flansmod.common.types.bullets;
 
 import com.flansmod.common.FlansMod;
-import com.flansmod.common.abilities.Abilities;
+import com.flansmod.common.effects.Effects;
 import com.flansmod.common.item.BulletItem;
 import com.flansmod.common.types.JsonDefinition;
 import com.flansmod.common.types.JsonField;
@@ -25,7 +25,7 @@ public class BulletDefinition extends JsonDefinition
 		bulletDef.hitscans = new HitscanDefinition[] { new HitscanDefinition() };
 		bulletDef.hitscans[0].impacts = new ImpactDefinition[] { new ImpactDefinition() };
 		bulletDef.hitscans[0].impacts[0].impactEffects = new AbilityEffectDefinition[] { new AbilityEffectDefinition() };
-		bulletDef.hitscans[0].impacts[0].impactEffects[0].effectType = Abilities.ABILITY_EFFECT_TYPE_APPLY_DAMAGE.getId();
+		bulletDef.hitscans[0].impacts[0].impactEffects[0].effectType = Effects.EFFECT_TYPE_APPLY_DAMAGE.getId();
 		return bulletDef;
 	});
 

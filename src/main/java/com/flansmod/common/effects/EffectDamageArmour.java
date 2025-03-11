@@ -1,5 +1,6 @@
-package com.flansmod.common.abilities;
+package com.flansmod.common.effects;
 
+import com.flansmod.common.abilities.AbilityStack;
 import com.flansmod.common.actions.contexts.ActionGroupContext;
 import com.flansmod.common.actions.contexts.TriggerContext;
 import com.flansmod.common.actions.contexts.TargetsContext;
@@ -11,11 +12,11 @@ import net.minecraft.world.level.Level;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-public class AbilityEffectDamageArmour implements IAbilityEffect
+public class EffectDamageArmour implements IEffect
 {
 	private final StatHolder InstantDamage;
 
-	public AbilityEffectDamageArmour(@Nonnull AbilityEffectDefinition def)
+	public EffectDamageArmour(@Nonnull AbilityEffectDefinition def)
 	{
 		InstantDamage = new StatHolder(Constants.STAT_INSTANT_DAMAGE, def);
 	}

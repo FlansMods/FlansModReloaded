@@ -1,5 +1,6 @@
-package com.flansmod.common.abilities;
+package com.flansmod.common.effects;
 
+import com.flansmod.common.abilities.AbilityStack;
 import com.flansmod.common.actions.contexts.ActionGroupContext;
 import com.flansmod.common.actions.contexts.TargetsContext;
 import com.flansmod.common.actions.contexts.TriggerContext;
@@ -10,12 +11,12 @@ import net.minecraft.world.phys.Vec3;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-public class AbilityEffectKnockback implements IAbilityEffect
+public class EffectKnockback implements IEffect
 {
 	private final StatHolder PushAmount;
 	// TODO: boolean AlwaysKickUpwards
 
-	public AbilityEffectKnockback(@Nonnull AbilityEffectDefinition def)
+	public EffectKnockback(@Nonnull AbilityEffectDefinition def)
 	{
 		PushAmount = new StatHolder(Constants.STAT_IMPACT_KNOCKBACK, def);
 	}

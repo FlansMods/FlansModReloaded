@@ -1,5 +1,6 @@
-package com.flansmod.common.abilities;
+package com.flansmod.common.effects;
 
+import com.flansmod.common.abilities.AbilityStack;
 import com.flansmod.common.actions.contexts.ActionGroupContext;
 import com.flansmod.common.actions.contexts.TargetsContext;
 import com.flansmod.common.actions.contexts.TriggerContext;
@@ -14,12 +15,12 @@ import net.minecraftforge.registries.ForgeRegistries;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-public class AbilityEffectSpawnEntity implements IAbilityEffect
+public class EffectSpawnEntity implements IEffect
 {
 	@Nullable
 	private final EntityType<? extends Entity> EntityType;
 
-	public AbilityEffectSpawnEntity(@Nonnull AbilityEffectDefinition def)
+	public EffectSpawnEntity(@Nonnull AbilityEffectDefinition def)
 	{
 		String entityID = def.ModifyString(Constants.KEY_ENTITY_ID, "");
 		EntityType = ForgeRegistries.ENTITY_TYPES.getValue(new ResourceLocation(entityID));

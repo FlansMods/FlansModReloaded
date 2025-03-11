@@ -1,5 +1,6 @@
-package com.flansmod.common.abilities;
+package com.flansmod.common.effects;
 
+import com.flansmod.common.abilities.AbilityStack;
 import com.flansmod.common.actions.contexts.ActionGroupContext;
 import com.flansmod.common.actions.contexts.TriggerContext;
 import com.flansmod.common.actions.contexts.TargetsContext;
@@ -11,14 +12,14 @@ import net.minecraft.world.entity.player.Player;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-public class AbilityEffectFeedEntity implements IAbilityEffect
+public class EffectFeedEntity implements IEffect
 {
 	@Nonnull
 	private final StatHolder FeedAmount;
 	@Nonnull
 	private final StatHolder FeedSaturation;
 
-	public AbilityEffectFeedEntity(@Nonnull AbilityEffectDefinition def)
+	public EffectFeedEntity(@Nonnull AbilityEffectDefinition def)
 	{
 		FeedAmount = new StatHolder(Constants.STAT_FEED_AMOUNT, def);
 		FeedSaturation = new StatHolder(Constants.STAT_FEED_SATURATION, def);

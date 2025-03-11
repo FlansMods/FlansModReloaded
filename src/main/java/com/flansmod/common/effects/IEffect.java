@@ -1,5 +1,6 @@
-package com.flansmod.common.abilities;
+package com.flansmod.common.effects;
 
+import com.flansmod.common.abilities.AbilityStack;
 import com.flansmod.common.actions.contexts.ActionGroupContext;
 import com.flansmod.common.actions.contexts.GunContext;
 import com.flansmod.common.actions.contexts.TargetsContext;
@@ -12,7 +13,7 @@ import com.flansmod.util.formulae.FloatAccumulation;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-public interface IAbilityEffect
+public interface IEffect
 {
 	class StatHolder
 	{

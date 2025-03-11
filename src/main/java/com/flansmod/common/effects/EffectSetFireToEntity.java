@@ -1,6 +1,7 @@
-package com.flansmod.common.abilities;
+package com.flansmod.common.effects;
 
 import com.flansmod.common.FlansModConfig;
+import com.flansmod.common.abilities.AbilityStack;
 import com.flansmod.common.actions.contexts.ActionGroupContext;
 import com.flansmod.common.actions.contexts.TargetsContext;
 import com.flansmod.common.actions.contexts.TriggerContext;
@@ -11,11 +12,11 @@ import com.flansmod.physics.common.util.Maths;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-public class AbilityEffectSetFireToEntity implements IAbilityEffect
+public class EffectSetFireToEntity implements IEffect
 {
 	private final StatHolder FireTime;
 
-	public AbilityEffectSetFireToEntity(@Nonnull AbilityEffectDefinition def)
+	public EffectSetFireToEntity(@Nonnull AbilityEffectDefinition def)
 	{
 		FireTime = new StatHolder(Constants.STAT_IMPACT_SET_FIRE_TO_TARGET, def);
 	}

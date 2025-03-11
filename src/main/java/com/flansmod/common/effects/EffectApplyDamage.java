@@ -1,8 +1,8 @@
-package com.flansmod.common.abilities;
+package com.flansmod.common.effects;
 
 import com.flansmod.common.FlansModConfig;
+import com.flansmod.common.abilities.AbilityStack;
 import com.flansmod.common.actions.contexts.ActionGroupContext;
-import com.flansmod.common.actions.contexts.GunContext;
 import com.flansmod.common.actions.contexts.TriggerContext;
 import com.flansmod.common.actions.contexts.TargetsContext;
 import com.flansmod.common.gunshots.EPlayerHitArea;
@@ -10,18 +10,17 @@ import com.flansmod.common.gunshots.PlayerHitResult;
 import com.flansmod.common.types.Constants;
 import com.flansmod.common.types.abilities.elements.AbilityEffectDefinition;
 import net.minecraft.world.damagesource.DamageSource;
-import net.minecraft.world.damagesource.DamageSources;
 import net.minecraft.world.entity.LivingEntity;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-public class AbilityEffectApplyDamage implements IAbilityEffect
+public class EffectApplyDamage implements IEffect
 {
 	private final StatHolder ImpactDamage;
 	private final boolean PreventDamageCooldown;
 
-	public AbilityEffectApplyDamage(@Nonnull AbilityEffectDefinition def)
+	public EffectApplyDamage(@Nonnull AbilityEffectDefinition def)
 	{
 		ImpactDamage = new StatHolder(Constants.STAT_IMPACT_DAMAGE, def);
 		PreventDamageCooldown = def.ModifyBoolean(Constants.STAT_PREVENT_DAMAGE_COOLDOWN, true);

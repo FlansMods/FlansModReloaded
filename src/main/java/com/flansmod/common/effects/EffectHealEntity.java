@@ -1,6 +1,7 @@
-package com.flansmod.common.abilities;
+package com.flansmod.common.effects;
 
 import com.flansmod.common.FlansModConfig;
+import com.flansmod.common.abilities.AbilityStack;
 import com.flansmod.common.actions.contexts.ActionGroupContext;
 import com.flansmod.common.actions.contexts.TriggerContext;
 import com.flansmod.common.actions.contexts.TargetsContext;
@@ -11,11 +12,11 @@ import net.minecraft.world.entity.LivingEntity;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-public class AbilityEffectHealEntity implements IAbilityEffect
+public class EffectHealEntity implements IEffect
 {
 	private final StatHolder HealAmount;
 
-	public AbilityEffectHealEntity(@Nonnull AbilityEffectDefinition def)
+	public EffectHealEntity(@Nonnull AbilityEffectDefinition def)
 	{
 		HealAmount = new StatHolder(Constants.STAT_HEAL_AMOUNT, def);
 	}

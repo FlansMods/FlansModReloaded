@@ -1,7 +1,7 @@
 package com.flansmod.common;
 
-import com.flansmod.common.abilities.Abilities;
-import com.flansmod.common.abilities.AbilityEffectType;
+import com.flansmod.common.effects.Effects;
+import com.flansmod.common.effects.EffectType;
 import com.flansmod.common.actions.ActionType;
 import com.flansmod.common.actions.Actions;
 import net.minecraft.core.Registry;
@@ -18,7 +18,7 @@ public class FlansRegistries
 
 	// Static init order matters. Make both keys
 	public static final ResourceKey<Registry<ActionType<?>>> ACTION_TYPE = ResourceKey.createRegistryKey(new ResourceLocation(FlansMod.MODID, "action_type"));
-	public static final ResourceKey<Registry<AbilityEffectType<?>>> ABILITY_EFFECT_TYPE = ResourceKey.createRegistryKey(new ResourceLocation(FlansMod.MODID, "ability_effect_type"));
+	public static final ResourceKey<Registry<EffectType<?>>> EFFECT_TYPE = ResourceKey.createRegistryKey(new ResourceLocation(FlansMod.MODID, "ability_effect_type"));
 
 	// Then load defaults
 	public static final Supplier<IForgeRegistry<ActionType<?>>> ACTION_TYPES =
@@ -29,10 +29,10 @@ public class FlansRegistries
 				.disableSaving()
 				.disableOverrides()
 				.disableSync());
-	public static final Supplier<IForgeRegistry<AbilityEffectType<?>>> ABILITY_EFFECT_TYPES =
-		Abilities.BASE_ABILITY_EFFECT_TYPES.makeRegistry(
-			() -> new RegistryBuilder<AbilityEffectType<?>>()
-				.setName(ABILITY_EFFECT_TYPE.location())
+	public static final Supplier<IForgeRegistry<EffectType<?>>> EFFECT_TYPES =
+		Effects.BASE_EFFECT_TYPES.makeRegistry(
+			() -> new RegistryBuilder<EffectType<?>>()
+				.setName(EFFECT_TYPE.location())
 				.setMaxID(REGISTRY_MAX)
 				.disableSaving()
 				.disableOverrides()

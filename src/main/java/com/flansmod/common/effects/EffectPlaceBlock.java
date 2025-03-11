@@ -1,6 +1,7 @@
-package com.flansmod.common.abilities;
+package com.flansmod.common.effects;
 
 import com.flansmod.common.FlansModConfig;
+import com.flansmod.common.abilities.AbilityStack;
 import com.flansmod.common.actions.contexts.ActionGroupContext;
 import com.flansmod.common.actions.contexts.TargetsContext;
 import com.flansmod.common.actions.contexts.TriggerContext;
@@ -17,12 +18,12 @@ import net.minecraftforge.registries.ForgeRegistries;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-public class AbilityEffectPlaceBlock implements IAbilityEffect
+public class EffectPlaceBlock implements IEffect
 {
 	@Nullable
 	public final BlockState BlockToPlace;
 
-	public AbilityEffectPlaceBlock(@Nonnull AbilityEffectDefinition def)
+	public EffectPlaceBlock(@Nonnull AbilityEffectDefinition def)
 	{
 		String blockID = def.ModifyString(Constants.STAT_BLOCK_ID, "");
 		if(!blockID.isEmpty())

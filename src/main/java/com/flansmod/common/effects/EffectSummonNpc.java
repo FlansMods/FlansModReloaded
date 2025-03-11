@@ -1,6 +1,7 @@
-package com.flansmod.common.abilities;
+package com.flansmod.common.effects;
 
 import com.flansmod.common.FlansModConfig;
+import com.flansmod.common.abilities.AbilityStack;
 import com.flansmod.common.actions.contexts.*;
 import com.flansmod.common.entity.INpcRelationshipsCapability;
 import com.flansmod.common.entity.NpcRelationshipsCapability;
@@ -23,13 +24,13 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Optional;
 
-public class AbilityEffectSummonNpc implements IAbilityEffect
+public class EffectSummonNpc implements IEffect
 {
 	private final ResourceLocation NpcID;
 	@Nullable
 	private final EntityType<? extends Entity> EntityType;
 
-	public AbilityEffectSummonNpc(@Nonnull AbilityEffectDefinition def)
+	public EffectSummonNpc(@Nonnull AbilityEffectDefinition def)
 	{
 		NpcID = new ResourceLocation(def.ModifyString(Constants.KEY_ENTITY_TAG, ""));
 		EntityType = ForgeRegistries.ENTITY_TYPES.getValue(NpcID);

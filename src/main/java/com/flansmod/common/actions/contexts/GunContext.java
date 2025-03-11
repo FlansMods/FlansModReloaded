@@ -2,10 +2,10 @@ package com.flansmod.common.actions.contexts;
 
 import com.flansmod.client.FlansModClient;
 import com.flansmod.common.FlansMod;
-import com.flansmod.common.abilities.Abilities;
-import com.flansmod.common.abilities.AbilityInstanceApplyModifier;
+import com.flansmod.common.effects.Effects;
+import com.flansmod.common.effects.EffectApplyModifier;
 import com.flansmod.common.abilities.AbilityStack;
-import com.flansmod.common.abilities.IAbilityEffect;
+import com.flansmod.common.effects.IEffect;
 import com.flansmod.common.actions.*;
 import com.flansmod.common.actions.stats.*;
 import com.flansmod.common.item.*;
@@ -795,13 +795,13 @@ public abstract class GunContext implements IStatCalculatorContext
 	}
 
 	@Nonnull
-	public Map<AbilityInstanceApplyModifier, AbilityStack> GetActiveModifierAbilities()
+	public Map<EffectApplyModifier, AbilityStack> GetActiveModifierAbilities()
 	{
-		Map<AbilityInstanceApplyModifier, AbilityStack> map = new HashMap<>();
+		Map<EffectApplyModifier, AbilityStack> map = new HashMap<>();
 		ForEachActiveModifierAbility(map::put);
 		return map;
 	}
-	public void ForEachActiveModifierAbility(@Nonnull BiConsumer<AbilityInstanceApplyModifier, AbilityStack> func)
+	public void ForEachActiveModifierAbility(@Nonnull BiConsumer<EffectApplyModifier, AbilityStack> func)
 	{
 		ActionStack actionStack = GetActionStack();
 		if(actionStack.IsValid())
@@ -813,10 +813,10 @@ public abstract class GunContext implements IStatCalculatorContext
 					{
 						for(AbilityEffectDefinition effectDef : abilityDef.effects)
 						{
-							if(effectDef.effectType.equals(Abilities.ABILITY_EFFECT_TYPE_APPLY_MODIFIER.getId()))
+							if(effectDef.effectType.equals(Effects.EFFECT_TYPE_APPLY_MODIFIER.getId()))
 							{
-								IAbilityEffect abilityEffect = effectDef.GetEffectProcessor();
-								if(abilityEffect instanceof AbilityInstanceApplyModifier modifierAbility)
+								IEffect abilityEffect = effectDef.GetEffectProcessor();
+								if(abilityEffect instanceof EffectApplyModifier modifierAbility)
 									func.accept(modifierAbility, stacks);
 								else
 									FlansMod.LOGGER.error("Ability was of type ApplyModifier, but had some other processor attached");

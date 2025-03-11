@@ -1,5 +1,6 @@
-package com.flansmod.common.abilities;
+package com.flansmod.common.effects;
 
+import com.flansmod.common.abilities.AbilityStack;
 import com.flansmod.common.actions.contexts.ActionGroupContext;
 import com.flansmod.common.types.Constants;
 import com.flansmod.common.types.abilities.elements.AbilityEffectDefinition;
@@ -11,13 +12,13 @@ import net.minecraftforge.registries.ForgeRegistries;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-public class AbilityEffectProvideEnchantment implements IAbilityEffect
+public class EffectProvideEnchantment implements IEffect
 {
 	public final Enchantment Enchant;
 	@Nonnull
 	private final StatHolder EnchantLevel;
 
-	public AbilityEffectProvideEnchantment(@Nonnull AbilityEffectDefinition def)
+	public EffectProvideEnchantment(@Nonnull AbilityEffectDefinition def)
 	{
 		Enchant = ForgeRegistries.ENCHANTMENTS.getValue(new ResourceLocation(def.ModifyString(Constants.STAT_ENCHANTMENT_ID, "")));
 

@@ -1,6 +1,7 @@
-package com.flansmod.common.abilities;
+package com.flansmod.common.effects;
 
 import com.flansmod.common.FlansMod;
+import com.flansmod.common.abilities.AbilityStack;
 import com.flansmod.common.actions.contexts.ActionGroupContext;
 import com.flansmod.common.actions.contexts.TargetsContext;
 import com.flansmod.common.actions.contexts.TriggerContext;
@@ -10,11 +11,11 @@ import com.flansmod.common.types.abilities.elements.AbilityEffectDefinition;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-public class AbilityEffectStartActionGroup implements IAbilityEffect
+public class EffectStartActionGroup implements IEffect
 {
 	public final String ActionGroupPath;
 
-	public AbilityEffectStartActionGroup(@Nonnull AbilityEffectDefinition def)
+	public EffectStartActionGroup(@Nonnull AbilityEffectDefinition def)
 	{
 		ActionGroupPath = def.ModifyString(Constants.KEY_ACTION_KEY, "");
 	}
