@@ -1,6 +1,7 @@
 package com.flansmod.common;
 
 import com.flansmod.client.FlansModClient;
+import com.flansmod.common.abilities.Abilities;
 import com.flansmod.common.actions.Actions;
 import com.flansmod.common.actions.contexts.*;
 import com.flansmod.common.actions.ServerActionManager;
@@ -497,7 +498,10 @@ public class FlansMod
         CREATIVE_TABS.register(modEventBus);
         ATTRIBUTES.register(modEventBus);
 
-        Actions.DEFERRED_ACTION_TYPES.register(modEventBus);
+        FlansRegistries.init();
+
+        Actions.BASE_ACTION_TYPES.register(modEventBus);
+        Abilities.BASE_ABILITY_EFFECT_TYPES.register(modEventBus);
     }
 
     private void CommonInit(final FMLCommonSetupEvent event)
@@ -586,7 +590,7 @@ public class FlansMod
                                         {
                                             for (AbilityEffectDefinition effectDef : abilityDef.effects)
                                             {
-                                                if (effectDef.effectType == EAbilityEffect.TotemOfUndying)
+                                                if (effectDef.effectType.equals(Abilities.ABILITY_EFFECT_TYPE_TOTEM_OF_UNDYING.getId()))
                                                 {
                                                     if (net.minecraftforge.common.ForgeHooks.onLivingUseTotem(player, damageSource, attachmentStack, gunContextPlayer.GetHand()))
                                                     {

@@ -1,6 +1,7 @@
 package com.flansmod.common.types.bullets;
 
 import com.flansmod.common.FlansMod;
+import com.flansmod.common.abilities.Abilities;
 import com.flansmod.common.item.BulletItem;
 import com.flansmod.common.types.JsonDefinition;
 import com.flansmod.common.types.JsonField;
@@ -13,20 +14,21 @@ import com.flansmod.common.types.elements.ItemDefinition;
 import com.flansmod.common.types.guns.elements.ActionGroupDefinition;
 import com.flansmod.common.types.guns.elements.AbilityDefinition;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraftforge.common.util.Lazy;
 
 import javax.annotation.Nonnull;
 
 public class BulletDefinition extends JsonDefinition
 {
 	public static final BulletDefinition INVALID = new BulletDefinition(new ResourceLocation(FlansMod.MODID, "bullets/null"));
-	public static final BulletDefinition STANDARD_TEST_BULLET = new BulletDefinition(new ResourceLocation(FlansMod.MODID, "bullets/test"));
-	static
-	{
-		STANDARD_TEST_BULLET.hitscans = new HitscanDefinition[] { new HitscanDefinition() };
-		STANDARD_TEST_BULLET.hitscans[0].impacts = new ImpactDefinition[] { new ImpactDefinition() };
-		STANDARD_TEST_BULLET.hitscans[0].impacts[0].impactEffects = new AbilityEffectDefinition[] { new AbilityEffectDefinition() };
-		STANDARD_TEST_BULLET.hitscans[0].impacts[0].impactEffects[0].effectType = EAbilityEffect.ApplyDamage;
-	}
+	public static final Lazy<BulletDefinition> STANDARD_TEST_BULLET = Lazy.of(() -> {
+		BulletDefinition bulletDef = new BulletDefinition(new ResourceLocation(FlansMod.MODID, "bullets/test"));
+		bulletDef.hitscans = new HitscanDefinition[] { new HitscanDefinition() };
+		bulletDef.hitscans[0].impacts = new ImpactDefinition[] { new ImpactDefinition() };
+		bulletDef.hitscans[0].impacts[0].impactEffects = new AbilityEffectDefinition[] { new AbilityEffectDefinition() };
+		bulletDef.hitscans[0].impacts[0].impactEffects[0].effectType = Abilities.ABILITY_EFFECT_TYPE_APPLY_DAMAGE.getId();
+		return bulletDef;
+	});
 
 	public static final String TYPE = "bullet";
 	public static final String FOLDER = "bullets";

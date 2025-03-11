@@ -1,5 +1,6 @@
 package com.flansmod.common.types.abilities.elements;
 
+import com.flansmod.common.FlansMod;
 import com.flansmod.common.abilities.Abilities;
 import com.flansmod.common.abilities.IAbilityEffect;
 import com.flansmod.common.types.JsonField;
@@ -12,11 +13,13 @@ import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.flansmod.common.types.JsonDefinition.InvalidLocation;
+
 public class AbilityEffectDefinition
 {
 	// -- Effect --
-	@JsonField
-	public EAbilityEffect effectType = EAbilityEffect.Nothing;
+	@JsonField(DefaultModID = FlansMod.MODID)
+	public ResourceLocation effectType = InvalidLocation;
 	@JsonField(Docs = "The modifiers to add when the effect is active")
 	public ModifierDefinition[] modifiers = new ModifierDefinition[0];
 
@@ -66,8 +69,8 @@ public class AbilityEffectDefinition
 	{
 		//expanded ? "trigger.expanded." : "trigger.icon."
 		String localisationKey = "effect.expanded." + effectType.toString().toLowerCase();
-		switch(effectType)
-		{
+		//switch(effectType)
+		//{
 			//case Owner, Shooter, ShotEntity, SplashedEntities -> {
 			//	for(ResourceLocation id : matchIDs)
 			//	{
@@ -76,9 +79,9 @@ public class AbilityEffectDefinition
 			//	}
 			//	return Component.translatable(localisationKey, Component.translatable("target.any"));
 			//}
-			default -> {
+			//default -> {
 				return Component.translatable(localisationKey);
-			}
-		}
+			//}
+		//}
 	}
 }

@@ -2,6 +2,7 @@ package com.flansmod.common.actions.contexts;
 
 import com.flansmod.client.FlansModClient;
 import com.flansmod.common.FlansMod;
+import com.flansmod.common.abilities.Abilities;
 import com.flansmod.common.abilities.AbilityInstanceApplyModifier;
 import com.flansmod.common.abilities.AbilityStack;
 import com.flansmod.common.abilities.IAbilityEffect;
@@ -813,7 +814,7 @@ public abstract class GunContext implements IStatCalculatorContext
 					{
 						for(AbilityEffectDefinition effectDef : abilityDef.effects)
 						{
-							if(effectDef.effectType == EAbilityEffect.ApplyModifier)
+							if(effectDef.effectType.equals(Abilities.ABILITY_EFFECT_TYPE_APPLY_MODIFIER.getId()))
 							{
 								IAbilityEffect abilityEffect = effectDef.GetEffectProcessor();
 								if(abilityEffect instanceof AbilityInstanceApplyModifier modifierAbility)

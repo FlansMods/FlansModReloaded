@@ -1,6 +1,7 @@
 package com.flansmod.common.actions.contexts;
 
 import com.flansmod.common.FlansMod;
+import com.flansmod.common.abilities.Abilities;
 import com.flansmod.common.abilities.AbilityEffectApplyDamage;
 import com.flansmod.common.gunshots.EPlayerHitArea;
 import com.flansmod.common.gunshots.Gunshot;
@@ -354,7 +355,7 @@ public class GunshotContext
 			if(impact.targetType == targetType)
 			{
 				for(AbilityEffectDefinition effectDef : impact.impactEffects)
-					if(effectDef.effectType == EAbilityEffect.ApplyDamage)
+					if(effectDef.effectType.equals(Abilities.ABILITY_EFFECT_TYPE_APPLY_DAMAGE.getId()))
 						if(effectDef.GetEffectProcessor() instanceof AbilityEffectApplyDamage dmgAbility)
 							return dmgAbility.DamageAmount(ActionGroup, null);
 			}

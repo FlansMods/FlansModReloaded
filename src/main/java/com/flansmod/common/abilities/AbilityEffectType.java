@@ -3,9 +3,9 @@ package com.flansmod.common.abilities;
 import com.flansmod.common.types.abilities.elements.AbilityEffectDefinition;
 
 import javax.annotation.Nonnull;
+import java.util.function.Function;
 
-public class AbilityEffectNone implements IAbilityEffect
+public record AbilityEffectType<T extends IAbilityEffect>(
+	@Nonnull Function<AbilityEffectDefinition, T> createFunc)
 {
-	public AbilityEffectNone() {}
-	public AbilityEffectNone(@Nonnull AbilityEffectDefinition def) {}
 }
