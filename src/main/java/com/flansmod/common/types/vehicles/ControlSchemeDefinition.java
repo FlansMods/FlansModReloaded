@@ -4,7 +4,6 @@ import com.flansmod.common.FlansMod;
 import com.flansmod.common.types.JsonDefinition;
 import com.flansmod.common.types.JsonField;
 import com.flansmod.common.types.vehicles.elements.ControlSchemeAxisDefinition;
-import com.flansmod.common.types.vehicles.elements.EControlLogicType;
 import net.minecraft.resources.ResourceLocation;
 
 import javax.annotation.Nonnull;
@@ -24,8 +23,8 @@ public class ControlSchemeDefinition extends JsonDefinition
 		super(resLoc);
 	}
 
-	@JsonField
-	public EControlLogicType logicType = EControlLogicType.Car;
+	@JsonField(DefaultModID = "flansmod")
+	public ResourceLocation logicType = new ResourceLocation("flansmod", "car");
 
 	@JsonField
 	public ControlSchemeAxisDefinition[] axes = new ControlSchemeAxisDefinition[0];

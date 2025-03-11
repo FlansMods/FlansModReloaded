@@ -46,6 +46,16 @@ public class LegacyVehicleControlLogic extends ControlLogic
 		super(def);
 		Tank = tank;
 	}
+	@Nonnull
+	public static LegacyVehicleControlLogic tank(@Nonnull ControlSchemeDefinition def)
+	{
+		return new LegacyVehicleControlLogic(def, true);
+	}
+	@Nonnull
+	public static LegacyVehicleControlLogic car(@Nonnull ControlSchemeDefinition def)
+	{
+		return new LegacyVehicleControlLogic(def, false);
+	}
 
 	@Override
 	public boolean CanControl(@Nonnull VehicleDefinition vehicleDef)

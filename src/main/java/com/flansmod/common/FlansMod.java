@@ -19,6 +19,7 @@ import com.flansmod.common.entity.longdistance.LongDistanceEntitySystem;
 import com.flansmod.common.entity.longdistance.LongDistanceVehicle;
 import com.flansmod.common.entity.longdistance.ServerLongDistanceEntitySystem;
 import com.flansmod.common.entity.vehicle.VehicleEntity;
+import com.flansmod.common.entity.vehicle.controls.ControlLogics;
 import com.flansmod.common.entity.vehicle.hierarchy.WheelEntity;
 import com.flansmod.common.gunshots.Raytracer;
 import com.flansmod.common.item.*;
@@ -498,6 +499,7 @@ public class FlansMod
 
         Actions.BASE_ACTION_TYPES.register(modEventBus);
         Effects.BASE_EFFECT_TYPES.register(modEventBus);
+        ControlLogics.BASE_CONTROL_LOGIC_TYPES.register(modEventBus);
     }
 
     private void CommonInit(final FMLCommonSetupEvent event)
