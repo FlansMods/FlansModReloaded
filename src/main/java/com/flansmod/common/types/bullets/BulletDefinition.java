@@ -6,7 +6,6 @@ import com.flansmod.common.item.BulletItem;
 import com.flansmod.common.types.JsonDefinition;
 import com.flansmod.common.types.JsonField;
 import com.flansmod.common.types.abilities.elements.AbilityEffectDefinition;
-import com.flansmod.common.types.abilities.elements.EAbilityEffect;
 import com.flansmod.common.types.bullets.elements.HitscanDefinition;
 import com.flansmod.common.types.bullets.elements.ImpactDefinition;
 import com.flansmod.common.types.bullets.elements.ProjectileDefinition;

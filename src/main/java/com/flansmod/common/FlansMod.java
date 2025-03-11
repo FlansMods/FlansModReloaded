@@ -30,7 +30,6 @@ import com.flansmod.common.types.abilities.CraftingTraitDefinition;
 import com.flansmod.common.types.abilities.CraftingTraitDefinitions;
 import com.flansmod.common.types.abilities.elements.AbilityEffectDefinition;
 import com.flansmod.common.types.abilities.elements.CraftingTraitProviderDefinition;
-import com.flansmod.common.types.abilities.elements.EAbilityEffect;
 import com.flansmod.common.types.armour.ArmourDefinitions;
 import com.flansmod.common.types.attachments.AttachmentDefinitions;
 import com.flansmod.common.types.attachments.EAttachmentType;

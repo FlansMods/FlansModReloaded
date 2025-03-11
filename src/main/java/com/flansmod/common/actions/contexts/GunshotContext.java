@@ -10,7 +10,6 @@ import com.flansmod.common.gunshots.UnresolvedEntityHitResult;
 import com.flansmod.common.projectiles.BulletGuidance;
 import com.flansmod.common.types.JsonDefinition;
 import com.flansmod.common.types.abilities.elements.AbilityEffectDefinition;
-import com.flansmod.common.types.abilities.elements.EAbilityEffect;
 import com.flansmod.common.types.abilities.elements.EAbilityTarget;
 import com.flansmod.common.types.abilities.elements.EAbilityTrigger;
 import com.flansmod.common.types.bullets.BulletDefinition;

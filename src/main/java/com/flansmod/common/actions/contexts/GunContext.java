@@ -11,7 +11,6 @@ import com.flansmod.common.actions.stats.*;
 import com.flansmod.common.item.*;
 import com.flansmod.common.types.abilities.CraftingTraitDefinition;
 import com.flansmod.common.types.abilities.elements.AbilityEffectDefinition;
-import com.flansmod.common.types.abilities.elements.EAbilityEffect;
 import com.flansmod.common.types.abilities.elements.EAbilityTrigger;
 import com.flansmod.common.types.attachments.AttachmentDefinition;
 import com.flansmod.common.types.attachments.EAttachmentType;
