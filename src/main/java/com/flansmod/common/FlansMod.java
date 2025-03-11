@@ -1,6 +1,7 @@
 package com.flansmod.common;
 
 import com.flansmod.client.FlansModClient;
+import com.flansmod.common.actions.Actions;
 import com.flansmod.common.actions.contexts.*;
 import com.flansmod.common.actions.ServerActionManager;
 import com.flansmod.common.blocks.TurretBlock;
@@ -496,7 +497,7 @@ public class FlansMod
         CREATIVE_TABS.register(modEventBus);
         ATTRIBUTES.register(modEventBus);
 
-
+        Actions.DEFERRED_ACTION_TYPES.register(modEventBus);
     }
 
     private void CommonInit(final FMLCommonSetupEvent event)

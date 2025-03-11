@@ -16,9 +16,11 @@ import com.flansmod.common.types.guns.GunDefinition;
 import com.flansmod.common.types.magazines.MagazineDefinition;
 import com.flansmod.physics.common.util.EContextSide;
 import com.flansmod.physics.common.util.Maths;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.Multimap;
 import com.mojang.blaze3d.platform.InputConstants;
+import cpw.mods.util.Lazy;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
@@ -320,6 +322,13 @@ public class GunItem extends FlanItem
     }
 
     // Left-click vanilla actions
+    private static final ImmutableList<ResourceLocation> canAttackActionTypes = ImmutableList.of(
+        new ResourceLocation(FlansMod.MODID, "axe"),
+        new ResourceLocation(FlansMod.MODID, "pickaxe"),
+        new ResourceLocation(FlansMod.MODID, "hoe"),
+        new ResourceLocation(FlansMod.MODID, "shovel"),
+        new ResourceLocation(FlansMod.MODID, "melee")
+    );
     @Override
     public boolean canAttackBlock(@Nonnull BlockState blockState, @Nonnull Level world, @Nonnull BlockPos blockPos, Player player)
     {
@@ -333,11 +342,9 @@ public class GunItem extends FlanItem
             {
                 for (ActionDefinition actionDef : gunContext.GetPotentialPrimaryActions())
                 {
-                    switch (actionDef.actionType)
+                    if(canAttackActionTypes.contains(actionDef.actionType))
                     {
-                        case Axe, Pickaxe, Hoe, Shovel, Melee -> {
-                            return true;
-                        }
+                        return true;
                     }
                 }
             }
@@ -345,6 +352,7 @@ public class GunItem extends FlanItem
 
         return false;
     }
+
     @Override
     public boolean isCorrectToolForDrops(ItemStack stack, BlockState blockState)
     {
@@ -353,41 +361,41 @@ public class GunItem extends FlanItem
         for (ActionDefinition actionDef : gunContext.GetPotentialPrimaryActions())
         {
             int harvestLevel = Maths.ceil(gunContext.ModifyFloat(Constants.STAT_TOOL_HARVEST_LEVEL).get());
-            switch (actionDef.actionType)
+            if(actionDef.actionType.equals(Actions.ACTION_TYPE_MELEE.getId()))
             {
-                case Melee -> { return blockState.is(Blocks.COBWEB); }
-                case Axe ->
-                {
-                    if(blockState.is(BlockTags.MINEABLE_WITH_AXE))
-                        for(Tier tier : tiers)
-                            if(tier.getLevel() >= harvestLevel)
-                                if(TierSortingRegistry.isCorrectTierForDrops(tier, blockState))
-                                    return true;
-                }
-                case Pickaxe ->
-                {
-                    if(blockState.is(BlockTags.MINEABLE_WITH_PICKAXE))
-                        for(Tier tier : tiers)
-                            if(tier.getLevel() >= harvestLevel)
-                                if(TierSortingRegistry.isCorrectTierForDrops(tier, blockState))
-                                    return true;
-                }
-                case Hoe ->
-                {
-                    if(blockState.is(BlockTags.MINEABLE_WITH_HOE))
-                        for(Tier tier : tiers)
-                            if(tier.getLevel() >= harvestLevel)
-                                if(TierSortingRegistry.isCorrectTierForDrops(tier, blockState))
-                                    return true;
-                }
-                case Shovel ->
-                {
-                    if(blockState.is(BlockTags.MINEABLE_WITH_SHOVEL))
-                        for(Tier tier : tiers)
-                            if(tier.getLevel() >= harvestLevel)
-                                if(TierSortingRegistry.isCorrectTierForDrops(tier, blockState))
-                                    return true;
-                }
+                return blockState.is(Blocks.COBWEB);
+            }
+            else if(actionDef.actionType.equals(Actions.ACTION_TYPE_AXE.getId()))
+            {
+                if(blockState.is(BlockTags.MINEABLE_WITH_AXE))
+                    for(Tier tier : tiers)
+                        if(tier.getLevel() >= harvestLevel)
+                            if(TierSortingRegistry.isCorrectTierForDrops(tier, blockState))
+                                return true;
+            }
+            else if(actionDef.actionType.equals(Actions.ACTION_TYPE_PICKAXE.getId()))
+            {
+                if(blockState.is(BlockTags.MINEABLE_WITH_PICKAXE))
+                    for(Tier tier : tiers)
+                        if(tier.getLevel() >= harvestLevel)
+                            if(TierSortingRegistry.isCorrectTierForDrops(tier, blockState))
+                                return true;
+            }
+            else if(actionDef.actionType.equals(Actions.ACTION_TYPE_HOE.getId()))
+            {
+                if(blockState.is(BlockTags.MINEABLE_WITH_HOE))
+                    for(Tier tier : tiers)
+                        if(tier.getLevel() >= harvestLevel)
+                            if(TierSortingRegistry.isCorrectTierForDrops(tier, blockState))
+                                return true;
+            }
+            else if(actionDef.actionType.equals(Actions.ACTION_TYPE_SHOVEL.getId()))
+            {
+                if(blockState.is(BlockTags.MINEABLE_WITH_SHOVEL))
+                    for(Tier tier : tiers)
+                        if(tier.getLevel() >= harvestLevel)
+                            if(TierSortingRegistry.isCorrectTierForDrops(tier, blockState))
+                                return true;
             }
         }
         return false;
@@ -405,11 +413,9 @@ public class GunItem extends FlanItem
                     GunContext gunContext = GunContext.of(stack, EContextSide.of(level));
                     for (ActionDefinition actionDef : gunContext.GetPotentialPrimaryActions())
                     {
-                        switch (actionDef.actionType)
+                        if(canAttackActionTypes.contains(actionDef.actionType))
                         {
-                            case Axe, Pickaxe, Hoe, Shovel, Melee -> {
-                                return;
-                            }
+                            return;
                         }
                     }
 
@@ -558,7 +564,7 @@ public class GunItem extends FlanItem
                 ImmutableMultimap.Builder<Attribute, AttributeModifier> builder = ImmutableMultimap.builder();
                 for(ActionDefinition actionDef : gunContext.GetPotentialPrimaryActions())
                 {
-                    if(actionDef.actionType == EActionType.Melee)
+                    if(actionDef.actionType.equals(Actions.ACTION_TYPE_MELEE.getId()))
                     {
                         float meleeDamage = actionGroupContext.ModifyFloat(Constants.STAT_MELEE_DAMAGE).get();
                         builder.put(Attributes.ATTACK_DAMAGE,
@@ -600,9 +606,9 @@ public class GunItem extends FlanItem
         GunContext gunContext = ContextCache.CreateWithoutCaching(stack);
         for (ActionDefinition actionDef : gunContext.GetPotentialSecondaryActions())
         {
-            switch (actionDef.actionType)
+            if(actionDef.actionType.equals(Actions.ACTION_TYPE_SHIELD.getId()))
             {
-                case Shield -> { return UseAnim.BLOCK; }
+                return UseAnim.BLOCK;
             }
         }
         return UseAnim.NONE;
@@ -613,9 +619,9 @@ public class GunItem extends FlanItem
         GunContext gunContext = ContextCache.CreateWithoutCaching(stack);
         for (ActionDefinition actionDef : gunContext.GetPotentialSecondaryActions())
         {
-            switch (actionDef.actionType)
+            if(actionDef.actionType.equals(Actions.ACTION_TYPE_SHIELD.getId()))
             {
-                case Shield -> { return 72000; }
+                return 72000;
             }
         }
         return 0;
@@ -630,13 +636,11 @@ public class GunItem extends FlanItem
             GunContext gunContext = playerContext.GetGunContextForSlot(hand, world.isClientSide);
             for (ActionDefinition actionDef : gunContext.GetPotentialSecondaryActions())
             {
-                switch (actionDef.actionType)
+                if(actionDef.actionType.equals(Actions.ACTION_TYPE_SHIELD.getId()))
                 {
-                    case Shield -> {
-                        ItemStack stackInHand = player.getItemInHand(hand);
-                        player.startUsingItem(hand);
-                        return InteractionResultHolder.consume(stackInHand);
-                    }
+                    ItemStack stackInHand = player.getItemInHand(hand);
+                    player.startUsingItem(hand);
+                    return InteractionResultHolder.consume(stackInHand);
                 }
             }
         }
@@ -662,21 +666,14 @@ public class GunItem extends FlanItem
                 {
                     for (ActionInstance action : actionGroup.GetActions())
                     {
-                        switch (action.Def.actionType)
-                        {
-                            case Strip -> {
-                                return Items.WOODEN_AXE.useOn(context);
-                            }
-                            case Shear -> {
-                                return Items.SHEARS.useOn(context);
-                            }
-                            case Flatten -> {
-                                return Items.WOODEN_SHOVEL.useOn(context);
-                            }
-                            case Till -> {
-                                return Items.WOODEN_HOE.useOn(context);
-                            }
-                        }
+                        if(action.Def.actionType.equals(Actions.ACTION_TYPE_STRIP.getId()))
+                            return Items.WOODEN_AXE.useOn(context);
+                        else if(action.Def.actionType.equals(Actions.ACTION_TYPE_SHEAR.getId()))
+                            return Items.SHEARS.useOn(context);
+                        else if(action.Def.actionType.equals(Actions.ACTION_TYPE_FLATTEN.getId()))
+                            return Items.WOODEN_SHOVEL.useOn(context);
+                        else if(action.Def.actionType.equals(Actions.ACTION_TYPE_TILL.getId()))
+                            return Items.WOODEN_HOE.useOn(context);
                     }
                 }
                 actionStack.CancelGroupInstance(actionGroupContext);
@@ -697,17 +694,50 @@ public class GunItem extends FlanItem
         {
             for(ActionDefinition actionDef : actionGroup.actions)
             {
-                switch(actionDef.actionType)
+                if(actionDef.actionType.equals(Actions.ACTION_TYPE_STRIP.getId()))
                 {
-                    case Strip -> { if(toolAction == ToolActions.AXE_STRIP) return true; }
-                    case Shear -> { if(toolAction == ToolActions.SHEARS_HARVEST) return true; }
-                    case Flatten -> { if(toolAction == ToolActions.SHOVEL_FLATTEN) return true; }
-                    case Till -> { if(toolAction == ToolActions.HOE_TILL) return true; }
-                    case Axe -> { if(toolAction == ToolActions.AXE_DIG) return true; }
-                    case Pickaxe -> { if(toolAction == ToolActions.PICKAXE_DIG) return true; }
-                    case Shovel -> { if(toolAction == ToolActions.SHOVEL_DIG) return true; }
-                    case Hoe -> { if(toolAction == ToolActions.HOE_DIG) return true; }
-                    case Shield -> { if(toolAction == ToolActions.SHIELD_BLOCK) return true; }
+                    if (toolAction == ToolActions.AXE_STRIP)
+                        return true;
+                }
+                else if(actionDef.actionType.equals(Actions.ACTION_TYPE_SHEAR.getId()))
+                {
+                    if (toolAction == ToolActions.SHEARS_HARVEST)
+                        return true;
+                }
+                else if(actionDef.actionType.equals(Actions.ACTION_TYPE_FLATTEN.getId()))
+                {
+                    if (toolAction == ToolActions.SHOVEL_FLATTEN)
+                        return true;
+                }
+                else if(actionDef.actionType.equals(Actions.ACTION_TYPE_TILL.getId()))
+                {
+                    if (toolAction == ToolActions.HOE_TILL)
+                        return true;
+                }
+                else if(actionDef.actionType.equals(Actions.ACTION_TYPE_AXE.getId()))
+                {
+                    if (toolAction == ToolActions.AXE_DIG)
+                        return true;
+                }
+                else if(actionDef.actionType.equals(Actions.ACTION_TYPE_PICKAXE.getId()))
+                {
+                    if (toolAction == ToolActions.PICKAXE_DIG)
+                        return true;
+                }
+                else if(actionDef.actionType.equals(Actions.ACTION_TYPE_SHOVEL.getId()))
+                {
+                    if (toolAction == ToolActions.SHOVEL_DIG)
+                        return true;
+                }
+                else if(actionDef.actionType.equals(Actions.ACTION_TYPE_HOE.getId()))
+                {
+                    if (toolAction == ToolActions.HOE_DIG)
+                        return true;
+                }
+                else if(actionDef.actionType.equals(Actions.ACTION_TYPE_SHIELD.getId()))
+                {
+                    if (toolAction == ToolActions.SHIELD_BLOCK)
+                        return true;
                 }
             }
         }

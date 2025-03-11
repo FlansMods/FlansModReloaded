@@ -8,6 +8,7 @@ public @interface JsonField
 {
 	String Docs() default "";
 	String AssetPathHint() default "";
+	String DefaultModID() default "minecraft";
 	String ModifiedBy() default "";
 	double Min() default -Double.MAX_VALUE;
 	double Max() default Double.MAX_VALUE;

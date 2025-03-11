@@ -5,6 +5,7 @@ import com.flansmod.common.FlansMod;
 import com.flansmod.common.FlansModConfig;
 import com.flansmod.common.actions.ActionGroupInstance;
 import com.flansmod.common.actions.ActionInstance;
+import com.flansmod.common.actions.Actions;
 import com.flansmod.common.actions.contexts.*;
 import com.flansmod.common.actions.nodes.EjectCasingAction;
 import com.flansmod.common.network.FlansEntityDataSerializers;
@@ -12,7 +13,6 @@ import com.flansmod.common.types.bullets.BulletDefinition;
 import com.flansmod.common.types.bullets.elements.ProjectileDefinition;
 import com.flansmod.common.types.guns.GunDefinition;
 import com.flansmod.common.types.guns.elements.ActionDefinition;
-import com.flansmod.common.types.guns.elements.EActionType;
 import com.flansmod.physics.common.util.Maths;
 import com.flansmod.physics.common.util.MinecraftHelpers;
 import com.flansmod.physics.common.util.Transform;
@@ -125,7 +125,7 @@ public class CasingEntity extends Projectile {
 
         if(Action == null){
             for(ActionDefinition def : actionGroup.Def.actions){
-                if(def.actionType == EActionType.EjectCasing)
+                if(def.actionType.equals(Actions.ACTION_TYPE_EJECT_CASING.getId()))
                     Action = new EjectCasingAction(new ActionGroupInstance(actionGroup),def);
             }
         }

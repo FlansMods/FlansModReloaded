@@ -1,17 +1,21 @@
 package com.flansmod.common.types.guns.elements;
 
+import com.flansmod.common.types.JsonDefinition;
 import com.flansmod.common.types.JsonField;
 import com.flansmod.common.types.elements.ModifierDefinition;
 import com.flansmod.common.types.elements.SoundDefinition;
+import net.minecraft.resources.ResourceLocation;
+
+import static com.flansmod.common.types.JsonDefinition.InvalidLocation;
 
 public class ActionDefinition
 {
 	public static final ActionDefinition Invalid = new ActionDefinition();
-	public boolean IsValid() { return actionType != EActionType.Invalid; }
+	public boolean IsValid() { return actionType.equals(InvalidLocation); }
 
 	// General fields
-	@JsonField
-	public EActionType actionType = EActionType.Invalid;
+	@JsonField(DefaultModID = "flansmod")
+	public ResourceLocation actionType = InvalidLocation;
 
 	// Animation action specifics
 	@JsonField

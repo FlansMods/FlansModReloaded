@@ -2,8 +2,8 @@ package com.flansmod.common.actions.contexts;
 
 import com.flansmod.common.FlansMod;
 import com.flansmod.common.actions.ActionInstance;
+import com.flansmod.common.actions.Actions;
 import com.flansmod.common.actions.stats.*;
-import com.flansmod.common.types.guns.elements.EActionType;
 import com.flansmod.common.item.BulletItem;
 import com.flansmod.common.item.GunItem;
 import com.flansmod.common.types.attachments.AttachmentDefinition;
@@ -648,7 +648,7 @@ public class ActionGroupContext
 	public ActionDefinition GetShootActionDefinition()
 	{
 		for(ActionDefinition def : Def.actions)
-			if(def.actionType == EActionType.Shoot)
+			if(def.actionType.equals(Actions.ACTION_TYPE_SHOOT.getId()))
 				return def;
 		return ActionDefinition.Invalid;
 	}

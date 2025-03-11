@@ -12,6 +12,7 @@ import net.minecraft.util.StringRepresentable;
 import net.minecraft.world.phys.Vec3;
 import org.joml.Vector3f;
 
+import javax.annotation.Nonnull;
 import java.lang.reflect.*;
 import java.util.HashMap;
 import java.util.Optional;
@@ -19,7 +20,12 @@ import java.util.Optional;
 public class DefinitionParser
 {
 	private Class<? extends JsonDefinition> classRef;
-	
+
+	private static String toLowerWithUnderscores(@Nonnull String src)
+	{
+		return src.replaceAll("([a-z])([A-Z])", "$1_$2").toLowerCase();
+	}
+
 	private enum FieldType
 	{
 		INT, DOUBLE, FLOAT, BYTE, SHORT, STRING, STRUCT, LIST;
@@ -99,7 +105,11 @@ public class DefinitionParser
 			try
 			{
 				String resLoc = jNode.getAsString();
-				return new ResourceLocation(resLoc);
+				resLoc = toLowerWithUnderscores(resLoc);
+				if(resLoc.contains(":"))
+					return new ResourceLocation(resLoc);
+				else
+					return new ResourceLocation(annot.DefaultModID(), resLoc);
 			}
 			catch(Exception e) { FlansMod.LOGGER.error("Failed to parse JsonNode " + jNode + " into " + ref + " as ResourceLocation due to exception: " + e); throw e; }
 		});
