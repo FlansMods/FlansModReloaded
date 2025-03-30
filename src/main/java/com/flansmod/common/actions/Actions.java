@@ -33,6 +33,7 @@ public class Actions
 	public static final RegistryObject<ActionType<?>> ACTION_TYPE_SWITCH_MODE		= BASE_ACTION_TYPES.register("switch_mode", () -> new ActionType<>(SwitchModeAction::new));
 	public static final RegistryObject<ActionType<?>> ACTION_TYPE_ABILITY_ON_SELF	= BASE_ACTION_TYPES.register("ability_on_self", () -> new ActionType<>(AbilityOnSelfAction::new));
 	public static final RegistryObject<ActionType<?>> ACTION_TYPE_EJECT_CASING		= BASE_ACTION_TYPES.register("eject_casing", () -> new ActionType<>(EjectCasingAction::new));
+	public static final RegistryObject<ActionType<?>> ACTION_TYPE_BEAM				= BASE_ACTION_TYPES.register("beam", () -> new ActionType<>(BeamAction::new));
 
 	public static final RegistryObject<ActionType<?>> ACTION_TYPE_MELEE 			= BASE_ACTION_TYPES.register("melee", () -> new ActionType<>((x, y) -> null));
 	public static final RegistryObject<ActionType<?>> ACTION_TYPE_SHIELD			= BASE_ACTION_TYPES.register("shield", () -> new ActionType<>((x, y) -> null));

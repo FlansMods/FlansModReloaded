@@ -37,7 +37,9 @@ public enum EAbilityTrigger
 	RaycastAction,
 
 
-
+	BeamEnter,
+	BeamStayInterval,
+	BeamLeave,
 	;
 
 	public static EAbilityTrigger FromReloadStage(@Nonnull EReloadStage stage)

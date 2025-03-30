@@ -123,4 +123,19 @@ public final class Constants
 
 	public static final String STAT_ENCHANTMENT_ID = "enchantment_id";
 	public static final String STAT_ENCHANTMENT_LEVEL = "enchantment_level";
+
+
+	public static final String STAT_BEAM_LENGTH = "beam_length";
+	public static final String STAT_BEAM_START_RADIUS = "beam_radius_start";
+	public static final String STAT_BEAM_END_RADIUS = "beam_radius_end";
+	public static final String STAT_BEAM_HIT_ENTITIES = "beam_hit_entities";
+	public static final String STAT_BEAM_HIT_BLOCKS = "beam_hit_blocks";
+
+	public static final String STAT_BEAM_PROCESS_BLOCKS = "beam_process_block";
+	public static final String STAT_BEAM_PROCESS_BLOCKS_BREAK_SPEED = "beam_process_block_factor_break_speed";
+	public static final String STAT_BEAM_PROCESS_BLOCKS_TIME = "beam_process_block_time";
+	public static final String STAT_BEAM_PROCESS_BLOCKS_REPEATS = "beam_process_block_repeats";
+	public static final String STAT_BEAM_TRIGGER_ENTITY_INTERVAL = "beam_trigger_entity_interval";
+	public static final String STAT_BEAM_TRIGGER_ENTITY_REPEATS = "beam_trigger_entity_repeats";
+
 }
