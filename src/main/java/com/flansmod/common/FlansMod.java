@@ -24,8 +24,8 @@ import com.flansmod.common.network.FlansEntityDataSerializers;
 import com.flansmod.common.network.FlansModPacketHandler;
 import com.flansmod.common.projectiles.BulletEntity;
 import com.flansmod.common.projectiles.CasingEntity;
-import com.flansmod.common.roads.BlockRoadMarker;
-import com.flansmod.common.roads.BlockRoadMarkerWall;
+import com.flansmod.common.roads.RunwayBlockEntity;
+import com.flansmod.common.roads.RunwayMarkerBlock;
 import com.flansmod.common.types.abilities.CraftingTraitDefinition;
 import com.flansmod.common.types.abilities.CraftingTraitDefinitions;
 import com.flansmod.common.types.abilities.elements.AbilityEffectDefinition;
@@ -52,12 +52,9 @@ import com.flansmod.common.types.teams.TeamDefinitions;
 import com.flansmod.common.types.vehicles.ControlSchemeDefinitions;
 import com.flansmod.common.types.vehicles.VehicleDefinitions;
 import com.flansmod.common.worldgen.loot.LootPopulator;
-import com.flansmod.packs.clockwork.common.ChipEntity;
-import com.flansmod.packs.clockwork.common.SadieEntity;
 import com.mojang.logging.LogUtils;
 import com.mojang.serialization.Codec;
 import net.minecraft.advancements.CriteriaTriggers;
-import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceKey;
@@ -83,7 +80,6 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
-import net.minecraft.world.level.material.PushReaction;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.RegisterRecipeBookCategoriesEvent;
 import net.minecraftforge.common.MinecraftForge;
@@ -91,7 +87,6 @@ import net.minecraftforge.common.crafting.CraftingHelper;
 import net.minecraftforge.common.extensions.IForgeMenuType;
 import net.minecraftforge.common.loot.IGlobalLootModifier;
 import net.minecraftforge.event.AddReloadListenerEvent;
-import net.minecraftforge.event.entity.EntityAttributeCreationEvent;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.level.LevelEvent;
@@ -181,9 +176,10 @@ public class FlansMod
     public static final RegistryObject<Item> PAINTING_TABLE_ITEM = ITEMS.register("painting_table", () -> new BlockItem(PAINTING_TABLE_BLOCK.get(), new Item.Properties()));
     public static final RegistryObject<Item> GUN_MOD_PORTABLE_ITEM = FlansMod.Workbench_Quick_Item(ITEMS, MODID, "portable_mod_kit");
 
-    public static final RegistryObject<Block> ROAD_MARKER_BLOCK = BLOCKS.register("road_marker", () -> new BlockRoadMarker(BlockBehaviour.Properties.copy(Blocks.REDSTONE_TORCH)));
-    public static final RegistryObject<Block> ROAD_MARKER_WALL_BLOCK = BLOCKS.register("road_marker_wall", () -> new BlockRoadMarkerWall(BlockBehaviour.Properties.copy(Blocks.REDSTONE_WALL_TORCH)));
-    public static final RegistryObject<Item> ROAD_MARKER_ITEM = ITEMS.register("road_marker", () -> new BlockItem(ROAD_MARKER_BLOCK.get(), new Item.Properties()));
+    public static final RegistryObject<Block> RUNWAY_MARKER_BLOCK = BLOCKS.register("runway_marker", () -> new RunwayMarkerBlock(BlockBehaviour.Properties.copy(Blocks.REDSTONE_BLOCK)));
+    public static final RegistryObject<Item> RUNWAY_MARKER_ITEM = ITEMS.register("runway_marker", () -> new BlockItem(RUNWAY_MARKER_BLOCK.get(), new Item.Properties()));
+    public static final RegistryObject<BlockEntityType<RunwayBlockEntity>> RUNWAY_MARKER_TILE_ENTITY = TILE_ENTITIES.register("runway_marker",
+        () -> BlockEntityType.Builder.of(RunwayBlockEntity::new, RUNWAY_MARKER_BLOCK.get()).build(null));
 
     // Tile entities
     public static final RegistryObject<BlockEntityType<WorkbenchBlockEntity>> DIESEL_GENERATOR_TILE_ENTITY = Workbench_TileEntityType(TILE_ENTITIES, MODID, "portable_diesel_generator");
