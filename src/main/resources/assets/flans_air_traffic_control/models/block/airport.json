@@ -1,0 +1,12 @@
+{
+  "parent": "block/cube",
+  "textures": {
+    "particle": "flans_air_traffic_control:block/airport_block_top",
+    "down": "flans_air_traffic_control:block/airport_block_top",
+    "up": "flans_air_traffic_control:block/airport_block_top",
+    "north": "flans_air_traffic_control:block/airport_block_side",
+    "east": "flans_air_traffic_control:block/airport_block_side",
+    "south": "flans_air_traffic_control:block/airport_block_side",
+    "west": "flans_air_traffic_control:block/airport_block_side"
+  }
+}

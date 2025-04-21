@@ -1,0 +1,12 @@
+{
+  "parent": "block/cube",
+  "textures": {
+    "particle": "flans_air_traffic_control:block/runway_block_side",
+    "down": "flans_air_traffic_control:block/runway_block_top_orthogonal",
+    "up": "flans_air_traffic_control:block/runway_block_top_orthogonal",
+    "north": "flans_air_traffic_control:block/runway_block_side",
+    "east": "flans_air_traffic_control:block/runway_block_side",
+    "south": "flans_air_traffic_control:block/runway_block_side",
+    "west": "flans_air_traffic_control:block/runway_block_side"
+  }
+}

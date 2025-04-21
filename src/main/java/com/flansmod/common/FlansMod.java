@@ -24,8 +24,6 @@ import com.flansmod.common.network.FlansEntityDataSerializers;
 import com.flansmod.common.network.FlansModPacketHandler;
 import com.flansmod.common.projectiles.BulletEntity;
 import com.flansmod.common.projectiles.CasingEntity;
-import com.flansmod.common.roads.RunwayBlockEntity;
-import com.flansmod.common.roads.RunwayMarkerBlock;
 import com.flansmod.common.types.abilities.CraftingTraitDefinition;
 import com.flansmod.common.types.abilities.CraftingTraitDefinitions;
 import com.flansmod.common.types.abilities.elements.AbilityEffectDefinition;
@@ -176,10 +174,6 @@ public class FlansMod
     public static final RegistryObject<Item> PAINTING_TABLE_ITEM = ITEMS.register("painting_table", () -> new BlockItem(PAINTING_TABLE_BLOCK.get(), new Item.Properties()));
     public static final RegistryObject<Item> GUN_MOD_PORTABLE_ITEM = FlansMod.Workbench_Quick_Item(ITEMS, MODID, "portable_mod_kit");
 
-    public static final RegistryObject<Block> RUNWAY_MARKER_BLOCK = BLOCKS.register("runway_marker", () -> new RunwayMarkerBlock(BlockBehaviour.Properties.copy(Blocks.REDSTONE_BLOCK)));
-    public static final RegistryObject<Item> RUNWAY_MARKER_ITEM = ITEMS.register("runway_marker", () -> new BlockItem(RUNWAY_MARKER_BLOCK.get(), new Item.Properties()));
-    public static final RegistryObject<BlockEntityType<RunwayBlockEntity>> RUNWAY_MARKER_TILE_ENTITY = TILE_ENTITIES.register("runway_marker",
-        () -> BlockEntityType.Builder.of(RunwayBlockEntity::new, RUNWAY_MARKER_BLOCK.get()).build(null));
 
     // Tile entities
     public static final RegistryObject<BlockEntityType<WorkbenchBlockEntity>> DIESEL_GENERATOR_TILE_ENTITY = Workbench_TileEntityType(TILE_ENTITIES, MODID, "portable_diesel_generator");

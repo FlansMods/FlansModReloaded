@@ -1,0 +1,36 @@
+{
+    "variants": {
+        "rotation=0": {
+            "model": "flans_air_traffic_control:block/runway",
+            "y": 90
+        },
+		"rotation=1": {
+            "model": "flans_air_traffic_control:block/runway_diagonal",
+            "y": 90
+        },
+        "rotation=2": {
+            "model": "flans_air_traffic_control:block/runway",
+            "y": 180
+        },
+		"rotation=3": {
+            "model": "flans_air_traffic_control:block/runway_diagonal",
+            "y": 180
+        },
+        "rotation=4": {
+            "model": "flans_air_traffic_control:block/runway",
+            "y": 270
+        },
+		"rotation=5": {
+            "model": "flans_air_traffic_control:block/runway_diagonal",
+            "y": 270
+        },
+        "rotation=6": {
+            "model": "flans_air_traffic_control:block/runway",
+            "y": 0
+        },
+		"rotation=7": {
+            "model": "flans_air_traffic_control:block/runway_diagonal",
+            "y": 0
+        }
+    }
+}
