@@ -1,12 +1,14 @@
-[![GitHub release](https://img.shields.io/github/v/tag/FlansMods/FlansMod.svg?include_prereleases&sort=semver&color=brightgreen)](https://GitHub.com//FlansMods/FlansMod/releases/)
-[![Github all releases](https://img.shields.io/github/downloads/FlansMods/FlansMod/total.svg)](https://GitHub.com/FlansMods/FlansMod/releases/)
-[![GitHub forks](https://img.shields.io/github/forks/FlansMods/FlansMod.svg?color=brightgreen)](https://GitHub.com/FlansMods/FlansMod/network/)
-[![GitHub forks](https://img.shields.io/github/stars/FlansMods/FlansMod.svg?color=brightgreen)](https://GitHub.com/FlansMods/FlansMod/stargazers/)
-[![GitHub contributors](https://img.shields.io/github/contributors/FlansMods/FlansMod.svg)](https://GitHub.com/FlansMods/FlansMod/graphs/contributors/)
+[![GitHub release](https://img.shields.io/github/v/tag/FlansMods/FlansModReloaded.svg?include_prereleases&sort=semver&color=brightgreen)](https://GitHub.com//FlansMods/FlansModReloaded/releases/)
+[![Github all releases](https://img.shields.io/github/downloads/FlansMods/FlansModReloaded/total.svg)](https://GitHub.com/FlansMods/FlansModReloaded/releases/)
+[![GitHub forks](https://img.shields.io/github/forks/FlansMods/FlansModReloaded.svg?color=brightgreen)](https://GitHub.com/FlansMods/FlansModReloaded/network/)
+[![GitHub forks](https://img.shields.io/github/stars/FlansMods/FlansModReloaded.svg?color=brightgreen)](https://GitHub.com/FlansMods/FlansModReloaded/stargazers/)
+[![GitHub contributors](https://img.shields.io/github/contributors/FlansMods/FlansModReloaded.svg)](https://GitHub.com/FlansMods/FlansModReloaded/graphs/contributors/)
 
-# [Flan's Mod](https://www.flansmod.com/)
+# [Flan's Mod: Reloaded](https://www.flansmod.com/)
 
-This is the offical Github repository of the minecraft modification Flan's Mod.
+This is the offical Github repository of the minecraft modification Flan's Mod: Reloaded.
+Flan's Mod: Reloaded is for versions 1.19.3 and later
+Flan's Mod: Legacy is for versions 1.12.2 and earlier
 
 ## Installation
 
