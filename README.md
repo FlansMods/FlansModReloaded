@@ -6,8 +6,8 @@
 
 # [Flan's Mod: Reloaded](https://www.flansmod.com/)
 
-This is the offical Github repository of the minecraft modification Flan's Mod: Reloaded.
-Flan's Mod: Reloaded is for versions 1.19.3 and later
+This is the offical Github repository of the minecraft modification Flan's Mod: Reloaded.\
+Flan's Mod: Reloaded is for versions 1.19.3 and later\
 Flan's Mod: Legacy is for versions 1.12.2 and earlier
 
 ## Installation
